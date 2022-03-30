@@ -3,7 +3,12 @@ import { isPointInPolygon, convertDistance } from 'geolib'
 import { isClient, get_env } from '../../index'
 import axios from 'axios'
 import moment from 'moment'
+import { isDateValidInRRule } from '../../'
 
+const drivableDistanceBetweenStoreAndCustomer = {
+   value: null,
+   isValidated: false,
+}
 // return delivery status of store (with recurrences, mileRange info, timeSlot info and drivable distance if store available for on demand delivery)
 export const isStoreOnDemandDeliveryAvailable = async (
    finalRecurrences,
@@ -13,13 +18,11 @@ export const isStoreOnDemandDeliveryAvailable = async (
    let fulfilledRecurrences = []
    for (let rec in finalRecurrences) {
       const now = new Date() // now
-      const start = new Date(now.getTime() - 1000 * 60 * 60 * 24) // yesterday
-      const end = new Date(now.getTime() + 1000 * 60 * 60 * 24) // tomorrow
-      const dates = rrulestr(finalRecurrences[rec].recurrence.rrule).between(
-         start,
-         now
+
+      const isValidDay = isDateValidInRRule(
+         finalRecurrences[rec].recurrence.rrule
       )
-      if (dates.length) {
+      if (isValidDay) {
          if (finalRecurrences[rec].recurrence.timeSlots.length) {
             const sortedTimeSlots = _.sortBy(
                finalRecurrences[rec].recurrence.timeSlots,
@@ -152,18 +155,18 @@ export const isStorePreOrderDeliveryAvailable = async (
                      eachStore,
                      address
                   )
-               console.log('distanceDeliveryStatus', distanceDeliveryStatus)
+               // console.log('distanceDeliveryStatus', distanceDeliveryStatus)
                const { isDistanceValid, zipcode, geoBoundary } =
                   distanceDeliveryStatus.result
                const status = isDistanceValid && zipcode && geoBoundary
-               console.log('statusMile', status, distanceDeliveryStatus.result)
+               // console.log('statusMile', status, distanceDeliveryStatus.result)
                if (status) {
                   timeslot.validMileRange = distanceDeliveryStatus.mileRangeInfo
                   validTimeSlots.push(timeslot)
                }
                const timeslotIndex = sortedTimeSlots.indexOf(timeslot)
                const timesSlotsLength = sortedTimeSlots.length
-               console.log('statusMile', timeslotIndex, timesSlotsLength)
+               // console.log('statusMile', timeslotIndex, timesSlotsLength)
                if (timeslotIndex == timesSlotsLength - 1) {
                   finalRecurrences[rec].recurrence.validTimeSlots =
                      validTimeSlots
@@ -219,7 +222,7 @@ const isStoreDeliveryAvailableByDistance = async (
    address
 ) => {
    const userLocation = { ...address }
-   console.log('userLocation', userLocation)
+   // console.log('userLocation', userLocation)
    let isStoreDeliveryAvailableByDistanceStatus = {
       isDistanceValid: false,
       zipcode: false,
@@ -246,32 +249,53 @@ const isStoreDeliveryAvailableByDistance = async (
       // drivable distance
       if (mileRanges[mileRange].distanceType === 'drivable') {
          const drivableDistance = mileRanges[mileRange]
-         console.log('drivableDistance', drivableDistance)
          if (drivableDistance.from !== null && drivableDistance.to !== null) {
             try {
-               const origin = isClient ? get_env('BASE_BRAND_URL') : ''
-               const url = `${origin}/server/api/distance-matrix`
-               const postLocationData = {
-                  key: get_env('GOOGLE_API_KEY'),
-                  lat1: userLocation.latitude,
-                  lon1: userLocation.longitude,
-                  lat2: eachStore.location.lat,
-                  lon2: eachStore.location.lng,
-               }
-               const { data } = await axios.post(url, postLocationData)
-               const distanceMeter = data.rows[0].elements[0].distance.value
-
-               const distanceMileFloat = convertDistance(distanceMeter, 'mi')
-
-               drivableByGoogleDistance = distanceMileFloat
-               let result =
-                  distanceMileFloat >= drivableDistance.from &&
-                  distanceMileFloat <= drivableDistance.to
-               if (result) {
-                  isStoreDeliveryAvailableByDistanceStatus['isDistanceValid'] =
-                     result && !mileRanges[mileRange].isExcluded
+               if (
+                  drivableDistanceBetweenStoreAndCustomer.value &&
+                  drivableDistanceBetweenStoreAndCustomer.isValidated
+               ) {
+                  let result =
+                     drivableDistanceBetweenStoreAndCustomer.value >=
+                        drivableDistance.from &&
+                     drivableDistanceBetweenStoreAndCustomer.value <=
+                        drivableDistance.to
+                  if (result) {
+                     isStoreDeliveryAvailableByDistanceStatus[
+                        'isDistanceValid'
+                     ] = result && !mileRanges[mileRange].isExcluded
+                  } else {
+                     break
+                  }
                } else {
-                  break
+                  const origin = isClient ? get_env('BASE_BRAND_URL') : ''
+                  const url = `${origin}/server/api/distance-matrix`
+                  const postLocationData = {
+                     key: get_env('GOOGLE_API_KEY'),
+                     lat1: userLocation.latitude,
+                     lon1: userLocation.longitude,
+                     lat2: eachStore.location.lat,
+                     lon2: eachStore.location.lng,
+                  }
+                  const { data } = await axios.post(url, postLocationData)
+                  const distanceMeter = data.rows[0].elements[0].distance.value
+
+                  const distanceMileFloat = convertDistance(distanceMeter, 'mi')
+
+                  drivableByGoogleDistance = distanceMileFloat
+                  drivableDistanceBetweenStoreAndCustomer.value =
+                     distanceMileFloat
+                  drivableDistanceBetweenStoreAndCustomer.isValidated = true
+                  let result =
+                     distanceMileFloat >= drivableDistance.from &&
+                     distanceMileFloat <= drivableDistance.to
+                  if (result) {
+                     isStoreDeliveryAvailableByDistanceStatus[
+                        'isDistanceValid'
+                     ] = result && !mileRanges[mileRange].isExcluded
+                  } else {
+                     break
+                  }
                }
             } catch (error) {
                console.log('getDataWithDrivableDistance', error)

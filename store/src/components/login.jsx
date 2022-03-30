@@ -27,7 +27,6 @@ import {
    OTPS,
    PLATFORM_CUSTOMERS,
    RESEND_OTP,
-   SEND_SMS,
 } from '../graphql'
 import {
    useLazyQuery,
@@ -36,6 +35,9 @@ import {
    useSubscription,
 } from '@apollo/react-hooks'
 import axios from 'axios'
+import isEmpty from 'lodash/isEmpty'
+import isNull from 'lodash/isNull'
+
 import {
    deleteStoredReferralCode,
    isReferralCodeValid,
@@ -44,6 +46,7 @@ import {
 } from '../utils/referrals'
 import gql from 'graphql-tag'
 import { useRouter } from 'next/router'
+import { useTranslation } from '../context'
 
 const ReactPixel = isClient ? require('react-facebook-pixel').default : null
 
@@ -57,6 +60,8 @@ export const Login = props => {
       singleLoginMethod = false,
       callbackURL,
       socialLogin = true,
+      showBackground = false,
+      currentAuth = null,
    } = props
 
    //loginBy --> initial login method ('email', 'otp' , 'signup', 'forgotPassword').
@@ -70,111 +75,161 @@ export const Login = props => {
 
    //component state
    const [defaultLogin, setDefaultLogin] = useState(loginBy)
+   const { configOf, setAuth } = useConfig()
+   const authConfig = configOf('Auth Methods', 'brand')
+   const { t } = useTranslation()
+   const showCreateOne = React.useMemo(() => {
+      if (singleLoginMethod) {
+         if (loginBy === 'email') {
+            return true
+         } else {
+            return false
+         }
+      } else {
+         return true
+      }
+   }, [])
+   React.useEffect(() => {
+      if (!isNull(currentAuth)) {
+         setDefaultLogin(loginBy)
+      }
+   }, [currentAuth])
 
    return (
-      <div className={`hern-login-v1-container`}>
-         <div className="hern-login-v1-content">
-            <div className="hern-login-v1-header">
-               {(defaultLogin === 'email' || defaultLogin === 'otp') && (
-                  <span>Log in</span>
-               )}
-
-               {defaultLogin === 'forgotPassword' && (
-                  <span>Forgot Password</span>
-               )}
-               {defaultLogin === 'signup' && <span>Sign Up</span>}
-
-               {!forceLogin && (
-                  <CloseIcon
-                     size={18}
-                     stroke={'#404040'}
-                     style={{ cursor: 'pointer' }}
-                     onClick={closeLoginPopup}
-                  />
-               )}
-            </div>
-            {forceLogin && (
-               <div className="hern-login-v1__custom-warning">
-                  You must login first to access this page.
-                  <span
-                     onClick={() => {
-                        if (isClient) {
-                           window.location.href =
-                              get_env('BASE_BRAND_URL') + getRoute('/')
-                        }
-                     }}
-                  >
-                     Go To Home
-                  </span>
-               </div>
+      <div
+         style={
+            showBackground
+               ? {
+                    background: 'transparent',
+                    boxShadow: 'none',
+                 }
+               : {}
+         }
+         className="hern-login-v1-content"
+      >
+         <div className="hern-login-v1-header">
+            {(defaultLogin === 'email' || defaultLogin === 'otp') && (
+               <span>{t('Log In')}</span>
             )}
-            <section>
-               {/* email login  or phone number login*/}
-               {defaultLogin === 'email' && (
-                  <Email
-                     setDefaultLogin={setDefaultLogin}
-                     isSilentlyLogin={isSilentlyLogin}
-                     closeLoginPopup={closeLoginPopup}
-                     callbackURL={callbackURL}
-                  />
-               )}
-               {defaultLogin === 'otp' && (
-                  <OTPLogin
-                     closeLoginPopup={closeLoginPopup}
-                     isSilentlyLogin={isSilentlyLogin}
-                     callbackURL={callbackURL}
-                  />
-               )}
-               {defaultLogin === 'forgotPassword' && (
-                  <ForgotPassword closeLoginPopup={closeLoginPopup} />
-               )}
-               {defaultLogin === 'signup' && (
-                  <Signup
-                     setDefaultLogin={setDefaultLogin}
-                     isSilentlyLogin={isSilentlyLogin}
-                     closeLoginPopup={closeLoginPopup}
-                     callbackURL={callbackURL}
-                  />
-               )}
-               {/* {defaultLogin === 'email' ? <Email /> : <OTPLogin />} */}
 
-               {!singleLoginMethod && (
-                  <>
-                     <DividerBar />
-                     <div style={{ margin: '1em' }}>
-                        <Button
-                           className="hern-login-login-switcher-btn"
-                           onClick={() => {
-                              defaultLogin === 'email'
-                                 ? setDefaultLogin('otp')
-                                 : setDefaultLogin('email')
-                           }}
-                        >
-                           {defaultLogin === 'email'
-                              ? 'Log in with Phone Number'
-                              : 'Log in with Email'}
-                        </Button>
-                     </div>
-                  </>
-               )}
+            {defaultLogin === 'forgotPassword' && (
+               <span>{t('Forgot Password')}</span>
+            )}
+            {defaultLogin === 'signup' && <span>{t('Sign Up')}</span>}
 
-               {/* google or facebook */}
-               {socialLogin && <SocialLogin callbackURL={callbackURL} />}
-            </section>
-            {defaultLogin !== 'signup' && (
-               <footer className="hern-login-v1__footer">
-                  <span>No account? </span>{' '}
-                  <button
-                     className="hern-login-v1__create-one-btn"
-                     onClick={() => {
-                        setDefaultLogin('signup')
-                     }}
-                  >
-                     Create one
-                  </button>
-               </footer>
+            {/* google or facebook */}
+            {socialLogin && <SocialLogin callbackURL={callbackURL} />}
+            {defaultLogin !== 'signup' &&
+               showCreateOne &&
+               authConfig.loginSettings?.signup?.value && (
+                  <footer className="hern-login-v1__footer">
+                     <span>{t('No account?')} </span>{' '}
+                     <button
+                        className="hern-login-v1__create-one-btn"
+                        onClick={() => {
+                           setAuth('sign-up')
+                           setDefaultLogin('signup')
+                        }}
+                     >
+                        {t('Create one')}
+                     </button>
+                  </footer>
+               )}
+            {!forceLogin && (
+               <CloseIcon
+                  size={18}
+                  stroke={'#404040'}
+                  style={{ cursor: 'pointer' }}
+                  onClick={closeLoginPopup}
+               />
             )}
          </div>
+         {forceLogin && (
+            <div className="hern-login-v1__custom-warning">
+               {t('You must login first to access this page.')}
+               <span
+                  onClick={() => {
+                     if (isClient) {
+                        window.location.href =
+                           get_env('BASE_BRAND_URL') + getRoute('/')
+                     }
+                  }}
+               >
+                  {t('Go To Home')}
+               </span>
+            </div>
+         )}
+         <section>
+            {/* email login  or phone number login*/}
+            {defaultLogin === 'email' && (
+               <Email
+                  setDefaultLogin={setDefaultLogin}
+                  isSilentlyLogin={isSilentlyLogin}
+                  closeLoginPopup={closeLoginPopup}
+                  callbackURL={callbackURL}
+               />
+            )}
+            {defaultLogin === 'otp' && (
+               <OTPLogin
+                  closeLoginPopup={closeLoginPopup}
+                  isSilentlyLogin={isSilentlyLogin}
+                  callbackURL={callbackURL}
+               />
+            )}
+            {defaultLogin === 'forgotPassword' && (
+               <ForgotPassword closeLoginPopup={closeLoginPopup} />
+            )}
+            {defaultLogin === 'signup' && (
+               <Signup
+                  setDefaultLogin={setDefaultLogin}
+                  isSilentlyLogin={isSilentlyLogin}
+                  closeLoginPopup={closeLoginPopup}
+                  callbackURL={callbackURL}
+               />
+            )}
+            {/* {defaultLogin === 'email' ? <Email /> : <OTPLogin />} */}
+
+            {!singleLoginMethod && (
+               <>
+                  <DividerBar />
+                  <div style={{ margin: '1em' }}>
+                     <Button
+                        className="hern-login-login-switcher-btn"
+                        variant="outline"
+                        onClick={() => {
+                           setAuth('sign-in')
+                           defaultLogin === 'email'
+                              ? setDefaultLogin('otp')
+                              : setDefaultLogin('email')
+                        }}
+                     >
+                        {defaultLogin === 'email' ? (
+                           <span>{t('Log in with Phone Number')}</span>
+                        ) : (
+                           <span> {t('Log in with Email')}</span>
+                        )}
+                     </Button>
+                  </div>
+               </>
+            )}
+
+            {/* google or facebook */}
+            {socialLogin && <SocialLogin callbackURL={callbackURL} />}
+         </section>
+         {defaultLogin !== 'signup' && showCreateOne && (
+            <footer className="hern-login-v1__footer">
+               <span>{t('No account?')} </span>
+               <button
+                  className="hern-login-v1__create-one-btn"
+                  onClick={() => {
+                     setDefaultLogin('signup')
+                     setAuth('sign-up')
+                  }}
+               >
+                  {t('Create one')}
+               </button>
+            </footer>
+         )}
       </div>
    )
 }
@@ -185,6 +240,7 @@ const Email = props => {
    const { setDefaultLogin, isSilentlyLogin, closeLoginPopup, callbackURL } =
       props
    const { addToast } = useToasts()
+   const { setAuth, deleteAuth } = useConfig()
    //component state
    const [loading, setLoading] = React.useState(false)
    const [error, setError] = React.useState('')
@@ -195,7 +251,7 @@ const Email = props => {
    const [showPassword, setShowPassword] = useState(false)
 
    const isValid = React.useMemo(() => form.email && form.password, [form])
-
+   const { t } = useTranslation()
    //handle input field change
    const onChange = e => {
       const { name, value } = e.target
@@ -218,17 +274,28 @@ const Email = props => {
          })
          setLoading(false)
          if (response?.status !== 200) {
-            setError('Email or password is incorrect!')
-            addToast('Email or password is incorrect!', {
-               appearance: 'error',
-            })
+            setError(
+               <>
+                  <span>{t('Email or password is incorrect')}</span>
+                  <span>{'!'}</span>
+               </>
+            )
+            addToast(
+               <>
+                  <span>{t('Email or password is incorrect')}</span>
+                  <span>{'!'}</span>
+               </>,
+               {
+                  appearance: 'error',
+               }
+            )
          } else if (response?.status === 200) {
             // fb pixel integration for tracking customer login
             ReactPixel.trackCustom('login', {
                email: form.email,
                phone: form.phone,
             })
-            addToast('Login successfully!', { appearance: 'success' })
+            addToast(t('Login successfully!'), { appearance: 'success' })
             const landedOn = isClient && localStorage.getItem('landed_on')
             if (!isSilentlyLogin) {
                if (isClient && landedOn) {
@@ -237,13 +304,15 @@ const Email = props => {
                } else {
                   window.location.href = getRoute('/menu')
                }
+               deleteAuth('auth')
             } else {
+               deleteAuth('auth')
                closeLoginPopup()
             }
          }
       } catch (error) {
          console.error(error)
-         addToast('Login failed', {
+         addToast(t('Login failed'), {
             appearance: 'error',
          })
       }
@@ -257,7 +326,7 @@ const Email = props => {
       <div className="hern-login-v1__email">
          <fieldset className="hern-login-v1__fieldset">
             <label className="hern-login-v1__label" htmlFor="email">
-               Email*
+               {t('Email')}
             </label>
 
             <input
@@ -273,7 +342,7 @@ const Email = props => {
          </fieldset>
          <fieldset className="hern-login-v1__fieldset">
             <label className="hern-login-v1__label" htmlFor="password">
-               Password*
+               {t('Password')}
             </label>
 
             <input
@@ -297,15 +366,17 @@ const Email = props => {
                   }}
                   style={{ cursor: 'pointer' }}
                />
-               <span>Show password</span>
+               <span>{t('Show password')}</span>
             </div>
             <span
                className="hern-login-v1__forgot-password"
                onClick={() => {
                   setDefaultLogin('forgotPassword')
+                  setAuth('forgotPassword')
                }}
             >
-               Forgot password?{' '}
+               <span>{t('Forgot password')}</span>
+               {'?'}
             </span>
          </div>
          {error && <span className="hern-login-v1__error">{error}</span>}
@@ -316,7 +387,13 @@ const Email = props => {
             })}
             onClick={() => isValid && submit()}
          >
-            {loading ? 'LOGGING IN...' : 'LOGIN'}
+            {loading ? (
+               <>
+                  <span>{t('LOGGING IN')}</span>
+               </>
+            ) : (
+               t('LOGIN')
+            )}
          </Button>
       </div>
    )
@@ -327,7 +404,8 @@ const OTPLogin = props => {
    //props
    const { isSilentlyLogin, closeLoginPopup, callbackURL } = props
    const { addToast } = useToasts()
-
+   const { t } = useTranslation()
+   const { deleteAuth } = useConfig()
    //component state
    const [error, setError] = React.useState('')
    const [loading, setLoading] = React.useState(false)
@@ -355,11 +433,11 @@ const OTPLogin = props => {
       onCompleted: () => {
          setResending(false)
          setTime(Date.now() + 120000)
-         addToast('OTP has been sent!', { appearance: 'success' })
+         addToast(t('OTP has been sent!'), { appearance: 'success' })
       },
       onError: error => {
          console.error(error)
-         addToast('Failed to send OTP!', { appearance: 'error' })
+         addToast(t('Failed to send OTP!'), { appearance: 'error' })
          setResending(false)
       },
    })
@@ -392,33 +470,15 @@ const OTPLogin = props => {
       }
    }, [otpId, otpsLoading, otps])
 
-   //send sms on valid phone number
-   const [sendSms] = useMutation(SEND_SMS, {
-      onCompleted: () => {
-         setHasOtpSent(true)
-         setSendingOtp(false)
-         setTime(Date.now() + 120000)
-         addToast('OTP has been sent!', { appearance: 'success' })
-      },
-      onError: error => {
-         console.error(error)
-         setSendingOtp(false)
-         setError('Failed to send otp, please try again!')
-         addToast('Failed to send OTP!', { appearance: 'error' })
-      },
-   })
-
    //insert a entry of phone number in table and get otp code then send sms
    const [insertOtpTransaction] = useMutation(INSERT_OTP_TRANSACTION, {
       onCompleted: async ({ insertOtp = {} } = {}) => {
          if (insertOtp?.code) {
             setOtpId(insertOtp?.id)
-            await sendSms({
-               variables: {
-                  phone: `${form.phone}`,
-                  message: `Here's your OTP - ${insertOtp?.code}.`,
-               },
-            })
+            setHasOtpSent(true)
+            setSendingOtp(false)
+            setTime(Date.now() + 120000)
+            addToast(t('OTP has been sent!'), { appearance: 'success' })
          } else {
             setSendingOtp(false)
          }
@@ -427,7 +487,7 @@ const OTPLogin = props => {
          console.error(error)
          setSendingOtp(false)
          setError('Failed to send otp, please try again!')
-         addToast('Failed to send OTP!', { appearance: 'error' })
+         addToast(t('Failed to send OTP!'), { appearance: 'error' })
       },
    })
 
@@ -449,7 +509,7 @@ const OTPLogin = props => {
          setLoading(true)
          if (!form.otp) {
             setError('Please enter the OTP!')
-            addToast('Please enter the OTP!', {
+            addToast(t('Please enter the OTP!'), {
                appearance: 'error',
             })
             setLoading(false)
@@ -459,7 +519,7 @@ const OTPLogin = props => {
             /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
          if (isNewUser && !emailRegex.test(form.email)) {
             setError('Please enter a valid email!')
-            addToast('Please enter a valid email!', {
+            addToast(t('Please enter a valid email!'), {
                appearance: 'error',
             })
             setLoading(false)
@@ -474,7 +534,7 @@ const OTPLogin = props => {
          })
          if (response?.status === 200) {
             const landedOn = localStorage.getItem('landed_on')
-            addToast('Login successfully!', { appearance: 'success' })
+            addToast(t('Login successfully!'), { appearance: 'success' })
             if (!isSilentlyLogin) {
                if (landedOn) {
                   localStorage.removeItem('landed_on')
@@ -482,23 +542,25 @@ const OTPLogin = props => {
                } else {
                   window.location.href = getRoute('/menu')
                }
+               deleteAuth('auth')
             } else {
                closeLoginPopup()
+               deleteAuth('auth')
             }
          } else {
             setLoading(false)
-            setError('Entered OTP is incorrect, please try again!')
-            addToast('Entered OTP is incorrect!', {
+            setError(t('Entered OTP is incorrect, please try again!'))
+            addToast(t('Entered OTP is incorrect!'), {
                appearance: 'error',
             })
          }
       } catch (error) {
          setLoading(false)
          console.error(error)
-         addToast('Failed to log in, please try again!', {
+         addToast(t('Failed to log in, please try again!'), {
             appearance: 'error',
          })
-         setError('Failed to log in, please try again!')
+         setError(t('Failed to log in, please try again!'))
       }
    }
 
@@ -506,7 +568,7 @@ const OTPLogin = props => {
    const sendOTP = async () => {
       try {
          if (!form.phone) {
-            setError('Phone number is required!')
+            setError(t('Phone number is required!'))
             return
          }
 
@@ -516,13 +578,18 @@ const OTPLogin = props => {
             variables: { where: { phoneNumber: { _eq: form.phone } } },
          })
          await insertOtpTransaction({
-            variables: { object: { phoneNumber: form.phone } },
+            variables: {
+               object: {
+                  phoneNumber: form.phone,
+                  domain: isClient ? window.location.host : '',
+               },
+            },
          })
       } catch (error) {
          setSendingOtp(false)
          console.log('error is this', error)
-         setError('Failed to send otp, please try again!')
-         addToast('Failed to send OTP!', { appearance: 'error' })
+         setError(t('Failed to send otp, please try again!'))
+         addToast(t('Failed to send OTP!'), { appearance: 'error' })
       }
    }
 
@@ -540,6 +607,15 @@ const OTPLogin = props => {
       }
    }
    const handleSubmitOTPKeyPress = event => {
+      if (
+         (event.which != 8 && event.which != 0 && event.which < 48) ||
+         event.which > 57
+      ) {
+         event.preventDefault()
+      }
+      if (event.key !== 'Enter' && form.otp.length >= 6) {
+         event.preventDefault()
+      }
       if (event.key === 'Enter') {
          if (
             !(resending || loading || !form.otp || (isNewUser && !form.email))
@@ -554,9 +630,12 @@ const OTPLogin = props => {
          {!hasOtpSent ? (
             <>
                <fieldset className="hern-login-v1__fieldset">
-                  <label className="hern-login-v1__label">Phone Number*</label>
+                  <label className="hern-login-v1__label">
+                     {t('Phone Number')}
+                  </label>
                   <PhoneInput
                      className={`hern-login-v1__otp__phone__input hern-login-v1__otp__phone__input${
+                        !(form.phone === '' || form.phone === undefined) &&
                         !(
                            (form.phone && isValidPhoneNumber(form.phone)) ||
                            sendingOtp
@@ -573,15 +652,23 @@ const OTPLogin = props => {
                         }))
                      }}
                      defaultCountry={get_env('COUNTRY_CODE')}
-                     placeholder="Enter your phone number"
+                     placeholder={'Enter your phone number'}
                      onKeyPress={handleSendOTPKeyPress}
                   />
                </fieldset>
+               {form.phone !== '' &&
+                  form.phone !== undefined &&
+                  !(form.phone && isValidPhoneNumber(form.phone)) && (
+                     <label class="hern-login-v1__otp__phone__error">
+                        Please enter a valid phone number
+                     </label>
+                  )}
                <button
                   className={`hern-login-v1__otp-submit ${
                      !(
-                        (form.phone && isValidPhoneNumber(form.phone)) ||
-                        sendingOtp
+                        form.phone &&
+                        isValidPhoneNumber(form.phone) &&
+                        !sendingOtp
                      )
                         ? 'hern-login-v1__otp-submit--disabled'
                         : ''
@@ -589,20 +676,29 @@ const OTPLogin = props => {
                   onClick={sendOTP}
                   disabled={
                      !(
-                        (form.phone && isValidPhoneNumber(form.phone)) ||
-                        sendingOtp
+                        form.phone &&
+                        isValidPhoneNumber(form.phone) &&
+                        !sendingOtp
                      )
                   }
                   style={{ height: '40px' }}
                >
-                  {sendingOtp ? 'SENDING OTP...' : 'SEND OTP'}
+                  {sendingOtp ? (
+                     <>
+                        <span>{t('SENDING OTP')}</span>
+                     </>
+                  ) : (
+                     t('SEND OTP')
+                  )}
                </button>
             </>
          ) : (
             <>
                {isNewUser && (
                   <fieldset className="hern-login-v1__fieldset">
-                     <label className="hern-login-v1__label">Email*</label>
+                     <label className="hern-login-v1__label">
+                        {t('Email')}
+                     </label>
                      <input
                         className="hern-login-v1__input"
                         name="email"
@@ -614,11 +710,14 @@ const OTPLogin = props => {
                   </fieldset>
                )}
                <fieldset className="hern-login-v1__fieldset">
-                  <label className="hern-login-v1__label">OTP*</label>
+                  <label className="hern-login-v1__label">{t('OTP')}</label>
                   <input
-                     className="hern-login-v1__input"
+                     className={classNames(
+                        'hern-login-v1__input',
+                        'hern-login-v1__input__otp'
+                     )}
                      name="otp"
-                     type="text"
+                     type="number"
                      onChange={onChange}
                      value={form.otp}
                      placeholder="Enter the otp"
@@ -643,34 +742,52 @@ const OTPLogin = props => {
                      (isNewUser && !form.email)
                   }
                >
-                  SUBMIT
+                  {t('SUBMIT')}
                </button>
                {time && (
                   <Countdown
                      date={time}
                      renderer={({ minutes, seconds, completed }) => {
-                        //otp?.id && otp?.isResendAllowed &&
                         if (completed) {
                            return (
-                              <button
-                                 onClick={resend}
-                                 disabled={resending}
-                                 className={`hern-login-v1__otp__resend ${
-                                    resending
-                                       ? 'hern-login-v1__otp__resend--disabled'
-                                       : ''
-                                 }`}
-                              >
-                                 Resend OTP
-                              </button>
+                              <>
+                                 {otp && otp?.isResendAllowed && (
+                                    <button
+                                       onClick={resend}
+                                       disabled={
+                                          resending ||
+                                          !(otp && otp?.isResendAllowed)
+                                       }
+                                       title={
+                                          otp?.id && otp?.isResendAllowed
+                                             ? ''
+                                             : 'Maximum resend limit reached'
+                                       }
+                                       className={`hern-login-v1__otp__resend ${
+                                          resending ||
+                                          !(otp && otp?.isResendAllowed)
+                                             ? 'hern-login-v1__otp__resend--disabled'
+                                             : ''
+                                       }`}
+                                    >
+                                       {t('Resend OTP')}
+                                    </button>
+                                 )}
+                              </>
+                           )
+                        } else {
+                           return (
+                              <>
+                                 {otp && otp?.resendAttempts <= 2 && (
+                                    <span className="hern-login-v1__otp__resend__time">
+                                       <span>{t('Resend OTP in')}</span>&nbsp;0
+                                       {minutes}:{seconds <= 9 ? '0' : ''}
+                                       {seconds}
+                                    </span>
+                                 )}
+                              </>
                            )
                         }
-                        return (
-                           <span className="hern-login-v1__otp__resend__time">
-                              Resend OTP in 0{minutes}:{seconds <= 9 ? '0' : ''}
-                              {seconds}
-                           </span>
-                        )
                      }}
                   />
                )}
@@ -688,7 +805,7 @@ const SocialLogin = props => {
 
    const { configOf, isConfigLoading } = useConfig()
    const authConfig = configOf('Auth Methods', 'brand')
-
+   const { t } = useTranslation()
    //fetch all available provider
    const {
       loading: providerLoading,
@@ -697,7 +814,7 @@ const SocialLogin = props => {
    } = useQuery(PROVIDERS)
 
    if (providerError) {
-      return <p>Some went wrong</p>
+      return <p>{t('Something went wrong')}</p>
    }
 
    if (!providerLoading && settings_authProvider.length === 0) {
@@ -710,7 +827,7 @@ const SocialLogin = props => {
 
    return (
       <>
-         <DividerBar text={'or sign in with'} />
+         <DividerBar text={t('or sign in with')} />
          <div className="hern-login-v1__social__login">
             <div className="hern-login-v1__social__login__providers">
                {providerLoading && (
@@ -761,9 +878,9 @@ const SocialLogin = props => {
 const ForgotPassword = props => {
    //props
    const { closeLoginPopup } = props
-
+   const { t } = useTranslation()
    const { addToast } = useToasts()
-   const { configOf } = useConfig()
+   const { configOf, deleteAuth } = useConfig()
 
    const theme = configOf('theme-color', 'Visual')
 
@@ -776,8 +893,9 @@ const ForgotPassword = props => {
 
    const [forgotPassword, { loading }] = useMutation(FORGOT_PASSWORD, {
       onCompleted: () => {
-         addToast('Email sent!', { appearance: 'success' })
+         addToast(t('Email sent!'), { appearance: 'success' })
          closeLoginPopup()
+         deleteAuth('auth')
       },
       onError: error => {
          addToast(error.message, { appearance: 'error' })
@@ -806,8 +924,21 @@ const ForgotPassword = props => {
          }
       } catch (error) {
          if (error?.code === 401) {
-            setError('Email or password is incorrect!')
-            addToast('Email or password is incorrect!', { appearance: 'error' })
+            setError(
+               <>
+                  <span>{t('Email or password is incorrect')}</span>
+                  <span>{'!'}</span>
+               </>
+            )
+            addToast(
+               <>
+                  <span>{t('Email or password is incorrect')}</span>
+                  <span>{'!'}</span>
+               </>,
+               {
+                  appearance: 'error',
+               }
+            )
          }
       }
    }
@@ -815,7 +946,7 @@ const ForgotPassword = props => {
       <div className="hern-forgot-password-v1">
          <fieldset className="hern-login-v1__fieldset">
             <label htmlFor="email" className="hern-login-v1__label">
-               Email*
+               <span>{t('Email')}</span>
             </label>
             <input
                className="hern-login-v1__input"
@@ -836,7 +967,7 @@ const ForgotPassword = props => {
             style={{ height: '40px' }}
             onClick={() => isValid && submit()}
          >
-            SEND EMAIL
+            {t('SEND EMAIL')}
          </button>
          {error && (
             <span className="hern-forgot-password-v1__error">{error}</span>
@@ -848,9 +979,10 @@ const ForgotPassword = props => {
 //divider bar
 const DividerBar = props => {
    const { text } = props
+   const { t } = useTranslation()
    return (
       <div className="hern-login-v1-divider-bar">
-         <span>{text || 'or'}</span>
+         <span>{text || t('or')}</span>
       </div>
    )
 }
@@ -866,11 +998,11 @@ const Signup = props => {
    //props
    const { setDefaultLogin, isSilentlyLogin, closeLoginPopup, callbackURL } =
       props
-
+   const { t } = useTranslation()
    //component state
    const [showPassword, setShowPassword] = useState(false)
    const { addToast } = useToasts()
-   const { brand } = useConfig()
+   const { brand, deleteAuth } = useConfig()
 
    const [emailExists, setEmailExists] = React.useState(false)
    const [hasAccepted, setHasAccepted] = React.useState(false)
@@ -893,7 +1025,9 @@ const Signup = props => {
       onCompleted: ({ customers = [] }) => {
          if (customers.length > 0) {
             setEmailExists(true)
-            addToast('User already exist', { appearance: 'info' })
+            addToast(<span>{t('User already exist')}</span>, {
+               appearance: 'info',
+            })
          }
       },
       onError: () => {},
@@ -901,12 +1035,16 @@ const Signup = props => {
 
    const [applyReferralCode] = useMutation(MUTATIONS.CUSTOMER_REFERRAL.UPDATE, {
       onCompleted: () => {
-         addToast('Referral code applied!', { appearance: 'success' })
+         addToast(<span>{t('Referral code applied!')}</span>, {
+            appearance: 'success',
+         })
          deleteStoredReferralCode()
       },
       onError: error => {
          console.log(error)
-         addToast('Referral code not applied!', { appearance: 'error' })
+         addToast(<span>{t('Referral code not applied!')}</span>, {
+            appearance: 'error',
+         })
       },
    })
 
@@ -934,30 +1072,50 @@ const Signup = props => {
                         },
                      })
                   }
-                  addToast('Login successfully', { appearance: 'success' })
+                  addToast(<span>{t('Login successfully')}</span>, {
+                     appearance: 'success',
+                  })
                   if (!isSilentlyLogin) {
                      window.location.href =
                         get_env('BASE_BRAND_URL') +
                         getRoute('/get-started/select-plan')
                   } else {
                      closeLoginPopup()
+                     deleteAuth('auth')
                   }
                   setLoading(false)
                } else {
                   setLoading(false)
-                  setError('Failed to signup, please try again!')
-                  addToast('Failed to signup!', { appearance: 'error' })
+                  setError(
+                     <>
+                        <span>{t('Failed to signup, please try again')}</span>
+                        <span>{'!'}</span>
+                     </>
+                  )
+                  addToast(
+                     <>
+                        <span>{t('Failed to signup')}</span>
+                        <span>{'!'}</span>
+                     </>,
+                     { appearance: 'error' }
+                  )
                }
             }
          } catch (error) {
             console.error(error)
-            addToast('Failed to signup!', { appearance: 'error' })
+            addToast(
+               <>
+                  <span>{t('Failed to signup')}</span>
+                  <span>{'!'}</span>
+               </>,
+               { appearance: 'error' }
+            )
          }
       },
       onError: error => {
          setLoading(false)
          if (error.message.includes('customer__phoneNumber_key')) {
-            setPhoneError('Phone no. already exist')
+            setPhoneError(<span>{t('Phone no. already exist')}</span>)
          }
          console.error(error)
       },
@@ -969,21 +1127,32 @@ const Signup = props => {
          onCompleted: ({ forgotPassword = {} } = {}) => {
             if (forgotPassword?.success) {
                setForgotPasswordText(
-                  'An email has been sent to your provided email. Please check your  inbox.'
+                  <span>
+                     {t(
+                        'An email has been sent to your provided email. Please check your inbox.'
+                     )}
+                  </span>
                )
                setTimeout(() => {
                   setForgotPasswordText('')
                }, 4000)
             }
-            addToast('Successfully sent the set password email.', {
-               appearance: 'success',
-            })
+            addToast(
+               <span>{t('Successfully sent the set password email.')}</span>,
+               {
+                  appearance: 'success',
+               }
+            )
             closeLoginPopup()
+            deleteAuth('auth')
          },
          onError: () => {
-            addToast('Failed to send the set password email.', {
-               appearance: 'error',
-            })
+            addToast(
+               <span>{t('Failed to send the set password email.')}</span>,
+               {
+                  appearance: 'error',
+               }
+            )
          },
       }
    )
@@ -993,7 +1162,8 @@ const Signup = props => {
       form.password &&
       form.password.length >= 6 &&
       form.phone &&
-      form.phone.length > 0
+      form.phone.length > 0 &&
+      isValidPhoneNumber(form.phone)
 
    const onEmailBlur = async e => {
       const { value } = e.target
@@ -1014,7 +1184,12 @@ const Signup = props => {
             variables: { where: { email: { _eq: value } } },
          })
       } else {
-         setEmailError('Must be a valid email!')
+         setEmailError(
+            <>
+               <span>{t('Must be a valid email')}</span>
+               <span>{'!'}</span>
+            </>
+         )
       }
    }
 
@@ -1046,7 +1221,12 @@ const Signup = props => {
          )
          if (!isCodeValid) {
             deleteStoredReferralCode()
-            return setError('Referral code is not valid!')
+            return setError(
+               <>
+                  <span>{t('Referral code is not valid')}</span>
+                  <span>{'!'}</span>
+               </>
+            )
          }
          if (form.code) {
             setStoredReferralCode(form.code)
@@ -1076,10 +1256,21 @@ const Signup = props => {
       } catch (error) {
          console.log(error)
          setLoading(false)
-         setError('Failed to register, please try again!')
-         addToast('Failed to register, please try again!', {
-            appearance: 'error',
-         })
+         setError(
+            <>
+               <span>{t('Failed to register, please try again')}</span>
+               <span>{'!'}</span>
+            </>
+         )
+         addToast(
+            <>
+               <span>{t('Failed to register, please try again')}</span>
+               <span>{'!'}</span>
+            </>,
+            {
+               appearance: 'error',
+            }
+         )
       }
    }
 
@@ -1087,7 +1278,7 @@ const Signup = props => {
       <div className="hern-signup-v1">
          <fieldset className="hern-login-v1__fieldset">
             <label className="hern-login-v1__label" htmlFor="email">
-               Email*
+               <span> {t('Email')}</span>
             </label>
             <input
                name="email"
@@ -1111,7 +1302,7 @@ const Signup = props => {
                   style={passwordError ? { marginBottom: '0.25rem' } : null}
                >
                   <label className="hern-login-v1__label" htmlFor="password">
-                     Password*
+                     <span>{t('Password')}</span>
                   </label>
                   <input
                      className="hern-login-v1__input"
@@ -1123,7 +1314,14 @@ const Signup = props => {
                      onBlur={e =>
                         e.target.value.length < 6
                            ? setPasswordError(
-                                'Password must be at least 6 letters long!'
+                                <>
+                                   <span>
+                                      {t(
+                                         'Password must be at least 6 letters long'
+                                      )}
+                                   </span>
+                                   <span>{'!'}</span>
+                                </>
                              )
                            : setPasswordError('')
                      }
@@ -1138,7 +1336,7 @@ const Signup = props => {
                      }}
                      style={{ cursor: 'pointer' }}
                   />
-                  <span>Show password</span>
+                  <span>{t('Show password')}</span>
                </div>
                {passwordError && (
                   <span className="hern-signup-v1__signup-error">
@@ -1150,10 +1348,11 @@ const Signup = props => {
                   style={phoneError ? { marginBottom: '0.25rem' } : null}
                >
                   <label className="hern-login-v1__label" htmlFor="phone">
-                     Phone Number*
+                     <span> {t('Phone Number')}</span>
                   </label>
                   <PhoneInput
                      className={`hern-login-v1__otp__phone__input hern-login-v1__otp__phone__input${
+                        !(form.phone === '' || form.phone === undefined) &&
                         !(form.phone && isValidPhoneNumber(form.phone))
                            ? '-invalid'
                            : '-valid'
@@ -1161,10 +1360,18 @@ const Signup = props => {
                      initialValueFormat="national"
                      value={form.phone}
                      onChange={e => {
-                        setForm(form => ({
-                           ...form,
-                           ['phone']: e,
-                        }))
+                        if (
+                           !(e === '' || e === undefined) &&
+                           !(e && isValidPhoneNumber(e))
+                        ) {
+                           setPhoneError('Please enter a valid phone number')
+                        } else {
+                           setPhoneError('')
+                           setForm(form => ({
+                              ...form,
+                              ['phone']: e,
+                           }))
+                        }
                      }}
                      defaultCountry={get_env('COUNTRY_CODE')}
                      placeholder="Enter your phone number"
@@ -1178,7 +1385,7 @@ const Signup = props => {
                {isReferralFieldVisible ? (
                   <fieldset className="hern-login-v1__fieldset">
                      <label className="hern-login-v1__label" htmlFor="code">
-                        Referral Code
+                        {t('Referral Code')}
                      </label>
                      <input
                         className="hern-login-v1__input"
@@ -1194,7 +1401,7 @@ const Signup = props => {
                      className="hern-signup-v1__referral-code"
                      onClick={() => setIsReferralFieldVisible(true)}
                   >
-                     Got a referral code?
+                     {t('Got a referral code?')}
                   </button>
                )}
                <section className="hern-signup-v1__signup__term">
@@ -1210,10 +1417,10 @@ const Signup = props => {
                      htmlFor="terms&copy;conditions"
                      style={{ marginLeft: '4px' }}
                   >
-                     I accept{' '}
+                     {t('I accept')}{' '}
                      <Link href={getRoute('/terms-and-conditions')}>
                         <a className="hern-signup__signup__term__link">
-                           terms and conditions.
+                           {t('terms and conditions')}
                         </a>
                      </Link>
                   </label>
@@ -1226,19 +1433,21 @@ const Signup = props => {
                   }`}
                   onClick={() => isValid && submit()}
                >
-                  {loading ? 'REGISTERING...' : 'REGISTER'}
+                  {loading ? t('REGISTERING') : t('REGISTER')}
                </button>
             </>
          ) : (
             <>
                <p className="hern-signup-v1__signup__email-already-exits">
-                  Looks like your email already exists. If you remember your
-                  password then go to&nbsp;
+                  {t(
+                     'Looks like your email already exists. If you remember your password then go to'
+                  )}
+                  &nbsp;
                   <button
                      className="hern-signup-v1__signup__login-switch"
                      onClick={() => setDefaultLogin('email')}
                   >
-                     login
+                     {t('login')}
                   </button>
                   &nbsp;or
                </p>
@@ -1262,11 +1471,20 @@ const Signup = props => {
                         ? 'hern-login-v1__login-btn--disabled'
                         : ''
                   }`}
-                  style={{ height: '40px', margin: '0', color: '#ffffff' }}
+                  style={{
+                     height: '40px',
+                     margin: '0',
+                     color: '#ffffff',
+                     backgroundColor: 'var(--hern-accent)',
+                  }}
                >
-                  {forgotPasswordLoading
-                     ? 'SENDING EMAIL...'
-                     : 'SEND LOGIN EMAIL'}
+                  {forgotPasswordLoading ? (
+                     <>
+                        <span>{t('SENDING EMAIL')}</span>
+                     </>
+                  ) : (
+                     t('SEND LOGIN EMAIL')
+                  )}
                </button>
                {forgotPasswordText && (
                   <p className="hern-signup-v1__signup__forgot-text">

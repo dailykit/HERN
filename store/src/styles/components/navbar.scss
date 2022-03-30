@@ -14,12 +14,10 @@
    height: 100%;
    display: -moz-box;
    display: flex;
-   -moz-box-pack: end;
-   justify-content: flex-end;
    margin: 0;
    padding: 0;
    align-items: center;
-   @media screen and (max-width: 768px) {
+   @media screen and (max-width: 767px) {
       -moz-box-orient: vertical !important;
       -moz-box-direction: normal !important;
       flex-direction: column !important;
@@ -72,6 +70,7 @@
    a {
       cursor: pointer;
       color: rgba(31, 41, 55, 1) !important;
+      white-space: nowrap;
    }
    a:hover {
       text-decoration: none;

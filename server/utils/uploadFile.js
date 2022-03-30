@@ -21,7 +21,9 @@ export const uploadFile = async (buffer, name, type) => {
       Bucket: S3_BUCKET,
       ContentType: type.mime,
       Key: `${name}.${type.ext}`,
-      Metadata: {}
+      Metadata: {
+         CacheControl: 'max-age=604800'
+      }
    }
 
    return s3.upload(params).promise()

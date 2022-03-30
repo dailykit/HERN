@@ -1,10 +1,16 @@
 import { useMutation, useQuery } from '@apollo/react-hooks'
 import { useRouter } from 'next/router'
-import React from 'react'
+import React, { useState } from 'react'
 import { useToasts } from 'react-toast-notifications'
 import { Button, Form, Loader, ProfileSidebar, Spacer } from '../../components'
-import { useUser } from '../../context'
-import { BRAND, SUBSCRIPTION_PLAN } from '../../graphql'
+import { useTranslation, useUser } from '../../context'
+import { useForm } from 'react-hook-form'
+
+import {
+   BRAND,
+   SUBSCRIPTION_PLAN,
+   UPDATE_PLATFORM_CUSTOMER,
+} from '../../graphql'
 import { useConfig } from '../../lib'
 import { getRoute, isClient } from '../../utils'
 import * as moment from 'moment'
@@ -16,9 +22,8 @@ export const Profile = () => {
    if (isConfigLoading || isLoading) return <Loader component />
 
    const isSubscriptionStore =
-      settings?.availability?.find(
-         i => i.identifier === 'isSubscriptionAvailable'
-      )?.value?.Subscription?.isSubscriptionAvailable?.value ?? false
+      settings?.availability?.['isSubscriptionAvailable']?.Subscription
+         ?.isSubscriptionAvailable?.value ?? false
    return (
       <main className="hern-profile__main">
          <ProfileSidebar />
@@ -33,9 +38,48 @@ export const Profile = () => {
 const ProfileForm = () => {
    const { user } = useUser()
    const { configOf } = useConfig()
-
+   const { t } = useTranslation()
    const theme = configOf('theme-color', 'Visual')
+   const { addToast } = useToasts()
+   const {
+      register,
+      handleSubmit,
+      formState: { errors },
+   } = useForm()
 
+   const [updateCustomer] = useMutation(UPDATE_PLATFORM_CUSTOMER, {
+      onCompleted: () => {
+         addToast('User info updated succesfully !', {
+            appearance: 'success',
+         })
+      },
+      onError: error => {
+         console.error(error)
+
+         addToast('Failed to save!', {
+            appearance: 'error',
+         })
+      },
+   })
+
+   const onSubmit = async data => {
+      const name = {
+         firstName: data.firstName
+            ? data.firstName
+            : user?.platform_customer?.firstName,
+         lastName: data.lastName
+            ? data.lastName
+            : user?.platform_customer?.lastName,
+      }
+      if (user?.keycloakId) {
+         await updateCustomer({
+            variables: {
+               keycloakId: user.keycloakId,
+               _set: name,
+            },
+         })
+      }
+   }
    return (
       <section className="hern-profile__profile-form">
          <header className="hern-profile__profile-form__header">
@@ -45,33 +89,50 @@ const ProfileForm = () => {
                   color: `${theme.accent ? theme.accent : 'rgba(5,150,105,1)'}`,
                }}
             >
-               Profile
+               {t('Profile')}
             </h2>
          </header>
-         <Form.Field>
-            <Form.Label>Email</Form.Label>
-            <Form.DisabledText value={user?.platform_customer?.email} />
-         </Form.Field>
-         <div className="hern-profile__profile-form__name">
+         <form onSubmit={handleSubmit(onSubmit)}>
             <Form.Field>
-               <Form.Label>First Name</Form.Label>
-               <Form.Text
-                  type="text"
-                  name="firstName"
-                  placeholder="Enter your first name"
-                  defaultValue={user?.platform_customer?.firstName}
-               />
+               <Form.Label> {t('Email')}</Form.Label>
+               <Form.DisabledText value={user?.platform_customer?.email} />
             </Form.Field>
-            <Form.Field>
-               <Form.Label>Last Name</Form.Label>
-               <Form.Text
-                  type="text"
-                  name="lastName"
-                  placeholder="Enter your last name"
-                  defaultValue={user?.platform_customer?.lastName}
-               />
-            </Form.Field>
-         </div>
+            <div className="hern-profile__profile-form__name">
+               <Form.Field>
+                  <Form.Label> {t('First Name')}</Form.Label>
+                  <input
+                     type="text"
+                     name="firstName"
+                     defaultValue={user?.platform_customer?.firstName}
+                     required
+                     {...register('firstName', { pattern: /^[a-zA-Z .]+$/ })}
+                     placeholder="Enter your first name"
+                  />
+                  {errors.firstName && errors.firstName.type === 'pattern' && (
+                     <span className="hern-profile__profile-form__error">
+                        Please enter a valid first name.
+                     </span>
+                  )}
+               </Form.Field>
+               <Form.Field>
+                  <Form.Label> {t('Last Name')}</Form.Label>
+                  <input
+                     type="text"
+                     name="lastName"
+                     defaultValue={user?.platform_customer?.lastName}
+                     required
+                     {...register('lastName', { pattern: /^[a-zA-Z .]+$/ })}
+                     placeholder="Enter your last name"
+                  />
+                  {errors.lastName && errors.lastName.type === 'pattern' && (
+                     <span className="hern-profile__profile-form__error">
+                        Please enter a valid last name.
+                     </span>
+                  )}
+               </Form.Field>
+            </div>
+            <Button type="submit">Submit</Button>
+         </form>
       </section>
    )
 }
@@ -83,7 +144,7 @@ const CurrentPlan = () => {
    const { brand, configOf } = useConfig()
 
    const theme = configOf('theme-color', 'Visual')
-
+   const { t } = useTranslation()
    const [plan, setPlan] = React.useState(null)
    const [isCancelFormVisible, setIsCancelFormVisible] = React.useState(false)
    const [reason, setReason] = React.useState('')
@@ -124,13 +185,13 @@ const CurrentPlan = () => {
       },
       onError: error => {
          console.log(error)
-         addToast('Failed to fetch current plan!', { appearance: 'error' })
+         addToast(t('Failed to fetch current plan!'), { appearance: 'error' })
       },
    })
 
    const [updateBrandCustomer] = useMutation(BRAND.CUSTOMER.UPDATE, {
       onCompleted: () => {
-         addToast('Successfully updated subscription status.', {
+         addToast(t('Successfully updated subscription status.'), {
             appearance: 'success',
          })
          setIsCancelFormVisible(false)
@@ -186,12 +247,16 @@ const CurrentPlan = () => {
          const end = new Date(endDate)
          const now = moment().format('YYYY-MM-DD')
          if (moment(start).isBefore(now)) {
-            return addToast('Start date is not valid!', { appearance: 'error' })
+            return addToast(t('Start date is not valid!'), {
+               appearance: 'error',
+            })
          } else if (moment(end).isBefore(now)) {
-            return addToast('End date is not valid!', { appearance: 'error' })
+            return addToast(t('End date is not valid!'), {
+               appearance: 'error',
+            })
          } else if (moment(end).isBefore(start)) {
             return addToast(
-               'End date should be greater than or same as start date!',
+               t('End date should be greater than or same as start date!'),
                {
                   appearance: 'error',
                }
@@ -234,7 +299,7 @@ const CurrentPlan = () => {
       return (
          <div className="hern-profile_current-plan">
             <Button size="sm" onClick={handleReactivation}>
-               Reactivate Subscription
+               {t('Reactivate Subscription')}
             </Button>
          </div>
       )
@@ -248,12 +313,12 @@ const CurrentPlan = () => {
                color: `${theme.accent ? theme.accent : 'rgba(5,150,105,1)'}`,
             }}
          >
-            Your current plan {isPlanPaused && `(PAUSED)`}
+            <span> {t('Your current plan')}</span> {isPlanPaused && `(PAUSED)`}
          </h4>
          <div className="hern-profile__current-plan__card">
             <div>
                <small className="hern-profile__current-plan__card__changeplan-key">
-                  Name
+                  {t('Name')}
                </small>
                <p className="hern-profile__current-plan__card__changeplan-value">
                   {plan?.name}
@@ -261,7 +326,7 @@ const CurrentPlan = () => {
             </div>
             <div>
                <small className="hern-profile__current-plan__card__changeplan-key">
-                  Item Count
+                  {t('Item Count')}
                </small>
                <p className="hern-profile__current-plan__card__changeplan-value">
                   {plan?.itemCount}
@@ -269,7 +334,7 @@ const CurrentPlan = () => {
             </div>
             <div>
                <small className="hern-profile__current-plan__card__changeplan-key">
-                  Servings
+                  {t('Servings')}
                </small>
                <p className="hern-profile__current-plan__card__changeplan-value">
                   {plan?.servings}
@@ -281,7 +346,7 @@ const CurrentPlan = () => {
             theme={theme}
             onClick={() => router.push(getRoute(`/change-plan`))}
          >
-            Change Plan
+            {t('Change Plan')}
          </Button>
          <Spacer size="xl" />
          <hr className="hern-profile__divider" />
@@ -293,7 +358,7 @@ const CurrentPlan = () => {
             >
                <div className="hern-profile__pause-plan__form__wrapper">
                   <Form.Field>
-                     <Form.Label>Start Date*</Form.Label>
+                     <Form.Label> {t('Start Date*')}</Form.Label>
                      <Form.Text
                         type="date"
                         name="start-date"
@@ -304,7 +369,7 @@ const CurrentPlan = () => {
                   </Form.Field>
                   <Spacer xAxis />
                   <Form.Field>
-                     <Form.Label>End Date*</Form.Label>
+                     <Form.Label> {t('End Date*')}</Form.Label>
                      <Form.Text
                         type="date"
                         name="end-date"
@@ -315,7 +380,7 @@ const CurrentPlan = () => {
                   </Form.Field>
                </div>
                <Button variant="warn" size="sm" type="submit">
-                  Yes! Pause my plan.
+                  {t('Yes! Pause my plan.')}
                </Button>
 
                <Spacer xAxis />
@@ -325,7 +390,7 @@ const CurrentPlan = () => {
                   type="reset"
                   onClick={() => setIsPauseFormVisible(false)}
                >
-                  No! I changed my mind.
+                  {t('No! I changed my mind.')}
                </Button>
             </form>
          ) : (
@@ -333,13 +398,13 @@ const CurrentPlan = () => {
                {!!user?.pausePeriod && Object.keys(user.pausePeriod).length ? (
                   <div>
                      <p className="hern-profile__pause-period-details">
-                        Plan pause interval starts from{' '}
+                        <span> {t('Plan pause interval starts from')}</span>
                         <span>
                            {moment(user.pausePeriod.startDate).format(
                               'MMM Do YYYY'
                            )}
                         </span>{' '}
-                        and ends on{' '}
+                        <span>{t('and ends on')}</span>
                         <span>
                            {moment(user.pausePeriod.endDate).format(
                               'MMM Do YYYY'
@@ -347,7 +412,7 @@ const CurrentPlan = () => {
                         </span>
                      </p>
                      <Button size="sm" theme={theme} onClick={clearPausePeriod}>
-                        Clear Pause Interval
+                        {t('Clear Pause Interval')}
                      </Button>
                   </div>
                ) : (
@@ -357,7 +422,7 @@ const CurrentPlan = () => {
                      theme={theme}
                      onClick={() => setIsPauseFormVisible(true)}
                   >
-                     Pause Plan
+                     {t('Pause Plan')}
                   </Button>
                )}
             </>
@@ -369,7 +434,7 @@ const CurrentPlan = () => {
                onSubmit={handleCancellation}
             >
                <Form.Field>
-                  <Form.Label>Reason(Optional)</Form.Label>
+                  <Form.Label> {t('Reason(Optional)')}</Form.Label>
                   <Form.Text
                      type="text"
                      name="reason"
@@ -379,7 +444,7 @@ const CurrentPlan = () => {
                   />
                </Form.Field>
                <Button variant="warn" size="sm" type="submit">
-                  Yes! Cancel my subscription.
+                  {t('Yes! Cancel my subscription.')}
                </Button>
                <Spacer xAxis size="xm" />
                <Button
@@ -388,7 +453,7 @@ const CurrentPlan = () => {
                   type="reset"
                   onClick={() => setIsCancelFormVisible(false)}
                >
-                  No! I changed my mind.
+                  {t('No! I changed my mind.')}
                </Button>
             </form>
          ) : (
@@ -398,7 +463,7 @@ const CurrentPlan = () => {
                theme={theme}
                onClick={() => setIsCancelFormVisible(true)}
             >
-               Cancel Subscription
+               {t('Cancel Subscription')}
             </Button>
          )}
       </div>

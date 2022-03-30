@@ -19,3 +19,12 @@ export const minifyImage = async (buffer, type) => {
       return error
    }
 }
+export const resizeImage = async (buffer, width, height, fit) => {
+   try {
+      console.log(width, height, fit)
+      const resizedImage = await sharp(buffer).resize(width, height).toBuffer()
+      return resizedImage
+   } catch (e) {
+      console.log('error', e)
+   }
+}

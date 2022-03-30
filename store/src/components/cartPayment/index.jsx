@@ -9,7 +9,7 @@ import { Wrapper } from './styles.js'
 import * as QUERIES from '../../graphql'
 import { Loader } from '../../components'
 import { usePayment } from '../../lib'
-import { useUser } from '../../context'
+import { useTranslation, useUser } from '../../context'
 import { isClient } from '../../utils'
 
 export function CartPaymentComponent({ cartId = null }) {
@@ -24,6 +24,7 @@ export function CartPaymentComponent({ cartId = null }) {
    } = usePayment()
    const { user } = useUser()
    const { addToast } = useToasts()
+   const { t } = useTranslation()
    const [cart, setCart] = React.useState(null)
    const [loading, setLoading] = React.useState(true)
    const [selectCustomerPaymentMethodId, setSelectedCustomerPaymentMethodId] =
@@ -97,7 +98,7 @@ export function CartPaymentComponent({ cartId = null }) {
          },
          onError: error => {
             console.log('updatePlatformCustomer -> error -> ', error)
-            addToast('Failed to update the user profile!', {
+            addToast(t('Failed to update the user profile!'), {
                appearance: 'success',
             })
          },
@@ -107,7 +108,7 @@ export function CartPaymentComponent({ cartId = null }) {
    const [updateCartPayment] = useMutation(QUERIES.UPDATE_CART_PAYMENT, {
       onError: error => {
          console.error(error)
-         addToast('Something went wrong!', { appearance: 'error' })
+         addToast(t('Something went wrong!'), { appearance: 'error' })
       },
    })
 
@@ -167,14 +168,14 @@ export function CartPaymentComponent({ cartId = null }) {
             },
          })
       } else {
-         addToast('Please select payment method', { appearance: 'warning' })
+         addToast(t('Please select payment method'), { appearance: 'warning' })
       }
    }
 
    if (loading || isPaymentLoading) return <Loader inline />
    if (hasCartError) {
       console.error(hasCartError)
-      addToast('Error fetching cart', { appearance: 'error' })
+      addToast(t('Error fetching cart'), { appearance: 'error' })
    }
 
    return (
@@ -225,7 +226,7 @@ export function CartPaymentComponent({ cartId = null }) {
                />
             </Form.Item>
          </Form>
-         <h1>Select Payment Method</h1>
+         <h1>{t('Select Payment Method')}</h1>
          <Radio.Group onChange={onPaymentMethodChange}>
             <Space direction="vertical">
                {!_isEmpty(cart) &&
@@ -252,7 +253,7 @@ export function CartPaymentComponent({ cartId = null }) {
             block
             onClick={confirmPayHandler}
          >
-            Confirm & Pay
+            {t('Confirm & Pay')}
          </Button>
       </Wrapper>
    )

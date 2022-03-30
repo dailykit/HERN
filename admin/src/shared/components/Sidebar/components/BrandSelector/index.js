@@ -1,11 +1,12 @@
 import { useSubscription } from '@apollo/react-hooks'
 import { Spacer } from '@dailykit/ui'
 import { Avatar } from 'antd'
-import React, { useContext, useState } from 'react'
+import { rearg } from 'lodash'
+import React, { useContext, useEffect, useState } from 'react'
 import { BrandContext } from '../../../../../App'
 import { UnionIcon } from '../../../../assets/icons'
 import { ArrowDown, ArrowUp } from '../../../../assets/navBarIcons'
-import { BRAND_LIST, BRAND_LOCATIONS } from '../../graphql/subscription'
+import { LOCATION_SELECTOR_LIST } from '../../graphql/subscription'
 import {
    StyledBrandLocations,
    StyledBrandName,
@@ -15,25 +16,17 @@ import {
 
 const BrandSelector = ({ mouseOver }) => {
    const [brandArrowClicked, setBrandArrowClicked] = useState(false)
+   const [displayBrand, setDisplayBrand] = useState(true)
    const [locationArrowClicked, setLocationArrowClicked] = useState(false)
    const [brandList, setBrandList] = React.useState([])
-   const [brandLocationsList, setBrandLocationsList] = React.useState([])
    const [brandContext, setBrandContext] = useContext(BrandContext)
 
-   const [viewingFor, setViewingFor] = useState({
-      brandId: null,
-      brandName: '',
-      logo: '',
-      locationId: null,
-      locationLabel: '',
-   })
-
-   const { loading: loadingList, error } = useSubscription(BRAND_LIST, {
+   const { loading } = useSubscription(LOCATION_SELECTOR_LIST, {
       variables: {
          identifier: 'Brand Info',
       },
-      onSubscriptionData: data => {
-         const result = data.subscriptionData.data.brandsAggregate.nodes.map(
+      onSubscriptionData: ({ subscriptionData }) => {
+         const result = subscriptionData.data.brandsAggregate.nodes.map(
             eachBrand => {
                return {
                   id: eachBrand.id,
@@ -47,119 +40,172 @@ const BrandSelector = ({ mouseOver }) => {
                         : eachBrand.brand_brandSettings[0]?.value.brandLogo
                              .default.url
                      : '',
+                  location: eachBrand.brand_locations,
                }
             }
          )
-         setBrandList(result)
-         result.map(brand => {
-            if (brand.isDefault) {
-               setViewingFor({
-                  ...viewingFor,
-                  brandId: brand.id,
-                  brandName: brand.title,
-                  logo: brand.logo,
-               })
-               setBrandContext({
-                  ...brandContext,
-                  brandId: brand.id,
-                  brandName: brand.title,
-                  brandDomain: brand.domain,
-               })
-            }
-         })
-      },
-   })
+         // setBrandList(result)
+         console.log('result', result)
 
-   const { loading: brandLocationsLoading, error: brandLocationsError } =
-      useSubscription(BRAND_LOCATIONS, {
-         variables: {
-            id: viewingFor.brandId,
-         },
-         onSubscriptionData: data => {
-            console.log(data.subscriptionData.data.brands[0].brand_locations)
-            const result =
-               data.subscriptionData.data.brands[0].brand_locations.map(
-                  brandLocation => {
-                     return {
-                        id: brandLocation.locationId,
-                        label: brandLocation.location.label,
-                     }
-                  }
-               )
-            setBrandLocationsList(result)
-
-            setViewingFor({
-               ...viewingFor,
-               locationId: result[0]?.id || null,
-               locationLabel: result[0]?.label || '',
-            })
+         if (
+            //organization scope
+            brandContext.brandId === null &&
+            brandContext.locationId === null
+         ) {
             setBrandContext({
                ...brandContext,
-               locationId: result[0]?.id || null,
-               locationLabel: result[0]?.label || '',
+               brandId: result[0].id,
+               brandName: result[0].title,
+               logo: result[0].logo,
+               domain: result[0].domain,
+               locationId: result[0]?.location[0]?.location.id,
+               locationLabel: result[0]?.location[0]?.location.label,
             })
-         },
+            return setBrandList(result)
+         } else if (
+            //brand scope
+            brandContext.brandId !== null &&
+            brandContext.locationId === null
+         ) {
+            setBrandContext({
+               ...brandContext,
+               logo: result[0].logo,
+               domain: result[0].domain,
+               locationId: result[0]?.location[0]?.location.id,
+               locationLabel: result[0]?.location[0]?.location.label,
+            })
+            return setBrandList([
+               result[result.findIndex(obj => obj.id === brandContext.brandId)],
+            ])
+         } else if (
+            //brand_location scope
+            brandContext.brandId !== null &&
+            brandContext.locationId !== null
+         ) {
+            const index = result.findIndex(
+               obj => obj.id === brandContext.brandId
+            )
+            const locationIndex = result[index].location.findIndex(
+               obj => obj.location.id === brandContext.locationId
+            )
+            setBrandContext({
+               ...brandContext,
+               logo: result[index].logo,
+               domain: result[index].domain,
+            })
+            return setBrandList([
+               {
+                  domain: result[index].domain,
+                  id: result[index].id,
+                  logo: result[index].logo,
+                  title: result[index].title,
+                  location: [result[index].location[locationIndex]],
+               },
+            ])
+         } else if (
+            //location scope
+            brandContext.brandId === null &&
+            brandContext.locationId !== null
+         ) {
+            setDisplayBrand(false)
+            setBrandContext({
+               ...brandContext,
+               locationId: result[0]?.location[0]?.location.id,
+               locationLabel: result[0]?.location[0]?.location.label,
+            })
+            return setBrandList([
+               {
+                  id: brandContext.brandId,
+                  title: brandContext.brandName,
+                  location: [
+                     {
+                        location: {
+                           id: brandContext.locationId,
+                           label: brandContext.locationLabel,
+                        },
+                     },
+                  ],
+               },
+            ])
+         }
+      },
+   })
+   console.log('brandContext', brandContext)
+   console.log('brandList', brandList)
+
+   React.useEffect(() => {
+      setBrandContext({
+         ...brandContext,
+         locationId:
+            brandList[
+               brandList.findIndex(obj => obj.id === brandContext.brandId)
+            ]?.location[0]?.location?.id || brandContext.locationId,
+         locationLabel:
+            brandList[
+               brandList.findIndex(obj => obj.id === brandContext.brandId)
+            ]?.location[0]?.location?.label || brandContext.locationLabel,
       })
-   // console.log('brandContext', brandContext)
+   }, [brandContext.brandId])
 
    return (
       <div style={{ padding: '7px', textAlign: 'center' }}>
          {mouseOver ? (
             <>
-               <div>
-                  <StyledBrandSelector>
-                     <div>
-                        {viewingFor.logo ? (
-                           <Avatar src={viewingFor.logo} size={52} />
-                        ) : (
-                           <Avatar
-                              style={{
-                                 backgroundColor: '#87d068',
+               {displayBrand && (
+                  <div>
+                     <StyledBrandSelector>
+                        <div>
+                           {brandContext.logo ? (
+                              <Avatar src={brandContext.logo} size={52} />
+                           ) : (
+                              <Avatar
+                                 style={{
+                                    backgroundColor: '#87d068',
+                                 }}
+                                 size={52}
+                              >
+                                 {brandContext.brandName
+                                    .charAt(0)
+                                    .toUpperCase()}
+                              </Avatar>
+                           )}
+                        </div>
+                        <div>
+                           <StyledBrandName>
+                              <p>Brand</p>
+                              <Spacer size="2px" />
+                              <p>{brandContext.brandName}</p>
+                           </StyledBrandName>
+                           <span
+                              onClick={() => {
+                                 setBrandArrowClicked(!brandArrowClicked)
+                                 setLocationArrowClicked(false)
                               }}
-                              size={52}
                            >
-                              {viewingFor.brandName.charAt(0).toUpperCase()}
-                           </Avatar>
-                        )}
-                     </div>
-                     <div>
-                        <StyledBrandName>
-                           <p>Brand</p>
-                           <Spacer size="2px" />
-                           <p>{viewingFor.brandName}</p>
-                        </StyledBrandName>
-                        <span
-                           onClick={() => {
-                              setBrandArrowClicked(!brandArrowClicked)
-                              setLocationArrowClicked(false)
-                           }}
-                        >
-                           {brandArrowClicked ? <ArrowUp /> : <ArrowDown />}
-                        </span>
-                     </div>
-                  </StyledBrandSelector>
-                  {brandArrowClicked && (
-                     <StyledBrandSelectorList>
-                        {brandList.map(brand => {
-                           return (
+                              {brandArrowClicked ? <ArrowUp /> : <ArrowDown />}
+                           </span>
+                        </div>
+                     </StyledBrandSelector>
+                     {brandArrowClicked && (
+                        <StyledBrandSelectorList>
+                           {brandList.map(brand => (
                               <div
                                  key={brand.id}
                                  onClick={() => {
-                                    setViewingFor({
-                                       ...viewingFor,
-                                       brandId: brand.id,
-                                       brandName: brand.title,
-                                       logo: brand.logo,
-                                    })
                                     setBrandContext({
                                        ...brandContext,
                                        brandId: brand.id,
                                        brandName: brand.title,
                                        brandDomain: brand.domain,
+                                       logo: brand.logo,
                                     })
                                     setBrandArrowClicked(false)
                                  }}
-                                 active={brand.id === viewingFor.brandId}
+                                 active={
+                                    brand.id == brandContext.brandId
+                                       ? 'true'
+                                       : 'false'
+                                 }
                               >
                                  {brand.logo ? (
                                     <Avatar src={brand.logo} size="small" />
@@ -175,20 +221,22 @@ const BrandSelector = ({ mouseOver }) => {
                                  )}
                                  {brand.title}
                               </div>
-                           )
-                        })}
-                     </StyledBrandSelectorList>
-                  )}
-               </div>
+                           ))}
+                        </StyledBrandSelectorList>
+                     )}
+                  </div>
+               )}
                <Spacer size="10px" />
 
                <div>
-                  {viewingFor.locationId ? (
+                  {brandList[
+                     brandList.findIndex(obj => obj.id === brandContext.brandId)
+                  ]?.location.length > 0 ? (
                      <div>
                         <StyledBrandLocations>
                            <div>
                               <span>Location</span>
-                              <span>{viewingFor.locationLabel}</span>
+                              <span>{brandContext.locationLabel}</span>
                            </div>
                            <div
                               onClick={() => {
@@ -205,28 +253,32 @@ const BrandSelector = ({ mouseOver }) => {
                         </StyledBrandLocations>
                         {locationArrowClicked && (
                            <StyledBrandSelectorList>
-                              {brandLocationsList.map(location => {
+                              {brandList[
+                                 brandList.findIndex(
+                                    obj => obj.id === brandContext.brandId
+                                 )
+                              ]?.location.map(eachLocation => {
                                  return (
                                     <div
-                                       key={location.id}
+                                       key={`${eachLocation.location.id}-${brandContext.brandId}`}
                                        onClick={() => {
-                                          setViewingFor({
-                                             ...viewingFor,
-                                             locationId: location.id,
-                                             locationLabel: location.label,
-                                          })
                                           setBrandContext({
                                              ...brandContext,
-                                             locationId: location.id,
-                                             locationLabel: location.label,
+                                             locationId:
+                                                eachLocation.location.id,
+                                             locationLabel:
+                                                eachLocation.location.label,
                                           })
                                           setLocationArrowClicked(false)
                                        }}
                                        active={
-                                          location.id === viewingFor.locationId
+                                          eachLocation.location.id ==
+                                          brandContext.id
+                                             ? 'true'
+                                             : 'false'
                                        }
                                     >
-                                       {location.label}
+                                       {eachLocation.location.label}
                                     </div>
                                  )
                               })}

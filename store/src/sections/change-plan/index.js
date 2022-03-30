@@ -1,5 +1,5 @@
 import React from 'react'
-import { useUser } from '../../context'
+import { useTranslation, useUser } from '../../context'
 import { useToasts } from 'react-toast-notifications'
 import { useConfig } from '../../lib'
 import { Plans } from '../../sections/select-plan'
@@ -28,6 +28,7 @@ const ChangePlanSection = () => {
    const router = useRouter()
    const { user, isAuthenticated, isLoading } = useUser()
    const { addToast } = useToasts()
+   const { t } = useTranslation()
    const { brand, configOf } = useConfig()
    const { state, dispatch } = useDelivery()
 
@@ -46,7 +47,7 @@ const ChangePlanSection = () => {
 
    const [updateBrandCustomer] = useMutation(BRAND.CUSTOMER.UPDATE, {
       onCompleted: () => {
-         addToast('Successfully changed plan.', {
+         addToast(t('Successfully changed plan.'), {
             appearance: 'success',
          })
          router.push(getRoute(`/account/profile`))
@@ -75,7 +76,7 @@ const ChangePlanSection = () => {
 
    const handlePlanClick = planId => {
       // TODO: don't allow user to select their current plan
-      addToast('Plan Selected!', { appearance: 'success' })
+      addToast(t('Plan Selected!'), { appearance: 'success' })
       setSelectedPlanId(planId)
    }
 

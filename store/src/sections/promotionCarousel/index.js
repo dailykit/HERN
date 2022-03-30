@@ -1,17 +1,23 @@
-import { useSubscription } from '@apollo/react-hooks'
+import { useQuery, useSubscription } from '@apollo/react-hooks'
 import { Carousel } from 'antd'
-import React from 'react'
+import React, { useState } from 'react'
 import { ArrowLeftIcon, ArrowRightIcon } from '../../assets/icons'
 import { Loader } from '../../components'
-import { COUPONS } from '../../graphql'
+import { COUPONS, PRODUCTS } from '../../graphql'
 import { useConfig } from '../../lib'
+import { useCart } from '../../context'
+import { KioskModifier } from '../../components/kiosk/component'
+import { HernLazyImage } from '../../utils/hernImage'
 
 export const PromotionCarousal = props => {
    const { config: componentConfig } = props
-   const { brand } = useConfig()
-   const { configOf } = useConfig()
+   const { brand, locationId } = useConfig()
+   const { configOf, isStoreAvailable } = useConfig()
+   const { addToCart } = useCart()
 
    const carousalRef = React.useRef()
+   const [showModifierPopup, setShowModifierPopup] = useState(false)
+   const [productData, setProductData] = useState(null)
 
    const lastCarousal = e => {
       e.stopPropagation()
@@ -31,16 +37,83 @@ export const PromotionCarousal = props => {
          brandId: brand?.id,
       },
    })
+   // get all products from productIds getting from PRODUCT_BY_CATEGORY
+   const argsForByLocation = React.useMemo(
+      () => ({
+         params: {
+            brandId: brand?.id,
+            locationId: locationId,
+         },
+      }),
+      [brand]
+   )
+
+   // take all productIds from promotion carousal images
+   const productIds = React.useMemo(() => {
+      if (
+         componentConfig.data.promotionImageWithEvent?.value?.images?.length > 0
+      ) {
+         const ids = componentConfig.data.promotionImageWithEvent?.value?.images
+            ?.map(eachImage => {
+               if (eachImage.belongsTo === 'PRODUCT') {
+                  return eachImage.productId
+               } else {
+                  return null
+               }
+            })
+            .filter(eachId => eachId !== null)
+         return ids
+      } else {
+         return []
+      }
+   }, [componentConfig])
+   const { data: productsData } = useQuery(PRODUCTS, {
+      skip: productIds?.length === 0,
+      variables: {
+         ids: productIds,
+         priceArgs: argsForByLocation,
+         discountArgs: argsForByLocation,
+         defaultCartItemArgs: argsForByLocation,
+         productOptionPriceArgs: argsForByLocation,
+         productOptionDiscountArgs: argsForByLocation,
+         productOptionCartItemArgs: argsForByLocation,
+         modifierCategoryOptionPriceArgs: argsForByLocation,
+         modifierCategoryOptionDiscountArgs: argsForByLocation,
+         modifierCategoryOptionCartItemArgs: argsForByLocation,
+      },
+   })
    const theme = configOf('theme-color', 'Visual')
+   const onImageClick = imageDetail => {
+      if (imageDetail.belongsTo === 'PRODUCT') {
+         if (imageDetail.productId) {
+            const clickedProduct = productsData.products.find(
+               product => product.id == imageDetail.productId
+            )
+            if (clickedProduct) {
+               if (
+                  clickedProduct.productOptions.length > 0 &&
+                  clickedProduct.isPopupAllowed
+               ) {
+                  setShowModifierPopup(true)
+                  setProductData(clickedProduct)
+               } else {
+                  if (isStoreAvailable) {
+                     addToCart(clickedProduct.defaultCartItem, 1)
+                  }
+               }
+            }
+         }
+      }
+   }
    if (subsLoading) {
       return <Loader inline />
    }
    if (subsError) {
       return <p>Something went wrong</p>
    }
-   if (data.coupons.length === 0) {
-      return <p> No Coupons available</p>
-   }
+   // if (data.coupons.length === 0) {
+   //    return <p> No Coupons available</p>
+   // }
 
    return (
       <div style={{ height: 'inherit', width: '100%' }}>
@@ -66,7 +139,13 @@ export const PromotionCarousal = props => {
                }99`,
             }}
          />
-         <Carousel ref={carousalRef} slidesToShow={2} slidesToScroll={2}>
+         <Carousel
+            ref={carousalRef}
+            slidesToShow={2}
+            slidesToScroll={2}
+            infinite={false}
+            style={{ minHeight: '230px' }}
+         >
             {data.coupons.map(eachCoupon => {
                if (!eachCoupon.metaDetails?.image) {
                   return null
@@ -76,13 +155,35 @@ export const PromotionCarousal = props => {
                      className="hern-kiosk__promotion-image"
                      key={eachCoupon.id}
                   >
-                     <img
-                        src={eachCoupon.metaDetails.image}
+                     <HernLazyImage
+                        dataSrc={eachCoupon.metaDetails.image}
                         style={{ padding: '1em' }}
+                        height={225}
+                        width={540}
                      />
                   </div>
                )
             })}
+            {componentConfig.data.promotionImageWithEvent.value.images.map(
+               (eachImage, index) => {
+                  return (
+                     <div
+                        className="hern-kiosk__promotion-image"
+                        key={eachImage.url + eachImage.belongsTo}
+                     >
+                        <HernLazyImage
+                           dataSrc={eachImage.url}
+                           style={{ padding: '1em' }}
+                           onClick={() => {
+                              onImageClick(eachImage)
+                           }}
+                           height={225}
+                           width={540}
+                        />
+                     </div>
+                  )
+               }
+            )}
             {componentConfig.data.promotionImages.value.url.map(
                (eachImage, index) => {
                   return (
@@ -90,12 +191,28 @@ export const PromotionCarousal = props => {
                         className="hern-kiosk__promotion-image"
                         key={eachImage}
                      >
-                        <img src={eachImage} style={{ padding: '1em' }} />
+                        <HernLazyImage
+                           dataSrc={eachImage}
+                           style={{ padding: '1em' }}
+                           height={225}
+                           width={540}
+                        />
                      </div>
                   )
                }
             )}
          </Carousel>
+         {showModifierPopup && productData && (
+            <KioskModifier
+               config={componentConfig}
+               onCloseModifier={() => {
+                  setShowModifierPopup(false)
+                  setProductData(null)
+               }}
+               productData={productData}
+               key={productData.id}
+            />
+         )}
       </div>
    )
 }

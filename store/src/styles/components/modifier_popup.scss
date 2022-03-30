@@ -8,7 +8,7 @@
    flex-direction: column;
    justify-content: flex-end;
    background: #20202066;
-   z-index: 15;
+   z-index: 10000;
    transition: height 0.45s ease;
 }
 .hern-product-modifier-pop-up-container--show-modifier-pop-up {
@@ -139,6 +139,12 @@
 
 .hern-product-modifier-pop-up-product-option-list > ul {
    padding: 16px;
+}
+
+.hern-product-modifier-pop-up-product-option-list > label {
+   &::after {
+      content: ' :';
+   }
 }
 
 .hern-product-modifier-pop-up-modifier-category-list {

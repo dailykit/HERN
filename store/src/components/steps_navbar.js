@@ -5,7 +5,7 @@ import { findKey, has, isEmpty } from 'lodash'
 import { signOut } from 'next-auth/client'
 
 import { useConfig } from '../lib'
-import { useUser } from '../context'
+import { useTranslation, useUser } from '../context'
 import { getProtectedRoutes, getRoute, isClient, get_env } from '../utils'
 
 const routes = {
@@ -28,6 +28,7 @@ export const StepsNavbar = () => {
    const { user, isAuthenticated } = useUser()
    const [currentStep, setCurrentStep] = React.useState(null)
    const { hasConfig, configOf } = useConfig()
+   const { t, dynamicTrans, locale } = useTranslation()
    const [steps, setSteps] = React.useState({
       register: 'Register',
       selectDelivery: 'Select Delivery',
@@ -36,8 +37,8 @@ export const StepsNavbar = () => {
    })
 
    React.useEffect(() => {
-      if (hasConfig('steps-labels', 'conventions')?.stepsLabels) {
-         const stepsLabels = hasConfig(
+      if (hasConfig('steps-labels', 'conventions')) {
+         const stepsLabels = configOf(
             'steps-labels',
             'conventions'
          )?.stepsLabels
@@ -52,7 +53,7 @@ export const StepsNavbar = () => {
    }, [hasConfig, configOf, setSteps])
 
    const router = useRouter()
-
+   const currentLang = React.useMemo(() => locale, [locale])
    React.useEffect(() => {
       if (router.pathname === '/get-started/select-delivery/') {
          router.push(getRoute('/get-started/select-delivery'))
@@ -60,7 +61,12 @@ export const StepsNavbar = () => {
          if (!has(routes, router.pathname)) return
          setCurrentStep(routes[router.pathname].level)
       }
-   }, [router.pathname])
+      const languageTags = document.querySelectorAll(
+         '[data-translation="true"]'
+      )
+      dynamicTrans(languageTags)
+
+   }, [router.pathname, currentLang])
 
    //config properties
    const brand = configOf('Brand Info', 'brand')
@@ -132,7 +138,7 @@ export const StepsNavbar = () => {
                   isActive={currentStep === 0}
                   route="/[brand]/get-started/select-plan"
                >
-                  Select Plan
+                  {t('Select Plan')}
                </RenderStep>
                <RenderStep
                   goToStep={goToStep}
@@ -140,7 +146,7 @@ export const StepsNavbar = () => {
                   isActive={currentStep === 33}
                   route="/[brand]/get-started/select-delivery"
                >
-                  {steps.selectDelivery}
+                  <span data-translation="true" > {steps.selectDelivery}</span>
                </RenderStep>
                <RenderStep
                   goToStep={goToStep}
@@ -148,7 +154,9 @@ export const StepsNavbar = () => {
                   isActive={currentStep === 66}
                   route="/[brand]/get-started/select-menu"
                >
-                  {steps.selectMenu}
+                  <span data-translation="true" >  {steps.selectMenu}</span>
+
+
                </RenderStep>
                <RenderStep
                   goToStep={goToStep}
@@ -156,7 +164,7 @@ export const StepsNavbar = () => {
                   isActive={currentStep === 100}
                   route="/[brand]/get-started/checkout"
                >
-                  {steps.checkout}
+                  <span data-translation="true" >  {steps.checkout} </span>
                </RenderStep>
             </ul>
          </section>
@@ -166,7 +174,7 @@ export const StepsNavbar = () => {
                   onClick={logout}
                   className="hern-steps-navbar__logout__btn"
                >
-                  Logout
+                  {t('Logout')}
                </button>
             ) : (
                <span />

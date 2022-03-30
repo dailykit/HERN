@@ -101,7 +101,10 @@ export const KioskCart = props => {
             style={{
                background: `${config.kioskSettings.theme.primaryColorLight.value}`,
                padding: '1em 2em',
-               height: '6em',
+               height: '10em',
+               display: 'flex',
+               flexDirection: 'column',
+               justifyContent: 'center',
             }}
          >
             <ProgressBar config={config} setCurrentPage={setCurrentPage} />
@@ -606,9 +609,11 @@ const CartCard = props => {
    return (
       <div className="hern-kiosk__cart-card">
          <HernLazyImage
-            data-src={productData.image}
+            dataSrc={productData.image}
             alt="p-image"
             className="hern-kiosk__cart-card-p-image"
+            width={152}
+            height={152}
          />
          <div className="hern-kiosk__cart-card-p-mid">
             <div className="hern-kiosk__cart-card-p-details">
@@ -617,7 +622,6 @@ const CartCard = props => {
                      className="hern-kiosk__cart-card-p-name"
                      style={{ color: '#5A5A5A' }}
                      data-translation="true"
-                     data-original-value={productData.name}
                   >
                      {productData.name}
                   </span>{' '}
@@ -651,12 +655,7 @@ const CartCard = props => {
                         Product Option:
                      </span> */}
                      <div className="hern-kiosk-cart-product-modifiers-product-option">
-                        <span
-                           data-translation="true"
-                           data-original-value={
-                              productData.childs[0].productOption.label || 'N/A'
-                           }
-                        >
+                        <span data-translation="true">
                            {productData.childs[0].productOption.label || 'N/A'}
                         </span>{' '}
                         {productData.childs[0].price !== 0 && (
@@ -705,13 +704,7 @@ const CartCard = props => {
                                                 className="hern-kiosk__parent-modifier-list"
                                              >
                                                 <div className="hern-kiosk__modifier-details">
-                                                   <span
-                                                      data-translation="true"
-                                                      data-original-value={
-                                                         modifier.modifierOption
-                                                            .name
-                                                      }
-                                                   >
+                                                   <span data-translation="true">
                                                       {
                                                          modifier.modifierOption
                                                             .name
@@ -760,14 +753,7 @@ const CartCard = props => {
                                                          ) => {
                                                             return (
                                                                <li key={index}>
-                                                                  <span
-                                                                     data-translation="true"
-                                                                     data-original-value={
-                                                                        eachNestedModifier
-                                                                           .modifierOption
-                                                                           .name
-                                                                     }
-                                                                  >
+                                                                  <span data-translation="true">
                                                                      {
                                                                         eachNestedModifier
                                                                            .modifierOption

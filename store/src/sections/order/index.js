@@ -9,7 +9,7 @@ import {
 } from '../../components'
 import { useQuery } from '@apollo/react-hooks'
 import _ from 'lodash'
-import { CartContext, onDemandMenuContext } from '../../context'
+import { CartContext, onDemandMenuContext, useTranslation } from '../../context'
 import { PRODUCTS } from '../../graphql'
 import classNames from 'classnames'
 import * as Scroll from 'react-scroll'
@@ -24,7 +24,7 @@ import { CustomArea } from '../featuredCollection/productCustomArea'
 export const OnDemandOrder = ({ config }) => {
    const router = useRouter()
    const { addToast } = useToasts()
-
+   const { dynamicTrans, locale } = useTranslation()
    const { brand, locationId, storeStatus } = useConfig()
 
    const menuType = config?.display?.dropdown?.value[0]?.value
@@ -50,6 +50,21 @@ export const OnDemandOrder = ({ config }) => {
       config?.display?.productsScrollWidth?.value ??
       config?.display?.productsScrollWidth?.default ??
       0
+   const showCategoryBackgroundImage =
+      config?.display?.showCategoryBackgroundImage?.value ??
+      config?.display?.showCategoryBackgroundImage?.default ??
+      false
+   // const showCategoryBackgroundImage = false
+   const categoryBackgroundImage =
+      config?.display?.categoryBackgroundImage?.value ??
+      config?.display?.categoryBackgroundImage?.default ??
+      null
+   const showAddToCartButtonFullWidth =
+      config?.display?.showAddToCartButtonFullWidth?.value ??
+      config?.display?.showAddToCartButtonFullWidth?.default ??
+      true
+   const navbarCategoryAlignment =
+      config?.display?.navbarCategoryAlignment?.value?.value ?? 'CENTER'
 
    setThemeVariable('--hern-number-of-products', numberOfProducts)
    setThemeVariable(
@@ -72,6 +87,14 @@ export const OnDemandOrder = ({ config }) => {
       }),
       [brand, locationId]
    )
+   const currentLang = React.useMemo(() => locale, [locale])
+   React.useEffect(() => {
+      const languageTags = document.querySelectorAll(
+         '[data-translation="true"]'
+      )
+      dynamicTrans(languageTags)
+   }, [currentLang])
+
    const { loading: productsLoading, error: productsError } = useQuery(
       PRODUCTS,
       {
@@ -120,7 +143,13 @@ export const OnDemandOrder = ({ config }) => {
    )
    const [productModifier, setProductModifier] = useState(null)
    const CustomAreaWrapper = ({ data }) => {
-      return <CustomArea data={data} setProductModifier={setProductModifier} />
+      return (
+         <CustomArea
+            data={data}
+            setProductModifier={setProductModifier}
+            showAddToCartButtonFullWidth={showAddToCartButtonFullWidth}
+         />
+      )
    }
    const closeModifier = () => {
       setProductModifier(null)
@@ -149,6 +178,7 @@ export const OnDemandOrder = ({ config }) => {
                menuType="navigationAnchorMenu"
                categories={categories}
                showCount={showCategoryLengthOnCategory}
+               navbarAlignment={navbarCategoryAlignment}
             />
          )}
          <div
@@ -170,15 +200,39 @@ export const OnDemandOrder = ({ config }) => {
                   {hydratedMenu.map((eachCategory, index) => {
                      return (
                         <Scroll.Element key={index} name={eachCategory.name}>
-                           <p
-                              className="hern-product-category-heading"
-                              id={`hern-product-category-${eachCategory.name}`}
-                           >
-                              {eachCategory.name}
-                              {showCategoryLengthOnCategoryTitle && (
-                                 <>({eachCategory.products.length})</>
+                           <div
+                              className={classNames(
+                                 'hern-store__order-category-name-wrapper',
+                                 {
+                                    'hern-store__order-category-name-wrapper-with-bg':
+                                       showCategoryBackgroundImage,
+                                 }
                               )}
-                           </p>
+                           >
+                              {showCategoryBackgroundImage && (
+                                 <div
+                                    className="hern-store__order-category-name-wrapper-bg-image"
+                                    style={{
+                                       backgroundImage: `url(${categoryBackgroundImage})`,
+                                    }}
+                                 ></div>
+                              )}
+                              <p
+                                 className={classNames(
+                                    'hern-product-category-heading',
+                                    {
+                                       'hern-product-category-heading-with-bg':
+                                          showCategoryBackgroundImage,
+                                    }
+                                 )}
+                                 id={`hern-product-category-${eachCategory.name}`}
+                              >
+                                 {eachCategory.name}
+                                 {showCategoryLengthOnCategoryTitle && (
+                                    <>({eachCategory.products.length})</>
+                                 )}
+                              </p>
+                           </div>
                            <div style={{ display: 'flex', flexWrap: 'wrap' }}>
                               {eachCategory.products.map(
                                  (eachProduct, index) => {

@@ -40,6 +40,7 @@ import { InventoryBundleProvider } from '../../../context/product/inventoryBundl
 import ProductInsight from './components/Insight'
 import { MASTER } from '../../../../settings/graphql/index'
 import { SEOSettings } from './components'
+import { ProductSettings } from './ProductSettings'
 const Product = () => {
    const { id: productId } = useParams()
 
@@ -532,7 +533,7 @@ const Product = () => {
                            <SEOSettings data={state} />
                         </HorizontalTabPanel>
                         <HorizontalTabPanel>
-                           {/* <ProductSettings /> */}
+                           <ProductSettings />
                         </HorizontalTabPanel>
                      </HorizontalTabPanels>
                   </HorizontalTabs>

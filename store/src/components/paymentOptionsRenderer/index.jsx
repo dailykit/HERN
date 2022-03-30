@@ -25,6 +25,7 @@ export default function PaymentOptionsRenderer({
    const { addToast } = useToasts()
    const theme = configOf('theme-color', 'Visual')
    const [isLoading, setIsLoading] = React.useState(true)
+   const [isUpdating, setIsUpdating] = React.useState(false)
    // query for fetching available payment options
    const {
       loading,
@@ -48,6 +49,14 @@ export default function PaymentOptionsRenderer({
       },
    })
 
+   // update cartPayment mutation
+   const [updateCartPayments] = useMutation(QUERIES.UPDATE_CART_PAYMENTS, {
+      onError: error => {
+         console.log(error)
+         addToast(error.message, { appearance: 'error' })
+      },
+   })
+
    const showPaymentIcon = label => {
       let icon = null
       if (['Debit/Credit Card', 'Debit/Credit Cards'].includes(label)) {
@@ -62,12 +71,30 @@ export default function PaymentOptionsRenderer({
       return icon
    }
 
-   const onPaymentMethodChange = id => {
+   const onPaymentMethodChange = async id => {
       if (id) {
          const availablePaymentOptionToCart =
             cart.availablePaymentOptionToCart.find(option => option.id === id)
-         console.log(availablePaymentOptionToCart)
-         updateCart({
+         await updateCartPayments({
+            variables: {
+               where: {
+                  cartId: {
+                     _eq: cartId,
+                  },
+                  paymentStatus: {
+                     _nin: ['SUCCEEDED'],
+                  },
+                  isResultShown: {
+                     _eq: false,
+                  },
+               },
+               _set: {
+                  paymentStatus: 'CANCELLED',
+                  isResultShown: true,
+               },
+            },
+         })
+         await updateCart({
             variables: {
                id: cartId,
                _set: {

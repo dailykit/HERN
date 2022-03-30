@@ -20,7 +20,7 @@ const FloatingBar = () => {
    const { brand } = useConfig()
    const { user } = useUser()
    const { initializePayment } = usePayment()
-   const [isOpen, setIsOpen] = React.useState(false)
+   const [isOpen, setIsOpen] = React.useState(true)
    const [cartPayment, setCartPayment] = React.useState(null)
    const [isLoading, setIsLoading] = React.useState(true)
    const { error, data: { cartPayments = [] } = {} } = useSubscription(
@@ -94,25 +94,39 @@ const FloatingBar = () => {
       return null
    }
    return (
-      <section tw="fixed flex items-center max-height[200px] z-index[100] width[85%] border-radius[6px] box-shadow[0px 4px 12px rgba(0, 0, 0, 0.2)] background[rgba(56, 161, 105, 0.8)] backdrop-blur-md bottom-0 right-0 left-0 margin[1rem auto] px-3 md:px-0">
-         <div tw="p-4 flex flex-col items-start sm:(flex-row items-center justify-between)  mx-auto rounded text-white w-full">
-            <div>
-               <p tw="text-white font-semibold text-2xl">
-                  Hi {user?.platform_customer?.fullName || ''}!
-               </p>
-               <p tw="text-white font-semibold text-lg">{pendingBarMsg()}</p>
-            </div>
-
-            <button
-               onClick={onPayHandler}
-               tw="bg-white color[#38A169] w-full md:(w-max) font-semibold text-lg rounded px-3 py-2"
-            >
-               Pay Now{' '}
-               {!isEmpty(cartPayment) &&
-                  formatCurrency(Number(cartPayment?.amount || 0))}
-            </button>
-         </div>
-      </section>
+      <>
+         {isOpen && (
+            <section tw="fixed flex items-center max-height[200px] z-index[100] width[85%] border-radius[6px] box-shadow[0px 4px 12px rgba(0, 0, 0, 0.2)] background[rgba(56, 161, 105, 0.8)] backdrop-blur-md bottom-0 right-0 left-0 margin[1rem auto] px-3 md:px-0">
+               <div tw="p-4 flex flex-col items-start  mx-auto rounded text-white w-full">
+                  <div tw="padding[1rem 0] flex items-center justify-between w-full">
+                     <p tw="text-white font-semibold text-2xl">
+                        Hi {user?.platform_customer?.fullName || ''}!
+                     </p>
+                     <span onClick={() => setIsOpen(false)}>
+                        <CloseIcon
+                           size={16}
+                           stroke="currentColor"
+                           color="#fff"
+                        />
+                     </span>
+                  </div>
+                  <div tw="w-full flex flex-col items-start sm:(flex-row items-center justify-between) ">
+                     <p tw="text-white font-semibold text-lg">
+                        {pendingBarMsg()}
+                     </p>
+                     <button
+                        onClick={onPayHandler}
+                        tw="bg-white color[#38A169] w-full md:(w-max) font-semibold text-lg rounded px-3 py-2"
+                     >
+                        Pay Now{' '}
+                        {!isEmpty(cartPayment) &&
+                           formatCurrency(Number(cartPayment?.amount || 0))}
+                     </button>
+                  </div>
+               </div>
+            </section>
+         )}
+      </>
    )
 }
 

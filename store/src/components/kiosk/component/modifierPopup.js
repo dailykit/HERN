@@ -28,6 +28,7 @@ import { useConfig } from '../../../lib'
 import { Loader } from '../..'
 import classNames from 'classnames'
 import { HernLazyImage } from '../../../utils/hernImage'
+import moment from 'moment'
 
 export const KioskModifier = props => {
    const {
@@ -42,6 +43,7 @@ export const KioskModifier = props => {
    const { t, dynamicTrans, locale, direction } = useTranslation()
    //context
    const { addToCart, methods } = React.useContext(CartContext)
+   const { isStoreAvailable } = useConfig()
 
    // component state
    const [selectedProductOption, setSelectedProductOption] = useState(
@@ -157,7 +159,7 @@ export const KioskModifier = props => {
       }
    }
    // add product(s) to cartItem
-   const handleAddOnCart = () => {
+   const handleAddOnCart = async () => {
       //check category fulfillment conditions
       const allSelectedOptions = [
          ...selectedOptions.single,
@@ -171,7 +173,7 @@ export const KioskModifier = props => {
             allSelectedOptions.map(x => x.cartItem)
          )
 
-         addToCart(cartItem, quantity)
+         await addToCart(cartItem, quantity)
          if (edit) {
             methods.cartItems.delete({
                variables: {
@@ -277,7 +279,7 @@ export const KioskModifier = props => {
             )
          }
 
-         addToCart(cartItem, quantity)
+         await addToCart(cartItem, quantity)
          if (edit) {
             methods.cartItems.delete({
                variables: {
@@ -618,16 +620,18 @@ export const KioskModifier = props => {
                </div> */}
                {productData.assets.images.length === 0 ? (
                   <HernLazyImage
-                     data-src={config.productSettings.defaultImage.value}
+                     dataSrc={config.productSettings.defaultImage.value}
                      style={{ height: '680px' }}
                   />
                ) : (
                   <Carousel style={{ height: '20em', width: '20em' }}>
                      {productData.assets.images.map((eachImage, index) => (
-                        <img
-                           src={eachImage}
+                        <HernLazyImage
+                           dataSrc={eachImage}
                            key={productData.id}
                            style={{ height: '680px', width: '100%' }}
+                           width={680}
+                           height={680}
                            className="hern-kiosk__menu-product-modifier-header-image"
                         />
                      ))}
@@ -653,7 +657,6 @@ export const KioskModifier = props => {
                      color: `${config.kioskSettings.theme.modifierTextColor.value}`,
                   }}
                   data-translation="true"
-                  data-original-value={productData.name}
                >
                   {productData.name}
                </span>
@@ -705,7 +708,6 @@ export const KioskModifier = props => {
                            <span
                               data-name={eachOption.label}
                               data-translation="true"
-                              data-original-value={eachOption.label}
                            >
                               {eachOption.label}
                            </span>
@@ -755,7 +757,6 @@ export const KioskModifier = props => {
                         <span
                            data-name={eachOption.label}
                            data-translation="true"
-                           data-original-value={eachOption.label}
                         >
                            {eachOption.label}
                         </span>
@@ -774,7 +775,6 @@ export const KioskModifier = props => {
                         color: `${config.kioskSettings.theme.modifierTextColor.value}`,
                      }}
                      data-translation="true"
-                     data-original-value={productData.additionalText}
                   >
                      {productData.additionalText}
                   </span>
@@ -828,7 +828,6 @@ export const KioskModifier = props => {
                                     color: `${config.kioskSettings.theme.modifierTextColor.value}`,
                                  }}
                                  data-translation="true"
-                                 data-original-value={eachModifierCategory.name}
                               >
                                  {eachModifierCategory.name}
                               </span>
@@ -886,20 +885,17 @@ export const KioskModifier = props => {
                                                 <HernLazyImage
                                                    className="hern-kiosk__modifier-category-option-image"
                                                    alt="modifier image"
-                                                   data-src={
+                                                   dataSrc={
                                                       eachOption.image ||
                                                       config.productSettings
                                                          .defaultImage.value
                                                    }
+                                                   height={95}
+                                                   width={95}
                                                 />
 
                                                 <span className="hern-kiosk__modifier--option-name">
-                                                   <span
-                                                      data-translation="true"
-                                                      data-original-value={
-                                                         eachOption.name
-                                                      }
-                                                   >
+                                                   <span data-translation="true">
                                                       {eachOption.name}
                                                    </span>
                                                    {eachOption.price > 0 && (
@@ -1034,12 +1030,14 @@ export const KioskModifier = props => {
                      {formatCurrency(totalAmount())}
                   </span>
                </div>
-               <KioskButton
-                  onClick={handleAddOnCart}
-                  customClass="hern-kiosk__modifier-add-to-cart"
-               >
-                  {t('Add To Cart')}
-               </KioskButton>
+               {isStoreAvailable && (
+                  <KioskButton
+                     onClick={handleAddOnCart}
+                     customClass="hern-kiosk__modifier-add-to-cart"
+                  >
+                     {t('Add To Cart')}
+                  </KioskButton>
+               )}
             </div>
          </div>
       </div>
@@ -1343,7 +1341,6 @@ const AdditionalModifiers = forwardRef(
                      className="hern-kiosk__additional-modifier-label"
                      style={{ color: '#ffffff' }}
                      data-translation="true"
-                     data-original-value={eachAdditionalModifier.label}
                   >
                      {eachAdditionalModifier.label}
                   </span>
@@ -1389,9 +1386,6 @@ const AdditionalModifiers = forwardRef(
                                        color: `${config.kioskSettings.theme.modifierTextColor.value}`,
                                     }}
                                     data-translation="true"
-                                    data-original-value={
-                                       eachModifierCategory.name
-                                    }
                                  >
                                     {eachModifierCategory.name}
                                  </span>
@@ -1454,20 +1448,17 @@ const AdditionalModifiers = forwardRef(
                                                    <HernLazyImage
                                                       className="hern-kiosk__modifier-category-option-image"
                                                       alt="modifier image"
-                                                      data-src={
+                                                      dataSrc={
                                                          eachOption.image ||
                                                          config.productSettings
                                                             .defaultImage.value
                                                       }
+                                                      height={95}
+                                                      width={95}
                                                    />
 
                                                    <span className="hern-kiosk__modifier--option-name">
-                                                      <span
-                                                         data-translation="true"
-                                                         data-original-value={
-                                                            eachOption.name
-                                                         }
-                                                      >
+                                                      <span data-translation="true">
                                                          {eachOption.name}
                                                       </span>
                                                       {eachOption.price > 0 && (
@@ -1907,7 +1898,6 @@ const ModifierOptionsList = forwardRef((props, ref) => {
                            color: `${config.kioskSettings.theme.modifierTextColor.value}`,
                         }}
                         data-translation="true"
-                        data-original-value={eachModifierCategory.name}
                      >
                         {eachModifierCategory.name}
                      </span>
@@ -1962,18 +1952,17 @@ const ModifierOptionsList = forwardRef((props, ref) => {
                                     <HernLazyImage
                                        className="hern-kiosk__modifier-category-option-image"
                                        alt="modifier image"
-                                       data-src={
+                                       dataSrc={
                                           eachOption.image ||
                                           config.productSettings.defaultImage
                                              .value
                                        }
+                                       height={95}
+                                       width={95}
                                     />
 
                                     <span className="hern-kiosk__modifier--option-name">
-                                       <span
-                                          data-translation="true"
-                                          data-original-value={eachOption.name}
-                                       >
+                                       <span data-translation="true">
                                           {eachOption.name}
                                        </span>
                                        {eachOption.price > 0 && (

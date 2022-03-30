@@ -284,7 +284,7 @@ const PageForm = () => {
                                  <Form.Text
                                     id="domain"
                                     name="domain"
-                                    value={brandContext.brandDomain}
+                                    value={brandContext.domain}
                                     disabled
                                  />
                                  <Form.Text

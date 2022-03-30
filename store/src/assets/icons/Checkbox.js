@@ -3,7 +3,7 @@ import React from 'react'
 export const CheckBoxIcon = ({
    size = 15,
    showTick = false,
-   stroke = '#367BF5',
+   stroke = 'var(--hern-accent)',
    ...props
 }) => {
    return (

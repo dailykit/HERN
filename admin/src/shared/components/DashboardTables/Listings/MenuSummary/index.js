@@ -25,17 +25,17 @@ const MenuSummary = () => {
    const tableHandleOnClick = () => {
       history.push('menu')
    }
-   console.log('menuSummary', {
-      where: `"paymentStatus"=\'SUCCEEDED\' ${
-         dashboardTableState.from && dashboardTableState.to
-            ? `AND \"created_at\" >= '${moment(
-                 dashboardTableState.from
-              ).format()}' AND \"created_at\" <= '${moment(
-                 dashboardTableState.to
-              ).format()}'`
-            : ''
-      }`,
-   })
+   // console.log('menuSummary', {
+   //    where: `"paymentStatus"=\'SUCCEEDED\' ${
+   //       dashboardTableState.from && dashboardTableState.to
+   //          ? `AND \"created_at\" >= '${moment(
+   //               dashboardTableState.from
+   //            ).format()}' AND \"created_at\" <= '${moment(
+   //               dashboardTableState.to
+   //            ).format()}'`
+   //          : ''
+   //    }`,
+   // })
    //subscription for order opportunity
    const { loading: subsLoading, error: subsError } = useSubscription(
       TOP_PRODUCT_LIST,

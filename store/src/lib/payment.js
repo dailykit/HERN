@@ -18,7 +18,7 @@ import {
    CREATE_PRINT_JOB,
    UPDATE_CART,
 } from '../graphql'
-import { useUser, useCart } from '../context'
+import { useUser, useCart, useTranslation } from '../context'
 import { useConfig } from '../lib'
 import {
    getRazorpayOptions,
@@ -93,7 +93,7 @@ export const PaymentProvider = ({ children }) => {
    const [isProcessingPayment, setIsProcessingPayment] = useState(false)
    const [isPaymentInitiated, setIsPaymentInitiated] = useState(false)
    const { user, isAuthenticated, isLoading } = useUser()
-   const { brand, kioskDetails, settings, selectedOrderTab } = useConfig()
+   const { kioskDetails, settings, selectedOrderTab, configOf } = useConfig()
    const { displayRazorpay } = useRazorPay()
    const { displayPaytm } = usePaytm()
    const {
@@ -103,10 +103,12 @@ export const PaymentProvider = ({ children }) => {
    } = useTerminalPay()
    const { cartState } = useCart()
    const { addToast } = useToasts()
+   const { t } = useTranslation()
 
    const BY_PASS_TERMINAL_PAYMENT = get_env('BY_PASS_TERMINAL_PAYMENT')
    const ALLOW_POSIST_PUSH_ORDER = get_env('ALLOW_POSIST_PUSH_ORDER')
-
+   const brand = configOf('Brand Info', 'brand')
+   const theme = configOf('theme-color', 'Visual')?.themeColor
    // subscription to get cart payment info
    const {
       data: { cartPayments: cartPaymentsFromQuery = [] } = {},
@@ -131,7 +133,7 @@ export const PaymentProvider = ({ children }) => {
    const [updateCartPayment] = useMutation(UPDATE_CART_PAYMENT, {
       onError: error => {
          console.error(error)
-         addToast('Something went wrong!', { appearance: 'error' })
+         addToast(`${t('Something went wrong')}`, { appearance: 'error' })
       },
    })
 
@@ -139,7 +141,7 @@ export const PaymentProvider = ({ children }) => {
    const [updateCart] = useMutation(UPDATE_CART, {
       onError: error => {
          console.error(error)
-         addToast('Something went wrong!', { appearance: 'error' })
+         addToast(`${t('Something went wrong')}`, { appearance: 'error' })
       },
    })
 
@@ -172,15 +174,16 @@ export const PaymentProvider = ({ children }) => {
          },
          onError: error => {
             console.error(error)
-            addToast('Something went wrong!', { appearance: 'error' })
+            addToast(`${t('Something went wrong')}`, { appearance: 'error' })
             dispatch({
                type: 'UPDATE_INITIAL_STATE',
                payload: {
                   printDetails: {
                      ...state.printDetails,
                      printStatus: 'failed',
-                     message:
-                        'Something went wrong while printing, please try again!',
+                     message: `${t(
+                        'Something went wrong while printing please try again!'
+                     )}`,
                   },
                },
             })
@@ -217,6 +220,8 @@ export const PaymentProvider = ({ children }) => {
                id: cartPayment?.id,
                _set: {
                   paymentStatus: 'CANCELLED',
+                  comment:
+                     'Cancelled by user using back button or dismiss modal',
                },
                _inc: {
                   cancelAttempt: 1,
@@ -282,9 +287,8 @@ export const PaymentProvider = ({ children }) => {
          },
       })
       if (!isEmpty(settings) && isClient) {
-         const path = settings['printing'].find(
-            item => item?.identifier === 'KioskCustomerTokenTemplate'
-         )?.value?.path?.value
+         const path =
+            settings['printing']?.['KioskCustomerTokenTemplate']?.path?.value
          const DATA_HUB_HTTPS = get_env('DATA_HUB_HTTPS')
          const { origin } = new URL(DATA_HUB_HTTPS)
          const templateOptions = encodeURI(
@@ -393,6 +397,8 @@ export const PaymentProvider = ({ children }) => {
    useEffect(() => {
       if (!isEmpty(cartPaymentsFromQuery)) {
          setCartPayment(cartPaymentsFromQuery[0])
+      } else {
+         setCartPayment(null)
       }
    }, [cartPaymentsFromQuery])
 
@@ -490,7 +496,6 @@ export const PaymentProvider = ({ children }) => {
       if (
          isPaymentInitiated &&
          !_isEmpty(cartPayment) &&
-         // !_isEmpty(cartPayment?.transactionRemark) &&
          _has(
             cartPayment,
             'availablePaymentOption.supportedPaymentOption.supportedPaymentCompany.label'
@@ -506,12 +511,17 @@ export const PaymentProvider = ({ children }) => {
          ) {
             console.log('inside payment provider useEffect 1', cartPayment)
 
-            if (cartPayment.paymentStatus === 'CREATED') {
+            if (
+               cartPayment.paymentStatus === 'CREATED' &&
+               !_isEmpty(cartPayment?.stripeInvoiceId)
+            ) {
                ;(async () => {
                   const options = getRazorpayOptions({
                      orderDetails: cartPayment.transactionRemark,
-                     paymentInfo: state.paymentInfo,
-                     profileInfo: state.profileInfo,
+                     brand,
+                     theme,
+                     paymentInfo: cartPayment.availablePaymentOption,
+                     profileInfo: cartPayment.cart.customerInfo,
                      ondismissHandler: () => onCancelledHandler(),
                      eventHandler,
                   })
@@ -547,7 +557,6 @@ export const PaymentProvider = ({ children }) => {
       }
    }, [
       cartPayment?.paymentStatus,
-      cartPayment?.transactionRemark,
       cartPayment?.transactionId,
       cartPayment?.stripeInvoiceId,
       cartPayment?.actionUrl,
