@@ -133,11 +133,13 @@ const Order = () => {
             cartId: {
                _eq: order?.cartId,
             },
-            brandId: {
-               _in: brandContext.brandId
-            },
-            locationId: {
-               _in: brandContext.locationId
+            cart: {
+               brandId: {
+                  _in: brandContext.brandId
+               },
+               locationId: {
+                  _in: brandContext.locationId
+               }
             }
          },
       },

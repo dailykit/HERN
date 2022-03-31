@@ -30,25 +30,30 @@ const Orders = () => {
       variables: {
          where: {
             isArchived: { _eq: false },
-            cart: { status: { _eq: state.orders.where?.cart?.status?._eq } },
-            brandId: {
-               _in: brandContext.brandId
+            cart: {
+               status: { _eq: state.orders.where?.cart?.status?._eq },
+               brandId: {
+                  _in: brandContext.brandId
+               },
+               locationId: { _in: brandContext.locationId }
             },
-            locationId: { _in: brandContext.locationId }
+
          },
       },
    })
    const { loading, error } = useSubscription(QUERIES.ORDERS.LIST, {
       variables: {
-         where: state.orders.where,
+         where: {
+            ...state.orders.where,
+            cart: {
+               brandId: {
+                  _in: brandContext.brandId
+               },
+               locationId: { _in: brandContext.locationId }
+            }
+         },
          ...(state.orders.limit && { limit: state.orders.limit }),
          ...(state.orders.offset !== null && { offset: state.orders.offset }),
-         where: {
-            brandId: {
-               _in: brandContext.brandId
-            },
-            locationId: { _in: brandContext.locationId }
-         }
       },
       onSubscriptionData: ({
          subscriptionData: { data: { orders: list = [] } = {} } = {},

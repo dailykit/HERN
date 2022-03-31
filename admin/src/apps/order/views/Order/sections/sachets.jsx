@@ -36,10 +36,12 @@ const Sachets = () => {
             where: {
                parentCartItemId: { _eq: state?.current_product?.id },
                levelType: { _eq: 'orderItemSachet' },
-               brandId: {
-                  _in: brandContext.brandId
-               }, locationId: {
-                  _in: brandContext.locationId
+               cart: {
+                  brandId: {
+                     _in: brandContext.brandId
+                  }, locationId: {
+                     _in: brandContext.locationId
+                  }
                }
             },
          },
