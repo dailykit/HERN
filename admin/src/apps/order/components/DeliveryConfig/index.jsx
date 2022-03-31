@@ -61,8 +61,9 @@ const containerStyle = {
 
 const options = {
    styles: subtleColorful,
-   // disableDefaultUI: true,
-   // zoomControl: true,
+   disableDefaultUI: true,
+   zoomControl: true,
+   fullscreenControl: true,
 }
 
 const isClient = typeof window !== 'undefined' && window.document ? true : false
@@ -452,7 +453,7 @@ export const DeliveryConfig = ({ closeTunnel: closeParentTunnel }) => {
                   }}
                   title={`Delivery - Order ${order.id}`}
                />
-               <DeliveryDetails details={order} />
+               {isLoaded && <DeliveryDetails details={order} />}
             </>
          ) : (
             <>
@@ -612,13 +613,12 @@ const DeliveryDetails = ({ details }) => {
             />
             <DirectionsService
                options={{
-                  destination: coordinates.organization,
-                  origin: coordinates.customer,
+                  destination: coordinates.customer,
+                  origin: coordinates.organization,
                   travelMode: 'DRIVING',
                }}
                callback={(response, status) => {
                   if (status === 'OK') {
-                     console.log('direction service response', response)
                      setDirections(response)
                   }
                }}
