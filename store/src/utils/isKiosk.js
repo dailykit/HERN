@@ -1,5 +1,7 @@
 import { useQueryParamState } from './useQueryParamState'
+import { isClient } from '.'
 export const isKiosk = () => {
-   const [params] = useQueryParamState('oiType')
-   return params === 'Kiosk Ordering'
+   const pathName = isClient ? window.location.pathname : ''
+
+   return pathName.includes('/kiosk/')
 }

@@ -145,25 +145,26 @@ export const ConfigProvider = ({ children }) => {
       const oiType = JSON.parse(localStorage.getItem('orderInterfaceType'))
       const oiTypeId = JSON.parse(localStorage.getItem('orderInterfaceTypeId'))
 
-      const urlSearchParams = new URLSearchParams(window.location.search)
-      const params = Object.fromEntries(urlSearchParams.entries())
+      // const urlSearchParams = new URLSearchParams(window.location.search)
+      // const params = Object.fromEntries(urlSearchParams.entries())
+      const pathName = isClient ? window.location.pathname : ''
 
-      if (params && params.oiType) {
+      if (pathName.includes('/kiosk/')) {
          localStorage.setItem(
             'orderInterfaceType',
-            JSON.stringify(params.oiType)
+            JSON.stringify('Kiosk Ordering')
          )
-         setOrderInterfaceType(prev => ({ ...prev, oiType: params.oiType }))
-         if (params.oiTypeId) {
-            localStorage.setItem(
-               'orderInterfaceTypeId',
-               JSON.stringify(params.oiTypeId)
-            )
-            setOrderInterfaceType(prev => ({
-               ...prev,
-               oiTypeId: params.oiTypeId,
-            }))
-         }
+         setOrderInterfaceType(prev => ({ ...prev, oiType: 'Kiosk Ordering' }))
+         // if (params.oiTypeId) {
+         //    localStorage.setItem(
+         //       'orderInterfaceTypeId',
+         //       JSON.stringify(params.oiTypeId)
+         //    )
+         //    setOrderInterfaceType(prev => ({
+         //       ...prev,
+         //       oiTypeId: params.oiTypeId,
+         //    }))
+         // }
       } else {
          localStorage.setItem('orderInterfaceType', JSON.stringify('Website'))
          setOrderInterfaceType(prev => ({
