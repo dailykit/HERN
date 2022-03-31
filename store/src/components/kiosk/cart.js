@@ -42,6 +42,7 @@ import { ProgressBar } from './component/progressBar'
 import { Coupon } from '../coupon'
 import isEmpty from 'lodash/isEmpty'
 import { HernLazyImage } from '../../utils/hernImage'
+import isNull from 'lodash/isNull'
 
 const { Header, Content, Footer } = Layout
 
@@ -631,18 +632,30 @@ const CartCard = props => {
    return (
       <div className="hern-kiosk__cart-card">
          <div className="hern-kiosk__cart-card-header">
-            <HernLazyImage
-               dataSrc={productData.image}
-               alt="p-image"
-               className="hern-kiosk__cart-card-p-image"
-               width={152}
-               height={152}
-               style={{
-                  ...(config.kioskSettings.allowTilt.value && {
-                     clipPath: 'polygon(0 0, 100% 0, 100% 100%, 0 97%)',
-                  }),
-               }}
-            />
+            {!(isNull(productData.image) && isEmpty(productData.image)) ? (
+               <HernLazyImage
+                  dataSrc={productData.image}
+                  alt="p-image"
+                  className="hern-kiosk__cart-card-p-image"
+                  width={152}
+                  height={152}
+                  style={{
+                     ...(config.kioskSettings.allowTilt.value && {
+                        clipPath: 'polygon(0 0, 100% 0, 100% 100%, 0 97%)',
+                     }),
+                  }}
+               />
+            ) : (
+               <>
+                  <img
+                     src={config.productSettings.defaultImage.value}
+                     alt="p-image"
+                     width={152}
+                     height={152}
+                  />
+               </>
+            )}
+
             <div className="hern-kiosk__cart-card-p-mid">
                <div className="hern-kiosk__cart-card-p-details">
                   <div style={{ display: 'flex', alignItems: 'center' }}>
