@@ -39,9 +39,11 @@ const Listing = ({ setTotal, setQuantity }) => {
       QUERIES.PLANNED.INGREDIENTS,
       {
          variables: {
-            cart: state.orders.where.cart,
-            brandId: brandContext.brandId,
-            locationId: brandContext.locationId
+            cart: {
+               ...state.orders.where.cart,
+               brandId: { _in: brandContext.brandId },
+               locationId: { _in: brandContext.locationId }
+            },
          },
          onSubscriptionData: ({
             subscriptionData: { data: { ingredients: list = {} } = {} } = {},
@@ -70,7 +72,6 @@ const Listing = ({ setTotal, setQuantity }) => {
          },
       }
    )
-
    if (loading) return <InlineLoader />
    if (error) {
       logger(error)

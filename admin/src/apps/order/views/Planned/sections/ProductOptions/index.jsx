@@ -79,15 +79,16 @@ const Listing = ({ type, setTotal }) => {
    } = useSubscription(QUERIES.PLANNED.PRODUCT_OPTIONS, {
       variables: {
          type: { _eq: type.title },
-         cart: state.orders.where.cart,
          cart: {
+            ...state.orders.where.cart,
             brandId: {
                _in: brandContext.brandId
             },
             locationId: {
                _in: brandContext.locationId
             }
-         }
+         },
+
       },
       onSubscriptionData: ({
          subscriptionData: { data: { productOptions: options = {} } = {} } = {},

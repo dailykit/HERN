@@ -39,9 +39,15 @@ const Listing = ({ setTotal, setServings }) => {
       QUERIES.PLANNED.SUB_RECIPES,
       {
          variables: {
-            cart: state.orders.where.cart,
-            brandId: brandContext.brandId,
-            locationId: brandContext.locationId
+            cart: {
+               ...state.orders.where.cart,
+               brandId: {
+                  _in: brandContext.brandId
+               },
+               locationId: {
+                  _in: brandContext.locationId
+               }
+            },
          },
 
          onSubscriptionData: ({

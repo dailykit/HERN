@@ -601,16 +601,9 @@ export const QUERIES = {
          subscription plannedProducts(
             $type: String_comparison_exp = {}
             $cart: order_cart_bool_exp = {}
-            $brandId: [Int!]!
-            $locationId: [Int!]!
          ) {
             plannedProducts: productsAggregate(
-               where: {
-                  type: $type
-                  cartItems: { cart: $cart }
-                  brandId: { _in: $brandId }
-                  locationId: { _in: $locationId }
-               }
+               where: { type: $type, cartItems: { cart: $cart } }
             ) {
                aggregate {
                   count
@@ -675,18 +668,12 @@ export const QUERIES = {
          }
       `,
       SIMPLE_RECIPES: gql`
-         subscription simpleRecipes(
-            $cart: order_cart_bool_exp = {}
-            $brandId: [Int!]!
-            $locationId: [Int!]!
-         ) {
+         subscription simpleRecipes($cart: order_cart_bool_exp = {}) {
             simpleRecipes: simpleRecipesAggregate(
                where: {
                   simpleRecipeYields: {
                      simpleRecipeCartItems: { level: { _eq: 3 }, cart: $cart }
                   }
-                  brandId: { _in: $brandId }
-                  locationId: { _in: $locationId }
                }
             ) {
                aggregate {
@@ -738,18 +725,12 @@ export const QUERIES = {
          }
       `,
       SUB_RECIPES: gql`
-         subscription subRecipes(
-            $cart: order_cart_bool_exp = {}
-            $brandId: [Int!]!
-            $locationId: [Int!]!
-         ) {
+         subscription subRecipes($cart: order_cart_bool_exp = {}) {
             subRecipes: simpleRecipesAggregate(
                where: {
                   simpleRecipeYields: {
                      subRecipeCartItems: { level: { _gte: 4 }, cart: $cart }
                   }
-                  brandId: { _in: $brandId }
-                  locationId: { _in: $locationId }
                }
             ) {
                aggregate {
@@ -796,11 +777,7 @@ export const QUERIES = {
          }
       `,
       INGREDIENTS: gql`
-         subscription ingredients(
-            $cart: order_cart_bool_exp = {}
-            $brandId: [Int!]!
-            $locationId: [Int!]!
-         ) {
+         subscription ingredients($cart: order_cart_bool_exp = {}) {
             ingredients: ingredientsAggregate(
                where: {
                   ingredientSachetViews: {
@@ -812,8 +789,6 @@ export const QUERIES = {
                         cart: $cart
                      }
                   }
-                  brandId: { _in: $brandId }
-                  locationId: { _in: $locationId }
                }
             ) {
                aggregate {

@@ -38,15 +38,15 @@ const Listing = ({ setTotal, setQuantity }) => {
       QUERIES.PLANNED.SACHET_ITEMS,
       {
          variables: {
-            cart: state.orders.where.cart,
             cart: {
+               ...state.orders.where.cart,
                brandId: {
                   _in: brandContext.brandId
                },
                locationId: {
                   _in: brandContext.locationId
                }
-            }
+            },
          },
          onSubscriptionData: ({
             subscriptionData: { data: { sachetItems: items = {} } = {} } = {},
