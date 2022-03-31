@@ -695,7 +695,7 @@ export const ImageUpload = props => {
       <>
          {editMode ? (
             <>
-               <ImageWrapper paddingRight="2rem">
+               <ImageWrapper>
                   <Flex container alignItems="flex-start">
                      <Form.Label title={fieldDetail.label} htmlFor="textArea">
                         YOUR {fieldDetail.label.toUpperCase()}
@@ -918,7 +918,7 @@ export const ProductSelector = props => {
             name: path,
          },
       }
-      console.log('productSelector', e, options)
+
       onConfigChange(e, options)
    }
    if (subsLoading) {
@@ -1046,6 +1046,6 @@ export const ImageWrapper = styled.div`
    display: flex;
    align-items: center;
    justify-content: space-between;
-   padding: 1rem 0.4rem;
+   padding: 1rem 1.5rem;
    padding-right: ${props => props.paddingRight || '0.4rem'};
 `
