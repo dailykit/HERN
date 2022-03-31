@@ -31,7 +31,10 @@ const KioskScreen = props => {
             finalKioskConfig.kioskSettings.primaryFont.value.fontFamily.value
          )
       }
-
+      setThemeVariable(
+         '--hern-primary-color',
+         finalKioskConfig.kioskSettings.theme.primaryColor.value
+      )
       dispatch({
          type: 'SET_KIOSK_ID',
          payload: kioskId,

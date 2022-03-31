@@ -286,6 +286,25 @@
       }
    }
 }
+.hern-kiosk__menu-header-veg-switch {
+   display: flex;
+   justify-content: space-between;
+   padding-top: 12px;
+   .ant-switch {
+      margin-top: 5px;
+   }
+   .ant-switch-checked {
+      background-color: var(--hern-primary-color) !important;
+   }
+}
+.hern-kiosk__menu-header-veg-text {
+   font-weight: 700;
+   font-size: 28px;
+   line-height: 38px;
+   text-transform: capitalize;
+
+   color: #303030;
+}
 .hern-kiosk__menu-header-col-2 {
    position: relative;
    margin: 1em 0;

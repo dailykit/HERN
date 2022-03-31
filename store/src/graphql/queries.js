@@ -1351,6 +1351,7 @@ export const PRODUCTS = gql`
          defaultProductOptionId
          defaultCartItem: defaultCartItemByLocation(args: $defaultCartItemArgs)
          productionOptionSelectionStatement
+         subCategory
          productOptions(
             where: { isArchived: { _eq: false } }
             order_by: { position: desc_nulls_last }
