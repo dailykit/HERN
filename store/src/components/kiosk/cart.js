@@ -1146,8 +1146,9 @@ const CartCard = props => {
                   }}
                   style={{
                      border: `2px solid ${config.kioskSettings.theme.secondaryColor.value}`,
-                     background: 'transparent',
+                     background: 'transparent !important',
                      padding: '.1em 2em',
+                     color: `${config.kioskSettings.theme.primaryColor.value}`,
                   }}
                   buttonConfig={config.kioskSettings.buttonSettings}
                >

@@ -31,6 +31,7 @@ export const KioskHeader = props => {
             }}
             closable={false}
             footer={null}
+            className="hern-kiosk__kiosk-header-reset-modal"
          >
             <div
                style={{
@@ -45,9 +46,11 @@ export const KioskHeader = props => {
                   }}
                   style={{
                      border: `2px solid ${config.kioskSettings.theme.secondaryColor.value}`,
-                     background: 'transparent',
+                     background: 'transparent !important',
                      padding: '.1em 2em',
+                     color: `${config.kioskSettings.theme.primaryColor.value}`,
                   }}
+                  buttonConfig={config.kioskSettings.buttonSettings}
                >
                   {t('CANCEL')}
                </KioskButton>
@@ -58,6 +61,7 @@ export const KioskHeader = props => {
                         window.location.reload()
                      }
                   }}
+                  buttonConfig={config.kioskSettings.buttonSettings}
                >
                   {t('CONTINUE')}
                </KioskButton>

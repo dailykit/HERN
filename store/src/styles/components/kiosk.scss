@@ -74,6 +74,11 @@
    border-radius: 10px;
    margin-right: 0.3em;
 }
+.hern-kiosk__kiosk-header-reset-modal {
+   .ant-modal-wrap {
+      z-index: 10000000;
+   }
+}
 
 // fulfillment section
 .hern-kiosk__fulfillment-section-container {
@@ -181,14 +186,14 @@
 }
 .hern-kiosk__fulfillment-section-main-text {
    font-weight: 800;
-   z-index: 100000;
+   z-index: 999;
    font-size: 6rem;
 }
 .hern-kiosk__fulfillment-section-secondary-text {
    font-size: 4em;
    font-weight: 700;
    margin: 0.5em 0;
-   z-index: 100000;
+   z-index: 999;
 }
 
 // menu page
@@ -576,7 +581,7 @@
    height: 32px;
    left: 30px;
    top: 35px;
-   font-family: Nunito;
+   // font-family: Nunito;
    font-style: normal;
    font-weight: bold;
    font-size: 30px;
@@ -651,7 +656,7 @@
    display: flex;
    align-items: center;
    margin-bottom: 1em;
-   font-family: Nunito;
+   // font-family: Nunito;
    font-style: normal;
    font-weight: bold;
    font-size: 1.7em;

@@ -28,7 +28,8 @@ import { useConfig } from '../../../lib'
 import { Loader } from '../..'
 import classNames from 'classnames'
 import { HernLazyImage } from '../../../utils/hernImage'
-import moment from 'moment'
+import isNull from 'lodash/isNull'
+import isEmpty from 'lodash/isEmpty'
 
 export const KioskModifier = props => {
    const {
@@ -639,16 +640,28 @@ export const KioskModifier = props => {
                      />
                   ) : (
                      <Carousel style={{ height: '20em', width: '20em' }}>
-                        {productData.assets.images.map((eachImage, index) => (
-                           <HernLazyImage
-                              dataSrc={eachImage}
-                              key={productData.id}
-                              style={{ height: '680px', width: '100%' }}
-                              width={680}
-                              height={680}
-                              className="hern-kiosk__menu-product-modifier-header-image"
-                           />
-                        ))}
+                        {productData.assets.images.map((eachImage, index) => {
+                           if (isNull(eachImage) || isEmpty(eachImage)) {
+                              return (
+                                 <HernLazyImage
+                                    dataSrc={
+                                       config.productSettings.defaultImage.value
+                                    }
+                                    style={{ height: '680px' }}
+                                 />
+                              )
+                           }
+                           return (
+                              <HernLazyImage
+                                 dataSrc={eachImage}
+                                 key={productData.id}
+                                 style={{ height: '680px', width: '100%' }}
+                                 width={680}
+                                 height={680}
+                                 className="hern-kiosk__menu-product-modifier-header-image"
+                              />
+                           )
+                        })}
                      </Carousel>
                   )}
                   {/* <KioskCounterButton
@@ -1071,7 +1084,7 @@ export const KioskModifier = props => {
                   <span
                      className="hern-kiosk__modifier-total-label"
                      style={{
-                        color: `${config.kioskSettings.theme.secondaryColor.value}`,
+                        color: `${config.modifierPopUpSettings.theme.totalTextColor.value}`,
                      }}
                   >
                      {t('Total')}
