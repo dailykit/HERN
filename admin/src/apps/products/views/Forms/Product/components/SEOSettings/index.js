@@ -20,7 +20,7 @@ const SEOSettings = ({ data }) => {
       },
    })
 
-   console.log(data, "🎁🎀🎄🎋🎍🎎")
+   // console.log(data, "🎁🎀🎄🎋🎍🎎")
    const update = ({ id, value }) => {
       updateSetting({
          variables: {

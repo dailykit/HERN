@@ -74,6 +74,8 @@ export const PRODUCT = {
             isPublished
             posist_baseItemId
             defaultProductOptionId
+            subCategory
+            VegNonVegType
             productOptions(
                where: { isArchived: { _eq: false } }
                order_by: { position: desc_nulls_last }
@@ -204,31 +206,41 @@ export const PRODUCT = {
    `,
    //product setting
    SETTING: gql`
-    subscription productSettings($productId: Int!) {
-  products_product_productSetting(where: {_and: {productId: {_eq: $productId}, productSetting: {isDynamicForm: {_eq: true}}}}) {
-    productId
-    value
-    productSetting {
-      id
-      identifier
-      type
-      isDynamicForm
-    }
-  }
-}
-`, UPDATE_PRODUCT_SETTING: gql`mutation upsertProductSetting(
-   $object: products_product_productSetting_insert_input!
-) {
-   upsertProductSetting: insert_products_product_productSetting_one(
-      object: $object
-      on_conflict: {
-         constraint: product_productSetting_pkey
-         update_columns: value
+      subscription productSettings($productId: Int!) {
+         products_product_productSetting(
+            where: {
+               _and: {
+                  productId: { _eq: $productId }
+                  productSetting: { isDynamicForm: { _eq: true } }
+               }
+            }
+         ) {
+            productId
+            value
+            productSetting {
+               id
+               identifier
+               type
+               isDynamicForm
+            }
+         }
       }
-   ) {
-      value
-   }
-}`
+   `,
+   UPDATE_PRODUCT_SETTING: gql`
+      mutation upsertProductSetting(
+         $object: products_product_productSetting_insert_input!
+      ) {
+         upsertProductSetting: insert_products_product_productSetting_one(
+            object: $object
+            on_conflict: {
+               constraint: product_productSetting_pkey
+               update_columns: value
+            }
+         ) {
+            value
+         }
+      }
+   `,
 }
 
 export const PRODUCT_OPTION = {
