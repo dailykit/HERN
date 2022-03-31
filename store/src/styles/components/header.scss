@@ -47,6 +47,7 @@
 }
 .hern-header__brand__logo {
    display: none;
+   cursor: pointer;
    @media (min-width: 600px) {
       display: block;
    }
@@ -54,6 +55,7 @@
 .hern-header__brand__logo--sm {
    display: block;
    max-height: 54px;
+   cursor: pointer;
    @media (min-width: 600px) {
       display: none;
    }
