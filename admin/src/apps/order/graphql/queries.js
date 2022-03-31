@@ -54,8 +54,10 @@ export const QUERIES = {
          ) {
             orders(
                where: {
-                  brandId: { _in: $brandId }
-                  locationId: { _in: $locationId }
+                  cart: {
+                     brandId: { _in: $brandId }
+                     locationId: { _in: $locationId }
+                  }
                   id: { _eq: $id }
                }
             ) {
