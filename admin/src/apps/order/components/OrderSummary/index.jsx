@@ -63,7 +63,7 @@ export const OrderSummary = ({ closeOrderSummaryTunnel }) => {
    //    data: { ordersAggregate = [] } = {},
    // } = useSubscription(QUERIES2.ORDERS_AGGREGATE)
    // console.log("orderSummary", ordersAggregate);
-
+   // console.log("BrandContextSummary", brandContext);
    const {
       loading,
       error,
@@ -94,7 +94,7 @@ export const OrderSummary = ({ closeOrderSummaryTunnel }) => {
          // console.log("orderSummary", order_orderStatusEnum);
       }
    })
-   console.log("orderSummary", ordersAggregate);
+   // console.log("orderSummary", ordersAggregate);
 
    const clearFilters = () => {
       dispatch({ type: 'CLEAR_READY_BY_FILTER' })

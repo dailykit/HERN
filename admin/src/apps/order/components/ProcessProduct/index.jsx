@@ -44,9 +44,8 @@ export const ProcessProduct = () => {
          const url = `${window._env_.REACT_APP_TEMPLATE_URL}?template={"name":"${product?.operationConfig?.labelTemplate?.name}","type":"label","format":"html"}&data={"id":${product?.id}}`
          setLabel(url)
       } else {
-         const url = `${
-            new URL(window._env_.REACT_APP_DATA_HUB_URI).origin
-         }/datahub/v1/query`
+         const url = `${new URL(window._env_.REACT_APP_DATA_HUB_URI).origin
+            }/datahub/v1/query`
 
          const data = { id: product?.id, status: 'READY' }
          await axios.post(

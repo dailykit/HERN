@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import { isEmpty, isNull } from 'lodash'
 import axios from 'axios'
 import { toast } from 'react-toastify'
@@ -34,6 +34,7 @@ import {
    StyledPackaging,
    StyledSOP,
 } from './styled'
+import { BrandContext } from '../../../../App'
 
 export const ProcessSachet = ({ closeOrderSummaryTunnel }) => {
    const {
@@ -49,6 +50,7 @@ export const ProcessSachet = ({ closeOrderSummaryTunnel }) => {
    const [isLoading, setIsLoading] = React.useState(true)
    const [scaleState, setScaleState] = React.useState('low')
    const [labelPreview, setLabelPreview] = React.useState('')
+   const [brandContext, setBrandContext] = useContext(BrandContext)
 
    const [updateCartItem] = useMutation(MUTATIONS.CART_ITEM.UPDATE, {
       onCompleted: () => toast.success('Succesfully updated sachet details!'),
@@ -64,6 +66,13 @@ export const ProcessSachet = ({ closeOrderSummaryTunnel }) => {
             id: { _eq: id },
             parentCartItemId: { _eq: state?.current_product?.id },
             levelType: { _eq: 'orderItemSachet' },
+            cart: {
+               brandId: {
+                  _in: brandContext.brandId
+               }, locationId: {
+                  _in: brandContext.locationId
+               }
+            }
          },
       },
       onSubscriptionData: ({
@@ -124,9 +133,8 @@ export const ProcessSachet = ({ closeOrderSummaryTunnel }) => {
          )}?template=${template}&data=${data}`
          setLabelPreview(url)
       } else {
-         const url = `${
-            new URL(get_env('REACT_APP_DATA_HUB_URI')).origin
-         }/datahub/v1/query`
+         const url = `${new URL(get_env('REACT_APP_DATA_HUB_URI')).origin
+            }/datahub/v1/query`
 
          const data = { id: sachet.id, status: 'READY' }
          await axios.post(
@@ -424,7 +432,7 @@ export const ProcessSachet = ({ closeOrderSummaryTunnel }) => {
                fallBackMessage="Pending order confirmation!"
                hasAccess={Boolean(
                   sachet?.cart?.order?.isAccepted &&
-                     !sachet?.cart?.order?.isRejected
+                  !sachet?.cart?.order?.isRejected
                )}
                onClick={() =>
                   updateCartItem({
@@ -447,7 +455,7 @@ export const ProcessSachet = ({ closeOrderSummaryTunnel }) => {
                fallBackMessage="Pending order confirmation!"
                hasAccess={Boolean(
                   sachet?.cart?.order?.isAccepted &&
-                     !sachet?.cart?.order?.isRejected
+                  !sachet?.cart?.order?.isRejected
                )}
                onClick={() =>
                   updateCartItem({
