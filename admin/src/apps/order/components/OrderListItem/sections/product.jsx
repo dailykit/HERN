@@ -6,7 +6,6 @@ import { Flex, Text } from '@dailykit/ui'
 import {
    Styles,
    StyledCount,
-   StyledServings,
    StyledProductItem,
    StyledProductTitle,
 } from './styled'

@@ -35,10 +35,12 @@ export const OrderSummary = ({ closeOrderSummaryTunnel }) => {
          variables: {
             where: {
                isArchived: { _eq: false },
-               brandId: {
-                  _in: brandContext.brandId
-               }, locationId: {
-                  _in: brandContext.locationId
+               cart: {
+                  brandId: {
+                     _in: brandContext.brandId
+                  }, locationId: {
+                     _in: brandContext.locationId
+                  }
                }
             }
          },
@@ -57,13 +59,6 @@ export const OrderSummary = ({ closeOrderSummaryTunnel }) => {
    //    }
    // )
 
-   // const {
-   //    loading,
-   //    error,
-   //    data: { ordersAggregate = [] } = {},
-   // } = useSubscription(QUERIES2.ORDERS_AGGREGATE)
-   // console.log("orderSummary", ordersAggregate);
-   // console.log("BrandContextSummary", brandContext);
    const {
       loading,
       error,
@@ -140,14 +135,14 @@ export const OrderSummary = ({ closeOrderSummaryTunnel }) => {
             )}
          </Flex> */}
          <Spacer size="8px" />
-         {/* <MetricItem
+         <MetricItem
             title="All"
             variant="ORDER_ALL"
             count={orders?.aggregate?.count}
             amount={orders?.aggregate?.sum?.amountPaid}
             average={orders?.aggregate?.avg?.amountPaid}
             closeOrderSummaryTunnel={closeOrderSummaryTunnel}
-         /> */}
+         />
          <ul>
             {ordersAggregate.map(({ title, value, count, sum, avg }) => (
                <MetricItem

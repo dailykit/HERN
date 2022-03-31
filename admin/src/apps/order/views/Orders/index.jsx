@@ -46,6 +46,7 @@ const Orders = () => {
          where: {
             ...state.orders.where,
             cart: {
+               ...state.orders.where.cart,
                brandId: {
                   _in: brandContext.brandId
                },

@@ -1012,7 +1012,7 @@ export const QUERIES2 = {
          $brandId: Int_comparison_exp!
          $locationId: Int_comparison_exp!
       ) {
-         order_orderStatusEnum(order_by: { index: desc }) {
+         order_orderStatusEnum(order_by: { index: asc }) {
             index
             title
             value
