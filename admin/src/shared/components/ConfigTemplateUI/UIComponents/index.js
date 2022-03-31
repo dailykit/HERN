@@ -394,8 +394,10 @@ export const TextArea = ({
             value={fieldDetail?.value || fieldDetail.default}
          />
       ) : (
-         <Text as="h3" style={{ color: '#555B6E', fontSize: "16px" }}>
-            {fieldDetail?.value?.length > 45 ? fieldDetail?.value?.substring(0, 25) : (fieldDetail?.value || fieldDetail.default)}
+         <Text as="h3" style={{ color: '#555B6E', fontSize: '16px' }}>
+            {fieldDetail?.value?.length > 45
+               ? fieldDetail?.value?.substring(0, 25)
+               : fieldDetail?.value || fieldDetail.default}
          </Text>
       )}
    </Flex>
@@ -833,8 +835,8 @@ export const MultipleImageUpload = props => {
          {editMode ? (
             <Flex width="50%" style={{ position: 'relative', top: '22px' }}>
                {fieldDetail?.value?.url &&
-                  fieldDetail?.value?.url !== null &&
-                  fieldDetail?.value?.url.length ? (
+               fieldDetail?.value?.url !== null &&
+               fieldDetail?.value?.url.length ? (
                   <Gallery
                      list={fieldDetail.value.url || []}
                      isMulti={true}
@@ -892,14 +894,13 @@ export const MultipleImageUpload = props => {
 }
 
 const PRODUCT_ID = gql`
-  subscription ProductCollections {
-  collections: products(order_by: {created_at: desc}) {
-    id
-    title: name
-    value: name
-  }
-}
-
+   subscription ProductCollections {
+      collections: products(order_by: { created_at: desc }) {
+         id
+         title: name
+         value: name
+      }
+   }
 `
 export const ProductSelector = props => {
    // props
@@ -910,12 +911,14 @@ export const ProductSelector = props => {
       error: subsError,
       data: { collections = [] } = {},
    } = useSubscription(PRODUCT_ID)
+
    const selectedOptionHandler = options => {
       const e = {
          target: {
             name: path,
          },
       }
+      console.log('productSelector', e, options)
       onConfigChange(e, options)
    }
    if (subsLoading) {
@@ -940,7 +943,7 @@ export const ProductSelector = props => {
                </Form.Label>
                <Tooltip identifier="select_component_info" />
             </Flex>
-            {editMode ?
+            {editMode ? (
                <Dropdown
                   type={fieldDetail?.type || 'single'}
                   options={collections}
@@ -948,8 +951,12 @@ export const ProductSelector = props => {
                   searchedOption={option => console.log(option)}
                   selectedOption={option => selectedOptionHandler(option)}
                   placeholder="choose product..."
-               /> :
-               <Text as="h4" className="showPhoneNumber">{"choose product..." || fieldDetail?.value}</Text>}
+               />
+            ) : (
+               <Text as="h4" className="showPhoneNumber">
+                  {fieldDetail?.value?.title || 'choose product...'}
+               </Text>
+            )}
          </Flex>
       </>
    )
