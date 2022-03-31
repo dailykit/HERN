@@ -34,6 +34,7 @@ import { ServiceInfo } from '../ServiceInfo'
 import { InfoIcon } from '../../../../shared/assets/icons'
 import { InlineLoader } from '../../../../shared/components'
 import { get_env } from '../../../../shared/utils'
+import { useBrand } from '../../../../shared/hooks'
 
 const formatTime = time =>
    moment(time).tz('Asia/Calcutta|Asia/Kolkata').format('YYYY-MM-DD hh:mm')
@@ -77,6 +78,7 @@ export const DeliveryConfig = ({ closeTunnel: closeParentTunnel }) => {
       updateOrder,
       state: { delivery_config },
    } = useOrder()
+   const { fetchBrandSettings } = useBrand()
    const [selectedService, setSelectedService] = React.useState(null)
    const [serviceInfo, setServiceInfo] = React.useState(null)
    const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
@@ -96,6 +98,20 @@ export const DeliveryConfig = ({ closeTunnel: closeParentTunnel }) => {
    }
 
    const addDeliveryPartner = async () => {
+      const { configOf } = await fetchBrandSettings({
+         domain: isClient ? window.location.hostname : '',
+         identifiers: ['Location', 'Contact', 'Brand Info'],
+      })
+      const brand = configOf('Brand Info', 'brand')
+      const contact = configOf('Contact', 'brand')
+      const location = configOf('Location', 'availability')
+      const organizationDetails = {
+         organizationId: 502,
+         organizationName: brand?.brandName?.value || '',
+         organizationPhone: contact?.Contact?.phoneNo?.value || '',
+         organizationEmail: contact?.Contact?.email?.value || '',
+         organizationAddress: location?.Location?.value || '',
+      }
       await updateOrder({
          id: order.id,
          set: selectedService.partnershipId
@@ -215,36 +231,7 @@ export const DeliveryConfig = ({ closeTunnel: closeParentTunnel }) => {
                              isRequired: false,
                           },
                        },
-                       pickupInfo: {
-                          //   organizationId: process.env.ORGANIZATION_ID,
-                          //   organizationName: settings?.brand?.name,
-                          //   organizationPhone: settings?.contact?.phoneNo,
-                          //   organizationEmail: settings?.contact?.email,
-                          //   organizationAddress: {
-                          //      line1: settings?.address?.line1,
-                          //      line2: settings?.address?.line2,
-                          //      city: settings?.address?.city,
-                          //      state: settings?.address?.state,
-                          //      country: settings?.address?.country,
-                          //      zipcode: settings?.address?.zip,
-                          //      latitude: settings?.address?.lat,
-                          //      longitude: settings?.address?.lng,
-                          //   },
-                          organizationId: 502,
-                          organizationName: 'Chefbaskit',
-                          organizationPhone: '+917011122390',
-                          organizationEmail: 'chefbaskit@gmail.com',
-                          organizationAddress: {
-                             line1: 'Kaveri nagar',
-                             line2: 'k c Halli main road, bommanahalli',
-                             city: 'Bengaluru',
-                             state: 'Karnataka',
-                             country: 'India',
-                             zipcode: '560068',
-                             lat: 12.8985,
-                             lng: 77.61799,
-                          },
-                       },
+                       pickupInfo: organizationDetails,
                     },
                     ...(isPickup(
                        delivery_config?.order?.cart?.fulfillmentInfo?.type
@@ -393,36 +380,7 @@ export const DeliveryConfig = ({ closeTunnel: closeParentTunnel }) => {
                              data: {},
                           },
                        },
-                       returnInfo: {
-                          //   organizationId: process.env.ORGANIZATION_ID,
-                          //   organizationName: settings?.brand?.name,
-                          //   organizationPhone: settings?.contact?.phoneNo,
-                          //   organizationEmail: settings?.contact?.email,
-                          //   organizationAddress: {
-                          //      line1: settings?.address?.line1,
-                          //      line2: settings?.address?.line2,
-                          //      city: settings?.address?.city,
-                          //      state: settings?.address?.state,
-                          //      country: settings?.address?.country,
-                          //      zipcode: settings?.address?.zip,
-                          //      latitude: settings?.address?.lat,
-                          //      longitude: settings?.address?.lng,
-                          //   },
-                          organizationId: 502,
-                          organizationName: 'Chefbaskit',
-                          organizationPhone: '+917011122390',
-                          organizationEmail: 'chefbaskit@gmail.com',
-                          organizationAddress: {
-                             line1: 'Kaveri nagar',
-                             line2: 'k c Halli main road, bommanahalli',
-                             city: 'Bengaluru',
-                             state: 'Karnataka',
-                             country: 'India',
-                             zipcode: '560068',
-                             latitude: '12.898500',
-                             longitude: '77.617990',
-                          },
-                       },
+                       returnInfo: organizationDetails,
                     },
                  },
               }
