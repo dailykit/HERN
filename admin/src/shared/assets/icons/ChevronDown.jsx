@@ -12,7 +12,7 @@ export const ChevronDown = ({ color = '#919699', size = '25' }) => (
          d="M17 10.6017L12 14.851L7 10.6017"
          stroke={color}
          strokeWidth="2"
-         stroke-linecap="round"
+         strokeLinecap="round"
          stroke-linejoin="round"
       />
    </svg>
