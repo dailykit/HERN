@@ -315,3 +315,21 @@ export const SETTINGS_QUERY = gql`
       }
    }
 `
+
+export const GET_BRAND_COUPONS = gql`
+   subscription couponsCollections($brandId: Int) {
+      coupons: brandCoupons(
+         where: {
+            isActive: { _eq: true }
+            brandId: { _eq: $brandId }
+            coupon: { isActive: { _eq: true } }
+         }
+      ) {
+         coupon {
+            id
+            title: code
+            value: id
+         }
+      }
+   }
+`
