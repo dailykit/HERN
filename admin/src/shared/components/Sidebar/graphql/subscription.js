@@ -49,6 +49,7 @@ export const LOCATION_SELECTOR_LIST = gql`
                value
             }
             brand_locations {
+               id
                location {
                   id
                   label
