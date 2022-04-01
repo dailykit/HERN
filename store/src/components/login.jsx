@@ -116,25 +116,6 @@ export const Login = props => {
                <span>{t('Forgot Password')}</span>
             )}
             {defaultLogin === 'signup' && <span>{t('Sign Up')}</span>}
-
-            {/* google or facebook */}
-            {socialLogin && <SocialLogin callbackURL={callbackURL} />}
-            {defaultLogin !== 'signup' &&
-               showCreateOne &&
-               authConfig.loginSettings?.signup?.value && (
-                  <footer className="hern-login-v1__footer">
-                     <span>{t('No account?')} </span>{' '}
-                     <button
-                        className="hern-login-v1__create-one-btn"
-                        onClick={() => {
-                           setAuth('sign-up')
-                           setDefaultLogin('signup')
-                        }}
-                     >
-                        {t('Create one')}
-                     </button>
-                  </footer>
-               )}
             {!forceLogin && (
                <CloseIcon
                   size={18}
@@ -187,7 +168,6 @@ export const Login = props => {
                   callbackURL={callbackURL}
                />
             )}
-            {/* {defaultLogin === 'email' ? <Email /> : <OTPLogin />} */}
 
             {!singleLoginMethod && (
                <>
@@ -227,6 +207,17 @@ export const Login = props => {
                   }}
                >
                   {t('Create one')}
+               </button>
+            </footer>
+         )}
+         {defaultLogin === 'signup' && (
+            <footer className="hern-login-v1__footer">
+               <span>{t('Already have an account ?')} </span>
+               <button
+                  className="hern-login-v1__create-one-btn"
+                  onClick={() => setDefaultLogin('email')}
+               >
+                  {t('Login')}
                </button>
             </footer>
          )}
