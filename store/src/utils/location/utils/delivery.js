@@ -81,14 +81,15 @@ export const isStoreOnDemandDeliveryAvailable = async (
 
                      if (status || rec == finalRecurrences.length - 1) {
                         return {
-                           status,
+                           status: validTimeSlots.length > 0,
                            result: distanceDeliveryStatus.result,
                            rec: fulfilledRecurrences,
                            mileRangeInfo: distanceDeliveryStatus.mileRangeInfo,
                            timeSlotInfo: timeslot,
-                           message: status
-                              ? 'Delivery available in your location'
-                              : 'Delivery not available in your location.',
+                           message:
+                              validTimeSlots.length > 0
+                                 ? 'Delivery available in your location'
+                                 : 'Delivery not available in your location.',
                            drivableDistance:
                               distanceDeliveryStatus.drivableDistance,
                         }
@@ -181,14 +182,15 @@ export const isStorePreOrderDeliveryAvailable = async (
                   timeslotIndex == timesSlotsLength - 1
                ) {
                   return {
-                     status,
+                     status: validTimeSlots.length > 0,
                      result: distanceDeliveryStatus.result,
                      rec: fulfilledRecurrences,
                      mileRangeInfo: distanceDeliveryStatus.mileRangeInfo,
                      timeSlotInfo: timeslot,
-                     message: status
-                        ? 'Pre Order Delivery available in your location'
-                        : 'Delivery not available in your location.',
+                     message:
+                        validTimeSlots.length > 0
+                           ? 'Pre Order Delivery available in your location'
+                           : 'Delivery not available in your location.',
                      drivableDistance: distanceDeliveryStatus.drivableDistance,
                   }
                } else {
@@ -242,8 +244,10 @@ const isStoreDeliveryAvailableByDistance = async (
                isStoreDeliveryAvailableByDistanceStatus['isDistanceValid'] =
                   result && !mileRanges[mileRange].isExcluded
             } else {
-               break
+               continue
             }
+         } else {
+            isStoreDeliveryAvailableByDistanceStatus['isDistanceValid'] = true
          }
       }
       // drivable distance
@@ -300,6 +304,8 @@ const isStoreDeliveryAvailableByDistance = async (
             } catch (error) {
                console.log('getDataWithDrivableDistance', error)
             }
+         } else {
+            isStoreDeliveryAvailableByDistanceStatus['isDistanceValid'] = true
          }
       }
 
@@ -309,7 +315,10 @@ const isStoreDeliveryAvailableByDistance = async (
          mileRanges[mileRange].zipcodes
       ) {
          // assuming null as true
-         if (mileRanges[mileRange].zipcodes === null) {
+         if (
+            mileRanges[mileRange].zipcodes === null ||
+            mileRanges[mileRange].zipcodes.zipcodes.length == 0
+         ) {
             isStoreDeliveryAvailableByDistanceStatus['zipcode'] = true
          } else {
             const zipcodes = mileRanges[mileRange].zipcodes.zipcodes
