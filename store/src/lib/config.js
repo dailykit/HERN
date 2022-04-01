@@ -78,6 +78,8 @@ export const ConfigProvider = ({ children }) => {
       'currentPage',
       'fulfillmentPage'
    )
+   const [currentAuth, setAuth, deleteAuth] = useQueryParamState('auth')
+
    const [showLocationSelectorPopup, setShowLocationSelectionPopup] =
       React.useState(false)
 
@@ -190,6 +192,9 @@ export const ConfigProvider = ({ children }) => {
             showLocationSelectorPopup,
             setShowLocationSelectionPopup,
             setIsLoading,
+            currentAuth,
+            setAuth,
+            deleteAuth,
          }}
       >
          {children}
@@ -213,6 +218,9 @@ export const useConfig = (globalType = '') => {
       showLocationSelectorPopup,
       setShowLocationSelectionPopup,
       setIsLoading,
+      currentAuth,
+      setAuth,
+      deleteAuth,
    } = React.useContext(ConfigContext)
 
    const hasConfig = React.useCallback(
@@ -278,5 +286,8 @@ export const useConfig = (globalType = '') => {
       isStoreAvailable,
       kioskAvailability: state.kioskAvailability,
       setIsLoading,
+      currentAuth,
+      setAuth,
+      deleteAuth,
    }
 }

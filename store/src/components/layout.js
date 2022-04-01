@@ -5,7 +5,12 @@ import { TemplateFile } from '.'
 import { MailIcon, PhoneIcon } from '../assets/icons'
 import { useTranslation, useUser } from '../context'
 import { useConfig } from '../lib'
-import { getRoute, normalizeAddress } from '../utils'
+import {
+   getRoute,
+   normalizeAddress,
+   setThemeVariable,
+   isClient,
+} from '../utils'
 import FloatingBar from './floatingBar'
 import { Header } from './header'
 
@@ -36,6 +41,10 @@ export const Layout = ({
    const theme = settings['Visual']?.['theme-color']?.themeColor
    const { direction } = useTranslation()
    const { dispatch, setIsLoading } = useConfig()
+
+   //Making theme variable for all pages
+   setThemeVariable('--hern-accent', theme?.accent?.value)
+
    React.useEffect(() => {
       dispatch({
          type: 'SET_BRANDID',
@@ -47,6 +56,22 @@ export const Layout = ({
       })
       setIsLoading(false)
    }, [settings])
+
+   React.useEffect(() => {
+      if (isClient) {
+         const signInButton = document.getElementById('footer-sign-in-button')
+         const signUpButton = document.getElementById('footer-sign-up-button')
+         if (signInButton && signUpButton) {
+            if (signInButton && isAuthenticated) {
+               signInButton.style.display = 'none'
+               signUpButton.style.display = 'none'
+            } else {
+               signInButton.style.display = 'block'
+               signUpButton.style.display = 'block'
+            }
+         }
+      }
+   }, [isAuthenticated])
 
    return (
       <div dir={direction}>
