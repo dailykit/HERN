@@ -14,7 +14,7 @@ export const ChevronUp = ({ size = 18, color = '#367BF5' }) => (
          stroke={color}
          strokeWidth="2"
          strokeLinecap="round"
-         stroke-linejoin="round"
+         strokeLinejoin="round"
       />
    </svg>
 )
