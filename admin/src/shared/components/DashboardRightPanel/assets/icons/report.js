@@ -94,8 +94,8 @@ export const ReportIcon = () => (
             y2="32.6915"
             gradientUnits="userSpaceOnUse"
          >
-            <stop stop-color="#367BF5" />
-            <stop offset="1" stop-color="#367BF5" stop-opacity="0" />
+            <stop stopColor="#367BF5" />
+            <stop offset="1" stopColor="#367BF5" stop-opacity="0" />
          </linearGradient>
       </defs>
    </svg>
