@@ -36,6 +36,7 @@ import { Typography, Slider } from 'antd'
 
 import { BrandContext } from '../../../../App'
 import { useContext } from 'react'
+import { GET_BRAND_COUPONS } from '../../../graphql'
 
 const { Paragraph } = Typography
 
@@ -1054,20 +1055,6 @@ export const ImageWrapper = styled.div`
 `
 
 // Coupon Selector
-const COUPON_ID = gql`
-   subscription couponsCollections($brandId: Int) {
-      coupons: brandCoupons(
-         where: { isActive: { _eq: true }, brandId: { _eq: $brandId } }
-      ) {
-         coupon {
-            id
-            title: code
-            value: code
-         }
-      }
-   }
-`
-
 export const CouponSelector = props => {
    // props
    const { fieldDetail, marginLeft, path, onConfigChange, editMode } = props
@@ -1077,7 +1064,7 @@ export const CouponSelector = props => {
       loading: subsLoading,
       error: subsError,
       data: { coupons = [] } = {},
-   } = useSubscription(COUPON_ID, {
+   } = useSubscription(GET_BRAND_COUPONS, {
       variables: {
          brandId: brandContext.brandId,
       },
@@ -1095,7 +1082,7 @@ export const CouponSelector = props => {
       return <InlineLoader />
    }
    if (subsError) {
-      return <ErrorState message="product not found" />
+      return <ErrorState message="coupon not found" />
    }
 
    return (
