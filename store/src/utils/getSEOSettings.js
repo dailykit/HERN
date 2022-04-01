@@ -46,6 +46,7 @@ export const getSEOSettings = async (domain, dataByRoute) => {
       ogImage: getSEOValue('ogImage', 'og-card'),
       ogTitle: getSEOValue('ogTitle', 'og-card'),
       ogDescription: getSEOValue('ogDescription', 'og-card'),
+      ogUrl: getSEOValue('ogURL', 'og-card'),
       googleAnalyticsId: getSEOValue('googleAnalyticsId', 'googleAnalyticsId'),
       facebookPixelId: getSEOValue('fbPixelId', 'facebookPixelId'),
       additionalTags: getSEOValue('additionalTags', 'additionalTags')
@@ -102,6 +103,7 @@ export const getProductSEOSettings = async (productId) => {
       ogImage: getSEOValue('ogImage', 'og-card') || null,
       ogTitle: getSEOValue('ogTitle', 'og-card') || null,
       ogDescription: getSEOValue('ogDescription', 'og-card') || null,
+      ogUrl: getSEOValue('ogURL', 'og-card') || null,
       googleAnalyticsId: getSEOValue('googleAnalyticsId', 'googleAnalyticsId') || null,
       facebookPixelId: getSEOValue('fbPixelId', 'facebookPixelId') || null
    }
