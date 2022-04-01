@@ -1,29 +1,19 @@
 import React, { useState } from 'react'
 import gql from 'graphql-tag'
 import Loadable from 'react-loadable'
-import { Loader, Spacer } from '@dailykit/ui'
+import { Loader } from '@dailykit/ui'
 import { useSubscription } from '@apollo/react-hooks'
-import { Switch, Route, Link } from 'react-router-dom'
-import FullOccurrenceReport from './shared/components/FullOccurrenceReport'
-import { isKeycloakSupported } from './shared/utils'
+import { Switch, Route } from 'react-router-dom'
+// import { isKeycloakSupported } from './shared/utils'
 import {
    TabBar,
-   RedirectBanner,
-   InsightDashboard,
-   AddressTunnel,
    Banner,
    Sidebar,
 } from './shared/components'
 import {
-   AppItem,
-   AppList,
-   AppIcon,
    Layout,
-   InsightDiv,
    DashboardPanel,
-   NavMenuPanel,
    HomeContainer,
-   WelcomeNote,
    DashboardRight,
 } from './styled'
 
@@ -137,7 +127,6 @@ export const BrandContext = React.createContext()
 const App = () => {
    // const location = useLocation()
    // const { routes, setRoutes } = useTabs()
-   const { pathname } = useLocation()
    const { loading, data: { apps = [] } = {} } = useSubscription(APPS)
    const user = useAuth()
    const { tabs } = useTabs()
@@ -145,7 +134,8 @@ const App = () => {
       brandId: null,
       brandName: "",
       locationId: null,
-      locationLabel: ""
+      locationLabel: "",
+      isLoading: true
    })
 
    console.log("user", user.user.email);
@@ -161,7 +151,8 @@ const App = () => {
             brandId: subscriptionData.data.settings_user[0]?.brand?.id || null,
             brandName: subscriptionData.data.settings_user[0]?.brand?.title || '',
             locationId: subscriptionData.data.settings_user[0]?.location?.id || null,
-            locationLabel: subscriptionData.data.settings_user[0]?.location?.label || ''
+            locationLabel: subscriptionData.data.settings_user[0]?.location?.label || '',
+            isLoading: false,
          })
       }
    })

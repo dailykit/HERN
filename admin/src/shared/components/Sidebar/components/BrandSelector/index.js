@@ -1,11 +1,11 @@
 import { useSubscription } from '@apollo/react-hooks'
 import { Spacer } from '@dailykit/ui'
 import { Avatar } from 'antd'
-import { rearg } from 'lodash'
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext, useState } from 'react'
 import { BrandContext } from '../../../../../App'
 import { UnionIcon } from '../../../../assets/icons'
 import { ArrowDown, ArrowUp } from '../../../../assets/navBarIcons'
+import { InlineLoader } from '../../../InlineLoader'
 import { LOCATION_SELECTOR_LIST } from '../../graphql/subscription'
 import {
    StyledBrandLocations,
@@ -20,8 +20,8 @@ const BrandSelector = ({ mouseOver }) => {
    const [locationArrowClicked, setLocationArrowClicked] = useState(false)
    const [brandList, setBrandList] = React.useState([])
    const [brandContext, setBrandContext] = useContext(BrandContext)
-
    const { loading } = useSubscription(LOCATION_SELECTOR_LIST, {
+      skip: brandContext.isLoading,
       variables: {
          identifier: 'Brand Info',
       },
@@ -45,7 +45,7 @@ const BrandSelector = ({ mouseOver }) => {
             }
          )
          // setBrandList(result)
-         console.log('result', result)
+         // console.log('result', result)
 
          if (
             //organization scope
@@ -61,7 +61,8 @@ const BrandSelector = ({ mouseOver }) => {
                locationId: result[0]?.location[0]?.location.id,
                locationLabel: result[0]?.location[0]?.location.label,
             })
-            return setBrandList(result)
+
+            setBrandList(result)
          } else if (
             //brand scope
             brandContext.brandId !== null &&
@@ -74,7 +75,7 @@ const BrandSelector = ({ mouseOver }) => {
                locationId: result[0]?.location[0]?.location.id,
                locationLabel: result[0]?.location[0]?.location.label,
             })
-            return setBrandList([
+            setBrandList([
                result[result.findIndex(obj => obj.id === brandContext.brandId)],
             ])
          } else if (
@@ -93,7 +94,7 @@ const BrandSelector = ({ mouseOver }) => {
                logo: result[index].logo,
                domain: result[index].domain,
             })
-            return setBrandList([
+            setBrandList([
                {
                   domain: result[index].domain,
                   id: result[index].id,
@@ -113,7 +114,7 @@ const BrandSelector = ({ mouseOver }) => {
                locationId: result[0]?.location[0]?.location.id,
                locationLabel: result[0]?.location[0]?.location.label,
             })
-            return setBrandList([
+            setBrandList([
                {
                   id: brandContext.brandId,
                   title: brandContext.brandName,
@@ -131,7 +132,7 @@ const BrandSelector = ({ mouseOver }) => {
       },
    })
    console.log('brandContext', brandContext)
-   console.log('brandList', brandList)
+   // console.log('brandList', brandList)
 
    React.useEffect(() => {
       setBrandContext({
@@ -147,6 +148,7 @@ const BrandSelector = ({ mouseOver }) => {
       })
    }, [brandContext.brandId])
 
+   if (loading) return <InlineLoader />
    return (
       <div style={{ padding: '7px', textAlign: 'center' }}>
          {mouseOver ? (
