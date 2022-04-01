@@ -139,10 +139,6 @@
       margin: 15px 0px 10px;
    }
    .hern-product_gallery__container {
-      .hern-product-card {
-         align-items: center;
-         flex-direction: column !important;
-      }
       .hern-product-card-content {
          padding: 0px;
       }
@@ -175,10 +171,6 @@
       margin: 15px 0px 10px;
    }
    .hern-product_gallery__container {
-      .hern-product-card {
-         align-items: center;
-         flex-direction: column !important;
-      }
       .hern-product-card-content {
          padding: 0px;
       }
@@ -212,5 +204,11 @@
       border-radius: 3px;
       padding: 4px 12px;
       margin-top: 12px;
+   }
+}
+.hern-product-galllery__product__display--1 {
+   .hern-product-card {
+      align-items: center;
+      flex-direction: column !important;
    }
 }
