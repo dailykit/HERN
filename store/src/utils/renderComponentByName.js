@@ -124,6 +124,12 @@ const SliderSection2 = dynamic(() =>
 const FeaturedCoupon = dynamic(() =>
    import('../sections/featured-coupon').then(promise => promise.FeaturedCoupon)
 )
+const FrequentlyAskedQuestions = dynamic(() =>
+   import('../sections/faq-section').then(
+      promise => promise.FrequentlyAskedQuestions
+   )
+)
+
 export const renderComponentByName = (fold, options) => {
    const getProps = component => {
       if (options) {
@@ -328,5 +334,7 @@ export const renderComponentByName = (fold, options) => {
          return <SliderSection2 config={fold.config} />
       case 'FeaturedCoupon':
          return <FeaturedCoupon config={fold.config} />
+      case 'FrequentlyAskedQuestions':
+         return <FrequentlyAskedQuestions config={fold.config} />
    }
 }
