@@ -543,7 +543,8 @@ const DeliveryDetails = ({ details }) => {
                         <p>
                            {deliveryInfo.tracking.eta?.dropoff > 0
                               ? `Estimated Time: ${
-                                   deliveryInfo.tracking.eta?.dropoff || 'N/A'
+                                   (deliveryInfo.tracking.eta?.pickup || 0) +
+                                   (deliveryInfo.tracking.eta?.dropoff || 0)
                                 } mins`
                               : `${
                                    deliveryInfo.assigned?.driverInfo
