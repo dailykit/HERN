@@ -81,7 +81,7 @@ export const ProductGallery = ({ config }) => {
          </div>
       )
    return (
-      <>
+      <div className="hern-product_gallery__container">
          <div className="hern-product_gallery-header">
             <h3
                className={
@@ -145,7 +145,7 @@ export const ProductGallery = ({ config }) => {
          ) : (
             <Loader />
          )}
-      </>
+      </div>
    )
 }
 

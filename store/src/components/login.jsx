@@ -1115,7 +1115,7 @@ const Signup = props => {
       onError: error => {
          setLoading(false)
          if (error.message.includes('customer__phoneNumber_key')) {
-            setPhoneError(<span>{t('Phone no. already exist')}</span>)
+            setPhoneError(<span>{t('Phone number already exist')}</span>)
          }
          console.error(error)
       },

@@ -54,7 +54,7 @@ const CreateSubscription = ({ closeTunnel }) => {
             },
          ])
          toast.success('Successfully created the Subscription!')
-         closeTunnel(14)
+         closeTunnel(1)
       },
       onError: () =>
          toast.success('Failed to create the Subscription, please try again!'),
@@ -156,7 +156,7 @@ const CreateSubscription = ({ closeTunnel }) => {
             },
          },
       ])
-      closeTunnel(14)
+      closeTunnel(1)
    }
    return (
       <>

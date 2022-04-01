@@ -690,31 +690,6 @@ export const INFORMATION_GRID = gql`
    }
 `
 
-export const FAQ = gql`
-   subscription faq(
-      $page: String_comparison_exp!
-      $identifier: String_comparison_exp!
-   ) {
-      faq: content_faqs(
-         where: {
-            page: $page
-            isVisible: { _eq: true }
-            identifier: $identifier
-         }
-      ) {
-         id
-         heading
-         subHeading
-         identifier
-         blocks: informationBlocks {
-            id
-            title
-            description
-         }
-      }
-   }
-`
-
 export const OUR_MENU = {
    TITLES: gql`
       query titles($brandId: Int!) {
