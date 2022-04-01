@@ -301,3 +301,17 @@ export const GET_BOTTOM_BAR_OPTIONS = gql`
       }
    }
 `
+
+export const SETTINGS_QUERY = gql`
+   query settings($where: brands_brand_brandSetting_bool_exp!) {
+      settings: brands_brand_brandSetting(where: $where) {
+         value
+         brandId
+         meta: brandSetting {
+            id
+            type
+            identifier
+         }
+      }
+   }
+`
