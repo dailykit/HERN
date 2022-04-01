@@ -28,6 +28,7 @@ import {
    DeliveryStates,
    StyledDeliveryBy,
    StyledTag,
+   StyledTime,
 } from './styled'
 import { normalizeAddress, formatDate } from '../../utils'
 import { ServiceInfo } from '../ServiceInfo'
@@ -106,7 +107,7 @@ export const DeliveryConfig = ({ closeTunnel: closeParentTunnel }) => {
       const contact = configOf('Contact', 'brand')
       const location = configOf('Location', 'availability')
       const organizationDetails = {
-         organizationId: 502,
+         organizationId: process.env.ORGANIZATION_ID || 502,
          organizationName: brand?.brandName?.value || '',
          organizationPhone: contact?.Contact?.phoneNo?.value || '',
          organizationEmail: contact?.Contact?.email?.value || '',
@@ -529,61 +530,109 @@ const DeliveryDetails = ({ details }) => {
                title={deliveryInfo.deliveryCompany.name || 'N/A'}
             />
          </StyledDeliveryBy>
-         <GoogleMap
-            center={coordinates.driver}
-            zoom={15}
-            options={options}
-            onLoad={onMapLoad}
-            mapContainerStyle={containerStyle}
+         <div
+            style={{
+               position: 'relative',
+               ...containerStyle,
+            }}
          >
-            <Marker
-               position={coordinates.organization}
-               icon={{
-                  url: 'https://dailykit-133-test.s3.us-east-2.amazonaws.com/icons/store.png',
-                  ...(isClient && {
-                     scaledSize: new window.google.maps.Size(30, 30),
-                     origin: new window.google.maps.Point(0, 0),
-                     anchor: new window.google.maps.Point(15, 15),
-                  }),
-               }}
-            />
-            <Marker
-               position={coordinates.customer}
-               icon={{
-                  url: 'https://dailykit-133-test.s3.us-east-2.amazonaws.com/icons/home.png',
-                  ...(isClient && {
-                     scaledSize: new window.google.maps.Size(30, 30),
-                     origin: new window.google.maps.Point(0, 0),
-                     anchor: new window.google.maps.Point(15, 15),
-                  }),
-               }}
-            />
-            <Marker
-               position={coordinates.driver}
-               icon={{
-                  url: 'https://dailykit-133-test.s3.us-east-2.amazonaws.com/icons/driver.png',
-                  ...(isClient && {
-                     scaledSize: new window.google.maps.Size(30, 30),
-                     origin: new window.google.maps.Point(0, 0),
-                     anchor: new window.google.maps.Point(15, 15),
-                  }),
-               }}
-            />
-            <DirectionsService
-               options={{
-                  destination: coordinates.customer,
-                  origin: coordinates.organization,
-                  travelMode: 'DRIVING',
-               }}
-               callback={(response, status) => {
-                  if (status === 'OK') {
-                     setDirections(response)
-                  }
-               }}
-            />
-            {directions && <DirectionsRenderer directions={directions} />}
-         </GoogleMap>
+            {deliveryInfo.dropoff.status.value !== 'SUCCEEDED' ? (
+               <>
+                  {deliveryInfo.tracking.eta && (
+                     <StyledTime>
+                        <p>
+                           {deliveryInfo.tracking.eta?.dropoff > 0
+                              ? `Estimated Time: ${
+                                   deliveryInfo.tracking.eta?.dropoff || 'N/A'
+                                } mins`
+                              : `${
+                                   deliveryInfo.assigned?.driverInfo
+                                      ?.driverFirstName || 'Partner'
+                                } reached at your location`}
+                        </p>
+                     </StyledTime>
+                  )}
+                  <GoogleMap
+                     center={coordinates.driver}
+                     zoom={15}
+                     options={options}
+                     onLoad={onMapLoad}
+                     mapContainerStyle={containerStyle}
+                  >
+                     <Marker
+                        position={coordinates.organization}
+                        icon={{
+                           url: 'https://dailykit-133-test.s3.us-east-2.amazonaws.com/icons/store.png',
+                           ...(isClient && {
+                              scaledSize: new window.google.maps.Size(30, 30),
+                              origin: new window.google.maps.Point(0, 0),
+                              anchor: new window.google.maps.Point(15, 15),
+                           }),
+                        }}
+                     />
+                     <Marker
+                        position={coordinates.customer}
+                        icon={{
+                           url: 'https://dailykit-133-test.s3.us-east-2.amazonaws.com/icons/home.png',
+                           ...(isClient && {
+                              scaledSize: new window.google.maps.Size(30, 30),
+                              origin: new window.google.maps.Point(0, 0),
+                              anchor: new window.google.maps.Point(15, 15),
+                           }),
+                        }}
+                     />
+                     <Marker
+                        position={coordinates.driver}
+                        icon={{
+                           url: 'https://dailykit-133-test.s3.us-east-2.amazonaws.com/icons/driver.png',
+                           ...(isClient && {
+                              scaledSize: new window.google.maps.Size(30, 30),
+                              origin: new window.google.maps.Point(0, 0),
+                              anchor: new window.google.maps.Point(15, 15),
+                           }),
+                        }}
+                     />
+                     <DirectionsService
+                        options={{
+                           destination: coordinates.customer,
+                           origin: coordinates.organization,
+                           travelMode: 'DRIVING',
+                        }}
+                        callback={(response, status) => {
+                           if (status === 'OK') {
+                              setDirections(response)
+                           }
+                        }}
+                     />
+                     {directions && (
+                        <DirectionsRenderer directions={directions} />
+                     )}
+                  </GoogleMap>
+               </>
+            ) : (
+               <div
+                  style={{
+                     display: 'flex',
+                     flexDirection: 'column',
+                     alignItems: 'center',
+                     justifyContent: 'center',
+                     background: '#e5e5e5',
+                     ...containerStyle,
+                  }}
+               >
+                  <Text as="title">Your order has been delivered </Text>
 
+                  <Text as="title">
+                     {`Delivered in ${moment(
+                        deliveryInfo.dropoff.status.timeStamp
+                     ).diff(
+                        moment(deliveryInfo.assigned.status.timeStamp),
+                        'minutes'
+                     )} mins`}{' '}
+                  </Text>
+               </div>
+            )}
+         </div>
          <section data-type="delivery-states">
             <DeliveryStates
                status={{
