@@ -343,7 +343,7 @@ const UserForm = () => {
                                  onClick={() => {
                                     dispatch({
                                        type: 'SET_FIELD_BRAND',
-                                       payload: { field: "brand", brandId: null, brandName: "All Brands Are Selected", isTouched: true },
+                                       payload: { field: "brand", brandId: null, brandName: "All", isTouched: true },
                                     })
                                     dispatch({
                                        type: 'SET_FIELD_LOCATION',
@@ -352,7 +352,7 @@ const UserForm = () => {
                                     setBrandArrowClicked(false)
                                  }}
                               >
-                                 {"All Brands Are Selected"}
+                                 {"Select all Brands"}
                               </div>
                               {scopeList.map(brand => (
                                  <div
@@ -387,7 +387,7 @@ const UserForm = () => {
                   </Flex>
                   {scopeList[
                      scopeList.findIndex(obj => obj.id === state.brand.brandId)
-                  ]?.location.length > 0 || state.brand.brandName === "All Brands Are Selected" ? (
+                  ]?.location.length > 0 || state.brand.brandName === "All" ? (
                      <div>
                         <StyledBrandLocations>
                            <div>
@@ -417,14 +417,14 @@ const UserForm = () => {
                                     dispatch({
                                        type: 'SET_FIELD_LOCATION',
                                        payload: {
-                                          field: "location", locationId: null, locationLabel: "All Locations Selected", isTouched: true
+                                          field: "location", locationId: null, locationLabel: "All", isTouched: true
                                        },
                                     })
                                     setLocationArrowClicked(false)
                                  }}
 
                               >
-                                 {"All Locations Selected"}
+                                 {"Select All locations"}
                               </div>
                               {scopeList[
                                  scopeList.findIndex(

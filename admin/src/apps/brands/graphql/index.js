@@ -393,3 +393,195 @@ export const BRAND_ID = gql`
       }
    }
 `
+export const KIOSK = {
+   AGGREGATE: gql`
+      subscription MySubscription {
+         brands_locationKiosk_aggregate {
+            aggregate {
+               count
+            }
+         }
+      }
+   `,
+   LIST: gql`
+      subscription MySubscription {
+         kiosk: brands_locationKiosk_aggregate {
+            aggregate {
+               count
+            }
+            nodes {
+               id
+               accessUrl
+               KioskLabel: internalLocationKioskLabel
+               printerId
+               isActive
+            }
+         }
+      }
+   `,
+   KIOSK: gql`
+      subscription Kiosk($id: Int_comparison_exp!) {
+         kiosk: brands_locationKiosk(where: { id: $id }) {
+            id
+            accessUrl
+            accessPassword
+            kioskLabel: internalLocationKioskLabel
+            isActive
+            printerId
+            location {
+               city
+               id
+            }
+         }
+      }
+   `,
+   CREATE_KIOSK: gql`
+      mutation CREATE_KIOSK($object: brands_locationKiosk_insert_input!) {
+         insert_brands_locationKiosk_one(object: $object) {
+            id
+         }
+      }
+   `,
+   CREATE_KIOSKS: gql`
+      mutation CREATE_KIOSKS($objects: [brands_locationKiosk_insert_input!]!) {
+         insert_brands_locationKiosk(objects: $objects) {
+            returning {
+               id
+            }
+            affected_rows
+         }
+      }
+   `,
+   PRINTERS: gql`
+      subscription MySubscription {
+         printers {
+            name
+            printNodeId
+         }
+      }
+   `,
+
+   LOCATIONS: gql`
+      subscription locationList {
+         locations: brands_location {
+            id
+            city
+            isActive
+            lat
+            lng
+            label
+         }
+      }
+   `,
+
+   GET_KIOSKS: gql`
+      query GET_KIOSK($id: Int!) {
+         kiosk: brands_locationKiosk_by_pk(id: $id) {
+            accessPassword
+            accessUrl
+            id
+            internalLocationKioskLabel
+            isActive
+            kioskModuleConfig
+            locationId
+            printerId
+            orderTabs {
+               orderPrefix
+               posist_tabId
+               posist_tabType
+               orderTabId
+               OrderTab {
+                  label
+               }
+            }
+         }
+      }
+   `,
+   ORDER_TAB_LIST: gql`
+      query OrderTabList {
+         brands_orderTab(
+            where: { availableOrderInterfaceLabel: { _eq: "Kiosk Ordering" } }
+         ) {
+            label
+            id
+         }
+      }
+   `,
+
+   UPDATE_KIOSK: gql`
+      mutation MyMutation2(
+         $id: Int!
+         $_set: brands_locationKiosk_set_input = {}
+      ) {
+         update_brands_locationKiosk_by_pk(
+            pk_columns: { id: $id }
+            _set: $_set
+         ) {
+            id
+         }
+      }
+   `,
+
+   CREATE_KIOSK_ORDER_TAB: gql`
+      mutation MyMutation(
+         $objects: [brands_locationKiosk_orderTab_insert_input!]!
+      ) {
+         insert_brands_locationKiosk_orderTab(objects: $objects) {
+            affected_rows
+         }
+      }
+   `,
+
+   UPDATE_KIOSK_ORDER_TAB: gql`
+      mutation MyMutation(
+         $orderTabId: Int!
+         $locationKioskId: Int!
+         $_set: brands_locationKiosk_orderTab_set_input = {}
+      ) {
+         update_brands_locationKiosk_orderTab_by_pk(
+            pk_columns: {
+               locationKioskId: $locationKioskId
+               orderTabId: $orderTabId
+            }
+            _set: $_set
+         ) {
+            locationKioskId
+            orderPrefix
+            orderTabId
+            posist_tabId
+            posist_tabType
+         }
+      }
+   `,
+
+   KIOSK_REPORT: gql`
+      subscription kiosk_report {
+         order_kioskReport {
+            amount
+            auth
+            bankId
+            cardNumber
+            cardType
+            city
+            date
+            dateTime
+            id
+            internalLocationKioskLabel
+            isTest
+            label
+            locationId
+            outlet
+            locationKioskId
+            par
+            paymentStatus
+            paymentType
+            posist_sourceName
+            posist_sourceOrderId
+            posist_tabType
+            terminalId
+            time
+            zipcode
+         }
+      }
+   `,
+}

@@ -174,3 +174,15 @@ export const StyledTag = styled.span(
       margin-left: 8px;
    `
 )
+
+export const StyledTime = styled.div`
+   position: absolute;
+   top: 0.5rem;
+   left: 0.5rem;
+   padding: 0.5rem;
+   margin: 0;
+   z-index: 100;
+   border-radius: 4px;
+   background: #5d83f5;
+   color: #fff;
+`

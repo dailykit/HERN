@@ -43,7 +43,7 @@
    margin-bottom: 85px;
    > h3 {
       font-weight: 700;
-      font-size: 64px;
+      font-size: 48px;
       line-height: 77px;
       letter-spacing: 0.04em;
    }
@@ -201,7 +201,7 @@
    }
    > p.heading {
       font-weight: 700;
-      font-size: 28px;
+      font-size: 24px;
       line-height: 51px;
       margin: 0.1em 0px;
    }
@@ -265,8 +265,12 @@
    margin: 10px auto;
    font-size: 20px;
    line-height: 24px;
-   height: 48px;
+   padding: 8px 32px;
    border-radius: 8.86364px;
+   transition: all 0.3s ease-in-out;
+   &:hover {
+      box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.2);
+   }
 }
 
 .contact-form-2 input:not(.submit-button),

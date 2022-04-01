@@ -30,8 +30,9 @@ const BrandLocationTunnel = ({ selectedBrand, closeTunnel }) => {
             data.subscriptionData.data.brands[0].brand_locations.map(
                brandLocation => {
                   return {
-                     id: brandLocation.locationId,
+                     id: brandLocation.location.id,
                      label: brandLocation.location.label,
+                     brandLocationId: brandLocation.id,
                   }
                }
             )
@@ -85,7 +86,7 @@ const BrandLocationTunnel = ({ selectedBrand, closeTunnel }) => {
                                  onClick={() =>
                                     addTab(
                                        option.label,
-                                       `/operationMode/${selectedBrand.brandName}-${selectedBrand.brandId}${option.id}`
+                                       `/operationMode/${selectedBrand.brandName}-${selectedBrand.brandId}${option.brandLocationId}`
                                     )
                                  }
                               />

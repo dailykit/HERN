@@ -22,28 +22,21 @@ const RecentOrderTable = () => {
    const [status, setStatus] = useState({ loading: true })
    // const { dashboardTableState } = React.useContext(DashboardTableContext)
    const history = useHistory()
-   const [brandContext, setBrandContext] = useContext(BrandContext)
+   const [brandContext] = useContext(BrandContext)
    const { addTab } = useTabs()
 
    const { loading: subsLoading, error: subsError } = useSubscription(
       RECENT_ORDERS,
       {
          variables: {
-            // where:
-            //    dashboardTableState.from && dashboardTableState.to
-            //       ? {
-            //            created_at: {
-            //               _gte: dashboardTableState.from,
-            //               _lte: dashboardTableState.to,
-            //            },
-            //         }
-            //       : {},
             where: {
-               brandId: {
-                  _in: brandContext.brandId,
-               },
-               locationId: {
-                  _in: brandContext.locationId,
+               cart: {
+                  brandId: {
+                     _in: brandContext.brandId,
+                  },
+                  locationId: {
+                     _in: brandContext.locationId,
+                  },
                },
             },
          },
@@ -86,7 +79,7 @@ const RecentOrderTable = () => {
          },
       }
    )
-   console.log('recent orders', recentOrders)
+   // console.log('recent orders', recentOrders)
    const tableHeaderOnClick = () => {
       history.push('order')
    }
