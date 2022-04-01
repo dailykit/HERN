@@ -269,7 +269,7 @@ const isStoreDeliveryAvailableByDistance = async (
                         'isDistanceValid'
                      ] = result && !mileRanges[mileRange].isExcluded
                   } else {
-                     break
+                     continue
                   }
                } else {
                   const origin = isClient ? get_env('BASE_BRAND_URL') : ''
@@ -298,7 +298,7 @@ const isStoreDeliveryAvailableByDistance = async (
                         'isDistanceValid'
                      ] = result && !mileRanges[mileRange].isExcluded
                   } else {
-                     break
+                     continue
                   }
                }
             } catch (error) {
