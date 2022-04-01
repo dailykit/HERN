@@ -95,7 +95,7 @@ export const ReportIcon = () => (
             gradientUnits="userSpaceOnUse"
          >
             <stop stopColor="#367BF5" />
-            <stop offset="1" stopColor="#367BF5" stop-opacity="0" />
+            <stop offset="1" stopColor="#367BF5" stopOpacity="0" />
          </linearGradient>
       </defs>
    </svg>
