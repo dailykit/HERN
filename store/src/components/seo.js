@@ -13,6 +13,7 @@ export const SEO = ({ seoSettings, richresult, children }) => {
       ogImage,
       ogTitle,
       ogDescription,
+      ogUrl,
       googleAnalyticsId,
       facebookPixelId,
       additionalTags,
@@ -51,7 +52,7 @@ export const SEO = ({ seoSettings, richresult, children }) => {
          />
          <meta property="og:image" content={ogImage} title="og-image" />
          <meta property="og:type" content="website" />
-         <meta property="og:url" content={ogImage} />
+         <meta property="og:url" content={ogUrl} />
          <meta property="twitter:card" content="summary" />
          <meta
             property="twitter:title"
