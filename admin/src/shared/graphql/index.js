@@ -328,7 +328,7 @@ export const GET_BRAND_COUPONS = gql`
          coupon {
             id
             title: code
-            value: code
+            value: id
          }
       }
    }
