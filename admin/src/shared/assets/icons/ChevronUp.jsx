@@ -12,7 +12,7 @@ export const ChevronUp = ({ size = 18, color = '#367BF5' }) => (
       <path
          d="M17 13.8442L12 9.59485L7 13.8442"
          stroke={color}
-         stroke-width="2"
+         strokeWidth="2"
          stroke-linecap="round"
          stroke-linejoin="round"
       />

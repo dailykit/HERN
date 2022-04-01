@@ -11,7 +11,7 @@ export const ReportIcon = () => (
       <path
          d="M12.1399 13.6132V32.5476C12.1399 32.8238 12.3638 33.0476 12.6399 33.0476H48.5596"
          stroke="#919699"
-         stroke-width="0.6"
+         strokeWidth="0.6"
          stroke-linecap="round"
       />
       <path
@@ -48,7 +48,7 @@ export const ReportIcon = () => (
       <path
          d="M12.4548 27.433L20.328 18.755C22.5428 16.3139 26.4723 16.6462 28.2457 19.4245L30.332 22.6931C31.4808 24.4928 33.6455 25.3645 35.7208 24.8631L39.6352 23.9174C41.2128 23.5363 42.8772 23.9446 44.0994 25.0125L47.7186 28.1751"
          stroke="#367BF5"
-         stroke-width="0.6"
+         strokeWidth="0.6"
          stroke-linecap="round"
       />
       <path
@@ -64,13 +64,13 @@ export const ReportIcon = () => (
       <path
          d="M68.9479 46.5499L86.0228 46.7734M63.4871 52.1636L81.4536 52.3988M68.9479 58.3922L86.9817 58.6283"
          stroke="#367BF5"
-         stroke-width="1.5"
+         strokeWidth="1.5"
          stroke-linecap="round"
       />
       <path
          d="M89.1118 60.8348L97.2247 66.3793"
          stroke="#202020"
-         stroke-width="2"
+         strokeWidth="2"
          stroke-linecap="round"
       />
       <path
