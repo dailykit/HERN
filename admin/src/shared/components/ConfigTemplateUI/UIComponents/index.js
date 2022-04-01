@@ -34,6 +34,9 @@ import CustomColorPicker from './CustomColorPicker'
 //antd components
 import { Typography, Slider } from 'antd'
 
+import { BrandContext } from '../../../../App'
+import { useContext } from 'react'
+
 const { Paragraph } = Typography
 
 export const TextBox = ({
@@ -1049,3 +1052,83 @@ export const ImageWrapper = styled.div`
    padding: 1rem 1.5rem;
    padding-right: ${props => props.paddingRight || '0.4rem'};
 `
+
+// Coupon Selector
+const COUPON_ID = gql`
+   subscription couponsCollections($brandId: Int) {
+      coupons: brandCoupons(
+         where: { isActive: { _eq: true }, brandId: { _eq: $brandId } }
+      ) {
+         coupon {
+            id
+            title: code
+            value: code
+         }
+      }
+   }
+`
+
+export const CouponSelector = props => {
+   // props
+   const { fieldDetail, marginLeft, path, onConfigChange, editMode } = props
+   const [brandContext, setBrandContext] = useContext(BrandContext)
+
+   const {
+      loading: subsLoading,
+      error: subsError,
+      data: { coupons = [] } = {},
+   } = useSubscription(COUPON_ID, {
+      variables: {
+         brandId: brandContext.brandId,
+      },
+   })
+
+   const selectedOptionHandler = options => {
+      const e = {
+         target: {
+            name: path,
+         },
+      }
+      onConfigChange(e, options)
+   }
+   if (subsLoading) {
+      return <InlineLoader />
+   }
+   if (subsError) {
+      return <ErrorState message="product not found" />
+   }
+
+   return (
+      <>
+         <Flex
+            container
+            justifyContent="space-between"
+            alignItems="center"
+            margin={`0 0 0 ${marginLeft}`}
+         >
+            <Flex container alignItems="flex-end">
+               <Form.Label title={fieldDetail.label} htmlFor="select">
+                  {fieldDetail.label.toUpperCase()}
+               </Form.Label>
+               <Tooltip identifier="select_component_info" />
+            </Flex>
+            {editMode ? (
+               <div>
+                  <Dropdown
+                     type={fieldDetail?.type || 'single'}
+                     options={coupons.map(coupon => coupon.coupon)}
+                     defaultOption={fieldDetail?.value}
+                     searchedOption={option => console.log(option)}
+                     selectedOption={option => selectedOptionHandler(option)}
+                     placeholder="choose coupon..."
+                  />
+               </div>
+            ) : (
+               <Text as="h4" className="showPhoneNumber">
+                  {fieldDetail?.value?.title || 'choose coupon...'}
+               </Text>
+            )}
+         </Flex>
+      </>
+   )
+}

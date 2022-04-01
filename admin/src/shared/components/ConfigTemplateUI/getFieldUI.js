@@ -19,6 +19,7 @@ import {
    RichText,
    CollectionSelector,
    ProductSelector,
+   CouponSelector,
 } from './UIComponents'
 import { Address } from './UIComponents/Address'
 import { useEditMode } from './EditModeContext'
@@ -293,6 +294,16 @@ export const getFieldUI = (
    } else if (field.userInsertType === 'productSelector') {
       configUI = (
          <ProductSelector
+            fieldDetail={field}
+            marginLeft={indentation}
+            path={fieldKey}
+            onConfigChange={onConfigChange}
+            editMode={editMode}
+         />
+      )
+   } else if (field.userInsertType === 'couponSelector') {
+      configUI = (
+         <CouponSelector
             fieldDetail={field}
             marginLeft={indentation}
             path={fieldKey}

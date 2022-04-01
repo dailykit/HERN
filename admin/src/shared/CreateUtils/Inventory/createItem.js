@@ -63,7 +63,7 @@ const CreateItem = ({ closeTunnel }) => {
             },
          ])
          toast.success('Successfully created the Item!')
-         closeTunnel(6)
+         closeTunnel(1)
       },
       onError: () =>
          toast.success('Failed to create the Item, please try again!'),
@@ -163,7 +163,7 @@ const CreateItem = ({ closeTunnel }) => {
             },
          },
       ])
-      closeTunnel(6)
+      closeTunnel(1)
    }
    return (
       <>
