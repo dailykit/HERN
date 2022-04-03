@@ -34,6 +34,10 @@ import CustomColorPicker from './CustomColorPicker'
 //antd components
 import { Typography, Slider } from 'antd'
 
+import { BrandContext } from '../../../../App'
+import { useContext } from 'react'
+import { GET_BRAND_COUPONS, GET_BRAND_CAMPAIGNS } from '../../../graphql'
+
 const { Paragraph } = Typography
 
 export const TextBox = ({
@@ -1049,3 +1053,141 @@ export const ImageWrapper = styled.div`
    padding: 1rem 1.5rem;
    padding-right: ${props => props.paddingRight || '0.4rem'};
 `
+
+// Coupon Selector
+export const CouponSelector = props => {
+   // props
+   const { fieldDetail, marginLeft, path, onConfigChange, editMode } = props
+   const [brandContext, setBrandContext] = useContext(BrandContext)
+
+   const {
+      loading: subsLoading,
+      error: subsError,
+      data: { coupons = [] } = {},
+   } = useSubscription(GET_BRAND_COUPONS, {
+      variables: {
+         brandId: brandContext.brandId,
+      },
+   })
+
+   const selectedOptionHandler = options => {
+      const e = {
+         target: {
+            name: path,
+         },
+      }
+      onConfigChange(e, options)
+   }
+   if (subsLoading) {
+      return <InlineLoader />
+   }
+   if (subsError) {
+      return <ErrorState message="coupon not found" />
+   }
+
+   return (
+      <>
+         <Flex
+            container
+            justifyContent="space-between"
+            alignItems="center"
+            margin={`0 0 0 ${marginLeft}`}
+         >
+            <Flex container alignItems="flex-end">
+               <Form.Label title={fieldDetail.label} htmlFor="select">
+                  {fieldDetail.label.toUpperCase()}
+               </Form.Label>
+               <Tooltip identifier="select_component_info" />
+            </Flex>
+            {editMode ? (
+               <div>
+                  <Dropdown
+                     type={fieldDetail?.type || 'single'}
+                     options={coupons.map(coupon => coupon.coupon)}
+                     defaultOption={fieldDetail?.value}
+                     searchedOption={option => console.log(option)}
+                     selectedOption={option => selectedOptionHandler(option)}
+                     placeholder="choose coupon..."
+                  />
+               </div>
+            ) : (
+               <Text as="h4" className="showPhoneNumber">
+                  {fieldDetail?.value?.title || 'choose coupon...'}
+               </Text>
+            )}
+         </Flex>
+      </>
+   )
+}
+
+// Campaign Selector
+export const CampaignSelector = props => {
+   // props
+   const { fieldDetail, marginLeft, path, onConfigChange, editMode } = props
+   const [brandContext, setBrandContext] = useContext(BrandContext)
+
+   const {
+      loading: subsLoading,
+      error: subsError,
+      data: { campaigns = [] } = {},
+   } = useSubscription(GET_BRAND_CAMPAIGNS, {
+      variables: {
+         brandId: brandContext.brandId,
+      },
+   })
+
+   const selectedOptionHandler = options => {
+      const e = {
+         target: {
+            name: path,
+         },
+      }
+      onConfigChange(e, options)
+   }
+   if (subsLoading) {
+      return <InlineLoader />
+   }
+   if (subsError) {
+      return <ErrorState message="campaign not found" />
+   }
+
+   return (
+      <>
+         <Flex
+            container
+            justifyContent="space-between"
+            alignItems="center"
+            margin={`0 0 0 ${marginLeft}`}
+         >
+            <Flex container alignItems="flex-end">
+               <Form.Label title={fieldDetail.label} htmlFor="select">
+                  {fieldDetail.label.toUpperCase()}
+               </Form.Label>
+               <Tooltip identifier="select_component_info" />
+            </Flex>
+            {editMode ? (
+               <div>
+                  <Dropdown
+                     type={fieldDetail?.type || 'single'}
+                     options={campaigns.map(campaign => {
+                        return {
+                           id: campaign.campaign.id,
+                           title: campaign.campaign.metaDetails?.title || '',
+                           value: campaign.campaign.id,
+                        }
+                     })}
+                     defaultOption={fieldDetail?.value}
+                     searchedOption={option => console.log(option)}
+                     selectedOption={option => selectedOptionHandler(option)}
+                     placeholder="choose campaign..."
+                  />
+               </div>
+            ) : (
+               <Text as="h4" className="showPhoneNumber">
+                  {fieldDetail?.value?.title || 'choose campaign...'}
+               </Text>
+            )}
+         </Flex>
+      </>
+   )
+}

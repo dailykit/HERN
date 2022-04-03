@@ -100,7 +100,7 @@ export const Header = ({ order }) => {
                         })
                      }
                   >
-                     {order?.deliveryCompany?.name ? 'View' : 'Select'} Delivery
+                     {order?.deliveryPartnershipId ? 'View' : 'Select'} Delivery
                   </TextButton>
                </>
             )}

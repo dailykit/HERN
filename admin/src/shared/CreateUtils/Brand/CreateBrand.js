@@ -72,7 +72,7 @@ const CreateBrand = ({ closeTunnel }) => {
             },
          ])
          toast.success('Successfully created the Brand!')
-         closeTunnel(4)
+         closeTunnel(1)
       },
       onError: () =>
          toast.success('Failed to create the Brand, please try again!'),
@@ -200,7 +200,7 @@ const CreateBrand = ({ closeTunnel }) => {
             },
          },
       ])
-      closeTunnel(4)
+      closeTunnel(1)
    }
    return (
       <>

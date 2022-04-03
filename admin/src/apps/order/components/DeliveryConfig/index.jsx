@@ -1,5 +1,11 @@
 import React from 'react'
-import { GoogleMap, LoadScript, Marker } from '@react-google-maps/api'
+import {
+   useJsApiLoader,
+   GoogleMap,
+   Marker,
+   DirectionsService,
+   DirectionsRenderer,
+} from '@react-google-maps/api'
 import { useQuery, useSubscription } from '@apollo/react-hooks'
 import {
    Text,
@@ -12,6 +18,7 @@ import {
 } from '@dailykit/ui'
 import moment from 'moment'
 
+import { greyWhite, subtleColorful } from './mapStyles'
 import { useOrder } from '../../context'
 import { QUERIES, DELIVERY_SERVICES, ORDER_DELIVERY_INFO } from '../../graphql'
 import {
@@ -21,12 +28,14 @@ import {
    DeliveryStates,
    StyledDeliveryBy,
    StyledTag,
+   StyledTime,
 } from './styled'
 import { normalizeAddress, formatDate } from '../../utils'
 import { ServiceInfo } from '../ServiceInfo'
 import { InfoIcon } from '../../../../shared/assets/icons'
 import { InlineLoader } from '../../../../shared/components'
 import { get_env } from '../../../../shared/utils'
+import { useBrand } from '../../../../shared/hooks'
 
 const formatTime = time =>
    moment(time).tz('Asia/Calcutta|Asia/Kolkata').format('YYYY-MM-DD hh:mm')
@@ -47,11 +56,30 @@ const settings = {
    },
 }
 
+const containerStyle = {
+   width: '100%',
+   height: '400px',
+}
+
+const options = {
+   styles: subtleColorful,
+   disableDefaultUI: true,
+   zoomControl: true,
+   fullscreenControl: true,
+}
+
+const isClient = typeof window !== 'undefined' && window.document ? true : false
+
 export const DeliveryConfig = ({ closeTunnel: closeParentTunnel }) => {
+   const { isLoaded } = useJsApiLoader({
+      id: 'google-map-id',
+      googleMapsApiKey: get_env('REACT_APP_MAPS_API_KEY'),
+   })
    const {
       updateOrder,
       state: { delivery_config },
    } = useOrder()
+   const { fetchBrandSettings } = useBrand()
    const [selectedService, setSelectedService] = React.useState(null)
    const [serviceInfo, setServiceInfo] = React.useState(null)
    const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
@@ -71,326 +99,294 @@ export const DeliveryConfig = ({ closeTunnel: closeParentTunnel }) => {
    }
 
    const addDeliveryPartner = async () => {
-      console.log('add delivery partner', {
+      const { configOf } = await fetchBrandSettings({
+         domain: isClient ? window.location.hostname : '',
+         identifiers: ['Location', 'Contact', 'Brand Info'],
+      })
+      const brand = configOf('Brand Info', 'brand')
+      const contact = configOf('Contact', 'brand')
+      const location = configOf('Location', 'availability')
+      const organizationDetails = {
+         organizationId: process.env.ORGANIZATION_ID || 502,
+         organizationName: brand?.brandName?.value || '',
+         organizationPhone: contact?.Contact?.phoneNo?.value || '',
+         organizationEmail: contact?.Contact?.email?.value || '',
+         organizationAddress: location?.Location?.value || '',
+      }
+      await updateOrder({
          id: order.id,
          set: selectedService.partnershipId
             ? {
                  deliveryPartnershipId: selectedService.partnershipId,
+                 deliveryInfo: {
+                    deliveryId: '',
+                    webhookUrl: '',
+                    deliveryCompany: {
+                       logo: selectedService.logo,
+                       name: selectedService.companyName,
+                       ...(selectedService.isThirdParty && {
+                          id: selectedService.partnershipId,
+                       }),
+                    },
+                    deliveryFee: {
+                       value: '',
+                       unit: '',
+                    },
+                    tracking: {
+                       location: {
+                          isAvailable: false,
+                          longitude: '',
+                          latitude: '',
+                       },
+                       code: {
+                          isAvailable: false,
+                          value: '',
+                          url: '',
+                       },
+                       sms: {
+                          isAvailable: false,
+                       },
+                       eta: '',
+                    },
+                    orderInfo: {
+                       products: [].concat(
+                          ...delivery_config?.order?.cart?.products.map(
+                             item => {
+                                return {
+                                   id: item.productId,
+                                   name: item.displayName,
+                                   quantity: item?.displayUnit || 1,
+                                   price: item?.price * 100 || 0,
+                                }
+                             }
+                          )
+                       ),
+                    },
+                    deliveryRequest: {
+                       status: {
+                          value: 'WAITING',
+                          timeStamp: '',
+                          description: '',
+                          data: {},
+                       },
+                       distance: {
+                          value: 0,
+                          unit: 'mile',
+                       },
+                    },
+                    assigned: {
+                       status: {
+                          value: 'WAITING',
+                          timeStamp: '',
+                          description: '',
+                          data: {},
+                       },
+                       driverInfo: {
+                          driverFirstName: '',
+                          driverLastName: '',
+                          driverPhone: '',
+                          driverPicture: '',
+                       },
+                       vehicleInfo: {
+                          vehicleType: '',
+                          vehicleMake: '',
+                          vehicleModel: '',
+                          vehicleColor: '',
+                          vehicleLicensePlateNumber: '',
+                          vehicleLicensePlateState: '',
+                       },
+                    },
+                    pickup: {
+                       window: {
+                          ...(isPickup(
+                             delivery_config?.order?.cart?.fulfillmentInfo?.type
+                          )
+                             ? {
+                                  approved: {
+                                     startsAt: formatTime(
+                                        delivery_config?.order?.cart
+                                           ?.fulfillmentInfo?.slot?.from
+                                     ),
+                                     endsAt: formatTime(
+                                        delivery_config?.order?.cart
+                                           ?.fulfillmentInfo?.slot?.to
+                                     ),
+                                  },
+                               }
+                             : { approved: {} }),
+                       },
+                       status: {
+                          value: 'WAITING',
+                       },
+                       confirmation: {
+                          photo: {
+                             data: {},
+                             isRequired: false,
+                          },
+                          idProof: {
+                             data: {},
+                             isRequired: false,
+                          },
+                          signature: {
+                             data: {},
+                             isRequired: false,
+                          },
+                       },
+                       pickupInfo: organizationDetails,
+                    },
+                    ...(isPickup(
+                       delivery_config?.order?.cart?.fulfillmentInfo?.type
+                    )
+                       ? {
+                            dropoff: {
+                               dropoffInfo: {
+                                  ...(delivery_config?.order?.cart?.customer &&
+                                     Object.keys(
+                                        delivery_config?.order?.cart?.customer
+                                     ).length > 0 && {
+                                        customerEmail:
+                                           delivery_config?.order?.cart
+                                              ?.customer?.customerEmail,
+                                        customerPhone:
+                                           delivery_config?.order?.cart
+                                              ?.customer?.customerPhone,
+                                        customerLastName:
+                                           delivery_config?.order?.cart
+                                              ?.customer?.customerLastName,
+                                        customerFirstName:
+                                           delivery_config?.order?.cart
+                                              ?.customer?.customerFirstName,
+                                     }),
+                               },
+                            },
+                         }
+                       : {
+                            dropoff: {
+                               status: {
+                                  value: 'WAITING',
+                               },
+                               window: {
+                                  approved: {},
+                                  requested: {
+                                     startsAt: new Date(
+                                        `${delivery_config?.order?.cart?.fulfillmentInfo?.date} ${delivery_config?.order?.cart?.fulfillmentInfo?.slot?.from}`
+                                     ),
+                                     endsAt: new Date(
+                                        `${delivery_config?.order?.cart?.fulfillmentInfo?.date} ${delivery_config?.order?.cart?.fulfillmentInfo?.slot?.to}`
+                                     ),
+                                  },
+                               },
+                               confirmation: {
+                                  photo: {
+                                     data: {},
+                                     isRequired: false,
+                                  },
+                                  idProof: {
+                                     data: {},
+                                     isRequired: false,
+                                  },
+                                  signature: {
+                                     data: {},
+                                     isRequired: false,
+                                  },
+                               },
+                               dropoffInfo: {
+                                  ...(delivery_config?.order?.cart?.customer &&
+                                     Object.keys(
+                                        delivery_config?.order?.cart?.customer
+                                     ).length > 0 && {
+                                        customerEmail:
+                                           delivery_config?.order?.cart
+                                              ?.customer?.customerEmail,
+                                        customerPhone:
+                                           delivery_config?.order?.cart
+                                              ?.customer?.customerPhone,
+                                        customerLastName:
+                                           delivery_config?.order?.cart
+                                              ?.customer?.customerLastName,
+                                        customerFirstName:
+                                           delivery_config?.order?.cart
+                                              ?.customer?.customerFirstName,
+                                        ...('address' in
+                                           delivery_config?.order?.cart &&
+                                           delivery_config?.order?.cart
+                                              ?.address &&
+                                           Object.keys(
+                                              delivery_config?.order?.cart
+                                                 ?.address
+                                           ).length > 0 && {
+                                              customerAddress: {
+                                                 line1: delivery_config?.order
+                                                    ?.cart?.address?.line1,
+                                                 line2: delivery_config?.order
+                                                    ?.cart?.address?.line2,
+                                                 city: delivery_config?.order
+                                                    ?.cart?.address?.city,
+                                                 state: delivery_config?.order
+                                                    ?.cart?.address?.state,
+                                                 zipcode:
+                                                    delivery_config?.order?.cart
+                                                       ?.address?.zipcode,
+                                                 lat: delivery_config?.order
+                                                    ?.cart?.address?.lat,
+                                                 lng: delivery_config?.order
+                                                    ?.cart?.address?.lng,
+                                                 country:
+                                                    delivery_config?.order?.cart
+                                                       ?.address?.country,
+                                                 notes: delivery_config?.order
+                                                    ?.cart?.address?.notes,
+                                                 label: delivery_config?.order
+                                                    ?.cart?.address?.label,
+                                                 landmark:
+                                                    delivery_config?.order?.cart
+                                                       ?.address?.landmark,
+                                              },
+                                           }),
+                                     }),
+                               },
+                            },
+                         }),
+                    return: {
+                       status: {
+                          value: 'WAITING',
+                          timeStamp: '',
+                          description: '',
+                          data: {},
+                       },
+                       window: {
+                          requested: {
+                             id: '',
+                             buffer: '',
+                             startsAt: '',
+                             endsAt: '',
+                          },
+                          approved: {
+                             id: '',
+                             startsAt: '',
+                             endsAt: '',
+                          },
+                       },
+                       confirmation: {
+                          photo: {
+                             isRequired: false,
+                             data: {},
+                          },
+                          signature: {
+                             isRequired: false,
+                             data: {},
+                          },
+                          idProof: {
+                             isRequired: false,
+                             data: {},
+                          },
+                       },
+                       returnInfo: organizationDetails,
+                    },
+                 },
               }
             : null,
-         append: {
-            deliveryInfo: {
-               deliveryId: '',
-               webhookUrl: '',
-               deliveryCompany: {
-                  logo: selectedService.logo,
-                  name: selectedService.companyName,
-                  ...(selectedService.isThirdParty && {
-                     id: selectedService.partnershipId,
-                  }),
-               },
-               deliveryFee: {
-                  value: '',
-                  unit: '',
-               },
-               tracking: {
-                  location: {
-                     isAvailable: false,
-                     longitude: '',
-                     latitude: '',
-                  },
-                  code: {
-                     isAvailable: false,
-                     value: '',
-                     url: '',
-                  },
-                  sms: {
-                     isAvailable: false,
-                  },
-                  eta: '',
-               },
-               orderInfo: {
-                  products: [].concat(
-                     ...delivery_config?.order?.cart?.products.map(product => {
-                        return product.items.map(item => {
-                           return {
-                              id: item.productId,
-                              name: item.displayName,
-                              quantity: item?.displayUnit || 1,
-                              price: item?.price * 100 || 0,
-                           }
-                        })
-                     })
-                  ),
-               },
-               deliveryRequest: {
-                  status: {
-                     value: 'WAITING',
-                     timeStamp: '',
-                     description: '',
-                     data: {},
-                  },
-                  distance: {
-                     value: 0,
-                     unit: 'mile',
-                  },
-               },
-               assigned: {
-                  status: {
-                     value: 'WAITING',
-                     timeStamp: '',
-                     description: '',
-                     data: {},
-                  },
-                  driverInfo: {
-                     driverFirstName: '',
-                     driverLastName: '',
-                     driverPhone: '',
-                     driverPicture: '',
-                  },
-                  vehicleInfo: {
-                     vehicleType: '',
-                     vehicleMake: '',
-                     vehicleModel: '',
-                     vehicleColor: '',
-                     vehicleLicensePlateNumber: '',
-                     vehicleLicensePlateState: '',
-                  },
-               },
-               pickup: {
-                  window: {
-                     ...(isPickup(
-                        delivery_config?.order?.cart.fulfillmentInfo.type
-                     )
-                        ? {
-                             approved: {
-                                startsAt: formatTime(
-                                   delivery_config?.order?.cart.fulfillmentInfo
-                                      .slot.from
-                                ),
-                                endsAt: formatTime(
-                                   delivery_config?.order?.cart.fulfillmentInfo
-                                      .slot.to
-                                ),
-                             },
-                          }
-                        : { approved: {} }),
-                  },
-                  status: {
-                     value: 'WAITING',
-                  },
-                  confirmation: {
-                     photo: {
-                        data: {},
-                        isRequired: false,
-                     },
-                     idProof: {
-                        data: {},
-                        isRequired: false,
-                     },
-                     signature: {
-                        data: {},
-                        isRequired: false,
-                     },
-                  },
-                  pickupInfo: {
-                     organizationId: process.env.ORGANIZATION_ID,
-                     organizationName: settings.brand.name,
-                     organizationPhone: settings.contact.phoneNo,
-                     organizationEmail: settings.contact.email,
-                     organizationAddress: {
-                        line1: settings.address.line1,
-                        line2: settings.address.line2,
-                        city: settings.address.city,
-                        state: settings.address.state,
-                        country: settings.address.country,
-                        zipcode: settings.address.zip,
-                        latitude: settings.address.lat,
-                        longitude: settings.address.lng,
-                     },
-                  },
-               },
-               ...(isPickup(delivery_config?.order?.cart.fulfillmentInfo.type)
-                  ? {
-                       dropoff: {
-                          dropoffInfo: {
-                             ...(delivery_config?.order?.cart.customer &&
-                                Object.keys(
-                                   delivery_config?.order?.cart.customer
-                                ).length > 0 && {
-                                   customerEmail:
-                                      delivery_config?.order?.cart.customer
-                                         .customerEmail,
-                                   customerPhone:
-                                      delivery_config?.order?.cart.customer
-                                         .customerPhone,
-                                   customerLastName:
-                                      delivery_config?.order?.cart.customer
-                                         .customerLastName,
-                                   customerFirstName:
-                                      delivery_config?.order?.cart.customer
-                                         .customerFirstName,
-                                }),
-                          },
-                       },
-                    }
-                  : {
-                       dropoff: {
-                          status: {
-                             value: 'WAITING',
-                          },
-                          window: {
-                             approved: {},
-                             requested: {
-                                startsAt: new Date(
-                                   `${delivery_config?.order?.cart.fulfillmentInfo.date} ${delivery_config?.order?.cart.fulfillmentInfo.slot.from}`
-                                ),
-                                endsAt: new Date(
-                                   `${delivery_config?.order?.cart.fulfillmentInfo.date} ${delivery_config?.order?.cart.fulfillmentInfo.slot.to}`
-                                ),
-                             },
-                          },
-                          confirmation: {
-                             photo: {
-                                data: {},
-                                isRequired: false,
-                             },
-                             idProof: {
-                                data: {},
-                                isRequired: false,
-                             },
-                             signature: {
-                                data: {},
-                                isRequired: false,
-                             },
-                          },
-                          dropoffInfo: {
-                             ...(delivery_config?.order?.cart.customer &&
-                                Object.keys(
-                                   delivery_config?.order?.cart.customer
-                                ).length > 0 && {
-                                   customerEmail:
-                                      delivery_config?.order?.cart.customer
-                                         .customerEmail,
-                                   customerPhone:
-                                      delivery_config?.order?.cart.customer
-                                         .customerPhone,
-                                   customerLastName:
-                                      delivery_config?.order?.cart.customer
-                                         .customerLastName,
-                                   customerFirstName:
-                                      delivery_config?.order?.cart.customer
-                                         .customerFirstName,
-                                   ...('customerAddress' in
-                                      delivery_config?.order?.cart
-                                         .customerInfo &&
-                                      delivery_config?.order?.cart.customer
-                                         .customerAddress &&
-                                      Object.keys(
-                                         delivery_config?.order?.cart
-                                            .customerInfo.customerAddress
-                                      ).length > 0 && {
-                                         customerAddress: {
-                                            line1: delivery_config?.order?.cart
-                                               .address.line1,
-                                            line2: delivery_config?.order?.cart
-                                               .address.line2,
-                                            city: delivery_config?.order?.cart
-                                               .address.city,
-                                            state: delivery_config?.order?.cart
-                                               .address.state,
-                                            zipcode:
-                                               delivery_config?.order?.cart
-                                                  .address.zipcode,
-                                            country:
-                                               delivery_config?.order?.cart
-                                                  .address.country,
-                                            notes: delivery_config?.order?.cart
-                                               .address.notes,
-                                            label: delivery_config?.order?.cart
-                                               .address.label,
-                                            landmark:
-                                               delivery_config?.order?.cart
-                                                  .address.landmark,
-                                         },
-                                      }),
-                                }),
-                          },
-                       },
-                    }),
-               return: {
-                  status: {
-                     value: 'WAITING',
-                     timeStamp: '',
-                     description: '',
-                     data: {},
-                  },
-                  window: {
-                     requested: {
-                        id: '',
-                        buffer: '',
-                        startsAt: '',
-                        endsAt: '',
-                     },
-                     approved: {
-                        id: '',
-                        startsAt: '',
-                        endsAt: '',
-                     },
-                  },
-                  confirmation: {
-                     photo: {
-                        isRequired: false,
-                        data: {},
-                     },
-                     signature: {
-                        isRequired: false,
-                        data: {},
-                     },
-                     idProof: {
-                        isRequired: false,
-                        data: {},
-                     },
-                  },
-                  returnInfo: {
-                     organizationId: process.env.ORGANIZATION_ID,
-                     organizationName: settings.brand.name,
-                     organizationPhone: settings.contact.phoneNo,
-                     organizationEmail: settings.contact.email,
-                     organizationAddress: {
-                        line1: settings.address.line1,
-                        line2: settings.address.line2,
-                        city: settings.address.city,
-                        state: settings.address.state,
-                        country: settings.address.country,
-                        zipcode: settings.address.zip,
-                        latitude: settings.address.lat,
-                        longitude: settings.address.lng,
-                     },
-                  },
-               },
-            },
-         },
       })
-      // await updateOrder({
-      //    id: order.id,
-      //    set: selectedService.partnershipId
-      //       ? {
-      //            deliveryPartnershipId: selectedService.partnershipId,
-      //         }
-      //       : null,
-      //    append: {
-      //       deliveryInfo: {
-      //          deliveryCompany: {
-      //             logo: selectedService.logo,
-      //             name: selectedService.companyName,
-      //             ...(selectedService.isThirdParty && {
-      //                id: selectedService.partnershipId,
-      //             }),
-      //          },
-      //       },
-      //    },
-      // })
       closeParentTunnel(1)
    }
 
@@ -398,7 +394,7 @@ export const DeliveryConfig = ({ closeTunnel: closeParentTunnel }) => {
       window.open(order.deliveryInfo.tracking.code.url, '__blank')
    }
 
-   if (loadingOrder)
+   if (loadingOrder && !isLoaded)
       return (
          <Wrapper>
             <InlineLoader />
@@ -416,7 +412,7 @@ export const DeliveryConfig = ({ closeTunnel: closeParentTunnel }) => {
                   }}
                   title={`Delivery - Order ${order.id}`}
                />
-               <DeliveryDetails details={order} />
+               {isLoaded && <DeliveryDetails details={order} />}
             </>
          ) : (
             <>
@@ -474,8 +470,12 @@ export const DeliveryConfig = ({ closeTunnel: closeParentTunnel }) => {
 }
 
 const DeliveryDetails = ({ details }) => {
-   const [map, setMap] = React.useState(null)
+   // const { isLoaded } = useJsApiLoader({
+   //    id: 'google-map-id',
+   //    googleMapsApiKey: get_env('REACT_APP_MAPS_API_KEY'),
+   // })
    const [isLoading, setIsLoading] = React.useState(true)
+   const [directions, setDirections] = React.useState('')
    const [coordinates, setCoordinates] = React.useState({
       driver: null,
       customer: null,
@@ -483,6 +483,10 @@ const DeliveryDetails = ({ details }) => {
    })
    const [deliveryInfo, setDeliveryInfo] = React.useState(null)
    const [order, setOrder] = React.useState(null)
+   const mapRef = React.useRef()
+   const onMapLoad = React.useCallback(map => {
+      mapRef.current = map
+   }, [])
 
    React.useEffect(() => {
       const { deliveryInfo, ...rest } = details
@@ -490,35 +494,30 @@ const DeliveryDetails = ({ details }) => {
       setDeliveryInfo(deliveryInfo)
       setCoordinates({
          driver: {
-            lat: deliveryInfo.tracking.location.latitude,
-            lng: deliveryInfo.tracking.location.longitude,
+            lat: +deliveryInfo.tracking.location.latitude,
+            lng: +deliveryInfo.tracking.location.longitude,
          },
          customer: {
-            lat: deliveryInfo.dropoff.dropoffInfo.customerAddress.latitude,
-            lng: deliveryInfo.dropoff.dropoffInfo.customerAddress.longitude,
+            lat: +deliveryInfo.dropoff.dropoffInfo.customerAddress.lat,
+            lng: +deliveryInfo.dropoff.dropoffInfo.customerAddress.lng,
          },
          organization: {
-            lat: deliveryInfo.pickup.pickupInfo.organizationAddress.latitude,
-            lng: deliveryInfo.pickup.pickupInfo.organizationAddress.longitude,
+            lat: +deliveryInfo.pickup.pickupInfo.organizationAddress.lat,
+            lng: +deliveryInfo.pickup.pickupInfo.organizationAddress.lng,
          },
       })
       setIsLoading(false)
    }, [details])
 
-   const onLoad = React.useCallback(function callback(map) {
-      const bounds = new window.google.maps.LatLngBounds()
-      map.fitBounds(bounds)
-      setMap(map)
-   }, [])
+   // const onLoad = React.useCallback(function callback(map) {
+   //    const bounds = new window.google.maps.LatLngBounds()
+   //    map.fitBounds(bounds)
+   //    setMap(map)
+   // }, [])
 
-   const onUnmount = React.useCallback(function callback(map) {
-      setMap(null)
-   }, [])
-
-   const containerStyle = {
-      width: '100%',
-      height: '400px',
-   }
+   // const onUnmount = React.useCallback(function callback(map) {
+   //    setMap(null)
+   // }, [])
 
    if (isLoading) return <InlineLoader />
    return (
@@ -531,29 +530,110 @@ const DeliveryDetails = ({ details }) => {
                title={deliveryInfo.deliveryCompany.name || 'N/A'}
             />
          </StyledDeliveryBy>
-         <LoadScript googleMapsApiKey={get_env('REACT_APP_MAPS_API_KEY')}>
-            <GoogleMap
-               zoom={15}
-               onLoad={onLoad}
-               onUnmount={onUnmount}
-               clickableIcons={false}
-               center={coordinates.driver}
-               mapContainerStyle={containerStyle}
-            >
-               <Marker
-                  position={coordinates.organization}
-                  icon="https://dailykit-133-test.s3.us-east-2.amazonaws.com/icons/store.png"
-               />
-               <Marker
-                  position={coordinates.customer}
-                  icon="https://dailykit-133-test.s3.us-east-2.amazonaws.com/icons/home.png"
-               />
-               <Marker
-                  position={coordinates.driver}
-                  icon="https://dailykit-133-test.s3.us-east-2.amazonaws.com/icons/package.png"
-               />
-            </GoogleMap>
-         </LoadScript>
+         <div
+            style={{
+               position: 'relative',
+               ...containerStyle,
+            }}
+         >
+            {deliveryInfo.dropoff.status.value !== 'SUCCEEDED' ? (
+               <>
+                  {deliveryInfo.tracking.eta && (
+                     <StyledTime>
+                        <p>
+                           {deliveryInfo.tracking.eta?.dropoff > 0
+                              ? `Estimated Time: ${
+                                   (deliveryInfo.tracking.eta?.pickup || 0) +
+                                   (deliveryInfo.tracking.eta?.dropoff || 0)
+                                } mins`
+                              : `${
+                                   deliveryInfo.assigned?.driverInfo
+                                      ?.driverFirstName || 'Partner'
+                                } reached at your location`}
+                        </p>
+                     </StyledTime>
+                  )}
+                  <GoogleMap
+                     center={coordinates.driver}
+                     zoom={15}
+                     options={options}
+                     onLoad={onMapLoad}
+                     mapContainerStyle={containerStyle}
+                  >
+                     <Marker
+                        position={coordinates.organization}
+                        icon={{
+                           url: 'https://dailykit-133-test.s3.us-east-2.amazonaws.com/icons/store.png',
+                           ...(isClient && {
+                              scaledSize: new window.google.maps.Size(30, 30),
+                              origin: new window.google.maps.Point(0, 0),
+                              anchor: new window.google.maps.Point(15, 15),
+                           }),
+                        }}
+                     />
+                     <Marker
+                        position={coordinates.customer}
+                        icon={{
+                           url: 'https://dailykit-133-test.s3.us-east-2.amazonaws.com/icons/home.png',
+                           ...(isClient && {
+                              scaledSize: new window.google.maps.Size(30, 30),
+                              origin: new window.google.maps.Point(0, 0),
+                              anchor: new window.google.maps.Point(15, 15),
+                           }),
+                        }}
+                     />
+                     <Marker
+                        position={coordinates.driver}
+                        icon={{
+                           url: 'https://dailykit-133-test.s3.us-east-2.amazonaws.com/icons/driver.png',
+                           ...(isClient && {
+                              scaledSize: new window.google.maps.Size(30, 30),
+                              origin: new window.google.maps.Point(0, 0),
+                              anchor: new window.google.maps.Point(15, 15),
+                           }),
+                        }}
+                     />
+                     <DirectionsService
+                        options={{
+                           destination: coordinates.customer,
+                           origin: coordinates.organization,
+                           travelMode: 'DRIVING',
+                        }}
+                        callback={(response, status) => {
+                           if (status === 'OK') {
+                              setDirections(response)
+                           }
+                        }}
+                     />
+                     {directions && (
+                        <DirectionsRenderer directions={directions} />
+                     )}
+                  </GoogleMap>
+               </>
+            ) : (
+               <div
+                  style={{
+                     display: 'flex',
+                     flexDirection: 'column',
+                     alignItems: 'center',
+                     justifyContent: 'center',
+                     background: '#e5e5e5',
+                     ...containerStyle,
+                  }}
+               >
+                  <Text as="title">Your order has been delivered </Text>
+
+                  <Text as="title">
+                     {`Delivered in ${moment(
+                        deliveryInfo.dropoff.status.timeStamp
+                     ).diff(
+                        moment(deliveryInfo.assigned.status.timeStamp),
+                        'minutes'
+                     )} mins`}{' '}
+                  </Text>
+               </div>
+            )}
+         </div>
          <section data-type="delivery-states">
             <DeliveryStates
                status={{

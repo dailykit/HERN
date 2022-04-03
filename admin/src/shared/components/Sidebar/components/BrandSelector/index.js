@@ -1,11 +1,11 @@
 import { useSubscription } from '@apollo/react-hooks'
 import { Spacer } from '@dailykit/ui'
 import { Avatar } from 'antd'
-import { rearg } from 'lodash'
 import React, { useContext, useEffect, useState } from 'react'
 import { BrandContext } from '../../../../../App'
 import { UnionIcon } from '../../../../assets/icons'
 import { ArrowDown, ArrowUp } from '../../../../assets/navBarIcons'
+import { InlineLoader } from '../../../InlineLoader'
 import { LOCATION_SELECTOR_LIST } from '../../graphql/subscription'
 import {
    StyledBrandLocations,
@@ -20,8 +20,8 @@ const BrandSelector = ({ mouseOver }) => {
    const [locationArrowClicked, setLocationArrowClicked] = useState(false)
    const [brandList, setBrandList] = React.useState([])
    const [brandContext, setBrandContext] = useContext(BrandContext)
-
    const { loading } = useSubscription(LOCATION_SELECTOR_LIST, {
+      skip: brandContext.isLoading,
       variables: {
          identifier: 'Brand Info',
       },
@@ -45,7 +45,7 @@ const BrandSelector = ({ mouseOver }) => {
             }
          )
          // setBrandList(result)
-         console.log('result', result)
+         // console.log('result', result)
 
          if (
             //organization scope
@@ -54,29 +54,26 @@ const BrandSelector = ({ mouseOver }) => {
          ) {
             setBrandContext({
                ...brandContext,
-               brandId: result[0].id,
-               brandName: result[0].title,
-               logo: result[0].logo,
-               domain: result[0].domain,
-               locationId: result[0]?.location[0]?.location.id,
-               locationLabel: result[0]?.location[0]?.location.label,
+               brandName: 'All',
+               locationLabel: 'All locations are selected',
             })
-            return setBrandList(result)
+
+            setBrandList(result)
          } else if (
             //brand scope
             brandContext.brandId !== null &&
             brandContext.locationId === null
          ) {
+            const index = result.findIndex(
+               obj => obj.id === brandContext.brandId
+            )
             setBrandContext({
                ...brandContext,
-               logo: result[0].logo,
-               domain: result[0].domain,
-               locationId: result[0]?.location[0]?.location.id,
-               locationLabel: result[0]?.location[0]?.location.label,
+               logo: result[index].logo,
+               domain: result[index].domain,
+               locationLabel: 'All',
             })
-            return setBrandList([
-               result[result.findIndex(obj => obj.id === brandContext.brandId)],
-            ])
+            return setBrandList([result[index]])
          } else if (
             //brand_location scope
             brandContext.brandId !== null &&
@@ -93,7 +90,7 @@ const BrandSelector = ({ mouseOver }) => {
                logo: result[index].logo,
                domain: result[index].domain,
             })
-            return setBrandList([
+            setBrandList([
                {
                   domain: result[index].domain,
                   id: result[index].id,
@@ -108,11 +105,6 @@ const BrandSelector = ({ mouseOver }) => {
             brandContext.locationId !== null
          ) {
             setDisplayBrand(false)
-            setBrandContext({
-               ...brandContext,
-               locationId: result[0]?.location[0]?.location.id,
-               locationLabel: result[0]?.location[0]?.location.label,
-            })
             return setBrandList([
                {
                   id: brandContext.brandId,
@@ -131,22 +123,17 @@ const BrandSelector = ({ mouseOver }) => {
       },
    })
    console.log('brandContext', brandContext)
-   console.log('brandList', brandList)
+   // console.log('brandList', brandList)
 
-   React.useEffect(() => {
+   useEffect(() => {
       setBrandContext({
          ...brandContext,
-         locationId:
-            brandList[
-               brandList.findIndex(obj => obj.id === brandContext.brandId)
-            ]?.location[0]?.location?.id || brandContext.locationId,
-         locationLabel:
-            brandList[
-               brandList.findIndex(obj => obj.id === brandContext.brandId)
-            ]?.location[0]?.location?.label || brandContext.locationLabel,
+         locationId: null,
+         locationLabel: 'All',
       })
    }, [brandContext.brandId])
 
+   if (loading) return <InlineLoader />
    return (
       <div style={{ padding: '7px', textAlign: 'center' }}>
          {mouseOver ? (
@@ -155,7 +142,7 @@ const BrandSelector = ({ mouseOver }) => {
                   <div>
                      <StyledBrandSelector>
                         <div>
-                           {brandContext.logo ? (
+                           {brandContext?.logo ? (
                               <Avatar src={brandContext.logo} size={52} />
                            ) : (
                               <Avatar
@@ -188,6 +175,23 @@ const BrandSelector = ({ mouseOver }) => {
                      </StyledBrandSelector>
                      {brandArrowClicked && (
                         <StyledBrandSelectorList>
+                           <div
+                              key={`${brandContext.brandId}-brand`}
+                              onClick={() => {
+                                 setBrandContext({
+                                    ...brandContext,
+                                    brandId: null,
+                                    brandName: 'All',
+                                    locationId: null,
+                                    locationLabel: 'All',
+                                    logo: '',
+                                 })
+                                 setBrandArrowClicked(false)
+                              }}
+                              style={{ position: 'relative', left: '31px' }}
+                           >
+                              {'Select all Brands'}
+                           </div>
                            {brandList.map(brand => (
                               <div
                                  key={brand.id}
@@ -253,6 +257,19 @@ const BrandSelector = ({ mouseOver }) => {
                         </StyledBrandLocations>
                         {locationArrowClicked && (
                            <StyledBrandSelectorList>
+                              <div
+                                 key={`${brandContext.locationId}-${brandContext.brandId}-location`}
+                                 onClick={() => {
+                                    setBrandContext({
+                                       ...brandContext,
+                                       locationId: null,
+                                       locationLabel: 'All',
+                                    })
+                                    setLocationArrowClicked(false)
+                                 }}
+                              >
+                                 {'Select all Locations'}
+                              </div>
                               {brandList[
                                  brandList.findIndex(
                                     obj => obj.id === brandContext.brandId
@@ -264,6 +281,7 @@ const BrandSelector = ({ mouseOver }) => {
                                        onClick={() => {
                                           setBrandContext({
                                              ...brandContext,
+                                             brandLocationId: eachLocation.id,
                                              locationId:
                                                 eachLocation.location.id,
                                              locationLabel:
