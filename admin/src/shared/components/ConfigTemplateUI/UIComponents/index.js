@@ -12,6 +12,7 @@ import {
    Tunnel,
    TunnelHeader,
    useTunnel,
+   RadioGroup
 } from '@dailykit/ui'
 import { Image, Carousel } from 'antd'
 import {
@@ -251,6 +252,27 @@ export const Checkbox = ({ fieldDetail, marginLeft, path, onConfigChange }) => (
          <Tooltip identifier="checkbox_component_info" />
       </Flex>
       <Form.Checkbox
+         id={path}
+         name={path}
+         onChange={e => onConfigChange(e, !fieldDetail.value)}
+         value={fieldDetail.value}
+      />
+   </Flex>
+)
+export const RadioButton = ({ fieldDetail, marginLeft, path, onConfigChange }) => (
+   <Flex
+      container
+      justifyContent="space-between"
+      alignItems="center"
+      margin={`0 0 0 ${marginLeft}`}
+   >
+      <Flex container alignItems="flex-end">
+         <Form.Label title={fieldDetail.label} htmlFor="checkbox">
+            {fieldDetail.label.toUpperCase()}
+         </Form.Label>
+         <Tooltip identifier="checkbox_component_info" />
+      </Flex>
+      <RadioGroup
          id={path}
          name={path}
          onChange={e => onConfigChange(e, !fieldDetail.value)}
@@ -838,8 +860,8 @@ export const MultipleImageUpload = props => {
          {editMode ? (
             <Flex width="50%" style={{ position: 'relative', top: '22px' }}>
                {fieldDetail?.value?.url &&
-               fieldDetail?.value?.url !== null &&
-               fieldDetail?.value?.url.length ? (
+                  fieldDetail?.value?.url !== null &&
+                  fieldDetail?.value?.url.length ? (
                   <Gallery
                      list={fieldDetail.value.url || []}
                      isMulti={true}

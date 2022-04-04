@@ -20,6 +20,7 @@ import {
    CollectionSelector,
    ProductSelector,
    CouponSelector,
+   RadioButton,
 } from './UIComponents'
 import { Address } from './UIComponents/Address'
 import { useEditMode } from './EditModeContext'
@@ -310,6 +311,26 @@ export const getFieldUI = (
             onConfigChange={onConfigChange}
             editMode={editMode}
          />
+      )
+   } else if (
+      field.dataType === 'boolean' &&
+      field.userInsertType === 'radiobutton'
+   ) {
+      configUI = (
+         <>
+            {editMode ? (
+               <RadioButton
+                  fieldDetail={field}
+                  marginLeft={indentation}
+                  path={fieldKey}
+                  onConfigChange={onConfigChange}
+               />
+            ) : (
+               <p>
+                  {value.label} {value.value === true ? 'YES' : 'NO'}
+               </p>
+            )}
+         </>
       )
    }
    return <div data-config-path={fieldKey}>{configUI}</div>
