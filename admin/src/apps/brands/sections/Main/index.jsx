@@ -60,20 +60,20 @@ export default function Main() {
                   <KioskLocations/>
                </AccessCheck>
             </Route>
-            <Route path="/brands/kiosks/id/:id" exact>
-               <AccessCheck
-                  title="kioskLocation"
-                  message="You do not have sufficient permission to access location details."
-               >
-                  <KioskLocation />
-               </AccessCheck>
-            </Route>
             <Route path="/brands/kiosks/report" exact>
                <AccessCheck
                   title="kioskReport"
                   message="You do not have sufficient permission to access location details."
                >
                   <KioskReportTable />
+               </AccessCheck>
+            </Route>
+            <Route path="/brands/kiosks/:id" exact>
+               <AccessCheck
+                  title="kioskLocation"
+                  message="You do not have sufficient permission to access location details."
+               >
+                  <KioskLocation />
                </AccessCheck>
             </Route>
          </Switch>

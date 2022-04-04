@@ -87,7 +87,8 @@ export const KioskLocation = () => {
          const brandsData = brands?.nodes.map(brand => {
             return {
                id: brand?.id || '',
-               title: brand?.title || '',
+               // title: brand?.title || '',
+               title: brand?.domain || '',
             }
          })
          setBrandList(previousData => [...previousData, ...brandsData])
@@ -97,7 +98,7 @@ export const KioskLocation = () => {
 
    React.useEffect(() => {
       if (!tab && !loading && !isEmpty(kiosk)) {
-         addTab(kiosk?.title || 'N/A', `/kiosks/kiosks/id/${kiosk[0].id}`)
+         addTab(kiosk?.title || 'N/A', `/kiosks/kiosks/${kiosk[0].id}`)
          console.log('data:', loading)
       }
    }, [tab, addTab, loading, kiosk])
@@ -243,39 +244,41 @@ export const KioskLocation = () => {
                            padding: '0 12px 12px 12px',
                         }}
                      >
-                        <Dropdown
-                           type="single"
-                           isLoading={loading1}
-                           addOption={brandList}
-                           options={brandList}
-                           defaultName={title.accessUrl.split('.')[0]}
-                           selectedOption={e =>
-                              update({
-                                 variables: {
-                                    id: params.id,
-                                    _set: {
-                                       accessUrl:
-                                          e.title + '.' + title.value + '.com',
+                        <div style={{ marginTop: '10px' }}>
+                           <Dropdown
+                              type="single"
+                              isLoading={loading1}
+                              addOption={brandList}
+                              options={brandList}
+                              defaultName={title.accessUrl.split('/kiosk')[0]}
+                              selectedOption={e =>
+                                 update({
+                                    variables: {
+                                       id: params.id,
+                                       _set: {
+                                          accessUrl:
+                                             e.title + '/kiosk/' + params.id,
+                                       },
                                     },
-                                 },
-                              })
-                           }
-                           placeholder="Enter brand name"
-                           addOption={() => console.log('brand ADDED')}
-                        />
+                                 })
+                              }
+                              placeholder="Enter brand domain"
+                              addOption={() => console.log('brand ADDED')}
+                           />
+                        </div>
                      </div>
-                     <h1>.</h1>
+                     {/* <h1>.</h1> */}
                      <Form.Text
                         id="Kiosk"
                         name="Kiosk"
                         // style={{ marginTop: '-2px' }}
                         placeholder="Enter the kiosk label"
-                        value={title.value}
+                        value={'/kiosk/' + params.id}
                         disabled={kiosk?.isDefault}
-                        onChange={e =>
-                           setTitle({ ...title, value: e.target.value })
-                        }
-                        onBlur={e => updateTitle(e)}
+                        // onChange={e =>
+                        //    setTitle({ ...title, value: e.target.value })
+                        // }
+                        // onBlur={e => updateTitle(e)}
                      />
                   </div>
                </Form.Group>

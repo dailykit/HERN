@@ -317,7 +317,7 @@ export const BasicInfo = () => {
                   <Form.Label htmlFor="password" title="password">
                      <ButtonGroup
                         onClick={() => {
-                           copy(title.accessUrl)
+                           copy(title.password)
                         }}
                      >
                         {'Access Password   '}

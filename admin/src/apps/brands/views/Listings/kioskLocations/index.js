@@ -61,7 +61,7 @@ export const KioskLocations = () => {
    const cellClick = kiosk => {
       addTab(
          kiosk?.KioskLabel || kiosk?.accessUrl || 'N/A',
-         `/brands/kiosks/id/${kiosk.id}`
+         `/brands/kiosks/${kiosk.id}`
       )
    }
    //  console.log("id:",params.id)
