@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Button } from 'antd'
 import { useCart, useTranslation } from '../../context'
 import { DineInIcon, TakeOutIcon } from '../../assets/icons'
@@ -6,6 +6,7 @@ import { useConfig } from '../../lib'
 import { rrulestr } from 'rrule'
 import moment from 'moment'
 import { isDateValidInRRule } from '../../utils'
+import { DineInTableSelection } from './component'
 
 export const FulfillmentSection = props => {
    const { config, setCurrentPage } = props
@@ -18,6 +19,9 @@ export const FulfillmentSection = props => {
    } = useConfig()
    const { t, direction, dynamicTrans, locale } = useTranslation()
    console.log('config', config)
+   const { methods, setDineInTableInfo, storedCartId } = useCart()
+   const [showDineInTableSelection, setShowDineInTableSelection] =
+      useState(false)
    React.useEffect(() => {
       // check is there any recurrence available or not
       // if available then check that store is available for current day and time
@@ -95,6 +99,32 @@ export const FulfillmentSection = props => {
       )
       dynamicTrans(languageTags)
    }, [locale])
+   const onTableSelectionConfirmClick = async tableInfo => {
+      setDineInTableInfo(tableInfo)
+      if (storedCartId) {
+         await methods.cart.update({
+            variables: {
+               id: storedCartId,
+               _set: {
+                  locationTableId: orderTabs.find(
+                     eachOrderTab =>
+                        eachOrderTab?.orderFulfillmentTypeLabel ===
+                        'ONDEMAND_DINEIN'
+                  )?.id,
+               },
+            },
+         })
+      }
+      dispatch({
+         type: 'SET_SELECTED_ORDER_TAB',
+         payload: orderTabs.find(
+            eachOrderTab =>
+               eachOrderTab?.orderFulfillmentTypeLabel === 'ONDEMAND_DINEIN'
+         ),
+      })
+      setShowDineInTableSelection(false)
+      setCurrentPage('menuPage')
+   }
    return (
       <div className="hern-kiosk__fulfillment-section-container">
          {config.fulfillmentPageSettings.backgroundImage.value.url[0] && (
@@ -156,6 +186,9 @@ export const FulfillmentSection = props => {
                            buttonText={eachTab?.label}
                            key={index}
                            setCurrentPage={setCurrentPage}
+                           setShowDineInTableSelection={
+                              setShowDineInTableSelection
+                           }
                         />
                      )
                   }
@@ -190,6 +223,15 @@ export const FulfillmentSection = props => {
                   </Button>
                </div>
             )}
+         <DineInTableSelection
+            showDineInTableSelection={showDineInTableSelection}
+            onClose={() => {
+               console.log('showDineInTableSelection', showDineInTableSelection)
+               setShowDineInTableSelection(false)
+            }}
+            config={config}
+            onConfirmClick={onTableSelectionConfirmClick}
+         />
       </div>
    )
 }
@@ -268,6 +310,7 @@ const FulfillmentOptionCustom = props => {
       buttonText,
       setCurrentPage,
       fulfillment,
+      setShowDineInTableSelection,
    } = props
 
    const { dispatch, kioskAvailability } = useConfig()
@@ -278,22 +321,29 @@ const FulfillmentOptionCustom = props => {
       if (!kioskAvailability[fulfillment.orderFulfillmentTypeLabel]) {
          return
       }
-      dispatch({
-         type: 'SET_SELECTED_ORDER_TAB',
-         payload: fulfillment,
-      })
-      const cartIdInLocal = localStorage.getItem('cart-id')
-      if (cartIdInLocal) {
-         methods.cart.update({
-            variables: {
-               id: JSON.parse(cartIdInLocal),
-               _set: {
-                  orderTabId: fulfillment?.id || null,
-               },
-            },
+      if (
+         config.kioskSettings.showTableSelectionView.value &&
+         fulfillment.orderFulfillmentTypeLabel === 'ONDEMAND_DINEIN'
+      ) {
+         setShowDineInTableSelection(true)
+      } else {
+         dispatch({
+            type: 'SET_SELECTED_ORDER_TAB',
+            payload: fulfillment,
          })
+         const cartIdInLocal = localStorage.getItem('cart-id')
+         if (cartIdInLocal) {
+            methods.cart.update({
+               variables: {
+                  id: JSON.parse(cartIdInLocal),
+                  _set: {
+                     orderTabId: fulfillment?.id || null,
+                  },
+               },
+            })
+         }
+         setCurrentPage('menuPage')
       }
-      setCurrentPage('menuPage')
    }
 
    return (

@@ -265,52 +265,37 @@ export const KioskCart = props => {
                            cartId={cart?.id}
                            className="hern-kiosk__kiosk-button hern-kiosk__cart-place-order-btn"
                         > */}
-                        {selectedOrderTab?.orderFulfillmentTypeLabel ===
-                           'ONDEMAND_DINEIN' &&
-                        config.kioskSettings.showTableSelectionView.value &&
-                        !cartState.cart?.locationTableId ? (
-                           <KioskButton
-                              customClass="hern-kiosk__cart-place-order-btn"
-                              buttonConfig={config.kioskSettings.buttonSettings}
-                              onClick={() => {
-                                 setShowDineInTableSelection(true)
-                              }}
-                           >
-                              <span>{t('SELECT YOUR TABLE')}</span>
-                           </KioskButton>
-                        ) : (
-                           <KioskButton
-                              customClass="hern-kiosk__cart-place-order-btn"
-                              onClick={placeOrderHandler}
-                              buttonConfig={config.kioskSettings.buttonSettings}
-                           >
-                              <span className="hern-kiosk__cart-place-order-btn-total">
-                                 {formatCurrency(
-                                    (
-                                       cart?.cartOwnerBilling?.balanceToPay || 0
-                                    ).toFixed(2)
-                                 )}
-                              </span>
-                              <span className="hern-kiosk__cart-place-order-btn-text">
-                                 {t('Place Order')}
-                              </span>
-                              {direction === 'ltr' ? (
-                                 <ArrowRightIcon
-                                    stroke={
-                                       config.kioskSettings.theme.primaryColor
-                                          .value
-                                    }
-                                 />
-                              ) : (
-                                 <ArrowLeftIcon
-                                    stroke={
-                                       config.kioskSettings.theme.primaryColor
-                                          .value
-                                    }
-                                 />
+                        <KioskButton
+                           customClass="hern-kiosk__cart-place-order-btn"
+                           onClick={placeOrderHandler}
+                           buttonConfig={config.kioskSettings.buttonSettings}
+                        >
+                           <span className="hern-kiosk__cart-place-order-btn-total">
+                              {formatCurrency(
+                                 (
+                                    cart?.cartOwnerBilling?.balanceToPay || 0
+                                 ).toFixed(2)
                               )}
-                           </KioskButton>
-                        )}
+                           </span>
+                           <span className="hern-kiosk__cart-place-order-btn-text">
+                              {t('Place Order')}
+                           </span>
+                           {direction === 'ltr' ? (
+                              <ArrowRightIcon
+                                 stroke={
+                                    config.kioskSettings.theme.primaryColor
+                                       .value
+                                 }
+                              />
+                           ) : (
+                              <ArrowLeftIcon
+                                 stroke={
+                                    config.kioskSettings.theme.primaryColor
+                                       .value
+                                 }
+                              />
+                           )}
+                        </KioskButton>
 
                         {/* </PayButton> */}
                      </Footer>
@@ -318,13 +303,13 @@ export const KioskCart = props => {
                </Footer>
             </>
          )}
-         <DineInTableSelection
+         {/* <DineInTableSelection
             showDineInTableSelection={showDineInTableSelection}
             onClose={() => {
                setShowDineInTableSelection(false)
             }}
             config={config}
-         />
+         /> */}
       </Layout>
    )
 }

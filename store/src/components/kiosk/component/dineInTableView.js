@@ -9,7 +9,7 @@ import classNames from 'classnames'
 import { ArrowLeftIcon } from '../../../assets/icons'
 
 export const DineInTableSelection = props => {
-   const { showDineInTableSelection, onClose, config } = props
+   const { showDineInTableSelection, onClose, config, onConfirmClick } = props
    const { locationId } = useConfig()
    const { methods, storedCartId } = useCart()
    const { t, dynamicTrans, locale } = useTranslation()
@@ -48,17 +48,12 @@ export const DineInTableSelection = props => {
             )}
             disabled={!selectedLocationTableId}
             onClick={() => {
-               if (storedCartId) {
-                  methods.cart.update({
-                     variables: {
-                        id: storedCartId,
-                        _set: {
-                           locationTableId: selectedLocationTableId,
-                        },
-                     },
-                  })
-                  onClose()
-               }
+               onConfirmClick(
+                  data.brands_locationTable.find(
+                     table => table.id === selectedLocationTableId
+                  )
+               )
+               onClose()
             }}
          >
             {t('CONFIRM')}

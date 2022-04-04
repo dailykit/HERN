@@ -18,7 +18,8 @@ const { Step } = Steps
 export const ProgressBar = props => {
    const { config, setCurrentPage } = props
 
-   const { cartState } = React.useContext(CartContext)
+   const { cartState, dineInTableInfo, setDineInTableInfo } =
+      React.useContext(CartContext)
    const { t, direction } = useTranslation()
    const { cart } = cartState
    const { selectedOrderTab } = useConfig()
@@ -90,6 +91,20 @@ export const ProgressBar = props => {
             setCurrentPage('menuPage')
       }
    }
+   const onConfirmClick = async tableInfo => {
+      setDineInTableInfo(tableInfo)
+      if (storedCartId) {
+         await methods.cart.update({
+            variables: {
+               id: storedCartId,
+               _set: {
+                  locationTableId: selectedLocationTableId,
+               },
+            },
+         })
+      }
+      setShowDineInTableSelection(false)
+   }
    return (
       <Header
          style={{
@@ -144,14 +159,16 @@ export const ProgressBar = props => {
                >
                   {selectedOrderTab?.label}
                </span>
-               {cartState.cart.locationTableId && (
+               {(dineInTableInfo?.internalTableLabel ||
+                  cartState.cart.locationTableId) && (
                   <div className="hern-kiosk__dine-in-table-detail">
                      <div>
                         <span className="hern-kiosk__dine-in-table-text">
                            {t('TABLE')}
                         </span>
                         <span className="hern-kiosk__dine-in-table-internal-table-label">
-                           {cartState.cart.locationTable.internalTableLabel}
+                           {dineInTableInfo?.internalTableLabel ||
+                              cartState.cart.locationTable.internalTableLabel}
                         </span>
                      </div>
                      <EditIcon
@@ -221,6 +238,7 @@ export const ProgressBar = props => {
                setShowDineInTableSelection(false)
             }}
             config={config}
+            onConfirmClick={onConfirmClick}
          />
       </Header>
    )
