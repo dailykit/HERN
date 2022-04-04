@@ -47,8 +47,20 @@ export const QUERIES = {
          }
       `,
       DETAILS: gql`
-         subscription order($id: oid!) {
-            order(id: $id) {
+         subscription order(
+            $brandId: [Int!]!
+            $locationId: [Int!]!
+            $id: oid!
+         ) {
+            orders(
+               where: {
+                  cart: {
+                     brandId: { _in: $brandId }
+                     locationId: { _in: $locationId }
+                  }
+                  id: { _eq: $id }
+               }
+            ) {
                id
                tax
                discount
@@ -439,8 +451,14 @@ export const QUERIES = {
             }
          `,
          CANCELLED: gql`
-            subscription orders {
-               orders: ordersAggregate(where: { isRejected: { _eq: true } }) {
+            subscription orders($brandId: [Int!]!, $locationId: [Int!]!) {
+               orders: ordersAggregate(
+                  where: {
+                     isRejected: { _eq: true }
+                     brandId: { _in: $brandId }
+                     locationId: { _in: $locationId }
+                  }
+               ) {
                   aggregate {
                      count
                      sum {
@@ -595,6 +613,9 @@ export const QUERIES = {
                nodes {
                   id
                   name
+                  type
+                  brandId
+                  locationId
                   cartItems_aggregate(where: { cart: $cart }) {
                      aggregate {
                         count
@@ -663,6 +684,8 @@ export const QUERIES = {
                nodes {
                   id
                   name
+                  brandId
+                  locationId
                   simpleRecipeYields_aggregate(
                      where: {
                         simpleRecipeCartItems: {
@@ -776,6 +799,8 @@ export const QUERIES = {
                nodes {
                   id
                   name
+                  brandId
+                  locationId
                   cartItems_aggregate(
                      where: {
                         level: { _eq: 4 }
@@ -985,13 +1010,21 @@ export const DEVICES = {
 
 export const QUERIES2 = {
    ORDERS_AGGREGATE: gql`
-      subscription ordersAggregate {
-         ordersAggregate: order_ordersAggregate {
+      subscription MySubscription(
+         $brandId: Int_comparison_exp!
+         $locationId: Int_comparison_exp!
+      ) {
+         order_orderStatusEnum(order_by: { index: asc }) {
+            index
             title
             value
-            count: totalOrders
-            sum: totalOrderSum
-            avg: totalOrderAverage
+            groupedOrderSummary(
+               where: { brandId: $brandId, locationId: $locationId }
+            ) {
+               avg
+               count
+               sum
+            }
          }
       }
    `,
@@ -1020,6 +1053,8 @@ export const ORDERS_ACCOUNTS = gql`
    subscription ORDERS_ACCOUNTS($where: order_cart_bool_exp = {}) {
       carts(where: $where, order_by: { created_at: desc_nulls_last }) {
          orderId
+         brandId
+         locationId
          customerId
          paymentStatus
          tip

@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import { isEmpty, isNull } from 'lodash'
 import { useTranslation } from 'react-i18next'
 import { Flex, Text, Spacer } from '@dailykit/ui'
@@ -14,11 +14,14 @@ import {
 import { Styles, StyledStat } from './styled'
 import { useWindowSize } from '../../../../../shared/hooks'
 import { currencyFmt, parseAddress } from '../../../../../shared/utils'
+import { BrandContext } from '../../../../../App'
 
 const address = 'apps.order.components.orderlistitem.'
 
 export const Details = ({ order }) => {
    const { t } = useTranslation()
+   const [brandContext, setBrandContext] = useContext(BrandContext)
+
    const [brand, setBrand] = React.useState({
       logo: '',
       name: '',
@@ -54,7 +57,6 @@ export const Details = ({ order }) => {
          setCurrentPanel('')
       }
    }, [order, width])
-
    return (
       <aside>
          <Styles.Accordian isOpen={currentPanel === 'brand'}>
@@ -222,6 +224,13 @@ export const Details = ({ order }) => {
                   <span>{order?.cart?.transactionId || 'N/A'}</span>
                </StyledStat>
             </main>
+         </Styles.Accordian>
+         <Styles.Accordian>
+            <header>
+               <Text as="p">
+                  Location: {brandContext?.locationLabel || ""}
+               </Text>
+            </header>
          </Styles.Accordian>
       </aside>
    )

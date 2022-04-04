@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import { toast } from 'react-toastify'
 import { Filler, Flex } from '@dailykit/ui'
 import styled from 'styled-components'
@@ -12,6 +12,7 @@ import { OrderListItem } from '../../components'
 import { logger } from '../../../../shared/utils'
 import { useTabs } from '../../../../shared/providers'
 import { ErrorState, InlineLoader, Banner } from '../../../../shared/components'
+import { BrandContext } from '../../../../App'
 
 const Orders = () => {
    const location = useLocation()
@@ -19,6 +20,8 @@ const Orders = () => {
    const { state, dispatch } = useOrder()
    const [active, setActive] = React.useState(1)
    const [orders, setOrders] = React.useState([])
+   const [brandContext, setBrandContext] = useContext(BrandContext)
+
    const {
       loading: loadingAggregate,
       data: { orders: ordersAggregate = {} } = {},
@@ -27,13 +30,29 @@ const Orders = () => {
       variables: {
          where: {
             isArchived: { _eq: false },
-            cart: { status: { _eq: state.orders.where?.cart?.status?._eq } },
+            cart: {
+               status: { _eq: state.orders.where?.cart?.status?._eq },
+               brandId: {
+                  _in: brandContext.brandId
+               },
+               locationId: { _in: brandContext.locationId }
+            },
+
          },
       },
    })
    const { loading, error } = useSubscription(QUERIES.ORDERS.LIST, {
       variables: {
-         where: state.orders.where,
+         where: {
+            ...state.orders.where,
+            cart: {
+               ...state.orders.where.cart,
+               brandId: {
+                  _in: brandContext.brandId
+               },
+               locationId: { _in: brandContext.locationId }
+            }
+         },
          ...(state.orders.limit && { limit: state.orders.limit }),
          ...(state.orders.offset !== null && { offset: state.orders.offset }),
       },
@@ -134,9 +153,8 @@ const Orders = () => {
                   <OrderListItem
                      order={order}
                      key={order.id}
-                     containerId={`${
-                        index % 10 === 0 ? `${index / 10 + 1}` : ''
-                     }`}
+                     containerId={`${index % 10 === 0 ? `${index / 10 + 1}` : ''
+                        }`}
                   />
                ))
             ) : (

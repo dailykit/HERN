@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import { toast } from 'react-toastify'
 import styled, { css } from 'styled-components'
 import { useQuery, useSubscription } from '@apollo/react-hooks'
@@ -20,6 +20,7 @@ import { logger } from '../../../../../../shared/utils'
 import { useTabs } from '../../../../../../shared/providers'
 import { Spacer } from '../../../../components/OrderSummary/styled'
 import { ErrorState, InlineLoader } from '../../../../../../shared/components'
+import { BrandContext } from '../../../../../../App'
 
 export const ProductOptions = () => {
    const [total, setTotal] = React.useState({})
@@ -69,6 +70,8 @@ export const ProductOptions = () => {
 
 const Listing = ({ type, setTotal }) => {
    const { state } = useOrder()
+   const [brandContext] = useContext(BrandContext)
+
    const {
       loading,
       error,
@@ -76,7 +79,16 @@ const Listing = ({ type, setTotal }) => {
    } = useSubscription(QUERIES.PLANNED.PRODUCT_OPTIONS, {
       variables: {
          type: { _eq: type.title },
-         cart: state.orders.where.cart,
+         cart: {
+            ...state.orders.where.cart,
+            brandId: {
+               _in: brandContext.brandId
+            },
+            locationId: {
+               _in: brandContext.locationId
+            }
+         },
+
       },
       onSubscriptionData: ({
          subscriptionData: { data: { productOptions: options = {} } = {} } = {},

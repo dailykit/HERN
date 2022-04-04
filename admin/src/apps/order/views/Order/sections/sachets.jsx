@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import { isEmpty } from 'lodash'
 import { useTranslation } from 'react-i18next'
 import { Flex, Filler } from '@dailykit/ui'
@@ -15,6 +15,7 @@ import {
 } from '../../../../../shared/components'
 import { useDnd } from '../../../../../shared/components/DragNDrop/useDnd'
 import { QUERIES } from '../../../graphql'
+import { BrandContext } from '../../../../../App'
 
 const address = 'apps.order.views.order.'
 
@@ -24,6 +25,8 @@ const Sachets = () => {
    const { initiatePriority } = useDnd()
    const { isSuperUser } = useAccess()
    const { state } = useOrder()
+   const [brandContext, setBrandContext] = useContext(BrandContext)
+
 
    const { loading, data: { sachets = [] } = {} } = useSubscription(
       QUERIES.ORDER.SACHET.MULTIPLE,
@@ -33,6 +36,13 @@ const Sachets = () => {
             where: {
                parentCartItemId: { _eq: state?.current_product?.id },
                levelType: { _eq: 'orderItemSachet' },
+               cart: {
+                  brandId: {
+                     _in: brandContext.brandId
+                  }, locationId: {
+                     _in: brandContext.locationId
+                  }
+               }
             },
          },
       }

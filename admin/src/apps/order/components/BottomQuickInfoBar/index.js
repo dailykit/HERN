@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import { toast } from 'react-toastify'
 import { useSubscription } from '@apollo/react-hooks'
 
@@ -8,22 +8,71 @@ import { useOrder } from '../../context'
 import { QUERIES, QUERIES2 } from '../../graphql'
 import { logger, currencyFmt } from '../../../../shared/utils'
 import { InlineLoader, ErrorState } from '../../../../shared/components'
+import { BrandContext } from '../../../../App'
 
 const BottomQuickInfoBar = ({ openOrderSummaryTunnel }) => {
    const { state } = useOrder()
+   const [brandContext, setBrandContext] = useContext(BrandContext)
+   const [ordersAggregate, setOrdersAggregate] = React.useState([])
+   // console.log('brandContextBottom', brandContext)
+   const [loaderBottom, setLoaderBottom] = React.useState(true)
+
    const { data: { orders = {} } = {} } = useSubscription(
-      QUERIES.ORDERS.AGGREGATE.TOTAL
+      QUERIES.ORDERS.AGGREGATE.TOTAL,
+      {
+         variables: {
+            where: {
+               cart: {
+                  brandId: {
+                     _in: brandContext.brandId,
+                  },
+                  locationId: { _in: brandContext.locationId },
+               },
+            },
+         },
+      }
    )
    const { data: { orders: cancelledOrders = {} } = {} } = useSubscription(
       QUERIES.ORDERS.AGGREGATE.CANCELLED
    )
-   const {
-      loading,
-      error,
-      data: { ordersAggregate = [] } = {},
-   } = useSubscription(QUERIES2.ORDERS_AGGREGATE)
+   const { loading, error } = useSubscription(QUERIES2.ORDERS_AGGREGATE, {
+      variables: {
+         brandId:
+            brandContext.brandId === null
+               ? { _is_null: true }
+               : {
+                    _in: brandContext.brandId,
+                 },
+         locationId:
+            brandContext.locationId === null
+               ? { _is_null: true }
+               : {
+                    _in: brandContext.locationId,
+                 },
+      },
+      onSubscriptionData: ({
+         subscriptionData: { data: { order_orderStatusEnum = [] } = {} },
+      }) => {
+         if (order_orderStatusEnum.length > 0) {
+            const result = order_orderStatusEnum.map(order => {
+               return {
+                  title: order.title,
+                  value: order.value,
+                  count: order.groupedOrderSummary[0]?.count || 0,
+                  sum: order.groupedOrderSummary[0]?.sum || 0,
+                  avg: order.groupedOrderSummary[0]?.avg || 0,
+               }
+            })
+            setOrdersAggregate(result)
+            // console.log('orderSummary 1', order_orderStatusEnum, result)
+            setLoaderBottom(false)
+         }
+      },
+   })
+   // console.log('orderSummary for bottom', ordersAggregate)
 
-   if (loading) return <div />
+   if (loading || loaderBottom) return <InlineLoader />
+   // console.log('Error and loading', error, loading, loaderBottom)
    if (error) {
       logger(error)
       toast.error('Failed to fetch the order summary!')

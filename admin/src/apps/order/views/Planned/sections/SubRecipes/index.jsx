@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import styled, { css } from 'styled-components'
 import { useSubscription } from '@apollo/react-hooks'
 import { Tabs, TabList, Tab, TabPanels, TabPanel } from '@reach/tabs'
@@ -11,6 +11,7 @@ import { NewTabIcon } from '../../../../assets/icons'
 import { logger } from '../../../../../../shared/utils'
 import { useTabs } from '../../../../../../shared/providers'
 import { ErrorState, InlineLoader } from '../../../../../../shared/components'
+import { BrandContext } from './../../../../../../../src/App'
 
 export const SubRecipes = () => {
    const [total, setTotal] = React.useState(0)
@@ -32,11 +33,21 @@ export const SubRecipes = () => {
 
 const Listing = ({ setTotal, setServings }) => {
    const { state } = useOrder()
+   const [brandContext, setBrandContext] = useContext(BrandContext)
+
    const { loading, error, data: { subRecipes = {} } = {} } = useSubscription(
       QUERIES.PLANNED.SUB_RECIPES,
       {
          variables: {
-            cart: state.orders.where.cart,
+            cart: {
+               ...state.orders.where.cart,
+               brandId: {
+                  _in: brandContext.brandId
+               },
+               locationId: {
+                  _in: brandContext.locationId
+               }
+            },
          },
 
          onSubscriptionData: ({
@@ -48,8 +59,8 @@ const Listing = ({ setTotal, setServings }) => {
                   a.simpleRecipeYields_aggregate.nodes.reduce(
                      (y, x) =>
                         y +
-                           x.subRecipeCartItems_aggregate.aggregate.sum
-                              .displayServing || 0,
+                        x.subRecipeCartItems_aggregate.aggregate.sum
+                           .displayServing || 0,
                      0
                   ),
                0
