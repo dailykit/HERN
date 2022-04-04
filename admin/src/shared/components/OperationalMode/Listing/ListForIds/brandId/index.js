@@ -19,19 +19,19 @@ import { Banner, InlineLoader } from '../../../..'
 import { TunnelContainer } from '../../../../../../apps/inventory/components'
 
 const BrandManagerList = ({ closeTunnel }) => {
-   const [brandId, setBrandId] = React.useState([])
+   const [brandList, setBrandList] = React.useState([])
    const { tab, addTab } = useTabs()
 
    //subscription
    const { loading, error } = useSubscription(BRAND_ID, {
       onSubscriptionData: data => {
-         setBrandId(data.subscriptionData.data.brandsAggregate.nodes)
+         setBrandList(data.subscriptionData.data.brandsAggregate.nodes)
       },
    })
-   // console.log('brand ID:::', brandId)
+   // console.log('brand ID:::', brandList)
 
    //ssl1 declaration
-   const [list, current, selectOption] = useSingleList(brandId)
+   const [list, current, selectOption] = useSingleList(brandList)
    const [search, setSearch] = React.useState('')
 
    return (

@@ -43,6 +43,7 @@ const loadScript = (node, position, parent) => {
    const { tag, type, code } = node
    const parentContainer = document.querySelector(parent)
    const fragment = document.createDocumentFragment()
+
    if (type === 'inline' && tag === 'script') {
       const script = document.createElement('script')
       script.innerHTML = code.replace('<script>', '').replace('</script>', '')
@@ -64,8 +65,13 @@ const loadScript = (node, position, parent) => {
       const noscript = document.createElement('noscript')
       noscript.innerHTML = code.replace('<noscript>', '').replace('</noscript>', '')
       fragment.appendChild(noscript)
+   } else if (tag === 'none') {
+      //when no tag is specified the tags will directly be appended in parent element(works for non-script tags)
+      const element = document.createElement('wrapper')
+      element.innerHTML = code
+      const node = element.childNodes
+      fragment.appendChild(...element.childNodes)
    }
-
    if (position === 'start') {
       parentContainer.prepend(fragment)
    } else if (position === 'end') {

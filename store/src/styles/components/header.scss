@@ -34,7 +34,7 @@
    -ms-flex-align: center;
    align-items: center;
    > img {
-      height: 3rem;
+      max-height: 54px;
    }
    > span {
       margin-left: 0.5rem;
@@ -47,13 +47,15 @@
 }
 .hern-header__brand__logo {
    display: none;
+   cursor: pointer;
    @media (min-width: 600px) {
       display: block;
    }
 }
 .hern-header__brand__logo--sm {
    display: block;
-   min-height: 54px;
+   max-height: 54px;
+   cursor: pointer;
    @media (min-width: 600px) {
       display: none;
    }
@@ -63,9 +65,9 @@
    padding-left: 0.5rem;
    padding-right: 0.5rem;
    display: flex;
-   justify-content: center;
+   // justify-content: center;
    align-items: center;
-   margin-left: auto;
+   // margin-left: auto;
    @media (min-width: 768px) {
       margin-left: unset;
       padding-left: 1rem;
@@ -82,6 +84,7 @@
    padding-top: 0.25rem;
    padding-bottom: 0.25rem;
    transition: all 0.3s ease;
+   white-space: nowrap;
    &:focus {
       outline: none;
    }
@@ -125,6 +128,10 @@
       opacity: 0.7;
    }
 }
+.hern-header__login-btn--rounded {
+   border-radius: 16px;
+   padding: 4px 16px;
+}
 .hern-navigatin-menu__wrapper {
    display: none;
    align-items: center;
@@ -142,7 +149,7 @@
    --tw-bg-opacity: 1;
    background-color: rgba(255, 255, 255, var(--tw-bg-opacity));
    width: 100%;
-   top: 6rem;
+   top: auto;
    list-style-type: none;
    -webkit-transition-property: all;
    transition-property: all;
@@ -199,9 +206,7 @@
 .hern-header__downvector-icon {
    margin: 0 6px;
 }
-.hern-header__location-right {
-   display: flex;
-}
+
 .hern-header__location-right-loading {
    font-style: italic;
    color: #40404099;
@@ -215,4 +220,110 @@
    @media (min-width: 768px) {
       display: unset;
    }
+}
+.hern-header--layout-one {
+   display: flex;
+   justify-content: space-between;
+   align-items: center;
+   padding: 12px 0;
+   position: relative;
+}
+.hern-header__auth--layout-one {
+   position: absolute;
+   left: 50%;
+   top: 50%;
+   transform: translate(-50%, -50%);
+   @media screen and (max-width: 1023px) {
+      position: unset;
+      left: unset;
+      top: unset;
+      transform: unset;
+   }
+}
+.hern-navbar__list--layout-one {
+   padding-bottom: 12px;
+   ul {
+      justify-content: center;
+   }
+   .hern-navbar__list__item {
+      font-family: 'Inter';
+      font-style: normal;
+      font-size: 18px;
+      line-height: 22px;
+      text-align: center;
+      letter-spacing: 0.04em;
+      color: #000000;
+      &:active {
+         > a {
+            font-weight: 600 !important;
+         }
+         border-bottom: 2px solid var(--hern-accent);
+      }
+   }
+   .hern-navbar__list__item--active {
+      a {
+         font-weight: 600 !important;
+      }
+      border-bottom: 2px solid var(--hern-accent);
+   }
+   .hern-navbar__list__item a {
+      font-weight: 500;
+      transition: all 0.3s ease-in-out;
+   }
+   .hern-navbar__list__item a:hover {
+      font-weight: 600;
+      color: #000000 !important;
+   }
+}
+.hern-header__location-container--layout-one {
+   display: flex;
+   @media screen and (max-width: 767px) {
+      display: none;
+   }
+}
+.hern-location-info--layout-one--sm {
+   display: none;
+   @media screen and (max-width: 767px) {
+      display: flex;
+      > .hern-header__location-right {
+         display: flex;
+      }
+   }
+}
+.hern-navigatin-menu__wrapper--mobile--layout-one {
+   z-index: 999;
+}
+
+.hern-header-stickey {
+   position: sticky;
+   top: 0;
+   background: #fff;
+   z-index: 999;
+}
+.hern-header--layout-two {
+   display: flex;
+   justify-content: space-between;
+   align-items: center;
+   padding-top: 12px;
+}
+.hern-header__location-right--layout-two {
+   display: flex;
+}
+.hern-header__css-transition-enter {
+   height: 0;
+   opacity: 0;
+}
+.hern-header__css-transition-enter-active {
+   transition: all 0.4s;
+   height: auto;
+   opacity: 1;
+}
+.hern-header__css-transition-exit {
+   opacity: 1;
+   height: auto;
+}
+.hern-header__css-transition-exit-active {
+   transition: all 0.4s;
+   height: 0;
+   opacity: 0;
 }

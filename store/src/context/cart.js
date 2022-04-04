@@ -254,7 +254,6 @@ export const CartProvider = ({ children }) => {
    // delete cartItems
    const [deleteCartItems] = useMutation(DELETE_CART_ITEMS, {
       onCompleted: ({ deleteCartItems = null }) => {
-         console.log('item removed successfully')
          if (
             deleteCartItems &&
             deleteCartItems.returning.length &&
@@ -269,9 +268,11 @@ export const CartProvider = ({ children }) => {
             })
          }
          setIsFinalCartLoading(false)
-         addToast(t('Item removed!'), {
-            appearance: 'success',
-         })
+         if (deleteCartItems && deleteCartItems.returning.length) {
+            addToast(t('Item removed!'), {
+               appearance: 'success',
+            })
+         }
       },
       onError: error => {
          console.log(error)

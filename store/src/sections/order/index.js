@@ -50,6 +50,21 @@ export const OnDemandOrder = ({ config }) => {
       config?.display?.productsScrollWidth?.value ??
       config?.display?.productsScrollWidth?.default ??
       0
+   const showCategoryBackgroundImage =
+      config?.display?.showCategoryBackgroundImage?.value ??
+      config?.display?.showCategoryBackgroundImage?.default ??
+      false
+   // const showCategoryBackgroundImage = false
+   const categoryBackgroundImage =
+      config?.display?.categoryBackgroundImage?.value ??
+      config?.display?.categoryBackgroundImage?.default ??
+      null
+   const showAddToCartButtonFullWidth =
+      config?.display?.showAddToCartButtonFullWidth?.value ??
+      config?.display?.showAddToCartButtonFullWidth?.default ??
+      true
+   const navbarCategoryAlignment =
+      config?.display?.navbarCategoryAlignment?.value?.value ?? 'CENTER'
 
    setThemeVariable('--hern-number-of-products', numberOfProducts)
    setThemeVariable(
@@ -128,7 +143,13 @@ export const OnDemandOrder = ({ config }) => {
    )
    const [productModifier, setProductModifier] = useState(null)
    const CustomAreaWrapper = ({ data }) => {
-      return <CustomArea data={data} setProductModifier={setProductModifier} />
+      return (
+         <CustomArea
+            data={data}
+            setProductModifier={setProductModifier}
+            showAddToCartButtonFullWidth={showAddToCartButtonFullWidth}
+         />
+      )
    }
    const closeModifier = () => {
       setProductModifier(null)
@@ -157,6 +178,7 @@ export const OnDemandOrder = ({ config }) => {
                menuType="navigationAnchorMenu"
                categories={categories}
                showCount={showCategoryLengthOnCategory}
+               navbarAlignment={navbarCategoryAlignment}
             />
          )}
          <div
@@ -178,19 +200,39 @@ export const OnDemandOrder = ({ config }) => {
                   {hydratedMenu.map((eachCategory, index) => {
                      return (
                         <Scroll.Element key={index} name={eachCategory.name}>
-                           <p
-                              className="hern-product-category-heading"
-                              id={`hern-product-category-${eachCategory.name}`}
-
-                           >
-                              <span data-translation="true"
-                              >
-                                 {eachCategory.name}</span>
-
-                              {showCategoryLengthOnCategoryTitle && (
-                                 <>({eachCategory.products.length})</>
+                           <div
+                              className={classNames(
+                                 'hern-store__order-category-name-wrapper',
+                                 {
+                                    'hern-store__order-category-name-wrapper-with-bg':
+                                       showCategoryBackgroundImage,
+                                 }
                               )}
-                           </p>
+                           >
+                              {showCategoryBackgroundImage && (
+                                 <div
+                                    className="hern-store__order-category-name-wrapper-bg-image"
+                                    style={{
+                                       backgroundImage: `url(${categoryBackgroundImage})`,
+                                    }}
+                                 ></div>
+                              )}
+                              <p
+                                 className={classNames(
+                                    'hern-product-category-heading',
+                                    {
+                                       'hern-product-category-heading-with-bg':
+                                          showCategoryBackgroundImage,
+                                    }
+                                 )}
+                                 id={`hern-product-category-${eachCategory.name}`}
+                              >
+                                 {eachCategory.name}
+                                 {showCategoryLengthOnCategoryTitle && (
+                                    <>({eachCategory.products.length})</>
+                                 )}
+                              </p>
+                           </div>
                            <div style={{ display: 'flex', flexWrap: 'wrap' }}>
                               {eachCategory.products.map(
                                  (eachProduct, index) => {
@@ -219,7 +261,7 @@ export const OnDemandOrder = ({ config }) => {
                                                 router.push(
                                                    getRoute(
                                                       '/products/' +
-                                                      eachProduct.id
+                                                         eachProduct.id
                                                    )
                                                 )
                                              }
@@ -227,7 +269,7 @@ export const OnDemandOrder = ({ config }) => {
                                                 router.push(
                                                    getRoute(
                                                       '/products/' +
-                                                      eachProduct.id
+                                                         eachProduct.id
                                                    )
                                                 )
                                              }
@@ -246,7 +288,7 @@ export const OnDemandOrder = ({ config }) => {
                                              showModifier={
                                                 productModifier &&
                                                 productModifier.id ===
-                                                eachProduct.id
+                                                   eachProduct.id
                                              }
                                              closeModifier={closeModifier}
                                              customAreaFlex={false}

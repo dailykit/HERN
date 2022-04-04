@@ -273,7 +273,7 @@ const PrintTunnel = ({ closeTunnel }) => {
    const [printers, setPrinters] = React.useState([])
    const [createPrint, { loading: isPrinting }] = useMutation(PRINT_JOB, {
       onCompleted: () => {
-         closeTunnel(18)
+         closeTunnel(1)
          toast.success('Successfully Printed!')
       },
       onError: error => {
@@ -314,7 +314,7 @@ const PrintTunnel = ({ closeTunnel }) => {
                isLoading: isPrinting,
                disabled: !Boolean(url) ?? isEmpty(current),
             }}
-            close={() => closeTunnel(18)}
+            close={() => closeTunnel(1)}
          />
          <Banner id="settings-app-devices-print-tunnel-top" />
          <Flex padding="16px" overflowY="auto" height="calc(100vh - 105px)">

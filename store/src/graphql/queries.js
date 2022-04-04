@@ -690,31 +690,6 @@ export const INFORMATION_GRID = gql`
    }
 `
 
-export const FAQ = gql`
-   subscription faq(
-      $page: String_comparison_exp!
-      $identifier: String_comparison_exp!
-   ) {
-      faq: content_faqs(
-         where: {
-            page: $page
-            isVisible: { _eq: true }
-            identifier: $identifier
-         }
-      ) {
-         id
-         heading
-         subHeading
-         identifier
-         blocks: informationBlocks {
-            id
-            title
-            description
-         }
-      }
-   }
-`
-
 export const OUR_MENU = {
    TITLES: gql`
       query titles($brandId: Int!) {
@@ -2505,6 +2480,14 @@ export const LOCATION_TABLES = gql`
          isActive
          locationId
          seatCover
+      }
+   }
+`
+export const COUPON_BY_ID = gql`
+   query coupon($id: Int!) {
+      coupon(id: $id) {
+         code
+         metaDetails
       }
    }
 `

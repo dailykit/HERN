@@ -10,7 +10,7 @@
       "@dailykit/web-renderer": "1.0.7",
       "@monaco-editor/react": "^4.0.11",
       "@reach/tabs": "0.11.2",
-      "@react-google-maps/api": "1.9.7",
+      "@react-google-maps/api": "^2.7.0",
       "@sentry/react": "^5.25.0",
       "@sentry/tracing": "^5.25.0",
       "@stripe/react-stripe-js": "^1.4.1",
