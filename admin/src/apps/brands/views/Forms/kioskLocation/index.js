@@ -8,25 +8,33 @@ import {
    Text,
    Spacer,
    Form,
+   ButtonGroup,
    HorizontalTab,
    HorizontalTabs,
    HorizontalTabList,
    HorizontalTabPanel,
    HorizontalTabPanels,
+   Dropdown,
+   TextButton,
 } from '@dailykit/ui'
 import validator from '../../validator'
-import { KIOSK } from '../../../graphql'
+import copy from 'copy-to-clipboard'
+import { KIOSK, BRANDS } from '../../../graphql'
 import { Wrapper, Label } from '../brand/styled'
 import { logger } from '../../../../../shared/utils'
 import { useTabs } from '../../../../../shared/providers'
 import { Banner, InlineLoader, Tooltip } from '../../../../../shared/components'
 import { KioskConfig, BasicInfo, LinkOrderTab } from './tabs'
+import { CopyIcon } from '../../../../editor/assets/Icons'
 
 export const KioskLocation = () => {
    const params = useParams()
    const { tab, addTab, setTabTitle } = useTabs()
+   const [brandList, setBrandList] = React.useState([])
    const [title, setTitle] = React.useState({
       value: '',
+      accessUrl: '',
+      brandName: '',
       meta: {
          isValid: false,
          isTouched: false,
@@ -58,6 +66,7 @@ export const KioskLocation = () => {
          console.log('data is:', kiosk)
          setTitle({
             value: kiosk[0].kioskLabel || '',
+            accessUrl: kiosk[0]?.accessUrl || '',
             meta: {
                isValid: kiosk[0].kioskLabel ? true : false,
                isTouched: false,
@@ -68,9 +77,27 @@ export const KioskLocation = () => {
       },
    })
 
+   const { error1, loading1, data1 } = useSubscription(BRANDS.LIST, {
+      onSubscriptionData: ({
+         subscriptionData: {
+            data: { brands = {} },
+         },
+      }) => {
+         console.log('brands data', brands)
+         const brandsData = brands?.nodes.map(brand => {
+            return {
+               id: brand?.id || '',
+               title: brand?.title || '',
+            }
+         })
+         setBrandList(previousData => [...previousData, ...brandsData])
+      },
+   })
+   console.log('brandlist made now::>', brandList)
+
    React.useEffect(() => {
       if (!tab && !loading && !isEmpty(kiosk)) {
-         addTab(kiosk?.title || 'N/A', `/kiosks/kiosks/${kiosk[0].id}`)
+         addTab(kiosk?.title || 'N/A', `/kiosks/kiosks/id/${kiosk[0].id}`)
          console.log('data:', loading)
       }
    }, [tab, addTab, loading, kiosk])
@@ -90,7 +117,7 @@ export const KioskLocation = () => {
             variables: {
                id: params.id,
                _set: {
-                  title: title.value,
+                  internalLocationKioskLabel: title.value,
                },
             },
          })
@@ -114,11 +141,11 @@ export const KioskLocation = () => {
             alignItems="center"
             justifyContent="space-between"
          >
-            <Flex container>
+            <Flex container style={{ gap: '10px' }}>
                <Form.Group>
                   <Flex container alignItems="flex-end">
                      <Form.Label htmlFor="name" title="Kiosk Label">
-                        Title*
+                        Kiosk Label*
                      </Form.Label>
                      <Tooltip identifier="brand_title_info" />
                   </Flex>
@@ -140,16 +167,118 @@ export const KioskLocation = () => {
                      ))}
                </Form.Group>
 
-               <Spacer size="24px" xAxis />
-               {/* <section>
-                  <Flex container alignItems="center">
-                     <Label>Domain</Label>
-                     <Tooltip identifier="brand_domain_info" />
+               {/* <Form.Group>
+                  <Flex container alignItems="flex-end">
+                     <Form.Label
+                        htmlFor="accessUrl"
+                        title="Copy Kiosk Access URL"
+                     >
+                     
+                        <ButtonGroup
+                           onClick={() => {
+                              copy(title.accessUrl)
+                           }}
+                        >
+                           {'Domain*    '}
+                           <div>
+                              <CopyIcon size={20} />
+                           </div>
+                        </ButtonGroup>
+                     </Form.Label>
                   </Flex>
-                  <Text as="h3" style={{ marginTop: '13px' }}>
-                     {brand?.domain}
-                  </Text>
-               </section> */}
+                  
+                  <Form.Text
+                     id="accessUrl"
+                     name="accessUrl"
+                     placeholder="Enter the kiosk Domain"
+                     style={{ marginTop: '-2px' }}
+                     value={title.accessUrl}
+                     disabled={kiosk?.isDefault}
+                     onChange={e =>
+                        setTitle({ ...title, accessUrl: e.target.value })
+                     }
+                     // onBlur={e => updateTitle(e)}
+                     onBlur={e =>
+                        update({
+                           variables: {
+                              id: params.id,
+                              _set: { accessUrl: e.target.value },
+                           },
+                        })
+                     }
+                  />
+                  {title.meta.isTouched &&
+                     !title.meta.isValid &&
+                     title.meta.errors.map((error, index) => (
+                        <Form.Error key={index}>{error}</Form.Error>
+                     ))}
+                  
+               </Form.Group> */}
+
+               <Form.Group>
+                  <Flex container alignItems="flex-end">
+                     <Form.Label
+                        htmlFor="accessUrl"
+                        title="Copy Kiosk Access URL"
+                     >
+                        <ButtonGroup
+                           onClick={() => {
+                              copy(title.accessUrl)
+                           }}
+                        >
+                           {'Domain*    '}
+
+                           <CopyIcon size={20} />
+                        </ButtonGroup>
+                     </Form.Label>
+                  </Flex>
+                  <div style={{ display: 'flex' }}>
+                     <div
+                        style={{
+                           border: '1px solid #e3e3e3',
+                           borderRadius: '6px',
+                           // marginTop: '15px',
+                           height: '40px',
+                           textAlign: 'match-parent',
+                           padding: '0 12px 12px 12px',
+                        }}
+                     >
+                        <Dropdown
+                           type="single"
+                           isLoading={loading1}
+                           addOption={brandList}
+                           options={brandList}
+                           defaultName={title.accessUrl.split('.')[0]}
+                           selectedOption={e =>
+                              update({
+                                 variables: {
+                                    id: params.id,
+                                    _set: {
+                                       accessUrl:
+                                          e.title + '.' + title.value + '.com',
+                                    },
+                                 },
+                              })
+                           }
+                           placeholder="Enter brand name"
+                           addOption={() => console.log('brand ADDED')}
+                        />
+                     </div>
+                     <h1>.</h1>
+                     <Form.Text
+                        id="Kiosk"
+                        name="Kiosk"
+                        // style={{ marginTop: '-2px' }}
+                        placeholder="Enter the kiosk label"
+                        value={title.value}
+                        disabled={kiosk?.isDefault}
+                        onChange={e =>
+                           setTitle({ ...title, value: e.target.value })
+                        }
+                        onBlur={e => updateTitle(e)}
+                     />
+                  </div>
+               </Form.Group>
             </Flex>
 
             <Form.Toggle

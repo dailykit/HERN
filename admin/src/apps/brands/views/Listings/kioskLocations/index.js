@@ -61,7 +61,7 @@ export const KioskLocations = () => {
    const cellClick = kiosk => {
       addTab(
          kiosk?.KioskLabel || kiosk?.accessUrl || 'N/A',
-         `/brands/kiosks/${kiosk.id}`
+         `/brands/kiosks/id/${kiosk.id}`
       )
    }
    //  console.log("id:",params.id)
@@ -188,9 +188,7 @@ export const KioskLocations = () => {
                <TextButton
                   type="solid"
                   align="left"
-                  onClick={() =>
-                     addTab('kioskReport', '/brands/kiosks/kioskReport/table')
-                  }
+                  onClick={() => addTab('kioskReport', '/brands/kiosks/report')}
                >
                   Kiosk Report
                </TextButton>
@@ -255,7 +253,7 @@ function KioskName({ cell, addTab }) {
             alignItems="center"
          >
             <p
-               title="Click to view this brand"
+               title="Click to view this Kiosk"
                style={{
                   width: '230px',
                   whiteSpace: 'nowrap',

@@ -162,6 +162,7 @@ const CreateLinkOrderTab = ({ closeTunnel }) => {
                      <Dropdown
                         type="single"
                         // default={kioskOrderTab.orderTab}
+                        placeholder="Enter Order Tab"
                         options={orderTabList}
                         selectedOption={e =>
                            createKioskOrderTab(e, kioskOrderTab)

@@ -68,14 +68,48 @@ export const LinkOrderTab = () => {
       //  }
    ])
 
-   const { error, loading } = useQuery(KIOSK.GET_KIOSKS, {
+   // const { error, loading } = useQuery(KIOSK.GET_KIOSKS, {
+   //    variables: {
+   //       id: params.id,
+   //    },
+   //    onError: () => {
+   //       toast.error('Failed to load addresses, please try again.')
+   //    },
+   //    onCompleted: ({ kiosk }) => {
+   //       console.log('kiosks data:', kiosk)
+   //       let dataExtracted = kiosk.orderTabs
+   //       dataExtracted = dataExtracted.map(order => {
+   //          return {
+   //             value: '',
+   //             orderPrefix: order?.orderPrefix || '',
+   //             orderTab: order?.OrderTab.label || '',
+   //             posistTab: order?.posist_tabType || '',
+   //             posistTabId: order?.posist_tabId || '',
+   //             orderTabId: order?.orderTabId || '',
+   //             meta: {
+   //                isValid: order ? true : false,
+   //                isTouched: false,
+   //                errors: [],
+   //             },
+   //          }
+   //       })
+   //       console.log('formatted data-->', dataExtracted)
+   //       setTitle(previousData => [...previousData, ...dataExtracted])
+   //    },
+   // })
+
+   const { error, loading } = useSubscription(KIOSK.GET_KIOSKS, {
       variables: {
          id: params.id,
       },
       onError: () => {
          toast.error('Failed to load addresses, please try again.')
       },
-      onCompleted: ({ kiosk }) => {
+      onSubscriptionData: ({
+         subscriptionData: {
+            data: { kiosk = [] },
+         },
+      }) => {
          console.log('kiosks data:', kiosk)
          let dataExtracted = kiosk.orderTabs
          dataExtracted = dataExtracted.map(order => {
@@ -97,15 +131,27 @@ export const LinkOrderTab = () => {
          setTitle(previousData => [...previousData, ...dataExtracted])
       },
    })
-
-   console.log('new tittle', title)
+   console.log('new tittle', title, title[0]?.orderTabId)
+   // if (title[0]?.orderTabId) {
+   //    let firstObject = {
+   //       id: title[0]?.orderTabId || 'nope',
+   //       title: title[0]?.orderTab || 'nope',
+   //       value: title[0]?.orderTab || 'nope',
+   //    }
+   //    console.log('first object:::>', firstObject)
+   //    setOrderTabList(firstObject)
+   // }
 
    const { error1, loading1, data1 } = useQuery(KIOSK.ORDER_TAB_LIST, {
       onCompleted: data => {
          const name1 = data.brands_orderTab.map(orderTabList => {
-            return { id: orderTabList.id, title: orderTabList.label }
+            return {
+               id: orderTabList?.id || '',
+               title: orderTabList?.label || '',
+               value: orderTabList?.label || '',
+            }
          })
-         setOrderTabList(name1)
+         setOrderTabList(previousData => [...previousData, ...name1])
       },
    })
    console.log('labels are:', orderTabList)
@@ -246,7 +292,7 @@ export const LinkOrderTab = () => {
                            Order Tab
                         </Form.Label>
 
-                        <Form.Text
+                        {/* <Form.Text
                            id={`kioskOrderTab.orderTabs-${i}`}
                            name={`kioskOrderTab.orderTabs-${i}`}
                            value={kioskOrderTab.orderTab}
@@ -257,10 +303,13 @@ export const LinkOrderTab = () => {
                            //       setTitle(prevTitle)
                            //    }}
                            //    onBlur={e => updateOrderTab(e, title[i])}
-                        />
+                        /> */}
                         <Dropdown
                            type="single"
-                           //    default={kioskOrderTab.orderTab}
+                           defaultOption={{ id: kioskOrderTab.orderTabId }}
+                           isLoading={loading1}
+                           addOption={orderTabList}
+                           placeholder="Enter Order Tab"
                            options={orderTabList}
                            selectedOption={e =>
                               updateOrderTab(e, kioskOrderTab)
