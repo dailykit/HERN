@@ -7,6 +7,8 @@ export const printKOT = async (req, res) => {
    try {
       const { id = '', status = '' } = req.body.event.data.new
 
+      console.log('printKOT', req.body.event.data.new)
+
       if (status !== 'ORDER_UNDER_PROCESSING')
          return res.status(200).json({
             success: true,
@@ -28,10 +30,10 @@ export const printKOT = async (req, res) => {
          Object.keys(req.body.event.data.new).length === 2
       ) {
          const DATA_HUB = await get_env('DATA_HUB')
+         const origin = new URL(DATA_HUB).origin
          const { data: { data = {}, success } = {} } = await axios.get(
-            `${new URL(DATA_HUB).origin}/server/api/kot-urls?id=${id}`
+            `${origin}/server/api/kot-urls?id=${id}&format=raw`
          )
-
          if (success) {
             await Promise.all(
                data.map(async node => {
@@ -61,14 +63,14 @@ const print_job = async (url, title, printerId) => {
       title,
       printerId,
       source: 'Admin',
-      contentType: 'pdf_uri'
+      contentType: 'raw_uri'
    })
    return
 }
 
 export const getKOTUrls = async (req, res) => {
    try {
-      const { id } = req.query
+      const { id, format = 'pdf' } = req.query
       const { settings = [] } = await client.request(SETTINGS, {
          type: {
             _eq: 'kot'
@@ -123,7 +125,7 @@ export const getKOTUrls = async (req, res) => {
          JSON.stringify({
             name: 'product_kot1',
             type: 'kot',
-            format: 'pdf'
+            format
          })
       )
 
@@ -131,7 +133,7 @@ export const getKOTUrls = async (req, res) => {
          JSON.stringify({
             name: 'sachet_kot1',
             type: 'kot',
-            format: 'pdf'
+            format
          })
       )
 

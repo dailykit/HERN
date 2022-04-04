@@ -326,10 +326,8 @@ const Order = () => {
                args: {
                   name: 'printKOT',
                   payload: {
-                     new: {
-                        id: order.id,
-                        status: 'ORDER_UNDER_PROCESSING',
-                     },
+                     id: order.id,
+                     status: 'ORDER_UNDER_PROCESSING',
                   },
                },
             },
