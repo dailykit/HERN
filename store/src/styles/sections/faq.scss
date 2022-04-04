@@ -12,13 +12,24 @@
       width: inherit;
    }
    @media screen and (max-width: 768px) {
+      height: 180px;
+      .hern-faq__banner__content__heading {
+         font-size: 20px;
+         line-height: unset;
+      }
+      .hern-faq__banner__content__sub-heading {
+         font-size: 24px;
+         line-height: unset;
+      }
+   }
+   @media screen and (max-width: 567px) {
       height: 120px;
       .hern-faq__banner__content__heading {
          font-size: 12px;
          line-height: unset;
       }
       .hern-faq__banner__content__sub-heading {
-         font-size: 16px;
+         font-size: 15px;
          line-height: unset;
       }
    }
@@ -32,7 +43,7 @@
 .hern-faq__banner__content__heading {
    font-family: 'Lato';
    font-weight: 700;
-   font-size: 40px;
+   font-size: 36px;
    line-height: 77px;
    letter-spacing: 0.02em;
    margin: 0 !important;
@@ -51,14 +62,14 @@
    display: flex;
    padding: 64px 0;
    @media only screen and (max-width: 768px) {
-      flex-direction: column;
       padding: 0 0 64px 0;
       align-items: center;
+      display: block;
    }
 }
 .hern-faq__qna {
    background: rgba(255, 181, 161, 0.25);
-   border-radius: 20px;
+   border-radius: 16px;
    padding: 24px;
    max-width: 1200px;
    margin-bottom: 16px;
@@ -76,11 +87,11 @@
       font-family: 'Lato';
       font-style: normal;
       font-weight: 700;
-      font-size: 28px;
-      line-height: 40px;
+      font-size: 24px;
       letter-spacing: 0.055em;
       color: #7cc144;
       margin: 0 !important;
+      text-align: left;
    }
    > p {
       font-family: 'Inter';
@@ -93,6 +104,7 @@
       color: #000000;
       padding: 0 40px;
       margin: 0 !important;
+      text-align: justify;
    }
 }
 .hern-faq__qna--without-bg {
@@ -119,11 +131,57 @@
       text-transform: none;
       max-width: 650px;
    }
+   @media screen and (max-width: 768px) {
+      padding: 12px;
+      > button > h3 {
+         font-size: 16px;
+      }
+      > p {
+         font-size: 14px;
+         padding: 0 16px;
+         max-width: 580px;
+      }
+      > button > img {
+         width: 12px;
+         margin: auto 12px auto 0px;
+      }
+   }
+   @media screen and (max-width: 567px) {
+      padding: 8px;
+      > button > h3 {
+         font-size: 14px;
+         line-height: initial;
+      }
+      > p {
+         font-size: 12px;
+      }
+      > button > img {
+         width: 8px;
+         margin: auto 8px auto 0px;
+      }
+   }
 }
 .hern-faq__questions__illustration {
    width: 350px;
    height: auto;
    margin-top: 64px;
+   @media screen and (max-width: 768px) {
+      width: 200px;
+      margin-top: 32px;
+      margin-inline: auto;
+   }
+   @media screen and (max-width: 567px) {
+      width: 140px;
+      margin-top: 16px;
+   }
+}
+.hern-faq__questions__content {
+   @media screen and (max-width: 768px) {
+      margin-left: 64px;
+   }
+   @media screen and (max-width: 567px) {
+      margin-left: 32px;
+   }
 }
 .hern-faq__questions--without-ill {
    justify-content: center;
@@ -132,6 +190,48 @@
    margin: 64px auto;
    padding: 16px;
    .hern-faq__qna {
-      padding: 28px 75px;
+      padding: 24px 48px;
    }
+   @media screen and (max-width: 768px) {
+      .hern-faq__questions__content {
+         margin: 0 32px;
+      }
+   }
+   @media screen and (max-width: 567px) {
+      padding: 0;
+      margin: 16px auto;
+      .hern-faq__questions__content {
+         margin: 0 16px;
+      }
+      .hern-faq__qna {
+         padding: 8px;
+         border-radius: 8px;
+         > button > img {
+            width: 8px;
+         }
+         > button > h3 {
+            font-size: 16px;
+         }
+         > p {
+            font-size: 14px;
+            padding: 0 16px;
+            text-align: left;
+            letter-spacing: 0.01em;
+         }
+      }
+   }
+}
+.hern-faq__answer-transitoin-enter {
+   opacity: 0;
+}
+.hern-faq__answer-transitoin-enter-active {
+   opacity: 1;
+   transition: opacity 200ms;
+}
+.hern-faq__answer-transitoin-exit {
+   opacity: 1;
+}
+.hern-faq__answer-transitoin-exit-active {
+   opacity: 0;
+   transition: opacity 200ms;
 }
