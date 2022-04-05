@@ -3,6 +3,7 @@ import { Carousel } from 'antd'
 import { ArrowLeftIcon, ArrowRightIcon } from '../../assets/icons'
 import { HernLazyImage } from '../../utils/hernImage'
 import { config } from 'bluebird'
+import { isClient } from '../../utils'
 
 export const SliderSection2 = ({ config }) => {
    const showDotsOnSlider =
@@ -88,9 +89,33 @@ export const SliderSection2 = ({ config }) => {
 }
 
 const SliderDiv = ({ images, index }) => {
+   const sliderImageSize = React.useMemo(() => {
+      const innerWidth = isClient ? window.innerWidth : ''
+      if (0 <= innerWidth && innerWidth <= 599) {
+         return {
+            width: 220,
+            height: 260,
+         }
+      } else if (600 <= innerWidth && innerWidth <= 1024) {
+         return {
+            width: 250,
+            height: 340,
+         }
+      } else if (1024 <= innerWidth) {
+         return {
+            width: 360,
+            height: 480,
+         }
+      }
+   }, [])
    return (
-      <div class="slider-div">
-         <img class="slider-img" src={images[index] ? images[index] : ''} />
+      <div className="slider-div">
+         <HernLazyImage
+            className="slider-img"
+            dataSrc={images[index] ? images[index] : ''}
+            width={sliderImageSize.width}
+            height={sliderImageSize.height}
+         />
       </div>
    )
 }

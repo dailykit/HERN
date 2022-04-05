@@ -128,7 +128,8 @@ export const Delivery = props => {
          locationSearching.loading
       ) {
          fetch(
-            `https://maps.googleapis.com/maps/api/geocode/json?latlng=${userCoordinate.latitude
+            `https://maps.googleapis.com/maps/api/geocode/json?latlng=${
+               userCoordinate.latitude
             },${userCoordinate.longitude}&key=${get_env('GOOGLE_API_KEY')}`
          )
             .then(res => res.json())
@@ -199,15 +200,16 @@ export const Delivery = props => {
    const [loaded, error] = useScript(
       isClient
          ? `https://maps.googleapis.com/maps/api/js?key=${get_env(
-            'GOOGLE_API_KEY'
-         )}&libraries=places`
+              'GOOGLE_API_KEY'
+           )}&libraries=places`
          : ''
    )
    const formatAddress = async input => {
       if (!isClient) return 'Runs only on client side.'
-      console.log('inputfn', input)
+      // console.log('inputfn', input)
       const response = await fetch(
-         `https://maps.googleapis.com/maps/api/geocode/json?key=${isClient ? get_env('GOOGLE_API_KEY') : ''
+         `https://maps.googleapis.com/maps/api/geocode/json?key=${
+            isClient ? get_env('GOOGLE_API_KEY') : ''
          }&address=${encodeURIComponent(input.description)}`
       )
       const data = await response.json()
@@ -283,7 +285,7 @@ export const Delivery = props => {
             )}
          >
             <Radio.Group
-               options={t(deliveryRadioOptions)}
+               options={deliveryRadioOptions}
                onChange={e => {
                   setFulfillmentType(e.target.value)
                   setIsGetStoresLoading(true)
@@ -381,9 +383,7 @@ export const Delivery = props => {
                   width={72}
                   height={72}
                />
-               <span>
-                  {t('Finding nearest store location to you')}
-               </span>
+               <span>{t('Finding nearest store location to you')}</span>
             </div>
          ) : stores?.length == 0 ? (
             <div
@@ -420,9 +420,7 @@ export const Delivery = props => {
                   width={72}
                   height={72}
                />
-               <span>
-                  {t('Finding nearest store location to you')}
-               </span>
+               <span>{t('Finding nearest store location to you')}</span>
             </div>
          ) : (
             <StoreList

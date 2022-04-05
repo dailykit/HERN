@@ -301,3 +301,53 @@ export const GET_BOTTOM_BAR_OPTIONS = gql`
       }
    }
 `
+
+export const SETTINGS_QUERY = gql`
+   query settings($where: brands_brand_brandSetting_bool_exp!) {
+      settings: brands_brand_brandSetting(where: $where) {
+         value
+         brandId
+         meta: brandSetting {
+            id
+            type
+            identifier
+         }
+      }
+   }
+`
+
+export const GET_BRAND_COUPONS = gql`
+   subscription couponsCollections($brandId: Int) {
+      coupons: brandCoupons(
+         where: {
+            isActive: { _eq: true }
+            brandId: { _eq: $brandId }
+            coupon: { isActive: { _eq: true } }
+         }
+      ) {
+         coupon {
+            id
+            title: code
+            value: id
+         }
+      }
+   }
+`
+
+export const GET_BRAND_CAMPAIGNS = gql`
+   subscription campaignCollections($brandId: Int) {
+      campaigns: brandCampaigns(
+         where: {
+            brandId: { _eq: $brandId }
+            isActive: { _eq: true }
+            campaign: { isActive: { _eq: true } }
+         }
+      ) {
+         campaign {
+            id
+            type
+            metaDetails
+         }
+      }
+   }
+`

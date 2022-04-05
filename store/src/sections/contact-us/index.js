@@ -218,7 +218,12 @@ export const ContactUs = ({ config }) => {
                      <p class="heading">Whatsapp</p>
                      <p class="phone">
                         <a
-                           href={`tel:${config?.phone.value}`}
+                           target="_blank"
+                           //Phone not should be passed with country code
+                           href={`https://api.whatsapp.com/send?phone=${config?.phone.value.replace(
+                              '+',
+                              ''
+                           )}`}
                            title={config?.phone.value}
                         >
                            {config?.phone.value}

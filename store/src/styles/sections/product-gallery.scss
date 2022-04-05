@@ -98,14 +98,15 @@
       margin: 2px 0;
    }
 }
-
-.hern-product-card-details-2 .hern-product-card__name {
-   font-family: 'Inter';
-   font-weight: 600;
-   font-size: 18px;
-   line-height: 32px;
-   text-align: center;
-   letter-spacing: 0.02em;
+.hern-product_gallery__container {
+   .hern-product-card-details-2 .hern-product-card__name {
+      font-family: 'Inter';
+      font-weight: 600;
+      font-size: 18px;
+      line-height: 32px;
+      text-align: center;
+      letter-spacing: 0.02em;
+   }
 }
 
 .hern-product_gallery_page-button {
@@ -137,16 +138,14 @@
       line-height: 40px;
       margin: 15px 0px 10px;
    }
-   .hern-product-card {
-      align-items: center;
-      flex-direction: column !important;
-   }
-   .hern-product-card-content {
-      padding: 0px;
-   }
-   .hern-product-card-details-2 .hern-product-card__name {
-      font-size: 26px;
-      line-height: 30px;
+   .hern-product_gallery__container {
+      .hern-product-card-content {
+         padding: 0px;
+      }
+      .hern-product-card-details-2 .hern-product-card__name {
+         font-size: 26px;
+         line-height: 30px;
+      }
    }
    .hern-product_gallery_page-button {
       font-size: 18px;
@@ -171,16 +170,14 @@
       line-height: 34px;
       margin: 15px 0px 10px;
    }
-   .hern-product-card {
-      align-items: center;
-      flex-direction: column !important;
-   }
-   .hern-product-card-content {
-      padding: 0px;
-   }
-   .hern-product-card-details-2 .hern-product-card__name {
-      font-size: 16px;
-      line-height: 19px;
+   .hern-product_gallery__container {
+      .hern-product-card-content {
+         padding: 0px;
+      }
+      .hern-product-card-details-2 .hern-product-card__name {
+         font-size: 16px;
+         line-height: 19px;
+      }
    }
    .hern-product_gallery_page-button {
       font-size: 14px;
@@ -207,5 +204,11 @@
       border-radius: 3px;
       padding: 4px 12px;
       margin-top: 12px;
+   }
+}
+.hern-product-galllery__product__display--1 {
+   .hern-product-card {
+      align-items: center;
+      flex-direction: column !important;
    }
 }
