@@ -1,24 +1,16 @@
-import { Button, Loader } from '.'
+import { Button } from '.'
 import Link from 'next/link'
+import { useRouter } from 'next/router'
 import { useConfig } from '../lib'
 import classNames from 'classnames'
 import React, { useState } from 'react'
 import Countdown from 'react-countdown'
-import { signIn, getSession, providers } from 'next-auth/client'
-import { detectCountry, getRoute, get_env, isClient } from '../utils'
-import PhoneInput, {
-   formatPhoneNumber,
-   formatPhoneNumberIntl,
-   isValidPhoneNumber,
-} from 'react-phone-number-input'
+import { signIn, getSession } from 'next-auth/client'
+import { getRoute, get_env, isClient } from '../utils'
+import PhoneInput, { isValidPhoneNumber } from 'react-phone-number-input'
 import 'react-phone-number-input/style.css'
 import { useToasts } from 'react-toast-notifications'
-import {
-   CheckBoxIcon,
-   CloseIcon,
-   FacebookIcon,
-   GoogleIcon,
-} from '../assets/icons'
+import { CheckBoxIcon, FacebookIcon, GoogleIcon } from '../assets/icons'
 import {
    FORGOT_PASSWORD,
    INSERT_OTP_TRANSACTION,
@@ -35,7 +27,6 @@ import {
    useSubscription,
 } from '@apollo/react-hooks'
 import axios from 'axios'
-import isNull from 'lodash/isNull'
 
 import {
    deleteStoredReferralCode,
@@ -44,7 +35,6 @@ import {
    getStoredReferralCode,
 } from '../utils/referrals'
 import gql from 'graphql-tag'
-import { useRouter } from 'next/router'
 import { useTranslation } from '../context'
 import { useForm } from 'react-hook-form'
 
@@ -53,30 +43,22 @@ const ReactPixel = isClient ? require('react-facebook-pixel').default : null
 export const Login = props => {
    //props
    const {
-      closeLoginPopup,
       loginBy = 'email',
       forceLogin = false,
-      isSilentlyLogin = true,
       singleLoginMethod = false,
       callbackURL,
       socialLogin = true,
       showBackground = false,
-      currentAuth = null,
    } = props
 
    //loginBy --> initial login method ('email', 'otp' , 'signup', 'forgotPassword').
-   //isSilentlyLogin --> page not reload after login.
-   //closeLoginPopup --> fn to close popup.
    //forceLogin --> disable close icon and only close when successfully signup or login.
    //singleLoginMethod --> only use one method for log in either email or phone num. (based on loginBy).
    //callbackURL --> callback url for signIn (string)
    //socialLogin --> need social login or not
-   const router = useRouter()
 
    //component state
    const [defaultLogin, setDefaultLogin] = useState(loginBy)
-   const { configOf, setAuth } = useConfig()
-   const authConfig = configOf('Auth Methods', 'brand')
    const { t } = useTranslation()
    const showCreateOne = React.useMemo(() => {
       if (singleLoginMethod) {
@@ -89,12 +71,6 @@ export const Login = props => {
          return true
       }
    }, [singleLoginMethod])
-
-   React.useEffect(() => {
-      if (!isNull(currentAuth)) {
-         setDefaultLogin(loginBy)
-      }
-   }, [currentAuth])
 
    return (
       <div
@@ -113,14 +89,6 @@ export const Login = props => {
                <span>{t('Log In')}</span>
             )}
             {defaultLogin === 'signup' && <span>{t('Sign Up')}</span>}
-            {/* {!forceLogin && (
-               <CloseIcon
-                  size={18}
-                  stroke={'#404040'}
-                  style={{ cursor: 'pointer' }}
-                  onClick={closeLoginPopup}
-               />
-            )} */}
          </div>
          {forceLogin && (
             <div className="hern-login-v1__custom-warning">
@@ -142,26 +110,14 @@ export const Login = props => {
             {defaultLogin === 'email' && (
                <Email
                   setDefaultLogin={setDefaultLogin}
-                  isSilentlyLogin={isSilentlyLogin}
-                  closeLoginPopup={closeLoginPopup}
                   callbackURL={callbackURL}
                />
             )}
-            {defaultLogin === 'otp' && (
-               <OTPLogin
-                  closeLoginPopup={closeLoginPopup}
-                  isSilentlyLogin={isSilentlyLogin}
-                  callbackURL={callbackURL}
-               />
-            )}
-            {defaultLogin === 'forgotPassword' && (
-               <ForgotPassword closeLoginPopup={closeLoginPopup} />
-            )}
+            {defaultLogin === 'otp' && <OTPLogin callbackURL={callbackURL} />}
+            {defaultLogin === 'forgotPassword' && <ForgotPassword />}
             {defaultLogin === 'signup' && (
                <Signup
                   setDefaultLogin={setDefaultLogin}
-                  isSilentlyLogin={isSilentlyLogin}
-                  closeLoginPopup={closeLoginPopup}
                   callbackURL={callbackURL}
                />
             )}
@@ -223,10 +179,9 @@ export const Login = props => {
 //email log in
 const Email = props => {
    //props
-   const { setDefaultLogin, isSilentlyLogin, closeLoginPopup, callbackURL } =
-      props
+   const { setDefaultLogin, callbackURL } = props
    const { addToast } = useToasts()
-   const { setAuth, deleteAuth } = useConfig()
+   const router = useRouter()
    //component state
    const [loading, setLoading] = React.useState(false)
    const [error, setError] = React.useState('')
@@ -282,16 +237,15 @@ const Email = props => {
                phone: form.phone,
             })
             addToast(t('Login successfully!'), { appearance: 'success' })
-            const landedOn = isClient && localStorage.getItem('landed_on')
-            if (!isSilentlyLogin) {
-               if (isClient && landedOn) {
+            if (isClient) {
+               const landedOn = localStorage.getItem('landed_on')
+               if (landedOn) {
+                  const route = landedOn.replace(window.location.origin, '')
                   localStorage.removeItem('landed_on')
-                  window.location.href = landedOn
+                  router.push(getRoute(route))
                } else {
-                  window.location.href = getRoute('/menu')
+                  router.push(getRoute('/order'))
                }
-            } else {
-               window.location.href = landedOn
             }
          }
       } catch (error) {
@@ -370,13 +324,7 @@ const Email = props => {
             })}
             onClick={() => isValid && submit()}
          >
-            {loading ? (
-               <>
-                  <span>{t('LOGGING IN')}</span>
-               </>
-            ) : (
-               t('LOGIN')
-            )}
+            {loading ? <span>{t('LOGGING IN')}</span> : t('LOGIN')}
          </Button>
       </div>
    )
@@ -385,10 +333,10 @@ const Email = props => {
 //  login with otp
 const OTPLogin = props => {
    //props
-   const { isSilentlyLogin, closeLoginPopup, callbackURL } = props
+   const { callbackURL } = props
    const { addToast } = useToasts()
    const { t } = useTranslation()
-   const { deleteAuth } = useConfig()
+   const router = useRouter()
    //component state
    const [error, setError] = React.useState('')
    const [loading, setLoading] = React.useState(false)
@@ -516,17 +464,16 @@ const OTPLogin = props => {
             ...(callbackURL && { callbackUrl: callbackURL }),
          })
          if (response?.status === 200) {
-            const landedOn = localStorage.getItem('landed_on')
             addToast(t('Login successfully!'), { appearance: 'success' })
-            if (!isSilentlyLogin) {
+            if (isClient) {
+               const landedOn = localStorage.getItem('landed_on')
                if (landedOn) {
+                  const route = landedOn.replace(window.location.origin, '')
                   localStorage.removeItem('landed_on')
-                  window.location.href = landedOn
+                  router.push(getRoute(route))
                } else {
-                  window.location.href = getRoute('/menu')
+                  router.push(getRoute('/order'))
                }
-            } else {
-               window.location.href = landedOn
             }
          } else {
             setLoading(false)
@@ -856,8 +803,7 @@ const SocialLogin = props => {
 }
 
 //forgot password
-const ForgotPassword = props => {
-   //props
+const ForgotPassword = () => {
    const { t } = useTranslation()
    const { addToast } = useToasts()
    const [isEmailSent, setIsEmailSent] = React.useState(false)
@@ -1013,14 +959,13 @@ function validateEmail(email) {
 //signup
 const Signup = props => {
    //props
-   const { setDefaultLogin, isSilentlyLogin, closeLoginPopup, callbackURL } =
-      props
+   const { setDefaultLogin, callbackURL } = props
    const { t } = useTranslation()
    //component state
    const [showPassword, setShowPassword] = useState(false)
    const { addToast } = useToasts()
-   const { brand, deleteAuth } = useConfig()
-
+   const { brand } = useConfig()
+   const router = useRouter()
    const [emailExists, setEmailExists] = React.useState(false)
    const [hasAccepted, setHasAccepted] = React.useState(false)
    const [isReferralFieldVisible, setIsReferralFieldVisible] =
@@ -1089,16 +1034,20 @@ const Signup = props => {
                         },
                      })
                   }
-                  addToast(<span>{t('Login successfully')}</span>, {
-                     appearance: 'success',
-                  })
-                  if (!isSilentlyLogin) {
-                     window.location.href =
-                        get_env('BASE_BRAND_URL') +
-                        getRoute('/get-started/select-plan')
-                  } else {
-                     closeLoginPopup()
-                     deleteAuth('auth')
+
+                  addToast(t('Login successfully!'), { appearance: 'success' })
+                  if (isClient) {
+                     const landedOn = localStorage.getItem('landed_on')
+                     if (landedOn) {
+                        const route = landedOn.replace(
+                           window.location.origin,
+                           ''
+                        )
+                        localStorage.removeItem('landed_on')
+                        router.push(getRoute(route))
+                     } else {
+                        router.push(getRoute('/order'))
+                     }
                   }
                   setLoading(false)
                } else {
@@ -1160,8 +1109,6 @@ const Signup = props => {
                   appearance: 'success',
                }
             )
-            closeLoginPopup()
-            deleteAuth('auth')
          },
          onError: () => {
             addToast(
@@ -1476,7 +1423,6 @@ const Signup = props => {
                            origin: location.origin,
                            type: 'set_password',
                            ...(isClient &&
-                              !isSilentlyLogin &&
                               localStorage.getItem('landed_on') && {
                                  redirectUrl: localStorage.getItem('landed_on'),
                               }),
