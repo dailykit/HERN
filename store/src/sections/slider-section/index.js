@@ -49,22 +49,20 @@ const SliderDiv = ({ content, index, getStartedURL }) => {
       const innerWidth = isClient ? window.innerWidth : ''
       if (0 < innerWidth && innerWidth <= 468) {
          return {
-            width: 420,
-            height: 210,
+            width: innerWidth,
+            height: innerWidth / 2,
          }
       } else if (469 <= innerWidth && innerWidth <= 900) {
          return {
-            width: 820,
-            height: 410,
+            width: innerWidth,
+            height: innerWidth / 2,
          }
-      }
-      //  else if (901 <= innerWidth) {
-      //    return {
-      //       width: null,
-      //       height: null,
-      //    }
-      // }
-      else {
+      } else if (901 <= innerWidth) {
+         return {
+            width: innerWidth,
+            height: innerWidth / 2,
+         }
+      } else {
          return {
             width: null,
             height: null,

@@ -61,6 +61,9 @@ export const HernLazyImage = ({
       'images',
       `${width}x${height}-rb`
    )
+   const lowSizeBGImage = dataSrc
+      .slice()
+      .replace('images', `${width / 50}x${height / 50}`)
 
    const finalImageSrc = React.useMemo(() => {
       if (removeBg && !(Boolean(width) && Boolean(height))) {
@@ -105,6 +108,13 @@ export const HernLazyImage = ({
          className={`lazyload ${className}`}
          data-src={src}
          // src={src}
+         style={{
+            backgroundImage: `url(${lowSizeBGImage}), url(${SERVER_URL}/server/api/assets/serve-image?width=${
+               width / 50
+            }&height=${height / 50}&src=${dataSrc})`,
+            backgroundRepeat: 'no-repeat',
+            backgroundSize: '100% 100%',
+         }}
          onError={async ({ currentTarget }) => {
             if (!error) {
                // changing class to lazyloding to lazyload so that lazysizes reload the new image
