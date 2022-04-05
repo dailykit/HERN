@@ -35,7 +35,6 @@ import {
    useSubscription,
 } from '@apollo/react-hooks'
 import axios from 'axios'
-import isEmpty from 'lodash/isEmpty'
 import isNull from 'lodash/isNull'
 
 import {
@@ -47,6 +46,7 @@ import {
 import gql from 'graphql-tag'
 import { useRouter } from 'next/router'
 import { useTranslation } from '../context'
+import { useForm } from 'react-hook-form'
 
 const ReactPixel = isClient ? require('react-facebook-pixel').default : null
 
@@ -88,7 +88,8 @@ export const Login = props => {
       } else {
          return true
       }
-   }, [])
+   }, [singleLoginMethod])
+
    React.useEffect(() => {
       if (!isNull(currentAuth)) {
          setDefaultLogin(loginBy)
@@ -111,19 +112,15 @@ export const Login = props => {
             {(defaultLogin === 'email' || defaultLogin === 'otp') && (
                <span>{t('Log In')}</span>
             )}
-
-            {defaultLogin === 'forgotPassword' && (
-               <span>{t('Forgot Password')}</span>
-            )}
             {defaultLogin === 'signup' && <span>{t('Sign Up')}</span>}
-            {!forceLogin && (
+            {/* {!forceLogin && (
                <CloseIcon
                   size={18}
                   stroke={'#404040'}
                   style={{ cursor: 'pointer' }}
                   onClick={closeLoginPopup}
                />
-            )}
+            )} */}
          </div>
          {forceLogin && (
             <div className="hern-login-v1__custom-warning">
@@ -177,7 +174,6 @@ export const Login = props => {
                         className="hern-login-login-switcher-btn"
                         variant="outline"
                         onClick={() => {
-                           setAuth('sign-in')
                            defaultLogin === 'email'
                               ? setDefaultLogin('otp')
                               : setDefaultLogin('email')
@@ -203,7 +199,6 @@ export const Login = props => {
                   className="hern-login-v1__create-one-btn"
                   onClick={() => {
                      setDefaultLogin('signup')
-                     setAuth('sign-up')
                   }}
                >
                   {t('Create one')}
@@ -295,10 +290,8 @@ const Email = props => {
                } else {
                   window.location.href = getRoute('/menu')
                }
-               deleteAuth('auth')
             } else {
-               deleteAuth('auth')
-               closeLoginPopup()
+               window.location.href = landedOn
             }
          }
       } catch (error) {
@@ -363,7 +356,6 @@ const Email = props => {
                className="hern-login-v1__forgot-password"
                onClick={() => {
                   setDefaultLogin('forgotPassword')
-                  setAuth('forgotPassword')
                }}
             >
                <span>{t('Forgot password')}</span>
@@ -533,10 +525,8 @@ const OTPLogin = props => {
                } else {
                   window.location.href = getRoute('/menu')
                }
-               deleteAuth('auth')
             } else {
-               closeLoginPopup()
-               deleteAuth('auth')
+               window.location.href = landedOn
             }
          } else {
             setLoading(false)
@@ -868,59 +858,58 @@ const SocialLogin = props => {
 //forgot password
 const ForgotPassword = props => {
    //props
-   const { closeLoginPopup } = props
    const { t } = useTranslation()
    const { addToast } = useToasts()
-   const { configOf, deleteAuth } = useConfig()
+   const [isEmailSent, setIsEmailSent] = React.useState(false)
+   const [email, setEmail] = React.useState('')
 
-   const theme = configOf('theme-color', 'Visual')
+   const {
+      register,
+      handleSubmit,
+      formState: { errors },
+   } = useForm()
 
-   const [error, setError] = React.useState('')
-   const [form, setForm] = React.useState({
-      email: '',
+   const [checkCustomerExistence] = useLazyQuery(PLATFORM_CUSTOMERS, {
+      variables: {
+         where: { email: { _eq: email } },
+      },
+      onCompleted: ({ customers = [] }) => {
+         if (customers.length > 0) {
+            //customer exists
+            submit()
+         } else {
+            //customer doesn't exist
+            addToast("The email you have entered doesn't have an account", {
+               appearance: 'info',
+            })
+         }
+      },
+      onError: () => {},
    })
-
-   const isValid = form.email
 
    const [forgotPassword, { loading }] = useMutation(FORGOT_PASSWORD, {
       onCompleted: () => {
          addToast(t('Email sent!'), { appearance: 'success' })
-         closeLoginPopup()
-         deleteAuth('auth')
+         setIsEmailSent(true)
       },
       onError: error => {
          addToast(error.message, { appearance: 'error' })
       },
    })
 
-   const onChange = e => {
-      const { name, value } = e.target
-      setForm(form => ({
-         ...form,
-         [name]: value,
-      }))
-   }
-
    const submit = async () => {
       try {
-         setError('')
          if (isClient) {
             const origin = get_env('BASE_BRAND_URL')
             forgotPassword({
                variables: {
-                  email: form.email,
+                  email,
                   origin,
                },
             })
          }
       } catch (error) {
          if (error?.code === 401) {
-            setError(
-               <>
-                  <span>{t('Email or password is incorrect')}</span>
-                  <span>{'!'}</span>
-               </>
-            )
             addToast(
                <>
                   <span>{t('Email or password is incorrect')}</span>
@@ -933,37 +922,74 @@ const ForgotPassword = props => {
          }
       }
    }
+   if (isEmailSent) {
+      return (
+         <div className="hern-login-v1__forgot-password__email-sent">
+            <h3>
+               An email was sent to <span>{email}</span>{' '}
+            </h3>
+            <p>
+               Please check your email and follow the instructions to reset your
+               password.
+            </p>
+            <Link href={getRoute('/order')}>
+               <a>
+                  <Button onClick={() => {}}>Explore our menu </Button>
+               </a>
+            </Link>
+         </div>
+      )
+   }
+
    return (
-      <div className="hern-forgot-password-v1">
-         <fieldset className="hern-login-v1__fieldset">
-            <label htmlFor="email" className="hern-login-v1__label">
-               <span>{t('Email')}</span>
-            </label>
-            <input
-               className="hern-login-v1__input"
-               type="email"
-               name="email"
-               id="email"
-               value={form.email}
-               onChange={onChange}
-               placeholder="Enter your email"
-            />
-         </fieldset>
-         <button
-            className={classNames('hern-forgot-password-v1__submit-btn', {
-               'hern-forgot-password-v1__submit-btn--disabled':
-                  !isValid || loading,
-            })}
-            disabled={!isValid || loading}
-            style={{ height: '40px' }}
-            onClick={() => isValid && submit()}
-         >
-            {t('SEND EMAIL')}
-         </button>
-         {error && (
-            <span className="hern-forgot-password-v1__error">{error}</span>
-         )}
-      </div>
+      <form
+         onClick={handleSubmit(data => {
+            setEmail(data.email)
+            checkCustomerExistence()
+         })}
+      >
+         <div className="hern-forgot-password-v1">
+            <fieldset className="hern-login-v1__fieldset">
+               <label htmlFor="email" className="hern-login-v1__label">
+                  <span>{t('Email')}</span>
+               </label>
+               <input
+                  className="hern-login-v1__input"
+                  type="email"
+                  name="email"
+                  id="email"
+                  {...register('email', {
+                     required: {
+                        value: true,
+                        message: 'Please enter your email address',
+                     },
+                     pattern: {
+                        value: /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
+                        message: 'Invalid email address',
+                     },
+                  })}
+                  placeholder="Enter your email"
+               />
+            </fieldset>
+            {errors.email && (
+               <span className="hern-forgot-password-v1__error">
+                  {errors.email.message}
+               </span>
+            )}
+            <button
+               type="submit"
+               className={classNames('hern-forgot-password-v1__submit-btn', {
+                  'hern-forgot-password-v1__submit-btn--disabled':
+                     errors.email || loading,
+               })}
+               disabled={errors.email || loading}
+               style={{ height: '40px' }}
+               m
+            >
+               {t('SEND EMAIL')}
+            </button>
+         </div>
+      </form>
    )
 }
 

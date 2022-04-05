@@ -1,14 +1,4 @@
 .hern-login-v1-container {
-   position: fixed;
-   top: 80px;
-   bottom: 0;
-   left: 0;
-   right: 0;
-   z-index: 1000;
-   width: 100vw;
-   overflow: hidden;
-   background-color: #ffffff;
-   transition: all 0.4s ease-in-out;
 }
 .hern-login-v1-container__img {
    display: none;
@@ -454,4 +444,41 @@
       box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.15);
       border-radius: 12px;
    }
+}
+.hern-login-v1__forgot-password__email-sent {
+   padding: 48px 0;
+   display: flex;
+   flex-direction: column;
+   align-items: center;
+   justify-content: center;
+
+   > h3 {
+      font-size: 18px;
+      line-height: 18px;
+      color: var(--hern-accent);
+      font-weight: 400;
+      > span {
+         font-size: 20px;
+         font-weight: 500;
+      }
+   }
+   p {
+      font-size: 14px;
+      line-height: 18px;
+      color: #404040;
+      font-weight: 400;
+   }
+   button {
+      margin-top: 24px;
+   }
+   a {
+      color: #fff;
+      text-decoration: none;
+   }
+   a:hover {
+      color: #fff !important;
+   }
+}
+.hern-forgot-password-v1__error {
+   color: #ef4444;
 }
