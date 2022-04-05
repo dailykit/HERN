@@ -11,9 +11,9 @@ export const ChevronDown = ({ color = '#919699', size = '25' }) => (
       <path
          d="M17 10.6017L12 14.851L7 10.6017"
          stroke={color}
-         stroke-width="2"
-         stroke-linecap="round"
-         stroke-linejoin="round"
+         strokeWidth="2"
+         strokeLinecap="round"
+         strokeLinejoin="round"
       />
    </svg>
 )
