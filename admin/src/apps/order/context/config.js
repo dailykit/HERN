@@ -53,6 +53,18 @@ const initialState = {
          value: { printNodeId: '' },
          identifier: 'default kot printer',
       },
+      product_kot: {
+         app: 'order',
+         type: 'kot',
+         value: { isActive: false },
+         identifier: 'product kot',
+      },
+      sachet_kot: {
+         app: 'order',
+         type: 'kot',
+         value: { isActive: false },
+         identifier: 'sachet kot',
+      },
    },
 }
 
@@ -85,10 +97,8 @@ export const ConfigProvider = ({ children }) => {
          },
       }
    )
-   const {
-      loading: loadingSettings,
-      data: { settings = [] } = {},
-   } = useSubscription(QUERIES.SETTINGS.LIST)
+   const { loading: loadingSettings, data: { settings = [] } = {} } =
+      useSubscription(QUERIES.SETTINGS.LIST)
 
    React.useEffect(() => {
       if (!loadingSettings && !_.isEmpty(settings)) {
@@ -148,6 +158,36 @@ export const ConfigProvider = ({ children }) => {
                   field: 'kot',
                   value: {
                      group_by_product_type: rest,
+                  },
+               },
+            })
+         }
+         const productKotIndex = settings.findIndex(
+            setting => setting.identifier === 'product kot'
+         )
+         if (productKotIndex !== -1) {
+            const { __typename, ...rest } = settings[productKotIndex]
+            dispatch({
+               type: 'SET_SETTING',
+               payload: {
+                  field: 'kot',
+                  value: {
+                     product_kot: rest,
+                  },
+               },
+            })
+         }
+         const sachetKotIndex = settings.findIndex(
+            setting => setting.identifier === 'sachet kot'
+         )
+         if (sachetKotIndex !== -1) {
+            const { __typename, ...rest } = settings[sachetKotIndex]
+            dispatch({
+               type: 'SET_SETTING',
+               payload: {
+                  field: 'kot',
+                  value: {
+                     sachet_kot: rest,
                   },
                },
             })
