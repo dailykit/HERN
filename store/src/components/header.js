@@ -2,37 +2,26 @@ import React, { useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { signOut } from 'next-auth/client'
+import classNames from 'classnames'
+import { CSSTransition } from 'react-transition-group'
+
 import {
    getProtectedRoutes,
    get_env,
-   // LoginWrapper,
    formatCurrency,
    getStoresWithValidations,
    useQueryParams,
 } from '../utils'
-
-import { CSSTransition } from 'react-transition-group'
-
 import { useUser, CartContext, useTranslation } from '../context'
 import { isClient, getRoute, LocationSelectorWrapper } from '../utils'
 import { MenuIcon, UserIcon } from '../assets/icons'
-
 import { ProfileSidebar } from './profile_sidebar'
 import { CrossIcon, CartIcon, LocationIcon, DownVector } from '../assets/icons'
-
 import NavigationBar from './navbar'
 import { useWindowSize } from '../utils/useWindowSize'
 import { LanguageSwitch, TemplateFile } from '.'
-import classNames from 'classnames'
 import { useConfig } from '../lib'
-import isEmpty from 'lodash/isEmpty'
-import isNull from 'lodash/isNull'
-import dynamic from 'next/dynamic'
 
-const LoginWrapper = dynamic(
-   () => import('../utils/loginWrapper').then(promise => promise.LoginWrapper),
-   { ssr: false }
-)
 const ReactPixel = isClient ? require('react-facebook-pixel').default : null
 
 export const Header = ({ settings, navigationMenus }) => {
@@ -46,7 +35,6 @@ export const Header = ({ settings, navigationMenus }) => {
    } = useConfig()
    const router = useRouter()
    const { width } = useWindowSize()
-   const { deleteAuth } = useConfig()
    const logout = async () => {
       const currentPathName = router.pathname
       const isRouteProtected = Boolean(
@@ -64,7 +52,6 @@ export const Header = ({ settings, navigationMenus }) => {
    const brand = settings['brand']['theme-brand']
    const headerNavigationSettings =
       settings['navigation']?.['header-navigation']?.headerNavigation
-   // console.log('header navigation : ', headerNavigationSettings?.layout.value)
    const showLocationButton =
       settings?.['navigation']?.['Show Location Selector']?.[
          'Location-Selector'
@@ -75,7 +62,6 @@ export const Header = ({ settings, navigationMenus }) => {
 
    const [toggle, setToggle] = React.useState(true)
    const [isMobileNavVisible, setIsMobileNavVisible] = React.useState(false)
-   const [showLoginPopup, setShowLoginPopup] = React.useState(false)
    const [address, setAddress] = useState(null)
    const [, setUserCoordinate] = useState({
       latitude: null,
@@ -88,21 +74,6 @@ export const Header = ({ settings, navigationMenus }) => {
    const { auth: currentAuth } = useQueryParams()
    const { isAuthenticated, isLoading } = useUser()
 
-   React.useEffect(() => {
-      if (isClient) {
-         if (!isLoading) {
-            if (!isAuthenticated) {
-               if (!(isEmpty(currentAuth) || isNull(currentAuth))) {
-                  setShowLoginPopup(true)
-               }
-            } else {
-               if (!(isEmpty(currentAuth) || isNull(currentAuth))) {
-                  deleteAuth('auth')
-               }
-            }
-         }
-      }
-   }, [currentAuth, isClient, isLoading, isAuthenticated])
    const {
       cartState,
       setStoredCartId,
@@ -360,7 +331,6 @@ export const Header = ({ settings, navigationMenus }) => {
                logout={logout}
                toggle={toggle}
                setToggle={setToggle}
-               setShowLoginPopup={setShowLoginPopup}
                isMobileNavVisible={isMobileNavVisible}
                setIsMobileNavVisible={setIsMobileNavVisible}
                showLocationButton={showLocationButton}
@@ -374,7 +344,6 @@ export const Header = ({ settings, navigationMenus }) => {
                logout={logout}
                toggle={toggle}
                setToggle={setToggle}
-               setShowLoginPopup={setShowLoginPopup}
                isMobileNavVisible={isMobileNavVisible}
                setIsMobileNavVisible={setIsMobileNavVisible}
                showLocationButton={showLocationButton}
@@ -390,16 +359,6 @@ export const Header = ({ settings, navigationMenus }) => {
          {isClient && width < 768 && (
             <ProfileSidebar toggle={toggle} logout={logout} />
          )}
-         {isClient && (
-            <LoginWrapper
-               closeLoginPopup={() => {
-                  setShowLoginPopup(false)
-                  deleteAuth('auth')
-               }}
-               showLoginPopup={showLoginPopup}
-               currentAuth={currentAuth}
-            />
-         )}
       </>
    )
 }
@@ -408,7 +367,6 @@ const LayoutOne = ({
    logout,
    toggle,
    setToggle,
-   setShowLoginPopup,
    isMobileNavVisible,
    setIsMobileNavVisible,
    showLocationButton,
@@ -431,7 +389,6 @@ const LayoutOne = ({
                logout={logout}
                toggle={toggle}
                setToggle={setToggle}
-               setShowLoginPopup={setShowLoginPopup}
                isMobileNavVisible={isMobileNavVisible}
                setIsMobileNavVisible={setIsMobileNavVisible}
                layout="layout-one"
@@ -473,7 +430,6 @@ const LayoutTwo = ({
    logout,
    toggle,
    setToggle,
-   setShowLoginPopup,
    isMobileNavVisible,
    setIsMobileNavVisible,
    showLocationButton,
@@ -501,7 +457,6 @@ const LayoutTwo = ({
                   logout={logout}
                   toggle={toggle}
                   setToggle={setToggle}
-                  setShowLoginPopup={setShowLoginPopup}
                   isMobileNavVisible={isMobileNavVisible}
                   setIsMobileNavVisible={setIsMobileNavVisible}
                   layout="layout-two"
@@ -772,14 +727,13 @@ const AuthMenu = ({
    logout,
    toggle,
    setToggle,
-   setShowLoginPopup,
    isMobileNavVisible,
    setIsMobileNavVisible,
    layout,
 }) => {
    const { isAuthenticated, user, isLoading } = useUser()
    const router = useRouter()
-   const { configOf, setAuth } = useConfig()
+   const { configOf } = useConfig()
    const { width } = useWindowSize()
    const theme = configOf('theme-color', 'Visual')?.themeColor
    const isSubscriptionStore =
@@ -881,13 +835,9 @@ const AuthMenu = ({
                style={{
                   backgroundColor: `var(--hern-accent)`,
                }}
-               onClick={() => {
-                  setShowLoginPopup(true)
-                  setAuth('sign-in')
-               }}
                id="hern-header__global-login-button"
             >
-               {loginButtonLabel}
+               <Link href={getRoute('/login')}>{loginButtonLabel}</Link>
             </button>
          )}
          <button
