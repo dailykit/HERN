@@ -34,6 +34,8 @@ export const ConfigTunnel = () => {
             'group by product type',
             'print automatically',
             'default kot printer',
+            'product kot',
+            'sachet kot',
          ],
          station: ['selected station'],
       }),
@@ -82,6 +84,14 @@ export const ConfigTunnel = () => {
                      <Spacer size="16px" />
                      <section id="default kot printer">
                         <DefaultKOTPrinter />
+                     </section>
+                     <Spacer size="16px" />
+                     <section id="default kot printer">
+                        <ProductKOT />
+                     </section>
+                     <Spacer size="16px" />
+                     <section id="default kot printer">
+                        <SachetKOT />
                      </section>
                   </ScrollSection.Section>
                   <Spacer size="48px" />
@@ -220,6 +230,88 @@ const GroupByStation = () => {
             <Flex container alignItems="center">
                Group by stations
                <Tooltip identifier="app_order_tunnel_field_group_by_station" />
+            </Flex>
+         </Form.Toggle>
+      </div>
+   )
+}
+
+const ProductKOT = () => {
+   const { state } = useConfig()
+   const [update] = useMutation(MUTATIONS.SETTING.UPDATE, {
+      onCompleted: () => {
+         toast.success('Successfully updated the setting!')
+      },
+      onError: error => {
+         logger(error)
+         toast.error('Failed to update the setting!')
+      },
+   })
+
+   const handleChange = value => {
+      update({
+         variables: {
+            app: { _eq: 'order' },
+            identifier: { _eq: 'product kot' },
+            type: { _eq: 'kot' },
+            _set: {
+               value: { isActive: value },
+            },
+         },
+      })
+   }
+
+   return (
+      <div>
+         <Form.Toggle
+            name="product_kot"
+            value={state.kot.product_kot.value.isActive}
+            onChange={() => handleChange(!state.kot.product_kot.value.isActive)}
+         >
+            <Flex container alignItems="center">
+               Product KOT
+               <Tooltip identifier="app_order_tunnel_field_product_kot" />
+            </Flex>
+         </Form.Toggle>
+      </div>
+   )
+}
+
+const SachetKOT = () => {
+   const { state } = useConfig()
+   const [update] = useMutation(MUTATIONS.SETTING.UPDATE, {
+      onCompleted: () => {
+         toast.success('Successfully updated the setting!')
+      },
+      onError: error => {
+         logger(error)
+         toast.error('Failed to update the setting!')
+      },
+   })
+
+   const handleChange = value => {
+      update({
+         variables: {
+            app: { _eq: 'order' },
+            identifier: { _eq: 'sachet kot' },
+            type: { _eq: 'kot' },
+            _set: {
+               value: { isActive: value },
+            },
+         },
+      })
+   }
+
+   return (
+      <div>
+         <Form.Toggle
+            name="sachet_kot"
+            value={state.kot.sachet_kot.value.isActive}
+            onChange={() => handleChange(!state.kot.sachet_kot.value.isActive)}
+         >
+            <Flex container alignItems="center">
+               Sachet KOT
+               <Tooltip identifier="app_order_tunnel_field_sachet_kot" />
             </Flex>
          </Form.Toggle>
       </div>

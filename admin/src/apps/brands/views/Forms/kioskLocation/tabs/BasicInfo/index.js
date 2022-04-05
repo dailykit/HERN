@@ -9,18 +9,16 @@ import {
    Spacer,
    Form,
    Dropdown,
-   ButtonTile,
-   HorizontalTab,
-   HorizontalTabs,
-   HorizontalTabList,
-   HorizontalTabPanel,
-   HorizontalTabPanels,
+   ButtonGroup,
+   TextButton,
 } from '@dailykit/ui'
+import { CopyIcon } from '../../../../../../editor/assets/Icons'
 import validator from '../validator'
 import { KIOSK } from '../../../../../graphql'
 import { Wrapper, Label } from '../../../brand/styled'
 import { logger } from '../../../../../../../shared/utils'
 import { useTabs } from '../../../../../../../shared/providers'
+import copy from 'copy-to-clipboard'
 import {
    Banner,
    InlineLoader,
@@ -60,7 +58,8 @@ export const BasicInfo = () => {
             value: kiosk[0].kioskLabel || '',
             accessUrl: kiosk[0].accessUrl || '',
             printerId: kiosk[0].printerId || '',
-            password: kiosk[0].password || '',
+            password:
+               kiosk[0].password || kiosk[0].kioskLabel + '@' + params.id,
             location: kiosk[0].location?.city || '',
             locationId: kiosk[0].location?.id || '',
             meta: {
@@ -70,13 +69,15 @@ export const BasicInfo = () => {
             },
          })
          setTabTitle(kiosk[0].kioskLabel || '')
-         //  setPrinterList(prevPrinterList => [
-         //     ...prevPrinterList,
-         //     {
-         //        id: kiosk[0].printerId || '',
-         //        title: kiosk[0]?.printerId?.label || '',
-         //     },
-         //  ])
+         // if (kiosk[0]?.printerId) {
+         //    setPrinterList(prevPrinterList => [
+         //       ...prevPrinterList,
+         //       {
+         //          id: kiosk[0].printerId || '',
+         //          title: kiosk[0]?.printerId || '',
+         //       },
+         //    ])
+         // }
       },
    })
 
@@ -97,6 +98,12 @@ export const BasicInfo = () => {
             return {
                id: printer?.printNodeId || '',
                title: printer?.name || '',
+               description:
+                  printer?.printNodeId +
+                     '-' +
+                     printer?.name +
+                     '-' +
+                     printer?.computer?.name || '',
             }
          })
          setPrinterList(previousData => [...previousData, ...printersData])
@@ -115,6 +122,9 @@ export const BasicInfo = () => {
             return {
                id: location?.id || '',
                title: location?.city || '',
+               description:
+                  location?.id + '-' + location?.label + '-' + location?.city ||
+                  '',
             }
          })
          setLocationList(previousLocation => [
@@ -135,6 +145,12 @@ export const BasicInfo = () => {
          logger(error)
       },
    })
+
+   const generatePwd = () => {
+      let newPwd = title.value + '@' + params.id
+      console.log('pwd::', newPwd)
+      return newPwd
+   }
 
    const updateKioskAccessUrl = async () => {
       const { isValid, errors } = validator.url(title.accessUrl)
@@ -203,14 +219,14 @@ export const BasicInfo = () => {
    }
 
    const updateKioskPrinter = async printer => {
-      const { isValid, errors } = validator.name(printer[0].title)
+      const { isValid, errors } = validator.name(printer?.title)
       if (isValid) {
          console.log('update printer printer====?', printer)
          const { data } = await updateKiosk({
             variables: {
                id: params.id,
                _set: {
-                  printerId: printer[0].id,
+                  printerId: printer?.id,
                },
             },
          })
@@ -252,7 +268,7 @@ export const BasicInfo = () => {
       <div>
          <Flex padding="16px">
             <>
-               <Form.Group>
+               {/* <Form.Group>
                   <Form.Label>Kiosk Name</Form.Label>
 
                   <Form.Text
@@ -271,9 +287,9 @@ export const BasicInfo = () => {
                      title.meta.errors.map((error, index) => (
                         <Form.Error key={index}>{error}</Form.Error>
                      ))}
-               </Form.Group>
+               </Form.Group>*/}
 
-               <Spacer yAxis size="16px" />
+               {/* <Spacer yAxis size="16px" />
                <Form.Group>
                   <Form.Label htmlFor="accessUrl" title="accessUrl">
                      Access Url*
@@ -294,12 +310,21 @@ export const BasicInfo = () => {
                      title.meta.errors.map((error, index) => (
                         <Form.Error key={index}>{error}</Form.Error>
                      ))}
-               </Form.Group>
+               </Form.Group> */}
 
                <Spacer yAxis size="16px" />
                <Form.Group>
                   <Form.Label htmlFor="password" title="password">
-                     Access Password
+                     <ButtonGroup
+                        onClick={() => {
+                           copy(title.password)
+                        }}
+                     >
+                        {'Access Password   '}
+                        <div>
+                           <CopyIcon size={20} />
+                        </div>{' '}
+                     </ButtonGroup>
                   </Form.Label>
                   <Form.Password
                      value={title.password}
@@ -324,7 +349,7 @@ export const BasicInfo = () => {
                   <Form.Label htmlFor="printerId" title="printerId">
                      Printer
                   </Form.Label>
-                  <Form.Text
+                  {/* <Form.Text
                      value={title.printerId}
                      placeholder="Enter printer ID"
                      id="printerId"
@@ -334,11 +359,13 @@ export const BasicInfo = () => {
                      //  }
                      //  onBlur={updateKioskPrinter}
                      //  hasError={!title.meta.isValid && title.isTouched}
-                  />
+                  /> */}
                   <Dropdown
                      type="single"
                      //  variant="revamp"
-                     defaultName={title.printerId}
+                     defaultOption={{
+                        id: title.printerId,
+                     }}
                      isLoading={loading}
                      addOption={printerList}
                      options={printerList}
