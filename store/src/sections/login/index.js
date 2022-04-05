@@ -41,6 +41,7 @@ export const Login = ({ config }) => {
                     backgroundPosition: 'center',
                     backgroundRepeat: 'no-repeat',
                     backgroundColor: '#fff',
+                    minHeight: 'auto',
                  }
                : {}
          }
