@@ -395,7 +395,7 @@ export const BRAND_ID = gql`
 `
 export const KIOSK = {
    AGGREGATE: gql`
-      subscription MySubscription {
+      subscription KIOSK {
          brands_locationKiosk_aggregate {
             aggregate {
                count
@@ -404,7 +404,7 @@ export const KIOSK = {
       }
    `,
    LIST: gql`
-      subscription MySubscription {
+      subscription KIOSK_LIST {
          kiosk: brands_locationKiosk_aggregate {
             aggregate {
                count
@@ -453,10 +453,14 @@ export const KIOSK = {
       }
    `,
    PRINTERS: gql`
-      subscription MySubscription {
+      subscription PRINTERS {
          printers {
             name
             printNodeId
+            computerId
+            computer {
+               name
+            }
          }
       }
    `,
@@ -475,7 +479,7 @@ export const KIOSK = {
    `,
 
    GET_KIOSKS: gql`
-      query GET_KIOSK($id: Int!) {
+      subscription GET_KIOSK($id: Int!) {
          kiosk: brands_locationKiosk_by_pk(id: $id) {
             accessPassword
             accessUrl
@@ -509,7 +513,7 @@ export const KIOSK = {
    `,
 
    UPDATE_KIOSK: gql`
-      mutation MyMutation2(
+      mutation UPDATE_KIOSK(
          $id: Int!
          $_set: brands_locationKiosk_set_input = {}
       ) {
@@ -523,7 +527,7 @@ export const KIOSK = {
    `,
 
    CREATE_KIOSK_ORDER_TAB: gql`
-      mutation MyMutation(
+      mutation CREATE_KIOSK_ORDER_TAB(
          $objects: [brands_locationKiosk_orderTab_insert_input!]!
       ) {
          insert_brands_locationKiosk_orderTab(objects: $objects) {
@@ -533,7 +537,7 @@ export const KIOSK = {
    `,
 
    UPDATE_KIOSK_ORDER_TAB: gql`
-      mutation MyMutation(
+      mutation UPDATE_KIOSK_ORDER_TAB(
          $orderTabId: Int!
          $locationKioskId: Int!
          $_set: brands_locationKiosk_orderTab_set_input = {}
