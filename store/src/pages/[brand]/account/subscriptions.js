@@ -2,23 +2,22 @@ import React from 'react'
 import { useRouter } from 'next/router'
 
 import { useUser } from '../../../context'
-import { getPageProps, isClient, renderPageContent } from '../../../utils'
 import {
-   SEO,
-   Layout,
-   LoginWarning,
-   ExternalJSCSSFiles,
-} from '../../../components'
+   getPageProps,
+   isClient,
+   renderPageContent,
+   getRoute,
+} from '../../../utils'
+import { SEO, Layout, ExternalJSCSSFiles } from '../../../components'
 
 const SubscriptionHistory = props => {
    const router = useRouter()
    const { isAuthenticated, isLoading } = useUser()
    const { folds, settings, navigationMenus, seoSettings, linkedFiles } = props
-
    React.useEffect(() => {
       if (!isAuthenticated && !isLoading) {
          isClient && localStorage.setItem('landed_on', location.href)
-         // router.push(getRoute('/get-started/register'))
+         router.push(getRoute('/login'))
       }
    }, [isAuthenticated, isLoading])
 
@@ -26,9 +25,10 @@ const SubscriptionHistory = props => {
       <Layout settings={settings} navigationMenus={navigationMenus}>
          <SEO seoSettings={seoSettings} />
          <ExternalJSCSSFiles externalFiles={linkedFiles} />
-         {!isAuthenticated && !isLoading ? (
-            <LoginWarning />
-         ) : (
+         {isAuthenticated && !isLoading && (
+            <main>{renderPageContent(folds)}</main>
+         )}{' '}
+         {isAuthenticated && !isLoading && (
             <main>{renderPageContent(folds)}</main>
          )}
       </Layout>
