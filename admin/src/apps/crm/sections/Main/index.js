@@ -27,7 +27,11 @@ const Main = () => {
                component={CustomerRelation}
                exact
             />
-            <Route path="/crm/customers" component={CustomerListing} exact />
+            <Route
+               path="/crm/customers-:brandName-:brandId"
+               component={CustomerListing}
+               exact
+            />
             <Route path="/crm/coupons/:id" exact component={CouponForm} />
             <Route path="/crm/campaign/:id" exact component={CampaignForm} />
             <Route path="/crm/coupons" component={CouponListing} exact />

@@ -44,7 +44,10 @@ const Home = () => {
                count={customersCount?.customers_aggregate.aggregate.count || 0}
                onClick={() => {
                   brandContext.brandId
-                     ? addTab('Customers', '/crm/customers')
+                     ? addTab(
+                          'Customers',
+                          `/crm/customers-${brandContext.brandName}-${brandContext.brandId}`
+                       )
                      : openBrandTunnel(1)
                }}
                tileSvg={<CustomersSvg />}
