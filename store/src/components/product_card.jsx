@@ -278,12 +278,6 @@ export const ProductCard = props => {
                                     )}
                               </div>
                            )}
-                           {showProductAdditionalText &&
-                              data?.additionalText && (
-                                 <div className="hern-product-card__additional-text">
-                                    {data.additionalText}
-                                 </div>
-                              )}
                         </div>
                      ) : (
                         <div className="hern-product-card-details-2">

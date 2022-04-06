@@ -183,7 +183,7 @@ export const renderComponentByName = (fold, options) => {
       [brand]/login
       */
       case 'Login':
-         return <Login />
+         return <Login config={fold.config} />
       /*ROUTES :
       [brand]/terms-and-condition
       */

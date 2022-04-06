@@ -21,11 +21,6 @@ export const LoyaltyPoints = ({ cart, version = 1 }) => {
          ? cart.loyaltyPointsUsed
          : cart.loyaltyPointsUsable
    )
-   console.log(
-      cart.loyaltyPointsUsed < cart.loyaltyPointsUsable,
-      cart.loyaltyPointsUsed,
-      cart.loyaltyPointsUsable
-   )
    const [updateCart] = useMutation(MUTATIONS.CART.UPDATE, {
       onCompleted: () => console.log('Loyalty points added!'),
       onError: error => console.log(error),
