@@ -6,12 +6,7 @@ import {
    renderPageContent,
    getPageProps,
 } from '../../../utils'
-import {
-   SEO,
-   Layout,
-   LoginWarning,
-   ExternalJSCSSFiles,
-} from '../../../components'
+import { SEO, Layout, ExternalJSCSSFiles } from '../../../components'
 import { useUser } from '../../../context'
 
 const Checkout = props => {
@@ -21,7 +16,7 @@ const Checkout = props => {
    React.useEffect(() => {
       if (!isAuthenticated && !isLoading) {
          isClient && localStorage.setItem('landed_on', location.href)
-         // router.push(getRoute('/get-started/register'))
+         router.push(getRoute('/login'))
       }
    }, [isAuthenticated, isLoading])
 
@@ -29,9 +24,7 @@ const Checkout = props => {
       <Layout noHeader settings={settings}>
          <SEO seoSettings={seoSettings} />
          <ExternalJSCSSFiles externalFiles={linkedFiles} />
-         {!isAuthenticated && !isLoading ? (
-            <LoginWarning />
-         ) : (
+         {isAuthenticated && !isLoading && (
             <main>{renderPageContent(folds)}</main>
          )}
       </Layout>
