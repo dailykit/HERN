@@ -326,10 +326,8 @@ const Order = () => {
                args: {
                   name: 'printKOT',
                   payload: {
-                     new: {
-                        id: order.id,
-                        status: 'ORDER_UNDER_PROCESSING',
-                     },
+                     id: order.id,
+                     status: 'ORDER_UNDER_PROCESSING',
                   },
                },
             },
@@ -350,10 +348,9 @@ const Order = () => {
    const viewKOT = React.useCallback(() => {
       const kots = async () => {
          try {
+            const origin = get_env('REACT_APP_DAILYOS_SERVER_URI')
             const { data: { data = {}, success } = {} } = await axios.get(
-               `${get_env('REACT_APP_DAILYOS_SERVER_URI')}/api/kot-urls?id=${
-                  order.id
-               }`
+               `${origin}/api/kot-urls?id=${order.id}`
             )
             if (success) {
                data.forEach(node => window.open(node.url, '_blank'))

@@ -1,6 +1,7 @@
 import React from 'react'
 import classNames from 'classnames'
 import ReactHTMLParser from 'react-html-parser'
+import { CSSTransition } from 'react-transition-group'
 
 export const FrequentlyAskedQuestions = ({ config: faqConfig }) => {
    const config = {
@@ -24,6 +25,9 @@ export const FrequentlyAskedQuestions = ({ config: faqConfig }) => {
       backgruond:
          faqConfig?.FAQ?.backgruond?.value ??
          'https://dailykit-237-breezychef.s3.us-east-2.amazonaws.com/images/87806-home-faq-first-bg.jpg',
+      arrowIcon:
+         faqConfig?.FAQ?.arrowIcon?.value ??
+         'https://dailykit-237-breezychef.s3.us-east-2.amazonaws.com/images/52865-right-arrow.png',
       qna:
          faqConfig?.FAQ?.qna?.value?.map(qna => {
             return {
@@ -65,6 +69,7 @@ export const FrequentlyAskedQuestions = ({ config: faqConfig }) => {
                         count={index}
                         withoutBg={!config.QuestionWithMultipleColor}
                         qna={qna}
+                        config={config}
                      />
                   )
                })}
@@ -88,7 +93,7 @@ const Banner = ({ heading, img, subHeading }) => {
       </div>
    )
 }
-const QuestionAndAnswer = ({ qna, withoutBg = false, count }) => {
+const QuestionAndAnswer = ({ qna, withoutBg = false, count, config }) => {
    const [isOpen, setIsOpen] = React.useState(false)
    const questionColor = [
       {
@@ -112,7 +117,6 @@ const QuestionAndAnswer = ({ qna, withoutBg = false, count }) => {
    return (
       <div
          style={{
-            color: withoutBg ? '#000' : questionColor[colorIndex].text,
             backgroundColor: withoutBg ? '#fff' : questionColor[colorIndex].bg,
          }}
          className={classNames('hern-faq__qna', {
@@ -123,10 +127,28 @@ const QuestionAndAnswer = ({ qna, withoutBg = false, count }) => {
             onClick={() => setIsOpen(!isOpen)}
             style={{ color: '#7CC144', marginBottom: isOpen ? '16px' : '0' }}
          >
-            <img src="https://dailykit-237-breezychef.s3.us-east-2.amazonaws.com/images/52865-right-arrow.png" />
-            <h3>{qna.question}</h3>
+            <img
+               style={{ transform: isOpen ? 'rotate(90deg)' : 'rotate(0deg)' }}
+               src={config.arrowIcon}
+            />
+            <h3
+               style={{
+                  color: withoutBg ? '#000' : questionColor[colorIndex].text,
+               }}
+            >
+               {qna.question}
+            </h3>
          </button>
-         {isOpen && <p>{qna.answer}</p>}
+         <CSSTransition
+            in={isOpen}
+            unmountOnExit
+            timeout={200}
+            onEnter={() => setIsOpen(true)}
+            onExited={() => setIsOpen(false)}
+            classNames="hern-faq__answer-transitoin"
+         >
+            <p>{qna.answer}</p>
+         </CSSTransition>
       </div>
    )
 }

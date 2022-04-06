@@ -21,6 +21,7 @@ import {
    ProductSelector,
    CouponSelector,
    RadioButton,
+   CampaignSelector,
 } from './UIComponents'
 import { Address } from './UIComponents/Address'
 import { useEditMode } from './EditModeContext'
@@ -318,6 +319,16 @@ export const getFieldUI = (
    ) {
       configUI = (
          <RadioButton
+            fieldDetail={field}
+            marginLeft={indentation}
+            path={fieldKey}
+            onConfigChange={onConfigChange}
+            editMode={editMode}
+         />
+      )
+   } else if (field.userInsertType === 'campaignSelector') {
+      configUI = (
+         <CampaignSelector
             fieldDetail={field}
             marginLeft={indentation}
             path={fieldKey}

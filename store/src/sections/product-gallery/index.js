@@ -10,6 +10,7 @@ import { useRouter } from 'next/router'
 import { getRoute, isClient } from '../../utils'
 import { CustomArea } from '../featuredCollection/productCustomArea'
 import { setThemeVariable } from '../../utils'
+import classNames from 'classnames'
 
 export const ProductGallery = ({ config }) => {
    const [productsData, setProductsData] = React.useState([])
@@ -81,7 +82,12 @@ export const ProductGallery = ({ config }) => {
          </div>
       )
    return (
-      <div className="hern-product_gallery__container">
+      <div
+         className={classNames('hern-product_gallery__container', {
+            'hern-product-galllery__product__display--1':
+               config?.informationVisibility?.productDetailType?.value?.value,
+         })}
+      >
          <div className="hern-product_gallery-header">
             <h3
                className={
