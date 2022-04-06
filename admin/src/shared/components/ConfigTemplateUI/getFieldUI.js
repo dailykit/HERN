@@ -314,23 +314,16 @@ export const getFieldUI = (
       )
    } else if (
       field.dataType === 'boolean' &&
-      field.userInsertType === 'radiobutton'
+      field.userInsertType === 'radioButton'
    ) {
       configUI = (
-         <>
-            {editMode ? (
-               <RadioButton
-                  fieldDetail={field}
-                  marginLeft={indentation}
-                  path={fieldKey}
-                  onConfigChange={onConfigChange}
-               />
-            ) : (
-               <p>
-                  {value.label} {value.value === true ? 'YES' : 'NO'}
-               </p>
-            )}
-         </>
+         <RadioButton
+            fieldDetail={field}
+            marginLeft={indentation}
+            path={fieldKey}
+            onConfigChange={onConfigChange}
+            editMode={editMode}
+         />
       )
    }
    return <div data-config-path={fieldKey}>{configUI}</div>
