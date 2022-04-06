@@ -333,3 +333,21 @@ export const GET_BRAND_COUPONS = gql`
       }
    }
 `
+
+export const GET_BRAND_CAMPAIGNS = gql`
+   subscription campaignCollections($brandId: Int) {
+      campaigns: brandCampaigns(
+         where: {
+            brandId: { _eq: $brandId }
+            isActive: { _eq: true }
+            campaign: { isActive: { _eq: true } }
+         }
+      ) {
+         campaign {
+            id
+            type
+            metaDetails
+         }
+      }
+   }
+`

@@ -65,9 +65,7 @@
    padding-left: 0.5rem;
    padding-right: 0.5rem;
    display: flex;
-   // justify-content: center;
    align-items: center;
-   // margin-left: auto;
    @media (min-width: 768px) {
       margin-left: unset;
       padding-left: 1rem;
@@ -85,6 +83,12 @@
    padding-bottom: 0.25rem;
    transition: all 0.3s ease;
    white-space: nowrap;
+   a {
+      color: inherit !important;
+   }
+   a:hover {
+      color: inherit !important;
+   }
    &:focus {
       outline: none;
    }

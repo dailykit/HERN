@@ -435,8 +435,8 @@ const MenuIcon = ({ isOpen }) => {
                      y2="34"
                      gradientUnits="userSpaceOnUse"
                   >
-                     <stop stop-color="white" />
-                     <stop offset="1" stop-color="white" />
+                     <stop stopColor="white" />
+                     <stop offset="1" stopColor="white" />
                   </linearGradient>
                   <linearGradient
                      id="paint1_linear"
@@ -446,8 +446,8 @@ const MenuIcon = ({ isOpen }) => {
                      y2="53.6923"
                      gradientUnits="userSpaceOnUse"
                   >
-                     <stop stop-color="white" />
-                     <stop offset="1" stop-color="white" />
+                     <stop stopColor="white" />
+                     <stop offset="1" stopColor="white" />
                   </linearGradient>
                </defs>
             </svg>
@@ -883,8 +883,8 @@ const MenuIcon = ({ isOpen }) => {
                      y2="34"
                      gradientUnits="userSpaceOnUse"
                   >
-                     <stop stop-color="white" />
-                     <stop offset="1" stop-color="white" />
+                     <stop stopColor="white" />
+                     <stop offset="1" stopColor="white" />
                   </linearGradient>
                   <linearGradient
                      id="paint1_linear"
@@ -894,8 +894,8 @@ const MenuIcon = ({ isOpen }) => {
                      y2="53.6923"
                      gradientUnits="userSpaceOnUse"
                   >
-                     <stop stop-color="white" />
-                     <stop offset="1" stop-color="white" />
+                     <stop stopColor="white" />
+                     <stop offset="1" stopColor="white" />
                   </linearGradient>
                </defs>
             </svg>

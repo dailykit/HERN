@@ -33,9 +33,14 @@ const Breadcrumbs = () => {
       return routes
    }
    const routes = getRoutes()
+   console.log('routesBreadcrumb', routes)
    return (
       <Styles.Wrapper>
-         <Styles.Crumb onClick={() => history.push('/')} isHome={true}>
+         <Styles.Crumb
+            onClick={() => history.push('/')}
+            isHome={true}
+            title={'Home'}
+         >
             Home{' '}
             {routes.length >= 1 && (
                <>
@@ -46,7 +51,11 @@ const Breadcrumbs = () => {
          </Styles.Crumb>
 
          {routes.map((route, index) => (
-            <Styles.Crumb onClick={() => history.push(route.path)}>
+            <Styles.Crumb
+               key={`${route.path}-${route.title}`}
+               onClick={() => history.push(route.path)}
+               title={route.title}
+            >
                {route.title}
                {routes.length - 1 !== index && (
                   <>
