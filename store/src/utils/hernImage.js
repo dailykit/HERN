@@ -38,6 +38,7 @@ export const HernLazyImage = ({
    height = null,
    removeBg = false,
    dataSrc,
+   style,
    ...rest
 }) => {
    const { configOf } = useConfig()
@@ -61,9 +62,16 @@ export const HernLazyImage = ({
       'images',
       `${width}x${height}-rb`
    )
+   const lowImageSizeWidth = React.useMemo(() => {
+      return width / 50 < 10 ? 10 : width / 50
+   }, [])
+   const lowImageSizeHeight = React.useMemo(() => {
+      return height / 50 < 10 ? 10 : height / 50
+   }, [])
+
    const lowSizeBGImage = dataSrc
       .slice()
-      .replace('images', `${width / 50}x${height / 50}`)
+      .replace('images', `${lowImageSizeWidth}x${lowImageSizeHeight}`)
 
    const finalImageSrc = React.useMemo(() => {
       if (removeBg && !(Boolean(width) && Boolean(height))) {
@@ -96,6 +104,7 @@ export const HernLazyImage = ({
          <img
             className={`lazyload ${className}`}
             data-src={dataSrc}
+            style={style}
             {...rest}
          />
       )
@@ -109,11 +118,10 @@ export const HernLazyImage = ({
          data-src={src}
          // src={src}
          style={{
-            backgroundImage: `url(${lowSizeBGImage}), url(${SERVER_URL}/server/api/assets/serve-image?width=${
-               width / 50
-            }&height=${height / 50}&src=${dataSrc})`,
+            backgroundImage: `url(${lowSizeBGImage}), url(${SERVER_URL}/server/api/assets/serve-image?width=${lowImageSizeWidth}&height=${lowImageSizeHeight}&src=${dataSrc})`,
             backgroundRepeat: 'no-repeat',
             backgroundSize: '100% 100%',
+            ...style,
          }}
          onError={async ({ currentTarget }) => {
             if (!error) {

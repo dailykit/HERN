@@ -14,7 +14,7 @@ import {
 import { CSSTransition } from 'react-transition-group'
 
 import { useUser, CartContext, useTranslation } from '../context'
-import { isClient, getRoute, LocationSelectorWrapper } from '../utils'
+import { isClient, getRoute } from '../utils'
 import { MenuIcon, UserIcon } from '../assets/icons'
 
 import { ProfileSidebar } from './profile_sidebar'
@@ -32,6 +32,11 @@ import dynamic from 'next/dynamic'
 const LoginWrapper = dynamic(
    () => import('../utils/loginWrapper').then(promise => promise.LoginWrapper),
    { ssr: false }
+)
+const LocationSelectorWrapper = dynamic(() =>
+   import('../utils/locationSelectorWrapper').then(
+      promise => promise.LocationSelectorWrapper
+   )
 )
 const ReactPixel = isClient ? require('react-facebook-pixel').default : null
 

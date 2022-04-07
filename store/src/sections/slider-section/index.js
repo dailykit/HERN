@@ -1,8 +1,13 @@
 import React from 'react'
-import { Carousel } from 'antd'
+import Carousel from 'antd/lib/carousel'
 import { ArrowLeftIcon, ArrowRightIcon } from '../../assets/icons'
-import { HernLazyImage } from '../../utils/hernImage'
+// import { HernLazyImage } from '../../utils/hernImage'
 import { isClient } from '../../utils'
+import dynamic from 'next/dynamic'
+
+const HernLazyImage = dynamic(() =>
+   import('../../utils/hernImage').then(promise => promise.HernLazyImage)
+)
 
 export const SliderSection = ({ config }) => {
    const showDotsOnSlider =
@@ -12,7 +17,14 @@ export const SliderSection = ({ config }) => {
    const sliderContent = config.display.slider.content.images.value ?? false
    const getStartedURL = config?.data?.callToActionButtonURL.value ?? '#'
    return (
-      <>
+      <div
+         style={{
+            width: '100%',
+            minHeight: 'calc(100vw / 2 )',
+            position: 'relative',
+         }}
+      >
+         <div className="hern-slider-section-overlay"></div>
          {sliderContent && (
             <Carousel
                className="hern-slider_section-carousel"
@@ -37,7 +49,7 @@ export const SliderSection = ({ config }) => {
                   )}
             </Carousel>
          )}
-      </>
+      </div>
    )
 }
 
@@ -83,6 +95,7 @@ const SliderDiv = ({ content, index, getStartedURL }) => {
             }
             width={sliderImageSize.width}
             height={sliderImageSize.height}
+            className="hern-slider_section-image"
             // alt="products"
             // width="100%"
          />
