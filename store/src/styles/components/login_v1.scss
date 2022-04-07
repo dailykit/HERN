@@ -150,7 +150,7 @@
 }
 
 .hern-login-v1__login-btn--disabled {
-   background: var(--hern-accent) !important;
+   background: #808080 !important;
    cursor: not-allowed;
    color: '#ffffff' !important;
    opacity: 0.5;
@@ -192,7 +192,7 @@
 }
 
 .hern-login-v1__otp-submit--disabled {
-   background-color: var(--hern-accent) !important;
+   background-color: #808080 !important;
    cursor: not-allowed;
    opacity: 0.5;
 }
@@ -259,7 +259,7 @@
    cursor: not-allowed;
    opacity: 0.5;
    &:hover {
-      background: #fff;
+      background: #808080;
    }
 }
 
@@ -303,7 +303,7 @@
    height: 40px;
 }
 .hern-forgot-password-v1__submit-btn--disabled {
-   background: var(--hern-accent) !important;
+   background: #808080 !important;
    cursor: not-allowed;
    opacity: 0.5;
 }
@@ -367,7 +367,7 @@
 }
 
 .hern-signup-v1__signup__submit--disabled {
-   background: var(--hern-accent) !important;
+   background: #808080 !important;
    cursor: not-allowed;
    opacity: 0.5;
 }
