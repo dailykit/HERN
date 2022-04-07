@@ -6,9 +6,8 @@ export const TermsAndConditions = () => {
    const { settings } = useConfig('brand')
 
    const termsAndConditions =
-      settings?.brand?.find(
-         setting => setting.identifier === 'Terms and Conditions'
-      )?.value?.['Terms and Conditions']?.value ?? ''
+      settings?.brand?.['Terms and Conditions']?.['Terms and Conditions']
+         ?.value ?? ''
 
    return (
       <div className="hern-terms-condition">

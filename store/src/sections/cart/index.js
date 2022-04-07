@@ -9,8 +9,9 @@ import {
    Button,
    PaymentOptionsRenderer,
    WalletAmount,
+   LanguageSwitch,
 } from '../../components'
-import { CartContext, useUser } from '../../context'
+import { CartContext, useTranslation, useUser } from '../../context'
 import {
    EmptyCart,
    PaymentIcon,
@@ -28,6 +29,8 @@ export const OnDemandCart = () => {
       React.useContext(CartContext)
    const { isAuthenticated, userType } = useUser()
    const { locationId, dispatch } = useConfig()
+   const { t } = useTranslation()
+
    React.useEffect(() => {
       if (!isFinalCartLoading) {
          const storeLocationId = localStorage.getItem('storeLocationId')
@@ -86,10 +89,17 @@ export const OnDemandCart = () => {
             <CartPageHeader />
             <div className="hern-cart-empty-cart">
                <EmptyCart />
-               <span>Oops! Your cart is empty </span>
-               <Button className="hern-cart-go-to-menu-btn" onClick={() => {}}>
-                  <Link href="/order">GO TO MENU</Link>
-               </Button>
+               <span>{t('Oops! Your cart is empty')} </span>
+               <Link href="/order">
+                  <a>
+                     <Button
+                        className="hern-cart-go-to-menu-btn"
+                        onClick={() => {}}
+                     >
+                        {t('GO TO MENU')}
+                     </Button>
+                  </a>
+               </Link>
             </div>
          </>
       )
@@ -155,7 +165,7 @@ export const OnDemandCart = () => {
 const PaymentSection = () => {
    const { isAuthenticated } = useUser()
    const { cartState } = React.useContext(CartContext)
-   const [open, setOpen] = React.useState(false)
+   const [open, setOpen] = React.useState(true)
    const [isTunnelOpen, setIsTunnelOpen] = React.useState(false)
    const isDisabled =
       !cartState?.cart.fulfillmentInfo ||
@@ -164,7 +174,7 @@ const PaymentSection = () => {
       !cartState.cart?.customerInfo?.customerPhone
    console.log('first', cartState)
    const isSmallerDevice = isClient && window.innerWidth < 768
-
+   const { t } = useTranslation()
    return (
       <>
          {!isSmallerDevice && (
@@ -193,7 +203,7 @@ const PaymentSection = () => {
                         />
                      </span>
                      &nbsp; &nbsp;
-                     <h3>Payment</h3>
+                     <h3>{t('Payment')}</h3>
                   </div>
                   <span role="button">
                      <ChevronIcon
@@ -225,7 +235,7 @@ const PaymentSection = () => {
                   className="hern-cart__make-payment-btn"
                   onClick={() => setIsTunnelOpen(true)}
                >
-                  Make Payment{' '}
+                  {t('Make Payment')}
                   {`(${formatCurrency(
                      cartState?.cart?.cartOwnerBilling?.balanceToPay
                   )})`}
@@ -265,6 +275,7 @@ const CartPageHeader = () => {
       brandLogo: { value: logo } = {},
    } = useConfig('brand').configOf('Brand Info')
    const router = useRouter()
+   const { t } = useTranslation()
    return (
       <header className="hern-cart-page__header">
          <div>

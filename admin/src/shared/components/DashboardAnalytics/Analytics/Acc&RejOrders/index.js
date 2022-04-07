@@ -113,29 +113,29 @@ const AcceptedAndRejectedAnalytics = () => {
          },
       }
    )
-   console.log('compare query', {
-      where: `${
-         analyticsApiArgState.compare.from !== moment('2017 - 01 - 01') &&
-         `a.created_at >= '${analyticsApiArgState.compare.from}' `
-      } ${
-         analyticsApiArgState.compare.from !== moment('2017 - 01 - 01') &&
-         `AND a.created_at < '${analyticsApiArgState.compare.to}' `
-      } ${
-         analyticsApiArgState.brandShop.brandId
-            ? `AND a."brandId" = ${analyticsApiArgState.brandShop.brandId}`
-            : ''
-      } ${
-         analyticsApiArgState.brandShop.shopTitle
-            ? `AND b.source = \'${analyticsApiArgState.brandShop.shopTitle}\'`
-            : ''
-      }`,
-      groupingSets: `(${analyticsApiArgState.groupBy.toString()})`,
-      columns: analyticsApiArgState.groupBy
-         .map(group => {
-            return `EXTRACT(${group.toUpperCase()} FROM a.created_at) AS \"${group.toLowerCase()}\"`
-         })
-         .join(','),
-   })
+   // console.log('compare query', {
+   //    where: `${
+   //       analyticsApiArgState.compare.from !== moment('2017 - 01 - 01') &&
+   //       `a.created_at >= '${analyticsApiArgState.compare.from}' `
+   //    } ${
+   //       analyticsApiArgState.compare.from !== moment('2017 - 01 - 01') &&
+   //       `AND a.created_at < '${analyticsApiArgState.compare.to}' `
+   //    } ${
+   //       analyticsApiArgState.brandShop.brandId
+   //          ? `AND a."brandId" = ${analyticsApiArgState.brandShop.brandId}`
+   //          : ''
+   //    } ${
+   //       analyticsApiArgState.brandShop.shopTitle
+   //          ? `AND b.source = \'${analyticsApiArgState.brandShop.shopTitle}\'`
+   //          : ''
+   //    }`,
+   //    groupingSets: `(${analyticsApiArgState.groupBy.toString()})`,
+   //    columns: analyticsApiArgState.groupBy
+   //       .map(group => {
+   //          return `EXTRACT(${group.toUpperCase()} FROM a.created_at) AS \"${group.toLowerCase()}\"`
+   //       })
+   //       .join(','),
+   // })
    const dataCompareMachine = data => {
       const result = {}
       const present = insights_analytics[0]

@@ -15,8 +15,6 @@ const PrintProcessingModal = ({
    initializePrinting = () => null,
    resetPaymentProviderStates = () => null,
 }) => {
-   console.log('PrintProcessingModal')
-
    const router = useRouter()
    const isKioskMode = isKiosk()
    const { width, height } = useWindowSize()
@@ -56,7 +54,7 @@ const PrintProcessingModal = ({
                className="payment_status_loader"
             />
          )
-         title = `${t('Failed to print your receipt')}`
+         title = 'Failed to print your receipt'
          subtitle = message
          extra = [
             <Button type="primary" onClick={initializePrinting}>
@@ -109,8 +107,8 @@ const PrintProcessingModal = ({
          <Wrapper>
             <Result
                icon={showPrintingStatus().icon}
-               title={showPrintingStatus().title}
-               subTitle={showPrintingStatus().subtitle}
+               title={t(showPrintingStatus().title)}
+               subTitle={t(showPrintingStatus().subtitle)}
                extra={showPrintingStatus().extra}
             />
 

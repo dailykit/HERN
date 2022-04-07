@@ -19,9 +19,9 @@ import {
    getRoute,
    isClient,
 } from '../utils'
-import { CloseIcon, CheckBoxIcon } from '../assets/icons'
+import { CloseIcon } from '../assets/icons'
 import { useOnClickOutside } from '../utils/useOnClickOutisde'
-import { CartContext } from '../context'
+import { CartContext, useTranslation } from '../context'
 import { CounterButton } from './counterBtn'
 import classNames from 'classnames'
 import Link from 'next/link'
@@ -51,7 +51,10 @@ export const ModifierPopup = props => {
    } = props
    //context
    const { addToCart, methods } = React.useContext(CartContext)
+   const { t, dynamicTrans, locale } = useTranslation()
    const { addToast } = useToasts()
+   const currentLang = React.useMemo(() => locale, [locale])
+
    const [productOption, setProductOption] = useState(
       productData.productOptions.find(
          x => x.id === productData.defaultProductOptionId
@@ -117,7 +120,7 @@ export const ModifierPopup = props => {
    })
 
    const { locationId, storeStatus, configOf } = useConfig()
-   const recipeLink = useConfig('Product Card').configOf('recipe-link')
+   const recipeLink = useConfig('Product card').configOf('recipe-link')
 
    const recipeButton = {
       show:
@@ -146,10 +149,14 @@ export const ModifierPopup = props => {
       }
    }, [])
 
-   console.log(
-      'productOptionsGroupedByProductOptionType',
-      productOptionsGroupedByProductOptionType
-   )
+   useEffect(() => {
+      if (status == 'success') {
+         const languageTags = document.querySelectorAll(
+            '[data-translation="true"]'
+         )
+         dynamicTrans(languageTags)
+      }
+   }, [status, currentLang])
 
    //add to cart
    const handleAddOnCartOn = async () => {
@@ -173,7 +180,7 @@ export const ModifierPopup = props => {
          // const objects = new Array(quantity).fill({ ...cartItem })
          // console.log('cartItem', objects)
          await addToCart(cartItem, quantity)
-         addToast('Added to the Cart!', {
+         addToast(t('Added to the Cart!'), {
             appearance: 'success',
          })
          if (edit) {
@@ -398,17 +405,33 @@ export const ModifierPopup = props => {
       }
    }
 
-   const CustomProductDetails = () => {
+   const CustomProductDetails = React.memo(() => {
+      useEffect(() => {
+         const languageTags = document.querySelectorAll(
+            '[data-translation="true"]'
+         )
+         dynamicTrans(languageTags)
+      }, [currentLang])
+
       return (
          <div className="hern-product-options__custom-details">
             <div>
-               <div className="hern-product-options__custom-details__product-title">
+               <div
+                  className="hern-product-options__custom-details__product-title"
+                  data-translation="true"
+               >
                   {productData.name}
                </div>
-               <div className="hern-product-options__custom-details__product-desc">
+               <div
+                  className="hern-product-options__custom-details__product-desc"
+                  data-translation="true"
+               >
                   {productData.description}
                </div>
-               <div className="hern-product-options__custom-details__product-tags">
+               <div
+                  className="hern-product-options__custom-details__product-tags"
+                  data-translation="true"
+               >
                   {productData?.tags?.join(',')}
                </div>
             </div>
@@ -416,13 +439,16 @@ export const ModifierPopup = props => {
                <div className="hern-product-options__custom-details__product-counter">
                   <CustomArea />
                </div>
-               <div className="hern-product-options__custom-details__product-price">
+               <div
+                  className="hern-product-options__custom-details__product-price"
+                  data-translation="true"
+               >
                   {finalProductPrice()}
                </div>
             </div>
          </div>
       )
-   }
+   })
 
    window.onclick = function (event) {
       if (
@@ -460,6 +486,7 @@ export const ModifierPopup = props => {
                      <div
                         className="hern-product-card__name"
                         style={{ fontSize: '20px', fontWeight: '600px' }}
+                        data-translation="true"
                      >
                         {productData?.name}
                      </div>
@@ -526,6 +553,7 @@ export const ModifierPopup = props => {
                                           setIsModifierOptionsViewOpen(false)
                                        }
                                     }}
+                                    data-translation="true"
                                  >
                                     {camelCaseToNormalText(
                                        eachProductOptionType.type == 'null'
@@ -562,9 +590,13 @@ export const ModifierPopup = props => {
                      )}
                   >
                      <label htmlFor="products">
-                        {productData.productionOptionSelectionStatement
-                           ? productData.productionOptionSelectionStatement
-                           : 'Available Options:'}
+                        {productData.productionOptionSelectionStatement ? (
+                           <span data-translation="true">
+                              {productData.productionOptionSelectionStatement}
+                           </span>
+                        ) : (
+                           t('Available Options')
+                        )}
                      </label>
                      <br />
                      <ul
@@ -607,7 +639,7 @@ export const ModifierPopup = props => {
                                        }
                                     }}
                                  >
-                                    <li>
+                                    <li data-translation="true">
                                        {eachOption.label}
 
                                        {' (+ '}
@@ -668,6 +700,7 @@ export const ModifierPopup = props => {
                                     fontSize: '16px',
                                     marginLeft: '10px',
                                  }}
+                                 data-translation="true"
                               >
                                  {productOption.label}
                               </span>
@@ -677,7 +710,7 @@ export const ModifierPopup = props => {
                            htmlFor="products"
                            className="hern-product-modifier-pop-up-add-on"
                         >
-                           Add on:
+                           {t('Add on')}:
                         </label>
                         {productOption.additionalModifiers.length > 0 &&
                            productOption.additionalModifiers.map(
@@ -764,13 +797,28 @@ export const ModifierPopup = props => {
                         locationId ? (storeStatus.status ? false : true) : true
                      }
                   >
-                     {showModifiers && productOption.modifier
-                        ? showStepViewProductOptionAndModifiers
-                           ? !isModifierOptionsViewOpen
-                              ? 'PROCEED'
-                              : `ADD TO CART ${totalAmount()}`
-                           : `ADD TO CART ${totalAmount()}`
-                        : `ADD TO CART ${totalAmount()}`}
+                     {showModifiers && productOption.modifier ? (
+                        showStepViewProductOptionAndModifiers ? (
+                           !isModifierOptionsViewOpen ? (
+                              t('PROCEED')
+                           ) : (
+                              <span>
+                                 {t('ADD TO CART')}&nbsp;
+                                 {totalAmount()}
+                              </span>
+                           )
+                        ) : (
+                           <span>
+                              {t('ADD TO CART')}&nbsp;
+                              {totalAmount()}
+                           </span>
+                        )
+                     ) : (
+                        <span>
+                           {t('ADD TO CART')}&nbsp;
+                           {totalAmount()}
+                        </span>
+                     )}
                   </Button>
                </div>
             </div>
@@ -839,7 +887,9 @@ const AdditionalModifiers = forwardRef(
                      cursor: 'pointer',
                   }}
                >
-                  <span className="">{eachAdditionalModifier.label}</span>
+                  <span className="" data-translation="true">
+                     {eachAdditionalModifier.label}
+                  </span>
                   {showCustomize ? (
                      <UpVector size={18} />
                   ) : (

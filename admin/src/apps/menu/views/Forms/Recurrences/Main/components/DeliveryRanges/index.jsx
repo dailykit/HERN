@@ -21,6 +21,7 @@ import { Flex } from '../../../styled'
 import {
    DeleteIcon,
    PlusIcon,
+   EditIcon
 } from '../../../../../../../../shared/assets/icons'
 import { Switch } from 'antd'
 import {
@@ -68,8 +69,20 @@ const DeliveryRanges = ({ timeSlotId, mileRanges, openTunnel }) => {
 
    const addMileRange = () => {
       recurrenceDispatch({
+         type: 'MILE_RANGE',
+         payload: undefined,
+      })
+      recurrenceDispatch({
          type: 'TIME_SLOT',
          payload: timeSlotId,
+      })
+      openTunnel(3)
+   }
+
+   const updateMileRangeHandler = mileRange => {
+      recurrenceDispatch({
+         type: 'MILE_RANGE',
+         payload: mileRange,
       })
       openTunnel(3)
    }
@@ -178,8 +191,8 @@ const DeliveryRanges = ({ timeSlotId, mileRanges, openTunnel }) => {
                                  <StyledContext>
                                     <div>Zipcodes</div>
                                     <div>
-                                       {mileRange?.zipcodes?.zipcodes.map(x => (
-                                          <span>{x}, </span>
+                                       {mileRange?.zipcodes?.zipcodes.map((x, index) => (
+                                          mileRange?.zipcodes?.zipcodes.length-1!==index ? <span>{x}, </span> : <span>{x} </span> 
                                        ))}
                                     </div>
                                  </StyledContext>
@@ -223,6 +236,13 @@ const DeliveryRanges = ({ timeSlotId, mileRanges, openTunnel }) => {
                                              })
                                           }
                                        />
+                                       <IconButton
+                                          type="ghost"
+                                          title="Click to edit delivery area"
+                                          onClick={() => updateMileRangeHandler(mileRange)}
+                                       >
+                                          <EditIcon color="#919699" />
+                                       </IconButton>
                                        <IconButton
                                           type="ghost"
                                           title="Delete Delivery Area"

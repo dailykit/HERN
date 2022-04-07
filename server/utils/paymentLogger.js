@@ -29,6 +29,7 @@ const STATUS = {
    created: 'CREATED',
    cancelled: 'CANCELLED',
    succeeded: 'SUCCEEDED',
+   paid: 'SUCCEEDED',
    processing: 'PROCESSING',
    payment_failed: 'FAILED',
    requires_action: 'REQUIRES_ACTION',
@@ -202,7 +203,8 @@ export const paymentLogger = async args => {
          paymentStatus = 'PENDING',
          actionUrl = null,
          actionRequired = false,
-         stripeInvoiceDetails = null
+         stripeInvoiceDetails = null,
+         comment = 'Updated by payment logger'
       } = args
       await client.request(UPDATE_CART_PAYMENT, {
          id: cartPaymentId,
@@ -212,6 +214,7 @@ export const paymentLogger = async args => {
             transactionId,
             stripeInvoiceId: requestId,
             stripeInvoiceDetails,
+            comment,
             ...(actionUrl && { actionUrl }),
             ...(actionRequired && { actionRequired })
          }

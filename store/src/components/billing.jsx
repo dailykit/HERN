@@ -1,4 +1,5 @@
 import React from 'react'
+import { useTranslation } from '../context'
 import { formatCurrency } from '../utils'
 
 const parseText = (text = '') =>
@@ -7,6 +8,14 @@ const parseText = (text = '') =>
    })
 
 export const Billing = ({ billing }) => {
+   const { dynamicTrans, locale } = useTranslation()
+   const currentLang = React.useMemo(() => locale, [locale])
+   React.useEffect(() => {
+      const languageTags = document.querySelectorAll(
+         '[data-translation="true"]'
+      )
+      dynamicTrans(languageTags)
+   }, [currentLang])
    return (
       <table className="hern-billing__table">
          <tbody>
@@ -15,8 +24,13 @@ export const Billing = ({ billing }) => {
                   className="hern-billing__table__cell"
                   title={billing?.itemTotal?.description}
                >
-                  {billing?.itemTotal?.label}
-                  <p className="hern-billing__table__cell__comment">
+                  <span data-translation="true">
+                     {billing?.itemTotal?.label}
+                  </span>
+                  <p
+                     className="hern-billing__table__cell__comment"
+                     data-translation="true"
+                  >
                      {parseText(billing?.itemTotal?.comment)}
                   </p>
                </td>
@@ -29,8 +43,13 @@ export const Billing = ({ billing }) => {
                   className="hern-billing__table__cell"
                   title={billing?.deliveryPrice?.description}
                >
-                  {billing?.deliveryPrice?.label}
-                  <p className="hern-billing__table__cell__comment">
+                  <span data-translation="true">
+                     {billing?.deliveryPrice?.label}
+                  </span>
+                  <p
+                     className="hern-billing__table__cell__comment"
+                     data-translation="true"
+                  >
                      {parseText(billing?.deliveryPrice?.comment)}
                   </p>
                </td>
@@ -44,8 +63,13 @@ export const Billing = ({ billing }) => {
                      className="hern-billing__table__cell"
                      title={billing?.subTotal?.description}
                   >
-                     {billing?.subTotal?.label}
-                     <p className="hern-billing__table__cell__comment">
+                     <span data-translation="true">
+                        {billing?.subTotal?.label}
+                     </span>
+                     <p
+                        className="hern-billing__table__cell__comment"
+                        data-translation="true"
+                     >
                         {parseText(billing?.subTotal?.comment)}
                      </p>
                   </td>
@@ -60,8 +84,11 @@ export const Billing = ({ billing }) => {
                      className="hern-billing__table__cell"
                      title={billing?.tax?.description}
                   >
-                     {billing?.tax?.label}
-                     <p className="hern-billing__table__cell__comment">
+                     <span data-translation="true">{billing?.tax?.label}</span>
+                     <p
+                        className="hern-billing__table__cell__comment"
+                        data-translation="true"
+                     >
                         {parseText(billing?.tax?.comment)}
                      </p>
                   </td>
@@ -72,8 +99,13 @@ export const Billing = ({ billing }) => {
             )}
             {!!billing?.walletAmountUsed?.value && (
                <tr>
-                  <td className="hern-billing__table__cell">
-                     {billing?.walletAmountUsed?.label}
+                  <td
+                     className="hern-billing__table__cell"
+                     data-translation="true"
+                  >
+                     <span data-translation="true">
+                        {billing?.walletAmountUsed?.label}
+                     </span>
                   </td>
                   <td className="hern-billing__table__cell">
                      {formatCurrency(billing?.walletAmountUsed?.value)}
@@ -82,7 +114,10 @@ export const Billing = ({ billing }) => {
             )}
             {!!billing?.loyaltyPointsUsed?.value && (
                <tr>
-                  <td className="hern-billing__table__cell">
+                  <td
+                     className="hern-billing__table__cell"
+                     data-translation="true"
+                  >
                      {billing?.loyaltyPointsUsed?.label}
                   </td>
                   <td className="hern-billing__table__cell">
@@ -92,8 +127,13 @@ export const Billing = ({ billing }) => {
             )}
             {!!billing?.discount?.value && (
                <tr>
-                  <td className="hern-billing__table__cell">
-                     {billing?.discount?.label}
+                  <td
+                     className="hern-billing__table__cell"
+                     data-translation="true"
+                  >
+                     <span data-translation="true">
+                        {billing?.discount?.label}
+                     </span>
                   </td>
                   <td className="hern-billing__table__cell">
                      {formatCurrency(billing?.discount?.value)}
@@ -105,8 +145,13 @@ export const Billing = ({ billing }) => {
                   className="hern-billing__table__cell"
                   title={billing?.totalPrice?.description}
                >
-                  {billing?.totalPrice?.label}
-                  <p className="hern-billing__table__cell__comment">
+                  <span data-translation="true">
+                     {billing?.totalPrice?.label}
+                  </span>
+                  <p
+                     className="hern-billing__table__cell__comment"
+                     data-translation="true"
+                  >
                      {parseText(billing?.totalPrice?.comment)}
                   </p>
                </td>

@@ -15,6 +15,7 @@ import { useUser } from '.'
 import { useConfig } from '../lib'
 import { useToasts } from 'react-toast-notifications'
 import { combineCartItems, useQueryParamState } from '../utils'
+import { useTranslation } from './language'
 
 export const CartContext = React.createContext()
 
@@ -41,6 +42,7 @@ export const CartProvider = ({ children }) => {
    const { brand, kioskId, selectedOrderTab, locationId, dispatch, orderTabs } =
       useConfig()
    const { addToast } = useToasts()
+   const { t } = useTranslation()
    const [oiType] = useQueryParamState('oiType')
    const [isFinalCartLoading, setIsFinalCartLoading] = React.useState(true)
 
@@ -189,7 +191,7 @@ export const CartProvider = ({ children }) => {
       onError: error => {
          console.log(error)
          setIsFinalCartLoading(false)
-         addToast('Failed to create cart!', {
+         addToast(t('Failed to create cart!'), {
             appearance: 'error',
          })
       },
@@ -200,7 +202,7 @@ export const CartProvider = ({ children }) => {
          if (!(oiType === 'Kiosk Ordering')) {
             // localStorage.removeItem('cart-id')
          }
-         addToast('Update Successfully!', {
+         addToast(t('Update Successfully!'), {
             appearance: 'success',
          })
          console.log('🍾 Cart updated with data!')
@@ -209,7 +211,7 @@ export const CartProvider = ({ children }) => {
       onError: error => {
          console.log(error)
          setIsFinalCartLoading(false)
-         addToast('Failed to update items!', {
+         addToast(t('Failed to update items!'), {
             appearance: 'error',
          })
       },
@@ -239,7 +241,7 @@ export const CartProvider = ({ children }) => {
       onError: error => {
          console.log(error)
          setIsFinalCartLoading(false)
-         addToast('Failed to create items!', {
+         addToast(t('Failed to create items!'), {
             appearance: 'error',
          })
       },
@@ -248,7 +250,6 @@ export const CartProvider = ({ children }) => {
    // delete cartItems
    const [deleteCartItems] = useMutation(DELETE_CART_ITEMS, {
       onCompleted: ({ deleteCartItems = null }) => {
-         console.log('item removed successfully')
          if (
             deleteCartItems &&
             deleteCartItems.returning.length &&
@@ -263,14 +264,16 @@ export const CartProvider = ({ children }) => {
             })
          }
          setIsFinalCartLoading(false)
-         addToast('Item removed!', {
-            appearance: 'success',
-         })
+         if (deleteCartItems && deleteCartItems.returning.length) {
+            addToast(t('Item removed!'), {
+               appearance: 'success',
+            })
+         }
       },
       onError: error => {
          console.log(error)
          setIsFinalCartLoading(false)
-         addToast('Failed to delete items!', {
+         addToast(t('Failed to delete items!'), {
             appearance: 'error',
          })
       },

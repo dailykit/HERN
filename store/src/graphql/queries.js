@@ -436,6 +436,7 @@ export const ZIPCODE = gql`
          deliveryTime
          deliveryPrice
          isPickupActive
+         locationId
          isDeliveryActive
          defaultAutoSelectFulfillmentMode
          pickupOptionId: subscriptionPickupOptionId
@@ -683,31 +684,6 @@ export const INFORMATION_GRID = gql`
             id
             title
             thumbnail
-            description
-         }
-      }
-   }
-`
-
-export const FAQ = gql`
-   subscription faq(
-      $page: String_comparison_exp!
-      $identifier: String_comparison_exp!
-   ) {
-      faq: content_faqs(
-         where: {
-            page: $page
-            isVisible: { _eq: true }
-            identifier: $identifier
-         }
-      ) {
-         id
-         heading
-         subHeading
-         identifier
-         blocks: informationBlocks {
-            id
-            title
             description
          }
       }
@@ -1970,6 +1946,17 @@ export const BRAND_LOCATIONS = gql`
             orderExperienceOptionType
             doesDeliverOutsideCity
             doesDeliverOutsideState
+            operatingTime
+            brand_recurrences(where: { isActive: { _eq: true } }) {
+               recurrence {
+                  rrule
+                  type
+                  timeSlots {
+                     from
+                     to
+                  }
+               }
+            }
          }
       }
    }
@@ -2244,6 +2231,9 @@ export const GET_CART_PAYMENT_INFO = gql`
          amount
          cancelAttempt
          cartId
+         cart {
+            customerInfo
+         }
          isTest
          paymentStatus
          paymentType
@@ -2472,6 +2462,14 @@ export const SUPPORTED_PAYMENT_OPTIONS = gql`
       brands_supportedPaymentCompany {
          id
          label
+      }
+   }
+`
+export const COUPON_BY_ID = gql`
+   query coupon($id: Int!) {
+      coupon(id: $id) {
+         code
+         metaDetails
       }
    }
 `

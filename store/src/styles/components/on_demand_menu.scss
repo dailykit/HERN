@@ -79,9 +79,11 @@
    justify-content: center;
    /*Stick to the top  with the equal height of navigatin menu*/
    top: var(--hern-navigation-menu-height);
-   z-index: 10;
+   z-index: 99;
    width: inherit;
    background-color: #fff;
+   max-width: 1200px;
+   margin: 0 auto;
    > ul {
       display: flex;
       width: inherit;
@@ -93,16 +95,20 @@
       }
       > li {
          list-style: none;
-         // padding: 4px 10px;
          cursor: pointer;
          margin: 0 0.4em;
-         // border-radius: 1em;
          font-weight: 700;
          font-size: 14px;
          line-height: 16px;
          font-size: 18px;
          line-height: 20px;
          color: var(--hern-accent);
+         > li:active {
+            background-color: var(--hern-accent);
+            > a {
+               color: #000;
+            }
+         }
          > a {
             width: 100%;
             display: flex;
@@ -110,11 +116,13 @@
             color: var(--hern-accent);
             text-decoration: none;
             padding: 0.5em 1em;
-            border-radius: 2em;
-            border: 2px solid var(--hern-accent);
+            box-sizing: border-box;
+            border-radius: 12px;
+            border: 1px solid var(--hern-accent);
          }
          > a:hover {
             text-decoration: none;
+            color: #000000;
          }
       }
    }

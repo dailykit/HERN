@@ -16,6 +16,7 @@ import { MenuSection } from '../../components/kiosk/menu'
 import { KioskCart } from '../../components/kiosk/cart'
 import { DELETE_CART } from '../../graphql'
 import { usePayment } from '../../lib'
+import { InfoBar } from '../../components/kiosk/component'
 // idle screen component
 // fulfillment component
 // header
@@ -157,6 +158,7 @@ const Kiosk = props => {
                <KioskHeader config={kioskConfig} />
             </Header>
             <Layout className="hern-kiosk__content-layout">
+               <InfoBar />
                {currentPage === 'fulfillmentPage' && (
                   <Content>
                      <FulfillmentSection

@@ -2,18 +2,20 @@ import React from 'react'
 import { PRODUCTS } from '../../graphql'
 import { useQuery } from '@apollo/react-hooks'
 import { useConfig } from '../../lib'
-import { Button, Loader } from '../../components'
+import { Loader } from '../../components'
 import { Carousel, Row, Col } from 'antd'
 import { ProductCard } from '../../components/product_card'
 import { ArrowLeftIcon, ArrowRightIcon } from '../../assets/icons'
 import { useRouter } from 'next/router'
-import { getRoute } from '../../utils'
+import { getRoute, isClient } from '../../utils'
 import { CustomArea } from '../featuredCollection/productCustomArea'
+import { setThemeVariable } from '../../utils'
+import classNames from 'classnames'
 
 export const ProductGallery = ({ config }) => {
    const [productsData, setProductsData] = React.useState([])
    const [productOrientation, setProductOrientation] = React.useState(
-      config.informationVisibility.productOrientation.value[0].value
+      config.informationVisibility.productOrientation.value.value
    )
    const [status, setStatus] = React.useState('loading')
    const { brand, locationId } = useConfig()
@@ -56,17 +58,50 @@ export const ProductGallery = ({ config }) => {
       }
    )
 
+   // Setting arrows active color into root variables
+   setThemeVariable(
+      '--arrow-active-color',
+      config?.data?.arrowActiveColor?.value
+   )
+
    if (status == 'loading') return <Loader inline />
-   if (status == 'error') return <p>Something went wrong</p>
+   if (status == 'error')
+      return (
+         <div className="hern-product-galllery__something-went-wrong">
+            Opps!
+            <br /> Something went wrong while loading products. <br />
+            <button
+               onClick={() => {
+                  if (isClient) {
+                     window.location.reload()
+                  }
+               }}
+            >
+               Reload
+            </button>
+         </div>
+      )
    return (
-      <>
+      <div
+         className={classNames('hern-product_gallery__container', {
+            'hern-product-galllery__product__display--1':
+               config?.informationVisibility?.productDetailType?.value?.value,
+         })}
+      >
          <div className="hern-product_gallery-header">
-            <h3 className="hern-product_gallery-header-heading">
+            <h3
+               className={
+                  config?.informationVisibility?.headingStyleType?.value
+                     ?.value || 'hern-product_gallery-header-heading'
+               }
+            >
                {config.data.title.value}
             </h3>
-            <h5 className="hern-product_gallery-header-description">
-               {config.data.subTitle.value}
-            </h5>
+            {config?.data?.subTitle?.value && (
+               <h5 className="hern-product_gallery-header-description">
+                  {config.data.subTitle.value}
+               </h5>
+            )}
          </div>
          {productsData.length ? (
             <>
@@ -91,15 +126,36 @@ export const ProductGallery = ({ config }) => {
                      })}
                   </Row>
                )}
+               {config?.informationVisibility?.showPageButton?.value && (
+                  <Row
+                     style={{
+                        justifyContent: 'center',
+                        margin: '20px 0px',
+                     }}
+                  >
+                     <Col span={12} style={{ textAlign: 'center' }}>
+                        <a
+                           class="hern-product_gallery_page-button"
+                           href={
+                              config?.data?.pageButton?.route?.value ||
+                              config?.data?.pageButton?.route?.default
+                           }
+                        >
+                           {config.data.pageButton.title.value ||
+                              config.data.pageButton.title.default}
+                        </a>
+                     </Col>
+                  </Row>
+               )}
             </>
          ) : (
             <Loader />
          )}
-      </>
+      </div>
    )
 }
 
-const ProductGrid = ({ product, index }) => {
+const ProductGrid = ({ config, product, index }) => {
    const { locationId, storeStatus } = useConfig()
    const router = useRouter()
    const [productModifier, setProductModifier] = React.useState(null)
@@ -118,19 +174,55 @@ const ProductGrid = ({ product, index }) => {
          onImageClick={() => router.push(getRoute('/products/' + product.id))}
          key={index}
          data={product}
-         showProductDescription={true}
          showImage={product.assets.images.length > 0 ? true : false}
-         customAreaComponent={CustomAreaWrapper}
+         customAreaComponent={
+            (!config?.informationVisibility?.showAddButtonInProduct &&
+               CustomAreaWrapper) ||
+            (config?.informationVisibility?.showAddButtonInProduct?.value &&
+               CustomAreaWrapper)
+         }
          showModifier={productModifier && productModifier.id === product.id}
          closeModifier={closeModifier}
          customAreaFlex={false}
+         showSliderIndicators={
+            config?.informationVisibility?.showSliderIndicators?.value
+         }
+         showSliderArrows={
+            config?.informationVisibility?.showSliderArrows?.value
+         }
+         productDetailType={
+            config?.informationVisibility?.productDetailType?.value?.value
+         }
+         showProductDescription={
+            config?.informationVisibility?.showProductDescription?.value ||
+            !config?.informationVisibility?.showProductDescription
+         }
       />
    )
 }
 
+const isMobile = () => {
+   if (window.innerWidth <= 599) {
+      return true
+   }
+   return false
+}
+
+const isTab = () => {
+   if (window.innerWidth > 599 && window.innerWidth <= 1024) {
+      return true
+   }
+   return false
+}
+
 const ProductSlider = ({ config, productsData }) => {
-   const numberOfProductsToShow =
-      config?.informationVisibility.numberOfProductsToShow.value
+   let numberOfProductsToShow
+   if (isMobile() || isTab()) {
+      numberOfProductsToShow = 1
+   } else {
+      numberOfProductsToShow =
+         config?.informationVisibility.numberOfProductsToShow.value
+   }
    const numberOfSliders = Math.ceil(
       productsData.length / numberOfProductsToShow
    )
@@ -152,15 +244,36 @@ const ProductSlider = ({ config, productsData }) => {
          arrows
          prevArrow={<LeftArrow />}
          nextArrow={<RightArrow />}
+         responsive={[
+            {
+               breakpoint: 1024,
+               settings: {
+                  slidesToShow: 1,
+                  initialSlide: 1,
+               },
+            },
+            {
+               breakpoint: 599,
+               settings: {
+                  slidesToShow: 1,
+               },
+            },
+            {
+               breakpoint: 480,
+               settings: {
+                  slidesToShow: 1,
+               },
+            },
+         ]}
       >
          {sliderProducts.map((productsArray, index) => {
-            return <SliderDiv productsArray={productsArray} />
+            return <SliderDiv productsArray={productsArray} config={config} />
          })}
       </Carousel>
    )
 }
 
-const SliderDiv = ({ productsArray }) => {
+const SliderDiv = ({ config, productsArray }) => {
    return (
       <Row
          gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}
@@ -168,9 +281,16 @@ const SliderDiv = ({ productsArray }) => {
       >
          {productsArray.map((product, index) => {
             return (
-               <Col className="gutter-row" span={6}>
+               <Col
+                  className="gutter-row"
+                  span={isMobile() || isTab() ? 12 : 6}
+               >
                   <div>
-                     <ProductGrid product={product} index={index} />
+                     <ProductGrid
+                        product={product}
+                        index={index}
+                        config={config}
+                     />
                   </div>
                </Col>
             )
