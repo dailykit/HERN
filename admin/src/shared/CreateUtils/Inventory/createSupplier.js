@@ -57,7 +57,7 @@ const CreateSupplier = ({ closeTunnel }) => {
             },
          ])
          toast.success('Successfully created the Supplier!')
-         closeTunnel(5)
+         closeTunnel(1)
       },
       onError: () =>
          toast.success('Failed to create the Supplier, please try again!'),
@@ -157,7 +157,7 @@ const CreateSupplier = ({ closeTunnel }) => {
             },
          },
       ])
-      closeTunnel(5)
+      closeTunnel(1)
    }
    return (
       <>

@@ -13,7 +13,7 @@ import {
    TunnelHeader,
    useTunnel,
 } from '@dailykit/ui'
-import { Image, Carousel } from 'antd'
+import { Image, Carousel, Radio } from 'antd'
 import {
    Tooltip,
    RichTextEditor,
@@ -33,6 +33,11 @@ import CustomColorPicker from './CustomColorPicker'
 
 //antd components
 import { Typography, Slider } from 'antd'
+
+import { BrandContext } from '../../../../App'
+import { useContext } from 'react'
+import { GET_BRAND_COUPONS, GET_BRAND_CAMPAIGNS } from '../../../graphql'
+
 
 const { Paragraph } = Typography
 
@@ -255,6 +260,39 @@ export const Checkbox = ({ fieldDetail, marginLeft, path, onConfigChange }) => (
       />
    </Flex>
 )
+export const RadioButton = ({ fieldDetail, marginLeft, path, onConfigChange, editMode }) => {
+   const options = fieldDetail?.options
+   const [value, setValue] = React.useState(fieldDetail?.value?.value || '');
+
+   const onChange = e => {
+      setValue(e.target.value)
+      // passing the selected object in the value key of config(fieldDetail)
+      onConfigChange(e, [options.find((option) => option.value == e.target.value)][0])
+   };
+
+   return (
+      <Flex
+         container
+         justifyContent="space-between"
+         alignItems="center"
+         margin={`0 0 0 ${marginLeft}`}
+      >
+         <Flex container alignItems="flex-end">
+            <Form.Label title={fieldDetail.label} htmlFor="checkbox">
+               {fieldDetail.label.toUpperCase()}
+            </Form.Label>
+            <Tooltip identifier="checkbox_component_info" />
+         </Flex>
+         {editMode ? (<Radio.Group name={path} id={path} onChange={onChange} value={value}>
+            {options.map((option) => {
+               return <Radio value={option.value}>{option.title}</Radio>
+            })}
+
+         </Radio.Group>) :
+            (<p> {fieldDetail?.value && fieldDetail?.value.title} </p>)}
+      </Flex>
+   )
+}
 export const Date = ({
    fieldDetail,
    marginLeft,
@@ -394,8 +432,10 @@ export const TextArea = ({
             value={fieldDetail?.value || fieldDetail.default}
          />
       ) : (
-         <Text as="h3" style={{ color: '#555B6E', fontSize: "16px" }}>
-            {fieldDetail?.value?.length > 45 ? fieldDetail?.value?.substring(0, 25) : (fieldDetail?.value || fieldDetail.default)}
+         <Text as="h3" style={{ color: '#555B6E', fontSize: '16px' }}>
+            {fieldDetail?.value?.length > 45
+               ? fieldDetail?.value?.substring(0, 25)
+               : fieldDetail?.value || fieldDetail.default}
          </Text>
       )}
    </Flex>
@@ -693,7 +733,7 @@ export const ImageUpload = props => {
       <>
          {editMode ? (
             <>
-               <ImageWrapper paddingRight="2rem">
+               <ImageWrapper>
                   <Flex container alignItems="flex-start">
                      <Form.Label title={fieldDetail.label} htmlFor="textArea">
                         YOUR {fieldDetail.label.toUpperCase()}
@@ -892,14 +932,13 @@ export const MultipleImageUpload = props => {
 }
 
 const PRODUCT_ID = gql`
-  subscription ProductCollections {
-  collections: products(order_by: {created_at: desc}) {
-    id
-    title: name
-    value: name
-  }
-}
-
+   subscription ProductCollections {
+      collections: products(order_by: { created_at: desc }) {
+         id
+         title: name
+         value: name
+      }
+   }
 `
 export const ProductSelector = props => {
    // props
@@ -910,12 +949,14 @@ export const ProductSelector = props => {
       error: subsError,
       data: { collections = [] } = {},
    } = useSubscription(PRODUCT_ID)
+
    const selectedOptionHandler = options => {
       const e = {
          target: {
             name: path,
          },
       }
+
       onConfigChange(e, options)
    }
    if (subsLoading) {
@@ -940,7 +981,7 @@ export const ProductSelector = props => {
                </Form.Label>
                <Tooltip identifier="select_component_info" />
             </Flex>
-            {editMode ?
+            {editMode ? (
                <Dropdown
                   type={fieldDetail?.type || 'single'}
                   options={collections}
@@ -948,8 +989,12 @@ export const ProductSelector = props => {
                   searchedOption={option => console.log(option)}
                   selectedOption={option => selectedOptionHandler(option)}
                   placeholder="choose product..."
-               /> :
-               <Text as="h4" className="showPhoneNumber">{"choose product..." || fieldDetail?.value}</Text>}
+               />
+            ) : (
+               <Text as="h4" className="showPhoneNumber">
+                  {fieldDetail?.value?.title || 'choose product...'}
+               </Text>
+            )}
          </Flex>
       </>
    )
@@ -1039,6 +1084,144 @@ export const ImageWrapper = styled.div`
    display: flex;
    align-items: center;
    justify-content: space-between;
-   padding: 1rem 0.4rem;
+   padding: 1rem 1.5rem;
    padding-right: ${props => props.paddingRight || '0.4rem'};
 `
+
+// Coupon Selector
+export const CouponSelector = props => {
+   // props
+   const { fieldDetail, marginLeft, path, onConfigChange, editMode } = props
+   const [brandContext, setBrandContext] = useContext(BrandContext)
+
+   const {
+      loading: subsLoading,
+      error: subsError,
+      data: { coupons = [] } = {},
+   } = useSubscription(GET_BRAND_COUPONS, {
+      variables: {
+         brandId: brandContext.brandId,
+      },
+   })
+
+   const selectedOptionHandler = options => {
+      const e = {
+         target: {
+            name: path,
+         },
+      }
+      onConfigChange(e, options)
+   }
+   if (subsLoading) {
+      return <InlineLoader />
+   }
+   if (subsError) {
+      return <ErrorState message="coupon not found" />
+   }
+
+   return (
+      <>
+         <Flex
+            container
+            justifyContent="space-between"
+            alignItems="center"
+            margin={`0 0 0 ${marginLeft}`}
+         >
+            <Flex container alignItems="flex-end">
+               <Form.Label title={fieldDetail.label} htmlFor="select">
+                  {fieldDetail.label.toUpperCase()}
+               </Form.Label>
+               <Tooltip identifier="select_component_info" />
+            </Flex>
+            {editMode ? (
+               <div>
+                  <Dropdown
+                     type={fieldDetail?.type || 'single'}
+                     options={coupons.map(coupon => coupon.coupon)}
+                     defaultOption={fieldDetail?.value}
+                     searchedOption={option => console.log(option)}
+                     selectedOption={option => selectedOptionHandler(option)}
+                     placeholder="choose coupon..."
+                  />
+               </div>
+            ) : (
+               <Text as="h4" className="showPhoneNumber">
+                  {fieldDetail?.value?.title || 'choose coupon...'}
+               </Text>
+            )}
+         </Flex>
+      </>
+   )
+}
+
+// Campaign Selector
+export const CampaignSelector = props => {
+   // props
+   const { fieldDetail, marginLeft, path, onConfigChange, editMode } = props
+   const [brandContext, setBrandContext] = useContext(BrandContext)
+
+   const {
+      loading: subsLoading,
+      error: subsError,
+      data: { campaigns = [] } = {},
+   } = useSubscription(GET_BRAND_CAMPAIGNS, {
+      variables: {
+         brandId: brandContext.brandId,
+      },
+   })
+
+   const selectedOptionHandler = options => {
+      const e = {
+         target: {
+            name: path,
+         },
+      }
+      onConfigChange(e, options)
+   }
+   if (subsLoading) {
+      return <InlineLoader />
+   }
+   if (subsError) {
+      return <ErrorState message="campaign not found" />
+   }
+
+   return (
+      <>
+         <Flex
+            container
+            justifyContent="space-between"
+            alignItems="center"
+            margin={`0 0 0 ${marginLeft}`}
+         >
+            <Flex container alignItems="flex-end">
+               <Form.Label title={fieldDetail.label} htmlFor="select">
+                  {fieldDetail.label.toUpperCase()}
+               </Form.Label>
+               <Tooltip identifier="select_component_info" />
+            </Flex>
+            {editMode ? (
+               <div>
+                  <Dropdown
+                     type={fieldDetail?.type || 'single'}
+                     options={campaigns.map(campaign => {
+                        return {
+                           id: campaign.campaign.id,
+                           title: campaign.campaign.metaDetails?.title || '',
+                           value: campaign.campaign.id,
+                        }
+                     })}
+                     defaultOption={fieldDetail?.value}
+                     searchedOption={option => console.log(option)}
+                     selectedOption={option => selectedOptionHandler(option)}
+                     placeholder="choose campaign..."
+                  />
+               </div>
+            ) : (
+               <Text as="h4" className="showPhoneNumber">
+                  {fieldDetail?.value?.title || 'choose campaign...'}
+               </Text>
+            )}
+         </Flex>
+      </>
+   )
+}

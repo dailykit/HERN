@@ -5,14 +5,20 @@ import { onDemandMenuContext } from '../context'
 import { useOnClickOutside } from '../utils/useOnClickOutisde'
 import * as Scroll from 'react-scroll'
 import { useTranslation } from '../context'
+import { useConfig } from '../lib'
 
 export const OnDemandMenu = props => {
    // props
    // menuTYpe --> floating or navigation anchor
-   const { menuType, categories, showCount } = props
+   const { menuType, categories, showCount, navbarAlignment = 'CENTER' } = props
    const showProductCount = showCount ?? showCount ?? true
    const [showMenuItems, setShowMenuItems] = useState('0')
    const [activeCategory, setActiveCategory] = useState(null)
+
+   const { configOf } = useConfig()
+   const headerLayoutStyle =
+      configOf('header-navigation', 'navigation')?.headerNavigation?.layout
+         ?.value?.value ?? 'layout-two'
    const ref = React.useRef()
    useOnClickOutside(ref, () => setShowMenuItems('0'))
 
@@ -36,9 +42,27 @@ export const OnDemandMenu = props => {
       dynamicTrans(languageTags)
    }, [showMenuItems, currentLang])
 
+   const navAlignment = React.useMemo(() => {
+      const value = {
+         CENTER: 'center',
+         LEFT: 'flex-start',
+         RIGHT: 'flex-end',
+      }
+      return value[navbarAlignment]
+   }, [navbarAlignment])
+
    if (menuType && menuType === 'navigationAnchorMenu') {
       return (
-         <div className={classNames('hern-on-demand-menu__navigationAnchor')}>
+         <div
+            className={classNames('hern-on-demand-menu__navigationAnchor')}
+            style={{
+               justifyContent: navAlignment,
+               top:
+                  headerLayoutStyle === 'layout-one'
+                     ? 0
+                     : 'var(--hern-navigation-menu-height)',
+            }}
+         >
             <ul>
                {categories.map((each, index) => (
                   <React.Fragment key={index}>
@@ -57,7 +81,9 @@ export const OnDemandMenu = props => {
                            activeClass="hern-on-demand-menu__navigationAnchor-li--active"
                            to={each.name}
                            spy={true}
-                           offset={-130}
+                           offset={
+                              headerLayoutStyle === 'layout-one' ? -60 : -130
+                           }
                         >
                            <span>
                               <span data-translation="true">{each.name}</span>
