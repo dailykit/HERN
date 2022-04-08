@@ -211,7 +211,25 @@ export const PLANS = {
       }
    `,
 }
-
+export const BRAND_COUPONS = {
+   LIST: gql`
+      subscription brandCoupons($brandId: Int_comparison_exp!) {
+         brandCoupons(
+            where: { brandId: $brandId }
+            order_by: { position: desc_nulls_last }
+         ) {
+            id
+            brandId
+            couponId
+            isActive
+            position
+            coupon {
+               code
+            }
+         }
+      }
+   `,
+}
 export const LOCATIONS = {
    AGGREGATE: gql`
       subscription locations {
