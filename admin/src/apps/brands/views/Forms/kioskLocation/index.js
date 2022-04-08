@@ -223,6 +223,7 @@ export const KioskLocation = () => {
                         title="Copy Kiosk Access URL"
                      >
                         <ButtonGroup
+                           style={{ gap: '5px' }}
                            onClick={() => {
                               copy(title.accessUrl)
                            }}
@@ -274,7 +275,7 @@ export const KioskLocation = () => {
                         // style={{ marginTop: '-2px' }}
                         placeholder="Enter the kiosk label"
                         value={'/kiosk/' + params.id}
-                        disabled={kiosk?.isDefault}
+                        disabled={true}
                         // onChange={e =>
                         //    setTitle({ ...title, value: e.target.value })
                         // }

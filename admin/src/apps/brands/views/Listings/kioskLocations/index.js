@@ -186,7 +186,7 @@ export const KioskLocations = () => {
             </Flex>
             <div style={{ display: 'flex', gap: '10px' }}>
                <TextButton
-                  type="solid"
+                  type="outline"
                   align="left"
                   onClick={() => addTab('kioskReport', '/brands/kiosks/report')}
                >

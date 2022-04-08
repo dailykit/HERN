@@ -283,16 +283,18 @@ export const LinkOrderTab = () => {
                //    <ul key={index}>
                return (
                   <>
-                     <Form.Group>
-                        <Spacer yAxis size="16px" />
-                        <Form.Label
-                           htmlFor={`kioskOrderTab.orderTabs-${i}`}
-                           title={`kioskOrderTab.orderTabs-${i}`}
-                        >
-                           Order Tab
-                        </Form.Label>
+                     <Flex>
+                        <Flex>
+                           <Form.Group>
+                              <Spacer yAxis size="16px" />
+                              <Form.Label
+                                 htmlFor={`kioskOrderTab.orderTabs-${i}`}
+                                 title={`kioskOrderTab.orderTabs-${i}`}
+                              >
+                                 Order Tab
+                              </Form.Label>
 
-                        {/* <Form.Text
+                              {/* <Form.Text
                            id={`kioskOrderTab.orderTabs-${i}`}
                            name={`kioskOrderTab.orderTabs-${i}`}
                            value={kioskOrderTab.orderTab}
@@ -304,70 +306,78 @@ export const LinkOrderTab = () => {
                            //    }}
                            //    onBlur={e => updateOrderTab(e, title[i])}
                         /> */}
-                        <Dropdown
-                           type="single"
-                           defaultOption={{ id: kioskOrderTab.orderTabId }}
-                           isLoading={loading1}
-                           addOption={orderTabList}
-                           placeholder="Enter Order Tab"
-                           options={orderTabList}
-                           selectedOption={e =>
-                              updateOrderTab(e, kioskOrderTab)
-                           }
-                           //    addOption={() => console.log('Item added')}
-                        />
-                     </Form.Group>
+                              <Dropdown
+                                 type="single"
+                                 defaultOption={{
+                                    id: kioskOrderTab.orderTabId,
+                                 }}
+                                 isLoading={loading1}
+                                 addOption={orderTabList}
+                                 placeholder="Enter Order Tab"
+                                 options={orderTabList}
+                                 selectedOption={e =>
+                                    updateOrderTab(e, kioskOrderTab)
+                                 }
+                                 //    addOption={() => console.log('Item added')}
+                              />
+                           </Form.Group>
+                        </Flex>
 
-                     <Spacer yAxis size="16px" />
-                     <Form.Group>
-                        <Form.Label
-                           htmlFor={`kioskOrderTab.orderPrefix-${i}`}
-                           title={`kioskOrderTab.orderPrefix-${i}`}
-                        >
-                           Order Prefix
-                        </Form.Label>
-                        <Form.Text
-                           id={`kioskOrderTab.orderPrefix-${i}`}
-                           name={`kioskOrderTab.orderPrefix-${i}`}
-                           value={kioskOrderTab.orderPrefix}
-                           placeholder="Enter Order Prefix"
-                           onChange={e => {
-                              const prevTitle = [...title]
-                              prevTitle[i].orderPrefix = e.target.value
-                              setTitle(prevTitle)
-                           }}
-                           onBlur={e => updateOrderPrefix(e, title[i])}
-                        />
-                     </Form.Group>
+                        <Spacer yAxis size="16px" />
+                        <Flex>
+                           <Form.Group>
+                              <Form.Label
+                                 htmlFor={`kioskOrderTab.orderPrefix-${i}`}
+                                 title={`kioskOrderTab.orderPrefix-${i}`}
+                              >
+                                 Order Prefix
+                              </Form.Label>
+                              <Form.Text
+                                 id={`kioskOrderTab.orderPrefix-${i}`}
+                                 name={`kioskOrderTab.orderPrefix-${i}`}
+                                 value={kioskOrderTab.orderPrefix}
+                                 placeholder="Enter Order Prefix"
+                                 onChange={e => {
+                                    const prevTitle = [...title]
+                                    prevTitle[i].orderPrefix = e.target.value
+                                    setTitle(prevTitle)
+                                 }}
+                                 onBlur={e => updateOrderPrefix(e, title[i])}
+                              />
+                           </Form.Group>
+                        </Flex>
 
-                     <Spacer yAxis size="16px" />
-                     <Form.Group>
-                        <Form.Label
-                           htmlFor={`kioskOrderTab.posistTab-${i}`}
-                           title={`kioskOrderTab.posistTab-${i}`}
-                        >
-                           Posist Tab
-                        </Form.Label>
-                        <Form.Text
-                           id={`kioskOrderTab.posistTab-${i}`}
-                           name={`kioskOrderTab.posistTab-${i}`}
-                           value={kioskOrderTab.posistTab}
-                           placeholder="Enter Posist Tab"
-                           onChange={e => {
-                              const prevTitle = [...title]
-                              prevTitle[i].posistTab = e.target.value
-                              setTitle(prevTitle)
-                           }}
-                        />
-                     </Form.Group>
+                        <Spacer yAxis size="16px" />
+                        <Flex>
+                           <Form.Group>
+                              <Form.Label
+                                 htmlFor={`kioskOrderTab.posistTab-${i}`}
+                                 title={`kioskOrderTab.posistTab-${i}`}
+                              >
+                                 Posist Tab
+                              </Form.Label>
+                              <Form.Text
+                                 id={`kioskOrderTab.posistTab-${i}`}
+                                 name={`kioskOrderTab.posistTab-${i}`}
+                                 value={kioskOrderTab.posistTab}
+                                 placeholder="Enter Posist Tab"
+                                 onChange={e => {
+                                    const prevTitle = [...title]
+                                    prevTitle[i].posistTab = e.target.value
+                                    setTitle(prevTitle)
+                                 }}
+                              />
+                           </Form.Group>
+                        </Flex>
+                     </Flex>
                   </>
                )
                //    </ul>
             })}
             <Spacer yAxis size="16px" />
-            <TextButton
-               type="solid"
-               text="Link More Order Tabs"
+            <ButtonTile
+               type="secondary"
+               text="Link New Order Tab"
                //    onClick={() =>
                //       setTitle([
                //          ...title,
@@ -384,9 +394,9 @@ export const LinkOrderTab = () => {
                //       ])
                //    }
                onClick={() => openTunnel(1)}
-            >
-               Link More Order Tabs
-            </TextButton>
+            />
+            {/* Link New Order Tab
+            </TextButton> */}
             <Tunnels tunnels={tunnels}>
                <Tunnel layer={1} size="md">
                   <CreateLinkOrderTab closeTunnel={closeTunnel} />

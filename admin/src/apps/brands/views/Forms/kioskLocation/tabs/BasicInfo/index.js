@@ -121,7 +121,7 @@ export const BasicInfo = () => {
          let locationsData = locations.map(location => {
             return {
                id: location?.id || '',
-               title: location?.city || '',
+               title: location?.label || '',
                description:
                   location?.id + '-' + location?.label + '-' + location?.city ||
                   '',
@@ -263,7 +263,7 @@ export const BasicInfo = () => {
          },
       })
    }
-
+   if (loading && loading1 && loading2) return <InlineLoader />
    return (
       <div>
          <Flex padding="16px">
@@ -316,6 +316,7 @@ export const BasicInfo = () => {
                <Form.Group>
                   <Form.Label htmlFor="password" title="password">
                      <ButtonGroup
+                        style={{ gap: '5px' }}
                         onClick={() => {
                            copy(title.password)
                         }}
@@ -326,7 +327,7 @@ export const BasicInfo = () => {
                         </div>{' '}
                      </ButtonGroup>
                   </Form.Label>
-                  <Form.Password
+                  <Form.Text
                      value={title.password}
                      placeholder="Enter access password"
                      id="password"
