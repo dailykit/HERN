@@ -37,6 +37,7 @@ import { Typography, Slider } from 'antd'
 import { BrandContext } from '../../../../App'
 import { useContext } from 'react'
 import { GET_BRAND_COUPONS, GET_BRAND_CAMPAIGNS } from '../../../graphql'
+import { config } from 'bluebird'
 
 const { Paragraph } = Typography
 
@@ -260,17 +261,13 @@ export const Checkbox = ({ fieldDetail, marginLeft, path, onConfigChange }) => (
    </Flex>
 )
 export const RadioButton = ({ fieldDetail, marginLeft, path, onConfigChange, editMode }) => {
-   const options = fieldDetail?.value
-   const [value, setValue] = React.useState(options && [options.find((option) => option.active == true)][0].title || '');
+   const options = fieldDetail?.options
+   const [value, setValue] = React.useState(fieldDetail?.value?.value || '');
 
    const onChange = e => {
       setValue(e.target.value)
-      //making all values as false
-      options && options.map((option) => { return option.active = false })
-      // making the target element as true
-      options && ([options.find((option) => option.title == e.target.value)][0].active = true)
-      //making the option property (active) as true 
-      onConfigChange(e, options)
+      // passing the selected object in the value key of config(fieldDetail)
+      onConfigChange(e, [options.find((option) => option.value == e.target.value)][0])
    };
 
    return (
@@ -288,10 +285,11 @@ export const RadioButton = ({ fieldDetail, marginLeft, path, onConfigChange, edi
          </Flex>
          {editMode ? (<Radio.Group name={path} id={path} onChange={onChange} value={value}>
             {options.map((option) => {
-               return <Radio value={option.title}>{option.title}</Radio>
+               return <Radio value={option.value}>{option.title}</Radio>
             })}
+
          </Radio.Group>) :
-            (<p> {options && [options.find((option) => option.active == true)][0].title || ''}</p>)}
+            (<p> {fieldDetail?.value && fieldDetail?.value.title} </p>)}
       </Flex>
    )
 }
