@@ -62,11 +62,18 @@ export const CartOrderDetails = () => {
       )
    const cart = carts[0]
    const addressInfo = cart?.address
-   const deliveryInfo = cart?.order?.deliveryInfo
+   // const deliveryInfo = React.useMemo(() => {
+   //    cart?.order?.deliveryInfo
+   // }, [])
 
    return (
       <>
-         <DeliveryTracking deliveryInfo={deliveryInfo} onMapLoad={onMapLoad} />
+         {isLoaded && (
+            <DeliveryTracking
+               deliveryInfo={cart?.order?.deliveryInfo}
+               onMapLoad={onMapLoad}
+            />
+         )}
          <div className="hern-order-history-card__tunnel-payment-info">
             <span style={{ minWidth: '24px' }}>
                <DebitCardIcon size={20} />
@@ -165,7 +172,10 @@ const getTitle = type => {
    }
 }
 
-const DeliveryTracking = ({ deliveryInfo, onMapLoad }) => {
+const DeliveryTracking = React.memo(function DeliveryTracking({
+   deliveryInfo,
+   onMapLoad,
+}) {
    console.log(
       '🚀 ~ file: cart_order_details.js ~ line 170 ~ DeliveryTracking ~ deliveryInfo',
       deliveryInfo.assigned.driverInfo.length
@@ -238,7 +248,7 @@ const DeliveryTracking = ({ deliveryInfo, onMapLoad }) => {
 
    return (
       <>
-         <DilveryMap deliveryInfo={deliveryInfo} onMapLoad={onMapLoad} />
+         <DeliveryMap deliveryInfo={deliveryInfo} onMapLoad={onMapLoad} />
          <div style={{ marginTop: '24px' }}>
             {deliveryInformation.map(info => (
                <DeliveryProgress key={info.id} info={info} />
@@ -246,7 +256,8 @@ const DeliveryTracking = ({ deliveryInfo, onMapLoad }) => {
          </div>
       </>
    )
-}
+})
+
 const DeliveryProgress = ({ info }) => {
    console.log(
       '🚀 ~ file: cart_order_details.js ~ line 248 ~ DeliveryProgress ~ info',
@@ -416,26 +427,35 @@ const getIcon = step => {
          return null
    }
 }
-const DilveryMap = ({ deliveryInfo, onMapLoad }) => {
+const DeliveryMap = ({ deliveryInfo, onMapLoad }) => {
    const [directions, setDirections] = React.useState('')
    const containerStyle = {
       width: '100%',
       height: '400px',
    }
-   const coordinates = {
-      driver: {
-         lat: +deliveryInfo.tracking.location.latitude,
-         lng: +deliveryInfo.tracking.location.longitude,
-      },
-      customer: {
-         lat: +deliveryInfo.dropoff.dropoffInfo.customerAddress.lat,
-         lng: +deliveryInfo.dropoff.dropoffInfo.customerAddress.lng,
-      },
-      organization: {
-         lat: +deliveryInfo.pickup.pickupInfo.organizationAddress.lat,
-         lng: +deliveryInfo.pickup.pickupInfo.organizationAddress.lng,
-      },
-   }
+   const coordinates = React.useMemo(() => {
+      return {
+         driver: {
+            lat: +deliveryInfo.tracking.location.latitude,
+            lng: +deliveryInfo.tracking.location.longitude,
+         },
+         customer: {
+            lat: +deliveryInfo.dropoff.dropoffInfo.customerAddress.lat,
+            lng: +deliveryInfo.dropoff.dropoffInfo.customerAddress.lng,
+         },
+         organization: {
+            lat: +deliveryInfo.pickup.pickupInfo.organizationAddress.lat,
+            lng: +deliveryInfo.pickup.pickupInfo.organizationAddress.lng,
+         },
+      }
+   }, [
+      deliveryInfo.tracking.location.latitude,
+      deliveryInfo.tracking.location.longitude,
+      deliveryInfo.dropoff.dropoffInfo.customerAddress.lat,
+      deliveryInfo.dropoff.dropoffInfo.customerAddress.lng,
+      deliveryInfo.pickup.pickupInfo.organizationAddress.lat,
+      deliveryInfo.pickup.pickupInfo.organizationAddress.lng,
+   ])
    return (
       <div
          style={{
@@ -462,7 +482,7 @@ const DilveryMap = ({ deliveryInfo, onMapLoad }) => {
                )}
                <GoogleMap
                   center={coordinates.driver}
-                  zoom={15}
+                  zoom={11}
                   defaultOptions={options}
                   onLoad={onMapLoad}
                   mapContainerStyle={containerStyle}
@@ -500,18 +520,24 @@ const DilveryMap = ({ deliveryInfo, onMapLoad }) => {
                         }),
                      }}
                   />
-                  <DirectionsService
-                     options={{
-                        destination: coordinates.customer,
-                        origin: coordinates.organization,
-                        travelMode: 'DRIVING',
-                     }}
-                     callback={(response, status) => {
-                        if (status === 'OK') {
-                           setDirections(response)
-                        }
-                     }}
-                  />
+
+                  {/* DirectionService will rerender again and again
+                  (so you'll face flickering issue in map) and you have
+                  to stop it until get a response result from DirectionService callback */}
+                  {!directions && (
+                     <DirectionsService
+                        options={{
+                           destination: coordinates.customer,
+                           origin: coordinates.organization,
+                           travelMode: 'DRIVING',
+                        }}
+                        callback={(response, status) => {
+                           if (status === 'OK') {
+                              setDirections(response)
+                           }
+                        }}
+                     />
+                  )}
                   {directions && (
                      <DirectionsRenderer
                         options={{ suppressMarkers: true }}
