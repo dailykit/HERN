@@ -37,7 +37,7 @@ import { Typography, Slider } from 'antd'
 import { BrandContext } from '../../../../App'
 import { useContext } from 'react'
 import { GET_BRAND_COUPONS, GET_BRAND_CAMPAIGNS } from '../../../graphql'
-import { config } from 'bluebird'
+
 
 const { Paragraph } = Typography
 
