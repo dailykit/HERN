@@ -24,16 +24,21 @@ export const SliderSection = ({ config }) => {
                   config.display.slider.content.images.value.map(
                      (imageSrc, index) => {
                         return (
-                           <SliderDiv
-                              content={config.display.slider.content}
-                              index={index}
-                              getStartedURL={getStartedURL}
-                           />
+                           <div>
+                              <SliderDiv
+                                 content={config.display.slider.content}
+                                 index={index}
+                                 getStartedURL={getStartedURL}
+                              />
+                           </div>
                         )
                      }
                   )}
             </Carousel>
          )}
+         <div className="feedBack_button">
+            <FeedBackFormButton />
+         </div>
       </>
    )
 }
@@ -93,6 +98,25 @@ const RightArrow = ({ ...props }) => {
    return (
       <div {...props} className="hern-slider_section-right_arrow">
          <ArrowRightIcon color="black" size="35" />
+      </div>
+   )
+}
+
+const FeedBackFormButton = ({ content, index, getStartedURL }) => {
+   return (
+      <div>
+         {/* <div className="hern-slider-section__content"> */}
+         <div>
+            <a
+               href="https://docs.google.com/forms/d/e/1FAIpQLSec10yg1m1RlikaVXPWALWmsXqrWJGYMyEUj8Bp2KMn2DyS3Q/viewform"
+               className="hern-slider_section-feedBack_button"
+               // style={{}}
+            >
+               {' '}
+               Give Your FeedBack
+            </a>
+            {/* </div> */}
+         </div>
       </div>
    )
 }
