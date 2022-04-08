@@ -1,0 +1,106 @@
+.hern-delivery-progress {
+   display: flex;
+   > .hern-delivery-progress__content {
+      padding: 8px 0 8px 12px;
+   }
+}
+.hern-delivery-progress__title {
+   > h3 {
+      font-weight: 600;
+      font-size: 18px;
+      line-height: 20px;
+      color: #202020;
+   }
+}
+
+.hern-delivery-progress__icon {
+   display: flex;
+   align-items: center;
+   flex-direction: column;
+   max-width: fit-content;
+}
+.hern-delivery-progress__icon__step-icon {
+   width: 32px;
+   height: 32px;
+   border-radius: 50%;
+   background-color: rgba(64, 64, 64, 0.2);
+   display: flex;
+   align-items: center;
+   justify-content: center;
+}
+.hern-delivery-progress__time {
+   display: flex;
+   align-items: center;
+   > span {
+      display: inline-block;
+      margin-left: 4px;
+      font-weight: 600;
+      font-size: 12px;
+      line-height: 12px;
+      color: rgba(64, 64, 64, 0.6);
+   }
+}
+.hern-delivery-progress__driver-info {
+   display: flex;
+   align-items: center;
+   gap: 48px;
+   margin-top: 8px;
+}
+.hern-delivery-progress__driver-info__avatar {
+   display: flex;
+   align-items: center;
+   .ant-avatar-string {
+      bottom: 2px;
+   }
+   > .hern-delivery-progress__driver-info__avatar__title {
+      font-style: normal;
+      font-weight: 600;
+      font-size: 14px;
+      line-height: 12px;
+      color: rgba(64, 64, 64, 0.8);
+      margin-left: 6px;
+   }
+}
+
+.hern-delivery-progress__driver-info__phone {
+   display: flex;
+   align-items: center;
+   > span {
+      font-weight: 600;
+      font-size: 12px;
+      line-height: 12px;
+      color: rgba(64, 64, 64, 0.6);
+      margin-left: 4px;
+   }
+}
+.hern-delivery-progess__address {
+   > p {
+      font-weight: 600;
+      font-style: normal;
+      font-size: 14px;
+      line-height: 16px;
+      color: rgba(64, 64, 64, 0.8);
+      margin-top: 8px;
+      font-family: 'Nunito';
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      text-overflow: ellipsis;
+   }
+   span {
+      font-weight: bolder;
+   }
+}
+.hern-delivery-info__map__time {
+   position: absolute;
+   top: 0.5rem;
+   left: 0.5rem;
+   padding: 0.5rem;
+   margin: 0;
+   z-index: 100;
+   border-radius: 4px;
+   background: var(--hern-accent);
+   color: #fff;
+   margin: 0;
+}
