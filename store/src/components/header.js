@@ -28,6 +28,7 @@ import { useConfig } from '../lib'
 import isEmpty from 'lodash/isEmpty'
 import isNull from 'lodash/isNull'
 import dynamic from 'next/dynamic'
+import 'antd/dist/antd.css'
 
 const LoginWrapper = dynamic(
    () => import('../utils/loginWrapper').then(promise => promise.LoginWrapper),
@@ -174,88 +175,103 @@ export const Header = ({ settings, navigationMenus }) => {
                })
                return
             }
-            const geolocation = isClient ? window.navigator.geolocation : false
-            if (geolocation) {
-               const success = position => {
-                  const latitude = position.coords.latitude
-                  const longitude = position.coords.longitude
-                  setUserCoordinate(prev => ({ ...prev, latitude, longitude }))
-                  fetch(
-                     `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=${get_env(
-                        'GOOGLE_API_KEY'
-                     )}`
-                  )
-                     .then(res => res.json())
-                     .then(data => {
-                        if (data?.status === 'OK' && data.results.length > 0) {
-                           const formatted_address =
-                              data.results[0].formatted_address.split(',')
-                           const mainText = formatted_address
-                              .slice(0, formatted_address.length - 3)
-                              .join(',')
-                           const secondaryText = formatted_address
-                              .slice(formatted_address.length - 3)
-                              .join(',')
-                           const address = {}
-                           data.results[0].address_components.forEach(node => {
-                              if (node.types.includes('locality')) {
-                                 address.city = node.long_name
-                              }
+            if (isClient) {
+               window.onload = function () {
+                  const geolocation = isClient
+                     ? window.navigator.geolocation
+                     : false
+                  if (geolocation) {
+                     const success = position => {
+                        const latitude = position.coords.latitude
+                        const longitude = position.coords.longitude
+                        setUserCoordinate(prev => ({
+                           ...prev,
+                           latitude,
+                           longitude,
+                        }))
+                        fetch(
+                           `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=${get_env(
+                              'GOOGLE_API_KEY'
+                           )}`
+                        )
+                           .then(res => res.json())
+                           .then(data => {
                               if (
-                                 node.types.includes(
-                                    'administrative_area_level_1'
-                                 )
+                                 data?.status === 'OK' &&
+                                 data.results.length > 0
                               ) {
-                                 address.state = node.long_name
-                              }
-                              if (node.types.includes('country')) {
-                                 address.country = node.long_name
-                              }
-                              if (node.types.includes('postal_code')) {
-                                 address.zipcode = node.long_name
+                                 const formatted_address =
+                                    data.results[0].formatted_address.split(',')
+                                 const mainText = formatted_address
+                                    .slice(0, formatted_address.length - 3)
+                                    .join(',')
+                                 const secondaryText = formatted_address
+                                    .slice(formatted_address.length - 3)
+                                    .join(',')
+                                 const address = {}
+                                 data.results[0].address_components.forEach(
+                                    node => {
+                                       if (node.types.includes('locality')) {
+                                          address.city = node.long_name
+                                       }
+                                       if (
+                                          node.types.includes(
+                                             'administrative_area_level_1'
+                                          )
+                                       ) {
+                                          address.state = node.long_name
+                                       }
+                                       if (node.types.includes('country')) {
+                                          address.country = node.long_name
+                                       }
+                                       if (node.types.includes('postal_code')) {
+                                          address.zipcode = node.long_name
+                                       }
+                                    }
+                                 )
+                                 setAddress(prev => ({
+                                    ...prev,
+                                    mainText,
+                                    secondaryText,
+                                    latitude,
+                                    longitude,
+                                    ...address,
+                                 }))
+                                 dispatch({
+                                    type: 'SET_USER_LOCATION',
+                                    payload: {
+                                       mainText,
+                                       secondaryText,
+                                       latitude,
+                                       longitude,
+                                       ...address,
+                                    },
+                                 })
                               }
                            })
-                           setAddress(prev => ({
-                              ...prev,
-                              mainText,
-                              secondaryText,
-                              latitude,
-                              longitude,
-                              ...address,
-                           }))
-                           dispatch({
-                              type: 'SET_USER_LOCATION',
-                              payload: {
-                                 mainText,
-                                 secondaryText,
-                                 latitude,
-                                 longitude,
-                                 ...address,
-                              },
+                           .catch(e => {
+                              console.log('error', e)
                            })
-                        }
+                     }
+                     const error = () => {
+                        console.log('this is error')
+                        setShowLocationSelectionPopup(true)
+                        dispatch({
+                           type: 'SET_STORE_STATUS',
+                           payload: {
+                              status: true,
+                              message: 'Please select location.',
+                              loading: false,
+                           },
+                        })
+                     }
+                     geolocation.getCurrentPosition(success, error, {
+                        maximumAge: 60000,
+                        timeout: 15000,
+                        enableHighAccuracy: true,
                      })
-                     .catch(e => {
-                        console.log('error', e)
-                     })
+                  }
                }
-               const error = () => {
-                  console.log('this is error')
-                  setShowLocationSelectionPopup(true)
-                  dispatch({
-                     type: 'SET_STORE_STATUS',
-                     payload: {
-                        status: true,
-                        message: 'Please select location.',
-                        loading: false,
-                     },
-                  })
-               }
-               geolocation.getCurrentPosition(success, error, {
-                  maximumAge: 60000,
-                  timeout: 15000,
-                  enableHighAccuracy: true,
-               })
             }
          }
       }

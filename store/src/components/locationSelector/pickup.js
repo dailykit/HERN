@@ -1,6 +1,10 @@
 import React, { useState, useEffect } from 'react'
 import classNames from 'classnames'
-import { Divider, Radio, Modal, Skeleton } from 'antd'
+// import { Divider, Radio, Modal, Skeleton } from 'antd'
+import Radio from 'antd/lib/radio'
+import Modal from 'antd/lib/modal'
+import Skeleton from 'antd/lib/skeleton'
+import Divider from 'antd/lib/divider'
 import { useConfig } from '../../lib'
 import { get_env, useScript, isClient } from '../../utils'
 import { getStoresWithValidations } from '../../utils'
@@ -48,14 +52,20 @@ export const Pickup = props => {
          orderTabFulfillmentType.includes('ONDEMAND_PICKUP') &&
          Boolean(availableStoreType.find(x => x === 'ONDEMAND'))
       ) {
-         options.push({ label: <span>{t('Now')}</span>, value: 'ONDEMAND_PICKUP' })
+         options.push({
+            label: <span>{t('Now')}</span>,
+            value: 'ONDEMAND_PICKUP',
+         })
       }
       if (
          orderTabFulfillmentType &&
          orderTabFulfillmentType.includes('PREORDER_PICKUP') &&
          Boolean(availableStoreType.find(x => x === 'PREORDER'))
       ) {
-         options.push({ label: <span>{t('Later')}</span>, value: 'PREORDER_PICKUP' })
+         options.push({
+            label: <span>{t('Later')}</span>,
+            value: 'PREORDER_PICKUP',
+         })
       }
 
       return options
@@ -136,7 +146,8 @@ export const Pickup = props => {
    useEffect(() => {
       if (userCoordinate.latitude && userCoordinate.longitude) {
          fetch(
-            `https://maps.googleapis.com/maps/api/geocode/json?latlng=${userCoordinate.latitude
+            `https://maps.googleapis.com/maps/api/geocode/json?latlng=${
+               userCoordinate.latitude
             },${userCoordinate.longitude}&key=${get_env('GOOGLE_API_KEY')}`
          )
             .then(res => res.json())
@@ -199,15 +210,16 @@ export const Pickup = props => {
    const [loaded, error] = useScript(
       isClient
          ? `https://maps.googleapis.com/maps/api/js?key=${get_env(
-            'GOOGLE_API_KEY'
-         )}&libraries=places`
+              'GOOGLE_API_KEY'
+           )}&libraries=places`
          : ''
    )
 
    const formatAddress = async input => {
       if (!isClient) return 'Runs only on client side.'
       const response = await fetch(
-         `https://maps.googleapis.com/maps/api/geocode/json?key=${isClient ? get_env('GOOGLE_API_KEY') : ''
+         `https://maps.googleapis.com/maps/api/geocode/json?key=${
+            isClient ? get_env('GOOGLE_API_KEY') : ''
          }&address=${encodeURIComponent(input.description)}`
       )
       const data = await response.json()

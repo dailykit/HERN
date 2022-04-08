@@ -19,10 +19,10 @@ const LocationSelector = dynamic(() =>
    import('./locationSelector').then(promise => promise.LocationSelector)
 )
 
-export { Delivery, Pickup, DineIn, StoreList, AddressInfo }
+export { Delivery, Pickup, DineIn, StoreList, AddressInfo, LocationSelector }
 // export * from './addressInfo'
 // export * from './delivery'
 // export * from './dinein'
 // export * from './pickup'
 // export * from './storeList'
-export * from './locationSelector'
+// export * from './locationSelector'
