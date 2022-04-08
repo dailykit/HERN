@@ -13,7 +13,7 @@ import {
    TunnelHeader,
    useTunnel,
 } from '@dailykit/ui'
-import { Image, Carousel } from 'antd'
+import { Image, Carousel, Radio } from 'antd'
 import {
    Tooltip,
    RichTextEditor,
@@ -259,6 +259,42 @@ export const Checkbox = ({ fieldDetail, marginLeft, path, onConfigChange }) => (
       />
    </Flex>
 )
+export const RadioButton = ({ fieldDetail, marginLeft, path, onConfigChange, editMode }) => {
+   const options = fieldDetail?.value
+   const [value, setValue] = React.useState(options && [options.find((option) => option.active == true)][0].title || '');
+
+   const onChange = e => {
+      setValue(e.target.value)
+      //making all values as false
+      options && options.map((option) => { return option.active = false })
+      // making the target element as true
+      options && ([options.find((option) => option.title == e.target.value)][0].active = true)
+      //making the option property (active) as true 
+      onConfigChange(e, options)
+   };
+
+   return (
+      <Flex
+         container
+         justifyContent="space-between"
+         alignItems="center"
+         margin={`0 0 0 ${marginLeft}`}
+      >
+         <Flex container alignItems="flex-end">
+            <Form.Label title={fieldDetail.label} htmlFor="checkbox">
+               {fieldDetail.label.toUpperCase()}
+            </Form.Label>
+            <Tooltip identifier="checkbox_component_info" />
+         </Flex>
+         {editMode ? (<Radio.Group name={path} id={path} onChange={onChange} value={value}>
+            {options.map((option) => {
+               return <Radio value={option.title}>{option.title}</Radio>
+            })}
+         </Radio.Group>) :
+            (<p> {options && [options.find((option) => option.active == true)][0].title || ''}</p>)}
+      </Flex>
+   )
+}
 export const Date = ({
    fieldDetail,
    marginLeft,
@@ -839,8 +875,8 @@ export const MultipleImageUpload = props => {
          {editMode ? (
             <Flex width="50%" style={{ position: 'relative', top: '22px' }}>
                {fieldDetail?.value?.url &&
-               fieldDetail?.value?.url !== null &&
-               fieldDetail?.value?.url.length ? (
+                  fieldDetail?.value?.url !== null &&
+                  fieldDetail?.value?.url.length ? (
                   <Gallery
                      list={fieldDetail.value.url || []}
                      isMulti={true}

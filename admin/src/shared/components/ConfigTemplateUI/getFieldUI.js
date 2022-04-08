@@ -20,6 +20,7 @@ import {
    CollectionSelector,
    ProductSelector,
    CouponSelector,
+   RadioButton,
    CampaignSelector,
 } from './UIComponents'
 import { Address } from './UIComponents/Address'
@@ -305,6 +306,19 @@ export const getFieldUI = (
    } else if (field.userInsertType === 'couponSelector') {
       configUI = (
          <CouponSelector
+            fieldDetail={field}
+            marginLeft={indentation}
+            path={fieldKey}
+            onConfigChange={onConfigChange}
+            editMode={editMode}
+         />
+      )
+   } else if (
+      field.dataType === 'boolean' &&
+      field.userInsertType === 'radioButton'
+   ) {
+      configUI = (
+         <RadioButton
             fieldDetail={field}
             marginLeft={indentation}
             path={fieldKey}
