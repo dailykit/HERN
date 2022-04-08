@@ -102,5 +102,7 @@
    border-radius: 4px;
    background: var(--hern-accent);
    color: #fff;
-   margin: 0;
+   > p {
+      margin: 0;
+   }
 }

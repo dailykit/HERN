@@ -4,7 +4,7 @@ import { useSubscription } from '@apollo/react-hooks'
 import moment from 'moment'
 import classNames from 'classnames'
 import { FaCheckCircle } from 'react-icons/fa'
-import { Avatar, Button } from 'antd'
+import { Avatar } from 'antd'
 import {
    useJsApiLoader,
    GoogleMap,
@@ -13,7 +13,7 @@ import {
    DirectionsRenderer,
 } from '@react-google-maps/api'
 import { CartBillingDetails } from './cart_billing_details'
-import { DebitCardIcon, LocationIcon, DeliveryInfoIcons } from '../assets/icons'
+import { DebitCardIcon, DeliveryInfoIcons } from '../assets/icons'
 import TimeIcon from '../assets/icons/Time'
 import { GET_ORDER_DETAILS } from '../graphql'
 import {
@@ -27,6 +27,7 @@ import {
 import { Loader } from './loader'
 import { Empty } from 'antd'
 import { useTranslation } from '../context'
+import deliveryInfo from './delivery.json'
 
 export const CartOrderDetails = () => {
    const [cartId] = useQueryParamState('id')
@@ -62,9 +63,6 @@ export const CartOrderDetails = () => {
       )
    const cart = carts[0]
    const addressInfo = cart?.address
-   // const deliveryInfo = React.useMemo(() => {
-   //    cart?.order?.deliveryInfo
-   // }, [])
 
    return (
       <>
@@ -159,27 +157,7 @@ const ModifiersList = props => {
    )
 }
 
-const getTitle = type => {
-   switch (type) {
-      case 'ONDEMAND_DELIVERY':
-         return 'Delivery'
-      case 'PREORDER_DELIVERY':
-         return 'Schedule Delivery'
-      case 'PREORDER_PICKUP':
-         return 'Schedule Pickup'
-      case 'ONDEMAND_PICKUP':
-         return 'Pickup'
-   }
-}
-
-const DeliveryTracking = React.memo(function DeliveryTracking({
-   deliveryInfo,
-   onMapLoad,
-}) {
-   console.log(
-      '🚀 ~ file: cart_order_details.js ~ line 170 ~ DeliveryTracking ~ deliveryInfo',
-      deliveryInfo.assigned.driverInfo.length
-   )
+const DeliveryTracking = ({ deliveryInfo, onMapLoad }) => {
    const deliveryInformation = [
       {
          id: 1,
@@ -249,21 +227,16 @@ const DeliveryTracking = React.memo(function DeliveryTracking({
    return (
       <>
          <DeliveryMap deliveryInfo={deliveryInfo} onMapLoad={onMapLoad} />
-         <div style={{ marginTop: '24px' }}>
+         <div style={{ margin: '24px 0' }}>
             {deliveryInformation.map(info => (
                <DeliveryProgress key={info.id} info={info} />
             ))}
          </div>
       </>
    )
-})
+}
 
 const DeliveryProgress = ({ info }) => {
-   console.log(
-      '🚀 ~ file: cart_order_details.js ~ line 248 ~ DeliveryProgress ~ info',
-      info
-   )
-
    const {
       label,
       status,
@@ -482,8 +455,8 @@ const DeliveryMap = ({ deliveryInfo, onMapLoad }) => {
                )}
                <GoogleMap
                   center={coordinates.driver}
-                  zoom={11}
-                  defaultOptions={options}
+                  zoom={10}
+                  options={options}
                   onLoad={onMapLoad}
                   mapContainerStyle={containerStyle}
                >
@@ -557,9 +530,10 @@ const DeliveryMap = ({ deliveryInfo, onMapLoad }) => {
                   ...containerStyle,
                }}
             >
-               <p>Your order has been delivered </p>
-
-               <p as="title">
+               <p style={{ margin: 0, fontSize: '16px' }}>
+                  Your order has been delivered.
+               </p>
+               <p style={{ margin: 0, fontWeight: 600, fontSize: '18px' }}>
                   {`Delivered in ${moment(
                      deliveryInfo.dropoff.status.timeStamp
                   ).diff(
