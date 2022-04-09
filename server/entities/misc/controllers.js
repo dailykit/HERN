@@ -169,7 +169,7 @@ export const placeDetails = async (req, res) => {
    try {
       const { key, placeid, language } = req.query
       if (key && placeid) {
-         const url = `https://maps.googleapis.com/maps/api/place/details/json?key=${key}&placeid=${placeid}&language=${language}`
+         const url = `https://maps.googleapis.com/maps/api/place/details/json?key=${key}&placeid=${placeid}&language=${language}&fields=formatted_address,name,geometry,address_component`
          const response = await axios.get(url)
          return res.json(response.data)
       } else {
