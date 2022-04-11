@@ -6,6 +6,7 @@ import {
    Divider,
    Button,
    Loader,
+   Empty,
 } from '../../components'
 import { useQuery } from '@apollo/react-hooks'
 import _ from 'lodash'
@@ -155,9 +156,9 @@ export const FeaturedCollection = ({ config }) => {
                      products: updatedProducts,
                   }
                })
-               setStatus('success')
                setHydratedMenu(updatedMenu)
             }
+            setStatus('success')
          },
          onError: error => {
             setStatus('error')
@@ -178,6 +179,17 @@ export const FeaturedCollection = ({ config }) => {
       console.log(productsError)
       return <p>Error</p>
    }
+
+   if (_.isEmpty(hydratedMenu))
+      return (
+         <Empty
+            title="No product found !"
+            description="We are updating our menu with more new items, please check back later."
+            route="/"
+            buttonLabel="Back to home"
+         />
+      )
+
    if (isMenuLoading || status === 'loading' || productsLoading) {
       return <Loader type="order-loading" />
    }

@@ -23,9 +23,10 @@ import { Banner, InlineLoader, Tooltip } from '../../../../../shared/components'
 import {
    OnDemandCollections,
    SubscriptionPlans,
-   ThirdPartyIntegrations,
+   // ThirdPartyIntegrations,
    BrandSettings,
    SEOSettings,
+   BrandCoupons,
 } from './tabs'
 
 export const Brand = () => {
@@ -180,6 +181,7 @@ export const Brand = () => {
                <HorizontalTab>SEO Tools</HorizontalTab>
                <HorizontalTab>On Demand Collections</HorizontalTab>
                <HorizontalTab>Subscription Plans</HorizontalTab>
+               <HorizontalTab>Coupons</HorizontalTab>
                {/* <HorizontalTab>Third Party Integration</HorizontalTab> */}
             </HorizontalTabList>
             <HorizontalTabPanels>
@@ -194,6 +196,9 @@ export const Brand = () => {
                </HorizontalTabPanel>
                <HorizontalTabPanel>
                   <SubscriptionPlans />
+               </HorizontalTabPanel>
+               <HorizontalTabPanel>
+                  <BrandCoupons />
                </HorizontalTabPanel>
                {/* <HorizontalTabPanel>
                   <ThirdPartyIntegrations brand={brand} />

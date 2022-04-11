@@ -21,7 +21,12 @@ import {
 import { UserInfo, UserType, Tunnel } from '../../components'
 import { useConfig } from '../../lib'
 import classNames from 'classnames'
-import { formatCurrency, isClient, setThemeVariable } from '../../utils'
+import {
+   formatCurrency,
+   isClient,
+   setThemeVariable,
+   getRoute,
+} from '../../utils'
 import { useRouter } from 'next/router'
 
 export const OnDemandCart = () => {
@@ -288,7 +293,11 @@ const CartPageHeader = () => {
 
             {/* <span>Go back</span> */}
          </div>
-         <div className="hern-cart-page__header-logo">
+         <div
+            role="button"
+            onClick={() => router.push(getRoute('/'))}
+            className="hern-cart-page__header-logo"
+         >
             {showBrandLogo && logo && <img src={logo} alt={brandName} />}
             &nbsp;&nbsp;
             {showBrandName && brandName && <span>{brandName}</span>}

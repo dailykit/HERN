@@ -33,7 +33,6 @@ const Breadcrumbs = () => {
       return routes
    }
    const routes = getRoutes()
-   console.log('routesBreadcrumb', routes)
    return (
       <Styles.Wrapper>
          <Styles.Crumb
@@ -51,11 +50,22 @@ const Breadcrumbs = () => {
          </Styles.Crumb>
 
          {routes.map((route, index) => (
-            <Styles.Crumb
-               key={`${route.path}-${route.title}`}
-               onClick={() => history.push(route.path)}
-               title={route.title}
-            >
+            <Styles.Crumb onClick={() => history.push(route.path)} key={`${route.path}-${route.title}`}>
+               <p
+                  title={route.title}
+                  style={{
+                     textAlign: 'left',
+                     overflow: routes.length - 1 == index ? 'hidden' : 'auto',
+                     whiteSpace:
+                        routes.length - 1 == index ? 'nowrap' : 'normal',
+                     textOverflow:
+                        routes.length - 1 == index ? 'ellipsis' : 'unset',
+                     width: routes.length - 1 == index ? '100px' : 'auto',
+                  }}
+               >
+                  {route.title}
+               </p>
+            
                {route.title}
                {routes.length - 1 !== index && (
                   <>
@@ -78,7 +88,6 @@ const Styles = {
       float: none;
       max-width: 1280px;
       width: calc(100vw - 130px);
-     
       }
    `,
    Crumb: styled.button`
