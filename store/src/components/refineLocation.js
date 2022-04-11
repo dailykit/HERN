@@ -60,13 +60,14 @@ const RefineLocation = props => {
       },
       zoom: 16,
    })
+   const [runInitialMapChange, setRunInitialMapChange] = useState(false)
    console.log('this is address', address)
 
    const [loaded, error] = useScript(
       isClient
          ? `https://maps.googleapis.com/maps/api/js?key=${get_env(
-            'GOOGLE_API_KEY'
-         )}&libraries=places`
+              'GOOGLE_API_KEY'
+           )}&libraries=places`
          : ''
    )
 
@@ -167,7 +168,7 @@ const RefineLocation = props => {
       if (
          localStorage.getItem('storeLocationId') &&
          JSON.parse(localStorage.getItem('storeLocationId')) !==
-         selectedStore.location.id
+            selectedStore.location.id
       ) {
          const lastStoreLocationId = JSON.parse(
             localStorage.getItem('storeLocationId')
@@ -195,14 +196,19 @@ const RefineLocation = props => {
 
    const onChangeMap = ({ center, zoom, bounds, marginBounds }) => {
       // console.log('onChange', center, zoom, bounds, marginBounds)
-      console.log('thisIsCenter', center)
+      // console.log('thisIsCenter', center)
+      if (!runInitialMapChange) {
+         setRunInitialMapChange(true)
+         return
+      }
       setCenterCoordinate(prev => ({
          ...prev,
          latitude: center.lat.toString(),
          longitude: center.lng.toString(),
       }))
       fetch(
-         `https://maps.googleapis.com/maps/api/geocode/json?latlng=${center.lat
+         `https://maps.googleapis.com/maps/api/geocode/json?latlng=${
+            center.lat
          },${center.lng}&key=${get_env('GOOGLE_API_KEY')}`
       )
          .then(res => res.json())
@@ -287,7 +293,8 @@ const RefineLocation = props => {
       if (!isClient) return 'Runs only on client side.'
       console.log('inputfn', input)
       const response = await fetch(
-         `https://maps.googleapis.com/maps/api/geocode/json?key=${isClient ? get_env('GOOGLE_API_KEY') : ''
+         `https://maps.googleapis.com/maps/api/geocode/json?key=${
+            isClient ? get_env('GOOGLE_API_KEY') : ''
          }&address=${encodeURIComponent(input.description)}`
       )
       const data = await response.json()
@@ -436,8 +443,8 @@ const RefineLocation = props => {
             {isGetStoresLoading
                ? t('Searching store')
                : isStoreAvailableOnAddress
-                  ? t('Save & Proceed')
-                  : t('No store available')}
+               ? t('Save & Proceed')
+               : t('No store available')}
          </Button>
       </div>
    )

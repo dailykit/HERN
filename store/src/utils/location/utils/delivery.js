@@ -5,10 +5,10 @@ import axios from 'axios'
 import moment from 'moment'
 import { isDateValidInRRule } from '../../'
 
-const drivableDistanceBetweenStoreAndCustomer = {
+const drivableDistanceBetweenStoreAndCustomerFn = () => ({
    value: null,
    isValidated: false,
-}
+})
 // return delivery status of store (with recurrences, mileRange info, timeSlot info and drivable distance if store available for on demand delivery)
 export const isStoreOnDemandDeliveryAvailable = async (
    finalRecurrences,
@@ -18,7 +18,8 @@ export const isStoreOnDemandDeliveryAvailable = async (
    let fulfilledRecurrences = []
    for (let rec in finalRecurrences) {
       const now = new Date() // now
-
+      const drivableDistanceBetweenStoreAndCustomer =
+         drivableDistanceBetweenStoreAndCustomerFn()
       const isValidDay = isDateValidInRRule(
          finalRecurrences[rec].recurrence.rrule
       )
@@ -59,7 +60,8 @@ export const isStoreOnDemandDeliveryAvailable = async (
                         await isStoreDeliveryAvailableByDistance(
                            timeslot.mileRanges,
                            eachStore,
-                           address
+                           address,
+                           drivableDistanceBetweenStoreAndCustomer
                         )
 
                      const { isDistanceValid, zipcode, geoBoundary } =
@@ -136,6 +138,9 @@ export const isStorePreOrderDeliveryAvailable = async (
    eachStore,
    address
 ) => {
+   // console.log('addess', address)
+   const drivableDistanceBetweenStoreAndCustomer =
+      drivableDistanceBetweenStoreAndCustomerFn()
    let fulfilledRecurrences = []
    for (let rec in finalRecurrences) {
       if (finalRecurrences[rec].recurrence.timeSlots.length) {
@@ -154,7 +159,8 @@ export const isStorePreOrderDeliveryAvailable = async (
                   await isStoreDeliveryAvailableByDistance(
                      timeslot.mileRanges,
                      eachStore,
-                     address
+                     address,
+                     drivableDistanceBetweenStoreAndCustomer
                   )
                // console.log('distanceDeliveryStatus', distanceDeliveryStatus)
                const { isDistanceValid, zipcode, geoBoundary } =
@@ -221,7 +227,8 @@ export const isStorePreOrderDeliveryAvailable = async (
 const isStoreDeliveryAvailableByDistance = async (
    mileRanges,
    eachStore,
-   address
+   address,
+   drivableDistanceBetweenStoreAndCustomer
 ) => {
    const userLocation = { ...address }
    // console.log('userLocation', userLocation)
