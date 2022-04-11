@@ -145,6 +145,7 @@ const ModifierOptionCard = dynamic(() =>
 const ModifierCategory = dynamic(() =>
    import('./modifierCategory').then(promise => promise.ModifierCategory)
 )
+const Empty = dynamic(() => import('./empty').then(promise => promise.Empty))
 
 export {
    PaymentProcessingModal,
@@ -200,6 +201,7 @@ export {
    ModifierOptionCard,
    ModifierCategory,
    LanguageSwitch,
+   Empty,
 }
 
 const TunnelHeader = dynamic(() =>
