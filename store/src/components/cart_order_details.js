@@ -27,7 +27,6 @@ import {
 import { Loader } from './loader'
 import { Empty } from 'antd'
 import { useTranslation } from '../context'
-import deliveryInfo from './delivery.json'
 
 export const CartOrderDetails = () => {
    const [cartId] = useQueryParamState('id')
@@ -62,17 +61,20 @@ export const CartOrderDetails = () => {
          </h2>
       )
    const cart = carts[0]
-   const addressInfo = cart?.address
+   const deliveryInfo = cart?.order?.deliveryInfo ?? null
 
    return (
       <>
          {isLoaded && (
             <DeliveryTracking
-               deliveryInfo={cart?.order?.deliveryInfo}
+               deliveryInfo={deliveryInfo}
                onMapLoad={onMapLoad}
             />
          )}
-         <div className="hern-order-history-card__tunnel-payment-info">
+         <div
+            style={{ margin: deliveryInfo ? '24px 0' : 0 }}
+            className="hern-order-history-card__tunnel-payment-info"
+         >
             <span style={{ minWidth: '24px' }}>
                <DebitCardIcon size={20} />
             </span>
@@ -158,6 +160,8 @@ const ModifiersList = props => {
 }
 
 const DeliveryTracking = ({ deliveryInfo, onMapLoad }) => {
+   if (_.isNull(deliveryInfo)) return null
+
    const deliveryInformation = [
       {
          id: 1,
@@ -227,7 +231,7 @@ const DeliveryTracking = ({ deliveryInfo, onMapLoad }) => {
    return (
       <>
          <DeliveryMap deliveryInfo={deliveryInfo} onMapLoad={onMapLoad} />
-         <div style={{ margin: '24px 0' }}>
+         <div style={{ margin: '32px 0' }}>
             {deliveryInformation.map(info => (
                <DeliveryProgress key={info.id} info={info} />
             ))}
