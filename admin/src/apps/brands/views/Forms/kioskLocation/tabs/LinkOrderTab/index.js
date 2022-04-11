@@ -12,12 +12,9 @@ import {
    useTunnel,
    Tunnels,
    Tunnel,
-   HorizontalTab,
-   HorizontalTabs,
-   HorizontalTabList,
-   HorizontalTabPanel,
-   HorizontalTabPanels,
+   Collapsible,
    Dropdown,
+   IconButton,
    TextButton,
 } from '@dailykit/ui'
 import validator from '../validator'
@@ -26,6 +23,7 @@ import { KIOSK } from '../../../../../graphql'
 import { Wrapper, Label } from '../../../brand/styled'
 import { logger } from '../../../../../../../shared/utils'
 import { useTabs } from '../../../../../../../shared/providers'
+import { DeleteIcon } from '../../../../../../../shared/assets/icons'
 import {
    Banner,
    InlineLoader,
@@ -276,25 +274,59 @@ export const LinkOrderTab = () => {
          })
       }
    }
+
+   const [deleteKioskOrderTab] = useMutation(KIOSK.DELETE_KIOSK_ORDER_TAB, {
+      onCompleted: () => {
+         toast.success('Option deleted!')
+      },
+      onError: error => {
+         toast.error('Something went wrong!')
+         logger(error)
+         console.log(error)
+      },
+   })
+   const handleDeleteOption = async (e, kioskOrderTab) => {
+      console.log('delete::>', kioskOrderTab.orderTabId, params.id)
+      const isConfirmed = window.confirm(
+         `Are you sure you want to delete - ${kioskOrderTab.orderTab}?`
+      )
+      if (isConfirmed) {
+         deleteKioskOrderTab({
+            variables: {
+               locationKioskId: { _eq: params.id },
+               orderTabId: { _eq: kioskOrderTab.orderTabId },
+            },
+         })
+      }
+   }
+
+   // const renderHead = () => {
    return (
       <div>
          <Flex padding="16px">
             {title.map((kioskOrderTab, i) => {
-               //    <ul key={index}>
                return (
                   <>
-                     <Flex>
-                        <Flex>
-                           <Form.Group>
-                              <Spacer yAxis size="16px" />
-                              <Form.Label
-                                 htmlFor={`kioskOrderTab.orderTabs-${i}`}
-                                 title={`kioskOrderTab.orderTabs-${i}`}
-                              >
-                                 Order Tab
-                              </Form.Label>
+                     <Collapsible
+                        isDraggable
+                        head={
+                           <Flex
+                              container
+                              alignItems="center"
+                              style={{ gap: '15px' }}
+                           >
+                              {/* <Flex > */}
+                              <Form.Group>
+                                 {/* <Spacer yAxis size="16px" /> */}
+                                 <Form.Label
+                                    // style={{ marginTop: '-38px' }}
+                                    htmlFor={`kioskOrderTab.orderTabs-${i}`}
+                                    title={`kioskOrderTab.orderTabs-${i}`}
+                                 >
+                                    Order Tab
+                                 </Form.Label>
 
-                              {/* <Form.Text
+                                 {/* <Form.Text
                            id={`kioskOrderTab.orderTabs-${i}`}
                            name={`kioskOrderTab.orderTabs-${i}`}
                            value={kioskOrderTab.orderTab}
@@ -306,103 +338,104 @@ export const LinkOrderTab = () => {
                            //    }}
                            //    onBlur={e => updateOrderTab(e, title[i])}
                         /> */}
-                              <Dropdown
-                                 type="single"
-                                 defaultOption={{
-                                    id: kioskOrderTab.orderTabId,
-                                 }}
-                                 isLoading={loading1}
-                                 addOption={orderTabList}
-                                 placeholder="Enter Order Tab"
-                                 options={orderTabList}
-                                 selectedOption={e =>
-                                    updateOrderTab(e, kioskOrderTab)
+                                 <div
+                                    style={{
+                                       border: '1px solid #e3e3e3',
+                                       borderRadius: '6px',
+                                       height: '40px',
+                                       textAlign: 'match-parent',
+                                       padding: '7px 12px 12px 12px',
+                                    }}
+                                 >
+                                    <Dropdown
+                                       type="single"
+                                       defaultOption={{
+                                          id: kioskOrderTab.orderTabId,
+                                       }}
+                                       isLoading={loading1}
+                                       addOption={orderTabList}
+                                       placeholder="Enter Order Tab"
+                                       options={orderTabList}
+                                       selectedOption={e =>
+                                          updateOrderTab(e, kioskOrderTab)
+                                       }
+                                       //    addOption={() => console.log('Item added')}
+                                    />
+                                 </div>
+                              </Form.Group>
+                              {/* </Flex> */}
+                              <Spacer yAxis size="16px" />
+                              {/* <Flex container alignItems="center"> */}
+                              <Form.Group>
+                                 <Form.Label
+                                    htmlFor={`kioskOrderTab.orderPrefix-${i}`}
+                                    title={`kioskOrderTab.orderPrefix-${i}`}
+                                 >
+                                    Order Prefix
+                                 </Form.Label>
+                                 <Form.Text
+                                    id={`kioskOrderTab.orderPrefix-${i}`}
+                                    name={`kioskOrderTab.orderPrefix-${i}`}
+                                    value={kioskOrderTab.orderPrefix}
+                                    placeholder="Enter Order Prefix"
+                                    onChange={e => {
+                                       const prevTitle = [...title]
+                                       prevTitle[i].orderPrefix = e.target.value
+                                       setTitle(prevTitle)
+                                    }}
+                                    onBlur={e => updateOrderPrefix(e, title[i])}
+                                 />
+                              </Form.Group>
+                              {/* </Flex> */}
+                              <Spacer yAxis size="16px" />
+                              {/* <Flex container alignItems="center"> */}
+                              <Form.Group>
+                                 <Form.Label
+                                    htmlFor={`kioskOrderTab.posistTab-${i}`}
+                                    title={`kioskOrderTab.posistTab-${i}`}
+                                 >
+                                    Posist Tab
+                                 </Form.Label>
+                                 <Form.Text
+                                    id={`kioskOrderTab.posistTab-${i}`}
+                                    name={`kioskOrderTab.posistTab-${i}`}
+                                    value={kioskOrderTab.posistTab}
+                                    placeholder="Enter Posist Tab"
+                                    onChange={e => {
+                                       const prevTitle = [...title]
+                                       prevTitle[i].posistTab = e.target.value
+                                       setTitle(prevTitle)
+                                    }}
+                                 />
+                              </Form.Group>
+                              {/* </Flex> */}
+                              <IconButton
+                                 title="Delete Option"
+                                 type="ghost"
+                                 onClick={e =>
+                                    handleDeleteOption(e, kioskOrderTab)
                                  }
-                                 //    addOption={() => console.log('Item added')}
-                              />
-                           </Form.Group>
-                        </Flex>
-
-                        <Spacer yAxis size="16px" />
-                        <Flex>
-                           <Form.Group>
-                              <Form.Label
-                                 htmlFor={`kioskOrderTab.orderPrefix-${i}`}
-                                 title={`kioskOrderTab.orderPrefix-${i}`}
                               >
-                                 Order Prefix
-                              </Form.Label>
-                              <Form.Text
-                                 id={`kioskOrderTab.orderPrefix-${i}`}
-                                 name={`kioskOrderTab.orderPrefix-${i}`}
-                                 value={kioskOrderTab.orderPrefix}
-                                 placeholder="Enter Order Prefix"
-                                 onChange={e => {
-                                    const prevTitle = [...title]
-                                    prevTitle[i].orderPrefix = e.target.value
-                                    setTitle(prevTitle)
-                                 }}
-                                 onBlur={e => updateOrderPrefix(e, title[i])}
-                              />
-                           </Form.Group>
-                        </Flex>
-
-                        <Spacer yAxis size="16px" />
-                        <Flex>
-                           <Form.Group>
-                              <Form.Label
-                                 htmlFor={`kioskOrderTab.posistTab-${i}`}
-                                 title={`kioskOrderTab.posistTab-${i}`}
-                              >
-                                 Posist Tab
-                              </Form.Label>
-                              <Form.Text
-                                 id={`kioskOrderTab.posistTab-${i}`}
-                                 name={`kioskOrderTab.posistTab-${i}`}
-                                 value={kioskOrderTab.posistTab}
-                                 placeholder="Enter Posist Tab"
-                                 onChange={e => {
-                                    const prevTitle = [...title]
-                                    prevTitle[i].posistTab = e.target.value
-                                    setTitle(prevTitle)
-                                 }}
-                              />
-                           </Form.Group>
-                        </Flex>
-                     </Flex>
+                                 <DeleteIcon />
+                              </IconButton>
+                           </Flex>
+                        }
+                     />
                   </>
                )
-               //    </ul>
             })}
-            <Spacer yAxis size="16px" />
-            <ButtonTile
-               type="secondary"
-               text="Link New Order Tab"
-               //    onClick={() =>
-               //       setTitle([
-               //          ...title,
-               //          {
-               //             // internalLocationKioskLabel: {
-               //             value: null,
-               //             meta: {
-               //                isValid: false,
-               //                isTouched: false,
-               //                errors: [],
-               //             },
-               //             // },
-               //          },
-               //       ])
-               //    }
-               onClick={() => openTunnel(1)}
-            />
-            {/* Link New Order Tab
-            </TextButton> */}
-            <Tunnels tunnels={tunnels}>
-               <Tunnel layer={1} size="md">
-                  <CreateLinkOrderTab closeTunnel={closeTunnel} />
-               </Tunnel>
-            </Tunnels>
          </Flex>
+         <Spacer yAxis size="16px" />
+         <ButtonTile
+            type="secondary"
+            text="Link New Order Tab"
+            onClick={() => openTunnel(1)}
+         />
+         <Tunnels tunnels={tunnels}>
+            <Tunnel layer={1} size="md">
+               <CreateLinkOrderTab closeTunnel={closeTunnel} />
+            </Tunnel>
+         </Tunnels>
       </div>
    )
 }

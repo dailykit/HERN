@@ -558,6 +558,22 @@ export const KIOSK = {
       }
    `,
 
+   DELETE_KIOSK_ORDER_TAB: gql`
+      mutation DELETE_KIOSK_ORDER_TAB(
+         $locationKioskId: Int_comparison_exp!
+         $orderTabId: Int_comparison_exp!
+      ) {
+         delete_brands_locationKiosk_orderTab(
+            where: {
+               locationKioskId: $locationKioskId
+               orderTabId: $orderTabId
+            }
+         ) {
+            affected_rows
+         }
+      }
+   `,
+
    KIOSK_REPORT: gql`
       subscription kiosk_report {
          order_kioskReport {
