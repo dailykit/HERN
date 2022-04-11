@@ -1,10 +1,10 @@
 import { useQuery } from '@apollo/react-hooks'
-import { has, isEmpty } from 'lodash'
+// import { has, isEmpty } from 'lodash'
+import has from 'lodash/has'
+import isEmpty from 'lodash/isEmpty'
 import React from 'react'
 import { ORDER_TAB } from '../graphql'
-import { rrulestr } from 'rrule'
 import { get_env, isClient, useQueryParamState } from '../utils'
-import moment from 'moment'
 const ConfigContext = React.createContext()
 
 const initialState = {

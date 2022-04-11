@@ -1,6 +1,5 @@
 import { useMutation, useSubscription } from '@apollo/react-hooks'
 import isEmpty from 'lodash/isEmpty'
-import gql from 'graphql-tag'
 import React, { useEffect, useState, useContext } from 'react'
 import {
    CREATE_CART_ITEMS,
