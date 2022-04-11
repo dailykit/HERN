@@ -6,6 +6,7 @@ import {
    Divider,
    Button,
    Loader,
+   Empty,
 } from '../../components'
 import { useQuery } from '@apollo/react-hooks'
 import _ from 'lodash'
@@ -20,7 +21,6 @@ import { useRouter } from 'next/router'
 import { useToasts } from 'react-toast-notifications'
 import { VegNonVegType } from '../../assets/icons'
 import { CustomArea } from '../featuredCollection/productCustomArea'
-import { Empty } from 'antd'
 
 export const OnDemandOrder = ({ config }) => {
    const router = useRouter()
@@ -163,7 +163,15 @@ export const OnDemandOrder = ({ config }) => {
    if (isMenuLoading || status === 'loading' || productsLoading) {
       return <Loader type="order-loading" />
    }
-   if (_.isEmpty(hydratedMenu)) return <Empty />
+   if (_.isEmpty(hydratedMenu))
+      return (
+         <Empty
+            title="No product found !"
+            description="We are updating our menu with more new items, please check back later."
+            route="/"
+            buttonLabel="Back to home"
+         />
+      )
 
    const getWrapperClasses = () => {
       if (menuType === 'fixed-top-nav') {
