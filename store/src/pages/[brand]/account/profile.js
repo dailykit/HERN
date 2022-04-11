@@ -1,17 +1,11 @@
 import { useRouter } from 'next/router'
 import React from 'react'
-import {
-   Layout,
-   LoginWarning,
-   SEO,
-   ExternalJSCSSFiles,
-} from '../../../components'
+import { Layout, SEO, ExternalJSCSSFiles } from '../../../components'
 import { useUser } from '../../../context'
 import {
    getPageProps,
    getRoute,
    isClient,
-   processExternalFiles,
    renderPageContent,
 } from '../../../utils'
 
@@ -23,7 +17,7 @@ const ProfilePage = props => {
    React.useEffect(() => {
       if (!isAuthenticated && !isLoading) {
          isClient && localStorage.setItem('landed_on', location.href)
-         // router.push(getRoute('/get-started/register'))
+         router.push(getRoute('/login'))
       }
    }, [isAuthenticated, isLoading])
 
@@ -31,9 +25,7 @@ const ProfilePage = props => {
       <Layout settings={settings} navigationMenus={navigationMenus}>
          <SEO seoSettings={seoSettings} />
          <ExternalJSCSSFiles externalFiles={linkedFiles} />
-         {!isAuthenticated && !isLoading ? (
-            <LoginWarning />
-         ) : (
+         {isAuthenticated && !isLoading && (
             <main>{renderPageContent(folds)}</main>
          )}
       </Layout>

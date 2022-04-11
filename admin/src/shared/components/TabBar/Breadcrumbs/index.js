@@ -35,7 +35,11 @@ const Breadcrumbs = () => {
    const routes = getRoutes()
    return (
       <Styles.Wrapper>
-         <Styles.Crumb onClick={() => history.push('/')} isHome={true}>
+         <Styles.Crumb
+            onClick={() => history.push('/')}
+            isHome={true}
+            title={'Home'}
+         >
             Home{' '}
             {routes.length >= 1 && (
                <>
@@ -46,7 +50,22 @@ const Breadcrumbs = () => {
          </Styles.Crumb>
 
          {routes.map((route, index) => (
-            <Styles.Crumb onClick={() => history.push(route.path)}>
+            <Styles.Crumb onClick={() => history.push(route.path)} key={`${route.path}-${route.title}`}>
+               <p
+                  title={route.title}
+                  style={{
+                     textAlign: 'left',
+                     overflow: routes.length - 1 == index ? 'hidden' : 'auto',
+                     whiteSpace:
+                        routes.length - 1 == index ? 'nowrap' : 'normal',
+                     textOverflow:
+                        routes.length - 1 == index ? 'ellipsis' : 'unset',
+                     width: routes.length - 1 == index ? '100px' : 'auto',
+                  }}
+               >
+                  {route.title}
+               </p>
+            
                {route.title}
                {routes.length - 1 !== index && (
                   <>
@@ -69,7 +88,6 @@ const Styles = {
       float: none;
       max-width: 1280px;
       width: calc(100vw - 130px);
-     
       }
    `,
    Crumb: styled.button`

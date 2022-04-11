@@ -205,17 +205,30 @@ export const DineIn = props => {
          fetchStores()
       }
    }, [address, fulfillmentType, brand])
-
+   const SERVER_URL = React.useMemo(() => {
+      const storeMode = process?.env?.NEXT_PUBLIC_MODE || 'production'
+      if (isClient) {
+         return {
+            production: window.location.origin,
+            'full-dev': 'http://localhost:4000',
+            'store-dev': 'http://localhost:4000',
+         }[storeMode]
+      } else {
+         return null
+      }
+   }, [isClient])
    const formatAddress = async input => {
       if (!isClient) return 'Runs only on client side.'
       const response = await fetch(
-         `https://maps.googleapis.com/maps/api/geocode/json?key=${
+         `${SERVER_URL}/server/api/place/details/json?key=${
             isClient ? get_env('GOOGLE_API_KEY') : ''
-         }&address=${encodeURIComponent(input.description)}`
+         }&placeid=${input.place_id}&language=en`
       )
+
       const data = await response.json()
-      if (data.status === 'OK' && data.results.length > 0) {
-         const [result] = data.results
+      // console.log('this is data', data)
+      if (data.status === 'OK' && data.result) {
+         const result = data.result
          const userCoordinate = {
             latitude: result.geometry.location.lat,
             longitude: result.geometry.location.lng,

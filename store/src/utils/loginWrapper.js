@@ -2,8 +2,6 @@ import React from 'react'
 import { Login } from '../components'
 import { CSSTransition } from 'react-transition-group'
 import { useConfig } from '../lib'
-import isEmpty from 'lodash/isEmpty'
-import isNull from 'lodash/isNull'
 
 export const LoginWrapper = ({ ...props }) => {
    const { showLoginPopup, currentAuth = null } = props
@@ -11,27 +9,12 @@ export const LoginWrapper = ({ ...props }) => {
    const authConfig = configOf('Auth Methods', 'brand')
 
    const loginBy = React.useMemo(() => {
-      if (isEmpty(currentAuth) || isNull(currentAuth)) {
-         if (authConfig?.loginSettings?.defaultLogInMethod?.value?.value) {
-            return authConfig?.loginSettings?.defaultLogInMethod?.value?.value
-         } else {
-            return 'email'
-         }
+      if (authConfig?.loginSettings?.defaultLogInMethod?.value?.value) {
+         return authConfig?.loginSettings?.defaultLogInMethod?.value?.value
       } else {
-         if (currentAuth === 'sign-up') {
-            return 'signup'
-         } else if (currentAuth === 'sign-in') {
-            if (authConfig?.loginSettings?.defaultLogInMethod?.value?.value) {
-               return authConfig?.loginSettings?.defaultLogInMethod?.value
-                  ?.value
-            } else {
-               return 'email'
-            }
-         } else if (currentAuth === 'forgotPassword') {
-            return 'forgotPassword'
-         }
+         return 'email'
       }
-   }, [currentAuth])
+   }, [])
 
    /** Brand level config for login illustration **/
    const loginIllustration = configOf('Login Illustrations', 'brand')
