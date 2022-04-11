@@ -65,12 +65,14 @@ export const CartOrderDetails = () => {
 
    return (
       <>
+         {/* Component for current location and status of delivery order */}
          {isLoaded && (
             <DeliveryTracking
                deliveryInfo={deliveryInfo}
                onMapLoad={onMapLoad}
             />
          )}
+         {/* Payment status */}
          <div
             style={{ margin: deliveryInfo ? '24px 0' : 0 }}
             className="hern-order-history-card__tunnel-payment-info"
@@ -82,7 +84,9 @@ export const CartOrderDetails = () => {
                <div>Payment: Paid by {cart?.availablePaymentOption?.label}</div>
             )}
          </div>
+         {/* List of ordered items   */}
          <CartItems products={cart?.cartItems} border={true} title={true} />
+         {/* Cart billing details  */}
          <CartBillingDetails billing={cart?.billingDetails} />
       </>
    )
@@ -123,6 +127,7 @@ const CartItems = ({ products, border = false, title = false }) => {
                      <div>{product.name}</div>
                      <span>x{product.ids.length}</span>
                   </div>
+                  {/* Modifiers of the product */}
                   {product.childs.length > 0 && (
                      <ModifiersList data={product} />
                   )}
@@ -162,14 +167,15 @@ const ModifiersList = props => {
 const DeliveryTracking = ({ deliveryInfo, onMapLoad }) => {
    if (_.isNull(deliveryInfo)) return null
 
+   /** Array of all status of order */
    const deliveryInformation = [
       {
          id: 1,
          step: 'delivery-request',
          label: 'Delivery  Request',
-         status: deliveryInfo.deliveryRequest.status.value,
-         time: deliveryInfo.deliveryRequest.status.timeStamp,
-         tailHeight: 48,
+         status: deliveryInfo.deliveryRequest.status.value, // define the status SUCCEEDED or WAITING or CANCELED
+         time: deliveryInfo.deliveryRequest.status.timeStamp, //define the time of the status
+         tailHeight: 48, //define the height of the dots of current status
       },
       {
          id: 2,
@@ -198,7 +204,7 @@ const DeliveryTracking = ({ deliveryInfo, onMapLoad }) => {
             name: deliveryInfo.pickup.pickupInfo.organizationName,
             phone: deliveryInfo.pickup.pickupInfo.organizationPhone,
          },
-         address: deliveryInfo.pickup.pickupInfo.organizationAddress,
+         address: deliveryInfo.pickup.pickupInfo.organizationAddress, //define the address of the pickup location or store
          tailHeight: 120,
       },
       {
@@ -214,7 +220,7 @@ const DeliveryTracking = ({ deliveryInfo, onMapLoad }) => {
                deliveryInfo.dropoff.dropoffInfo.customerLastName,
             phone: deliveryInfo.dropoff.dropoffInfo.customerPhone,
          },
-         address: deliveryInfo.dropoff.dropoffInfo.customerAddress,
+         address: deliveryInfo.dropoff.dropoffInfo.customerAddress, // define customer address
          tailHeight: 120,
       },
       {
@@ -230,7 +236,9 @@ const DeliveryTracking = ({ deliveryInfo, onMapLoad }) => {
 
    return (
       <>
+         {/* Details on map  */}
          <DeliveryMap deliveryInfo={deliveryInfo} onMapLoad={onMapLoad} />
+         {/* Status with info  */}
          <div style={{ margin: '32px 0' }}>
             {deliveryInformation.map(info => (
                <DeliveryProgress key={info.id} info={info} />
@@ -257,9 +265,11 @@ const DeliveryProgress = ({ info }) => {
                <FaCheckCircle size={32} color="var(--hern-accent)" />
             ) : (
                <div className="hern-delivery-progress__icon__step-icon">
+                  {/* Get icon based on delivery step  */}
                   {getIcon(step)}
                </div>
             )}
+            {/* Dots towards the next step || tail of current step */}
             <svg
                width="4"
                height={tailHeight}
@@ -282,6 +292,7 @@ const DeliveryProgress = ({ info }) => {
                />
             </svg>
          </div>
+         {/* label */}
          <div className="hern-delivery-progress__content">
             <div className="hern-delivery-progress__title">
                <h3
@@ -294,6 +305,7 @@ const DeliveryProgress = ({ info }) => {
                   {label}
                </h3>
             </div>
+            {/* time */}
             {time && (
                <div className="hern-delivery-progress__time">
                   <TimeIcon
@@ -315,6 +327,7 @@ const DeliveryProgress = ({ info }) => {
                   </span>
                </div>
             )}
+            {/* details : name, phone and image  of customer or organization or driver based on step */}
             {!isEmpty(details) && (
                <div className="hern-delivery-progress__driver-info">
                   {!isEmpty(details.name) && (
@@ -348,6 +361,7 @@ const DeliveryProgress = ({ info }) => {
                   )}
                   {!isEmpty(details.phone) && (
                      <div className="hern-delivery-progress__driver-info__phone">
+                        {/* phone icon */}
                         <svg
                            width="11"
                            height="11"
@@ -366,10 +380,11 @@ const DeliveryProgress = ({ info }) => {
                   )}
                </div>
             )}
+            {/* address */}
             {!isEmpty(address) && (
                <div
                   title={normalizeAddress(address)}
-                  className="hern-delivery-progess__address"
+                  className="hern-delivery-progress__address"
                   style={status !== 'SUCCEEDED' ? { opacity: '0.6' } : {}}
                >
                   <p>
@@ -460,10 +475,11 @@ const DeliveryMap = ({ deliveryInfo, onMapLoad }) => {
                <GoogleMap
                   center={coordinates.driver}
                   zoom={10}
-                  options={options}
+                  options={options} //options for disable default UI and add custom
                   onLoad={onMapLoad}
                   mapContainerStyle={containerStyle}
                >
+                  {/* marker for store location */}
                   <Marker
                      position={coordinates.organization}
                      icon={{
@@ -475,6 +491,7 @@ const DeliveryMap = ({ deliveryInfo, onMapLoad }) => {
                         }),
                      }}
                   />
+                  {/* marker for customer  */}
                   <Marker
                      position={coordinates.customer}
                      icon={{
@@ -486,6 +503,7 @@ const DeliveryMap = ({ deliveryInfo, onMapLoad }) => {
                         }),
                      }}
                   />
+                  {/* marker for driver */}
                   <Marker
                      position={coordinates.driver}
                      icon={{
