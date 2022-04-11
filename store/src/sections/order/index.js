@@ -20,6 +20,7 @@ import { useRouter } from 'next/router'
 import { useToasts } from 'react-toast-notifications'
 import { VegNonVegType } from '../../assets/icons'
 import { CustomArea } from '../featuredCollection/productCustomArea'
+import { Empty } from 'antd'
 
 export const OnDemandOrder = ({ config }) => {
    const router = useRouter()
@@ -131,9 +132,9 @@ export const OnDemandOrder = ({ config }) => {
                      products: updatedProducts,
                   }
                })
-               setStatus('success')
                setHydratedMenu(updatedMenu)
             }
+            setStatus('success')
          },
          onError: error => {
             setStatus('error')
@@ -162,6 +163,8 @@ export const OnDemandOrder = ({ config }) => {
    if (isMenuLoading || status === 'loading' || productsLoading) {
       return <Loader type="order-loading" />
    }
+   if (_.isEmpty(hydratedMenu)) return <Empty />
+
    const getWrapperClasses = () => {
       if (menuType === 'fixed-top-nav') {
          if (!showCartOnRight) {

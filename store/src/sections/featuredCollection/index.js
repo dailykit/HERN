@@ -155,9 +155,9 @@ export const FeaturedCollection = ({ config }) => {
                      products: updatedProducts,
                   }
                })
-               setStatus('success')
                setHydratedMenu(updatedMenu)
             }
+            setStatus('success')
          },
          onError: error => {
             setStatus('error')
@@ -178,6 +178,9 @@ export const FeaturedCollection = ({ config }) => {
       console.log(productsError)
       return <p>Error</p>
    }
+
+   if (_.isEmpty(hydratedMenu)) return <Empty />
+
    if (isMenuLoading || status === 'loading' || productsLoading) {
       return <Loader type="order-loading" />
    }
