@@ -1,5 +1,5 @@
 import { useSubscription } from '@apollo/react-hooks'
-import { Flex, Form, Text } from '@dailykit/ui'
+import { ButtonGroup, ComboButton, Flex, Form, PlusIcon, Text, Tunnel, Tunnels, useTunnel } from '@dailykit/ui'
 import { Tooltip } from 'antd'
 import React from 'react'
 import { useParams } from 'react-router-dom'
@@ -8,12 +8,14 @@ import { DragNDrop } from '../../../../../../../shared/components'
 import { useDnd } from '../../../../../../../shared/components/DragNDrop/useDnd'
 import { isEmpty } from 'lodash'
 import { CouponStripCard } from '../../../../../assets/illustration'
-import { Card3, Card4, CardContext, CouponCard, StyledIcon, StyledText } from '../../styled'
+import { Card3, Card4, CardContext, CouponCard, StyledHeader, StyledIcon, StyledText } from '../../styled'
 import { DeleteIcon, DragIcon } from '../../../../../../../shared/assets/icons'
+import { BrandCouponsTunnel } from '../../Tunnels/BrandCoupons'
 
 export const BrandCoupons = () => {
     const params = useParams()
     const { initiatePriority } = useDnd()
+    const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
 
     const { loading, error, data: { brandCoupons = [] } = {} } = useSubscription(BRAND_COUPONS.LIST, {
         variables: {
@@ -34,12 +36,22 @@ export const BrandCoupons = () => {
     console.log("brandCouponsAggregate", brandCoupons);
     return (
         <Flex padding="16px 16px 16px 34px">
-            <Flex container alignItems="center">
+            <StyledHeader>
                 <Text as="h2">
                     Brand Coupons ({brandCoupons.length || 0})
                 </Text>
-                <Tooltip identifier="brands_coupons_listing_heading" />
-            </Flex>
+                <ButtonGroup>
+                    <ComboButton
+                        type="ghost"
+                        size="sm"
+                        onClick={() => openTunnel(1)}
+                        title="Click to add new Coupon"
+                    >
+                        <PlusIcon color="#367BF5" /> Add More
+                    </ComboButton>
+                    <Tooltip identifier="brands_coupons_listing_heading" />
+                </ButtonGroup>
+            </StyledHeader>
             {
                 Boolean(brandCoupons.length) && (
                     <Flex margin="16px 0 32px 0">
@@ -76,6 +88,14 @@ export const BrandCoupons = () => {
                     </Flex>
                 )
             }
+            <Tunnels tunnels={tunnels}>
+                <Tunnel layer={1} size="md">
+                    <BrandCouponsTunnel
+                        close={closeTunnel}
+                        brandId={params.id}
+                    />
+                </Tunnel>
+            </Tunnels>
         </Flex>
     )
 }   

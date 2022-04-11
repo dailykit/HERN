@@ -229,6 +229,38 @@ export const BRAND_COUPONS = {
          }
       }
    `,
+   TUNNEL_LIST: gql`
+      subscription couponList($brandId: Int!) {
+         coupons(
+            order_by: { isActive: desc_nulls_last }
+            where: {
+               _not: {
+                  brands: {
+                     brand: { brand_coupons: { brandId: { _eq: $brandId } } }
+                  }
+               }
+            }
+         ) {
+            code
+            id
+            metaDetails
+            isActive
+         }
+      }
+   `,
+   UPSERT_BRAND_COUPONS: gql`
+      mutation upsertBrandCoupons($objects: [crm_brand_coupon_insert_input!]!) {
+         createBrandCoupons(
+            objects: $objects
+            on_conflict: {
+               constraint: brand_coupon_id_key
+               update_columns: isActive
+            }
+         ) {
+            affected_rows
+         }
+      }
+   `,
 }
 export const LOCATIONS = {
    AGGREGATE: gql`
@@ -399,7 +431,6 @@ export const BRAND_ID_LIST = gql`
       }
    }
 `
-
 // getting brandSettingId using identifier
 export const BRAND_ID = gql`
    query MyQuery($identifier: String_comparison_exp!) {

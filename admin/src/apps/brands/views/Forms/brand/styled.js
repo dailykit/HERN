@@ -11,6 +11,12 @@ export const Wrapper = styled.div`
    }
 `
 
+export const StyledHeader = styled.div`
+   display: flex;
+   align-items: center;
+   justify-content: space-between;
+`
+
 export const Label = styled.label`
    color: #6f6565;
    font-size: 13px;
