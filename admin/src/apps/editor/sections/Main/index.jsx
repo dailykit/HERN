@@ -166,7 +166,7 @@ const Main = () => {
          }
       } else if (type === 'delete') {
          if (nodeType === 'FILE') {
-            const filePath = path.replace(/.\/templates/g, '')
+            const filePath = path.replace('./template/templates', '')
             await deleteFile({
                variables: {
                   path: filePath,
