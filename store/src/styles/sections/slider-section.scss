@@ -38,30 +38,6 @@
    }
 }
 
-.feedBack_button {
-   position: fixed;
-   background: #7cc41e;
-   color: #fff;
-   padding: 13px 40px;
-   margin-top: 1rem;
-   display: inline-block;
-   border-radius: 2rem;
-   transition: all 0.3s ease;
-   font-weight: bold;
-   width: 220px;
-   height: 48px;
-   filter: drop-shadow(0px 4px 20px rgba(0, 0, 0, 0.2));
-   transform: rotate(-90deg);
-   bottom: 300px;
-   left: -50px;
-   // --tw-drop-shadow: '0px 2px 25px rgba(0,0,0,0.2)';
-   &:hover {
-      background: #7cc41e;
-      > svg {
-         fill: #fff;
-      }
-   }
-}
 .hern-slider_section-heading {
    font-size: 3.5rem;
    color: #fff;

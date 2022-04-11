@@ -36,9 +36,9 @@ export const SliderSection = ({ config }) => {
                   )}
             </Carousel>
          )}
-         <div className="feedBack_button">
+         {/* <div className="feedBack_button">
             <FeedBackFormButton />
-         </div>
+         </div> */}
       </>
    )
 }
@@ -102,21 +102,21 @@ const RightArrow = ({ ...props }) => {
    )
 }
 
-const FeedBackFormButton = ({ content, index, getStartedURL }) => {
-   return (
-      <div>
-         {/* <div className="hern-slider-section__content"> */}
-         <div>
-            <a
-               href="https://docs.google.com/forms/d/e/1FAIpQLSec10yg1m1RlikaVXPWALWmsXqrWJGYMyEUj8Bp2KMn2DyS3Q/viewform"
-               className="hern-slider_section-feedBack_button"
-               // style={{}}
-            >
-               {' '}
-               Give Your FeedBack
-            </a>
-            {/* </div> */}
-         </div>
-      </div>
-   )
-}
+// const FeedBackFormButton = () => {
+//    return (
+//       <div>
+//          {/* <div className="hern-slider-section__content"> */}
+//          <div>
+//             <a
+//                href="https://docs.google.com/forms/d/e/1FAIpQLSec10yg1m1RlikaVXPWALWmsXqrWJGYMyEUj8Bp2KMn2DyS3Q/viewform"
+//                className="hern-slider_section-feedBack_button"
+//                // style={{}}
+//             >
+//                {' '}
+//                Feedback
+//             </a>
+//             {/* </div> */}
+//          </div>
+//       </div>
+//    )
+// }
