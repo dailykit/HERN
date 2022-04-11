@@ -2344,6 +2344,7 @@ export const GET_ORDER_DETAILS = gql`
          address
          order {
             created_at
+            deliveryInfo
          }
          cartPayments {
             id

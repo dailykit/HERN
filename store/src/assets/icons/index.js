@@ -266,6 +266,8 @@ const ProfileSidebarIcon = {
    ManageCards,
 }
 
+export * from './DeliveryInfoIcons'
+
 export {
    AddressIcon,
    ArrowLeftIcon,
