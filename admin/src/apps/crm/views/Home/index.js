@@ -1,5 +1,5 @@
 import React, { useContext } from 'react'
-import { DashboardTile, Text } from '@dailykit/ui'
+import { DashboardTile, Text, Tunnel, Tunnels, useTunnel } from '@dailykit/ui'
 import { useSubscription } from '@apollo/react-hooks'
 // import BrandContext from '../../context/Brand'
 // State
@@ -14,10 +14,12 @@ import {
    CustomersSvg,
 } from '../../../../shared/assets/illustrationTileSvg'
 import { BrandContext } from '../../../../App'
+import { BrandListing } from '../../components'
 
 const Home = () => {
    // const [context, setContext] = useContext(BrandContext)
    const [brandContext, setBrandContext] = useContext(BrandContext)
+   const [brandTunnels, openBrandTunnel, closeBrandTunnel] = useTunnel(1)
    const { addTab } = useTabs()
    // const { t } = useTranslation()
    const { data: customersCount } = useSubscription(CUSTOMERS_COUNT, {
@@ -40,7 +42,14 @@ const Home = () => {
             <DashboardTile
                title="Customers"
                count={customersCount?.customers_aggregate.aggregate.count || 0}
-               onClick={() => addTab('Customers', '/crm/customers')}
+               onClick={() => {
+                  brandContext.brandId
+                     ? addTab(
+                          'Customers',
+                          `/crm/customers-${brandContext.brandName}-${brandContext.brandId}`
+                       )
+                     : openBrandTunnel(1)
+               }}
                tileSvg={<CustomersSvg />}
             />
             <DashboardTile
@@ -57,6 +66,12 @@ const Home = () => {
             />
          </StyledCardList>
          <Banner id="crm-app-home-bottom" />
+
+         <Tunnels tunnels={brandTunnels}>
+            <Tunnel popup={true} layer={1} size="md">
+               <BrandListing closeTunnel={closeBrandTunnel} />
+            </Tunnel>
+         </Tunnels>
       </StyledHome>
    )
 }
