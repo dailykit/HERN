@@ -166,10 +166,11 @@ export const OnDemandOrder = ({ config }) => {
    if (_.isEmpty(hydratedMenu))
       return (
          <Empty
-            title="No product found !"
-            description="We are updating our menu with more new items, please check back later."
+            title="No items !"
+            description="Looks like store is empty. Wait for some time to order yummy items"
             route="/"
             buttonLabel="Back to home"
+            illustration="empty-store"
          />
       )
 
