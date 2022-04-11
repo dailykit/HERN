@@ -267,7 +267,9 @@ const ProfileSidebarIcon = {
 }
 
 export * from './DeliveryInfoIcons'
-
+const EmptyCloche = dynamic(() =>
+   import('./EmptyCloche').then(promise => promise.EmptyCloche)
+)
 export {
    AddressIcon,
    ArrowLeftIcon,
@@ -349,4 +351,5 @@ export {
    ProfileSidebarIcon,
    ProductGalleryBG,
    NoImage,
+   EmptyCloche,
 }
