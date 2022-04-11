@@ -1,22 +1,25 @@
-import { useSubscription } from '@apollo/react-hooks'
-import { ButtonGroup, ComboButton, Flex, Form, PlusIcon, Text, Tunnel, Tunnels, useTunnel } from '@dailykit/ui'
+import { useMutation, useSubscription } from '@apollo/react-hooks'
+import { ButtonGroup, ComboButton, Flex, Form, IconButton, PlusIcon, Text, Tunnel, Tunnels, useTunnel } from '@dailykit/ui'
 import { Tooltip } from 'antd'
 import React from 'react'
 import { useParams } from 'react-router-dom'
 import { BRAND_COUPONS } from '../../../../../graphql'
-import { DragNDrop } from '../../../../../../../shared/components'
+import { DragNDrop, InlineLoader } from '../../../../../../../shared/components'
 import { useDnd } from '../../../../../../../shared/components/DragNDrop/useDnd'
 import { isEmpty } from 'lodash'
 import { CouponStripCard } from '../../../../../assets/illustration'
-import { Card3, Card4, CardContext, CouponCard, StyledHeader, StyledIcon, StyledText } from '../../styled'
+import { CardContext, CouponCard, StyledDelete, StyledHeader, StyledIcon, StyledText } from '../../styled'
 import { DeleteIcon, DragIcon } from '../../../../../../../shared/assets/icons'
 import { BrandCouponsTunnel } from '../../Tunnels/BrandCoupons'
+import { logger } from '../../../../../../../shared/utils'
+import { toast } from 'react-toastify'
 
 export const BrandCoupons = () => {
     const params = useParams()
     const { initiatePriority } = useDnd()
     const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
 
+    //subscription
     const { loading, error, data: { brandCoupons = [] } = {} } = useSubscription(BRAND_COUPONS.LIST, {
         variables: {
             brandId: {
@@ -24,6 +27,19 @@ export const BrandCoupons = () => {
             },
         },
     })
+
+    //mutation
+    const [deleteCoupon] = useMutation(BRAND_COUPONS.DELETE, {
+        onCompleted: () => {
+            toast.success('Coupon deleted!')
+        },
+        onError: error => {
+            toast.error('Something went wrong!')
+            logger(error)
+        },
+    })
+
+    //useEffect
     React.useEffect(() => {
         if (!loading && !isEmpty(brandCoupons)) {
             initiatePriority({
@@ -33,7 +49,26 @@ export const BrandCoupons = () => {
             })
         }
     }, [loading, brandCoupons])
-    console.log("brandCouponsAggregate", brandCoupons);
+    // console.log("brandCouponsAggregate", brandCoupons);
+
+    // Handler
+    const deleteCouponHandler = brandCoupon => {
+        if (
+            window.confirm(
+                `Are you sure you want to delete product - ${brandCoupon.coupon.code}?`
+            )
+        ) {
+            deleteCoupon({
+                variables: {
+                    brandId: brandCoupon.brandId,
+                    couponId: brandCoupon.couponId
+                },
+            })
+        }
+        // console.log(brandCoupon)
+    }
+
+    if (loading) return <InlineLoader />
     return (
         <Flex padding="16px 16px 16px 34px">
             <StyledHeader>
@@ -65,6 +100,16 @@ export const BrandCoupons = () => {
                                 <CouponCard>
                                     <StyledIcon ><DragIcon /></StyledIcon>
                                     <StyledText >{brandCoupon.coupon.code}</StyledText>
+                                    <div></div>
+                                    <StyledDelete>
+                                        <IconButton
+                                            type="ghost"
+                                            title="Click to remove coupon"
+                                            onClick={() => deleteCouponHandler(brandCoupon)}
+                                        >
+                                            <DeleteIcon color="#FF5A52" />
+                                        </IconButton>
+                                    </StyledDelete>
 
                                     {/* <CardContext>
                                         <Card1 ><DragIcon /></Card1>

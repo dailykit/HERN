@@ -72,6 +72,12 @@ export const StyledText = styled.div`
 
    color: #202020;
 `
+export const StyledDelete = styled.div`
+   display: flex;
+   cursor: pointer;
+   align-items: center;
+   justify-content: center;
+`
 
 // export const CardContext = styled.div`
 //    display: grid;

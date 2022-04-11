@@ -261,6 +261,13 @@ export const BRAND_COUPONS = {
          }
       }
    `,
+   DELETE: gql`
+      mutation deleteBrandCoupon($brandId: Int!, $couponId: Int!) {
+         deleteBrandCoupon(brandId: $brandId, couponId: $couponId) {
+            id
+         }
+      }
+   `,
 }
 export const LOCATIONS = {
    AGGREGATE: gql`
