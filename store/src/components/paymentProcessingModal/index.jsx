@@ -377,6 +377,7 @@ const PaymentProcessingModal = ({
          <CartPageHeader
             resetPaymentProviderStates={resetPaymentProviderStates}
             closeModal={closeModal}
+            isCartPaymentEmpty={isEmpty(cartPayment)}
          />
          {/* this payment option selection screen and back button, it will only show in kiosk app  */}
          {isKioskMode && isEmpty(cartPayment) ? (
@@ -504,6 +505,7 @@ const LABEL = {
 const CartPageHeader = ({
    closeModal = () => null,
    resetPaymentProviderStates = () => null,
+   isCartPaymentEmpty = true,
 }) => {
    const { configOf } = useConfig('brand')
    const {
@@ -520,7 +522,7 @@ const CartPageHeader = ({
    return (
       <header className="hern-cart-page__header">
          <div>
-            {!isKioskMode && (
+            {!isKioskMode && isCartPaymentEmpty && (
                <span
                   tw="hover:(cursor-pointer)"
                   onClick={async () => {

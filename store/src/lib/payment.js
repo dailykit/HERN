@@ -251,6 +251,8 @@ export const PaymentProvider = ({ children }) => {
          type: 'UPDATE_INITIAL_STATE',
          payload: {
             isPaymentProcessing: false,
+            isPaymentInitiated: false,
+            paymentLifeCycleState: '',
          },
       })
       const url = isClient ? get_env('BASE_BRAND_URL') : ''
@@ -261,14 +263,17 @@ export const PaymentProvider = ({ children }) => {
       console.log('result', data)
    }
 
-   const initializePayment = requiredCartId => {
+   const initializePayment = (
+      requiredCartId,
+      paymentLifeCycleState = 'INITIALIZE'
+   ) => {
       setCartId(requiredCartId)
       setIsPaymentInitiated(true)
       setIsProcessingPayment(true)
       dispatch({
          type: 'UPDATE_INITIAL_STATE',
          payload: {
-            paymentLifeCycleState: 'INITIALIZE',
+            paymentLifeCycleState,
          },
       })
    }
@@ -401,8 +406,9 @@ export const PaymentProvider = ({ children }) => {
       }
       if (!isEmpty(cartPaymentsFromQuery)) {
          setCartPayment(cartPaymentsFromQuery[0])
-         initializePayment(cartPaymentsFromQuery[0].cartId)
-         console.log('initializedPayment', cartPaymentsFromQuery[0].cartId)
+         setCartId(cartPaymentsFromQuery[0].cartId)
+         setIsPaymentInitiated(true)
+         setIsProcessingPayment(true)
       } else {
          setCartPayment(null)
          setIsPaymentInitiated(false)
@@ -534,7 +540,9 @@ export const PaymentProvider = ({ children }) => {
                      eventHandler,
                   })
                   console.log('options', options)
-                  await displayRazorpay(options)
+                  if (state.paymentLifeCycleState === 'INITIALIZE') {
+                     await displayRazorpay(options)
+                  }
                })()
             }
          } else if (
