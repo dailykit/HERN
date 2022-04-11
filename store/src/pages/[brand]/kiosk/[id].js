@@ -7,6 +7,7 @@ import { BRAND_LOCATIONS, LOCATION_KIOSK } from '../../../graphql'
 import { getSettings, isClient } from '../../../utils'
 import { useQuery } from '@apollo/react-hooks'
 import { setThemeVariable } from '../../../utils'
+import KioskConfig from './kioskConfig.json'
 
 const KioskScreen = props => {
    const { kioskId, kioskDetails, settings } = props
@@ -14,7 +15,9 @@ const KioskScreen = props => {
 
    useEffect(() => {
       const finalKioskConfig =
-         kioskDetails.kioskModuleConfig || settings.kiosk['kiosk-config']
+         KioskConfig ||
+         kioskDetails.kioskModuleConfig ||
+         settings.kiosk['kiosk-config']
       if (
          finalKioskConfig.kioskSettings?.primaryFont?.value?.fontEmbedLink
             ?.value
@@ -80,7 +83,9 @@ const KioskScreen = props => {
       <div>
          <Kiosk
             kioskConfig={
-               kioskDetails.kioskModuleConfig || settings.kiosk['kiosk-config']
+               KioskConfig ||
+               kioskDetails.kioskModuleConfig ||
+               settings.kiosk['kiosk-config']
             }
          />
       </div>
