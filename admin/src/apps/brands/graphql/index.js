@@ -268,6 +268,20 @@ export const BRAND_COUPONS = {
          }
       }
    `,
+   UPDATE: gql`
+      mutation updateBrandCoupon(
+         $_set: crm_brand_coupon_set_input!
+         $brandId: Int!
+         $couponId: Int!
+      ) {
+         updateBrandCoupon(
+            pk_columns: { brandId: $brandId, couponId: $couponId }
+            _set: $_set
+         ) {
+            id
+         }
+      }
+   `,
 }
 export const LOCATIONS = {
    AGGREGATE: gql`

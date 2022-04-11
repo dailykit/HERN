@@ -1,14 +1,12 @@
 import { useMutation, useSubscription } from '@apollo/react-hooks'
 import { ButtonGroup, ComboButton, Flex, Form, IconButton, PlusIcon, Text, Tunnel, Tunnels, useTunnel } from '@dailykit/ui'
-import { Tooltip } from 'antd'
 import React from 'react'
 import { useParams } from 'react-router-dom'
 import { BRAND_COUPONS } from '../../../../../graphql'
 import { DragNDrop, InlineLoader } from '../../../../../../../shared/components'
 import { useDnd } from '../../../../../../../shared/components/DragNDrop/useDnd'
 import { isEmpty } from 'lodash'
-import { CouponStripCard } from '../../../../../assets/illustration'
-import { CardContext, CouponCard, StyledDelete, StyledHeader, StyledIcon, StyledText } from '../../styled'
+import { CouponCard, StyledDelete, StyledHeader, StyledIcon, StyledText } from '../../styled'
 import { DeleteIcon, DragIcon } from '../../../../../../../shared/assets/icons'
 import { BrandCouponsTunnel } from '../../Tunnels/BrandCoupons'
 import { logger } from '../../../../../../../shared/utils'
@@ -39,6 +37,19 @@ export const BrandCoupons = () => {
         },
     })
 
+    const [updateCoupon, { loading: inFlight }] = useMutation(
+        BRAND_COUPONS.UPDATE,
+        {
+            onCompleted: () => {
+                toast.success('Coupons update successfully!')
+            },
+            onError: error => {
+                logger(error)
+                toast.error('Error update Coupons!')
+            },
+        }
+    )
+
     //useEffect
     React.useEffect(() => {
         if (!loading && !isEmpty(brandCoupons)) {
@@ -67,6 +78,19 @@ export const BrandCoupons = () => {
         }
         // console.log(brandCoupon)
     }
+    const couponToggleHandler = brandCoupon => {
+        const value = !brandCoupon.isActive
+        updateCoupon({
+            variables: {
+                brandId: brandCoupon.brandId,
+                couponId: brandCoupon.couponId,
+                _set: {
+                    isActive: value
+                }
+            },
+        })
+        // console.log(brandCoupon)
+    }
 
     if (loading) return <InlineLoader />
     return (
@@ -84,7 +108,6 @@ export const BrandCoupons = () => {
                     >
                         <PlusIcon color="#367BF5" /> Add More
                     </ComboButton>
-                    <Tooltip identifier="brands_coupons_listing_heading" />
                 </ButtonGroup>
             </StyledHeader>
             {
@@ -98,9 +121,24 @@ export const BrandCoupons = () => {
                         >
                             {brandCoupons.map(brandCoupon => (
                                 <CouponCard>
-                                    <StyledIcon ><DragIcon /></StyledIcon>
-                                    <StyledText >{brandCoupon.coupon.code}</StyledText>
-                                    <div></div>
+                                    <StyledIcon><DragIcon /></StyledIcon>
+                                    <StyledText
+                                        title={brandCoupon.coupon.code}
+                                    >
+                                        {brandCoupon.coupon.code}
+                                    </StyledText>
+                                    <StyledText>
+                                        <Form.Group>
+                                            <Form.Toggle
+                                                name={`toggle-${brandCoupon.id}`}
+                                                title="Click to change active status of coupon"
+                                                onChange={() => couponToggleHandler(brandCoupon)}
+                                                value={brandCoupon.isActive}
+                                            >
+                                                Active
+                                            </Form.Toggle>
+                                        </Form.Group>
+                                    </StyledText>
                                     <StyledDelete>
                                         <IconButton
                                             type="ghost"
@@ -110,23 +148,6 @@ export const BrandCoupons = () => {
                                             <DeleteIcon color="#FF5A52" />
                                         </IconButton>
                                     </StyledDelete>
-
-                                    {/* <CardContext>
-                                        <Card1 ><DragIcon /></Card1>
-                                        <Card2 >{brandCoupon.coupon.code}</Card2>
-                                        <Card3>
-                                            <Form.Group>
-                                                <Form.Toggle
-                                                    name='first_time'
-                                                    onChange={() => console.log('nitin')}
-                                                    value={brandCoupon.coupon.isActive}
-                                                >
-                                                    Publish
-                                                </Form.Toggle>
-                                            </Form.Group></Card3>
-                                        <Card4><DeleteIcon /></Card4>
-                                    </CardContext>
-                                    <CouponStripCard /> */}
                                 </CouponCard>
                             ))}
                         </DragNDrop>
