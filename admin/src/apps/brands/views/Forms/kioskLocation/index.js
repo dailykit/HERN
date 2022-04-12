@@ -300,8 +300,17 @@ export const KioskLocation = () => {
                            _set: { isActive: !kiosk[0].isActive || false },
                         },
                      })
+                  }
+                  if (title.accessUrl && kiosk[0]?.printerId) {
+                     toast.error('Location not set')
+                  }
+                  if (kiosk[0]?.printerId && kiosk[0]?.location?.id) {
+                     toast.error('Access URL not set')
+                  }
+                  if (title.accessUrl && kiosk[0]?.location?.id) {
+                     toast.error('Printer not set')
                   } else {
-                     window.confirm('Access URL or Printer or Location not set')
+                     toast.error('Access URL or Printer or Location not set')
                   }
                }}
                style={{ marginTop: '24px' }}
