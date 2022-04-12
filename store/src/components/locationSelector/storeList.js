@@ -118,6 +118,7 @@ export const StoreList = props => {
                         address: customerAddress,
                         locationId: firstStoreOfSortedBrandLocation.location.id,
                         orderTabId: selectedOrderTab.id,
+                        fulfillmentInfo: null,
                      },
                   },
                })
@@ -150,7 +151,7 @@ export const StoreList = props => {
             if (
                localStorage.getItem('storeLocationId') &&
                JSON.parse(localStorage.getItem('storeLocationId')) !==
-               firstStoreOfSortedBrandLocation.location.id
+                  firstStoreOfSortedBrandLocation.location.id
             ) {
                const lastStoreLocationId = JSON.parse(
                   localStorage.getItem('storeLocationId')
@@ -246,7 +247,9 @@ export const StoreList = props => {
       <div className="hern-location-selector__stores-list">
          {showStoresOnMap.value && (
             <div className="hern-location-selector__view-on-map">
-               <span onClick={() => setShowStoreOnMap(true)}>{t('View on map')}</span>
+               <span onClick={() => setShowStoreOnMap(true)}>
+                  {t('View on map')}
+               </span>
             </div>
          )}
          <RefineLocationPopup
@@ -290,7 +293,7 @@ export const StoreList = props => {
                      {
                         'hern-store-location-selector__each-store--disabled':
                            disabledLocationDisplayStyle.value?.value ===
-                           'disabled' &&
+                              'disabled' &&
                            !eachStore['fulfillmentStatus'].status,
                      }
                   )}
@@ -399,10 +402,10 @@ export const StoreList = props => {
                   {cardSelectionStyle.value?.value === 'radio' &&
                      (storeDistanceValidation
                         ? !(
-                           disabledLocationDisplayStyle.value?.value ===
-                           'disabled' &&
-                           !eachStore['fulfillmentStatus'].status
-                        )
+                             disabledLocationDisplayStyle.value?.value ===
+                                'disabled' &&
+                             !eachStore['fulfillmentStatus'].status
+                          )
                         : true) && (
                         <RadioIcon
                            size={18}

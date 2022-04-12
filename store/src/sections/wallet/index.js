@@ -19,13 +19,12 @@ const Content = () => {
    const { configOf } = useConfig()
    const { t, dynamicTrans, locale } = useTranslation()
    const theme = configOf('theme-color', 'Visual')
-   const { isAvailable = false, label = 'Wallet' } = configOf(
+   const { value:isAvailable = false, label = 'Wallet' } = configOf(
       'Wallet',
       'rewards'
-   )
+   ).Wallet.isWalletAvailable
 
    const currentLang = React.useMemo(() => locale, [locale])
-
    React.useEffect(() => {
       const languageTags = document.querySelectorAll(
          '[data-translation="true"]'
@@ -49,9 +48,10 @@ const Content = () => {
          {isAvailable && !!user.wallet && (
             <>
                <Form.Label>{t('Balance')}</Form.Label>
-               {formatCurrency(user.wallet.amount)}
+               &nbsp;&nbsp;&nbsp;{formatCurrency(user.wallet.amount)}
                <Spacer />
                <Form.Label>{t('Transactions')}</Form.Label>
+               {user.wallet.walletTransactions.length>0 ?
                <table className="hern-wallet__table">
                   <thead>
                      <tr>
@@ -84,7 +84,9 @@ const Content = () => {
                         </tr>
                      ))}
                   </tbody>
-               </table>
+               </table> :
+               <p class="hern-wallet__no_txn">No transactions available</p>
+               }
             </>
          )}
       </section>
