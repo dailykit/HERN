@@ -3,7 +3,7 @@ import React from 'react'
 export const EmptyStore = () => {
    return (
       <svg
-         width="400"
+         width="auto"
          height="301"
          viewBox="0 0 400 301"
          fill="none"
