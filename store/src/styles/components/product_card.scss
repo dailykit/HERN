@@ -10,6 +10,7 @@
    @media (max-width: 479px) {
       display: flex;
       gap: 16px;
+      align-items: flex-end;
    }
 }
 
@@ -166,7 +167,7 @@
    right: 1em;
    align-items: center;
    @media (max-width: 479px) {
-      align-items: flex-end;
+      align-items: flex-start;
    }
    // margin-left: 2.5em;
 }
