@@ -1,13 +1,11 @@
 import React from 'react'
-import { Carousel } from 'antd'
+import classNames from 'classnames'
 import { Slide } from 'react-slideshow-image'
 import 'react-slideshow-image/dist/styles.css'
-import { formatCurrency, isClient } from '../utils'
-import { ModifierPopup } from './index'
-import classNames from 'classnames'
-import { EditIcon } from '../assets/icons'
 import { useTranslation } from '../context'
+import { formatCurrency, isClient } from '../utils'
 import { HernLazyImage } from '../utils/hernImage'
+import { ModifierPopup } from './index'
 // if (isClient) {
 //    import('lazysizes/plugins/unveilhooks/ls.unveilhooks').then(module => module)
 // }

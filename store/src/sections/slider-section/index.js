@@ -1,9 +1,9 @@
 import React from 'react'
-import Carousel from 'antd/lib/carousel'
+import { Carousel } from 'antd'
+import dynamic from 'next/dynamic'
 import { ArrowLeftIcon, ArrowRightIcon } from '../../assets/icons'
 // import { HernLazyImage } from '../../utils/hernImage'
 import { isClient } from '../../utils'
-import dynamic from 'next/dynamic'
 
 const HernLazyImage = dynamic(() =>
    import('../../utils/hernImage').then(promise => promise.HernLazyImage)
