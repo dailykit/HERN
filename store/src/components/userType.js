@@ -45,9 +45,9 @@ export const UserType = () => {
                            payload: 'guest',
                         })
                      }}
-                  >
                      style={{ color: themeColor }}
-                     className= "hern-user-type__guest" Continue as Guest
+                  >
+                     Continue as Guest
                   </span>
                </>
             )}
