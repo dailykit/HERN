@@ -96,7 +96,7 @@ const SEOBasics = ({ update, domain, product }) => {
     }
     const [seoDetails, { loading: metaDetailsLoading, productSettings }] =
         useLazyQuery(PRODUCT.PRODUCT_PAGE_SETTINGS, {
-            onCompleted: ({ products_productPageSetting: productSettings
+            onCompleted: ({ products_productSetting: productSettings
             }) => {
                 if (!isEmpty(productSettings)) {
                     const { product, id } = productSettings[0]
