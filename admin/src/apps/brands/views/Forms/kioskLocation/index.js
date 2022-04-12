@@ -127,7 +127,7 @@ export const KioskLocation = () => {
       }
    }
 
-   if (loading && loading1) return <InlineLoader />
+   if (loading || loading1) return <InlineLoader />
    if (error) {
       toast.error('Something went wrong!')
       logger(error)

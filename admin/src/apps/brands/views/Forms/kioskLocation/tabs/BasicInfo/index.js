@@ -3,15 +3,7 @@ import { isEmpty } from 'lodash'
 import { toast } from 'react-toastify'
 import { useParams } from 'react-router-dom'
 import { useMutation, useSubscription } from '@apollo/react-hooks'
-import {
-   Flex,
-   Text,
-   Spacer,
-   Form,
-   Dropdown,
-   ButtonGroup,
-   TextButton,
-} from '@dailykit/ui'
+import { Flex, Text, Spacer, Form, Dropdown, ButtonGroup } from '@dailykit/ui'
 import { CopyIcon } from '../../../../../../editor/assets/Icons'
 import validator from '../validator'
 import { KIOSK } from '../../../../../graphql'
@@ -263,7 +255,10 @@ export const BasicInfo = () => {
          },
       })
    }
-   if (loading && loading1 && loading2) return <InlineLoader />
+   if (loading || loading1 || loading2) {
+      console.log('loadings::', loading, loading1)
+      return <InlineLoader />
+   }
    return (
       <div>
          <Flex padding="16px">

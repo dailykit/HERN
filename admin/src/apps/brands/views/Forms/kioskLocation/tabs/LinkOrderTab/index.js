@@ -301,7 +301,8 @@ export const LinkOrderTab = () => {
       }
    }
 
-   // const renderHead = () => {
+   if (loading) return <InlineLoader />
+
    return (
       <div>
          <Flex padding="16px">
