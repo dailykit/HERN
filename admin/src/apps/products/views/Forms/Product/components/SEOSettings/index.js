@@ -20,14 +20,15 @@ const SEOSettings = ({ data }) => {
       },
    })
 
-   console.log(data, "🎁🎀🎄🎋🎍🎎")
+
    const update = ({ id, value }) => {
+      console.log(id, value, "id,value", data?.id)
       updateSetting({
          variables: {
             object: {
                value,
                productId: data?.id,
-               productPageSettingId: id,
+               productSettingId: id,
             },
          },
       })
