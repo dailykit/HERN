@@ -8,6 +8,7 @@ import { useTranslation, useUser } from '../../context'
 import { get_env } from '../../utils'
 import { Spacer, ProfileSidebar, Form, Button, Loader } from '../../components'
 import { CUSTOMERS_REFERRED } from '../../graphql'
+import { isEmpty } from 'lodash'
 
 export const Referrals = () => {
    return (
@@ -104,15 +105,30 @@ const Content = () => {
                               <td
                                  className="hern-referrals__table__cell"
                                  data-translation="true"
+                                 colSpan={
+                                    isEmpty(
+                                       ref.customer.platform_customer.lastName
+                                    )
+                                       ? 2
+                                       : 1
+                                 }
                               >
-                                 {ref.customer.platform_customer.firstName}
+                                 {!isEmpty(
+                                    ref.customer.platform_customer.firstName
+                                 )
+                                    ? ref.customer.platform_customer.firstName
+                                    : '(unnamed)'}
                               </td>
-                              <td
-                                 className="hern-referrals__table__cell"
-                                 data-translation="true"
-                              >
-                                 {ref.customer.platform_customer.lastName}
-                              </td>
+                              {!isEmpty(
+                                 ref.customer.platform_customer.lastName
+                              ) && (
+                                 <td
+                                    className="hern-referrals__table__cell"
+                                    data-translation="true"
+                                 >
+                                    {ref.customer.platform_customer.lastName}
+                                 </td>
+                              )}
                            </tr>
                         ))}
                      </tbody>
