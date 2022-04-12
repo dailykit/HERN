@@ -140,6 +140,7 @@ const RefineLocation = props => {
                   address: customerAddress,
                   locationId: selectedStore.location.id,
                   orderTabId: selectedOrderTab.id,
+                  fulfillmentInfo: null,
                },
             },
          })
