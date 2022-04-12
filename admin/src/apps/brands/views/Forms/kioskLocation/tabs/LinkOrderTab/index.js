@@ -126,7 +126,8 @@ export const LinkOrderTab = () => {
             }
          })
          console.log('formatted data-->', dataExtracted)
-         setTitle(previousData => [...previousData, ...dataExtracted])
+         // setTitle(previousData => [...previousData, ...dataExtracted])
+         setTitle(dataExtracted)
       },
    })
    console.log('new tittle', title, title[0]?.orderTabId)
@@ -277,7 +278,7 @@ export const LinkOrderTab = () => {
 
    const [deleteKioskOrderTab] = useMutation(KIOSK.DELETE_KIOSK_ORDER_TAB, {
       onCompleted: () => {
-         toast.success('Option deleted!')
+         toast.success('Order Tab deleted!')
       },
       onError: error => {
          toast.error('Something went wrong!')

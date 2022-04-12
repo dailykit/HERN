@@ -127,7 +127,7 @@ export const KioskLocation = () => {
       }
    }
 
-   if (loading) return <InlineLoader />
+   if (loading && loading1) return <InlineLoader />
    if (error) {
       toast.error('Something went wrong!')
       logger(error)
@@ -264,7 +264,7 @@ export const KioskLocation = () => {
                                  })
                               }
                               placeholder="Enter brand domain"
-                              addOption={() => console.log('brand ADDED')}
+                              addOption={() => console.log('Brand Added')}
                            />
                         </div>
                      </div>
@@ -288,14 +288,22 @@ export const KioskLocation = () => {
             <Form.Toggle
                name="Active"
                value={kiosk[0]?.isActive}
-               onChange={() =>
-                  update({
-                     variables: {
-                        id: params.id,
-                        _set: { isActive: !kiosk[0].isActive || false },
-                     },
-                  })
-               }
+               onChange={() => {
+                  if (
+                     title.accessUrl &&
+                     kiosk[0]?.printerId &&
+                     kiosk[0]?.location?.id
+                  ) {
+                     update({
+                        variables: {
+                           id: params.id,
+                           _set: { isActive: !kiosk[0].isActive || false },
+                        },
+                     })
+                  } else {
+                     window.confirm('Access URL or Printer or Location not set')
+                  }
+               }}
                style={{ marginTop: '24px' }}
             >
                <Flex container alignItems="center">

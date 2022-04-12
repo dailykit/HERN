@@ -37,7 +37,7 @@ export const KioskLocations = () => {
 
    const [deleteKiosk] = useMutation(KIOSK.UPDATE_KIOSK, {
       onCompleted: () => {
-         toast.success('KIOSK deleted!')
+         toast.success('KIOSK inActive!')
       },
       onError: error => {
          console.log(error)
@@ -173,6 +173,7 @@ export const KioskLocations = () => {
       toast.error('Something went wrong!')
       logger(error)
    }
+
    if (listLoading) return <InlineLoader />
    return (
       <StyledWrapper>
