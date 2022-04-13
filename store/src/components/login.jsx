@@ -1021,20 +1021,6 @@ const Signup = props => {
                   ...(callbackURL && { callbackUrl: callbackURL }),
                })
                if (response?.status === 200) {
-                  const session = await getSession()
-                  const storedCode = getStoredReferralCode(null)
-                  if (storedCode && session?.user?.id) {
-                     await applyReferralCode({
-                        variables: {
-                           brandId: brand.id,
-                           keycloakId: session?.user?.id,
-                           _set: {
-                              referredByCode: storedCode,
-                           },
-                        },
-                     })
-                  }
-
                   addToast(t('Login successfully!'), { appearance: 'success' })
                   if (isClient) {
                      const landedOn = localStorage.getItem('landed_on')
@@ -1198,7 +1184,7 @@ const Signup = props => {
 
          const url = `${get_env('BASE_BRAND_URL')}/api/hash`
          const { data } = await axios.post(url, { password: form.password })
-
+            
          if (data?.success && data?.hash) {
             // fb pixel integration after successfull registration
             ReactPixel.trackCustom('signup', {
