@@ -51,6 +51,14 @@ export const CartProvider = ({ children }) => {
    const [storedCartId, setStoredCartId] = useState(null)
    const [combinedCartItems, setCombinedCartData] = useState(null)
    const [showCartIconToolTip, setShowCartIconToolTip] = useState(false)
+   const [windowLoad, setWindowLoad] = React.useState(true)
+   useEffect(() => {
+      if (isClient) {
+         window.onload = function () {
+            setWindowLoad(false)
+         }
+      }
+   }, [])
    React.useEffect(() => {
       const cartId = localStorage.getItem('cart-id')
       if (cartId) {
@@ -68,7 +76,7 @@ export const CartProvider = ({ children }) => {
       error: getInitialCart,
       data: cartData = {},
    } = useSubscription(GET_CART, {
-      skip: !storedCartId,
+      skip: windowLoad || !storedCartId,
       variables: {
          where: {
             id: {
@@ -95,7 +103,7 @@ export const CartProvider = ({ children }) => {
       loading: cartItemsLoading,
       error: cartItemsError,
       data: cartItemsData,
-   } = useSubscription(GET_CART_ITEMS_BY_CART, {
+   } = useSubscription(windowLoad || GET_CART_ITEMS_BY_CART, {
       skip: !storedCartId,
       variables: {
          where: {
@@ -436,7 +444,9 @@ export const CartProvider = ({ children }) => {
                },
             },
          },
-         skip: !(brand?.id && user?.keycloakId && orderTabs.length > 0),
+         skip:
+            !(brand?.id && user?.keycloakId && orderTabs.length > 0) ||
+            windowLoad,
          fetchPolicy: 'no-cache',
          onSubscriptionData: ({ subscriptionData }) => {
             console.log('subscriptionData', subscriptionData)

@@ -6,7 +6,6 @@ import { useConfig } from '../../../lib'
 import { BRAND_LOCATIONS, LOCATION_KIOSK } from '../../../graphql'
 import { getSettings, isClient } from '../../../utils'
 import { useQuery } from '@apollo/react-hooks'
-import 'antd/dist/antd.css'
 
 const KioskScreen = props => {
    const { kioskId, kioskDetails, settings } = props

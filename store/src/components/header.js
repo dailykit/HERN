@@ -22,7 +22,6 @@ import classNames from 'classnames'
 import { useConfig } from '../lib'
 import isNull from 'lodash/isNull'
 import dynamic from 'next/dynamic'
-import 'antd/dist/antd.css'
 
 const LocationSelectorWrapper = dynamic(() =>
    import('../utils/locationSelectorWrapper').then(

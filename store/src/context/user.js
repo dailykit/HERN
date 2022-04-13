@@ -171,18 +171,20 @@ export const UserProvider = ({ children }) => {
 
    React.useEffect(() => {
       if (!loadingSession) {
-         if (session?.user?.id) {
-            //login
-            setKeycloakId(session?.user?.id)
-            dispatch({
-               type: 'SET_USER',
-               payload: { keycloakId: session?.user?.id },
-            })
-            setIsLoading(false)
-         } else {
-            //logout
-            dispatch({ type: 'CLEAR_USER' })
-            setIsLoading(false)
+         window.onload = function () {
+            if (session?.user?.id) {
+               //login
+               setKeycloakId(session?.user?.id)
+               dispatch({
+                  type: 'SET_USER',
+                  payload: { keycloakId: session?.user?.id },
+               })
+               setIsLoading(false)
+            } else {
+               //logout
+               dispatch({ type: 'CLEAR_USER' })
+               setIsLoading(false)
+            }
          }
       }
    }, [session, loadingSession])
