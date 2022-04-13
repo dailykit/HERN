@@ -18,6 +18,14 @@ export const ProductGallery = ({ config }) => {
    )
    const [status, setStatus] = React.useState('loading')
    const { brand, locationId } = useConfig()
+   const [windowLoad, setWindowLoad] = React.useState(true)
+   useEffect(() => {
+      if (isClient) {
+         window.onload = function () {
+            setWindowLoad(prev => !prev)
+         }
+      }
+   }, [isClient])
    const argsForByLocation = React.useMemo(
       () => ({
          params: {
@@ -25,11 +33,12 @@ export const ProductGallery = ({ config }) => {
             locationId: locationId,
          },
       }),
-      [brand]
+      [brand, location]
    )
    const { loading: productsLoading, error: productsError } = useQuery(
       PRODUCTS,
       {
+         skip: windowLoad,
          variables: {
             ids: config.data.products.value,
             priceArgs: argsForByLocation,

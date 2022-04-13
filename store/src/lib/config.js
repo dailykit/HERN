@@ -82,9 +82,16 @@ export const ConfigProvider = ({ children }) => {
 
    const [showLocationSelectorPopup, setShowLocationSelectionPopup] =
       React.useState(false)
-
+   const [windowLoad, setWindowLoad] = React.useState(true)
+   useEffect(() => {
+      if (isClient) {
+         window.onload = function () {
+            setWindowLoad(prev => !prev)
+         }
+      }
+   }, [isClient])
    useQuery(ORDER_TAB, {
-      skip: isLoading || !orderInterfaceType,
+      skip: windowLoad || isLoading || !orderInterfaceType,
       variables: {
          where: {
             isActive: { _eq: true },
