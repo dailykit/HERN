@@ -13,7 +13,7 @@ import {
 import { useUser } from '.'
 import { useConfig } from '../lib'
 import { useToasts } from 'react-toast-notifications'
-import { combineCartItems, useQueryParamState } from '../utils'
+import { combineCartItems, useQueryParamState, isClient } from '../utils'
 import { useTranslation } from './language'
 
 export const CartContext = React.createContext()
