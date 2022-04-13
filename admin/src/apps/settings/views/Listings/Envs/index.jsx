@@ -6,8 +6,9 @@ import { Text, Loader, Flex } from '@dailykit/ui'
 import { Input } from 'antd'
 import { ENVS } from '../../../graphql'
 import { CloseIcon } from '../../../../brands/assets/icons'
-import { Child, CollapsibleWrapper, Styles } from './styled'
+import { Child, CollapsibleWrapper, ResponsiveFlex, Styles } from './styled'
 import { SettingsCard } from './SettingsCard'
+import { Tooltip } from '../../../../../shared/components'
 
 const EnvsList = () => {
     const [allSettings, setAllSettings] = React.useState([])
@@ -27,7 +28,6 @@ const EnvsList = () => {
             } = {},
         }) => {
             setAllSettings(settings_env)
-
         },
     })
 
@@ -51,7 +51,13 @@ const EnvsList = () => {
     }
     console.log("saveAllSettings", saveAllSettings, "isChangeSaved", isChangeSaved, "mode", mode)
     return (
-        <>
+        <ResponsiveFlex maxWidth="1280px" margin="0 auto">
+            <Flex container alignItems="center" style={{ margin: '0px 0px 16px 16px' }}>
+                <Text as="h2" >
+                    Envs({allSettings.length || 0})
+                </Text>
+                <Tooltip identifier="products_list_heading" />
+            </Flex>
             <Styles.Wrapper>
                 {/* navigation bar */}
                 <Styles.SettingsWrapper>
@@ -181,7 +187,7 @@ const EnvsList = () => {
                     </Flex>
                 </Styles.SettingWrapper>
             </Styles.Wrapper>
-        </>
+        </ResponsiveFlex>
     )
 }
 export default EnvsList
