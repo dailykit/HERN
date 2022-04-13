@@ -393,14 +393,15 @@ export const Select = ({ fieldDetail, marginLeft, path, onConfigChange }) => {
          <Dropdown
             type={fieldDetail?.type || 'single'}
             options={searchResult}
-            defaultValue={
-               fieldDetail?.type === 'single' && fieldDetail?.value?.id
-            }
+            // defaultValue={
+            //    fieldDetail?.type === 'single' && fieldDetail?.value?.id
+            // }
             defaultOptions={fieldDetail?.value}
             searchedOption={option => setSearchOption(option)}
             selectedOption={option => selectedOptionHandler(option)}
             placeholder="type what you're looking for..."
          />
+
       </Flex>
    )
 }
