@@ -39,10 +39,10 @@ export const OnDemandMenuProvider = ({ children }) => {
    useEffect(() => {
       if (isClient) {
          window.onload = function () {
-            setWindowLoad(false)
+            setWindowLoad(prev => !prev)
          }
       }
-   }, [])
+   }, [isClient])
 
    useQuery(PRODUCTS_BY_CATEGORY, {
       skip: windowLoad || isConfigLoading || !brand?.id,
