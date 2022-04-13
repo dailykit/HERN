@@ -6,7 +6,7 @@ import classNames from 'classnames'
 import React, { useState } from 'react'
 import Countdown from 'react-countdown'
 import { signIn, getSession } from 'next-auth/client'
-import { getRoute, get_env, isClient } from '../utils'
+import { getRoute, get_env, isClient, useQueryParams } from '../utils'
 import PhoneInput, { isValidPhoneNumber } from 'react-phone-number-input'
 import 'react-phone-number-input/style.css'
 import { useToasts } from 'react-toast-notifications'
@@ -349,8 +349,26 @@ const OTPLogin = props => {
    const [resending, setResending] = React.useState(false)
    const [time, setTime] = React.useState(null)
    const [isNewUser, setIsNewUser] = React.useState(false)
+   const params = useQueryParams()
    const [isReferralFieldVisible, setIsReferralFieldVisible] =
       React.useState(false)
+   React.useEffect(() => {
+      if (params['invite-code']) {
+         const setInviteCode = async () => {
+            const isCodeValid = await isReferralCodeValid(
+               brand.id,
+               params['invite-code'],
+               true
+            )
+
+            if (isCodeValid) {
+               setIsReferralFieldVisible(true)
+               setForm({ ...form, code: params['invite-code'] })
+            }
+         }
+         setInviteCode()
+      }
+   }, [params])
 
    //check user already exist
    const [checkCustomerExistence] = useLazyQuery(PLATFORM_CUSTOMERS, {
@@ -1032,6 +1050,24 @@ const Signup = props => {
       phone: '',
       code: '',
    })
+   const params = useQueryParams()
+   React.useEffect(() => {
+      if (params['invite-code']) {
+         const setInviteCode = async () => {
+            const isCodeValid = await isReferralCodeValid(
+               brand.id,
+               params['invite-code'],
+               true
+            )
+
+            if (isCodeValid) {
+               setIsReferralFieldVisible(true)
+               setForm({ ...form, code: params['invite-code'] })
+            }
+         }
+         setInviteCode()
+      }
+   }, [params])
 
    const [checkCustomerExistence] = useLazyQuery(PLATFORM_CUSTOMERS, {
       onCompleted: ({ customers = [] }) => {
