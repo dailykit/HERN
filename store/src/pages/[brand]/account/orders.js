@@ -2,13 +2,13 @@ import React from 'react'
 import { useRouter } from 'next/router'
 
 import { useUser } from '../../../context'
-import { getPageProps, isClient, renderPageContent } from '../../../utils'
 import {
-   SEO,
-   Layout,
-   LoginWarning,
-   ExternalJSCSSFiles,
-} from '../../../components'
+   getPageProps,
+   isClient,
+   renderPageContent,
+   getRoute,
+} from '../../../utils'
+import { SEO, Layout, ExternalJSCSSFiles } from '../../../components'
 
 const OrdersPage = props => {
    const router = useRouter()
@@ -18,7 +18,7 @@ const OrdersPage = props => {
    React.useEffect(() => {
       if (!isAuthenticated && !isLoading) {
          isClient && localStorage.setItem('landed_on', location.href)
-         // router.push(getRoute('/get-started/register'))
+         router.push(getRoute('/login'))
       }
    }, [isAuthenticated, isLoading])
 
@@ -26,9 +26,7 @@ const OrdersPage = props => {
       <Layout settings={settings} navigationMenus={navigationMenus}>
          <SEO seoSettings={seoSettings} />
          <ExternalJSCSSFiles externalFiles={linkedFiles} />
-         {!isAuthenticated && !isLoading ? (
-            <LoginWarning />
-         ) : (
+         {isAuthenticated && !isLoading && (
             <main>{renderPageContent(folds)}</main>
          )}
       </Layout>

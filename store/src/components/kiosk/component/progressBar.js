@@ -1,8 +1,14 @@
 import { Steps } from 'antd'
 import React, { useEffect } from 'react'
-import { ArrowLeftIconBG, ArrowRightIconBG } from '../../../assets/icons'
+import {
+   ArrowLeftIconBG,
+   ArrowRightIconBG,
+   DineInIcon,
+   TakeOutIcon,
+} from '../../../assets/icons'
 import { CartContext, useTranslation } from '../../../context'
 import { useQueryParamState } from '../../../utils'
+import { useConfig } from '../../../lib'
 
 const { Step } = Steps
 
@@ -12,6 +18,7 @@ export const ProgressBar = props => {
    const { cartState } = React.useContext(CartContext)
    const { t, direction } = useTranslation()
    const { cart } = cartState
+   const { selectedOrderTab } = useConfig()
 
    const [current, setCurrent] = React.useState(0)
 
@@ -79,54 +86,94 @@ export const ProgressBar = props => {
       }
    }
    return (
-      <div style={{ display: 'flex', alignItems: 'center' }}>
-         {direction === 'ltr' ? (
-            <ArrowLeftIconBG
-               style={{ marginRight: '1em' }}
-               onClick={handleArrowClick}
-               bgColor={config.kioskSettings.theme.primaryColor.value}
-            />
-         ) : (
-            <ArrowRightIconBG
-               style={{ marginRight: '1em' }}
-               onClick={handleArrowClick}
-               bgColor={config.kioskSettings.theme.primaryColor.value}
-            />
-         )}
-         <Steps
-            current={current}
-            className={direction === 'rtl' && 'hern-kiosk__step-bar-rtl'}
+      <div
+         style={{
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center',
+         }}
+      >
+         <div
+            style={{
+               display: 'flex',
+               justifyContent: 'center',
+               alignItems: 'center',
+            }}
          >
-            {steps.map((item, index) => (
-               <Step
-                  key={item.title}
-                  title={t(item.title)}
-                  style={{
-                     color: `${config.kioskSettings.theme.primaryColor.value}`,
-                  }}
-                  onClick={() => {
-                     if (index < current) {
-                        if (index === 0) {
-                           setCurrentPage('menuPage')
-                        }
-                        if (index === 1) {
-                           setCurrentPage('cartPage')
-                        }
-                        if (index === 2) {
-                           setCurrentPage('paymentPage')
-                        }
-                     }
-                  }}
-                  icon={
-                     <StepCount
-                        step={index + 1}
-                        isFinish={index < current}
-                        isCurrent={index == current}
-                     />
-                  }
+            {selectedOrderTab?.orderFulfillmentTypeLabel ===
+               'ONDEMAND_PICKUP' && (
+               <TakeOutIcon
+                  width={50}
+                  height={50}
+                  fill={config.kioskSettings.theme.primaryColor.value}
                />
-            ))}
-         </Steps>
+            )}
+            {selectedOrderTab?.orderFulfillmentTypeLabel ===
+               'ONDEMAND_DINEIN' && (
+               <DineInIcon
+                  width={50}
+                  height={50}
+                  fill={config.kioskSettings.theme.primaryColor.value}
+               />
+            )}
+            <span
+               className="hern-kiosk__header-fulfillment-info-label"
+               style={{
+                  color: config.kioskSettings.theme.primaryColor.value,
+               }}
+            >
+               {selectedOrderTab?.label}
+            </span>
+         </div>
+         <div style={{ display: 'flex', alignItems: 'center' }}>
+            {direction === 'ltr' ? (
+               <ArrowLeftIconBG
+                  style={{ marginRight: '1em' }}
+                  onClick={handleArrowClick}
+                  bgColor={config.kioskSettings.theme.primaryColor.value}
+               />
+            ) : (
+               <ArrowRightIconBG
+                  style={{ marginRight: '1em' }}
+                  onClick={handleArrowClick}
+                  bgColor={config.kioskSettings.theme.primaryColor.value}
+               />
+            )}
+            <Steps
+               current={current}
+               className={direction === 'rtl' && 'hern-kiosk__step-bar-rtl'}
+            >
+               {steps.map((item, index) => (
+                  <Step
+                     key={item.title}
+                     title={t(item.title)}
+                     style={{
+                        color: `${config.kioskSettings.theme.primaryColor.value}`,
+                     }}
+                     onClick={() => {
+                        if (index < current) {
+                           if (index === 0) {
+                              setCurrentPage('menuPage')
+                           }
+                           if (index === 1) {
+                              setCurrentPage('cartPage')
+                           }
+                           if (index === 2) {
+                              setCurrentPage('paymentPage')
+                           }
+                        }
+                     }}
+                     icon={
+                        <StepCount
+                           step={index + 1}
+                           isFinish={index < current}
+                           isCurrent={index == current}
+                        />
+                     }
+                  />
+               ))}
+            </Steps>
+         </div>
       </div>
    )
 }

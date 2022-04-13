@@ -13,7 +13,7 @@ import { CREATE_CAMPAIGNS } from '../../../apps/crm/graphql/mutations'
 import { Tooltip } from '../../components'
 import { useTabs } from '../../providers'
 import validator from '../validator'
-const CreateCampaign = ({ closeTunnel }) => {
+const CreateCampaign = ({ close }) => {
    const { addTab, tab } = useTabs()
    const [click, setClick] = React.useState(null)
    const [campaignType, setCampaignType] = React.useState('sign up')
@@ -62,7 +62,7 @@ const CreateCampaign = ({ closeTunnel }) => {
             },
          ])
          toast.success('Successfully created the Campaign!')
-         closeTunnel(16)
+         closeTunnel(1)
       },
       onError: () =>
          toast.success('Failed to create the Campaign, please try again!'),
@@ -114,7 +114,7 @@ const CreateCampaign = ({ closeTunnel }) => {
       }
       return toast.error('Campaign Name is required!')
    }
-   const close = () => {
+   const closeTunnel = () => {
       setCampaign([
          {
             campaignName: {
@@ -127,7 +127,7 @@ const CreateCampaign = ({ closeTunnel }) => {
             },
          },
       ])
-      closeTunnel(16)
+      close(1)
    }
 
    return (
@@ -152,7 +152,7 @@ const CreateCampaign = ({ closeTunnel }) => {
                         : 'Save & Open',
                },
             ]}
-            close={close}
+            close={closeTunnel}
             tooltip={<Tooltip identifier="create_campaign_tunnelHeader" />}
          />
          <Flex padding="16px">

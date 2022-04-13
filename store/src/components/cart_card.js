@@ -299,6 +299,7 @@ const CartCard = props => {
       setModifyProduct(null)
       setModifyProductId(null)
       setShowModifier(false)
+      setModifierType(null)
    }
 
    useEffect(() => {
@@ -324,7 +325,6 @@ const CartCard = props => {
                      <div style={{ display: 'flex', gap: '12px' }}>
                         <span
                            data-translation="true"
-                           data-original-value={productData.name}
                            className="hern-cart-card__title"
                         >
                            {productData.name}
@@ -350,13 +350,7 @@ const CartCard = props => {
                      {showAdditionalDetailsOnCard && (
                         <div className="hern-cart-card-modifiers">
                            <div className="hern-cart-card-modifiers__product-option">
-                              <span
-                                 data-translation="true"
-                                 data-original-value={
-                                    productData.childs[0].productOption.label ||
-                                    'N/A'
-                                 }
-                              >
+                              <span data-translation="true">
                                  {productData.childs[0].productOption.label ||
                                     'N/A'}
                               </span>{' '}
@@ -404,14 +398,7 @@ const CartCard = props => {
                                                       className="hern-cart-card-modifiers__list__parent"
                                                    >
                                                       <div className="hern-cart-card-modifiers__list__details">
-                                                         <span
-                                                            data-translation="true"
-                                                            data-original-value={
-                                                               modifier
-                                                                  .modifierOption
-                                                                  .name
-                                                            }
-                                                         >
+                                                         <span data-translation="true">
                                                             {
                                                                modifier
                                                                   .modifierOption
@@ -467,14 +454,7 @@ const CartCard = props => {
                                                                            index
                                                                         }
                                                                      >
-                                                                        <span
-                                                                           data-translation="true"
-                                                                           data-original-value={
-                                                                              eachNestedModifier
-                                                                                 .modifierOption
-                                                                                 .name
-                                                                           }
-                                                                        >
+                                                                        <span data-translation="true">
                                                                            {
                                                                               eachNestedModifier
                                                                                  .modifierOption
@@ -569,6 +549,7 @@ const CartCard = props => {
                         productData.ids[productData.ids.length - 1],
                      ])
                   }
+                  showDeleteButton
                />
                <div className="hern-cart-card__price">
                   {getTotalPrice.totalDiscount > 0 && (
@@ -589,8 +570,11 @@ const CartCard = props => {
          </div>
          {modifyProduct && showModifier && (
             <ModifierPopup
+               forNewItem={Boolean(modifierType === 'newItem')}
+               edit={Boolean(modifierType === 'edit')}
                productData={modifyProduct}
                closeModifier={onCloseModifier}
+               productCartDetail={cartDetailSelectedProduct}
             />
          )}
          <Modal

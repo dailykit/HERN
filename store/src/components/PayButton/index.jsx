@@ -83,14 +83,14 @@ function PayButton({
             !isEmpty(cartValidity) &&
             cartValidity.status
          ) {
-            initializePayment(cartId)
             // setIsProcessingPayment(true)
             // setIsPaymentInitiated(true)
             // updatePaymentState({
             //    paymentLifeCycleState: 'INCREMENT_PAYMENT_RETRY_ATTEMPT',
             // })
+            initializePayment(cartId)
 
-            updateCart({
+            await updateCart({
                variables: {
                   id: cartId,
                   _inc: { paymentRetryAttempt: 1 },

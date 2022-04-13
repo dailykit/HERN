@@ -93,7 +93,7 @@ export const PaymentProvider = ({ children }) => {
    const [isProcessingPayment, setIsProcessingPayment] = useState(false)
    const [isPaymentInitiated, setIsPaymentInitiated] = useState(false)
    const { user, isAuthenticated, isLoading } = useUser()
-   const { brand, kioskDetails, settings, selectedOrderTab } = useConfig()
+   const { kioskDetails, settings, selectedOrderTab, configOf } = useConfig()
    const { displayRazorpay } = useRazorPay()
    const { displayPaytm } = usePaytm()
    const {
@@ -107,7 +107,8 @@ export const PaymentProvider = ({ children }) => {
 
    const BY_PASS_TERMINAL_PAYMENT = get_env('BY_PASS_TERMINAL_PAYMENT')
    const ALLOW_POSIST_PUSH_ORDER = get_env('ALLOW_POSIST_PUSH_ORDER')
-
+   const brand = configOf('Brand Info', 'brand')
+   const theme = configOf('theme-color', 'Visual')?.themeColor
    // subscription to get cart payment info
    const {
       data: { cartPayments: cartPaymentsFromQuery = [] } = {},
@@ -219,6 +220,8 @@ export const PaymentProvider = ({ children }) => {
                id: cartPayment?.id,
                _set: {
                   paymentStatus: 'CANCELLED',
+                  comment:
+                     'Cancelled by user using back button or dismiss modal',
                },
                _inc: {
                   cancelAttempt: 1,
@@ -248,6 +251,8 @@ export const PaymentProvider = ({ children }) => {
          type: 'UPDATE_INITIAL_STATE',
          payload: {
             isPaymentProcessing: false,
+            isPaymentInitiated: false,
+            paymentLifeCycleState: '',
          },
       })
       const url = isClient ? get_env('BASE_BRAND_URL') : ''
@@ -258,14 +263,17 @@ export const PaymentProvider = ({ children }) => {
       console.log('result', data)
    }
 
-   const initializePayment = requiredCartId => {
+   const initializePayment = (
+      requiredCartId,
+      paymentLifeCycleState = 'INITIALIZE'
+   ) => {
       setCartId(requiredCartId)
       setIsPaymentInitiated(true)
       setIsProcessingPayment(true)
       dispatch({
          type: 'UPDATE_INITIAL_STATE',
          payload: {
-            paymentLifeCycleState: 'INITIALIZE',
+            paymentLifeCycleState,
          },
       })
    }
@@ -284,9 +292,8 @@ export const PaymentProvider = ({ children }) => {
          },
       })
       if (!isEmpty(settings) && isClient) {
-         const path = settings['printing'].find(
-            item => item?.identifier === 'KioskCustomerTokenTemplate'
-         )?.value?.path?.value
+         const path =
+            settings['printing']?.['KioskCustomerTokenTemplate']?.path?.value
          const DATA_HUB_HTTPS = get_env('DATA_HUB_HTTPS')
          const { origin } = new URL(DATA_HUB_HTTPS)
          const templateOptions = encodeURI(
@@ -393,8 +400,19 @@ export const PaymentProvider = ({ children }) => {
 
    // setting cartPayment in state
    useEffect(() => {
+      console.log('useEffect for setting cartPayment')
+      if (!cartId) {
+         setCartId(cartState?.cart?.id || null)
+      }
       if (!isEmpty(cartPaymentsFromQuery)) {
          setCartPayment(cartPaymentsFromQuery[0])
+         setCartId(cartPaymentsFromQuery[0].cartId)
+         setIsPaymentInitiated(true)
+         setIsProcessingPayment(true)
+      } else {
+         setCartPayment(null)
+         setIsPaymentInitiated(false)
+         setIsProcessingPayment(false)
       }
    }, [cartPaymentsFromQuery])
 
@@ -492,7 +510,6 @@ export const PaymentProvider = ({ children }) => {
       if (
          isPaymentInitiated &&
          !_isEmpty(cartPayment) &&
-         // !_isEmpty(cartPayment?.transactionRemark) &&
          _has(
             cartPayment,
             'availablePaymentOption.supportedPaymentOption.supportedPaymentCompany.label'
@@ -508,17 +525,24 @@ export const PaymentProvider = ({ children }) => {
          ) {
             console.log('inside payment provider useEffect 1', cartPayment)
 
-            if (cartPayment.paymentStatus === 'CREATED') {
+            if (
+               cartPayment.paymentStatus === 'CREATED' &&
+               !_isEmpty(cartPayment?.stripeInvoiceId)
+            ) {
                ;(async () => {
                   const options = getRazorpayOptions({
                      orderDetails: cartPayment.transactionRemark,
-                     paymentInfo: state.paymentInfo,
-                     profileInfo: state.profileInfo,
+                     brand,
+                     theme,
+                     paymentInfo: cartPayment.availablePaymentOption,
+                     profileInfo: cartPayment.cart.customerInfo,
                      ondismissHandler: () => onCancelledHandler(),
                      eventHandler,
                   })
                   console.log('options', options)
-                  await displayRazorpay(options)
+                  if (state.paymentLifeCycleState === 'INITIALIZE') {
+                     await displayRazorpay(options)
+                  }
                })()
             }
          } else if (
@@ -549,7 +573,6 @@ export const PaymentProvider = ({ children }) => {
       }
    }, [
       cartPayment?.paymentStatus,
-      cartPayment?.transactionRemark,
       cartPayment?.transactionId,
       cartPayment?.stripeInvoiceId,
       cartPayment?.actionUrl,

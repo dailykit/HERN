@@ -1,7 +1,7 @@
 import React from 'react'
 
 import { useConfig } from '../../lib'
-import { useUser } from '../../context'
+import { useTranslation, useUser } from '../../context'
 import { ProfileSidebar, Form } from '../../components'
 import * as moment from 'moment'
 
@@ -17,16 +17,23 @@ export const LoyaltyPoints = () => {
 const Content = () => {
    const { user } = useUser()
    const { configOf, settings } = useConfig()
-
+   const { t, dynamicTrans, locale } = useTranslation()
    const theme = configOf('theme-color', 'Visual')
-   const { isAvailable = false, label = 'Loyalty Points' } = configOf(
-      'Loyalty Points',
-      'rewards'
-   )
-   const isLoyaltyPointsAvailable =
-      settings?.rewards?.find(
-         setting => setting?.['Loyalty Points Availability']
-      )?.value?.['Loyalty Points']?.IsLoyaltyPointsAvailable?.value ?? true
+
+   const loyaltyPointConfig = configOf('Loyalty Points ', 'rewards')
+   const isLoyaltyPointsAvailable = React.useMemo(() => {
+      return loyaltyPointConfig?.['Loyalty Points']?.IsLoyaltyPointsAvailable
+         ?.value
+   }, [loyaltyPointConfig])
+
+   const currentLang = React.useMemo(() => locale, [locale])
+
+   React.useEffect(() => {
+      const languageTags = document.querySelectorAll(
+         '[data-translation="true"]'
+      )
+      dynamicTrans(languageTags)
+   }, [currentLang])
 
    return (
       <section className="hern-account-loyalty-points">
@@ -37,23 +44,23 @@ const Content = () => {
                   color: `${theme.accent ? theme.accent : 'rgba(5,150,105,1)'}`,
                }}
             >
-               {label}
+               <span data-translation="true">{t('Loyalty Points')}</span>
             </h2>
          </header>
          {isLoyaltyPointsAvailable && !!user.loyaltyPoint ? (
             <>
                <div>
-                  <Form.Label>Balance </Form.Label>
+                  <Form.Label>{t('Balance')} </Form.Label>
                   {user.loyaltyPoint.points}
                </div>
-               <Form.Label>Transactions</Form.Label>
+               <Form.Label>{t('Transactions')}</Form.Label>
                <table className="hern-account-loyalty-points__table">
                   <thead>
                      <tr>
-                        <th>ID</th>
-                        <th>Type</th>
-                        <th>Points</th>
-                        <th>Created At</th>
+                        <th>{t('ID')}</th>
+                        <th>{t('Type')}</th>
+                        <th>{t('Points')}</th>
+                        <th>{t('Created At')}</th>
                      </tr>
                   </thead>
                   <tbody>
@@ -81,7 +88,8 @@ const Content = () => {
                         ))
                      ) : (
                         <div style={{ textAlign: 'center', color: 'gray' }}>
-                           (not available)
+                           <span>(</span> {t('not available')}
+                           <span>)</span>
                         </div>
                      )}
                   </tbody>
@@ -89,7 +97,7 @@ const Content = () => {
             </>
          ) : (
             <div style={{ textAlign: 'center', color: 'gray' }}>
-               Loyalty points not available
+               {t('Loyalty points not available')}
             </div>
          )}
       </section>

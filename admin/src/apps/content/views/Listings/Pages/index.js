@@ -55,7 +55,7 @@ const PageListing = () => {
                return {
                   id: page.id,
                   internalPageName: page.internalPageName,
-                  url: `${brandContext.brandDomain}${page.route}`,
+                  url: `${brandContext?.domain || ''}${page.route}`,
                   pageVisit: 'N/A',
                   published: page.published,
                }

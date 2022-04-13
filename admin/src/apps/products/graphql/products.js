@@ -164,6 +164,7 @@ export const PRODUCT = {
          }
       }
    `,
+   //SEO SETTINGS
    UPDATE_PRODUCT_SETTING: gql`
       mutation upsertProductSetting(
          $object: [products_product_productPageSetting_insert_input!]!
@@ -201,6 +202,33 @@ export const PRODUCT = {
          }
       }
    `,
+   //product setting
+   SETTING: gql`
+    subscription productSettings($productId: Int!) {
+  products_product_productSetting(where: {_and: {productId: {_eq: $productId}, productSetting: {isDynamicForm: {_eq: true}}}}) {
+    productId
+    value
+    productSetting {
+      id
+      identifier
+      type
+      isDynamicForm
+    }
+  }
+}
+`, UPDATE_PRODUCT_SETTING: gql`mutation upsertProductSetting(
+   $object: products_product_productSetting_insert_input!
+) {
+   upsertProductSetting: insert_products_product_productSetting_one(
+      object: $object
+      on_conflict: {
+         constraint: product_productSetting_pkey
+         update_columns: value
+      }
+   ) {
+      value
+   }
+}`
 }
 
 export const PRODUCT_OPTION = {
@@ -401,3 +429,14 @@ export const ADDITIONAL_MODIFIER = {
       }
    `,
 }
+// getting productSettingId using identifier
+export const PRODUCT_ID = gql`
+   query MyQuery($identifier: String_comparison_exp!) {
+      products_product_productSetting(
+         where: { productSetting: { identifier: $identifier } }
+         limit: 1
+      ) {
+         productSettingId
+      }
+   }
+`

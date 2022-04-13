@@ -37,7 +37,7 @@ const RecipeSummaryApp = () => {
             },
          },
          onSubscriptionData: ({ subscriptionData }) => {
-            console.log('Recipe Summary', subscriptionData)
+            // console.log('Recipe Summary', subscriptionData)
             setRecipeSummaryList(
                subscriptionData.data.insights_analytics[0].getTopRecipes
             )

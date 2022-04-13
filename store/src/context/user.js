@@ -14,6 +14,7 @@ import {
 } from '../graphql'
 import { PageLoader } from '../components'
 import { isClient, processUser, get_env } from '../utils'
+import { getStoredReferralCode } from "../utils/referrals"
 const ReactPixel = isClient ? require('react-facebook-pixel').default : null
 
 const UserContext = React.createContext()
@@ -106,6 +107,9 @@ export const UserProvider = ({ children }) => {
                            data: {
                               brandId: brand.id,
                               subscriptionOnboardStatus: 'SELECT_DELIVERY',
+                              metaDetails: {
+                                 referredByCode: getStoredReferralCode(null)
+                              }
                            },
                         },
                      },

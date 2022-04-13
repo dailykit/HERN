@@ -1,17 +1,21 @@
 import { Modal } from 'antd'
+import classNames from 'classnames'
 import React, { useState } from 'react'
 import { Button, CounterButton, ModifierPopup } from '../../components'
-import { CartContext } from '../../context'
+import { CartContext, useTranslation } from '../../context'
 import { useConfig } from '../../lib'
 import { getCartItemWithModifiers } from '../../utils'
 
 export const CustomArea = props => {
-   const { data, setProductModifier } = props
+   const { data, setProductModifier, showAddToCartButtonFullWidth } = props
    const { addToCart, combinedCartItems, methods, cartState } =
       React.useContext(CartContext)
    const { locationId, storeStatus, configOf, setShowLocationSelectionPopup } =
       useConfig()
    const theme = configOf('theme-color', 'Visual')?.themeColor
+   const addToCartButtonConfig = configOf('Add to cart button', 'Visual')?.[
+      'Add to cart Button'
+   ]
    const themeColor = theme?.accent?.value
       ? theme?.accent?.value
       : 'rgba(5, 150, 105, 1)'
@@ -20,7 +24,10 @@ export const CustomArea = props => {
    const [productCartItemIds, setProductCartItemIds] = React.useState([])
    const [showChooseIncreaseType, setShowChooseIncreaseType] = useState(false)
    const [showModifierPopup, setShowModifierPopup] = React.useState(false)
-   React.useEffect(() => {
+
+   const { t } = useTranslation()
+
+   React.useLayoutEffect(() => {
       if (combinedCartItems) {
          const allCartItemsIdsForThisProducts = combinedCartItems
             .filter(x => x.productId === data.id)
@@ -31,7 +38,6 @@ export const CustomArea = props => {
       }
    }, [combinedCartItems])
    const removeCartItems = cartItemIds => {
-      console.log('removed id', cartItemIds)
       methods.cartItems.delete({
          variables: {
             where: {
@@ -219,7 +225,12 @@ export const CustomArea = props => {
    }
 
    return (
-      <div className="hern-on-demand-product-custom-area">
+      <div
+         className={classNames('hern-on-demand-product-custom-area', {
+            'hern-on-demand-product-custom-area--no-full-width':
+               !showAddToCartButtonFullWidth,
+         })}
+      >
          <Modal
             title={'Repeat last used customization'}
             visible={showChooseIncreaseType}
@@ -249,7 +260,7 @@ export const CustomArea = props => {
                      color: themeColor,
                   }}
                >
-                  {"I'LL CHOOSE"}
+                  {t("I'LL CHOOSE")}
                </Button>
                <Button
                   style={{ padding: '.1em 2em' }}
@@ -257,7 +268,7 @@ export const CustomArea = props => {
                      await repeatLastOne(data)
                   }}
                >
-                  {'REPEAT LAST ONE'}
+                  {t('REPEAT LAST ONE')}
                </Button>
             </div>
          </Modal>
@@ -270,29 +281,25 @@ export const CustomArea = props => {
          )}
          {availableQuantityInCart === 0 ? (
             <Button
-               className="hern-custom-area-add-btn"
+               className={classNames('hern-custom-area-add-btn', {
+                  'hern-custom-area-add-btn--rounded':
+                     addToCartButtonConfig?.variant?.value?.value === 'rounded',
+               })}
                type="outline"
-               onClick={() => {
+               onClick={async () => {
                   if (!locationId) {
                      setShowLocationSelectionPopup(true)
                   } else {
                      if (data.productOptions.length > 0) {
                         setProductModifier(data)
+                        setShowModifierPopup(true)
                      } else {
-                        addToCart({ productId: data.id }, 1)
+                        await addToCart(data.defaultCartItem, 1)
                      }
                   }
                }}
-               // disabled={
-               //    locationId ? (storeStatus.status ? false : true) : true
-               // }
             >
-               {/* {locationId
-                  ? storeStatus.status
-                     ? 'ADD'
-                     : 'COMING SOON'
-                  : 'COMING SOON'} */}
-               ADD
+               {t(`${addToCartButtonConfig?.label?.value ?? 'ADD'}`)}
             </Button>
          ) : (
             <CounterButton
@@ -312,7 +319,7 @@ export const CustomArea = props => {
                showDeleteButton
             />
          )}
-         {data.productOptions.length > 0 && <span>Customizable</span>}
+         {data.productOptions.length > 0 && <span>{t('Customizable')}</span>}
       </div>
    )
 }

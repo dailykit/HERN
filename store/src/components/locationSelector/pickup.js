@@ -10,10 +10,11 @@ import { StoreList } from '../locationSelector/storeList'
 import { GPSIcon, NotFound } from '../../assets/icons'
 import { GoogleSuggestionsList, Loader } from '..'
 import { AddressInfo } from './addressInfo'
+import { useTranslation } from '../../context'
 
 export const Pickup = props => {
    // user location need only for show distance from user location
-
+   const { t } = useTranslation()
    // if there is no user location we will show all store which available for pickup
    const { pickupType: storePickupType, userAddress } =
       LocationSelectorConfig.informationVisibility.pickupSettings
@@ -47,14 +48,20 @@ export const Pickup = props => {
          orderTabFulfillmentType.includes('ONDEMAND_PICKUP') &&
          Boolean(availableStoreType.find(x => x === 'ONDEMAND'))
       ) {
-         options.push({ label: 'Now', value: 'ONDEMAND_PICKUP' })
+         options.push({
+            label: <span>{t('Now')}</span>,
+            value: 'ONDEMAND_PICKUP',
+         })
       }
       if (
          orderTabFulfillmentType &&
          orderTabFulfillmentType.includes('PREORDER_PICKUP') &&
          Boolean(availableStoreType.find(x => x === 'PREORDER'))
       ) {
-         options.push({ label: 'Later', value: 'PREORDER_PICKUP' })
+         options.push({
+            label: <span>{t('Later')}</span>,
+            value: 'PREORDER_PICKUP',
+         })
       }
 
       return options
@@ -151,12 +158,19 @@ export const Pickup = props => {
                      .slice(formatted_address.length - 3)
                      .join(',')
                   const address = {}
+                  address.line1 = formatted_address
+                     .slice(0, formatted_address.length - 3)
+                     .join(',')
+                  address.line2 = ''
                   data.results[0].address_components.forEach(node => {
-                     if (node.types.includes('street_number')) {
-                        address.line2 = `${node.long_name} `
+                     if (node.types.includes('sublocality_level_3')) {
+                        address.line2 += `${node.long_name} `
                      }
-                     if (node.types.includes('route')) {
-                        address.line2 += node.long_name
+                     if (node.types.includes('sublocality_level_2')) {
+                        address.line2 += `${node.long_name} `
+                     }
+                     if (node.types.includes('sublocality_level_1')) {
+                        address.line2 += `${node.long_name} `
                      }
                      if (node.types.includes('locality')) {
                         address.city = node.long_name
@@ -203,17 +217,30 @@ export const Pickup = props => {
            )}&libraries=places`
          : ''
    )
-
+   const SERVER_URL = React.useMemo(() => {
+      const storeMode = process?.env?.NEXT_PUBLIC_MODE || 'production'
+      if (isClient) {
+         return {
+            production: window.location.origin,
+            'full-dev': 'http://localhost:4000',
+            'store-dev': 'http://localhost:4000',
+         }[storeMode]
+      } else {
+         return null
+      }
+   }, [isClient])
    const formatAddress = async input => {
       if (!isClient) return 'Runs only on client side.'
       const response = await fetch(
-         `https://maps.googleapis.com/maps/api/geocode/json?key=${
+         `${SERVER_URL}/server/api/place/details/json?key=${
             isClient ? get_env('GOOGLE_API_KEY') : ''
-         }&address=${encodeURIComponent(input.description)}`
+         }&placeid=${input.place_id}&language=en`
       )
+
       const data = await response.json()
-      if (data.status === 'OK' && data.results.length > 0) {
-         const [result] = data.results
+      // console.log('this is data', data)
+      if (data.status === 'OK' && data.result) {
+         const result = data.result
          const userCoordinate = {
             latitude: result.geometry.location.lat,
             longitude: result.geometry.location.lng,

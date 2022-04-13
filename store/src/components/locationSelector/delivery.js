@@ -10,12 +10,13 @@ import { StoreList } from '../locationSelector/storeList'
 import { GPSIcon, NotFound } from '../../assets/icons'
 import { Loader, UserAddressList, GoogleSuggestionsList } from '..'
 import { AddressInfo } from './addressInfo'
+import { useTranslation } from '../../context'
 
 // delivery section
 export const Delivery = props => {
    const { deliveryType: storeDeliveryType } =
       LocationSelectorConfig.informationVisibility.deliverySettings
-
+   const { t } = useTranslation()
    const availableStoreType =
       storeDeliveryType.value.length > 0
          ? storeDeliveryType.value.map(x => x.value)
@@ -203,17 +204,32 @@ export const Delivery = props => {
            )}&libraries=places`
          : ''
    )
+   const SERVER_URL = React.useMemo(() => {
+      const storeMode = process?.env?.NEXT_PUBLIC_MODE || 'production'
+      if (isClient) {
+         return {
+            production: window.location.origin,
+            'full-dev': 'http://localhost:4000',
+            'store-dev': 'http://localhost:4000',
+         }[storeMode]
+      } else {
+         return null
+      }
+   }, [isClient])
    const formatAddress = async input => {
       if (!isClient) return 'Runs only on client side.'
-      console.log('inputfn', input)
+      // console.log('inputfn', input)
+
       const response = await fetch(
-         `https://maps.googleapis.com/maps/api/geocode/json?key=${
+         `${SERVER_URL}/server/api/place/details/json?key=${
             isClient ? get_env('GOOGLE_API_KEY') : ''
-         }&address=${encodeURIComponent(input.description)}`
+         }&placeid=${input.place_id}&language=en`
       )
+
       const data = await response.json()
-      if (data.status === 'OK' && data.results.length > 0) {
-         const [result] = data.results
+      // console.log('this is data', data)
+      if (data.status === 'OK' && data.result) {
+         const result = data.result
          const userCoordinate = {
             latitude: result.geometry.location.lat.toString(),
             longitude: result.geometry.location.lng.toString(),
@@ -222,18 +238,21 @@ export const Delivery = props => {
             mainText: input.structured_formatting.main_text,
             secondaryText: input.structured_formatting.secondary_text,
          }
+         const formatted_address = result.formatted_address.split(',')
+         // set line1 from formatted_address bcz it has more info than address_component
+         address.line1 = formatted_address
+            .slice(0, formatted_address.length - 3)
+            .join(',')
+         // line to most probably not use
          result.address_components.forEach(node => {
-            if (node.types.includes('street_number')) {
-               address.line2 = `${node.long_name} `
+            if (node.types.includes('sublocality_level_3')) {
+               address.line2 += `${node.long_name} `
             }
-            if (node.types.includes('route')) {
-               address.line2 += node.long_name
+            if (node.types.includes('sublocality_level_2')) {
+               address.line2 += `${node.long_name} `
             }
-            if (node.types.includes('street_number')) {
-               address.line2 = `${node.long_name} `
-            }
-            if (node.types.includes('route')) {
-               address.line2 += node.long_name
+            if (node.types.includes('sublocality_level_1')) {
+               address.line2 += `${node.long_name} `
             }
             if (node.types.includes('locality')) {
                address.city = node.long_name
@@ -258,8 +277,10 @@ export const Delivery = props => {
       }
    }
    const showWarningPopup = () => {
+      // const title = <span> {t('Please select a precise location. Try typing a landmark near your house.')}</span>
+      // console.log(title, "title")
       Modal.warning({
-         title: `Please select a precise location. Try typing a landmark near your house.`,
+         title: 'Please select a precise location. Try typing a landmark near your house.',
          maskClosable: true,
          centered: true,
       })
@@ -344,18 +365,19 @@ export const Delivery = props => {
                {locationSearching.error &&
                   locationSearching.errorType === 'blockByBrowser' && (
                      <span className="hern-store-location-selector-main__get-current-location-error-message">
-                        You have blocked this site from tracking your location.
-                        To use this, change your location settings in browser.
+                        {t(
+                           'You have blocked this site from tracking your location. To use this, change your location settings in browser.'
+                        )}
                      </span>
                   )}
             </div>
          </div>
 
          {locationSearching.loading ? (
-            <p style={{ padding: '1em' }}>Getting your location...</p>
+            <p style={{ padding: '1em' }}>{t('getting your location...')}</p>
          ) : locationSearching.error ? (
             <p style={{ padding: '1em', fontWeight: 'bold' }}>
-               Unable to find location
+               {/* {t('Unable to find location')} */}
             </p>
          ) : address ? (
             <div className="hern-store-location-selector__user-location">
@@ -379,7 +401,7 @@ export const Delivery = props => {
                   width={72}
                   height={72}
                />
-               <span>Finding nearest store location to you</span>
+               <span>{t('Finding nearest store location to you')}</span>
             </div>
          ) : stores?.length == 0 ? (
             <div
@@ -399,7 +421,7 @@ export const Delivery = props => {
                      lineHeight: '26px',
                   }}
                >
-                  No store available on this location.{' '}
+                  {t('No store available on this location.')}
                </span>
             </div>
          ) : isGetStoresLoading ? (
@@ -416,7 +438,7 @@ export const Delivery = props => {
                   width={72}
                   height={72}
                />
-               <span>Finding nearest store location to you</span>
+               <span>{t('Finding nearest store location to you')}</span>
             </div>
          ) : (
             <StoreList

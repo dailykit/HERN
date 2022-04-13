@@ -1,29 +1,19 @@
 import React, { useState } from 'react'
 import gql from 'graphql-tag'
 import Loadable from 'react-loadable'
-import { Loader, Spacer } from '@dailykit/ui'
+import { Loader } from '@dailykit/ui'
 import { useSubscription } from '@apollo/react-hooks'
-import { Switch, Route, Link } from 'react-router-dom'
-import FullOccurrenceReport from './shared/components/FullOccurrenceReport'
-import { isKeycloakSupported } from './shared/utils'
+import { Switch, Route } from 'react-router-dom'
+// import { isKeycloakSupported } from './shared/utils'
 import {
    TabBar,
-   RedirectBanner,
-   InsightDashboard,
-   AddressTunnel,
    Banner,
    Sidebar,
 } from './shared/components'
 import {
-   AppItem,
-   AppList,
-   AppIcon,
    Layout,
-   InsightDiv,
    DashboardPanel,
-   NavMenuPanel,
    HomeContainer,
-   WelcomeNote,
    DashboardRight,
 } from './styled'
 
@@ -44,6 +34,20 @@ const APPS = gql`
          route
       }
    }
+`
+const BRAND_LOCATION_ID = gql`
+  subscription brandAndLocationId($email: String_comparison_exp!) {
+  settings_user(where: {email: $email}) {
+    brand {
+      id
+      title
+    }
+    location {
+      label
+      id
+    }
+  }
+}
 `
 
 const Safety = Loadable({
@@ -114,20 +118,43 @@ const OperationMode = Loadable({
    loader: () => import('../src/shared/components/OperationalMode'),
    loading: Loader,
 })
+const ViewStore = Loadable({
+   loader: () => import('./apps/viewStore'),
+   loading: Loader,
+})
 export const BrandContext = React.createContext()
 
 const App = () => {
    // const location = useLocation()
    // const { routes, setRoutes } = useTabs()
-   const { pathname } = useLocation()
    const { loading, data: { apps = [] } = {} } = useSubscription(APPS)
-   const { user } = useAuth()
+   const user = useAuth()
    const { tabs } = useTabs()
-   const [brandContext, setBrandContext] = useState({ brandId: 0, brandName: "" })
+   const [brandContext, setBrandContext] = useState({
+      brandId: null,
+      brandName: "",
+      locationId: null,
+      locationLabel: "",
+      isLoading: true
+   })
 
-   const ViewStore = Loadable({
-      loader: () => import('./apps/viewStore'),
-      loading: Loader,
+   console.log("user", user.user.email);
+
+   const { loading: loadingUser, data } = useSubscription(BRAND_LOCATION_ID, {
+      variables: {
+         email: {
+            _eq: user.user.email
+         }
+      },
+      onSubscriptionData: ({ subscriptionData }) => {
+         setBrandContext({
+            brandId: subscriptionData.data.settings_user[0]?.brand?.id || null,
+            brandName: subscriptionData.data.settings_user[0]?.brand?.title || '',
+            locationId: subscriptionData.data.settings_user[0]?.location?.id || null,
+            locationLabel: subscriptionData.data.settings_user[0]?.location?.label || '',
+            isLoading: false,
+         })
+      }
    })
 
    if (loading) return <Loader />

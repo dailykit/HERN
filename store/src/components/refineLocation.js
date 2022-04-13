@@ -12,7 +12,7 @@ import {
 import { Form, Button, GoogleSuggestionsList, Tunnel } from '.'
 import LocationSelectorConfig from './locatoinSeletorConfig.json'
 import { useConfig } from '../lib'
-import { useUser, useCart } from '../context'
+import { useUser, useCart, useTranslation } from '../context'
 import { useMutation } from '@apollo/react-hooks'
 import { MUTATIONS } from '../graphql'
 import { useToasts } from 'react-toast-notifications'
@@ -35,7 +35,7 @@ const RefineLocation = props => {
    const { user } = useUser()
    const { storedCartId, methods } = useCart()
    const { addToast } = useToasts()
-
+   const { t } = useTranslation()
    // component state
    const [centerCoordinate, setCenterCoordinate] = useState({})
    const [address, setAddress] = React.useState(props.address)
@@ -60,7 +60,8 @@ const RefineLocation = props => {
       },
       zoom: 16,
    })
-   console.log('this is address', address)
+   const [runInitialMapChange, setRunInitialMapChange] = useState(false)
+   // console.log('this is address', address)
 
    const [loaded, error] = useScript(
       isClient
@@ -71,17 +72,17 @@ const RefineLocation = props => {
    )
 
    React.useEffect(() => {
-      if (address?.mainText) {
+      if (address?.line1) {
          setAdditionalAddressInfo(prev => ({
             ...prev,
-            line1: address.mainText || address.line1 || '',
+            line1: address.line1 || '',
          }))
       }
    }, [address])
 
    const [createAddress] = useMutation(MUTATIONS.CUSTOMER.ADDRESS.CREATE, {
       onCompleted: () => {
-         addToast('Address has been saved.', {
+         addToast(t('Address has been saved.'), {
             appearance: 'success',
          })
          // fb pixel custom event for adding a new address
@@ -105,19 +106,19 @@ const RefineLocation = props => {
       const selectedOrderTab = orderTabs.find(
          x => x.orderFulfillmentTypeLabel === fulfillmentType
       )
-      console.log('address', { ...address, ...additionalAddressInfo })
+      // console.log('address', { ...address, ...additionalAddressInfo })
       const customerAddress = {
-         line1: additionalAddressInfo.line1,
+         line1: additionalAddressInfo?.line1 || '',
          line2: address.line2 || '',
          city: address.city,
          state: address.state,
          country: address.country,
          zipcode: address.zipcode,
-         notes: additionalAddressInfo.notes,
-         label: additionalAddressInfo.label,
+         notes: additionalAddressInfo?.notes || '',
+         label: additionalAddressInfo?.label || '',
          lat: address.latitude.toString(),
          lng: address.longitude.toString(),
-         landmark: additionalAddressInfo.landmark,
+         landmark: additionalAddressInfo?.landmark || '',
          searched: '',
       }
       if (user?.keycloakId) {
@@ -139,6 +140,7 @@ const RefineLocation = props => {
                   address: customerAddress,
                   locationId: selectedStore.location.id,
                   orderTabId: selectedOrderTab.id,
+                  fulfillmentInfo: null,
                },
             },
          })
@@ -195,7 +197,11 @@ const RefineLocation = props => {
 
    const onChangeMap = ({ center, zoom, bounds, marginBounds }) => {
       // console.log('onChange', center, zoom, bounds, marginBounds)
-      console.log('thisIsCenter', center)
+      // console.log('thisIsCenter', center)
+      if (!runInitialMapChange) {
+         setRunInitialMapChange(true)
+         return
+      }
       setCenterCoordinate(prev => ({
          ...prev,
          latitude: center.lat.toString(),
@@ -204,7 +210,9 @@ const RefineLocation = props => {
       fetch(
          `https://maps.googleapis.com/maps/api/geocode/json?latlng=${
             center.lat
-         },${center.lng}&key=${get_env('GOOGLE_API_KEY')}`
+         },${center.lng}&key=${get_env(
+            'GOOGLE_API_KEY'
+         )}&result_type=street_address|point_of_interest&location_type=ROOFTOP`
       )
          .then(res => res.json())
          .then(data => {
@@ -219,12 +227,17 @@ const RefineLocation = props => {
                   .slice(formatted_address.length - 3)
                   .join(',')
                const address = {}
+               address.line1 = mainText
+               address.line2 = ''
                data.results[0].address_components.forEach(node => {
-                  if (node.types.includes('street_number')) {
-                     address.line2 = `${node.long_name} `
+                  if (node.types.includes('sublocality_level_3')) {
+                     address.line2 += `${node.long_name || ''} `
                   }
-                  if (node.types.includes('route')) {
-                     address.line2 += node.long_name
+                  if (node.types.includes('sublocality_level_2')) {
+                     address.line2 += `${node.long_name || ''} `
+                  }
+                  if (node.types.includes('sublocality_level_1')) {
+                     address.line2 += `${node.long_name || ''} `
                   }
                   if (node.types.includes('locality')) {
                      address.city = node.long_name
@@ -284,25 +297,33 @@ const RefineLocation = props => {
    const onChangeClick = () => {
       setShowLocationSelectorPopup(true)
    }
+
+   const SERVER_URL = React.useMemo(() => {
+      const storeMode = process?.env?.NEXT_PUBLIC_MODE || 'production'
+      if (isClient) {
+         return {
+            production: window.location.origin,
+            'full-dev': 'http://localhost:4000',
+            'store-dev': 'http://localhost:4000',
+         }[storeMode]
+      } else {
+         return null
+      }
+   }, [isClient])
+
    const formatAddress = async input => {
       if (!isClient) return 'Runs only on client side.'
-      console.log('inputfn', input)
+      // console.log('inputfn', input)
+
       const response = await fetch(
-         `https://maps.googleapis.com/maps/api/geocode/json?key=${
+         `${SERVER_URL}/server/api/place/details/json?key=${
             isClient ? get_env('GOOGLE_API_KEY') : ''
-         }&address=${encodeURIComponent(input.description)}`
+         }&placeid=${input.place_id}&language=en`
       )
       const data = await response.json()
-      if (data.status === 'OK' && data.results.length > 0) {
-         const [result] = data.results
-         const userCoordinate = {
-            latitude: result.geometry.location.lat.toString(),
-            longitude: result.geometry.location.lng.toString(),
-         }
-         const address = {
-            mainText: input.structured_formatting.main_text,
-            secondaryText: input.structured_formatting.secondary_text,
-         }
+      // console.log('datain', data)
+      if (data.status === 'OK' && data.result) {
+         const result = data.result
          result.address_components.forEach(node => {
             if (node.types.includes('postal_code')) {
                address.zipcode = node.long_name
@@ -312,8 +333,8 @@ const RefineLocation = props => {
             setDefaultProps(prev => ({
                ...prev,
                center: {
-                  lat: +userCoordinate.latitude,
-                  lng: +userCoordinate.longitude,
+                  lat: +result.geometry.location.lat.toString(),
+                  lng: +result.geometry.location.lng.toString(),
                },
             }))
             setShowGooglePlacesAutocomplete(false)
@@ -436,10 +457,10 @@ const RefineLocation = props => {
             }
          >
             {isGetStoresLoading
-               ? 'Searching store'
+               ? t('Searching store')
                : isStoreAvailableOnAddress
-               ? 'Save & Proceed'
-               : 'No store available'}
+               ? t('Save & Proceed')
+               : t('No store available')}
          </Button>
       </div>
    )
@@ -461,6 +482,7 @@ const UserLocationMarker = () => {
 }
 
 const RefineLocationHeader = ({ onRefineCloseClick, onChangeClick }) => {
+   const { t } = useTranslation()
    return (
       <div className="hern-store-location-selector-header">
          <div className="hern-store-location-selector-header-left">
@@ -470,7 +492,7 @@ const RefineLocationHeader = ({ onRefineCloseClick, onChangeClick }) => {
                stroke="currentColor"
                onClick={onRefineCloseClick}
             />
-            <span>Refine Your Location</span>
+            <span>{t('Refine Your Location')}</span>
          </div>
       </div>
    )
@@ -486,13 +508,13 @@ const AddressForm = ({
       line1: false,
    }) // to show warning for required field
    const [address] = React.useState({})
-
+   const { t } = useTranslation()
    return (
       <div style={{ position: 'relative' }}>
          <div className="hern-refine-location__address-form">
             <Form.Field className="hern-refine-location__address-form-field">
                <Form.Label>
-                  Apartment/Building Info/Street info*{' '}
+                  {t('Apartment/Building Info/Street info*')}{' '}
                   <span className="hern-address-warning">
                      {addressWarnings?.line1 ? 'fill this field' : null}
                   </span>
@@ -503,7 +525,7 @@ const AddressForm = ({
                   placeholder="Enter apartment/building info/street info"
                   value={additionalAddressInfo?.line1 || ''}
                   onChange={e => {
-                     console.log('evalue', e.target.value)
+                     // console.log('evalue', e.target.value)
                      if (!e.target.value) {
                         setAddressWarnings(prev => ({
                            ...prev,
@@ -523,7 +545,7 @@ const AddressForm = ({
                />
             </Form.Field>
             <Form.Field className="hern-refine-location__address-form-field">
-               <Form.Label>Landmark</Form.Label>
+               <Form.Label>{t('Landmark')}</Form.Label>
                <Form.Text
                   className="hern-refine-location__address-input"
                   type="text"
@@ -539,7 +561,7 @@ const AddressForm = ({
             </Form.Field>
 
             <Form.Field className="hern-refine-location__address-form-field">
-               <Form.Label>Label</Form.Label>
+               <Form.Label>{t('Label')}</Form.Label>
                <Form.Text
                   className="hern-refine-location__address-input"
                   type="text"
@@ -554,7 +576,7 @@ const AddressForm = ({
                />
             </Form.Field>
             <Form.Field className="hern-refine-location__address-form-field">
-               <Form.Label>Dropoff Instructions</Form.Label>
+               <Form.Label>{t('Dropoff Instructions')}</Form.Label>
                <Form.TextArea
                   className="hern-refine-location__address-text-area"
                   type="text"
@@ -579,11 +601,12 @@ const AddressInfo = props => {
       <div className="hern-store-location-selector__user-address">
          <div className="hern-store-location-selector__user-address-info">
             <span className="hern-store-location-selector__user-address-info-text hern-store-location-selector__user-address-info-main-text">
-               {address.mainText}
+               {address?.line1 || address.mainText}
             </span>
             <br />
             <span className="hern-store-location-selector__user-address-info-text hern-store-location-selector__user-address-info-secondary-text">
-               {address.secondaryText} {address.zipcode}
+               {`${address?.city || ''} ${address?.country || ''}`}{' '}
+               {address.zipcode}
             </span>
          </div>
       </div>
@@ -609,10 +632,11 @@ export const RefineLocationPopup = props => {
       onRefineLocationCloseIconClick,
       setShowRefineLocation,
    } = props
+   const { t } = useTranslation()
    return (
       <Tunnel.Left
          in={showRefineLocation}
-         title={'Refine Location'}
+         title={<span>{t('Refine Location')}</span>}
          visible={showRefineLocation}
          onClose={() => {
             setShowRefineLocation(false)

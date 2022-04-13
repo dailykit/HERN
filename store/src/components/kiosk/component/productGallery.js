@@ -110,9 +110,6 @@ export const ProductGalleryKiosk = ({ config }) => {
          <label
             className="hern-kiosk__product-gallery-title"
             data-translation="true"
-            data-original-value={
-               config?.productGallery.productGalleryTitle?.value
-            }
          >
             {config?.productGallery.productGalleryTitle?.value}
          </label>
@@ -196,12 +193,13 @@ const ProductGalleryCard = ({ product }) => {
             dataSrc={product.assets.images[0]}
             alt="p-image"
             className="hern-kiosk__product-gallery-p-image"
+            width={115}
+            height={115}
          />
          <div className="hern-kiosk__product-card-details">
             <span
                className="hern-kiosk__product-gallery-product-name"
                data-translation="true"
-               data-original-value={product.name}
             >
                {product.name}
             </span>

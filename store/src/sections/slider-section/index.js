@@ -2,6 +2,7 @@ import React from 'react'
 import { Carousel } from 'antd'
 import { ArrowLeftIcon, ArrowRightIcon } from '../../assets/icons'
 import { HernLazyImage } from '../../utils/hernImage'
+import { isClient } from '../../utils'
 
 export const SliderSection = ({ config }) => {
    const showDotsOnSlider =
@@ -19,18 +20,18 @@ export const SliderSection = ({ config }) => {
                dots={showDotsOnSlider}
                prevArrow={showArrowsOnSlider ? <LeftArrow /> : false}
                nextArrow={showArrowsOnSlider ? <RightArrow /> : false}
+               autoplay={true}
             >
                {sliderContent &&
                   config.display.slider.content.images.value.map(
                      (imageSrc, index) => {
                         return (
-                           <div>
-                              <SliderDiv
-                                 content={config.display.slider.content}
-                                 index={index}
-                                 getStartedURL={getStartedURL}
-                              />
-                           </div>
+                           <SliderDiv
+                              content={config.display.slider.content}
+                              index={index}
+                              getStartedURL={getStartedURL}
+                              key={imageSrc}
+                           />
                         )
                      }
                   )}
@@ -44,6 +45,35 @@ export const SliderSection = ({ config }) => {
 }
 
 const SliderDiv = ({ content, index, getStartedURL }) => {
+   if (!isClient) {
+      return null
+   }
+   const sliderImageSize = React.useMemo(() => {
+      const innerWidth = isClient ? window.innerWidth : ''
+      if (0 < innerWidth && innerWidth <= 468) {
+         return {
+            width: 420,
+            height: 210,
+         }
+      } else if (469 <= innerWidth && innerWidth <= 900) {
+         return {
+            width: 820,
+            height: 410,
+         }
+      }
+      //  else if (901 <= innerWidth) {
+      //    return {
+      //       width: null,
+      //       height: null,
+      //    }
+      // }
+      else {
+         return {
+            width: null,
+            height: null,
+         }
+      }
+   }, [isClient])
    return (
       <div
          style={{
@@ -56,6 +86,8 @@ const SliderDiv = ({ content, index, getStartedURL }) => {
                   ? content.images.value[index]
                   : content.images.default
             }
+            width={sliderImageSize.width}
+            height={sliderImageSize.height}
             // alt="products"
             // width="100%"
          />

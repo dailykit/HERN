@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { useSubscription } from '@apollo/react-hooks'
-import { useUser } from '../../context'
+import { useTranslation, useUser } from '../../context'
 import {
    combineCartItems,
    formatCurrency,
@@ -13,10 +13,11 @@ import {
    Button,
    Tunnel,
    CartOrderDetails,
+   Empty,
 } from '../../components'
 import classNames from 'classnames'
 import moment from 'moment'
-import { Select, Empty } from 'antd'
+import { Select } from 'antd'
 import _ from 'lodash'
 
 export const OrderHistory = () => {
@@ -29,6 +30,7 @@ export const OrderHistory = () => {
 }
 
 const OrderCards = () => {
+   const { t } = useTranslation()
    const { user, isLoading } = useUser()
    const [status, setOrderStatus] = useState('')
    const [orderDate, setOrderDate] = useState('')
@@ -72,24 +74,34 @@ const OrderCards = () => {
    }, [carts, status, orderDate])
    if (orderHistoryLoading || isLoading) return <OrderListSkeleton />
 
-   if (error) return <p>Error</p>
+   if (error) return <p>{t('Error')}</p>
 
    const orderDates = _.uniq(
       carts.map(cart => moment(cart.order.created_at).format('DD MMM YYYY'))
    )
    const orderStatus = _.uniq(carts.map(cart => cart.status))
-
+   if (_.isEmpty(orders))
+      return (
+         <Empty
+            title={t('No Orders yet !')}
+            description={t(
+               'Looks like you haven’t made any order yet. Order some yummy items'
+            )}
+            route="/order"
+            buttonLabel={t('Go to menu')}
+         />
+      )
    return (
       <div className="hern-order-history__wrapper">
-         <h2 className="hern-order-history__title">Orders</h2>
+         <h2 className="hern-order-history__title">{t('Orders')}</h2>
          <div className="hern-order-hisoty__filter">
             <Select
                labelInValue
-               defaultValue={{ value: 'Select Date' }}
+               defaultValue={{ value: t('Select Date') }}
                style={{ width: 120 }}
                onChange={data => setOrderDate(data.value)}
             >
-               <Select.Option value="">Select Date</Select.Option>
+               <Select.Option value="">{t('Select Date')}</Select.Option>
                {orderDates.map(date => (
                   <Select.Option key={date} value={date}>
                      {date}
@@ -98,11 +110,11 @@ const OrderCards = () => {
             </Select>
             <Select
                labelInValue
-               defaultValue={{ value: 'All Orders' }}
+               defaultValue={{ value: t('All Orders') }}
                style={{ width: 240 }}
                onChange={data => setOrderStatus(data.value)}
             >
-               <Select.Option value="">All Orders</Select.Option>
+               <Select.Option value="">{t('All Orders')}</Select.Option>
                {orderStatus.map(status => (
                   <Select.Option key={status} value={status}>
                      {_.startCase(_.toLower(status.replaceAll('_', ' ')))}
@@ -125,6 +137,7 @@ const OrderCards = () => {
 }
 
 const OrderCard = ({ cart }) => {
+   const { t } = useTranslation()
    const [cartId, setId, deleteId] = useQueryParamState('id')
    return (
       <div className="hern-order-history-card">
@@ -135,7 +148,7 @@ const OrderCard = ({ cart }) => {
                   fontSize: '16px',
                }}
             >
-               {getTitle(cart?.fulfillmentInfo?.type)}{' '}
+               {getTitle(cart?.fulfillmentInfo?.type)}
                {(cart?.fulfillmentInfo?.type === 'PREORDER_PICKUP' ||
                   cart?.fulfillmentInfo?.type === 'PREORDER_DELIVERY') && (
                   <span>
@@ -166,7 +179,7 @@ const OrderCard = ({ cart }) => {
 
          <CartItems products={cart?.cartItems} />
          <Button style={{ height: '3.5rem' }} onClick={() => setId(cart?.id)}>
-            View Details
+            {t(' View Details')}
          </Button>
          <Tunnel.Right
             title={`Order #${cart.id}`}
@@ -181,6 +194,16 @@ const OrderCard = ({ cart }) => {
 
 const CartItems = ({ products, border = false, title = false }) => {
    const cartItems = combineCartItems(products)
+   const { t, dynamicTrans, locale } = useTranslation()
+
+   const currentLang = React.useMemo(() => locale, [locale])
+
+   React.useEffect(() => {
+      const languageTags = document.querySelectorAll(
+         '[data-translation="true"]'
+      )
+      dynamicTrans(languageTags)
+   }, [currentLang])
 
    return (
       <div
@@ -190,7 +213,7 @@ const CartItems = ({ products, border = false, title = false }) => {
       >
          {title && (
             <h3 className="hern-order-history__cart-items__title">
-               Items({cartItems?.length})
+               <span> {t('Items')}</span>({cartItems?.length})
             </h3>
          )}
          {cartItems.map((product, index) => {
@@ -211,7 +234,7 @@ const CartItems = ({ products, border = false, title = false }) => {
                      className="hern-order-history-card__product-title"
                      key={index}
                   >
-                     <div>{product.name}</div>
+                     <div data-translation="true">{product.name}</div>
                      <span>x{product.ids.length}</span>
                   </div>
                   {product.childs.length > 0 && (
@@ -225,9 +248,21 @@ const CartItems = ({ products, border = false, title = false }) => {
 }
 const ModifiersList = props => {
    const { data } = props
+   const { dynamicTrans, locale } = useTranslation()
+
+   const currentLang = React.useMemo(() => locale, [locale])
+
+   React.useEffect(() => {
+      const languageTags = document.querySelectorAll(
+         '[data-translation="true"]'
+      )
+      dynamicTrans(languageTags)
+   }, [currentLang])
    return (
       <div className="hern-order-history-card__modifier-list">
-         <span>{data.childs[0].productOption.label || 'N/A'}</span>{' '}
+         <span data-translation="true">
+            {data.childs[0].productOption.label || 'N/A'}
+         </span>{' '}
          {data.childs[0].price !== 0 && (
             <div>
                {data.childs[0].discount > 0 && (
@@ -251,9 +286,10 @@ const ModifiersList = props => {
 }
 
 const OrderListSkeleton = () => {
+   const { t } = useTranslation()
    return (
       <aside className="hern-orders__list__skeleton">
-         <h2>Orders</h2>
+         <h2>{t('Orders')}</h2>
          <ul>
             <li></li>
             <li></li>

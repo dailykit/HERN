@@ -1,6 +1,6 @@
 import { useMutation, useSubscription } from '@apollo/react-hooks'
 import React, { useRef, useState, useImperativeHandle, useEffect } from 'react'
-import { useLocation, useParams } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 import {
    COLLECTION_PRODUCTS,
    COLLECTION_PRODUCT_OPTIONS,
@@ -26,7 +26,7 @@ import {
    HorizontalTabPanel,
 } from '@dailykit/ui'
 import { reactFormatter, ReactTabulator } from '@dailykit/react-tabulator'
-import { StyledGroupBy, StyledTitle } from './styled'
+import { StyledTitle } from './styled'
 import { BrandManager, BrandManagerProductOption } from './BulkActionTunnel'
 import { logger } from '../../../../utils'
 import { toast } from 'react-toastify'
@@ -967,8 +967,6 @@ const ActionBar = ({
             container
             height="80px"
             width="100%"
-            alignItems="center"
-            justifyContent="space-between"
             style={
                width > 500
                   ? { paddingBottom: '2em', gap: '3em' }

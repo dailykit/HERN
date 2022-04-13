@@ -144,7 +144,7 @@ const TotalEarningAnalytics = () => {
 
       setEarningCompare(prevState => ({ ...prevState, compareResult: result }))
    }
-   console.log('Loading', subsLoading, insights_analytics)
+   // console.log('Loading', subsLoading, insights_analytics)
    if (subsLoading || compareLoading) {
       return <InlineLoader />
    }

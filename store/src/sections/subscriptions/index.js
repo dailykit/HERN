@@ -3,7 +3,7 @@ import { useRouter } from 'next/router'
 import { useSubscription } from '@apollo/react-hooks'
 
 import { useConfig } from '../../lib'
-import { useUser } from '../../context'
+import { useTranslation, useUser } from '../../context'
 import { formatDate, getRoute, isClient } from '../../utils'
 import { ORDER_HISTORY, ORDER } from '../../graphql'
 import { HelperBar, ProfileSidebar, ProductSkeleton } from '../../components'
@@ -24,6 +24,7 @@ export const Subscriptions = () => {
 const Listing = () => {
    const router = useRouter()
    const { user } = useUser()
+   const { t } = useTranslation()
    const { configOf } = useConfig()
    const [orderWindow, setOrderWindow] = React.useState(1)
    const { loading, data: { orders = {} } = {} } = useSubscription(
@@ -63,7 +64,7 @@ const Listing = () => {
             }}
             theme={theme}
          >
-            Orders
+            {t('Orders')}
          </h2>
          <ul className="hern-orders__order-listing__list">
             {orders.nodes.map(
@@ -74,12 +75,11 @@ const Listing = () => {
                         key={node.occurrenceId}
                         onClick={() => selectOrder(node.occurenceId)}
                         style={{
-                           backgroundColor: `${
-                              theme.highlight &&
+                           backgroundColor: `${theme.highlight &&
                               node.occurenceId === Number(router.query.id)
-                                 ? theme.highlight
-                                 : '#fff'
-                           }`,
+                              ? theme.highlight
+                              : '#fff'
+                              }`,
                         }}
                         className={classNames(
                            'hern-orders__order-listing__list-item',
@@ -102,7 +102,7 @@ const Listing = () => {
                   className="hern-orders__order-listing__view-more"
                   onClick={() => setOrderWindow(orderWindow + 4)}
                >
-                  View More
+                  {t('View More')}
                </div>
             )}
          </ul>
@@ -113,6 +113,7 @@ const Listing = () => {
 const Details = () => {
    const router = useRouter()
    const { user } = useUser()
+   const { t } = useTranslation()
    const { configOf } = useConfig()
    const {
       error,
@@ -142,7 +143,7 @@ const Details = () => {
          <div className="hern-orders__order-details">
             <HelperBar type="warning">
                <HelperBar.SubTitle>
-                  Select a date to view an order details
+                  {t('Select a date to view an order details')}
                </HelperBar.SubTitle>
             </HelperBar>
          </div>
@@ -153,12 +154,11 @@ const Details = () => {
             <h2
                className="hern-orders__order-details__header__title"
                style={{
-                  color: `${
-                     theme?.accent ? theme?.accent : 'rgba(5,150,105,1)'
-                  }`,
+                  color: `${theme?.accent ? theme?.accent : 'rgba(5,150,105,1)'
+                     }`,
                }}
             >
-               Order Details
+               {t('Order Details')}
             </h2>
             {order?.cart?.orderStatus?.title && (
                <span
@@ -175,14 +175,14 @@ const Details = () => {
          </header>
          <OrderInfo cart={order?.cart} />
          <h4 className="hern-orders__order-details__payment__heading">
-            Payment
+            {t('Payment')}
          </h4>
          {order?.cart?.paymentStatus !== 'SUCCEEDED' && (
             <button
                className="hern-orders__order-details__payment__complete-payment"
                onClick={() => router.push(`/checkout?id=${order?.cart?.id}`)}
             >
-               Complete Payment
+               {t('Complete Payment')}
             </button>
          )}
          <section className="hern-orders__order-details__payment-method">
@@ -199,21 +199,23 @@ const Details = () => {
                      </div>
                   </div>
                   <span>
-                     <span>Last 4:</span>
+                     <span>{t('Last 4:')}</span>
                      {paymentMethod?.last4}
                   </span>
                </>
             ) : (
-               <p>Payment method linked to this order has been deleted.</p>
+               <p>{t('Payment method linked to this order has been deleted.')}</p>
             )}
          </section>
       </main>
    )
 }
 const OrderListSkeleton = () => {
+   const { t } = useTranslation()
+
    return (
       <aside className="hern-orders__list__skeleton">
-         <h2>Orders</h2>
+         <h2>{t('Orders')}</h2>
          <ul>
             <li></li>
             <li></li>
@@ -222,14 +224,17 @@ const OrderListSkeleton = () => {
       </aside>
    )
 }
-const OrderDetailsSkeleton = () => (
-   <main classNames="hern-orders__order-details__skeleton">
-      <h2>Order Details</h2>
-      <ProductSkeleton />
-      <ProductSkeleton />
-   </main>
-)
+const OrderDetailsSkeleton = () => {
+   const { t } = useTranslation()
 
+   return (
+      <main classNames="hern-orders__order-details__skeleton">
+         <h2>{t('Order Details')}</h2>
+         <ProductSkeleton />
+         <ProductSkeleton />
+      </main>
+   )
+}
 const selectColor = variant => {
    switch (variant) {
       case 'ORDER_PENDING':

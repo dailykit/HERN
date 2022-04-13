@@ -252,7 +252,9 @@ const DownVector = dynamic(() =>
 const UpVector = dynamic(() =>
    import('./Vector').then(promise => promise.UpVector)
 )
-
+const NoImage = dynamic(() =>
+   import('./NoImage').then(promise => promise.NoImage)
+)
 const ProfileSidebarIcon = {
    Profile,
    Wallet,
@@ -264,6 +266,13 @@ const ProfileSidebarIcon = {
    ManageCards,
 }
 
+export * from './DeliveryInfoIcons'
+const EmptyCloche = dynamic(() =>
+   import('./EmptyCloche').then(promise => promise.EmptyCloche)
+)
+const EmptyStore = dynamic(() =>
+   import('./EmptyStore').then(promise => promise.EmptyStore)
+)
 export {
    AddressIcon,
    ArrowLeftIcon,
@@ -344,4 +353,7 @@ export {
    UpVector,
    ProfileSidebarIcon,
    ProductGalleryBG,
+   NoImage,
+   EmptyCloche,
+   EmptyStore,
 }

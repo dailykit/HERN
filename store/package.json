@@ -2,7 +2,6 @@
    "name": "sub-shop",
    "version": "0.1.0",
    "private": true,
-   "sideEffects": false,
    "scripts": {
       "dev": "next dev",
       "build": "next build",
@@ -17,6 +16,7 @@
       "@emotion/react": "^11.1.4",
       "@emotion/styled": "^10.0.27",
       "@next/bundle-analyzer": "^12.1.0",
+      "@react-google-maps/api": "^2.8.1",
       "@stripe/react-stripe-js": "^1.1.2",
       "@stripe/stripe-js": "^1.11.0",
       "@svgr/webpack": "^5.5.0",
@@ -66,6 +66,7 @@
       "react-error-boundary": "^3.1.4",
       "react-facebook-pixel": "^1.0.4",
       "react-google-places-autocomplete": "^2.1.0",
+      "react-hook-form": "^7.28.1",
       "react-html-parser": "^2.0.2",
       "react-icons": "^4.3.1",
       "react-idle-timer": "^4.6.4",

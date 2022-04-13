@@ -5,7 +5,7 @@ export const RecurrenceContext = React.createContext()
 export const state = {
    recurrenceId: undefined,
    timeSlotId: undefined,
-   mileRangeId: undefined,
+   mileRange: undefined,
    charge: undefined,
 }
 
@@ -26,7 +26,7 @@ export const reducers = (state, { type, payload }) => {
       case 'MILE_RANGE': {
          return {
             ...state,
-            mileRangeId: payload,
+            mileRange: payload,
          }
       }
       case 'CHARGE': {

@@ -4,13 +4,20 @@ import Confetti from 'react-confetti'
 import { useRouter } from 'next/router'
 import { Result, Spin, Button, Modal } from 'antd'
 import isEmpty from 'lodash/isEmpty'
+import Countdown from 'react-countdown'
 
 import { Wrapper } from './styles'
 import { Button as StyledButton } from '../button'
 import PayButton from '../PayButton'
-import { ArrowLeftIconBG } from '../../assets/icons'
-import { useWindowSize, isKiosk, formatTerminalStatus } from '../../utils'
+import { ArrowLeftIconBG, ArrowLeftIcon } from '../../assets/icons'
+import {
+   useWindowSize,
+   isKiosk,
+   formatTerminalStatus,
+   isClient,
+} from '../../utils'
 import { useTranslation } from '../../context'
+import { useConfig } from '../../lib'
 
 const PaymentProcessingModal = ({
    isOpen,
@@ -33,7 +40,7 @@ const PaymentProcessingModal = ({
    const isKioskMode = isKiosk()
    const [isCelebrating, setIsCelebrating] = useState(false)
    const { width, height } = useWindowSize()
-   const [countDown, setCountDown] = useState(60)
+   const [countDown, setCountDown] = useState(null)
    const { t } = useTranslation()
 
    const closeModalHandler = async () => {
@@ -59,7 +66,8 @@ const PaymentProcessingModal = ({
       } else {
          if (router.pathname !== `/view-order`) {
             await closeModalHandler()
-            await resetStateAfterModalClose()
+            setIsProcessingPayment(false)
+            setIsPaymentInitiated(false)
             router.push(`/view-order?id=${cartPayment?.cartId}`)
          }
       }
@@ -80,7 +88,15 @@ const PaymentProcessingModal = ({
       )
 
       let title = 'Processing your payment'
-      let subtitle = 'Please wait while we process your payment'
+      let subtitle = (
+         <>
+            <p>{t('Please wait while we process your payment')}</p>
+            <br />
+            <p>{t('Please do not refresh or reload the page')}</p>
+            <br />
+            <p>{t("you'll be automatically redirected")}</p>
+         </>
+      )
       let extra = null
       if (isKioskMode) {
          icon = (
@@ -90,7 +106,7 @@ const PaymentProcessingModal = ({
             />
          )
          title = 'Processing your order'
-         subtitle = 'Please wait while we process your order'
+         subtitle = t('Please wait while we process your order')
          if (cartPayment?.paymentStatus === 'PENDING') {
             icon = (
                <img
@@ -99,7 +115,7 @@ const PaymentProcessingModal = ({
                />
             )
             title = 'Processing your order'
-            subtitle = 'Please wait while we process your order'
+            subtitle = t('Please wait while we process your order')
          } else if (cartPayment?.paymentStatus === 'SUCCEEDED') {
             icon = (
                <img
@@ -107,10 +123,8 @@ const PaymentProcessingModal = ({
                   className="payment_status_loader"
                />
             )
-            title = `${t('Successfully placed your order')}`
-            subtitle = `${t(
-               'You will be redirected to your order page shortly'
-            )}`
+            title = 'Successfully placed your order'
+            subtitle = t('You will be redirected to your order page shortly')
          } else if (cartPayment?.paymentStatus === 'FAILED') {
             icon = (
                <img
@@ -119,9 +133,10 @@ const PaymentProcessingModal = ({
                />
             )
             title = 'Payment Failed'
-            subtitle =
+            subtitle = t(
                formatTerminalStatus[cartPayment.transactionRemark?.StatusCode]
                   ?.message || 'Unknown error'
+            )
             extra = [
                <Button
                   type="primary"
@@ -134,7 +149,7 @@ const PaymentProcessingModal = ({
                      })
                   }}
                >
-                  Try again
+                  {t('Try again')}
                </Button>,
                <Button
                   type="primary"
@@ -144,7 +159,7 @@ const PaymentProcessingModal = ({
                      resetStateAfterModalClose({ showChoosePayment: true })
                   }
                >
-                  Try other payment method
+                  {t('Try other payment method')}
                </Button>,
             ]
          } else if (cartPayment?.paymentStatus === 'CANCELLED') {
@@ -155,7 +170,7 @@ const PaymentProcessingModal = ({
                />
             )
             title = 'Payment Cancelled'
-            subtitle = 'You cancelled your payment process'
+            subtitle = t('You cancelled your payment process')
             extra = [
                <Button
                   type="primary"
@@ -165,7 +180,7 @@ const PaymentProcessingModal = ({
                      resetStateAfterModalClose({ showChoosePayment: true })
                   }
                >
-                  Try other payment method
+                  {t('Try other payment method')}
                </Button>,
             ]
          } else if (cartPayment?.paymentStatus === 'SWIPE_CARD') {
@@ -176,8 +191,9 @@ const PaymentProcessingModal = ({
                />
             )
             title = 'Swipe or Insert your card'
-            subtitle =
+            subtitle = t(
                'Please swipe or insert your card to complete the payment'
+            )
          } else if (cartPayment?.paymentStatus === 'ENTER_PIN') {
             icon = (
                <img
@@ -186,7 +202,7 @@ const PaymentProcessingModal = ({
                />
             )
             title = 'Enter your pin'
-            subtitle = 'Please your pin to complete the payment'
+            subtitle = t('Please your pin to complete the payment')
          } else if (
             ![
                'SUCCEEDED',
@@ -218,7 +234,7 @@ const PaymentProcessingModal = ({
                />
             )
             title = 'Successfully placed your order'
-            subtitle = 'You will be redirected to your booking page shortly'
+            subtitle = t('You will be redirected to your booking page shortly')
          } else if (cartPayment?.paymentStatus === 'REQUIRES_ACTION') {
             icon = (
                <img
@@ -227,8 +243,9 @@ const PaymentProcessingModal = ({
                />
             )
             title = 'Looks like your card requires authentication'
-            subtitle =
+            subtitle = t(
                'An additional verification step which direct you to an authentication page on your bank’s website'
+            )
             extra = [
                <Button
                   type="primary"
@@ -236,10 +253,10 @@ const PaymentProcessingModal = ({
                   href={cartPayment?.actionUrl}
                   target="_blank"
                >
-                  Authenticate Here
+                  {t('Authenticate Here')}
                </Button>,
                <Button type="link" danger onClick={cancelPayment}>
-                  Cancel Payment
+                  {t('Cancel Payment')}
                </Button>,
             ]
          } else if (cartPayment?.paymentStatus === 'FAILED') {
@@ -250,7 +267,7 @@ const PaymentProcessingModal = ({
                />
             )
             title = 'Payment Failed'
-            subtitle = 'Something went wrong'
+            subtitle = t('Something went wrong')
             extra = [
                <Button
                   type="primary"
@@ -258,7 +275,7 @@ const PaymentProcessingModal = ({
                   key="console"
                   onClick={resetStateAfterModalClose}
                >
-                  Try other payment method
+                  {t('Try other payment method')}
                </Button>,
             ]
          } else if (cartPayment?.paymentStatus === 'CANCELLED') {
@@ -269,7 +286,7 @@ const PaymentProcessingModal = ({
                />
             )
             title = 'Payment Cancelled'
-            subtitle = 'You cancelled your payment process'
+            subtitle = t('You cancelled your payment process')
             extra = [
                <Button
                   type="primary"
@@ -277,7 +294,7 @@ const PaymentProcessingModal = ({
                   key="console"
                   onClick={resetStateAfterModalClose}
                >
-                  Try other payment method
+                  {t('Try other payment method')}
                </Button>,
             ]
          } else if (cartPayment?.paymentStatus === 'REQUIRES_PAYMENT_METHOD') {
@@ -288,8 +305,9 @@ const PaymentProcessingModal = ({
                />
             )
             title = 'Payment Failed'
-            subtitle =
+            subtitle = t(
                "Your payment is failed since your bank doesn't authenticate you"
+            )
             extra = [
                <Button
                   type="primary"
@@ -297,7 +315,7 @@ const PaymentProcessingModal = ({
                   key="console"
                   onClick={resetStateAfterModalClose}
                >
-                  Try other payment method
+                  {t('Try other payment method')}
                </Button>,
             ]
          }
@@ -312,7 +330,6 @@ const PaymentProcessingModal = ({
    }
 
    useEffect(() => {
-      let countdownTimer
       if (!isEmpty(cartPayment)) {
          // start celebration (confetti effect) once payment is successful
          if (cartPayment?.paymentStatus === 'SUCCEEDED') {
@@ -323,30 +340,17 @@ const PaymentProcessingModal = ({
                cartPayment?.paymentStatus
             )
          ) {
-            if (countDown >= 0) {
-               countdownTimer = setInterval(() => {
-                  countDown > 0 && setCountDown(prev => prev - 1)
-                  if (countDown === 0) {
-                     clearInterval(countdownTimer)
-                     cancelTerminalPayment({
-                        cartPayment,
-                        retryPaymentAttempt: false,
-                     })
-                  }
-               }, 1000)
-            }
+            isKioskMode
+               ? setCountDown(Date.now() + 1 * 60000)
+               : setCountDown(Date.now() + 5 * 60000)
          }
       }
-      return () => {
-         // clearTimeout(timer)
-         clearInterval(countdownTimer)
-      }
-   }, [cartPayment?.paymentStatus, countDown])
+   }, [cartPayment?.paymentStatus])
 
    // resetting countdown timer when payment status changes
-   useEffect(() => {
-      setCountDown(60)
-   }, [cartPayment?.paymentStatus])
+   // useEffect(() => {
+   //    setCountDown(60)
+   // }, [cartPayment?.paymentStatus])
 
    return (
       <Modal
@@ -357,27 +361,24 @@ const PaymentProcessingModal = ({
          keyboard={false}
          maskClosable={false}
          centered
+         width={isKioskMode ? 780 : 'auto'}
          onCancel={closeModalHandler}
-         width={780}
          zIndex={10000}
          bodyStyle={{
-            maxHeight: '520px',
+            maxHeight: '100%',
+            height: isKioskMode ? '100%' : 'calc(100vh - 16px)',
+            width: '100%',
             overflowY: 'auto',
          }}
          maskStyle={{
             backgroundColor: isKioskMode ? 'rgba(0, 64, 106, 0.9)' : '#fff',
          }}
       >
-         {!isEmpty(cartPayment) &&
-            !['SUCCEEDED', 'FAILED', 'CANCELLED'].includes(
-               cartPayment?.paymentStatus
-            ) && (
-               <h1 tw="font-extrabold color[rgba(0, 64, 106, 0.9)] text-xl text-center">
-                  {countDown > 0
-                     ? `Timout in ${countDown} seconds`
-                     : 'Request timed out'}
-               </h1>
-            )}
+         <CartPageHeader
+            resetPaymentProviderStates={resetPaymentProviderStates}
+            closeModal={closeModal}
+            isCartPaymentEmpty={isEmpty(cartPayment)}
+         />
          {/* this payment option selection screen and back button, it will only show in kiosk app  */}
          {isKioskMode && isEmpty(cartPayment) ? (
             <>
@@ -399,7 +400,7 @@ const PaymentProcessingModal = ({
                               </PayButton>
 
                               <p tw="last:(hidden) font-extrabold margin[2rem 0] color[rgba(0, 64, 106, 0.9)] text-2xl text-center">
-                                 OR
+                                 {t('OR')}
                               </p>
                            </>
                         )
@@ -421,7 +422,7 @@ const PaymentProcessingModal = ({
             <Wrapper>
                <Result
                   icon={ShowPaymentStatusInfo().icon}
-                  title={ShowPaymentStatusInfo().title}
+                  title={t(ShowPaymentStatusInfo().title)}
                   subTitle={ShowPaymentStatusInfo().subtitle}
                   extra={ShowPaymentStatusInfo().extra}
                />
@@ -456,6 +457,40 @@ const PaymentProcessingModal = ({
                   </Button>
                </div>
             )}
+         {!isEmpty(cartPayment) &&
+            !['SUCCEEDED', 'FAILED', 'CANCELLED'].includes(
+               cartPayment?.paymentStatus
+            ) && (
+               <>
+                  {countDown && (
+                     <Countdown
+                        date={countDown}
+                        renderer={({ minutes, seconds, completed }) => {
+                           if (completed) {
+                              return (
+                                 <h1 tw="font-extrabold color[rgba(0, 64, 106, 0.9)] text-xl text-center">
+                                    {t('Request timed out')}
+                                 </h1>
+                              )
+                           }
+                           return (
+                              <h1 tw="font-extrabold color[rgba(0, 64, 106, 0.9)] text-xl text-center">
+                                 {`Timeout in ${minutes}:${
+                                    seconds <= 9 ? '0' : ''
+                                 }${seconds}`}
+                              </h1>
+                           )
+                        }}
+                        onComplete={() =>
+                           cancelTerminalPayment({
+                              cartPayment,
+                              retryPaymentAttempt: false,
+                           })
+                        }
+                     />
+                  )}
+               </>
+            )}
       </Modal>
    )
 }
@@ -465,4 +500,56 @@ export default PaymentProcessingModal
 const LABEL = {
    COD: 'PAY AT COUNTER',
    TERMINAL: 'PAY VIA CARD',
+}
+
+const CartPageHeader = ({
+   closeModal = () => null,
+   resetPaymentProviderStates = () => null,
+   isCartPaymentEmpty = true,
+}) => {
+   const { configOf } = useConfig('brand')
+   const {
+      BrandName: { value: showBrandName } = {},
+      BrandLogo: { value: showBrandLogo } = {},
+      brandName: { value: brandName } = {},
+      brandLogo: { value: logo } = {},
+   } = configOf('Brand Info')
+   const theme = configOf('theme-color', 'Visual')?.themeColor
+   const themeColor = theme?.accent?.value
+      ? theme?.accent?.value
+      : 'rgba(5, 150, 105, 1)'
+   const isKioskMode = isKiosk()
+   return (
+      <header className="hern-cart-page__header">
+         <div>
+            {!isKioskMode && isCartPaymentEmpty && (
+               <span
+                  tw="hover:(cursor-pointer)"
+                  onClick={async () => {
+                     const isConfirmed =
+                        isClient &&
+                        window.confirm(
+                           'Your payment will be cancelled,Are you sure you want to go back?'
+                        )
+                     if (isConfirmed) {
+                        await closeModal()
+                        await resetPaymentProviderStates()
+                     }
+                  }}
+               >
+                  <ArrowLeftIconBG
+                     size={40}
+                     bgColor="#fff"
+                     arrowColor={themeColor}
+                  />
+               </span>
+            )}
+            {showBrandLogo && logo && (
+               <img src={logo} alt={brandName} tw="height[40px]" />
+            )}
+            &nbsp;&nbsp;
+            {showBrandName && brandName && <span>{brandName}</span>}
+         </div>
+      </header>
+   )
 }
