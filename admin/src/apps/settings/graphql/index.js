@@ -1067,3 +1067,15 @@ export const SCOPE_SELECTOR = gql`
       }
    }
 `
+export const ENVS = {
+   LIST: gql`
+      subscription envsList {
+         settings_env(order_by: { config: desc_nulls_last }) {
+            config
+            id
+            title
+            belongsTo
+         }
+      }
+   `,
+}
