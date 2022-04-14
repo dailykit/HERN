@@ -68,7 +68,7 @@ export const SocialShare = ({ update, domain, brandId, product }) => {
             },
         },
         ogURL: {
-            value: domain,
+            value: '',
             meta: {
                 isValid: false,
                 isTouched: false,
@@ -160,10 +160,10 @@ export const SocialShare = ({ update, domain, brandId, product }) => {
             id: settingId,
             productId: product?.id,
             value: {
-                ogTitle: form.ogTitle.value,
-                ogDescription: form.ogDescription.value,
-                ogImage: form.ogImage.value,
-                ogURL: form.ogURL.value
+                ogTitle: form.ogTitle.value == undefined ? product?.name : form.ogTitle.value,
+                ogDescription: form.ogDescription.value == undefined ? product?.description : form.ogDescription.value,
+                ogImage: form.ogImage.value == undefined ? product?.assets?.images[0] : form.ogImage.value,
+                ogURL: form.ogURL.value == undefined ? domain : form.ogURL.value
             }
         })
         handleOgOk()
@@ -341,7 +341,7 @@ export const SocialShare = ({ update, domain, brandId, product }) => {
                                             }}
                                             className="text-box"
                                             bordered={false}
-                                            value={form.ogURL.value}
+                                            value={form.ogURL.value || domain}
                                             onChange={onChangeHandler}
                                             id="ogURL"
                                             name="ogURL"
