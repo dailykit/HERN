@@ -63,10 +63,10 @@ export const HernLazyImage = ({
       `${width}x${height}-rb`
    )
    const lowImageSizeWidth = React.useMemo(() => {
-      return width / 50 < 10 ? 10 : width / 50
+      return width / 50 < 10 ? 10 : parseInt(width / 50)
    }, [])
    const lowImageSizeHeight = React.useMemo(() => {
-      return height / 50 < 10 ? 10 : height / 50
+      return height / 50 < 10 ? 10 : parseInt(height / 50)
    }, [])
 
    const lowSizeBGImage = dataSrc
