@@ -38,7 +38,7 @@ import { PRODUCT } from '../../../../../../graphql'
 import { InfoCircleOutlined } from '@ant-design/icons'
 const { Title, Text } = Typography
 
-export const SocialShare = ({ update, domain, product }) => {
+export const SocialShare = ({ update, domain, brandId, product }) => {
     const [tunnel1, openTunnel1, closeTunnel1] = useTunnel(1)
     const params = useParams()
     const [settingId, setSettingId] = React.useState(null)
@@ -101,7 +101,7 @@ export const SocialShare = ({ update, domain, product }) => {
     //query for getting metadetails
     const [seoDetails, { loading: metaDetailsLoading, productSettings }] =
         useLazyQuery(PRODUCT.PRODUCT_PAGE_SETTINGS, {
-            onCompleted: ({ products_productPageSetting: productSettings
+            onCompleted: ({ products_productSetting: productSettings
             }) => {
                 if (!isEmpty(productSettings)) {
                     const { product, id } = productSettings[0]
@@ -134,7 +134,8 @@ export const SocialShare = ({ update, domain, product }) => {
             variables: {
                 identifier: { _eq: 'og-card' },
                 type: { _eq: 'seo' },
-                productId: { _eq: product?.id }
+                productId: { _eq: product?.id },
+                brandId: { _eq: brandId }
             }
         })
     }, [])
@@ -445,7 +446,7 @@ export const SocialShare = ({ update, domain, product }) => {
                             >
                                 <Tooltip placement="bottom" title={'page link'}>
                                     <p style={{ textTransform: 'uppercase' }}>
-                                        {domain.split('//')[1]}
+                                        {domain}
                                     </p>
                                 </Tooltip>
                                 <Title strong level={4}>

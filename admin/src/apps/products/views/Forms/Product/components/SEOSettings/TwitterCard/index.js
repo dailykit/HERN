@@ -40,9 +40,10 @@ import {
     LinkIcon2,
 } from '../../../../../../../../shared/assets/icons'
 import { InfoCircleOutlined } from '@ant-design/icons'
+import Domain from 'twilio/lib/base/Domain'
 const { Title, Text } = Typography
 
-export const TwitterCard = ({ update, domain, product }) => {
+export const TwitterCard = ({ update, domain, brandId, product }) => {
     const [tunnel1, openTunnel1, closeTunnel1] = useTunnel(1)
     const params = useParams()
     const [settingId, setSettingId] = React.useState(null)
@@ -92,7 +93,7 @@ export const TwitterCard = ({ update, domain, product }) => {
 
     const [seoDetails, { loading: metaDetailsLoading, productSettings }] =
         useLazyQuery(PRODUCT.PRODUCT_PAGE_SETTINGS, {
-            onCompleted: ({ products_productPageSetting: productSettings
+            onCompleted: ({ products_productSetting: productSettings
             }) => {
                 if (!isEmpty(productSettings)) {
                     const { product, id } = productSettings[0]
@@ -125,7 +126,8 @@ export const TwitterCard = ({ update, domain, product }) => {
             variables: {
                 identifier: { _eq: 'twitter-card' },
                 type: { _eq: 'seo' },
-                productId: { _eq: product.id }
+                productId: { _eq: product.id },
+                brandId: { _eq: brandId }
             }
         })
     }, [])
@@ -465,7 +467,7 @@ export const TwitterCard = ({ update, domain, product }) => {
                                 <Tooltip placement="bottom" title={'page link'}>
                                     <p>
                                         <LinkIcon2 />
-                                        <span>{domain.split('//')[1]}</span>
+                                        <span>{domain}</span>
                                     </p>
                                 </Tooltip>
                             </Card>
