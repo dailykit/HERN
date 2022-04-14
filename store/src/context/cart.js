@@ -13,7 +13,7 @@ import {
 import { useUser } from '.'
 import { useConfig } from '../lib'
 import { useToasts } from 'react-toast-notifications'
-import { combineCartItems, useQueryParamState, isClient } from '../utils'
+import { combineCartItems, useQueryParamState, useWindowOnload } from '../utils'
 import { useTranslation } from './language'
 
 export const CartContext = React.createContext()
@@ -51,14 +51,9 @@ export const CartProvider = ({ children }) => {
    const [storedCartId, setStoredCartId] = useState(null)
    const [combinedCartItems, setCombinedCartData] = useState(null)
    const [showCartIconToolTip, setShowCartIconToolTip] = useState(false)
-   const [windowLoad, setWindowLoad] = React.useState(true)
-   useEffect(() => {
-      if (isClient) {
-         window.onload = function () {
-            setWindowLoad(false)
-         }
-      }
-   }, [])
+   const { isWindowLoading } = useWindowOnload()
+
+   console.log('isWindowLoadingCart', isWindowLoading)
    React.useEffect(() => {
       const cartId = localStorage.getItem('cart-id')
       if (cartId) {
@@ -76,7 +71,7 @@ export const CartProvider = ({ children }) => {
       error: getInitialCart,
       data: cartData = {},
    } = useSubscription(GET_CART, {
-      skip: windowLoad || !storedCartId,
+      skip: isWindowLoading || !storedCartId,
       variables: {
          where: {
             id: {
@@ -103,7 +98,7 @@ export const CartProvider = ({ children }) => {
       loading: cartItemsLoading,
       error: cartItemsError,
       data: cartItemsData,
-   } = useSubscription(windowLoad || GET_CART_ITEMS_BY_CART, {
+   } = useSubscription(isWindowLoading || GET_CART_ITEMS_BY_CART, {
       skip: !storedCartId,
       variables: {
          where: {
@@ -446,7 +441,7 @@ export const CartProvider = ({ children }) => {
          },
          skip:
             !(brand?.id && user?.keycloakId && orderTabs.length > 0) ||
-            windowLoad,
+            isWindowLoading,
          fetchPolicy: 'no-cache',
          onSubscriptionData: ({ subscriptionData }) => {
             console.log('subscriptionData', subscriptionData)
