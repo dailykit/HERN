@@ -23,13 +23,13 @@ export const FulfillmentForm = () => {
       () =>
          selectedOrderTab
             ? selectedOrderTab.orderFulfillmentTypeLabel
-               .replace('_', ' ')
-               .split(' ')[1]
+                 .replace('_', ' ')
+                 .split(' ')[1]
             : orderTabs.length == 0
-               ? null
-               : orderTabs[0].orderFulfillmentTypeLabel
-                  .replace('_', ' ')
-                  .split(' ')[1],
+            ? null
+            : orderTabs[0].orderFulfillmentTypeLabel
+                 .replace('_', ' ')
+                 .split(' ')[1],
       [orderTabs, selectedOrderTab]
    )
    const [showRefineLocation, setShowRefineLocation] = useState(false)
@@ -109,11 +109,11 @@ export const FulfillmentForm = () => {
                      </button>
                      {(selectedFulfillment === 'DELIVERY' ||
                         selectedFulfillment === 'PICKUP') && (
-                           <ConsumerAddress
-                              setShowRefineLocation={setShowRefineLocation}
-                              showEditIcon={selectedFulfillment === 'DELIVERY'}
-                           />
-                        )}
+                        <ConsumerAddress
+                           setShowRefineLocation={setShowRefineLocation}
+                           showEditIcon={selectedFulfillment === 'DELIVERY'}
+                        />
+                     )}
                   </div>
                </>
             )}
@@ -133,8 +133,12 @@ export const FulfillmentForm = () => {
                   </span>
                   &nbsp; &nbsp;
                   <h3>
-                     {selectedFulfillment === 'PICKUP' && <span>{t('Pick up time')}</span>}
-                     {selectedFulfillment === 'DELIVERY' && <span>{t('Delivery time')}</span>}
+                     {selectedFulfillment === 'PICKUP' && (
+                        <span>{t('Pick up time')}</span>
+                     )}
+                     {selectedFulfillment === 'DELIVERY' && (
+                        <span>{t('Delivery time')}</span>
+                     )}
                   </h3>
                </div>
                <span
@@ -311,24 +315,24 @@ export const Fulfillment = ({ cart, editable = true }) => {
                      {t(title)}{' '}
                      {(cart?.fulfillmentInfo?.type === 'PREORDER_PICKUP' ||
                         cart?.fulfillmentInfo?.type ===
-                        'PREORDER_DELIVERY') && (
-                           <span>
-                              {' '}
-                              on{' '}
-                              {moment(cart?.fulfillmentInfo?.slot?.from).format(
-                                 'DD MMM YYYY'
-                              )}
-                              {' ('}
-                              {moment(cart?.fulfillmentInfo?.slot?.from).format(
-                                 'HH:mm'
-                              )}
-                              {'-'}
-                              {moment(cart?.fulfillmentInfo?.slot?.to).format(
-                                 'HH:mm'
-                              )}
-                              {')'}
-                           </span>
-                        )}
+                           'PREORDER_DELIVERY') && (
+                        <span>
+                           {' '}
+                           on{' '}
+                           {moment(cart?.fulfillmentInfo?.slot?.from).format(
+                              'DD MMM YYYY'
+                           )}
+                           {' ('}
+                           {moment(cart?.fulfillmentInfo?.slot?.from).format(
+                              'HH:mm'
+                           )}
+                           {'-'}
+                           {moment(cart?.fulfillmentInfo?.slot?.to).format(
+                              'HH:mm'
+                           )}
+                           {')'}
+                        </span>
+                     )}
                   </label>
 
                   {!isEmpty(addressInfo) ? (
@@ -343,7 +347,7 @@ export const Fulfillment = ({ cart, editable = true }) => {
                                  {addressInfo.line1}
                               </span>
                               <span className="hern-store-location__store-location-address hern-store-location__store-location-address-line2">
-                                 {addressInfo.line2}
+                                 {/* {addressInfo.line2} */}
                               </span>
                               <span className="hern-store-location__store-location-address hern-store-location__store-location-address-c-s-c-z">
                                  {addressInfo.city} {addressInfo.state}{' '}
@@ -387,12 +391,14 @@ const ConsumerAddress = ({ setShowRefineLocation, showEditIcon }) => {
    if (!address) {
       return null
    }
-   const fullAddress = `${address?.line1} ${address?.line2} ${address?.city} ${address?.state} ${address?.country},${address?.zipcode}`
+   const fullAddress = `${address?.line1} ${address?.city} ${address?.state} ${address?.country},${address?.zipcode}`
    const isChangeButtonDisabled =
       !cart?.customerInfo?.customerFirstName ||
       !cart?.customerInfo?.customerLastName ||
       !cart?.customerInfo?.customerPhone
-   { console.log(showEditIcon, "showEditIcon") }
+   {
+      console.log(showEditIcon, 'showEditIcon')
+   }
    return (
       <>
          <address title={fullAddress}>{fullAddress}</address>

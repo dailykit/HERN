@@ -37,7 +37,7 @@ export const UserType = () => {
                <>
                   <span className="hern-user-type__or">Or</span>
                   <span
-                     className="hern-user-info__footer-guest"
+                     className="hern-user-type__guest"
                      onClick={() => {
                         localStorage.setItem('userType', 'guest')
                         dispatch({
@@ -45,9 +45,9 @@ export const UserType = () => {
                            payload: 'guest',
                         })
                      }}
-                  >
                      style={{ color: themeColor }}
-                     className= "hern-user-type__guest" Continue as Guest
+                  >
+                     Continue as Guest
                   </span>
                </>
             )}
