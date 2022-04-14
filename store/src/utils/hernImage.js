@@ -89,6 +89,7 @@ export const HernLazyImage = ({
    const [error, setError] = React.useState(false)
    const [LQIPimageUrl, setLQIPimageUrl] = React.useState(lowSizeBGImage)
    const [LQIPerror, setLQIPError] = React.useState(false)
+   const [LQIPdisplay, setLQIPdisplay] = React.useState('unset')
 
    const SERVER_URL = React.useMemo(() => {
       const storeMode = process?.env?.NEXT_PUBLIC_MODE || 'production'
@@ -121,7 +122,7 @@ export const HernLazyImage = ({
             className={`lazyload ${className} hern-LQIP-image`}
             data-src={LQIPimageUrl}
             onError={async ({ currentTarget }) => {
-               if (!error) {
+               if (!LQIPerror) {
                   // changing class to lazyloding to lazyload so that lazysizes reload the new image
                   currentTarget.className = currentTarget.className.replace(
                      'lazyloading',
@@ -132,6 +133,7 @@ export const HernLazyImage = ({
                   setLQIPError(true)
                }
             }}
+            style={{ display: LQIPdisplay }}
          />
          <img
             className={`lazyload ${className}`}
@@ -139,6 +141,9 @@ export const HernLazyImage = ({
             // src={src}
             style={{
                ...style,
+            }}
+            onLoad={() => {
+               setLQIPdisplay('none')
             }}
             onError={async ({ currentTarget }) => {
                if (!error) {
