@@ -17,7 +17,7 @@ export const UserType = () => {
    const [showLoginPopup, setShowLoginPopup] = React.useState(false)
 
    React.useEffect(() => {
-      if (isClient) {
+      if (isClient && document.querySelector('.feedBack_button')) {
          if (showLoginPopup) {
             document.querySelector('.feedBack_button').style.display = 'none'
          } else {
