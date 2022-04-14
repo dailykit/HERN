@@ -5,7 +5,7 @@ import { toast } from 'react-toastify'
 import { useInView } from 'react-intersection-observer'
 import ConfigTemplateUI from '../../../../../shared/components/ConfigTemplateUI'
 import { logger } from '../../../../../shared/utils'
-import { BRANDS, BRAND_ID } from '../../../../brands/graphql'
+import { ENVS } from '../../../graphql'
 
 export const SettingsCard = ({
    setting,
@@ -22,7 +22,6 @@ export const SettingsCard = ({
    setAlertShow,
 }) => {
    const [config, setConfig] = React.useState({})
-   const params = useParams()
    const [setting_brand_Id, setBrandId] = React.useState('')
    const { ref, inView } = useInView({
       threshold: 0,
@@ -38,9 +37,9 @@ export const SettingsCard = ({
       }
    }, [inView, title])
 
-   const [updateSetting] = useMutation(BRANDS.UPDATE_BRAND_SETTING, {
+   const [updateSetting] = useMutation(ENVS.UPDATE, {
       onCompleted: () => {
-         toast.success('Successfully updated brandSetting')
+         toast.success('Successfully updated Env')
       },
       onError: error => {
          toast.error('Something went wrong!!')
@@ -53,39 +52,14 @@ export const SettingsCard = ({
       if (setting == [] && setting?.config == null) {
          updateSetting({
             variables: {
-               object: {
-                  brandId: params?.id,
-                  brandSettingId: setting?.brandSetting?.id,
-                  value: setting.configTemplate,
+               _set: {
+                  config: setting.config,
                },
+               id: setting.id,
             },
          })
       }
    }, [])
-
-   //for updating previous changes
-   React.useEffect(() => {
-      if (saveAllSettings !== {} && isChangeSaved == false) {
-         getBrandSettingId({
-            variables: {
-               identifier: { _eq: Object.keys(saveAllSettings)[0] },
-            },
-         })
-      }
-   }, [saveAllSettings, isChangeSaved])
-
-   //from identifier getting brandId
-   const [getBrandSettingId, { loading, brands_brand_brandSetting }] =
-      useLazyQuery(BRAND_ID, {
-         onCompleted: ({ brands_brand_brandSetting }) => {
-            console.log(brands_brand_brandSetting, 'inside onComplted')
-            setBrandId(brands_brand_brandSetting[0]?.brandSettingId)
-         },
-         onError: error => {
-            toast.error('Something went wrong!')
-            logger(error)
-         },
-      })
 
    const saveInfo = () => {
       //saving changes in alert box(save changes button)
@@ -96,30 +70,21 @@ export const SettingsCard = ({
       ) {
          updateSetting({
             variables: {
-               object: {
-                  brandId: params?.id,
-                  brandSettingId: setting_brand_Id,
-                  value: saveAllSettings,
-               },
+               id: setting.id,
+               _set: { config: saveAllSettings },
             },
          })
          setAlertShow(true)
       } else {
          //normal updating setting(save button in each config)
          console.log({
-            object: {
-               brandId: params?.id,
-               brandSettingId: setting?.brandSetting?.id,
-               config: config,
-            },
+            id: setting.id,
+            _set: { config: config },
          })
          updateSetting({
             variables: {
-               object: {
-                  brandId: params?.id,
-                  brandSettingId: setting?.brandSetting?.id,
-                  value: config,
-               },
+               id: setting.id,
+               _set: { config: config },
             },
          })
       }

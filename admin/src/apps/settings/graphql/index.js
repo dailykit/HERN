@@ -1070,11 +1070,25 @@ export const SCOPE_SELECTOR = gql`
 export const ENVS = {
    LIST: gql`
       subscription envsList {
-         settings_env(order_by: { config: desc_nulls_last }) {
+         settings_env(
+            order_by: { config: desc_nulls_last }
+            where: { isUserInput: { _eq: true } }
+         ) {
             config
             id
             title
             belongsTo
+         }
+      }
+   `,
+   UPDATE: gql`
+      mutation updateEnv($id: Int!, $_set: settings_env_set_input!) {
+         update_settings_env(where: { id: { _eq: $id } }, _set: $_set) {
+            affected_rows
+            returning {
+               id
+               config
+            }
          }
       }
    `,
