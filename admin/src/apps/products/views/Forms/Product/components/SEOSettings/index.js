@@ -31,7 +31,7 @@ const SEOSettings = ({ data }) => {
          logger(error)
       },
    })
-   console.log(data, "data")
+
 
    const update = ({ id, value }) => {
       updateSetting({
