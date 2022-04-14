@@ -14,11 +14,7 @@ export default async function handler(req, res) {
    console.log('brand', brand)
    const revalidateTokenFromHeader = req.headers['revalidate-token']
    const revalidateTokenFromEnv = config['REVALIDATE_TOKEN']
-
-   // console.log({
-   //    secret: revalidateTokenFromHeader,
-   //    env: revalidateTokenFromEnv,
-   // })
+   const NODE_ENV = config['NODE_ENV']
 
    // Check for secret to confirm this is a valid request
    if (revalidateTokenFromHeader !== revalidateTokenFromEnv) {
@@ -36,14 +32,14 @@ export default async function handler(req, res) {
                .replace(dirnameToReplace, '')
                .replace('.html', '')
             const updatedFilePath =
-               process.env.NEXT_PUBLIC_NODE_ENV === 'development'
+               NODE_ENV === 'development'
                   ? filePath.replace(`/${brand}/`, '')
                   : filePath
             console.log('updatedFilePath', updatedFilePath)
             await res.unstable_revalidate(`/${updatedFilePath}`)
             return {
                path:
-                  process.env.NEXT_PUBLIC_NODE_ENV === 'development'
+                  NODE_ENV === 'development'
                      ? `http://localhost:3000/${updatedFilePath}`
                      : `https://${updatedFilePath}`,
                status: 'revalidated',
