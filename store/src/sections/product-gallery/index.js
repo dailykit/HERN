@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useQuery } from '@apollo/react-hooks'
 import { Carousel, Col, Row } from 'antd'
 import classNames from 'classnames'
@@ -33,7 +33,7 @@ export const ProductGallery = ({ config }) => {
             locationId: locationId,
          },
       }),
-      [brand, location]
+      [brand, locationId]
    )
    const { loading: productsLoading, error: productsError } = useQuery(
       PRODUCTS,
