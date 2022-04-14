@@ -8,7 +8,7 @@ import ConfigTemplateUI from '../../../../../../shared/components/ConfigTemplate
 import { useInView } from "react-intersection-observer";
 
 
-export const SettingsCard = ({ setting, title, isChangeSaved, setIsSavedChange, setIsComponentIsOnView, componentIsOnView, setMode, mode, saveAllSettings, setSaveAllSettings, alertShow, setAlertShow }) => {
+export const SettingsCard = ({ setting, title, isChangeSaved, setIsSavedChange, setIsComponentIsOnView, componentIsOnView, setMode, mode, saveAllSettings, setSaveAllSettings, alertShow, setAlertShow, brandId }) => {
     const [config, setConfig] = React.useState({})
     const params = useParams()
     const [setting_product_Id, setProductId] = React.useState('')
@@ -50,6 +50,7 @@ export const SettingsCard = ({ setting, title, isChangeSaved, setIsSavedChange, 
                         productId: params?.id,
                         productSettingId: setting?.productSetting?.id,
                         value: setting.configTemplate,
+                        brandId: brandId
                     },
                 },
             })
@@ -61,7 +62,8 @@ export const SettingsCard = ({ setting, title, isChangeSaved, setIsSavedChange, 
         if (saveAllSettings !== {} && isChangeSaved == false) {
             getProductSettingId({
                 variables: {
-                    identifier: { _eq: Object.keys(saveAllSettings)[0] }
+                    identifier: { _eq: Object.keys(saveAllSettings)[0] },
+                    brandId: { _eq: brandId }
                 }
             })
         }
@@ -88,19 +90,20 @@ export const SettingsCard = ({ setting, title, isChangeSaved, setIsSavedChange, 
                         productId: params?.id,
                         productSettingId: setting_product_Id,
                         value: saveAllSettings,
+                        brandId: brandId
                     },
                 },
             })
             setAlertShow(true)
         }
         else {
-
             updateSetting({
                 variables: {
                     object: {
                         productId: params?.id,
                         productSettingId: setting?.productSetting?.id,
                         value: config,
+                        brandId: brandId
                     },
                 },
             })

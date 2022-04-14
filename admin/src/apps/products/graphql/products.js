@@ -206,12 +206,13 @@ export const PRODUCT = {
 
    //product setting
    SETTING: gql`
-      subscription productSettings($productId: Int!) {
+      subscription productSettings($productId: Int!, $brandId: Int!) {
          products_product_productSetting(
             where: {
                _and: {
                   productId: { _eq: $productId }
                   productSetting: { isDynamicForm: { _eq: true } }
+                  brandId: { _eq: $brandId }
                }
             }
          ) {
@@ -441,11 +442,18 @@ export const ADDITIONAL_MODIFIER = {
       }
    `,
 }
+
 // getting productSettingId using identifier
 export const PRODUCT_ID = gql`
-   query MyQuery($identifier: String_comparison_exp!) {
+   query MyQuery(
+      $identifier: String_comparison_exp!
+      $brandId: Int_comparison_exp!
+   ) {
       products_product_productSetting(
-         where: { productSetting: { identifier: $identifier } }
+         where: {
+            productSetting: { identifier: $identifier }
+            brandId: $brandId
+         }
          limit: 1
       ) {
          productSettingId
