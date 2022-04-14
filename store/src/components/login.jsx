@@ -6,7 +6,7 @@ import classNames from 'classnames'
 import React, { useState } from 'react'
 import Countdown from 'react-countdown'
 import { signIn, getSession } from 'next-auth/client'
-import { getRoute, get_env, isClient } from '../utils'
+import { getRoute, get_env, isClient, useQueryParams } from '../utils'
 import PhoneInput, { isValidPhoneNumber } from 'react-phone-number-input'
 import 'react-phone-number-input/style.css'
 import { useToasts } from 'react-toast-notifications'
@@ -337,6 +337,7 @@ const OTPLogin = props => {
    const { addToast } = useToasts()
    const { t } = useTranslation()
    const router = useRouter()
+   const { brand } = useConfig()
    //component state
    const [error, setError] = React.useState('')
    const [loading, setLoading] = React.useState(false)
@@ -348,6 +349,26 @@ const OTPLogin = props => {
    const [resending, setResending] = React.useState(false)
    const [time, setTime] = React.useState(null)
    const [isNewUser, setIsNewUser] = React.useState(false)
+   const params = useQueryParams()
+   const [isReferralFieldVisible, setIsReferralFieldVisible] =
+      React.useState(false)
+   React.useEffect(() => {
+      if (params['invite-code']) {
+         const setInviteCode = async () => {
+            const isCodeValid = await isReferralCodeValid(
+               brand.id,
+               params['invite-code'],
+               true
+            )
+
+            if (isCodeValid) {
+               setIsReferralFieldVisible(true)
+               setForm({ ...form, code: params['invite-code'] })
+            }
+         }
+         setInviteCode()
+      }
+   }, [params])
 
    //check user already exist
    const [checkCustomerExistence] = useLazyQuery(PLATFORM_CUSTOMERS, {
@@ -458,6 +479,24 @@ const OTPLogin = props => {
          }
 
          setError('')
+         const isCodeValid = await isReferralCodeValid(
+            brand.id,
+            form.code,
+            true
+         )
+         if (!isCodeValid) {
+            deleteStoredReferralCode()
+            return setError(
+               <>
+                  <span>{t('Referral code is not valid')}</span>
+                  <span>{'!'}</span>
+               </>
+            )
+         }
+         if (form.code) {
+            setStoredReferralCode(form.code)
+         }
+
          const response = await signIn('otp', {
             redirect: false,
             ...form,
@@ -652,6 +691,35 @@ const OTPLogin = props => {
                      onKeyPress={handleSubmitOTPKeyPress}
                   />
                </fieldset>
+               {isNewUser && (
+                  <>
+                     {isReferralFieldVisible ? (
+                        <fieldset className="hern-login-v1__fieldset">
+                           <label
+                              className="hern-login-v1__label"
+                              htmlFor="code"
+                           >
+                              {t('Referral Code')}
+                           </label>
+                           <input
+                              className="hern-login-v1__input"
+                              name="code"
+                              type="text"
+                              onChange={onChange}
+                              value={form.code}
+                              placeholder="Enter referral code"
+                           />
+                        </fieldset>
+                     ) : (
+                        <button
+                           className="hern-signup-v1__referral-code"
+                           onClick={() => setIsReferralFieldVisible(true)}
+                        >
+                           {t('Got a referral code?')}
+                        </button>
+                     )}
+                  </>
+               )}
                <button
                   style={{ height: '40px' }}
                   className={`hern-login-v1__otp-submit ${
@@ -982,6 +1050,24 @@ const Signup = props => {
       phone: '',
       code: '',
    })
+   const params = useQueryParams()
+   React.useEffect(() => {
+      if (params['invite-code']) {
+         const setInviteCode = async () => {
+            const isCodeValid = await isReferralCodeValid(
+               brand.id,
+               params['invite-code'],
+               true
+            )
+
+            if (isCodeValid) {
+               setIsReferralFieldVisible(true)
+               setForm({ ...form, code: params['invite-code'] })
+            }
+         }
+         setInviteCode()
+      }
+   }, [params])
 
    const [checkCustomerExistence] = useLazyQuery(PLATFORM_CUSTOMERS, {
       onCompleted: ({ customers = [] }) => {
@@ -1184,7 +1270,7 @@ const Signup = props => {
 
          const url = `${get_env('BASE_BRAND_URL')}/api/hash`
          const { data } = await axios.post(url, { password: form.password })
-            
+
          if (data?.success && data?.hash) {
             // fb pixel integration after successfull registration
             ReactPixel.trackCustom('signup', {

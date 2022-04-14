@@ -69,7 +69,9 @@ const Content = () => {
                   <div>
                      <span>{user.customerReferral.referralCode}</span>
                      <CopyToClipboard
-                        text={`${get_env('BASE_BRAND_URL')}/?invite-code=${
+                        text={`${get_env(
+                           'BASE_BRAND_URL'
+                        )}/sign-up?invite-code=${
                            user.customerReferral.referralCode
                         }`}
                         onCopy={() =>
