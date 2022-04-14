@@ -431,6 +431,7 @@ export const KIOSK = {
             location {
                city
                id
+               label
             }
          }
       }

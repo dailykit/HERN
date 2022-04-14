@@ -52,7 +52,7 @@ export const BasicInfo = () => {
             printerId: kiosk[0].printerId || '',
             password:
                kiosk[0].password || kiosk[0].kioskLabel + '@' + params.id,
-            location: kiosk[0].location?.city || '',
+            location: kiosk[0].location?.label || '',
             locationId: kiosk[0].location?.id || '',
             meta: {
                isValid: kiosk[0].kioskLabel ? true : false,
@@ -367,7 +367,7 @@ export const BasicInfo = () => {
                      options={printerList}
                      selectedOption={e => updateKioskPrinter(e)}
                      placeholder="Enter printer name"
-                     addOption={() => console.log('printer ADDED')}
+                     // addOption={() => console.log('printer ADDED')}
                   />
                </Form.Group>
 
@@ -387,7 +387,7 @@ export const BasicInfo = () => {
                      options={locationList}
                      selectedOption={e => updateKioskLocation(e)}
                      placeholder="Choose kiosk location"
-                     addOption={() => console.log('location ADDED')}
+                     // addOption={() => console.log('location ADDED')}
                   />
                </Form.Group>
             </>
