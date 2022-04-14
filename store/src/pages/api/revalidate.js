@@ -11,6 +11,7 @@ export default async function handler(req, res) {
 
    const hostname = req.headers['host']
    const brand = hostname.replace(':', '')
+   console.log('brand', brand)
    const revalidateTokenFromHeader = req.headers['revalidate-token']
    const revalidateTokenFromEnv = config['REVALIDATE_TOKEN']
 
@@ -31,14 +32,20 @@ export default async function handler(req, res) {
       const filePaths = await Promise.all(
          paths.map(async item => {
             const startTime = Date.now()
-            console.log('logging item', item)
             const filePath = item
                .replace(dirnameToReplace, '')
-               .replace(`/${brand}`, '')
                .replace('.html', '')
-            await res.unstable_revalidate(filePath)
+            const updatedFilePath =
+               process.env.NEXT_PUBLIC_NODE_ENV === 'development'
+                  ? filePath.replace(`/${brand}/`, '')
+                  : filePath
+            console.log('updatedFilePath', updatedFilePath)
+            await res.unstable_revalidate(`/${updatedFilePath}`)
             return {
-               path: hostname + filePath,
+               path:
+                  process.env.NEXT_PUBLIC_NODE_ENV === 'development'
+                     ? `http://localhost:3000/${updatedFilePath}`
+                     : `https://${updatedFilePath}`,
                status: 'revalidated',
                timeTaken: Date.now() - startTime,
             }
