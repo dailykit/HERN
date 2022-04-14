@@ -3,7 +3,7 @@ import { Carousel } from 'antd'
 import dynamic from 'next/dynamic'
 import { ArrowLeftIcon, ArrowRightIcon } from '../../assets/icons'
 // import { HernLazyImage } from '../../utils/hernImage'
-import { isClient } from '../../utils'
+import { isClient, useWindowOnload } from '../../utils'
 
 const HernLazyImage = dynamic(() =>
    import('../../utils/hernImage').then(promise => promise.HernLazyImage)
@@ -16,6 +16,8 @@ export const SliderSection = ({ config }) => {
       config?.display?.slider?.showSliderArrow?.value ?? false
    const sliderContent = config.display.slider.content.images.value ?? false
    const getStartedURL = config?.data?.callToActionButtonURL.value ?? '#'
+
+   const { isWindowLoading } = useWindowOnload()
    return (
       <div
          style={{
@@ -32,7 +34,7 @@ export const SliderSection = ({ config }) => {
                dots={showDotsOnSlider}
                prevArrow={showArrowsOnSlider ? <LeftArrow /> : false}
                nextArrow={showArrowsOnSlider ? <RightArrow /> : false}
-               autoplay={true}
+               autoplay={!isWindowLoading}
             >
                {sliderContent &&
                   config.display.slider.content.images.value.map(
