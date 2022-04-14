@@ -4,23 +4,54 @@
    min-height: calc(100vh - 64px);
    grid-template-columns: 300px 1fr;
    position: relative;
-   @media (max-width: 768px) {
+   @media (max-width: 767px) {
       display: block;
    }
 }
+.hern-referrals__customer-referral-code__title {
+   font-style: normal;
+   font-weight: 500;
+   font-size: 16px;
+   line-height: 19px;
+   color: #202020;
+   margin-bottom: 16px;
+}
 
 .hern-referrals__customer-referral-code {
-   display: flex;
+   display: inline-block;
+   border: 1px dashed var(--hern-accent);
+   border-radius: 10px;
+   > div {
+      padding: 4px;
+      > span {
+         margin-right: 32px;
+      }
+   }
+   @media (max-width: 900px) {
+      display: block;
+      > div > span {
+         margin-right: 0;
+         display: block;
+         margin-bottom: 8px;
+         text-align: center;
+      }
+   }
+}
+.hern-referral-code__copy-btn {
+   display: inline-flex;
    align-items: center;
-   justify-content: space-between;
-   margin-bottom: 10px;
+   @media (max-width: 900px) {
+      width: 100%;
+      justify-content: center;
+   }
 }
 .hern-referrals__content {
    padding-left: 1.5rem;
    padding-right: 1.5rem;
    width: 100%;
-   @media (min-width: 768px) {
-      width: 40%;
+   @media (max-width: 767px) {
+      padding-left: 0.5rem;
+      padding-right: 0.5rem;
    }
 }
 .hern-referrals__header {
@@ -40,17 +71,40 @@
    justify-content: space-between;
 }
 .hern-referrals__header__title {
-   color: rgba(5, 150, 105, 1);
-   font-size: 1.5rem;
-   line-height: 2rem;
+   color: var(--hern-accent);
+   font-style: normal;
+   font-weight: 700;
+   font-size: 32px;
+   line-height: 38px;
+   text-transform: uppercase;
+   @media (max-width: 767px) {
+      font-size: 24px;
+      line-height: 28px;
+   }
+}
+.hern-referral__referred {
+   font-weight: 500;
+   font-size: 24px;
+   line-height: 38px;
+   color: #202020;
+   margin: 32px 0 16px 0;
+   @media (max-width: 767px) {
+      font-size: 20px;
+      line-height: 24px;
+   }
 }
 .hern-referrals__table {
    margin-top: 0.5rem;
    margin-bottom: 0.5rem;
    width: 100%;
    table-layout: auto;
+   max-width: 400px;
+   font-size: 16px;
    th {
       text-align: left;
+      border-width: 1px;
+      padding: 0.25rem 0.5rem;
+      font-weight: 600;
    }
    tr:nth-of-type(even) {
       background-color: rgba(243, 244, 246, 1);
@@ -60,5 +114,5 @@
    border-width: 1px;
    padding: 0.25rem 0.5rem;
    min-width: 100px;
-   text-align: center;
+   font-weight: 500;
 }
