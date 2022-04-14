@@ -171,6 +171,7 @@ export const getFieldUI = (
             marginLeft={indentation}
             path={fieldKey}
             onConfigChange={onConfigChange}
+            editMode={editMode}
          />
       )
    } else if (
