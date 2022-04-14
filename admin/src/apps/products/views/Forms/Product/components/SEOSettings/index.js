@@ -20,7 +20,8 @@ const SEOSettings = ({ data }) => {
    const [brandContext] = React.useContext(BrandContext)
    const [brandListTunnel, openBrandListTunnel, closeBrandListTunnel] =
       useTunnel(1)
-   const domain = `${window.location.origin}/product/${data?.id}`
+   // domain formatted like this=> https://testhern.dailykit.org/products/2960
+   const domain = 'https://' + brandContext?.brandDomain + '/products' + "/" + data?.id
    const [updateSetting] = useMutation(PRODUCT.UPDATE_PRODUCT_SETTING, {
       onCompleted: () => {
          toast.success('Successfully updated!')
@@ -30,7 +31,7 @@ const SEOSettings = ({ data }) => {
          logger(error)
       },
    })
-
+   console.log(data, "data")
 
    const update = ({ id, value }) => {
       updateSetting({
@@ -39,6 +40,7 @@ const SEOSettings = ({ data }) => {
                value,
                productId: data?.id,
                productSettingId: id,
+               brandId: brandContext.brandId
             },
          },
       })
@@ -52,9 +54,9 @@ const SEOSettings = ({ data }) => {
 
    return (<>
       <div style={{ margin: '35px 35px 35px 35px' }}>
-         <SEOBasics update={update} domain={domain} product={data} />
-         <SocialShare update={update} domain={domain} product={data} />
-         <TwitterCard update={update} domain={domain} product={data} />
+         <SEOBasics update={update} domain={domain} brandId={brandContext.brandId} product={data} />
+         <SocialShare update={update} domain={domain} brandId={brandContext.brandId} product={data} />
+         <TwitterCard update={update} domain={domain} brandId={brandContext.brandId} product={data} />
       </div>
       <Tunnels tunnels={brandListTunnel}>
          <Tunnel popup={true} layer={1} size="md">
