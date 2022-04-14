@@ -37,7 +37,6 @@ export const OnDemandMenuProvider = ({ children }) => {
    )
    const { isWindowLoading } = useWindowOnload()
 
-   console.log('isWindowLoadingOnDemand', isWindowLoading)
    useQuery(PRODUCTS_BY_CATEGORY, {
       skip: isWindowLoading || isConfigLoading || !brand?.id,
       variables: {

@@ -89,7 +89,6 @@ export const ConfigProvider = ({ children }) => {
       React.useState(false)
    const { isWindowLoading } = useWindowOnload()
 
-   console.log('isWindowLoadingConfig', isWindowLoading)
    useQuery(ORDER_TAB, {
       skip: isWindowLoading || isLoading || !orderInterfaceType,
       variables: {

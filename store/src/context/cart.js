@@ -53,7 +53,6 @@ export const CartProvider = ({ children }) => {
    const [showCartIconToolTip, setShowCartIconToolTip] = useState(false)
    const { isWindowLoading } = useWindowOnload()
 
-   console.log('isWindowLoadingCart', isWindowLoading)
    React.useEffect(() => {
       const cartId = localStorage.getItem('cart-id')
       if (cartId) {
