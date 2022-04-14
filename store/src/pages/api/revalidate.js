@@ -1,8 +1,34 @@
 import glob from 'glob'
 import path from 'path'
 import fs from 'fs'
+import Cors from 'cors'
+
+const cors = Cors({
+   methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE'],
+   origin: '*',
+   optionsSuccessStatus: 200,
+})
+
+// Helper method to wait for a middleware to execute before continuing
+// And to throw an error when an error happens in a middleware
+function runMiddleware(req, res, fn) {
+   return new Promise((resolve, reject) => {
+      fn(req, res, result => {
+         if (result instanceof Error) {
+            console.log('reject')
+            return reject(result)
+         }
+         console.log('resolve')
+         return resolve(result)
+      })
+   })
+}
 
 export default async function handler(req, res) {
+   // Run the middleware
+   console.log('inside revalidate')
+   await runMiddleware(req, res, cors)
+
    const content = await fs.readFileSync(
       process.cwd() + '/../hern/env-config.js',
       'utf-8'
