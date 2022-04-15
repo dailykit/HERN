@@ -359,7 +359,7 @@ export const Time = ({
       )}
    </Flex>
 )
-export const Select = ({ fieldDetail, marginLeft, path, onConfigChange }) => {
+export const Select = ({ fieldDetail, marginLeft, path, onConfigChange, editMode }) => {
    const [searchOption, setSearchOption] = useState('')
    const [searchResult, setSearchResult] = useState(fieldDetail?.options)
    const selectedOptionHandler = options => {
@@ -377,6 +377,7 @@ export const Select = ({ fieldDetail, marginLeft, path, onConfigChange }) => {
       )
       setSearchResult(result)
    }, [searchOption])
+   { console.log(editMode, "editMode") }
    return (
       <Flex
          container
@@ -390,18 +391,30 @@ export const Select = ({ fieldDetail, marginLeft, path, onConfigChange }) => {
             </Form.Label>
             <Tooltip identifier="select_component_info" />
          </Flex>
-         <Dropdown
+         {editMode ? (<DropdownWrapper><Dropdown
             type={fieldDetail?.type || 'single'}
             options={searchResult}
+<<<<<<< HEAD
             // defaultValue={
             //    fieldDetail?.type === 'single' && fieldDetail?.value?.id
             // }
+=======
+            //defaultOptions takes the default value 
+>>>>>>> bc817fe8335ac82669503623f963191e531283bf
             defaultOptions={fieldDetail?.value}
             searchedOption={option => setSearchOption(option)}
             selectedOption={option => selectedOptionHandler(option)}
             placeholder="type what you're looking for..."
+<<<<<<< HEAD
          />
 
+=======
+         /></DropdownWrapper>) : (
+            <Text as="h4" className="showPhoneNumber">
+               {fieldDetail?.value?.title || 'choose one of the options...'}
+            </Text>
+         )}
+>>>>>>> bc817fe8335ac82669503623f963191e531283bf
       </Flex>
    )
 }

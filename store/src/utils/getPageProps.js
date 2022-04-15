@@ -47,8 +47,8 @@ export const getPageProps = async (params, route) => {
          where: {
             _or: [
                { brandPage: { route: { _eq: route } } },
-               { brandPageModuleId: { _in: fileIds.htmlFileIds } },
-               { htmlFileId: { _in: fileIds.pageModules } },
+               { brandPageModuleId: { _in: fileIds.pageModules } },
+               { htmlFileId: { _in: fileIds.htmlFileIds } },
                {
                   brand: {
                      _or: [

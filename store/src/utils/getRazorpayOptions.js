@@ -102,8 +102,12 @@ export const getRazorpayOptions = ({
          // },
          modal: {
             ondismiss: ondismissHandler,
+            confirm_close: true,
          },
          handler: eventHandler,
+         retry: {
+            enabled: false,
+         },
       }
       return options
    }

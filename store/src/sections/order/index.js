@@ -6,6 +6,7 @@ import {
    Divider,
    Button,
    Loader,
+   Empty,
 } from '../../components'
 import { useQuery } from '@apollo/react-hooks'
 import _ from 'lodash'
@@ -131,9 +132,9 @@ export const OnDemandOrder = ({ config }) => {
                      products: updatedProducts,
                   }
                })
-               setStatus('success')
                setHydratedMenu(updatedMenu)
             }
+            setStatus('success')
          },
          onError: error => {
             setStatus('error')
@@ -162,6 +163,17 @@ export const OnDemandOrder = ({ config }) => {
    if (isMenuLoading || status === 'loading' || productsLoading) {
       return <Loader type="order-loading" />
    }
+   if (_.isEmpty(hydratedMenu))
+      return (
+         <Empty
+            title="No items !"
+            description="Looks like store is empty. Wait for some time to order yummy items"
+            route="/"
+            buttonLabel="Back to home"
+            illustration="empty-store"
+         />
+      )
+
    const getWrapperClasses = () => {
       if (menuType === 'fixed-top-nav') {
          if (!showCartOnRight) {

@@ -162,6 +162,7 @@
 
 @media screen and (max-width: 599px) {
    // mobile
+
    .hern-product_gallery-header {
       margin: 15px 0px;
    }
@@ -171,6 +172,9 @@
       margin: 15px 0px 10px;
    }
    .hern-product_gallery__container {
+      .ant-row {
+         display: block !important;
+      }
       .hern-product-card-content {
          padding: 0px;
       }
