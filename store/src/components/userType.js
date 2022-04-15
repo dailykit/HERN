@@ -1,7 +1,7 @@
 import React from 'react'
 import { Button } from '.'
 import { useUser } from '../context'
-import { LoginWrapper } from '../utils'
+import { LoginWrapper, isClient } from '../utils'
 import { useConfig } from '../lib'
 import { AiOutlineClose } from 'react-icons/ai'
 
@@ -15,6 +15,16 @@ export const UserType = () => {
       ? theme?.accent?.value
       : 'rgba(5, 150, 105, 1)'
    const [showLoginPopup, setShowLoginPopup] = React.useState(false)
+
+   React.useEffect(() => {
+      if (isClient && document.querySelector('.feedBack_button')) {
+         if (showLoginPopup) {
+            document.querySelector('.feedBack_button').style.display = 'none'
+         } else {
+            document.querySelector('.feedBack_button').style.display = 'block'
+         }
+      }
+   }, [showLoginPopup])
 
    return (
       <div className="hern-user-type__wrapper">
