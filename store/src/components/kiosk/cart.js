@@ -201,6 +201,31 @@ export const KioskCart = props => {
                      <Header className="hern-kiosk__cart-page-offer">
                         <Offers config={config} />
                      </Header>
+                     <div
+                        style={{
+                           width: '100%',
+                           height: '120px',
+                           background: '#E5F0F7',
+                           display: 'flex',
+                           alignItems: 'center',
+                           justifyContent: 'space-between',
+                           padding: '0 2rem',
+                        }}
+                     >
+                        <h2
+                           style={{
+                              color: 'rgb(15, 107, 177)',
+                              fontSize: '28px',
+                              fontWeight: 'bold',
+                           }}
+                        >
+                           Free 1 Ice Cream Cone
+                        </h2>
+                        <img
+                           src="/assets/gifs/gift.gif"
+                           style={{ width: '120px' }}
+                        />
+                     </div>
                      <Content className="hern-kiosk__cart-page-price-detail">
                         <div className="hern-kiosk-cart-bill-details">
                            <span>{t('BILL DETAILS')}</span>
