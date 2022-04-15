@@ -13,7 +13,12 @@ import {
 import { useUser } from '.'
 import { useConfig } from '../lib'
 import { useToasts } from 'react-toast-notifications'
-import { combineCartItems, useQueryParamState, useWindowOnload } from '../utils'
+import {
+   combineCartItems,
+   useQueryParamState,
+   useWindowOnload,
+   isKiosk,
+} from '../utils'
 import { useTranslation } from './language'
 
 export const CartContext = React.createContext()
@@ -42,7 +47,13 @@ export const CartProvider = ({ children }) => {
       useConfig()
    const { addToast } = useToasts()
    const { t } = useTranslation()
-   const [oiType] = useQueryParamState('oiType')
+   const isKioskMode = isKiosk()
+   const oiType = React.useMemo(() => {
+      if (isKioskMode) {
+         return 'Kiosk Ordering'
+      }
+      return 'Website Ordering'
+   }, [isKioskMode])
    const [isFinalCartLoading, setIsFinalCartLoading] = React.useState(true)
 
    const { isAuthenticated, user, isLoading } = useUser()
@@ -54,15 +65,24 @@ export const CartProvider = ({ children }) => {
    const { isWindowLoading } = useWindowOnload()
 
    React.useEffect(() => {
+      // case 1 - user is not authenticated
+      //case 1.1 if there is cart-id in local storage , set storedCartId
+
+      //case 1.2 if not then do nothing,set storedCartId null
+
+      // case 2 - user is authenticated , handled by getCarts
+
+      // case 3 - use is authenticated and clicked on logout, set storedCartId null
+
       const cartId = localStorage.getItem('cart-id')
       if (cartId) {
          setStoredCartId(+cartId)
-         if (!isAuthenticated) {
-            // only set local cart id in headers when not authenticated
-            // when logged in, if it has local cart id then it will try to merge carts
+      } else {
+         if (!isLoading && !isAuthenticated) {
+            setStoredCartId(null)
          }
       }
-   }, [])
+   }, [isAuthenticated, isLoading])
 
    //initial cart when no auth
    const {
@@ -76,7 +96,7 @@ export const CartProvider = ({ children }) => {
             id: {
                _eq: storedCartId,
             },
-            ...(!oiType === 'Kiosk Ordering' && {
+            ...(!(oiType === 'Kiosk Ordering') && {
                paymentStatus: {
                   _eq: 'PENDING',
                },
@@ -107,7 +127,7 @@ export const CartProvider = ({ children }) => {
             cartId: {
                _eq: storedCartId,
             },
-            ...(!oiType === 'Kiosk Ordering' && {
+            ...(!(oiType === 'Kiosk Ordering') && {
                cart: {
                   paymentStatus: {
                      _eq: 'PENDING',

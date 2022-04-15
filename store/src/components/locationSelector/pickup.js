@@ -162,12 +162,19 @@ export const Pickup = props => {
                      .slice(formatted_address.length - 3)
                      .join(',')
                   const address = {}
+                  address.line1 = formatted_address
+                     .slice(0, formatted_address.length - 3)
+                     .join(',')
+                  address.line2 = ''
                   data.results[0].address_components.forEach(node => {
-                     if (node.types.includes('street_number')) {
-                        address.line2 = `${node.long_name} `
+                     if (node.types.includes('sublocality_level_3')) {
+                        address.line2 += `${node.long_name} `
                      }
-                     if (node.types.includes('route')) {
-                        address.line2 += node.long_name
+                     if (node.types.includes('sublocality_level_2')) {
+                        address.line2 += `${node.long_name} `
+                     }
+                     if (node.types.includes('sublocality_level_1')) {
+                        address.line2 += `${node.long_name} `
                      }
                      if (node.types.includes('locality')) {
                         address.city = node.long_name

@@ -2,7 +2,9 @@ import React, { useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { signOut } from 'next-auth/client'
+import classNames from 'classnames'
 import { CSSTransition } from 'react-transition-group'
+
 import {
    getProtectedRoutes,
    get_env,
@@ -18,7 +20,6 @@ import { CrossIcon, CartIcon, LocationIcon, DownVector } from '../assets/icons'
 import NavigationBar from './navbar'
 import { useWindowSize } from '../utils/useWindowSize'
 import { LanguageSwitch, TemplateFile } from '.'
-import classNames from 'classnames'
 import { useConfig } from '../lib'
 import isNull from 'lodash/isNull'
 import dynamic from 'next/dynamic'
@@ -28,6 +29,7 @@ const LocationSelectorWrapper = dynamic(() =>
       promise => promise.LocationSelectorWrapper
    )
 )
+
 const ReactPixel = isClient ? require('react-facebook-pixel').default : null
 
 export const Header = ({ settings, navigationMenus }) => {

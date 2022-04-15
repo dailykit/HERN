@@ -250,6 +250,8 @@ export const PaymentProvider = ({ children }) => {
          type: 'UPDATE_INITIAL_STATE',
          payload: {
             isPaymentProcessing: false,
+            isPaymentInitiated: false,
+            paymentLifeCycleState: '',
          },
       })
       const url = isClient ? get_env('BASE_BRAND_URL') : ''
@@ -260,14 +262,17 @@ export const PaymentProvider = ({ children }) => {
       console.log('result', data)
    }
 
-   const initializePayment = requiredCartId => {
+   const initializePayment = (
+      requiredCartId,
+      paymentLifeCycleState = 'INITIALIZE'
+   ) => {
       setCartId(requiredCartId)
       setIsPaymentInitiated(true)
       setIsProcessingPayment(true)
       dispatch({
          type: 'UPDATE_INITIAL_STATE',
          payload: {
-            paymentLifeCycleState: 'INITIALIZE',
+            paymentLifeCycleState,
          },
       })
    }
@@ -394,10 +399,19 @@ export const PaymentProvider = ({ children }) => {
 
    // setting cartPayment in state
    useEffect(() => {
-      if (!_isEmpty(cartPaymentsFromQuery)) {
+      console.log('useEffect for setting cartPayment')
+      if (!cartId) {
+         setCartId(cartState?.cart?.id || null)
+      }
+      if (!isEmpty(cartPaymentsFromQuery)) {
          setCartPayment(cartPaymentsFromQuery[0])
+         setCartId(cartPaymentsFromQuery[0].cartId)
+         setIsPaymentInitiated(true)
+         setIsProcessingPayment(true)
       } else {
          setCartPayment(null)
+         setIsPaymentInitiated(false)
+         setIsProcessingPayment(false)
       }
    }, [cartPaymentsFromQuery])
 
@@ -525,7 +539,9 @@ export const PaymentProvider = ({ children }) => {
                      eventHandler,
                   })
                   console.log('options', options)
-                  await displayRazorpay(options)
+                  if (state.paymentLifeCycleState === 'INITIALIZE') {
+                     await displayRazorpay(options)
+                  }
                })()
             }
          } else if (

@@ -143,3 +143,22 @@ const RightArrow = ({ ...props }) => {
       </div>
    )
 }
+
+// const FeedBackFormButton = () => {
+//    return (
+//       <div>
+//          {/* <div className="hern-slider-section__content"> */}
+//          <div>
+//             <a
+//                href="https://docs.google.com/forms/d/e/1FAIpQLSec10yg1m1RlikaVXPWALWmsXqrWJGYMyEUj8Bp2KMn2DyS3Q/viewform"
+//                className="hern-slider_section-feedBack_button"
+//                // style={{}}
+//             >
+//                {' '}
+//                Feedback
+//             </a>
+//             {/* </div> */}
+//          </div>
+//       </div>
+//    )
+// }

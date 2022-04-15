@@ -257,7 +257,7 @@ export const SIGNUP_COUNT = gql`
 
 export const BRAND_LISTING = gql`
    subscription BRAND_LISTING {
-      brands(where: { isPublished: { _eq: true } }) {
+      brands(order_by: { id: asc }, where: { isArchived: { _eq: false } }) {
          id
          domain
          title

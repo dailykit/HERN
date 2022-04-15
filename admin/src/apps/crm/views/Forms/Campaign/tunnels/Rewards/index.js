@@ -79,13 +79,11 @@ export default function RewardTypeTunnel({
       <>
          <Tunnels tunnels={tunnels}>
             <Tunnel layer={1}>
-               <Flex container alignItems="center">
-                  <TunnelHeader
-                     title="Select Type of Reward"
-                     close={() => closeTunnel(1)}
-                     tooltip={<Tooltip identifier="campaign_reward_type" />}
-                  />
-               </Flex>
+               <TunnelHeader
+                  title="Select Type of Reward"
+                  close={() => closeTunnel(1)}
+                  tooltip={<Tooltip identifier="campaign_reward_type" />}
+               />
                <Banner id="crm-app-campaigns-campaign-details-reward-type-tunnel-top" />
                <TunnelBody>
                   {types.map(type => {
