@@ -770,11 +770,7 @@ const AuthMenu = ({
                      <div
                         className="hern-navbar-cart-tooltip"
                         style={{
-                           backgroundColor: `${
-                              theme?.accent?.value
-                                 ? theme?.accent?.value
-                                 : 'rgba(37, 99, 235, 1)'
-                           }`,
+                           backgroundColor: `var(--hern-accent)`,
                            color: '#ffffff',
                         }}
                      >

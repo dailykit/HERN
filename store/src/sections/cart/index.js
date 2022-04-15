@@ -28,10 +28,15 @@ import {
    getRoute,
 } from '../../utils'
 import { useRouter } from 'next/router'
+import { useMutation } from '@apollo/react-hooks'
+import * as QUERIES from '../../graphql'
+import { useToasts } from 'react-toast-notifications'
+import { usePayment } from '../../lib'
 
 export const OnDemandCart = () => {
    const { cartState, combinedCartItems, isFinalCartLoading, storedCartId } =
       React.useContext(CartContext)
+
    const { isAuthenticated, userType } = useUser()
    const { locationId, dispatch } = useConfig()
    const { t } = useTranslation()
@@ -180,6 +185,28 @@ const PaymentSection = () => {
    console.log('first', cartState)
    const isSmallerDevice = isClient && window.innerWidth < 768
    const { t } = useTranslation()
+   const { addToast } = useToasts()
+   const { initializePayment } = usePayment()
+
+   // update cart mutation
+   const [updateCart] = useMutation(QUERIES.UPDATE_CART, {
+      onError: error => {
+         console.log(error)
+         addToast(error.message, { appearance: 'error' })
+      },
+   })
+
+   const placeOrderHandler = async () => {
+      initializePayment(cartState.cart.id)
+      await updateCart({
+         variables: {
+            id: cartState.cart.id,
+            _inc: { paymentRetryAttempt: 1 },
+            _set: {},
+         },
+      })
+   }
+
    return (
       <>
          {!isSmallerDevice && (
@@ -225,10 +252,19 @@ const PaymentSection = () => {
                      {isAuthenticated && (
                         <WalletAmount cart={cartState.cart} version={2} />
                      )}
-                     <PaymentOptionsRenderer
-                        cartId={cartState?.cart?.id}
-                        setPaymentTunnelOpen={setOpen}
-                     />
+                     {cartState?.cart?.cartOwnerBilling?.balanceToPay > 0 ? (
+                        <PaymentOptionsRenderer
+                           cartId={cartState?.cart?.id}
+                           setPaymentTunnelOpen={setOpen}
+                        />
+                     ) : (
+                        <Button
+                           className="hern-cart__place_order"
+                           onClick={placeOrderHandler}
+                        >
+                           {t('Place Order')}
+                        </Button>
+                     )}
                   </>
                )}
             </div>
@@ -261,10 +297,19 @@ const PaymentSection = () => {
                         <WalletAmount cart={cartState.cart} version={2} />
                      </div>
                   )}
-                  <PaymentOptionsRenderer
-                     cartId={cartState?.cart?.id}
-                     setPaymentTunnelOpen={setIsTunnelOpen}
-                  />
+                  {cartState?.cart?.cartOwnerBilling?.balanceToPay > 0 ? (
+                     <PaymentOptionsRenderer
+                        cartId={cartState?.cart?.id}
+                        setPaymentTunnelOpen={setIsTunnelOpen}
+                     />
+                  ) : (
+                     <button
+                        className="hern-cart__make-payment-btn"
+                        onClick={placeOrderHandler}
+                     >
+                        {t('Place Order')}
+                     </button>
+                  )}
                </Tunnel.Bottom>
             </>
          )}

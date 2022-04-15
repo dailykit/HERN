@@ -614,6 +614,7 @@ export const CartProvider = ({ children }) => {
                      localStorage.removeItem('cart-id')
                      setIsFinalCartLoading(false)
                   } else {
+                     setCombinedCartData([])
                      setIsFinalCartLoading(false)
                   }
                }
