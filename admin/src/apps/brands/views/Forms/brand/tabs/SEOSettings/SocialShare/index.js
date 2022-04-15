@@ -67,7 +67,16 @@ export const SocialShare = ({ update, domain }) => {
                 errors: [],
             },
         },
+        ogURL: {
+            value: domain,
+            meta: {
+                isValid: false,
+                isTouched: false,
+                errors: [],
+            },
+        }
     })
+
     //for modal
     const [isOgModalVisible, setIsOgModalVisible] = useState(false)
     const showOgModal = () => {
@@ -106,6 +115,7 @@ export const SocialShare = ({ update, domain }) => {
                 if (!isEmpty(brandSettings)) {
                     const { id, brand } = brandSettings[0]
                     setSettingId(id)
+
                     setForm(prev => ({
                         ogTitle: {
                             ...prev.ogTitle,
@@ -119,6 +129,10 @@ export const SocialShare = ({ update, domain }) => {
                             ...prev.ogImage,
                             value: brand[0]?.value?.ogImage,
                         },
+                        ogURL: {
+                            ...prev.ogURL,
+                            value: brand[0]?.value?.ogURL
+                        }
                     }))
                 }
             },
@@ -150,6 +164,7 @@ export const SocialShare = ({ update, domain }) => {
                 ogTitle: form.ogTitle.value,
                 ogDescription: form.ogDescription.value,
                 ogImage: form.ogImage.value,
+                ogURL: form.ogURL.value
             }
         })
         handleOgOk()
@@ -288,6 +303,48 @@ export const SocialShare = ({ update, domain }) => {
                                             name="ogDescription"
                                             id="og-description"
                                             placeholder="Add Page Meta description in 120 words"
+                                        />
+                                    </Form.Item>
+                                    <Form.Item
+                                        label={
+                                            <span
+                                                style={{
+                                                    color: '#555B6E',
+                                                    fontSize: '16px',
+                                                    fontWeight: '600',
+                                                }}
+                                            >
+                                                og: url
+                                            </span>
+                                        }
+                                        tooltip={{
+                                            title: 'Your og:url is what shows when pages in this pattern are shared on social networks. ',
+                                            icon: (
+                                                <InfoCircleOutlined
+                                                    style={{
+                                                        background: '#555B6E',
+                                                        color: 'white',
+                                                        borderRadius: '50%',
+                                                    }}
+                                                />
+                                            ),
+                                        }}
+                                    >
+                                        <Input
+                                            strong
+                                            level={5}
+                                            placeholder="Enter Url"
+                                            style={{
+                                                width: '60%',
+                                                border: '2px solid #E4E4E4',
+                                                borderRadius: '4px',
+                                            }}
+                                            className="text-box"
+                                            bordered={false}
+                                            value={form.ogURL.value}
+                                            onChange={onChangeHandler}
+                                            id="ogURL"
+                                            name="ogURL"
                                         />
                                     </Form.Item>
                                     <Form.Item
