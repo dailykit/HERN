@@ -300,7 +300,22 @@ const ENVS = `
       }
    }
 `
-
+const ENVS2 = `
+query envs {
+  envs: settings_env {
+    id
+    title
+    value
+    belongsTo
+    config
+  }
+  payment: brands_availablePaymentOption(where: {isActive: {_eq: true}}) {
+    label
+    privateCreds
+    publicCreds
+  }
+}
+`
 /*
 used to create env config files and populate with relevant envs
 */
@@ -384,11 +399,110 @@ export const createEnvFiles = async () => {
    }
    return { server, store, admin }
 }
+export const createEnvFiles2 = async () => {
+   const { envs, payment } = await client.request(ENVS2)
+   console.log('initializing createEnvFiles2')
+   if (isEmpty(envs) || isEmpty(payment)) {
+      return await syncEnvsFromPlatform()
+   }
+   const grouped = groupBy(envs, 'belongsTo')
+
+   const server = {}
+
+   payment.forEach(node => {
+      node.privateCreds.public.forEach(node2 => {
+         server[node2.label] = node2.value
+      })
+   })
+
+   // console.log('server', server)
+   get(grouped, 'server', {}).forEach(node => {
+      server[node.config.env_details.label] = node.config.env_details.value
+   })
+   // console.log('server', server)
+   writeFileSync(
+      path.join(__dirname, '../../../', 'config.js'),
+      `module.exports = ${JSON.stringify(server, null, 2)}`
+   )
+
+   const store = {}
+
+   {
+      payment.forEach(node => {
+         node.publicCreds.public.forEach(node2 => {
+            store[node2.label] = node2.value
+         })
+      })
+   }
+   get(grouped, 'store', {}).forEach(node => {
+      store[node.config.env_details.label] = node.config.env_details.value
+   })
+
+   const PATH_TO_SUBS = path.join(
+      __dirname,
+      '../../../',
+      'store',
+      'public',
+      'env-config.js'
+   )
+   const dirPath = path.join(__dirname, '../../../hern/')
+   const isDirectoryExist = existsSync(dirPath)
+   if (!isDirectoryExist) {
+      mkdirSync(dirPath, { recursive: true })
+   }
+   writeFileSync(
+      path.join(dirPath, 'env-config.js'),
+      `window._env_ = ${JSON.stringify(store, null, 2)}`
+   )
+   writeFileSync(
+      PATH_TO_SUBS,
+      `window._env_ = ${JSON.stringify(store, null, 2)}`
+   )
+
+   const admin = {}
+
+   payment.forEach(node => {
+      node.publicCreds.public.forEach(node2 => {
+         admin[node2.label] = node2.value
+      })
+   })
+
+   get(grouped, 'admin', {}).forEach(node => {
+      admin[node.config.env_details.label] = node.config.env_details.value
+   })
+
+   if (process.env.NODE_ENV === 'development') {
+      const PATH_TO_ADMIN = path.join(
+         __dirname,
+         '../../../',
+         'admin',
+         'public',
+         'env-config.js'
+      )
+      writeFileSync(
+         PATH_TO_ADMIN,
+         `window._env_ = ${JSON.stringify(admin, null, 2)}`
+      )
+   } else {
+      const PATH_TO_ADMIN = path.join(
+         __dirname,
+         '../../../',
+         'admin',
+         'build',
+         'env-config.js'
+      )
+      writeFileSync(
+         PATH_TO_ADMIN,
+         `window._env_ = ${JSON.stringify(admin, null, 2)}`
+      )
+   }
+   return { server, store, admin }
+}
 
 export const populate_env = async (req, res) => {
    try {
       console.log('initiating populate_env')
-      const data = await createEnvFiles()
+      const data = await createEnvFiles2()
       if (!data) {
          throw Error('No envs found!')
       }
@@ -421,7 +535,7 @@ export const syncEnvsFromPlatform = async () => {
             !isEmpty(insert_settings_env.returning)
          ) {
             console.log('updated successfully')
-            await createEnvFiles()
+            await createEnvFiles2()
          }
       } else {
          throw "Couldn't update envs"
