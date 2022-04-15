@@ -36,7 +36,7 @@ const BrandListing = ({ closeTunnel }) => {
     return (
         <>
             <TunnelHeader
-                title="Select Brand for Customer Details"
+                title="Select Brand"
                 close={() => closeTunnel(1)}
                 nextAction="Done"
             />
