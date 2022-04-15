@@ -403,7 +403,7 @@ export const PaymentProvider = ({ children }) => {
       if (!cartId) {
          setCartId(cartState?.cart?.id || null)
       }
-      if (!isEmpty(cartPaymentsFromQuery)) {
+      if (!_isEmpty(cartPaymentsFromQuery)) {
          setCartPayment(cartPaymentsFromQuery[0])
          setCartId(cartPaymentsFromQuery[0].cartId)
          setIsPaymentInitiated(true)
