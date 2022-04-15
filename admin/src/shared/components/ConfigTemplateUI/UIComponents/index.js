@@ -394,27 +394,16 @@ export const Select = ({ fieldDetail, marginLeft, path, onConfigChange, editMode
          {editMode ? (<DropdownWrapper><Dropdown
             type={fieldDetail?.type || 'single'}
             options={searchResult}
-<<<<<<< HEAD
-            // defaultValue={
-            //    fieldDetail?.type === 'single' && fieldDetail?.value?.id
-            // }
-=======
             //defaultOptions takes the default value 
->>>>>>> bc817fe8335ac82669503623f963191e531283bf
             defaultOptions={fieldDetail?.value}
             searchedOption={option => setSearchOption(option)}
             selectedOption={option => selectedOptionHandler(option)}
             placeholder="type what you're looking for..."
-<<<<<<< HEAD
-         />
-
-=======
          /></DropdownWrapper>) : (
             <Text as="h4" className="showPhoneNumber">
                {fieldDetail?.value?.title || 'choose one of the options...'}
             </Text>
          )}
->>>>>>> bc817fe8335ac82669503623f963191e531283bf
       </Flex>
    )
 }
