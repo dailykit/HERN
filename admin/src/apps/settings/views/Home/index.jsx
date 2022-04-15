@@ -80,6 +80,11 @@ const Home = () => {
                onClick={() => addTab('Market Place', '/settings/marketplace')}
             // tileSvg={<MasterListSvg />}
             />
+            <DashboardTile
+               title="Envs"
+               onClick={() => addTab('Envs', '/settings/envs')}
+            // tileSvg={<MasterListSvg />}
+            />
          </StyledCardList>
          <Banner id="settings-app-home-bottom" />
       </StyledHome>

@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react'
+import React, { useState, useRef, useContext } from 'react'
 import 'antd/dist/antd.css'
 import {
     Tunnel,
@@ -37,7 +37,8 @@ import { EditIcon, DeleteIcon } from '../../../../../../../../shared/assets/icon
 import { PRODUCT } from '../../../../../../graphql'
 import { InfoCircleOutlined } from '@ant-design/icons'
 
-const SEOBasics = ({ update, domain, product }) => {
+const SEOBasics = ({ update, domain, brandId, product }) => {
+
     const [settingId, setSettingId] = React.useState(null)
     const { Text, Title } = Typography
     const [tunnel1, openTunnel1, closeTunnel1] = useTunnel(1)
@@ -96,7 +97,7 @@ const SEOBasics = ({ update, domain, product }) => {
     }
     const [seoDetails, { loading: metaDetailsLoading, productSettings }] =
         useLazyQuery(PRODUCT.PRODUCT_PAGE_SETTINGS, {
-            onCompleted: ({ products_productPageSetting: productSettings
+            onCompleted: ({ products_productSetting: productSettings
             }) => {
                 if (!isEmpty(productSettings)) {
                     const { product, id } = productSettings[0]
@@ -129,7 +130,8 @@ const SEOBasics = ({ update, domain, product }) => {
             variables: {
                 identifier: { _eq: 'basic-seo' },
                 type: { _eq: 'seo' },
-                productId: { _eq: Number(product?.id) }
+                productId: { _eq: Number(product?.id) },
+                brandId: { _eq: brandId }
             }
         })
     }, [])

@@ -35,8 +35,8 @@ import { StyledWrapper, ImageContainer } from './styled'
 import { logger } from '../../../../../../../shared/utils'
 import { EditIcon, DeleteIcon } from '../../../../../../../shared/assets/icons'
 import { InfoCircleOutlined } from '@ant-design/icons'
-import { BrandContext } from '../../../../../../../App'
-// import BrandContext from '../../../../../context/Brand'
+// import { BrandContext } from '../../../../../../../App'
+import BrandContext from '../../../../../context/Brand'
 const { Title, Text } = Typography
 
 export const SocialShare = ({ routeName }) => {
@@ -70,6 +70,14 @@ export const SocialShare = ({ routeName }) => {
             errors: [],
          },
       },
+      ogURL: {
+         value: '',
+         meta: {
+            isValid: false,
+            isTouched: false,
+            errors: [],
+         },
+      }
    })
    //for modal
    const [isOgModalVisible, setIsOgModalVisible] = useState(false)
@@ -121,6 +129,10 @@ export const SocialShare = ({ routeName }) => {
                   ...prev.ogImage,
                   value: seoSettings?.value?.ogImage,
                },
+               ogURL: {
+                  ...prev.ogURL,
+                  value: seoSettings?.value?.ogURL || "https://" + brandContext.brandDomain + routeName
+               }
             }))
          },
          onError: error => {
@@ -164,6 +176,7 @@ export const SocialShare = ({ routeName }) => {
                   ogTitle: form.ogTitle.value,
                   ogDescription: form.ogDescription.value,
                   ogImage: form.ogImage.value,
+                  ogURL: form.ogURL.value
                },
             },
          },
@@ -304,6 +317,48 @@ export const SocialShare = ({ routeName }) => {
                               name="ogDescription"
                               id="og-description"
                               placeholder="Add Page Meta description in 120 words"
+                           />
+                        </Form.Item>
+                        <Form.Item
+                           label={
+                              <span
+                                 style={{
+                                    color: '#555B6E',
+                                    fontSize: '16px',
+                                    fontWeight: '600',
+                                 }}
+                              >
+                                 og: url
+                              </span>
+                           }
+                           tooltip={{
+                              title: 'Your og:url is what shows when pages in this pattern are shared on social networks. ',
+                              icon: (
+                                 <InfoCircleOutlined
+                                    style={{
+                                       background: '#555B6E',
+                                       color: 'white',
+                                       borderRadius: '50%',
+                                    }}
+                                 />
+                              ),
+                           }}
+                        >
+                           <Input
+                              strong
+                              level={5}
+                              placeholder="Enter Url"
+                              style={{
+                                 width: '60%',
+                                 border: '2px solid #E4E4E4',
+                                 borderRadius: '4px',
+                              }}
+                              className="text-box"
+                              bordered={false}
+                              value={form.ogURL.value}
+                              onChange={onChangeHandler}
+                              id="ogURL"
+                              name="ogURL"
                            />
                         </Form.Item>
                         <Form.Item
@@ -460,7 +515,7 @@ export const SocialShare = ({ routeName }) => {
                   >
                      <Tooltip placement="bottom" title={'page link'}>
                         <p style={{ textTransform: 'uppercase' }}>
-                           {brandContext.brandDomain + routeName}
+                           {form.ogURL.value || "https://" + brandContext.brandDomain + routeName}
                         </p>
                      </Tooltip>
                      <Title strong level={4}>

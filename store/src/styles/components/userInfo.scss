@@ -233,3 +233,24 @@
 .hern-profile__profile-form__error {
    color: #bf1650;
 }
+.hern-login-close__btn {
+   display: none;
+}
+@media only screen and (max-width: 768px) {
+   .hern-on-demand-cart-section__left {
+      position: relative;
+      .hern-user-type__wrapper {
+         padding: 16px 0;
+      }
+      .hern-login-v1-content {
+         height: calc(100vh - 108px);
+         width: auto;
+      }
+      .hern-login-close__btn {
+         display: block;
+         position: absolute;
+         top: 32px;
+         right: 20px;
+      }
+   }
+}

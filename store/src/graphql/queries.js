@@ -2440,8 +2440,8 @@ export const PRODUCT_SEO_SETTINGS_BY_ID = gql`
          description
          name
       }
-      products_productPageSetting(where: { type: { _eq: $type } }) {
-         product_productPageSettings(
+      products_productSetting(where: { type: { _eq: $type } }) {
+         product_productSettings(
             where: { productId: { _eq: $productId } }
          ) {
             value

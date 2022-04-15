@@ -402,7 +402,6 @@ export const INSERT_OTP_TRANSACTION = gql`
    mutation insertOtp($object: platform_otp_transaction_insert_input!) {
       insertOtp: insert_platform_otp_transaction_one(object: $object) {
          id
-         code
       }
    }
 `
