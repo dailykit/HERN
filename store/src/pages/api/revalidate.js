@@ -1,34 +1,16 @@
 import glob from 'glob'
 import path from 'path'
 import fs from 'fs'
-import Cors from 'cors'
-
-const cors = Cors({
-   methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE'],
-   origin: '*',
-   optionsSuccessStatus: 200,
-})
-
-// Helper method to wait for a middleware to execute before continuing
-// And to throw an error when an error happens in a middleware
-function runMiddleware(req, res, fn) {
-   return new Promise((resolve, reject) => {
-      fn(req, res, result => {
-         if (result instanceof Error) {
-            console.log('reject')
-            return reject(result)
-         }
-         console.log('resolve')
-         return resolve(result)
-      })
-   })
-}
+import NextCors from 'nextjs-cors'
 
 export default async function handler(req, res) {
    // Run the middleware
-   console.log('inside revalidate')
-   await runMiddleware(req, res, cors)
-
+   await NextCors(req, res, {
+      // Options
+      methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE'],
+      origin: '*',
+      optionsSuccessStatus: 200, // some legacy browsers (IE11, various SmartTVs) choke on 204
+   })
    const content = await fs.readFileSync(
       process.cwd() + '/../hern/env-config.js',
       'utf-8'
@@ -73,7 +55,7 @@ export default async function handler(req, res) {
             }
          })
       )
-      return res.json({ revalidated: true, filePaths })
+      return res.status(200).json({ revalidated: true, filePaths })
    } catch (err) {
       // If there was an error, Next.js will continue
       // to show the last successfully generated page
