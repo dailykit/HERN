@@ -2,13 +2,14 @@ import React from 'react'
 import { CopyToClipboard } from 'react-copy-to-clipboard'
 import { useToasts } from 'react-toast-notifications'
 import { useQuery } from '@apollo/react-hooks'
-
+import { CgClipboard } from 'react-icons/cg'
 import { useConfig } from '../../lib'
 import { useTranslation, useUser } from '../../context'
 import { get_env } from '../../utils'
 import { Spacer, ProfileSidebar, Form, Button, Loader } from '../../components'
 import { CUSTOMERS_REFERRED } from '../../graphql'
 import { isEmpty } from 'lodash'
+import { EmptyReferralIll } from '../../assets/icons'
 
 export const Referrals = () => {
    return (
@@ -57,40 +58,45 @@ const Content = () => {
    return (
       <section className="hern-referrals__content">
          <header className="hern-referrals__header">
-            <h2
-               style={{
-                  color: `${
-                     theme?.accent ? theme?.accent : 'rgba(5,150,105,1)'
-                  }`,
-               }}
-               className="hern-referrals__header__title"
-            >
-               {t('Referrals')}
-            </h2>
+            <h2 className="hern-referrals__header__title">{t('Referrals')}</h2>
          </header>
          {referralsAllowed && !!user.customerReferral && (
             <>
-               <Form.Label>{t('Referral Code')}</Form.Label>
-               <div className="hern-referrals__customer-referral-code">
-                  {user.customerReferral.referralCode}
+               <div className="hern-referrals__customer-referral-code__title">
+                  {t('Your Referral Code')}
                </div>
-               <CopyToClipboard
-                  text={`${get_env('BASE_BRAND_URL')}/sign-up?invite-code=${
-                     user.customerReferral.referralCode
-                  }`}
-                  onCopy={() =>
-                     addToast(t('Invite like copied!'), {
-                        appearance: 'success',
-                     })
-                  }
-               >
-                  <Button size="sm"> {t('Copy invite link')} </Button>
-               </CopyToClipboard>
+               <div className="hern-referrals__customer-referral-code">
+                  <div>
+                     <span>{user.customerReferral.referralCode}</span>
+                     <CopyToClipboard
+                        text={`${get_env(
+                           'BASE_BRAND_URL'
+                        )}/sign-up?invite-code=${
+                           user.customerReferral.referralCode
+                        }`}
+                        onCopy={() =>
+                           addToast(t('Invite like copied!'), {
+                              appearance: 'success',
+                           })
+                        }
+                     >
+                        <Button
+                           className="hern-referral-code__copy-btn"
+                           size="sm"
+                        >
+                           <CgClipboard />
+                           &nbsp; {t('Copy invite link')}{' '}
+                        </Button>
+                     </CopyToClipboard>
+                  </div>
+               </div>
                <Spacer />
-               <Form.Label>
-                  <span> {t('Customers Referred')}</span> (
-                  {customerReferrals.length}){' '}
-               </Form.Label>
+               <div className="hern-referral__referred">
+                  <span> {t('Friends referred by me')} :</span>
+                  <span style={{ color: 'var(--hern-accent)' }}>
+                     &nbsp;{customerReferrals.length}
+                  </span>
+               </div>
                {customerReferrals.length > 0 ? (
                   <table className="hern-referrals__table">
                      <thead>
@@ -105,30 +111,24 @@ const Content = () => {
                               <td
                                  className="hern-referrals__table__cell"
                                  data-translation="true"
-                                 colSpan={
-                                    isEmpty(
-                                       ref.customer.platform_customer.lastName
-                                    )
-                                       ? 2
-                                       : 1
-                                 }
                               >
                                  {!isEmpty(
                                     ref.customer.platform_customer.firstName
                                  )
                                     ? ref.customer.platform_customer.firstName
-                                    : '(unnamed)'}
+                                    : 'N/A'}
                               </td>
-                              {!isEmpty(
-                                 ref.customer.platform_customer.lastName
-                              ) && (
-                                 <td
-                                    className="hern-referrals__table__cell"
-                                    data-translation="true"
-                                 >
-                                    {ref.customer.platform_customer.lastName}
-                                 </td>
-                              )}
+
+                              <td
+                                 className="hern-referrals__table__cell"
+                                 data-translation="true"
+                              >
+                                 {!isEmpty(
+                                    ref.customer.platform_customer.lastName
+                                 )
+                                    ? ref.customer.platform_customer.lastName
+                                    : 'N/A'}
+                              </td>
                            </tr>
                         ))}
                      </tbody>
@@ -136,12 +136,13 @@ const Content = () => {
                ) : (
                   <div
                      style={{
-                        textAlign: 'center',
-                        color: 'gray',
-                        padding: '16px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        marginBottom: '2rem',
                      }}
                   >
-                     {t('(No customer reffered yet!)')}
+                     <EmptyReferralIll />
                   </div>
                )}
             </>

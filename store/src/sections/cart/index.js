@@ -290,8 +290,6 @@ const CartPageHeader = () => {
             >
                <LeftArrowIcon /> &nbsp;&nbsp;
             </a>
-
-            {/* <span>Go back</span> */}
          </div>
          <div
             role="button"
