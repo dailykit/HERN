@@ -29,6 +29,8 @@ import {
    BrandCoupons,
 } from './tabs'
 
+import { Revalidate } from '../../../components'
+
 export const Brand = () => {
    const params = useParams()
    const { tab, addTab, setTabTitle } = useTabs()
@@ -155,24 +157,27 @@ export const Brand = () => {
                </section>
             </Flex>
 
-            <Form.Toggle
-               name="Publish"
-               value={brand?.isPublished}
-               onChange={() =>
-                  update({
-                     variables: {
-                        id: params.id,
-                        _set: { isPublished: !brand?.isPublished || false },
-                     },
-                  })
-               }
-               style={{ marginTop: '24px' }}
-            >
-               <Flex container alignItems="center">
-                  Publish
-                  <Tooltip identifier="brands_publish_info" />
-               </Flex>
-            </Form.Toggle>
+            <div style={{ display: 'flex', alignItems: 'center' }}>
+               <Revalidate brandDetails={brand} />
+               <Spacer size="16px" xAxis />
+               <Form.Toggle
+                  name="Publish"
+                  value={brand?.isPublished}
+                  onChange={() =>
+                     update({
+                        variables: {
+                           id: params.id,
+                           _set: { isPublished: !brand?.isPublished || false },
+                        },
+                     })
+                  }
+               >
+                  <Flex container alignItems="center">
+                     Publish
+                     <Tooltip identifier="brands_publish_info" />
+                  </Flex>
+               </Form.Toggle>
+            </div>
          </Flex>
          <Spacer size="24px" />
          <HorizontalTabs>
