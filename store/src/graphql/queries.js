@@ -2341,6 +2341,7 @@ export const GET_ORDER_DETAILS = gql`
          paymentStatus
          fulfillmentInfo
          billingDetails
+         cartOwnerBilling
          address
          order {
             created_at
@@ -2348,6 +2349,8 @@ export const GET_ORDER_DETAILS = gql`
          }
          cartPayments {
             id
+            amount
+            transactionRemark
          }
          availablePaymentOption {
             label

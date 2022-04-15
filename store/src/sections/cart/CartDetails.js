@@ -32,7 +32,7 @@ export const CartDetails = () => {
    const { t } = useTranslation()
 
    const isLoyaltyPointsAvailable =
-      settings?.rewards?.['Loyalty Points Availability']?.['Loyalty Points']
+      settings?.rewards?.['Loyalty Points']?.['Loyalty Points']
          ?.IsLoyaltyPointsAvailable?.value ?? true
 
    //remove cartItem or cartItems

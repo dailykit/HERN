@@ -1081,21 +1081,6 @@ const Signup = props => {
       onError: () => {},
    })
 
-   const [applyReferralCode] = useMutation(MUTATIONS.CUSTOMER_REFERRAL.UPDATE, {
-      onCompleted: () => {
-         addToast(<span>{t('Referral code applied!')}</span>, {
-            appearance: 'success',
-         })
-         deleteStoredReferralCode()
-      },
-      onError: error => {
-         console.log(error)
-         addToast(<span>{t('Referral code not applied!')}</span>, {
-            appearance: 'error',
-         })
-      },
-   })
-
    const [insertPlatformCustomer] = useMutation(INSERT_PLATFORM_CUSTOMER, {
       onCompleted: async ({ insertCustomer = {} } = {}) => {
          try {
