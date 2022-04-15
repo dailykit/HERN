@@ -10,11 +10,12 @@ import {
    Tunnel,
    Tunnels,
    useTunnel,
-   TextButton,
 } from '@dailykit/ui'
+
+import { Revalidate } from '../../../components'
 import { BRANDS } from '../../../graphql'
 import tableOptions from '../../../tableOption'
-import { get_env, logger } from '../../../../../shared/utils'
+import { logger } from '../../../../../shared/utils'
 import { StyledWrapper, StyledHeader } from '../styled'
 import { DeleteIcon } from '../../../../../shared/assets/icons'
 import {
@@ -28,19 +29,12 @@ import CreateBrand from '../../../../../shared/CreateUtils/Brand/CreateBrand'
 import { PublishIcon, UnPublishIcon } from '../../../assets/icons'
 import moment from 'moment'
 import '../../../tableStyle.css'
-import axios from 'axios'
 
 export const Brands = () => {
    const { tooltip } = useTooltip()
    const tableRef = React.useRef()
    const { tab, addTab } = useTabs()
    const { loading } = useMutation(BRANDS.CREATE_BRAND)
-   const isClient =
-      typeof window !== 'undefined' && window.document ? true : false
-   const REVALIDATE_TOKEN = get_env('REVALIDATE_TOKEN')
-   const NODE_ENV = get_env('NODE_ENV')
-   const [isRevalidating, setIsRevalidation] = React.useState(false)
-
    const [deleteBrand] = useMutation(BRANDS.UPDATE_BRAND, {
       onCompleted: () => {
          toast.success('Brand deleted!')
@@ -84,34 +78,6 @@ export const Brands = () => {
                _set: { isArchived: true },
             },
          })
-      }
-   }
-
-   // revalidate api
-   const revalidateHandler = async brand => {
-      setIsRevalidation(true)
-      try {
-         console.log('brand', brand)
-         const origin = `https://${brand.domain}`
-
-         const response = await axios({
-            method: 'POST',
-            url: `${origin}/api/revalidate`,
-            headers: {
-               'Content-Type': 'application/json',
-               'revalidate-token': REVALIDATE_TOKEN,
-            },
-         })
-         if (!response.status === 200) {
-            toast.error('Something went wrong while publishing!')
-            setIsRevalidation(false)
-         }
-         toast.success(`Successfully published new version for ${brand.title}`)
-         setIsRevalidation(false)
-      } catch (error) {
-         toast.error('Something went wrong while publishing!')
-         setIsRevalidation(false)
-         throw new Error(error)
       }
    }
 
@@ -181,12 +147,7 @@ export const Brands = () => {
          headerSort: false,
          frozen: true,
          headerHozAlign: 'center',
-         formatter: reactFormatter(
-            <Revalidate
-               handler={revalidateHandler}
-               isRevalidating={isRevalidating}
-            />
-         ),
+         formatter: reactFormatter(<Revalidate />),
          headerTooltip: function (column) {
             const identifier = 'brands_listing_publish_version_column'
             return (
@@ -245,35 +206,14 @@ export const Brands = () => {
 
 const DeleteBrand = ({ cell, deleteHandler }) => {
    const onClick = () => deleteHandler(cell._cell.row.data)
-   // if (cell.getData().isDefault) return null
+   if (cell.getData().isDefault) return null
    return (
       <IconButton type="ghost" size="sm" onClick={onClick}>
          <DeleteIcon color="#FF5A52" />
       </IconButton>
    )
 }
-const Revalidate = ({ cell, handler, isRevalidating = false }) => {
-   const brand = cell._cell.row.data
-   const onClick = () => {
-      if (
-         window.confirm(
-            `Are you sure you want to Publish New Version on this Brand - ${brand.title}?`
-         )
-      ) {
-         handler(brand)
-      }
-   }
-   return (
-      <TextButton
-         isLoading={isRevalidating}
-         type="solid"
-         onClick={onClick}
-         size="sm"
-      >
-         {isRevalidating ? 'Publishing...' : 'Publish New Version'}
-      </TextButton>
-   )
-}
+
 function BrandName({ cell, addTab }) {
    const data = cell.getData()
    return (
