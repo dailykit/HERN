@@ -117,8 +117,8 @@ export const CartProvider = ({ children }) => {
       loading: cartItemsLoading,
       error: cartItemsError,
       data: cartItemsData,
-   } = useSubscription(isWindowLoading || GET_CART_ITEMS_BY_CART, {
-      skip: !storedCartId,
+   } = useSubscription(GET_CART_ITEMS_BY_CART, {
+      skip: isWindowLoading || !storedCartId,
       variables: {
          where: {
             level: {
