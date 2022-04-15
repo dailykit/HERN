@@ -43,8 +43,10 @@ export const CartBillingDetails = ({ billing, tip }) => {
                   )}
                </li>
                <li>
-                  <span data-translation="true">{billing.tax.label}</span>
-                  <span>{formatCurrency(billing.tax.value || 0)}</span>
+                  <span data-translation="true">
+                     {billing.tax?.label || 'Tax'}
+                  </span>
+                  <span>{formatCurrency(billing.tax?.value || 0)}</span>
                </li>
                {billing.discount.value > 0 && (
                   <li>

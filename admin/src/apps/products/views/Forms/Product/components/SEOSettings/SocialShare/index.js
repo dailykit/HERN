@@ -38,7 +38,7 @@ import { PRODUCT } from '../../../../../../graphql'
 import { InfoCircleOutlined } from '@ant-design/icons'
 const { Title, Text } = Typography
 
-export const SocialShare = ({ update, domain, product }) => {
+export const SocialShare = ({ update, domain, brandId, product }) => {
     const [tunnel1, openTunnel1, closeTunnel1] = useTunnel(1)
     const params = useParams()
     const [settingId, setSettingId] = React.useState(null)
@@ -67,6 +67,14 @@ export const SocialShare = ({ update, domain, product }) => {
                 errors: [],
             },
         },
+        ogURL: {
+            value: '',
+            meta: {
+                isValid: false,
+                isTouched: false,
+                errors: [],
+            },
+        }
     })
     //for modal
     const [isOgModalVisible, setIsOgModalVisible] = useState(false)
@@ -101,7 +109,7 @@ export const SocialShare = ({ update, domain, product }) => {
     //query for getting metadetails
     const [seoDetails, { loading: metaDetailsLoading, productSettings }] =
         useLazyQuery(PRODUCT.PRODUCT_PAGE_SETTINGS, {
-            onCompleted: ({ products_productPageSetting: productSettings
+            onCompleted: ({ products_productSetting: productSettings
             }) => {
                 if (!isEmpty(productSettings)) {
                     const { product, id } = productSettings[0]
@@ -119,6 +127,10 @@ export const SocialShare = ({ update, domain, product }) => {
                             ...prev.ogImage,
                             value: product[0]?.value?.ogImage,
                         },
+                        ogURL: {
+                            ...prev.ogURL,
+                            value: product[0]?.value?.ogURL
+                        }
                     }))
                 }
             },
@@ -134,7 +146,8 @@ export const SocialShare = ({ update, domain, product }) => {
             variables: {
                 identifier: { _eq: 'og-card' },
                 type: { _eq: 'seo' },
-                productId: { _eq: product?.id }
+                productId: { _eq: product?.id },
+                brandId: { _eq: brandId }
             }
         })
     }, [])
@@ -147,9 +160,10 @@ export const SocialShare = ({ update, domain, product }) => {
             id: settingId,
             productId: product?.id,
             value: {
-                ogTitle: form.ogTitle.value,
-                ogDescription: form.ogDescription.value,
-                ogImage: form.ogImage.value,
+                ogTitle: form.ogTitle.value == undefined ? product?.name : form.ogTitle.value,
+                ogDescription: form.ogDescription.value == undefined ? product?.description : form.ogDescription.value,
+                ogImage: form.ogImage.value == undefined ? product?.assets?.images[0] : form.ogImage.value,
+                ogURL: form.ogURL.value == undefined ? domain : form.ogURL.value
             }
         })
         handleOgOk()
@@ -289,6 +303,48 @@ export const SocialShare = ({ update, domain, product }) => {
                                             name="ogDescription"
                                             id="og-description"
                                             placeholder="Add Page Meta description in 120 words"
+                                        />
+                                    </Form.Item>
+                                    <Form.Item
+                                        label={
+                                            <span
+                                                style={{
+                                                    color: '#555B6E',
+                                                    fontSize: '16px',
+                                                    fontWeight: '600',
+                                                }}
+                                            >
+                                                og: url
+                                            </span>
+                                        }
+                                        tooltip={{
+                                            title: 'Your og:url is what shows when pages in this pattern are shared on social networks. ',
+                                            icon: (
+                                                <InfoCircleOutlined
+                                                    style={{
+                                                        background: '#555B6E',
+                                                        color: 'white',
+                                                        borderRadius: '50%',
+                                                    }}
+                                                />
+                                            ),
+                                        }}
+                                    >
+                                        <Input
+                                            strong
+                                            level={5}
+                                            placeholder="Enter Url"
+                                            style={{
+                                                width: '60%',
+                                                border: '2px solid #E4E4E4',
+                                                borderRadius: '4px',
+                                            }}
+                                            className="text-box"
+                                            bordered={false}
+                                            value={form.ogURL.value || domain}
+                                            onChange={onChangeHandler}
+                                            id="ogURL"
+                                            name="ogURL"
                                         />
                                     </Form.Item>
                                     <Form.Item
@@ -445,7 +501,7 @@ export const SocialShare = ({ update, domain, product }) => {
                             >
                                 <Tooltip placement="bottom" title={'page link'}>
                                     <p style={{ textTransform: 'uppercase' }}>
-                                        {domain.split('//')[1]}
+                                        {domain}
                                     </p>
                                 </Tooltip>
                                 <Title strong level={4}>

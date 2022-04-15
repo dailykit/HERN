@@ -2341,6 +2341,7 @@ export const GET_ORDER_DETAILS = gql`
          paymentStatus
          fulfillmentInfo
          billingDetails
+         cartOwnerBilling
          address
          order {
             created_at
@@ -2348,6 +2349,8 @@ export const GET_ORDER_DETAILS = gql`
          }
          cartPayments {
             id
+            amount
+            transactionRemark
          }
          availablePaymentOption {
             label
@@ -2440,8 +2443,8 @@ export const PRODUCT_SEO_SETTINGS_BY_ID = gql`
          description
          name
       }
-      products_productPageSetting(where: { type: { _eq: $type } }) {
-         product_productPageSettings(
+      products_productSetting(where: { type: { _eq: $type } }) {
+         product_productSettings(
             where: { productId: { _eq: $productId } }
          ) {
             value

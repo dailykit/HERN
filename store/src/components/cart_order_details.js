@@ -81,7 +81,13 @@ export const CartOrderDetails = () => {
                <DebitCardIcon size={20} />
             </span>
             {cart?.cartPayments?.length > 0 && (
-               <div>Payment: Paid by {cart?.availablePaymentOption?.label}</div>
+               <div>
+                  {cart?.availablePaymentOption?.label
+                     ? `Payment: Paid by ${cart?.availablePaymentOption?.label}`
+                     : cart?.cartPayments?.length === 1 &&
+                       cart?.cartPayments[0].amount === 0 &&
+                       cart?.cartPayments[0]?.transactionRemark?.paidBy}
+               </div>
             )}
          </div>
          {/* List of ordered items   */}

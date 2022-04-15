@@ -55,6 +55,7 @@ query cart($id: Int!) {
     statementDescriptor
     toUseAvailablePaymentOptionId
     customerInfo
+    cartOwnerBilling
     availablePaymentOption {
       id
       label

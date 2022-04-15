@@ -221,14 +221,14 @@ const ConfigUI = ({
    const showConfigUI = (configData, rootKey) => {
       _.forOwn(configData, (value, key) => {
          const isFieldObject = _.has(value, 'value')
-         console.log('Config (Key, Value) ->>', key, value)
+
 
          if (isFieldObject) {
             if (value?.userInsertType && Array.isArray(value.userInsertType)) {
                const updatedRootkey = rootKey
                   ? `${rootKey}.${key}.value`
                   : `${key}.value`
-               console.log('[Key from Array block] --> ', key)
+
 
                elements.push(
                   getHeaderUI({
