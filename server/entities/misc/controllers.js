@@ -410,12 +410,12 @@ export const createEnvFiles2 = async () => {
    const server = {}
 
    payment.forEach(node => {
-      node.privateCreds.public.forEach(node2 => {
+      node.privateCreds.private.forEach(node2 => {
          server[node2.label] = node2.value
       })
    })
 
-   // console.log('server', server)
+   console.log('server', server)
    get(grouped, 'server', {}).forEach(node => {
       server[node.config.env_details.label] = node.config.env_details.value
    })

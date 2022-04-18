@@ -63,7 +63,7 @@ const EnvsList = () => {
                         type="ghost"
                         title='Synchronization after changes in env'
                         size={24}
-                        onClick={() => axios.post("http://localhost:4000/server/api/envs")}
+                        onClick={() => axios.post(`${window.location.origin}/server/api/envs`)}
                     >
                         Sync
                     </TextButton>
