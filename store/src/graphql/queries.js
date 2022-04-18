@@ -1075,8 +1075,11 @@ export const SEARCH_COUPONS = gql`
 `
 
 export const CART_REWARDS = gql`
-   subscription CartRewards($cartId: Int!, $params: jsonb) {
-      cartRewards(where: { cartId: { _eq: $cartId } }) {
+   subscription CartRewards(
+      $params: jsonb
+      $where: order_cart_rewards_bool_exp!
+   ) {
+      cartRewards(where: $where) {
          reward {
             id
             coupon {
@@ -2444,9 +2447,7 @@ export const PRODUCT_SEO_SETTINGS_BY_ID = gql`
          name
       }
       products_productSetting(where: { type: { _eq: $type } }) {
-         product_productSettings(
-            where: { productId: { _eq: $productId } }
-         ) {
+         product_productSettings(where: { productId: { _eq: $productId } }) {
             value
             productId
          }
