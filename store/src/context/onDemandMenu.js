@@ -1,6 +1,7 @@
 import { useQuery } from '@apollo/react-hooks'
 import React from 'react'
 import { PRODUCTS_BY_CATEGORY } from '../graphql'
+import { useWindowOnload } from '../utils'
 import { useConfig } from './../lib'
 
 //on demand menu context
@@ -34,9 +35,10 @@ export const OnDemandMenuProvider = ({ children }) => {
       reducer,
       initialState
    )
+   const { isWindowLoading } = useWindowOnload()
 
    useQuery(PRODUCTS_BY_CATEGORY, {
-      skip: isConfigLoading || !brand?.id,
+      skip: isWindowLoading || isConfigLoading || !brand?.id,
       variables: {
          params: {
             brandId: brand?.id,

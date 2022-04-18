@@ -1,9 +1,10 @@
-import { rrulestr } from 'rrule'
+// import { rrulestr } from 'rrule'
 import { isPointInPolygon, convertDistance } from 'geolib'
 import { isClient, get_env } from '../../index'
 import axios from 'axios'
 import moment from 'moment'
 import { isDateValidInRRule } from '../../'
+import sortBy from 'lodash/sortBy'
 
 const drivableDistanceBetweenStoreAndCustomerFn = () => ({
    value: null,
@@ -25,7 +26,7 @@ export const isStoreOnDemandDeliveryAvailable = async (
       )
       if (isValidDay) {
          if (finalRecurrences[rec].recurrence.timeSlots.length) {
-            const sortedTimeSlots = _.sortBy(
+            const sortedTimeSlots = sortBy(
                finalRecurrences[rec].recurrence.timeSlots,
                [
                   function (slot) {
@@ -144,7 +145,7 @@ export const isStorePreOrderDeliveryAvailable = async (
    let fulfilledRecurrences = []
    for (let rec in finalRecurrences) {
       if (finalRecurrences[rec].recurrence.timeSlots.length) {
-         const sortedTimeSlots = _.sortBy(
+         const sortedTimeSlots = sortBy(
             finalRecurrences[rec].recurrence.timeSlots,
             [
                function (slot) {

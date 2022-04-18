@@ -38,6 +38,7 @@ export const HernLazyImage = ({
    height = null,
    removeBg = false,
    dataSrc,
+   style = {},
    ...rest
 }) => {
    const { configOf } = useConfig()
@@ -61,6 +62,16 @@ export const HernLazyImage = ({
       'images',
       `${width}x${height}-rb`
    )
+   const lowImageSizeWidth = React.useMemo(() => {
+      return width / 50 < 10 ? 10 : parseInt(width / 50)
+   }, [])
+   const lowImageSizeHeight = React.useMemo(() => {
+      return height / 50 < 10 ? 10 : parseInt(height / 50)
+   }, [])
+
+   const lowSizeBGImage = dataSrc
+      .slice()
+      .replace('images', `${lowImageSizeWidth}x${lowImageSizeHeight}`)
 
    const finalImageSrc = React.useMemo(() => {
       if (removeBg && !(Boolean(width) && Boolean(height))) {
@@ -76,6 +87,10 @@ export const HernLazyImage = ({
 
    const [src, setSrc] = React.useState(finalImageSrc)
    const [error, setError] = React.useState(false)
+   const [LQIPimageUrl, setLQIPimageUrl] = React.useState(lowSizeBGImage)
+   const [LQIPerror, setLQIPError] = React.useState(false)
+   const [LQIPdisplay, setLQIPdisplay] = React.useState('unset')
+
    const SERVER_URL = React.useMemo(() => {
       const storeMode = process?.env?.NEXT_PUBLIC_MODE || 'production'
       if (isClient) {
@@ -93,6 +108,7 @@ export const HernLazyImage = ({
          <img
             className={`lazyload ${className}`}
             data-src={dataSrc}
+            style={style}
             {...rest}
          />
       )
@@ -101,37 +117,62 @@ export const HernLazyImage = ({
    // removing data-src from rest bcz data-src using dynamically by state
 
    return (
-      <img
-         className={`lazyload ${className}`}
-         data-src={src}
-         // src={src}
-         onError={async ({ currentTarget }) => {
-            if (!error) {
-               // changing class to lazyloding to lazyload so that lazysizes reload the new image
-               currentTarget.className = currentTarget.className.replace(
-                  'lazyloading',
-                  'lazyload'
-               )
-               if (removeBg && !(Boolean(width) && Boolean(height))) {
-                  // remove only background
-                  const fallbackImageUrl = `${SERVER_URL}/server/api/assets/serve-image?removebg=true&src=${dataSrc}`
-                  // const imageData = await axios.get(fallbackImageUrl)
-                  setSrc(fallbackImageUrl)
-               } else if (!removeBg && Boolean(width) && Boolean(height)) {
-                  // resize image only
-                  const fallbackImageUrl = `${SERVER_URL}/server/api/assets/serve-image?width=${width}&height=${height}&src=${dataSrc}`
-                  // const imageData = await axios.get(fallbackImageUrl)
-                  setSrc(fallbackImageUrl)
-               } else if (removeBg && Boolean(width) && Boolean(height)) {
-                  // remove background and resize image
-                  const fallbackImageUrl = `${SERVER_URL}/server/api/assets/serve-image?width=${width}&height=${height}&src=${dataSrc}&removebg=true`
-                  // const imageData = await axios.get(fallbackImageUrl)
-                  setSrc(fallbackImageUrl)
+      <div className="hern-image__image-container">
+         <img
+            className={`lazyload ${className} hern-LQIP-image`}
+            data-src={LQIPimageUrl}
+            onError={async ({ currentTarget }) => {
+               if (!LQIPerror) {
+                  // changing class to lazyloding to lazyload so that lazysizes reload the new image
+                  currentTarget.className = currentTarget.className.replace(
+                     'lazyloading',
+                     'lazyload'
+                  )
+                  const LQIPfallbackUrl = `${SERVER_URL}/server/api/assets/serve-image?width=${lowImageSizeWidth}&height=${lowImageSizeHeight}&src=${dataSrc}`
+                  setLQIPimageUrl(LQIPfallbackUrl)
+                  setLQIPError(true)
                }
-               setError(true)
-            }
-         }}
-         {...rest}
-      />
+            }}
+            style={{ display: LQIPdisplay }}
+         />
+         <img
+            className={`lazyload ${className}`}
+            data-src={src}
+            // src={src}
+            style={{
+               ...style,
+            }}
+            onLoad={() => {
+               setLQIPdisplay('none')
+            }}
+            onError={async ({ currentTarget }) => {
+               if (!error) {
+                  // changing class to lazyloding to lazyload so that lazysizes reload the new image
+                  currentTarget.className = currentTarget.className.replace(
+                     'lazyloading',
+                     'lazyload'
+                  )
+                  if (removeBg && !(Boolean(width) && Boolean(height))) {
+                     // remove only background
+                     const fallbackImageUrl = `${SERVER_URL}/server/api/assets/serve-image?removebg=true&src=${dataSrc}`
+                     // const imageData = await axios.get(fallbackImageUrl)
+                     setSrc(fallbackImageUrl)
+                  } else if (!removeBg && Boolean(width) && Boolean(height)) {
+                     // resize image only
+                     const fallbackImageUrl = `${SERVER_URL}/server/api/assets/serve-image?width=${width}&height=${height}&src=${dataSrc}`
+                     // const imageData = await axios.get(fallbackImageUrl)
+                     setSrc(fallbackImageUrl)
+                  } else if (removeBg && Boolean(width) && Boolean(height)) {
+                     // remove background and resize image
+                     const fallbackImageUrl = `${SERVER_URL}/server/api/assets/serve-image?width=${width}&height=${height}&src=${dataSrc}&removebg=true`
+                     // const imageData = await axios.get(fallbackImageUrl)
+                     setSrc(fallbackImageUrl)
+                  }
+                  setError(true)
+               }
+            }}
+            {...rest}
+         />
+      </div>
    )
 }
