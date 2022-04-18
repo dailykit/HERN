@@ -38,6 +38,7 @@ import { ProgressBar } from './component/progressBar'
 import { Coupon } from '../coupon'
 import isEmpty from 'lodash/isEmpty'
 import { HernLazyImage } from '../../utils/hernImage'
+import { get_env } from '../../utils'
 
 const { Header, Content, Footer } = Layout
 
@@ -50,7 +51,7 @@ export const KioskCart = props => {
    const { t, direction } = useTranslation()
    const { setIsProcessingPayment, setIsPaymentInitiated, updatePaymentState } =
       usePayment()
-
+   const SHOW_FREEBIE_MSG = get_env('SHOW_FREEBIE_MSG')
    //remove cartItem or cartItems
    const removeCartItems = cartItemIds => {
       methods.cartItems.delete({
@@ -201,6 +202,7 @@ export const KioskCart = props => {
                      <Header className="hern-kiosk__cart-page-offer">
                         <Offers config={config} />
                      </Header>
+                     {SHOW_FREEBIE_MSG === 'true' && <FreebieMessage />}
                      <Content className="hern-kiosk__cart-page-price-detail">
                         <div className="hern-kiosk-cart-bill-details">
                            <span>{t('BILL DETAILS')}</span>
@@ -1015,3 +1017,15 @@ const Offers = props => {
       </div>
    )
 }
+
+const FreebieMessage = () => (
+   <div className="hern-kiosk__cart-page-freebie">
+      <h2 className="hern-kiosk__cart-page-freebie-content">
+         Free 1 Ice Cream Cone
+      </h2>
+      <img
+         src="/assets/gifs/gift.gif"
+         className="hern-kiosk__cart-page-freebie-gif"
+      />
+   </div>
+)
