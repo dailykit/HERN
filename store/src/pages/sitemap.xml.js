@@ -15,27 +15,40 @@ export const getServerSideProps = ({ req, res }) => {
 
     // using hostname as baseURL-------(1)
     const baseUrl = 'https://' + req.headers.host
+
     //getting paths of all files
     const paths = glob.sync(path.join(process.cwd(), "src/pages/**/*.js"))
 
-    //disallow certain pages to not get seen-------(2)
-    const staticPages = paths.filter((staticPage) => {
-        return ![
-            "_app.js",
-            "_document.js",
-            "_error.js",
-            "_middleware.js",
-            "sitemap.xml.js",
-        ].includes(staticPage);
+    //formating the url that goes to sitemap string------(2)
+    const formattedPath = paths.map((path) => {
+        const dirNameReplaced = process.cwd().replace(/\\/g, '/')
+        const pagePath = path.replace(dirNameReplaced, '').replace('/src/pages/[brand]', '')
+            .replace('/src/pages', '')
+            .replace('.js', '')
+            .replace('/index', '')
+        return pagePath;
     })
-        //formating the url that goes to sitemap string------(3)
-        .map((staticPagePath) => {
-            const dirNameReplaced = process.cwd().replace(/\\/g, '/')
-            const pagePath = staticPagePath.replace(dirNameReplaced, '').replace('/src/pages/[brand]', '')
-            return `${baseUrl}${pagePath}`;
-        });
 
-    // generating url for each page-------(4)
+    //disallow certain pages to not get seen-------(3)
+    const staticPages = formattedPath.filter((staticPage) => {
+        //removed pages and api folder
+        return ![
+            '/_app',
+            '/_document',
+            '/_error',
+            '/_middleware',
+            "/sitemap.xml",
+            "/404",
+        ].includes(staticPage) && !staticPage.startsWith('/api');
+    })
+
+        .map((staticPagePath) => {
+            console.log(staticPagePath)
+            // joining baseUrl with staticPagePath--------(4)
+            return `${baseUrl}${staticPagePath}`
+        })
+
+    // generating sitemap-url for each page-------(5)
     const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
         <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
           ${staticPages
