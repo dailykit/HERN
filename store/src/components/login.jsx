@@ -425,7 +425,7 @@ const OTPLogin = props => {
    //insert a entry of phone number in table and get otp code then send sms
    const [insertOtpTransaction] = useMutation(INSERT_OTP_TRANSACTION, {
       onCompleted: async ({ insertOtp = {} } = {}) => {
-         if (insertOtp?.code) {
+         if (insertOtp?.id) {
             setOtpId(insertOtp?.id)
             setHasOtpSent(true)
             setSendingOtp(false)
@@ -1079,21 +1079,6 @@ const Signup = props => {
          }
       },
       onError: () => {},
-   })
-
-   const [applyReferralCode] = useMutation(MUTATIONS.CUSTOMER_REFERRAL.UPDATE, {
-      onCompleted: () => {
-         addToast(<span>{t('Referral code applied!')}</span>, {
-            appearance: 'success',
-         })
-         deleteStoredReferralCode()
-      },
-      onError: error => {
-         console.log(error)
-         addToast(<span>{t('Referral code not applied!')}</span>, {
-            appearance: 'error',
-         })
-      },
    })
 
    const [insertPlatformCustomer] = useMutation(INSERT_PLATFORM_CUSTOMER, {

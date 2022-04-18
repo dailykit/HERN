@@ -1,7 +1,8 @@
-import { rrulestr } from 'rrule'
-import _ from 'lodash'
+// import { rrulestr } from 'rrule'
+// import _ from 'lodash'
 import moment from 'moment'
 import { isDateValidInRRule } from '../../'
+import sortBy from 'lodash/sortBy'
 
 export const isStoreOnDemandPickupAvailable = finalRecurrences => {
    for (let rec in finalRecurrences) {
@@ -11,7 +12,7 @@ export const isStoreOnDemandPickupAvailable = finalRecurrences => {
       )
       if (isValidDay) {
          if (finalRecurrences[rec].recurrence.timeSlots.length) {
-            const sortedTimeSlots = _.sortBy(
+            const sortedTimeSlots = sortBy(
                finalRecurrences[rec].recurrence.timeSlots,
                [
                   function (slot) {

@@ -1,6 +1,5 @@
 import { useMutation, useSubscription } from '@apollo/react-hooks'
 import isEmpty from 'lodash/isEmpty'
-import gql from 'graphql-tag'
 import React, { useEffect, useState, useContext } from 'react'
 import {
    CREATE_CART_ITEMS,
@@ -14,7 +13,12 @@ import {
 import { useUser } from '.'
 import { useConfig } from '../lib'
 import { useToasts } from 'react-toast-notifications'
-import { combineCartItems, isKiosk } from '../utils'
+import {
+   combineCartItems,
+   useQueryParamState,
+   useWindowOnload,
+   isKiosk,
+} from '../utils'
 import { useTranslation } from './language'
 
 export const CartContext = React.createContext()
@@ -58,6 +62,8 @@ export const CartProvider = ({ children }) => {
    const [storedCartId, setStoredCartId] = useState(null)
    const [combinedCartItems, setCombinedCartData] = useState(null)
    const [showCartIconToolTip, setShowCartIconToolTip] = useState(false)
+   const { isWindowLoading } = useWindowOnload()
+
    React.useEffect(() => {
       // case 1 - user is not authenticated
       //case 1.1 if there is cart-id in local storage , set storedCartId
@@ -84,7 +90,7 @@ export const CartProvider = ({ children }) => {
       error: getInitialCart,
       data: cartData = {},
    } = useSubscription(GET_CART, {
-      skip: !storedCartId,
+      skip: isWindowLoading || !storedCartId,
       variables: {
          where: {
             id: {
@@ -112,7 +118,7 @@ export const CartProvider = ({ children }) => {
       error: cartItemsError,
       data: cartItemsData,
    } = useSubscription(GET_CART_ITEMS_BY_CART, {
-      skip: !storedCartId,
+      skip: isWindowLoading || !storedCartId,
       variables: {
          where: {
             level: {
@@ -452,7 +458,9 @@ export const CartProvider = ({ children }) => {
                },
             },
          },
-         skip: !(brand?.id && user?.keycloakId && orderTabs.length > 0),
+         skip:
+            !(brand?.id && user?.keycloakId && orderTabs.length > 0) ||
+            isWindowLoading,
          fetchPolicy: 'no-cache',
          onSubscriptionData: ({ subscriptionData }) => {
             console.log('subscriptionData', subscriptionData)
@@ -614,6 +622,7 @@ export const CartProvider = ({ children }) => {
                      localStorage.removeItem('cart-id')
                      setIsFinalCartLoading(false)
                   } else {
+                     setCombinedCartData([])
                      setIsFinalCartLoading(false)
                   }
                }

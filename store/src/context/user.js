@@ -14,7 +14,10 @@ import {
 } from '../graphql'
 import { PageLoader } from '../components'
 import { isClient, processUser, get_env } from '../utils'
-import { getStoredReferralCode } from "../utils/referrals"
+import {
+   getStoredReferralCode,
+   deleteStoredReferralCode,
+} from '../utils/referrals'
 const ReactPixel = isClient ? require('react-facebook-pixel').default : null
 
 const UserContext = React.createContext()
@@ -108,13 +111,14 @@ export const UserProvider = ({ children }) => {
                               brandId: brand.id,
                               subscriptionOnboardStatus: 'SELECT_DELIVERY',
                               metaDetails: {
-                                 referredByCode: getStoredReferralCode(null)
-                              }
+                                 referredByCode: getStoredReferralCode(null),
+                              },
                            },
                         },
                      },
                   },
                })
+               deleteStoredReferralCode()
             }
          },
          onError: () => {

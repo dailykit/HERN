@@ -10,7 +10,7 @@ export const handleCartPayment = async (req, res) => {
    try {
       const payload = req.body.event.data.new
       const { cart = {} } = await client.request(CART, { id: payload.id })
-      if (cart.balancePayment > 0) {
+      if (cart.cartOwnerBilling.balanceToPay > 0) {
          const { cartPayments = [] } = await client.request(CART_PAYMENTS, {
             where: {
                cartId: {
@@ -31,7 +31,7 @@ export const handleCartPayment = async (req, res) => {
          if (cartPayments.length > 0) {
             if (
                cartPayments.length > 1 ||
-               cartPayments[0].amount !== cart.balancePayment
+               cartPayments[0].amount !== cart.cartOwnerBilling.balanceToPay
             ) {
                // cancell all invalid previous cart...
                const cancelledCartPayments = await Promise.all(
@@ -66,7 +66,7 @@ export const handleCartPayment = async (req, res) => {
                            // hardcoded for now
                            paymentStatus: 'SUCCEEDED'
                         }),
-                        amount: cart.balancePayment,
+                        amount: cart.cartOwnerBilling.balanceToPay,
                         isTest: cart.isTest,
                         paymentMethodId: cart.paymentMethodId,
                         paymentCustomerId: cart.paymentCustomerId,
@@ -123,7 +123,7 @@ export const handleCartPayment = async (req, res) => {
                      ...(isCashOrCod && {
                         paymentStatus: 'SUCCEEDED'
                      }),
-                     amount: cart.balancePayment,
+                     amount: cart.cartOwnerBilling.balanceToPay,
                      isTest: cart.isTest,
                      paymentMethodId: cart.paymentMethodId,
                      paymentCustomerId: cart.paymentCustomerId,
@@ -147,12 +147,28 @@ export const handleCartPayment = async (req, res) => {
             }
             res.status(200).json(createCartPayment)
          }
-      } else if (cart.balancePayment === 0) {
+      } else if (cart.cartOwnerBilling.balanceToPay === 0) {
+         await client.request(CREATE_CART_PAYMENT, {
+            object: {
+               cartId: cart.id,
+               paymentRetryAttempt: 1,
+               paymentStatus: 'SUCCEEDED',
+               amount: cart.cartOwnerBilling.balanceToPay,
+               transactionRemark: {
+                  paidBy:
+                     'This payment is done using Coupon, Loyalty Points or Wallet'
+               },
+               isTest: cart.isTest,
+               paymentMethodId: cart.paymentMethodId,
+               paymentCustomerId: cart.paymentCustomerId,
+               usedAvailablePaymentOptionId: cart.toUseAvailablePaymentOptionId
+            }
+         })
          res.status(200).json({
             success: true,
             message: 'No balance payment'
          })
-      } else if (cart.balancePayment < 0) {
+      } else if (cart.cartOwnerBilling.balanceToPay < 0) {
          res.status(200).json({
             success: true,
             message: 'This is a refund related case'

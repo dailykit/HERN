@@ -34,7 +34,6 @@ import {
    PaymentProcessingModal,
    PrintProcessingModal,
 } from '../components'
-import { isEmpty, set } from 'lodash'
 
 const PaymentContext = createContext()
 const inititalState = {
@@ -291,7 +290,7 @@ export const PaymentProvider = ({ children }) => {
             },
          },
       })
-      if (!isEmpty(settings) && isClient) {
+      if (!_isEmpty(settings) && isClient) {
          const path =
             settings['printing']?.['KioskCustomerTokenTemplate']?.path?.value
          const DATA_HUB_HTTPS = get_env('DATA_HUB_HTTPS')
@@ -404,7 +403,7 @@ export const PaymentProvider = ({ children }) => {
       if (!cartId) {
          setCartId(cartState?.cart?.id || null)
       }
-      if (!isEmpty(cartPaymentsFromQuery)) {
+      if (!_isEmpty(cartPaymentsFromQuery)) {
          setCartPayment(cartPaymentsFromQuery[0])
          setCartId(cartPaymentsFromQuery[0].cartId)
          setIsPaymentInitiated(true)

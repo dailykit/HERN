@@ -4,7 +4,6 @@ import { useMutation } from '@apollo/react-hooks'
 import { useIdleTimer } from 'react-idle-timer'
 import { Carousel, Layout, Modal } from 'antd'
 import isEmpty from 'lodash/isEmpty'
-import 'antd/dist/antd.css'
 
 import { IdleScreen } from '../../components/kiosk/idleScreen'
 import { KioskHeader } from '../../components/kiosk/header'
