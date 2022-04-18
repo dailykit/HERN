@@ -1,5 +1,5 @@
 import React from 'react'
-import { FaQuoteLeft, FaQuoteRight } from 'react-icons/fa'
+import { FaQuoteLeft } from 'react-icons/fa'
 import { BiChevronRight, BiChevronLeft } from 'react-icons/bi'
 import { Carousel } from 'antd'
 import { HernLazyImage } from '../../utils/hernImage'

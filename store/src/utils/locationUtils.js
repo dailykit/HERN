@@ -1,10 +1,8 @@
+import { add, formatISO } from 'date-fns'
+import { convertDistance, getDistance } from 'geolib'
+import sortBy from 'lodash/sortBy'
 import { rrulestr } from 'rrule'
-import { isPointInPolygon } from 'geolib'
-import { isClient, get_env } from './index'
-import axios from 'axios'
-import _, { each } from 'lodash'
-import { formatISO, add } from 'date-fns'
-import { getDistance, convertDistance } from 'geolib'
+import { get_env } from './index'
 
 export const getMinutes = time => {
    return parseInt(time.split(':')[0]) * 60 + parseInt(time.split(':')[1])
@@ -389,7 +387,7 @@ export const autoSelectStore = async (
       )
       // sort by distance
       if (sorted) {
-         const sortedDataWithAerialDistance = _.sortBy(dataWithAerialDistance, [
+         const sortedDataWithAerialDistance = sortBy(dataWithAerialDistance, [
             x => x.aerialDistance,
          ])
 

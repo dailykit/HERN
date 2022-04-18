@@ -1,6 +1,6 @@
 import React from 'react'
-import { isEmpty } from 'lodash'
-
+// import { isEmpty } from 'lodash'
+import isEmpty from 'lodash/isEmpty'
 import { useConfig } from '.'
 import { isClient } from '../utils'
 
@@ -63,7 +63,9 @@ const loadScript = (node, position, parent) => {
    } else if (type === 'inline' && tag === 'noscript') {
       // TODO: handle noscript markup injection
       const noscript = document.createElement('noscript')
-      noscript.innerHTML = code.replace('<noscript>', '').replace('</noscript>', '')
+      noscript.innerHTML = code
+         .replace('<noscript>', '')
+         .replace('</noscript>', '')
       fragment.appendChild(noscript)
    } else if (tag === 'none') {
       //when no tag is specified the tags will directly be appended in parent element(works for non-script tags)

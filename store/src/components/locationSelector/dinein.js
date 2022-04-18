@@ -1,16 +1,20 @@
-import React, { useState, useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
+import { Modal, Radio, Skeleton } from 'antd'
 import classNames from 'classnames'
-import { Divider, Radio, Modal, Skeleton } from 'antd'
-import { useConfig } from '../../lib'
-import { get_env, useScript, isClient } from '../../utils'
-import { getStoresWithValidations } from '../../utils'
 import GooglePlacesAutocomplete from 'react-google-places-autocomplete'
-import LocationSelectorConfig from '../locatoinSeletorConfig.json'
-import { StoreList } from '../locationSelector/storeList'
-import { GPSIcon, NotFound } from '../../assets/icons'
 import { GoogleSuggestionsList, Loader } from '..'
-import { AddressInfo } from './addressInfo'
+import { GPSIcon, NotFound } from '../../assets/icons'
 import { useTranslation } from '../../context'
+import { useConfig } from '../../lib'
+import {
+   getStoresWithValidations,
+   get_env,
+   isClient,
+   useScript,
+} from '../../utils'
+import { StoreList } from '../locationSelector/storeList'
+import LocationSelectorConfig from '../locatoinSeletorConfig.json'
+import { AddressInfo } from './addressInfo'
 
 // dine in section
 export const DineIn = props => {
