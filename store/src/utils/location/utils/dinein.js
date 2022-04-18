@@ -1,4 +1,4 @@
-import { rrulestr } from 'rrule'
+// import { rrulestr } from 'rrule'
 import { isDateValidInRRule } from '../../'
 
 export const isStoreOnDemandDineInAvailable = finalRecurrences => {

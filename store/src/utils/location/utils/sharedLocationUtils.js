@@ -1,4 +1,4 @@
-import _ from 'lodash'
+import sortBy from 'lodash/sortBy'
 import { getDistance, convertDistance } from 'geolib'
 import {
    isStoreOnDemandDeliveryAvailable,
@@ -40,7 +40,7 @@ const getSortedStoresByAerialDistance = async (brandLocations, address) => {
       })
    )
    // sort by aerial distance
-   const sortedBrandLocationsWithAerialDistance = _.sortBy(
+   const sortedBrandLocationsWithAerialDistance = sortBy(
       brandLocationsWithAerialDistance,
       [x => x.aerialDistance]
    )
