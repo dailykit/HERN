@@ -5,7 +5,14 @@ export const TunnelBody = styled.div`
    height: calc(100% - 106px);
    overflow: auto;
 `
-
+export const ContainerCard = styled.div`
+   display: flex;
+   border: 2px solid rgb(255, 255, 255);
+   box-shadow: rgb(0 0 0 / 10%) 0px 1px 8px;
+   padding: 16px;
+   margin: 16px 0px;
+   flex-direction: column;
+`
 export const RadioGroupOption = styled.div`
    display: flex;
    align-items: center;

@@ -1,10 +1,10 @@
 import { useMutation } from '@apollo/react-hooks'
-import { Flex, Form, Spacer, Text, TextButton, TunnelHeader } from '@dailykit/ui'
+import { ButtonGroup, Flex, Form, Spacer, Text, TextButton, TunnelHeader } from '@dailykit/ui'
 import React, { useState } from 'react'
 import { toast } from 'react-toastify'
 import { ENVS } from '../../../../apps/settings/graphql'
 import { logger } from '../../../utils'
-import { RadioButton, RadioGroupOption, TunnelBody } from '../../styled'
+import { ContainerCard, RadioButton, RadioGroupOption, TunnelBody } from '../../styled'
 import validatorFunc from '../../validator'
 
 const CreateEnvTunnel = ({ closeTunnel }) => {
@@ -91,16 +91,35 @@ const CreateEnvTunnel = ({ closeTunnel }) => {
         }
         setEnvs([...newEnvs])
     }
+    const addField = () => {
+        if (envs.every(object => object.envTitle.value.trim().length && object.envValue.value.trim().length && object.belongsTo.value)) {
+            setEnvs([
+                ...envs,
+                envInstance
+            ])
+        } else {
+            toast.error("Mandatory Co-ordinates are empty!")
+        }
+    }
     const createEnvsHandler = () => {
         try {
             const objects = envs.filter(Boolean).map(eachEnv => ({
                 title: eachEnv.envTitle.value,
                 value: eachEnv.envValue.value,
-                belongsTo: eachEnv.belongsTo.value
+                belongsTo: eachEnv.belongsTo.value,
+                config: {
+                    env_details: {
+                        label: eachEnv.envTitle.value,
+                        value: eachEnv.envValue.value,
+                        dataType: "text",
+                        userInsertType: "textField"
+                    }
+                }
             }))
             if (!objects.length) {
                 throw Error('Nothing to add!')
             }
+            console.log('objects', objects)
             createEnvs({
                 variables: {
                     objects,
@@ -118,7 +137,6 @@ const CreateEnvTunnel = ({ closeTunnel }) => {
             return createEnvsHandler()
         }
         return toast.error('All Fields Are required!')
-
     }
     console.log(envs);
     return (
@@ -133,7 +151,7 @@ const CreateEnvTunnel = ({ closeTunnel }) => {
             />
             <TunnelBody>
                 {envs.map((eachEnvs, index) => (
-                    <Flex key={index}>
+                    <ContainerCard key={index} >
                         <Form.Group>
                             <Form.Label htmlFor={`envTitle-${index}`} title={`envTitle ${index + 1}`}>
                                 Env Title
@@ -211,7 +229,7 @@ const CreateEnvTunnel = ({ closeTunnel }) => {
                         <RadioGroupOption>
                             {options.map(option => (
                                 <RadioButton
-                                    key={option.id}
+                                    key={`${index}-${option.id}`}
                                     onClick={() => {
                                         option.payload === eachEnvs.belongsTo.value ? handleGeoBoundaryChange(
                                             "belongsTo",
@@ -229,9 +247,18 @@ const CreateEnvTunnel = ({ closeTunnel }) => {
                                 </RadioButton>
                             ))}
                         </RadioGroupOption>
-                    </Flex>
+                    </ContainerCard>
                 ))
                 }
+                <ButtonGroup>
+                    <TextButton
+                        title="Add more envs"
+                        type='ghost'
+                        size='sm'
+                        onClick={addField}>
+                        + Add More
+                    </TextButton>
+                </ButtonGroup>
             </TunnelBody>
         </>
     )
