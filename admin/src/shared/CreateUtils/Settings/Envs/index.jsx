@@ -1,20 +1,19 @@
 import { useMutation } from '@apollo/react-hooks'
-import { Flex, Form, Spacer, TunnelHeader } from '@dailykit/ui'
+import { Flex, Form, Spacer, Text, TextButton, TunnelHeader } from '@dailykit/ui'
 import React, { useState } from 'react'
 import { toast } from 'react-toastify'
-import { TunnelBody } from '../../../../apps/menu/views/Forms/Collection/tunnels/styled'
 import { ENVS } from '../../../../apps/settings/graphql'
 import { logger } from '../../../utils'
+import { RadioButton, RadioGroupOption, TunnelBody } from '../../styled'
 import validatorFunc from '../../validator'
 
 const CreateEnvTunnel = ({ closeTunnel }) => {
-
     const envInstance = {
         envTitle: {
             value: '',
             meta: {
                 isTouched: false,
-                isValid: true,
+                isValid: false,
                 errors: [],
             },
         },
@@ -22,14 +21,21 @@ const CreateEnvTunnel = ({ closeTunnel }) => {
             value: '',
             meta: {
                 isTouched: false,
-                isValid: true,
+                isValid: false,
                 errors: [],
             },
+        },
+        belongsTo: {
+            value: null,
         }
     }
     const EnvInstances = [envInstance]
     const [envs, setEnvs] = useState(EnvInstances)
-
+    const options = [
+        { id: 1, payload: 'admin', title: 'Admin' },
+        { id: 2, payload: 'server', title: 'server' },
+        { id: 3, payload: 'store', title: 'Store' },
+    ]
     const [createEnvs, { loading: inFlight }] = useMutation(
         ENVS.CREATE,
         {
@@ -43,7 +49,6 @@ const CreateEnvTunnel = ({ closeTunnel }) => {
             },
         }
     )
-
     const handleGeoBoundaryChange = (field, value, index) => {
         const newEnvs = [...envs]
         newEnvs[index] = {
@@ -91,6 +96,7 @@ const CreateEnvTunnel = ({ closeTunnel }) => {
             const objects = envs.filter(Boolean).map(eachEnv => ({
                 title: eachEnv.envTitle.value,
                 value: eachEnv.envValue.value,
+                belongsTo: eachEnv.belongsTo.value
             }))
             if (!objects.length) {
                 throw Error('Nothing to add!')
@@ -107,27 +113,27 @@ const CreateEnvTunnel = ({ closeTunnel }) => {
     const save = () => {
         if (inFlight) return
         const envsValidation = envs.every(object =>
-            object.envTitle.meta.isValid && object.envValue.meta.isValid)
+            object.envTitle.meta.isValid && object.envValue.meta.isValid && object.belongsTo.value)
         if (envsValidation === true) {
             return createEnvsHandler()
         }
-        return toast.error('Envs Name and Author is required!')
+        return toast.error('All Fields Are required!')
 
     }
-
+    console.log(envs);
     return (
         <>
             <TunnelHeader
                 title="Create new Envs"
                 right={{
-                    action: () => closeTunnel(1),
+                    action: save,
                     title: "Save"
                 }}
                 close={() => closeTunnel(1)}
             />
             <TunnelBody>
                 {envs.map((eachEnvs, index) => (
-                    <Flex>
+                    <Flex key={index}>
                         <Form.Group>
                             <Form.Label htmlFor={`envTitle-${index}`} title={`envTitle ${index + 1}`}>
                                 Env Title
@@ -195,10 +201,37 @@ const CreateEnvTunnel = ({ closeTunnel }) => {
                                     )
                                 )}
                         </Form.Group>
+                        <Spacer size="16px" yAxis />
+                        <Text
+                            as='subtitle'
+                            style={{ color: '#57567a', marginBottom: '4px' }}
+                        >
+                            Belongs To
+                        </Text>
+                        <RadioGroupOption>
+                            {options.map(option => (
+                                <RadioButton
+                                    key={option.id}
+                                    onClick={() => {
+                                        option.payload === eachEnvs.belongsTo.value ? handleGeoBoundaryChange(
+                                            "belongsTo",
+                                            null,
+                                            index
+                                        ) : handleGeoBoundaryChange(
+                                            "belongsTo",
+                                            option.payload,
+                                            index
+                                        )
+                                    }}
+                                    active={eachEnvs.belongsTo.value === option.payload}
+                                >
+                                    <span>{option.title}</span>
+                                </RadioButton>
+                            ))}
+                        </RadioGroupOption>
                     </Flex>
                 ))
                 }
-
             </TunnelBody>
         </>
     )
