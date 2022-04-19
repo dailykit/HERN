@@ -1,13 +1,15 @@
 import { useMutation } from '@apollo/react-hooks'
-import { ButtonGroup, Flex, Form, Spacer, Text, TextButton, TunnelHeader } from '@dailykit/ui'
+import { ButtonGroup, Flex, Form, IconButton, Spacer, Text, TextButton, TunnelHeader } from '@dailykit/ui'
 import React, { useState } from 'react'
 import { toast } from 'react-toastify'
 import { ENVS } from '../../../../apps/settings/graphql'
+import { DeleteIcon } from '../../../assets/icons'
 import { logger } from '../../../utils'
 import { ContainerCard, RadioButton, RadioGroupOption, TunnelBody } from '../../styled'
 import validatorFunc from '../../validator'
 
 const CreateEnvTunnel = ({ closeTunnel }) => {
+    //declaration
     const envInstance = {
         envTitle: {
             value: '',
@@ -36,6 +38,8 @@ const CreateEnvTunnel = ({ closeTunnel }) => {
         { id: 2, payload: 'server', title: 'server' },
         { id: 3, payload: 'store', title: 'Store' },
     ]
+
+    //mutation
     const [createEnvs, { loading: inFlight }] = useMutation(
         ENVS.CREATE,
         {
@@ -49,7 +53,9 @@ const CreateEnvTunnel = ({ closeTunnel }) => {
             },
         }
     )
-    const handleGeoBoundaryChange = (field, value, index) => {
+
+    //handler
+    const handleEnvChange = (field, value, index) => {
         const newEnvs = [...envs]
         newEnvs[index] = {
             ...newEnvs[index],
@@ -60,7 +66,7 @@ const CreateEnvTunnel = ({ closeTunnel }) => {
         }
         setEnvs([...newEnvs])
     }
-    const handleGeoBoundaryFocus = (field, index) => {
+    const handleEnvFocus = (field, index) => {
         const newEnvs = [...envs]
         newEnvs[index] = {
             ...newEnvs[index],
@@ -91,16 +97,6 @@ const CreateEnvTunnel = ({ closeTunnel }) => {
         }
         setEnvs([...newEnvs])
     }
-    const addField = () => {
-        if (envs.every(object => object.envTitle.value.trim().length && object.envValue.value.trim().length && object.belongsTo.value)) {
-            setEnvs([
-                ...envs,
-                envInstance
-            ])
-        } else {
-            toast.error("Mandatory Co-ordinates are empty!")
-        }
-    }
     const createEnvsHandler = () => {
         try {
             const objects = envs.filter(Boolean).map(eachEnv => ({
@@ -129,6 +125,31 @@ const CreateEnvTunnel = ({ closeTunnel }) => {
             toast.error(error.message)
         }
     }
+
+    //remove and addition extra of envs 
+    const addField = () => {
+        if (envs.every(object => object.envTitle.value.trim().length &&
+            object.envValue.value.trim().length &&
+            object.belongsTo.value
+        )) {
+            setEnvs([
+                ...envs,
+                envInstance
+            ])
+        } else {
+            toast.error("Fill all existing fields!")
+        }
+    }
+    const removeField = index => {
+        const newEnvs = envs
+        if (newEnvs.length > 1) {
+            newEnvs.splice(index, 1)
+            setEnvs([...newEnvs])
+        } else {
+            toast.error('Envs should be atleast 1 !')
+        }
+    }
+
     const save = () => {
         if (inFlight) return
         const envsValidation = envs.every(object =>
@@ -138,7 +159,6 @@ const CreateEnvTunnel = ({ closeTunnel }) => {
         }
         return toast.error('All Fields Are required!')
     }
-    console.log(envs);
     return (
         <>
             <TunnelHeader
@@ -153,20 +173,40 @@ const CreateEnvTunnel = ({ closeTunnel }) => {
                 {envs.map((eachEnvs, index) => (
                     <ContainerCard key={index} >
                         <Form.Group>
-                            <Form.Label htmlFor={`envTitle-${index}`} title={`envTitle ${index + 1}`}>
-                                Env Title
-                            </Form.Label>
+                            <Flex
+                                container
+                                style={{
+                                    alignItems: 'center',
+                                    justifyContent: 'space-between',
+                                }}
+                            >
+                                <Form.Label htmlFor={`envTitle-${index}`} title={`envTitle ${index + 1}`}>
+                                    Env Title
+                                </Form.Label>
+                                <IconButton
+                                    type="ghost"
+                                    title="Delete this Env"
+                                    onClick={() => removeField(index)}
+                                    style={{
+                                        width: '30px',
+                                        height: '20px',
+                                        marginBottom: '4px',
+                                    }}
+                                >
+                                    <DeleteIcon color="#FF5A52" />
+                                </IconButton>
+                            </Flex>
                             <Form.Text
                                 id={`envTitle-${index}`}
                                 name={`envTitle-${index}`}
                                 value={eachEnvs.envTitle.value}
-                                onChange={e => handleGeoBoundaryChange(
+                                onChange={e => handleEnvChange(
                                     "envTitle",
                                     e.target.value,
                                     index
                                 )}
                                 onFocus={() => {
-                                    handleGeoBoundaryFocus('envTitle', index)
+                                    handleEnvFocus('envTitle', index)
                                 }}
                                 onBlur={() => validate('envTitle', index)}
                                 placeholder="Enter Env Title"
@@ -194,13 +234,13 @@ const CreateEnvTunnel = ({ closeTunnel }) => {
                                 id={`envValue-${index}`}
                                 name={`envValue-${index}`}
                                 value={eachEnvs.envValue.value}
-                                onChange={e => handleGeoBoundaryChange(
+                                onChange={e => handleEnvChange(
                                     "envValue",
                                     e.target.value,
                                     index
                                 )}
                                 onFocus={() => {
-                                    handleGeoBoundaryFocus('envValue', index)
+                                    handleEnvFocus('envValue', index)
                                 }}
                                 onBlur={() => validate('envValue', index)}
                                 placeholder="Enter Env Value"
@@ -231,11 +271,11 @@ const CreateEnvTunnel = ({ closeTunnel }) => {
                                 <RadioButton
                                     key={`${index}-${option.id}`}
                                     onClick={() => {
-                                        option.payload === eachEnvs.belongsTo.value ? handleGeoBoundaryChange(
+                                        option.payload === eachEnvs.belongsTo.value ? handleEnvChange(
                                             "belongsTo",
                                             null,
                                             index
-                                        ) : handleGeoBoundaryChange(
+                                        ) : handleEnvChange(
                                             "belongsTo",
                                             option.payload,
                                             index
