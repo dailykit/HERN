@@ -83,7 +83,7 @@ export const LoyaltyPoints = ({ cart, version = 1 }) => {
       )
    }
 
-   if (!cart.loyaltyPointsUsable) return null
+   if (!cart.loyaltyPointsUsable && !cart.loyaltyPointsUsed) return null
 
    return (
       <div
