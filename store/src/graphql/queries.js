@@ -2474,3 +2474,13 @@ export const COUPON_BY_ID = gql`
       }
    }
 `
+export const GET_PAGE_ROUTES = gql`
+query MyQuery($domain: String!) {
+  brands(where: {_or: [{ domain: { _eq: $domain } }, { isDefault: { _eq: true } }],}) {
+    brandPages(where: {isArchived: {_eq: false}, published: {_eq: true}}) {
+      route
+    }
+  }
+}
+
+`
