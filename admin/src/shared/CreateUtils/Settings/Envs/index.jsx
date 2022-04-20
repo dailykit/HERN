@@ -49,16 +49,33 @@ const CreateEnvTunnel = ({ closeTunnel }) => {
                 const remainingData = allEnvObjects.filter(({ title }) => !addedData.includes(title))
 
                 if (remainingData.length === 0 && allEnvObjects.length === addedData.length) {
+                    // this condition is for when we have entered all new envs
                     toast.success('New Env added!')
+                    closeTunnel(1)
                 } else if (addedData.length === 0) {
-                    toast.error(allEnvObjects.length > 1 ? 'All Envs are present!' : 'Env is already present!')
+                    // this condition stands when we have entered envs which are all present already
+                    toast.error(allEnvObjects.length > 1 ?
+                        'All Envs are present!' :
+                        'Env is already present!')
                 } else if (allEnvObjects.length !== addedData.length) {
+                    // this conditions stands when we have some already present envs and some new envs
                     remainingData.forEach(element => {
                         toast.error(`${element.title} Env is already present for ${element.belongsTo}!`)
                     })
                     toast.success('Remaining envs added!')
+                    const removeAddedEnvs = addedData.map(each => {
+                        return envs.findIndex(env => env.envTitle.value == each)
+                    })
+                    // this removes all the newly created cards from form and already presented env cards stays
+                    if (removeAddedEnvs.length > 0) {
+                        const newEnvs = envs
+                        removeAddedEnvs.map(each => {
+                            newEnvs.splice(each, 1)
+                            return setEnvs([...newEnvs])
+                        })
+                    }
+
                 }
-                closeTunnel(1)
             },
             onError: error => {
                 console.log(error);
@@ -67,7 +84,7 @@ const CreateEnvTunnel = ({ closeTunnel }) => {
             },
         }
     )
-
+    console.log("newEnv", envs)
     //handler
     const handleEnvChange = (field, value, index) => {
         const newEnvs = [...envs]
