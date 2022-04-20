@@ -614,3 +614,10 @@ export const OPTIONS_FROM_RECIPE_COMPONENT = gql`
       }
    }
 `
+export const PRODUCT_CATEGORIES = gql`
+   subscription PRODUCT_CATEGORIES {
+      productCategories {
+         name
+      }
+   }
+`

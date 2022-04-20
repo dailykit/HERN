@@ -27,23 +27,21 @@ const Coupons_List = ({
 }) => {
    // use this component for kiosk as well
    const brandConfig = useConfig('rewards').configOf('Coupons Availability')
+   const isKioskMode = isKiosk()
+
    const showListOnCarousel =
       brandConfig['Coupon list orientation']?.showInCarousel?.value ?? false
    const [orderInterfaceType] = useQueryParamState('oiType', 'Website')
-   const { state = {} } =
-      orderInterfaceType === 'Kiosk Ordering' ? {} : useMenu()
+   const { state = {} } = isKioskMode ? {} : useMenu()
    const { brand } = useConfig()
    const { user } = useUser()
    const { id } =
-      orderInterfaceType === 'Kiosk Ordering' || upFrontLayout
-         ? cart
-         : state?.occurenceCustomer?.cart
+      isKioskMode || upFrontLayout ? cart : state?.occurenceCustomer?.cart
    const { t } = useTranslation()
 
    const [availableCoupons, setAvailableCoupons] = React.useState([])
    const [applying, setApplying] = React.useState(false)
    const { width, height } = useWindowSize()
-   const isKioskMode = isKiosk()
 
    const { loading, error } = useSubscription(COUPONS, {
       variables: {
@@ -118,7 +116,7 @@ const Coupons_List = ({
    }
 
    if (loading) return <Loader />
-   if (orderInterfaceType === 'Kiosk Ordering' || upFrontLayout) {
+   if (isKioskMode || upFrontLayout) {
       const CouponCard = ({ coupon }) => {
          return (
             <div
@@ -281,7 +279,7 @@ const Coupons_List = ({
 
    return (
       <div className="hern-coupons-list">
-         {orderInterfaceType !== 'Kiosk Ordering' && (
+         {!isKioskMode && (
             <div className="hern-coupons-list__header">
                <div className="hern-coupons-list__heading">
                   {t('Available Coupons')}

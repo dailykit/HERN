@@ -581,3 +581,12 @@ export const UPDATE_PRODUCT_OPTION_SELECTION_STATEMENT = gql`
       }
    }
 `
+export const INSERT_PRODUCT_CATEGORY = gql`
+   mutation INSERT_PRODUCT_CATEGORY(
+      $object: master_productCategory_insert_input!
+   ) {
+      insertProductCategory(object: $object) {
+         name
+      }
+   }
+`

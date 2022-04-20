@@ -14,6 +14,9 @@ import { useQuery } from '@apollo/react-hooks'
 import { useConfig } from '../../../lib'
 import { HernLazyImage } from '../../../utils/hernImage'
 import moment from 'moment'
+import classNames from 'classnames'
+import isNull from 'lodash/isNull'
+import isEmpty from 'lodash/isEmpty'
 
 const { Header, Content, Footer } = Layout
 
@@ -263,49 +266,106 @@ export const KioskProduct = props => {
    }, [isStoreAvailable])
    return (
       <>
-         <div className="hern-kiosk__menu-product">
+         <div
+            className="hern-kiosk__menu-product"
+            style={{
+               ...(!config.productSettings.showProductCardFullView.value && {
+                  filter:
+                     'drop-shadow(0px 0.64912px 3.2456px rgba(0, 107, 177, 0.4))',
+               }),
+            }}
+         >
             <Layout style={{ height: '100%' }}>
-               <Header className="hern-kiosk__menu-product-header">
-                  <div className="hern-kiosk__menu-product-background-shadow"></div>
+               <Header
+                  className={classNames('hern-kiosk__menu-product-header', {
+                     'hern-kiosk__menu-product-header--full-view':
+                        config.productSettings.showProductCardFullView.value,
+                  })}
+               >
+                  {!config.productSettings.showProductCardFullView.value && (
+                     <div className="hern-kiosk__menu-product-background-shadow"></div>
+                  )}
 
                   {productData.assets.images.length === 0 ? (
                      <img src={config.productSettings.defaultImage.value} />
                   ) : (
                      <Carousel>
-                        {productData.assets.images.map((eachImage, index) => (
-                           <div
-                              className="product_image"
-                              style={{
-                                 height: '20em !important',
-                                 width: '20em !important',
-                              }}
-                              key={eachImage}
-                           >
-                              <HernLazyImage
-                                 // src={eachImage}
-                                 // key={index}
-                                 dataSrc={eachImage}
-                                 width={187}
-                                 height={187}
-                                 onClick={() => {
-                                    if (showAddToCartButton) {
-                                       if (
-                                          productData.productOptions.length >
-                                             0 &&
-                                          productData.isPopupAllowed
-                                       ) {
-                                          setShowModifier(true)
-                                       } else {
-                                          addToCart(
-                                             productData.defaultCartItem,
-                                             1
-                                          )
-                                       }
-                                    }
+                        {productData.assets.images.map((eachImage, index) => {
+                           return (
+                              <div
+                                 className="product_image"
+                                 style={{
+                                    height: '20em !important',
+                                    width: '20em !important',
                                  }}
-                              />
-                           </div>
-                        ))}
+                                 key={eachImage}
+                              >
+                                 {isNull(eachImage) || isEmpty(eachImage) ? (
+                                    <img
+                                       src={
+                                          config.productSettings.defaultImage
+                                             .value
+                                       }
+                                       style={{
+                                          width: `${
+                                             config.productSettings
+                                                .showProductCardFullView.value
+                                                ? '240px'
+                                                : '187px'
+                                          }`,
+                                          height: `${
+                                             config.productSettings
+                                                .showProductCardFullView.value
+                                                ? '240px'
+                                                : '187px'
+                                          }`,
+                                       }}
+                                    />
+                                 ) : (
+                                    <HernLazyImage
+                                       // src={eachImage}
+                                       // key={index}
+                                       dataSrc={eachImage}
+                                       width={
+                                          config.productSettings
+                                             .showProductCardFullView.value
+                                             ? 240
+                                             : 187
+                                       }
+                                       height={
+                                          config.productSettings
+                                             .showProductCardFullView.value
+                                             ? 240
+                                             : 187
+                                       }
+                                       style={{
+                                          ...(config.kioskSettings.allowTilt
+                                             .value && {
+                                             clipPath:
+                                                'polygon(0 0, 100% 0, 100% 100%, 0 97%)',
+                                          }),
+                                       }}
+                                       onClick={() => {
+                                          if (showAddToCartButton) {
+                                             if (
+                                                productData.productOptions
+                                                   .length > 0 &&
+                                                productData.isPopupAllowed
+                                             ) {
+                                                setShowModifier(true)
+                                             } else {
+                                                addToCart(
+                                                   productData.defaultCartItem,
+                                                   1
+                                                )
+                                             }
+                                          }
+                                       }}
+                                    />
+                                 )}
+                              </div>
+                           )
+                        })}
                      </Carousel>
                   )}
                </Header>
@@ -357,6 +417,7 @@ export const KioskProduct = props => {
                                  addToCart(productData.defaultCartItem, 1)
                               }
                            }}
+                           buttonConfig={config.kioskSettings.buttonSettings}
                         >
                            {isStoreAvailable
                               ? t('Add To Cart')
@@ -414,9 +475,11 @@ export const KioskProduct = props => {
                   }}
                   style={{
                      border: `2px solid ${config.kioskSettings.theme.secondaryColor.value}`,
-                     background: 'transparent',
+                     background: 'transparent !important',
                      padding: '.1em 2em',
+                     color: `${config.kioskSettings.theme.primaryColor.value}`,
                   }}
+                  buttonConfig={config.kioskSettings.buttonSettings}
                >
                   {t("I'LL CHOOSE")}
                </KioskButton>
@@ -425,6 +488,7 @@ export const KioskProduct = props => {
                   onClick={() => {
                      repeatLastOne(productData)
                   }}
+                  buttonConfig={config.kioskSettings.buttonSettings}
                >
                   {t('REPEAT LAST ONE')}
                </KioskButton>

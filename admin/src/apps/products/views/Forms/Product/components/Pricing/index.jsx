@@ -9,7 +9,7 @@ import validator from '../../validators'
 const Pricing = ({ state }) => {
    const [_state, _dispatch] = React.useReducer(reducer, initialState)
 
-   console.log('🚀 ~ file: index.jsx ~ line 10 ~ Pricing ~ state', state)
+   // console.log('🚀 ~ file: index.jsx ~ line 10 ~ Pricing ~ state', state)
 
    //Mutation
    const [updateProduct, { loading: inFlight }] = useMutation(PRODUCT.UPDATE, {
