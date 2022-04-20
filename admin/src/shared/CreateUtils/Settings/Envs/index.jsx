@@ -47,13 +47,14 @@ const CreateEnvTunnel = ({ closeTunnel }) => {
             onCompleted: (data) => {
                 const addedData = data.insert_settings_env.returning.map(each => { return each.title })
                 const remainingData = allEnvObjects.filter(({ title }) => !addedData.includes(title))
+
                 if (remainingData.length === 0 && allEnvObjects.length === addedData.length) {
                     toast.success('New Env added!')
                 } else if (addedData.length === 0) {
-                    toast.error(allEnvObjects.length > 1 ? 'All Envs are present' : 'Env is already present')
+                    toast.error(allEnvObjects.length > 1 ? 'All Envs are present!' : 'Env is already present!')
                 } else if (allEnvObjects.length !== addedData.length) {
                     remainingData.forEach(element => {
-                        toast.error(`${element.title} Env is already present for ${element.belongsTo}`)
+                        toast.error(`${element.title} Env is already present for ${element.belongsTo}!`)
                     })
                     toast.success('Remaining envs added!')
                 }
@@ -66,9 +67,7 @@ const CreateEnvTunnel = ({ closeTunnel }) => {
             },
         }
     )
-    // all added  remaining null && all.length === added.length
-    // few added  all.length !== added.data
-    // none added added.length === 0
+
     //handler
     const handleEnvChange = (field, value, index) => {
         const newEnvs = [...envs]
@@ -159,8 +158,15 @@ const CreateEnvTunnel = ({ closeTunnel }) => {
     const removeField = index => {
         const newEnvs = envs
         if (newEnvs.length > 1) {
-            newEnvs.splice(index, 1)
-            setEnvs([...newEnvs])
+            if (
+                window.confirm(
+                    newEnvs[index].envTitle.value ? `Are you sure you want to remove env - ${newEnvs[index].envTitle.value}?` : 'Are you sure you want to remove empty env ?'
+                )
+            ) {
+                newEnvs.splice(index, 1)
+                setEnvs([...newEnvs])
+            }
+
         } else {
             toast.error('Envs should be atleast 1 !')
         }
