@@ -10,6 +10,7 @@ import validatorFunc from '../../validator'
 
 const CreateEnvTunnel = ({ closeTunnel }) => {
     //declaration
+    const [allEnvObjects, setAllEnvObjects] = useState()
     const envInstance = {
         envTitle: {
             value: '',
@@ -43,17 +44,31 @@ const CreateEnvTunnel = ({ closeTunnel }) => {
     const [createEnvs, { loading: inFlight }] = useMutation(
         ENVS.CREATE,
         {
-            onCompleted: () => {
-                toast.success('Mile range added!')
-                closeTunnel(3)
+            onCompleted: (data) => {
+                const addedData = data.insert_settings_env.returning.map(each => { return each.title })
+                const remainingData = allEnvObjects.filter(({ title }) => !addedData.includes(title))
+                if (remainingData.length === 0 && allEnvObjects.length === addedData.length) {
+                    toast.success('New Env added!')
+                } else if (addedData.length === 0) {
+                    toast.error(allEnvObjects.length > 1 ? 'All Envs are present' : 'Env is already present')
+                } else if (allEnvObjects.length !== addedData.length) {
+                    remainingData.forEach(element => {
+                        toast.error(`${element.title} Env is already present for ${element.belongsTo}`)
+                    })
+                    toast.success('Remaining envs added!')
+                }
+                closeTunnel(1)
             },
             onError: error => {
+                console.log(error);
                 toast.error('Something went wrong!')
                 logger(error)
             },
         }
     )
-
+    // all added  remaining null && all.length === added.length
+    // few added  all.length !== added.data
+    // none added added.length === 0
     //handler
     const handleEnvChange = (field, value, index) => {
         const newEnvs = [...envs]
@@ -115,6 +130,7 @@ const CreateEnvTunnel = ({ closeTunnel }) => {
             if (!objects.length) {
                 throw Error('Nothing to add!')
             }
+            setAllEnvObjects(objects)
             console.log('objects', objects)
             createEnvs({
                 variables: {

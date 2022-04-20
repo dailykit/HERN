@@ -1095,10 +1095,13 @@ export const ENVS = {
    CREATE: gql`
       mutation createEnvs($objects: [settings_env_insert_input!]!) {
          insert_settings_env(
-            objects: $objects
             on_conflict: { constraint: env_title_belongsTo_key }
+            objects: $objects
          ) {
             affected_rows
+            returning {
+               title
+            }
          }
       }
    `,
