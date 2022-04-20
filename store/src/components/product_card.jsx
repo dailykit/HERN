@@ -1,13 +1,10 @@
-import React from 'react'
-import { Carousel } from 'antd'
-import { Slide } from 'react-slideshow-image'
-import 'react-slideshow-image/dist/styles.css'
-import { formatCurrency, isClient } from '../utils'
-import { ModifierPopup } from './index'
 import classNames from 'classnames'
-import { EditIcon } from '../assets/icons'
+import React from 'react'
+import { Slide } from 'react-slideshow-image'
 import { useTranslation } from '../context'
+import { formatCurrency, isClient } from '../utils'
 import { HernLazyImage } from '../utils/hernImage'
+import { ModifierPopup } from './index'
 // if (isClient) {
 //    import('lazysizes/plugins/unveilhooks/ls.unveilhooks').then(module => module)
 // }
@@ -278,12 +275,6 @@ export const ProductCard = props => {
                                     )}
                               </div>
                            )}
-                           {showProductAdditionalText &&
-                              data?.additionalText && (
-                                 <div className="hern-product-card__additional-text">
-                                    {data.additionalText}
-                                 </div>
-                              )}
                         </div>
                      ) : (
                         <div className="hern-product-card-details-2">

@@ -1,6 +1,5 @@
 import { useMutation, useSubscription } from '@apollo/react-hooks'
 import isEmpty from 'lodash/isEmpty'
-import gql from 'graphql-tag'
 import React, { useEffect, useState, useContext } from 'react'
 import {
    CREATE_CART_ITEMS,
@@ -14,7 +13,12 @@ import {
 import { useUser } from '.'
 import { useConfig } from '../lib'
 import { useToasts } from 'react-toast-notifications'
-import { combineCartItems, isKiosk, useQueryParamState } from '../utils'
+import {
+   combineCartItems,
+   useQueryParamState,
+   useWindowOnload,
+   isKiosk,
+} from '../utils'
 import { useTranslation } from './language'
 
 export const CartContext = React.createContext()
@@ -43,11 +47,13 @@ export const CartProvider = ({ children }) => {
       useConfig()
    const { addToast } = useToasts()
    const { t } = useTranslation()
-   // const [oiType] = useQueryParamState('oiType')
+   const isKioskMode = isKiosk()
    const oiType = React.useMemo(() => {
-      return isKiosk() ? 'Kiosk Ordering' : 'Website Ordering'
-   }, [])
-   console.log('oiTypeInCart', oiType)
+      if (isKioskMode) {
+         return 'Kiosk Ordering'
+      }
+      return 'Website Ordering'
+   }, [isKioskMode])
    const [isFinalCartLoading, setIsFinalCartLoading] = React.useState(true)
 
    const { isAuthenticated, user, isLoading } = useUser()
@@ -57,16 +63,27 @@ export const CartProvider = ({ children }) => {
    const [combinedCartItems, setCombinedCartData] = useState(null)
    const [showCartIconToolTip, setShowCartIconToolTip] = useState(false)
    const [dineInTableInfo, setDineInTableInfo] = useState(null)
+   const { isWindowLoading } = useWindowOnload()
+
    React.useEffect(() => {
+      // case 1 - user is not authenticated
+      //case 1.1 if there is cart-id in local storage , set storedCartId
+
+      //case 1.2 if not then do nothing,set storedCartId null
+
+      // case 2 - user is authenticated , handled by getCarts
+
+      // case 3 - use is authenticated and clicked on logout, set storedCartId null
+
       const cartId = localStorage.getItem('cart-id')
       if (cartId) {
          setStoredCartId(+cartId)
-         if (!isAuthenticated) {
-            // only set local cart id in headers when not authenticated
-            // when logged in, if it has local cart id then it will try to merge carts
+      } else {
+         if (!isLoading && !isAuthenticated) {
+            setStoredCartId(null)
          }
       }
-   }, [])
+   }, [isAuthenticated, isLoading])
 
    //initial cart when no auth
    const {
@@ -74,13 +91,13 @@ export const CartProvider = ({ children }) => {
       error: getInitialCart,
       data: cartData = {},
    } = useSubscription(GET_CART, {
-      skip: !storedCartId,
+      skip: isWindowLoading || !storedCartId,
       variables: {
          where: {
             id: {
                _eq: storedCartId,
             },
-            ...(!oiType === 'Kiosk Ordering' && {
+            ...(!(oiType === 'Kiosk Ordering') && {
                paymentStatus: {
                   _eq: 'PENDING',
                },
@@ -102,7 +119,7 @@ export const CartProvider = ({ children }) => {
       error: cartItemsError,
       data: cartItemsData,
    } = useSubscription(GET_CART_ITEMS_BY_CART, {
-      skip: !storedCartId,
+      skip: isWindowLoading || !storedCartId,
       variables: {
          where: {
             level: {
@@ -111,7 +128,7 @@ export const CartProvider = ({ children }) => {
             cartId: {
                _eq: storedCartId,
             },
-            ...(!oiType === 'Kiosk Ordering' && {
+            ...(!(oiType === 'Kiosk Ordering') && {
                cart: {
                   paymentStatus: {
                      _eq: 'PENDING',
@@ -444,7 +461,9 @@ export const CartProvider = ({ children }) => {
                },
             },
          },
-         skip: !(brand?.id && user?.keycloakId && orderTabs.length > 0),
+         skip:
+            !(brand?.id && user?.keycloakId && orderTabs.length > 0) ||
+            isWindowLoading,
          fetchPolicy: 'no-cache',
          onSubscriptionData: ({ subscriptionData }) => {
             console.log('subscriptionData', subscriptionData)
@@ -606,6 +625,7 @@ export const CartProvider = ({ children }) => {
                      localStorage.removeItem('cart-id')
                      setIsFinalCartLoading(false)
                   } else {
+                     setCombinedCartData([])
                      setIsFinalCartLoading(false)
                   }
                }

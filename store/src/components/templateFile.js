@@ -10,7 +10,6 @@ export const TemplateFile = ({ path = '/navigation-menu/index.ejs', data }) => {
 
    React.useEffect(() => {
       const url = `${get_env('BASE_BRAND_URL')}/template/files${path}`
-      console.log(url)
       const fetchData = async () => {
          const { data } = await axios.get(url)
 
@@ -23,12 +22,6 @@ export const TemplateFile = ({ path = '/navigation-menu/index.ejs', data }) => {
       setTemplateData(data)
    }, [data])
 
-   console.log(
-      'promsie',
-      import('../utils/renderTemplateFile').then(promise =>
-         promise.compileEJSFile(templateString, templateData)
-      )
-   )
    return (
       <div>{ReactHTMLParser(compileEJSFile(templateString, templateData))}</div>
    )

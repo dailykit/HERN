@@ -36,7 +36,7 @@ const Styles = {
          :hover {
             position: absolute;
             width: 222px;
-            z-index: 3;
+            z-index: 700;
          }
       `
    ),

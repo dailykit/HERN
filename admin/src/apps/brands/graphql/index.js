@@ -211,7 +211,78 @@ export const PLANS = {
       }
    `,
 }
-
+export const BRAND_COUPONS = {
+   LIST: gql`
+      subscription brandCoupons($brandId: Int_comparison_exp!) {
+         brandCoupons(
+            where: { brandId: $brandId }
+            order_by: { position: desc_nulls_last }
+         ) {
+            id
+            brandId
+            couponId
+            isActive
+            position
+            coupon {
+               code
+            }
+         }
+      }
+   `,
+   TUNNEL_LIST: gql`
+      subscription couponList($brandId: Int!) {
+         coupons(
+            order_by: { isActive: desc_nulls_last }
+            where: {
+               _not: {
+                  brands: {
+                     brand: { brand_coupons: { brandId: { _eq: $brandId } } }
+                  }
+               }
+            }
+         ) {
+            code
+            id
+            metaDetails
+            isActive
+         }
+      }
+   `,
+   UPSERT_BRAND_COUPONS: gql`
+      mutation upsertBrandCoupons($objects: [crm_brand_coupon_insert_input!]!) {
+         createBrandCoupons(
+            objects: $objects
+            on_conflict: {
+               constraint: brand_coupon_id_key
+               update_columns: isActive
+            }
+         ) {
+            affected_rows
+         }
+      }
+   `,
+   DELETE: gql`
+      mutation deleteBrandCoupon($brandId: Int!, $couponId: Int!) {
+         deleteBrandCoupon(brandId: $brandId, couponId: $couponId) {
+            id
+         }
+      }
+   `,
+   UPDATE: gql`
+      mutation updateBrandCoupon(
+         $_set: crm_brand_coupon_set_input!
+         $brandId: Int!
+         $couponId: Int!
+      ) {
+         updateBrandCoupon(
+            pk_columns: { brandId: $brandId, couponId: $couponId }
+            _set: $_set
+         ) {
+            id
+         }
+      }
+   `,
+}
 export const LOCATIONS = {
    AGGREGATE: gql`
       subscription locations {
@@ -381,7 +452,6 @@ export const BRAND_ID_LIST = gql`
       }
    }
 `
-
 // getting brandSettingId using identifier
 export const BRAND_ID = gql`
    query MyQuery($identifier: String_comparison_exp!) {
@@ -395,7 +465,7 @@ export const BRAND_ID = gql`
 `
 export const KIOSK = {
    AGGREGATE: gql`
-      subscription MySubscription {
+      subscription KIOSK {
          brands_locationKiosk_aggregate {
             aggregate {
                count
@@ -404,7 +474,7 @@ export const KIOSK = {
       }
    `,
    LIST: gql`
-      subscription MySubscription {
+      subscription KIOSK_LIST {
          kiosk: brands_locationKiosk_aggregate {
             aggregate {
                count
@@ -453,10 +523,14 @@ export const KIOSK = {
       }
    `,
    PRINTERS: gql`
-      subscription MySubscription {
+      subscription PRINTERS {
          printers {
             name
             printNodeId
+            computerId
+            computer {
+               name
+            }
          }
       }
    `,
@@ -475,7 +549,7 @@ export const KIOSK = {
    `,
 
    GET_KIOSKS: gql`
-      query GET_KIOSK($id: Int!) {
+      subscription GET_KIOSK($id: Int!) {
          kiosk: brands_locationKiosk_by_pk(id: $id) {
             accessPassword
             accessUrl
@@ -509,7 +583,7 @@ export const KIOSK = {
    `,
 
    UPDATE_KIOSK: gql`
-      mutation MyMutation2(
+      mutation UPDATE_KIOSK(
          $id: Int!
          $_set: brands_locationKiosk_set_input = {}
       ) {
@@ -523,7 +597,7 @@ export const KIOSK = {
    `,
 
    CREATE_KIOSK_ORDER_TAB: gql`
-      mutation MyMutation(
+      mutation CREATE_KIOSK_ORDER_TAB(
          $objects: [brands_locationKiosk_orderTab_insert_input!]!
       ) {
          insert_brands_locationKiosk_orderTab(objects: $objects) {
@@ -533,7 +607,7 @@ export const KIOSK = {
    `,
 
    UPDATE_KIOSK_ORDER_TAB: gql`
-      mutation MyMutation(
+      mutation UPDATE_KIOSK_ORDER_TAB(
          $orderTabId: Int!
          $locationKioskId: Int!
          $_set: brands_locationKiosk_orderTab_set_input = {}

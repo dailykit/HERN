@@ -1,4 +1,4 @@
-import _ from 'lodash'
+import sortBy from 'lodash/sortBy'
 import { getDistance, convertDistance } from 'geolib'
 import {
    isStoreOnDemandDeliveryAvailable,
@@ -40,7 +40,7 @@ const getSortedStoresByAerialDistance = async (brandLocations, address) => {
       })
    )
    // sort by aerial distance
-   const sortedBrandLocationsWithAerialDistance = _.sortBy(
+   const sortedBrandLocationsWithAerialDistance = sortBy(
       brandLocationsWithAerialDistance,
       [x => x.aerialDistance]
    )
@@ -95,7 +95,13 @@ export const getStoresWithValidations = async props => {
             ...(locationId || { locationId: { _eq: locationId } }),
          },
       })
-
+   if (
+      deliverableBrandLocations.length === 0 &&
+      (fulfillmentType === 'ONDEMAND_DELIVERY' ||
+         fulfillmentType === 'ONDEMAND_PICKUP')
+   ) {
+      return []
+   }
    const { brandRecurrences } = await graphQLClientSide.request(
       GET_ALL_RECURRENCES,
       {
@@ -116,9 +122,13 @@ export const getStoresWithValidations = async props => {
          },
       }
    )
-
+   const finalBrandLocations =
+      fulfillmentType === 'ONDEMAND_DELIVERY' ||
+      fulfillmentType === 'ONDEMAND_PICKUP'
+         ? deliverableBrandLocations
+         : brandLocations
    const sortedStoresByAerialDistance = await getSortedStoresByAerialDistance(
-      brandLocations,
+      finalBrandLocations,
       address
    )
    const sortedStoresByAerialDistanceWithValidation = []

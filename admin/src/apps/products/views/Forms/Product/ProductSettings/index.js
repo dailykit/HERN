@@ -9,8 +9,15 @@ import { Flex } from '../../../../../../shared/components'
 import { Child, Styles, CollapsibleWrapper } from './styled'
 import { SettingsCard } from './SettingsCard'
 import { Card, Input } from 'antd'
+import {
+   Tunnel,
+   Tunnels,
+   useTunnel,
+} from '@dailykit/ui'
 
 import { CloseIcon } from '../../../../../../shared/assets/icons'
+import { BrandContext } from '../../../../../../App'
+import BrandListing from '../components/BrandListing';
 
 export const ProductSettings = () => {
    const params = useParams()
@@ -23,7 +30,17 @@ export const ProductSettings = () => {
    const [saveAllSettings, setSaveAllSettings] = React.useState({})
    const [componentIsOnView, setIsComponentIsOnView] = React.useState([])
    const [alertShow, setAlertShow] = React.useState(false)
+
+   const [brandContext] = React.useContext(BrandContext)
+   const [brandListTunnel, openBrandListTunnel, closeBrandListTunnel] =
+      useTunnel(1)
    const { Search } = Input
+
+   React.useEffect(() => {
+      if (brandContext.brandId == null) {
+         openBrandListTunnel(1)
+      }
+   }, [brandContext.brandId])
 
    const groupingproductSettings = (array, key) => {
       return array.reduce((obj, item) => {
@@ -39,6 +56,7 @@ export const ProductSettings = () => {
    const { loading: loadingSettings, error } = useSubscription(PRODUCT.SETTING, {
       variables: {
          productId: Number(params.id),
+         brandId: brandContext.brandId
       },
       onSubscriptionData: ({
          subscriptionData: {
@@ -76,6 +94,7 @@ export const ProductSettings = () => {
          })
       )
    }
+
 
 
    return (
@@ -225,6 +244,7 @@ export const ProductSettings = () => {
                                        setSaveAllSettings={setSaveAllSettings}
                                        alertShow={alertShow}
                                        setAlertShow={setAlertShow}
+                                       brandId={brandContext.brandId}
                                     />
                                  </>
                               )
@@ -234,23 +254,13 @@ export const ProductSettings = () => {
                   })}
             </Flex>
          </Styles.SettingWrapper>
-
-         {/* linked component */}
-         {/* <Styles.LinkWrapper>
-            <LinkFiles
-               title="Linked CSS files"
-               fileType="css"
-               entityId={params?.id}
-               scope="brand"
-            />
-            <LinkFiles
-               title="Linked JS files"
-               fileType="js"
-               entityId={params?.id}
-               scope="brand"
-            />
-
-         </Styles.LinkWrapper> */}
+         <Tunnels tunnels={brandListTunnel}>
+            <Tunnel popup={true} layer={1} size="md">
+               <BrandListing
+                  closeTunnel={closeBrandListTunnel}
+               />
+            </Tunnel>
+         </Tunnels>
       </Styles.Wrapper>
    )
 }

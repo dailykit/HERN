@@ -306,7 +306,7 @@ const CouponListing = () => {
          <Banner id="crm-app-coupons-listing-top" />
          <Tunnels tunnels={couponTunnels}>
             <Tunnel layer={1} size="md">
-               <CreateCoupon closeTunnel={closeCouponTunnel} />
+               <CreateCoupon close={closeCouponTunnel} />
             </Tunnel>
          </Tunnels>
          <Flex

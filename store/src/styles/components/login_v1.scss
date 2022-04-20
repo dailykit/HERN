@@ -1,14 +1,4 @@
 .hern-login-v1-container {
-   position: fixed;
-   top: 80px;
-   bottom: 0;
-   left: 0;
-   right: 0;
-   z-index: 1000;
-   width: 100vw;
-   overflow: hidden;
-   background-color: #ffffff;
-   transition: all 0.4s ease-in-out;
 }
 .hern-login-v1-container__img {
    display: none;
@@ -150,7 +140,7 @@
 }
 
 .hern-login-v1__login-btn--disabled {
-   background: var(--hern-accent) !important;
+   background: #808080 !important;
    cursor: not-allowed;
    color: '#ffffff' !important;
    opacity: 0.5;
@@ -192,7 +182,7 @@
 }
 
 .hern-login-v1__otp-submit--disabled {
-   background-color: var(--hern-accent) !important;
+   background-color: #808080 !important;
    cursor: not-allowed;
    opacity: 0.5;
 }
@@ -259,7 +249,7 @@
    cursor: not-allowed;
    opacity: 0.5;
    &:hover {
-      background: #fff;
+      background: #808080;
    }
 }
 
@@ -303,7 +293,7 @@
    height: 40px;
 }
 .hern-forgot-password-v1__submit-btn--disabled {
-   background: var(--hern-accent) !important;
+   background: #808080 !important;
    cursor: not-allowed;
    opacity: 0.5;
 }
@@ -367,7 +357,7 @@
 }
 
 .hern-signup-v1__signup__submit--disabled {
-   background: var(--hern-accent) !important;
+   background: #808080 !important;
    cursor: not-allowed;
    opacity: 0.5;
 }
@@ -445,6 +435,7 @@
       align-items: center;
       gap: 96px;
       padding: 16px;
+      min-height: 80vh;
    }
    .hern-login-v1-content {
       padding: 20px;
@@ -454,4 +445,41 @@
       box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.15);
       border-radius: 12px;
    }
+}
+.hern-login-v1__forgot-password__email-sent {
+   padding: 48px 0;
+   display: flex;
+   flex-direction: column;
+   align-items: center;
+   justify-content: center;
+
+   > h3 {
+      font-size: 18px;
+      line-height: 18px;
+      color: var(--hern-accent);
+      font-weight: 400;
+      > span {
+         font-size: 20px;
+         font-weight: 500;
+      }
+   }
+   p {
+      font-size: 14px;
+      line-height: 18px;
+      color: #404040;
+      font-weight: 400;
+   }
+   button {
+      margin-top: 24px;
+   }
+   a {
+      color: #fff;
+      text-decoration: none;
+   }
+   a:hover {
+      color: #fff !important;
+   }
+}
+.hern-forgot-password-v1__error {
+   color: #ef4444;
 }

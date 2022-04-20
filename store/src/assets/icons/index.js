@@ -266,6 +266,17 @@ const ProfileSidebarIcon = {
    ManageCards,
 }
 
+export * from './DeliveryInfoIcons'
+const EmptyCloche = dynamic(() =>
+   import('./EmptyCloche').then(promise => promise.EmptyCloche)
+)
+const EmptyStore = dynamic(() =>
+   import('./EmptyStore').then(promise => promise.EmptyStore)
+)
+const EmptyReferralIll = dynamic(() =>
+   import('./EmptyReferralIll').then(promise => promise.EmptyReferralIll)
+)
+
 export {
    AddressIcon,
    ArrowLeftIcon,
@@ -347,4 +358,7 @@ export {
    ProfileSidebarIcon,
    ProductGalleryBG,
    NoImage,
+   EmptyCloche,
+   EmptyStore,
+   EmptyReferralIll,
 }
