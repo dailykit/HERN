@@ -55,6 +55,10 @@ const KioskScreen = props => {
          type: 'SET_SETTINGS',
          payload: settings,
       })
+      dispatch({
+         type: 'SET_KIOSK_POPUP_CONFIG',
+         payload: finalKioskConfig,
+      })
       setIsLoading(false)
    }, [])
 
