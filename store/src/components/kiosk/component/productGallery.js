@@ -57,8 +57,7 @@ export const ProductGalleryKiosk = ({ config }) => {
       PRODUCTS,
       {
          skip:
-            !config.productGallery.showGoToMenuCheckoutPopup.value ||
-            isConfigLoading,
+            !config.productGallery.showProductGallery.value || isConfigLoading,
          variables: {
             ids: config.productGallery.products.value,
             priceArgs: argsForByLocation,
@@ -98,12 +97,19 @@ export const ProductGalleryKiosk = ({ config }) => {
       <div className="hern-kiosk__product-gallery-container">
          <div
             className="hern-kiosk__product-gallery-background"
-            style={{ background: '#E5F0F7' }}
+            style={{
+               background: `url(${config?.productGallery?.productGalleryBackgroundImage?.value})`,
+            }}
          >
-            <ProductGalleryBG
+            {/* <ProductGalleryBG
                fill={
                   config?.kioskSettings?.theme?.secondaryColorLight?.value ||
                   theme?.accent
+               }
+            /> */}
+            <img
+               src={
+                  config?.productGallery?.productGalleryBackgroundImage?.value
                }
             />
          </div>
@@ -120,9 +126,13 @@ export const ProductGalleryKiosk = ({ config }) => {
                onClick={lastCarousal}
                style={{
                   backgroundColor: `${
-                     config?.kioskSettings?.theme?.secondaryColor?.value ||
+                     config?.kioskSettings?.theme?.arrowBgColor?.value ||
                      theme?.accent
                   }99`,
+                  color: `${
+                     config?.kioskSettings?.theme?.arrowColor?.value ||
+                     '#000000'
+                  }`,
                }}
             />
             <ArrowRightIcon
@@ -131,9 +141,13 @@ export const ProductGalleryKiosk = ({ config }) => {
                onClick={nextCarousal}
                style={{
                   backgroundColor: `${
-                     config?.kioskSettings?.theme?.secondaryColor?.value ||
+                     config?.kioskSettings?.theme?.arrowBgColor?.value ||
                      theme?.accent
                   }99`,
+                  color: `${
+                     config?.kioskSettings?.theme?.arrowColor?.value ||
+                     '#000000'
+                  }`,
                }}
             />
             <Carousel
@@ -147,6 +161,7 @@ export const ProductGalleryKiosk = ({ config }) => {
                      <ProductGalleryCard
                         product={eachProduct}
                         key={eachProduct.id}
+                        config={config}
                      />
                   )
                })}
@@ -156,7 +171,7 @@ export const ProductGalleryKiosk = ({ config }) => {
    )
 }
 
-const ProductGalleryCard = ({ product }) => {
+const ProductGalleryCard = ({ product, config }) => {
    const { locale, dynamicTrans, t, direction } = useTranslation()
    const { addToCart } = useCart()
 
@@ -195,6 +210,11 @@ const ProductGalleryCard = ({ product }) => {
             className="hern-kiosk__product-gallery-p-image"
             width={115}
             height={115}
+            style={{
+               ...(config.kioskSettings.allowTilt.value && {
+                  clipPath: 'polygon(0 0, 100% 0, 100% 100%, 0 97%)',
+               }),
+            }}
          />
          <div className="hern-kiosk__product-card-details">
             <span
@@ -220,6 +240,7 @@ const ProductGalleryCard = ({ product }) => {
                'hern-kiosk__product-gallery-add-btn-ltr': direction === 'ltr',
                'hern-kiosk__product-gallery-add-btn-rtl': direction === 'rtl',
             })}
+            buttonConfig={config.kioskSettings.buttonSettings}
             onClick={() => {
                addToCart(product.defaultCartItem, 1)
             }}

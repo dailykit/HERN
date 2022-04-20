@@ -13,7 +13,7 @@ export const KioskCounterButton = props => {
             justifyContent: 'center',
             alignItems: 'center',
             borderRadius: '.5em',
-            backgroundColor: '#E5F0F7',
+            backgroundColor: `${config.kioskSettings.theme.primaryColorLight.value}`,
             ...style,
          }}
       >

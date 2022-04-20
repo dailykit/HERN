@@ -123,9 +123,13 @@ export const PromotionCarousal = props => {
             onClick={lastCarousal}
             style={{
                backgroundColor: `${
-                  componentConfig?.kioskSettings?.theme?.secondaryColor
-                     ?.value || theme?.accent
+                  componentConfig?.kioskSettings?.theme?.arrowBgColor?.value ||
+                  theme?.accent
                }99`,
+               color: `${
+                  componentConfig?.kioskSettings?.theme?.arrowColor?.value ||
+                  '#000000'
+               }`,
             }}
          />
          <ArrowRightIcon
@@ -134,9 +138,13 @@ export const PromotionCarousal = props => {
             onClick={nextCarousal}
             style={{
                backgroundColor: `${
-                  componentConfig?.kioskSettings?.theme?.secondaryColor
-                     ?.value || theme?.accent
+                  componentConfig?.kioskSettings?.theme?.arrowBgColor?.value ||
+                  theme?.accent
                }99`,
+               color: `${
+                  componentConfig?.kioskSettings?.theme?.arrowColor?.value ||
+                  '#000000'
+               }`,
             }}
          />
          <Carousel

@@ -48,7 +48,7 @@ export const HernLazyImage = ({
       : 'rgba(5, 150, 105, 1)'
    // no image src available
    if (isNull(dataSrc) || isEmpty(dataSrc)) {
-      return <NoImage size={'100%'} fill={themeColor} />
+      return <NoImage size={'60%'} fill={themeColor} />
    }
    const imageUrlOfParticularDimension = dataSrc
       .slice()

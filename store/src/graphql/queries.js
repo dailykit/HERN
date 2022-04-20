@@ -1329,6 +1329,7 @@ export const PRODUCTS = gql`
          defaultProductOptionId
          defaultCartItem: defaultCartItemByLocation(args: $defaultCartItemArgs)
          productionOptionSelectionStatement
+         subCategory
          productOptions(
             where: { isArchived: { _eq: false } }
             order_by: { position: desc_nulls_last }
@@ -1809,6 +1810,12 @@ export const GET_CART = gql`
          toUseAvailablePaymentOptionId
          posistOrderStatus
          posistOrderResponse
+         locationTableId
+         locationTable {
+            internalTableLabel
+            id
+            seatCover
+         }
          subscriptionOccurence {
             id
             fulfillmentDate
@@ -2467,6 +2474,17 @@ export const SUPPORTED_PAYMENT_OPTIONS = gql`
       brands_supportedPaymentCompany {
          id
          label
+      }
+   }
+`
+export const LOCATION_TABLES = gql`
+   query LOCATION_TABLES($where: brands_locationTable_bool_exp) {
+      brands_locationTable(where: $where) {
+         id
+         internalTableLabel
+         isActive
+         locationId
+         seatCover
       }
    }
 `
