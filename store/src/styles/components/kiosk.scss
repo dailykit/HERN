@@ -1010,6 +1010,11 @@
    margin-bottom: 1em;
    justify-content: space-around;
    background: #ffffff;
+   .hern-image__image-container{
+      display: flex;
+      align-items: center;
+      justify-content: center;
+   }
    &:last-child {
       border-right: unset;
    }
