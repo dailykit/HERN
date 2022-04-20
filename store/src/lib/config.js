@@ -1,11 +1,15 @@
 import { useQuery } from '@apollo/react-hooks'
-import { has, isEmpty } from 'lodash'
+// import { has, isEmpty } from 'lodash'
+import has from 'lodash/has'
+import isEmpty from 'lodash/isEmpty'
 import React from 'react'
 import { ORDER_TAB } from '../graphql'
-import { rrulestr } from 'rrule'
-import { get_env, isClient, useQueryParamState } from '../utils'
-import moment from 'moment'
-import PaymentProcessingModal from '../components/paymentProcessingModal'
+import {
+   get_env,
+   isClient,
+   useQueryParamState,
+   useWindowOnload,
+} from '../utils'
 const ConfigContext = React.createContext()
 
 const initialState = {
@@ -86,9 +90,10 @@ export const ConfigProvider = ({ children }) => {
 
    const [showLocationSelectorPopup, setShowLocationSelectionPopup] =
       React.useState(false)
+   const { isWindowLoading } = useWindowOnload()
 
    useQuery(ORDER_TAB, {
-      skip: isLoading || !orderInterfaceType,
+      skip: isWindowLoading || isLoading || !orderInterfaceType,
       variables: {
          where: {
             isActive: { _eq: true },

@@ -13,10 +13,11 @@ import {
    Button,
    Tunnel,
    CartOrderDetails,
+   Empty,
 } from '../../components'
 import classNames from 'classnames'
 import moment from 'moment'
-import { Select, Empty } from 'antd'
+import { Select } from 'antd'
 import _ from 'lodash'
 
 export const OrderHistory = () => {
@@ -79,7 +80,17 @@ const OrderCards = () => {
       carts.map(cart => moment(cart.order.created_at).format('DD MMM YYYY'))
    )
    const orderStatus = _.uniq(carts.map(cart => cart.status))
-
+   if (_.isEmpty(orders))
+      return (
+         <Empty
+            title={t('No Orders yet !')}
+            description={t(
+               'Looks like you haven’t made any order yet. Order some yummy items'
+            )}
+            route="/order"
+            buttonLabel={t('Go to menu')}
+         />
+      )
    return (
       <div className="hern-order-history__wrapper">
          <h2 className="hern-order-history__title">{t('Orders')}</h2>
@@ -140,19 +151,19 @@ const OrderCard = ({ cart }) => {
                {getTitle(cart?.fulfillmentInfo?.type)}
                {(cart?.fulfillmentInfo?.type === 'PREORDER_PICKUP' ||
                   cart?.fulfillmentInfo?.type === 'PREORDER_DELIVERY') && (
-                     <span>
-                        {' '}
-                        on{' '}
-                        {moment(cart?.fulfillmentInfo?.slot?.from).format(
-                           'DD MMM YYYY'
-                        )}
-                        {' ('}
-                        {moment(cart?.fulfillmentInfo?.slot?.from).format('HH:mm')}
-                        {'-'}
-                        {moment(cart?.fulfillmentInfo?.slot?.to).format('HH:mm')}
-                        {')'}
-                     </span>
-                  )}
+                  <span>
+                     {' '}
+                     on{' '}
+                     {moment(cart?.fulfillmentInfo?.slot?.from).format(
+                        'DD MMM YYYY'
+                     )}
+                     {' ('}
+                     {moment(cart?.fulfillmentInfo?.slot?.from).format('HH:mm')}
+                     {'-'}
+                     {moment(cart?.fulfillmentInfo?.slot?.to).format('HH:mm')}
+                     {')'}
+                  </span>
+               )}
             </div>
             <div
                style={{
@@ -202,8 +213,7 @@ const CartItems = ({ products, border = false, title = false }) => {
       >
          {title && (
             <h3 className="hern-order-history__cart-items__title">
-               <span> {t('Items')}</span>
-               ({cartItems?.length})
+               <span> {t('Items')}</span>({cartItems?.length})
             </h3>
          )}
          {cartItems.map((product, index) => {
@@ -211,10 +221,11 @@ const CartItems = ({ products, border = false, title = false }) => {
                <div
                   className="hern-order-history__cart-items"
                   style={{
-                     borderBottom: `${cartItems?.length > 1
-                        ? '1px solid rgba(64, 64, 64, 0.25)'
-                        : 'none'
-                        }`,
+                     borderBottom: `${
+                        cartItems?.length > 1
+                           ? '1px solid rgba(64, 64, 64, 0.25)'
+                           : 'none'
+                     }`,
                      border: `${border && '1px solid rgba(64, 64, 64, 0.25)'}`,
                      paddingLeft: `${border && '16px'}`,
                   }}
@@ -249,7 +260,9 @@ const ModifiersList = props => {
    }, [currentLang])
    return (
       <div className="hern-order-history-card__modifier-list">
-         <span data-translation="true">{data.childs[0].productOption.label || 'N/A'}</span>{' '}
+         <span data-translation="true">
+            {data.childs[0].productOption.label || 'N/A'}
+         </span>{' '}
          {data.childs[0].price !== 0 && (
             <div>
                {data.childs[0].discount > 0 && (

@@ -1,5 +1,4 @@
 import React from 'react'
-import { CSSTransition } from 'react-transition-group'
 import { Tunnel } from '../components'
 import { LocationSelector } from '../components/locationSelector/index'
 import { useTranslation } from '../context'

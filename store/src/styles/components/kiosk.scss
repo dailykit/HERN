@@ -876,7 +876,24 @@
 
 .hern-kiosk__cart-page-footer {
    padding: 0;
-   height: 40em;
+   height: calc(40em + 120px);
+}
+.hern-kiosk__cart-page-freebie {
+   width: 100%;
+   height: 120px;
+   background: #e5f0f7;
+   display: flex;
+   align-items: center;
+   justify-content: space-between;
+   padding: 0 2rem;
+   .hern-kiosk__cart-page-freebie-content {
+      color: rgb(15, 107, 177);
+      font-size: 28px;
+      font-weight: bold;
+   }
+   .hern-kiosk__cart-page-freebie-gif {
+      width: 120px;
+   }
 }
 .hern-kiosk__cart-page-offer {
    height: 16em;

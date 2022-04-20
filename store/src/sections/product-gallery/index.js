@@ -1,16 +1,20 @@
-import React from 'react'
-import { PRODUCTS } from '../../graphql'
+import React, { useEffect } from 'react'
 import { useQuery } from '@apollo/react-hooks'
-import { useConfig } from '../../lib'
-import { Loader } from '../../components'
-import { Carousel, Row, Col } from 'antd'
-import { ProductCard } from '../../components/product_card'
-import { ArrowLeftIcon, ArrowRightIcon } from '../../assets/icons'
-import { useRouter } from 'next/router'
-import { getRoute, isClient } from '../../utils'
-import { CustomArea } from '../featuredCollection/productCustomArea'
-import { setThemeVariable } from '../../utils'
+import { Carousel, Col, Row } from 'antd'
 import classNames from 'classnames'
+import { useRouter } from 'next/router'
+import { ArrowLeftIcon, ArrowRightIcon } from '../../assets/icons'
+import { Loader } from '../../components'
+import { ProductCard } from '../../components/product_card'
+import { PRODUCTS } from '../../graphql'
+import { useConfig } from '../../lib'
+import {
+   getRoute,
+   isClient,
+   setThemeVariable,
+   useWindowOnload,
+} from '../../utils'
+import { CustomArea } from '../featuredCollection/productCustomArea'
 
 export const ProductGallery = ({ config }) => {
    const [productsData, setProductsData] = React.useState([])
@@ -19,6 +23,8 @@ export const ProductGallery = ({ config }) => {
    )
    const [status, setStatus] = React.useState('loading')
    const { brand, locationId } = useConfig()
+   const { isWindowLoading } = useWindowOnload()
+
    const argsForByLocation = React.useMemo(
       () => ({
          params: {
@@ -26,11 +32,12 @@ export const ProductGallery = ({ config }) => {
             locationId: locationId,
          },
       }),
-      [brand]
+      [brand, locationId]
    )
    const { loading: productsLoading, error: productsError } = useQuery(
       PRODUCTS,
       {
+         skip: isWindowLoading,
          variables: {
             ids: config.data.products.value,
             priceArgs: argsForByLocation,

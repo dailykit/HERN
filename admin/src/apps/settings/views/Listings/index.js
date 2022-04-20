@@ -5,6 +5,7 @@ import DevicesListing from './DevicesListing'
 import StationsListing from './StationsListing'
 import MasterList from './MasterList'
 import MarketPlace from './MarketPlace'
+import EnvsList from './Envs'
 
 export {
    AppsListing,
@@ -14,4 +15,5 @@ export {
    StationsListing,
    MasterList,
    MarketPlace,
+   EnvsList,
 }

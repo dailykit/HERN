@@ -19,7 +19,7 @@
 
 .hern-wallet__header {
    margin-top: 1.5rem;
-   margin-bottom: 0.75rem;
+   margin-bottom: 1.65rem;
    display: -webkit-box;
    display: -webkit-flex;
    display: -ms-flexbox;
@@ -33,18 +33,52 @@
    -ms-flex-pack: justify;
    justify-content: space-between;
 }
+
 .hern-wallet__header__title {
-   color: rgba(5, 150, 105, 1);
-   font-size: 1.5rem;
-   line-height: 2rem;
+   font-weight: 700;
+   font-size: 32px;
+   line-height: 38px;
 }
-.hern-wallet__table {
-   margin-top: 0.5rem;
-   margin-bottom: 0.5rem;
+
+.hern-wallet__total_balance_title{
+   font-weight: 500;
+   font-size: 16px;
+   color: #202020;
+}
+
+.hern-wallet__transaction_title{
+   font-weight: 700;
+   font-size: 20px;
+   line-height: 22px;
+   font-variant: small-caps;
+   color: #202020;
+   margin-top: 28px;
+   margin-bottom: 10px;
+}
+
+.hern-wallet__balance{
+   font-family: 'Roboto';
+   font-weight: 700;
+   font-size: 23px;
+   line-height: 26px;
+   color: #202020;
+   margin-left: 15px;
+}
+
+.hern-wallet__table_wrapper{
+   overflow-x: auto;
    width: 100%;
+}
+
+.hern-wallet__table {
+   margin: 0.5rem 0px;
    table-layout: auto;
+   font-weight: 400;
+   font-size: 14px;
+   line-height: 16px;
    th {
       text-align: left;
+      padding: 0.55rem 5px;
    }
    tr:nth-of-type(even) {
       background-color: rgba(243, 244, 246, 1);
@@ -52,6 +86,78 @@
 }
 .hern-wallet__table__cell {
    border-width: 1px;
-   padding: 0.25rem 0.5rem;
+   padding: 0.55rem 0.5rem;
    min-width: 100px;
+}
+
+.hern-wallet__no_txn{
+   font-size: 14px;
+}
+
+.hern-wallet__referral_code_block{
+   color: #202020;
+   margin-top: 10px;
+   margin-bottom: 25px;
+   .hern-wallet__referral_code_title{
+      font-weight: 700;
+      font-size: 16px;
+      line-height: 19px;
+      margin-bottom: 5.5px;
+   }
+
+   .hern-wallet__referral_code_field{
+      border: 1px dashed var(--hern-accent);
+      box-sizing: border-box;
+      border-radius: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+   }
+   .hern-wallet__referral_code{
+      font-weight: 500;
+      font-size: 16px;
+      line-height: 19px;
+      padding: 0px 10px;
+   }
+   .hern-wallet__referral_code_copy{
+      background-color: var(--hern-accent);
+      color: #fff;
+      border-radius: 0px 10px 10px 0px;
+      font-weight: 500;
+      font-size: 16px;
+      line-height: 19px;
+      padding: 5px 10px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+   }
+}
+
+@media (max-width: 568px) {
+   .hern-wallet__header__title {
+      font-size: 28px;
+      line-height: 28px;
+   }
+
+   .hern-wallet__referral_code_block{
+      .hern-wallet__referral_code{
+         font-size: 11px;
+         line-height: 11px;
+      }
+      .hern-wallet__referral_code_copy{
+         font-size: 12px;
+      }
+   }
+
+   .hern-wallet__table__cell{
+      padding: 0.25rem 0.2rem;
+   }
+}
+
+@media (max-width: 376px){
+   .hern-wallet__referral_code_block{
+      .hern-wallet__referral_code_copy{
+         font-size: 9px;
+      }
+   }
 }

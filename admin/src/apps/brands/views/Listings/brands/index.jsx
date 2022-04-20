@@ -11,6 +11,8 @@ import {
    Tunnels,
    useTunnel,
 } from '@dailykit/ui'
+
+import { Revalidate } from '../../../components'
 import { BRANDS } from '../../../graphql'
 import tableOptions from '../../../tableOption'
 import { logger } from '../../../../../shared/utils'
@@ -33,8 +35,6 @@ export const Brands = () => {
    const tableRef = React.useRef()
    const { tab, addTab } = useTabs()
    const { loading } = useMutation(BRANDS.CREATE_BRAND)
-
-
    const [deleteBrand] = useMutation(BRANDS.UPDATE_BRAND, {
       onCompleted: () => {
          toast.success('Brand deleted!')
@@ -140,6 +140,21 @@ export const Brands = () => {
          headerFilter: true,
          formatter: reactFormatter(<DateFormatter />),
       },
+
+      {
+         title: 'Publish Version',
+         hozAlign: 'center',
+         headerSort: false,
+         frozen: true,
+         headerHozAlign: 'center',
+         formatter: reactFormatter(<Revalidate />),
+         headerTooltip: function (column) {
+            const identifier = 'brands_listing_publish_version_column'
+            return (
+               tooltip(identifier)?.description || column.getDefinition().title
+            )
+         },
+      },
    ])
 
    if (error) {
@@ -198,6 +213,7 @@ const DeleteBrand = ({ cell, deleteHandler }) => {
       </IconButton>
    )
 }
+
 function BrandName({ cell, addTab }) {
    const data = cell.getData()
    return (

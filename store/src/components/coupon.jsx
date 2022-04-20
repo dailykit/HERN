@@ -106,7 +106,19 @@ const Coupon_ = ({
 
    const { data, error } = useSubscription(CART_REWARDS, {
       variables: {
-         cartId: id,
+         where: {
+            cartId: {
+               _eq: id,
+            },
+            cart: {
+               paymentStatus: {
+                  _eq: 'PENDING',
+               },
+               status: {
+                  _eq: 'CART_PENDING',
+               },
+            },
+         },
          params: {
             cartId: id,
             keycloakId: user?.keycloakId,

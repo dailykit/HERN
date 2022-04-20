@@ -1,8 +1,13 @@
 import React from 'react'
 import { Carousel } from 'antd'
+import dynamic from 'next/dynamic'
 import { ArrowLeftIcon, ArrowRightIcon } from '../../assets/icons'
-import { HernLazyImage } from '../../utils/hernImage'
-import { isClient } from '../../utils'
+// import { HernLazyImage } from '../../utils/hernImage'
+import { isClient, useWindowOnload } from '../../utils'
+
+const HernLazyImage = dynamic(() =>
+   import('../../utils/hernImage').then(promise => promise.HernLazyImage)
+)
 
 export const SliderSection = ({ config }) => {
    const showDotsOnSlider =
@@ -11,8 +16,17 @@ export const SliderSection = ({ config }) => {
       config?.display?.slider?.showSliderArrow?.value ?? false
    const sliderContent = config.display.slider.content.images.value ?? false
    const getStartedURL = config?.data?.callToActionButtonURL.value ?? '#'
+
+   const { isWindowLoading } = useWindowOnload()
    return (
-      <>
+      <div
+         style={{
+            width: '100%',
+            minHeight: 'calc(100vw / 2 )',
+            position: 'relative',
+         }}
+      >
+         <div className="hern-slider-section-overlay"></div>
          {sliderContent && (
             <Carousel
                className="hern-slider_section-carousel"
@@ -20,7 +34,7 @@ export const SliderSection = ({ config }) => {
                dots={showDotsOnSlider}
                prevArrow={showArrowsOnSlider ? <LeftArrow /> : false}
                nextArrow={showArrowsOnSlider ? <RightArrow /> : false}
-               autoplay={true}
+               autoplay={!isWindowLoading}
             >
                {sliderContent &&
                   config.display.slider.content.images.value.map(
@@ -37,7 +51,7 @@ export const SliderSection = ({ config }) => {
                   )}
             </Carousel>
          )}
-      </>
+      </div>
    )
 }
 
@@ -49,22 +63,20 @@ const SliderDiv = ({ content, index, getStartedURL }) => {
       const innerWidth = isClient ? window.innerWidth : ''
       if (0 < innerWidth && innerWidth <= 468) {
          return {
-            width: 420,
-            height: 210,
+            width: innerWidth,
+            height: innerWidth / 2,
          }
       } else if (469 <= innerWidth && innerWidth <= 900) {
          return {
-            width: 820,
-            height: 410,
+            width: innerWidth,
+            height: innerWidth / 2,
          }
-      }
-      //  else if (901 <= innerWidth) {
-      //    return {
-      //       width: null,
-      //       height: null,
-      //    }
-      // }
-      else {
+      } else if (901 <= innerWidth) {
+         return {
+            width: innerWidth,
+            height: innerWidth / 2,
+         }
+      } else {
          return {
             width: null,
             height: null,
@@ -85,6 +97,7 @@ const SliderDiv = ({ content, index, getStartedURL }) => {
             }
             width={sliderImageSize.width}
             height={sliderImageSize.height}
+            className="hern-slider_section-image"
             // alt="products"
             // width="100%"
          />
@@ -130,3 +143,22 @@ const RightArrow = ({ ...props }) => {
       </div>
    )
 }
+
+// const FeedBackFormButton = () => {
+//    return (
+//       <div>
+//          {/* <div className="hern-slider-section__content"> */}
+//          <div>
+//             <a
+//                href="https://docs.google.com/forms/d/e/1FAIpQLSec10yg1m1RlikaVXPWALWmsXqrWJGYMyEUj8Bp2KMn2DyS3Q/viewform"
+//                className="hern-slider_section-feedBack_button"
+//                // style={{}}
+//             >
+//                {' '}
+//                Feedback
+//             </a>
+//             {/* </div> */}
+//          </div>
+//       </div>
+//    )
+// }
