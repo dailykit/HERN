@@ -824,8 +824,8 @@
    justify-content: space-between;
 }
 .hern-kiosk__cart-card-p-image {
-   width: 15%;
-   height: 15%;
+   width: 100%;
+   height: 100%;
 }
 .hern-kiosk__cart-card-p-mid {
    width: 60%;
@@ -1119,7 +1119,11 @@
    margin-bottom: 1em;
    justify-content: space-around;
    background: #ffffff;
-
+   .hern-image__image-container{
+      display: flex;
+      align-items: center;
+      justify-content: center;
+   }
    &:last-child {
       border-right: unset;
    }
