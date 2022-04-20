@@ -822,6 +822,9 @@
 .hern-kiosk__cart-card-header {
    display: flex;
    justify-content: space-between;
+   .hern-image__image-container{
+      height: 10em;
+   }
 }
 .hern-kiosk__cart-card-p-image {
    width: 100%;
