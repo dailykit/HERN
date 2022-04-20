@@ -5,6 +5,7 @@ import { ORDER_TAB } from '../graphql'
 import { rrulestr } from 'rrule'
 import { get_env, isClient, useQueryParamState } from '../utils'
 import moment from 'moment'
+import PaymentProcessingModal from '../components/paymentProcessingModal'
 const ConfigContext = React.createContext()
 
 const initialState = {
@@ -31,6 +32,7 @@ const initialState = {
       ONDEMAND_DINEIN: false,
       isValidated: false, // show that above two values are validate or not, initially false
    },
+   KioskConfig: null,
 }
 
 const reducers = (state, { type, payload }) => {
@@ -59,6 +61,8 @@ const reducers = (state, { type, payload }) => {
          return { ...state, lastLocationId: payload }
       case 'SET_KIOSK_RECURRENCES':
          return { ...state, kioskRecurrences: payload }
+      case 'SET_KIOSK_POPUP_CONFIG':
+         return { ...state, KioskConfig: payload }
       case 'SET_KIOSK_AVAILABILITY': {
          return {
             ...state,
@@ -196,6 +200,7 @@ export const ConfigProvider = ({ children }) => {
             currentAuth,
             setAuth,
             deleteAuth,
+            // KioskConfig,
          }}
       >
          {children}
@@ -222,6 +227,7 @@ export const useConfig = (globalType = '') => {
       currentAuth,
       setAuth,
       deleteAuth,
+      // KioskConfig,
    } = React.useContext(ConfigContext)
 
    const hasConfig = React.useCallback(
@@ -290,5 +296,6 @@ export const useConfig = (globalType = '') => {
       currentAuth,
       setAuth,
       deleteAuth,
+      KioskConfig: state.KioskConfig,
    }
 }
