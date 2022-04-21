@@ -671,10 +671,13 @@ export const PAYMENT_OPTIONS = {
    `,
    LIST: gql`
       subscription availablePaymentOptions {
-         brands_availablePaymentOption {
+         brands_availablePaymentOption(
+            order_by: { position: desc_nulls_last }
+         ) {
             id
             label
             isValid
+            isActive
             position
             description
             privateCreds
@@ -702,6 +705,19 @@ export const PAYMENT_OPTIONS = {
                   }
                }
             }
+         }
+      }
+   `,
+   UPDATE: gql`
+      mutation updatePaymantOption(
+         $id: Int!
+         $_set: brands_availablePaymentOption_set_input!
+      ) {
+         update_brands_availablePaymentOption_by_pk(
+            pk_columns: { id: $id }
+            _set: $_set
+         ) {
+            id
          }
       }
    `,

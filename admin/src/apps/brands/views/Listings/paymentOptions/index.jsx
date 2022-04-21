@@ -1,5 +1,5 @@
-import { useSubscription } from '@apollo/react-hooks'
-import { Flex, Text } from '@dailykit/ui'
+import { useMutation, useSubscription } from '@apollo/react-hooks'
+import { Flex, Form, Text } from '@dailykit/ui'
 import { isEmpty } from 'lodash'
 import React from 'react'
 import { toast } from 'react-toastify'
@@ -13,12 +13,27 @@ import { GridContainer, StyledCardText, StyledCompany, StyledDrag, StyledHeader,
 export const PaymentOptions = () => {
     const { initiatePriority } = useDnd()
 
+    //subscription
     const {
         error,
         loading: listLoading,
         data: { brands_availablePaymentOption: paymentOptions = [] } = {},
     } = useSubscription(PAYMENT_OPTIONS.LIST)
     console.log(paymentOptions);
+
+    //mutation
+    const [updatePaymentOption, { loading: inFlight }] = useMutation(
+        PAYMENT_OPTIONS.UPDATE,
+        {
+            onCompleted: () => {
+                toast.success('Payment Options update successfully!')
+            },
+            onError: error => {
+                logger(error)
+                toast.error('Error update Payment Options!')
+            },
+        }
+    )
 
     //useEffect
     React.useEffect(() => {
@@ -30,6 +45,20 @@ export const PaymentOptions = () => {
             })
         }
     }, [listLoading, paymentOptions])
+
+    //handler
+    const paymentOptionActiveHandler = paymentOption => {
+        const value = !paymentOption.isActive
+        updatePaymentOption({
+            variables: {
+                id: paymentOption.id,
+                _set: {
+                    isActive: value
+                }
+            },
+        })
+        // console.log(paymentOption)
+    }
 
     if (error) {
         toast.error('Something went wrong!')
@@ -76,6 +105,18 @@ export const PaymentOptions = () => {
                                         <span>Payment Option</span>
                                         <span>{element.supportedPaymentOption.paymentOptionLabel}</span>
                                     </StyledCardText>
+                                    <StyledCardText>
+                                        <Form.Group>
+                                            <Form.Toggle
+                                                name={`toggle-${element.id}`}
+                                                title="Click to change active status of payment option"
+                                                onChange={() => paymentOptionActiveHandler(element)}
+                                                value={element.isActive}
+                                            >
+                                                Active
+                                            </Form.Toggle>
+                                        </Form.Group>
+                                    </StyledCardText >
                                 </GridContainer>
                             )
                             )}

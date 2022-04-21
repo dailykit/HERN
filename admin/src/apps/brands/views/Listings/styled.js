@@ -2,7 +2,7 @@ import styled from 'styled-components'
 
 export const StyledWrapper = styled.div`
    > div {
-      margin: 0 auto;
+      margin: 0 16px;
       max-width: 1280px;
       @media screen and (max-width: 767px) {
          width: calc(100vw - 32px);
@@ -23,6 +23,7 @@ export const GridContainer = styled.div`
    display: grid;
    grid-template-columns: 4rem 12rem 12rem 12rem auto auto;
    height: 60px;
+   width: 100%;
    background: #ffffff;
    border: 1px solid #e8e8e8;
    box-sizing: border-box;
@@ -82,6 +83,10 @@ export const StyledCardText = styled.div`
          line-height: 18px;
          letter-spacing: 0.44px;
          color: #555b6e;
+         white-space: nowrap;
+         overflow: hidden;
+         text-overflow: ellipsis;
+         width: 10rem;
       }
    }
 `
