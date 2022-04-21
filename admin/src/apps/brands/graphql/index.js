@@ -683,6 +683,7 @@ export const PAYMENT_OPTIONS = {
                paymentOptionLabel
                supportedPaymentCompany {
                   label
+                  logo
                }
             }
             SUCCEEDED: cartPayments_aggregate(

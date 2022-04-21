@@ -58,8 +58,16 @@ export const PaymentOptions = () => {
                             {paymentOptions.map(element => (
                                 <GridContainer key={element.id}>
                                     <StyledDrag ><DragIcon /></StyledDrag>
-                                    <StyledCompany>{element.supportedPaymentOption.supportedPaymentCompany.label.charAt(0)
-                                        .toUpperCase() + element.supportedPaymentOption.supportedPaymentCompany.label.slice(1)}</StyledCompany>
+                                    <StyledCompany>
+                                        <img
+                                            src={element.supportedPaymentOption.supportedPaymentCompany.logo}
+                                            alt="new"
+                                            width={28}
+                                            height={32}
+                                        />
+                                        <div>{element.supportedPaymentOption.supportedPaymentCompany.label.charAt(0)
+                                            .toUpperCase() + element.supportedPaymentOption.supportedPaymentCompany.label.slice(1)}</div>
+                                    </StyledCompany>
                                     <StyledCardText>
                                         <span>Label</span>
                                         <span>{element.label}</span>

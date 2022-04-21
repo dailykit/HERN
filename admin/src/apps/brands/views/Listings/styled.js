@@ -38,13 +38,27 @@ export const StyledDrag = styled.div`
    display: flex;
 `
 export const StyledCompany = styled.div`
+   display: flex;
+   position: relative;
+   left: 8px;
    font-family: 'Roboto';
    font-style: normal;
    font-weight: 500;
    font-size: 16px;
    line-height: 18px;
-
    color: #919699;
+   align-items: center;
+   gap: 8px;
+   > img {
+      width: 32px;
+      height: 32px;
+      left: 124.84px;
+      top: 340.41px;
+
+      border: 1px solid #f3f3f3;
+      box-sizing: border-box;
+      border-radius: 30px;
+   }
 `
 export const StyledCardText = styled.div`
    display: flex;
