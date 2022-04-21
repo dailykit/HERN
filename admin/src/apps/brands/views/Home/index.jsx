@@ -6,7 +6,7 @@ import { BRANDS, LOCATIONS, KIOSK } from '../../graphql'
 import { StyledCardList, StyledHome } from './styled'
 import { useTabs } from '../../../../shared/providers'
 import { Banner } from '../../../../shared/components'
-import { BrandLocationsSvg, BrandsSvg, KioskLocationsSvg } from '../../../../shared/assets/illustrationTileSvg'
+import { BrandLocationsSvg, BrandsSvg, KioskLocationsSvg, PaymentSvg } from '../../../../shared/assets/illustrationTileSvg'
 
 export const Home = () => {
    const { addTab } = useTabs()
@@ -19,7 +19,7 @@ export const Home = () => {
       loading: loadingLocations,
       data: { brands_location_aggregate = {} } = {}
    } = useSubscription(LOCATIONS.AGGREGATE)
-   
+
    const {
       loading: loadingLocationKiosk,
       data: { brands_locationKiosk_aggregate = {} } = {}
@@ -56,6 +56,15 @@ export const Home = () => {
                }
                onClick={() => addTab('kiosk', '/brands/kiosks')}
                tileSvg={<KioskLocationsSvg />}
+            />
+            <DashboardTile
+               title="Payment Options"
+               conf="All available"
+               count={
+                  loadingBrands ? '...' : brandsAggregate?.aggregate?.count || 0
+               }
+               onClick={() => addTab('Payment', '/brands/payment')}
+               tileSvg={<PaymentSvg />}
             />
          </StyledCardList>
          <Banner id="brands-app-home-bottom" />
