@@ -675,6 +675,8 @@ export const PAYMENT_OPTIONS = {
             id
             label
             isValid
+            position
+            description
             privateCreds
             publicCreds
             supportedPaymentOption {
