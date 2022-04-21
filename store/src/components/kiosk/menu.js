@@ -11,6 +11,7 @@ import {
    Space,
    Radio,
    Spin,
+   Switch,
 } from 'antd'
 import { useQueryParamState, formatCurrency } from '../../utils'
 import { CartContext, useTranslation } from '../../context'
@@ -187,21 +188,7 @@ export const MenuSection = props => {
          <Content>
             {/* Promotion, coupons and progress bar */}
             <Layout style={{ height: '100%' }}>
-               <Header
-                  style={{
-                     background: `${config.kioskSettings.theme.primaryColorLight.value}`,
-                     padding: '1em 2em',
-                     height: '10em',
-                     display: 'flex',
-                     flexDirection: 'column',
-                     justifyContent: 'center',
-                  }}
-               >
-                  <ProgressBar
-                     config={config}
-                     setCurrentPage={setCurrentPage}
-                  />
-               </Header>
+               <ProgressBar config={config} setCurrentPage={setCurrentPage} />
                <Content className="hern-kiosk__menu-promotion-coupons">
                   <PromotionCarousal config={config} />
                </Content>
@@ -233,7 +220,8 @@ const KioskMenu = props => {
    const [selectedCategory, setSelectedCategory] = useState(
       (categoryId && categoryId.toString()) || '0'
    )
-
+   const [showVegMenuOnly, setShowVegMenuOnly] = useState(false)
+   const [vegMenu, setVegMenu] = useState(null)
    const { t, dynamicTrans, direction } = useTranslation()
 
    const onCategorySelect = e => {
@@ -246,6 +234,30 @@ const KioskMenu = props => {
       )
       dynamicTrans(languageTags)
    }, [])
+   useEffect(() => {
+      const kioskMenusClone = JSON.parse(JSON.stringify(kioskMenus))
+      const filteredVegMenu = kioskMenusClone
+         .map(eachCategory => {
+            const vegProductInCategory = eachCategory.products.filter(
+               eachProduct =>
+                  eachProduct.VegNonVegType &&
+                  (eachProduct['VegNonVegType'].toUpperCase() === 'VEG' ||
+                     eachProduct['VegNonVegType'].toUpperCase() ===
+                        'VEGETARIAN')
+            )
+            eachCategory.products = vegProductInCategory
+            return eachCategory
+         })
+         .filter(eachCategory => eachCategory.products.length > 0)
+      setVegMenu(filteredVegMenu)
+   }, [kioskMenus])
+   const kioskFinalMenu = React.useMemo(() => {
+      if (showVegMenuOnly) {
+         return vegMenu
+      } else {
+         return kioskMenus
+      }
+   }, [kioskMenus, showVegMenuOnly])
 
    return (
       <Layout
@@ -264,7 +276,7 @@ const KioskMenu = props => {
                onSelect={onCategorySelect}
                defaultSelectedKeys={[selectedCategory]}
             >
-               {kioskMenus.map((eachCategory, index) => {
+               {kioskFinalMenu.map((eachCategory, index) => {
                   return (
                      <Menu.Item key={index} style={{ height: '13em' }}>
                         <div
@@ -322,7 +334,34 @@ const KioskMenu = props => {
             <Layout style={{ height: '100%', backgroundColor: '#fff' }}>
                <Header theme={'light'} className="hern-kiosk__menu-header">
                   <Row className="hern-kiosk__menu-header-row">
-                     <Col span={18} className="hern-kiosk__menu-header-col-1">
+                     {config.menuSettings?.showVegToggle?.value && (
+                        <Col
+                           span={4}
+                           className="hern-kiosk__menu-header-veg-switch"
+                        >
+                           <span className="hern-kiosk__menu-header-veg-text">
+                              {t('VEG')}
+                           </span>
+                           <Switch
+                              onClick={checked => {
+                                 setShowVegMenuOnly(checked)
+                              }}
+                           />
+                           {/* <button
+                           onClick={checked => {
+                              setShowVegMenuOnly(prev => !prev)
+                           }}
+                        >
+                           veg
+                        </button> */}
+                        </Col>
+                     )}
+                     <Col
+                        span={
+                           config.menuSettings?.showVegToggle?.value ? 14 : 18
+                        }
+                        className="hern-kiosk__menu-header-col-1"
+                     >
                         <Row>
                            <Col
                               span={24}
@@ -343,12 +382,21 @@ const KioskMenu = props => {
                               setCurrentPage('cartPage')
                            }}
                         >
-                           <KioskButton customClass="hern-kiosk__goto-cart-btn">
-                              <CartIcon size={25} />
+                           <KioskButton
+                              customClass="hern-kiosk__goto-cart-btn"
+                              buttonConfig={config.kioskSettings.buttonSettings}
+                           >
+                              <CartIcon
+                                 size={25}
+                                 stroke={
+                                    config.kioskSettings.buttonSettings
+                                       .textColor.value
+                                 }
+                              />
                               <span
                                  className="hern-kiosk__goto-cart-btn-text"
                                  style={{
-                                    color: `${config.kioskSettings.theme.primaryColor.value}`,
+                                    color: `${config.kioskSettings.buttonSettings.textColor.value}`,
                                  }}
                               >
                                  {t('Go To Cart')}
@@ -414,136 +462,126 @@ const KioskMenu = props => {
                   className="hern-kiosk__menu-product-list"
                   id="hern-kiosk__menu-list"
                >
-                  {kioskMenus.map((eachCategory, index) => {
-                     // VegNonVegTYpe change into type
-                     const groupedByType = React.useMemo(() => {
-                        const data = _.chain(eachCategory.products)
-                           .groupBy('VegNonVegType')
-                           .map((value, key) => ({
-                              type: key,
-                              products: value,
-                           }))
-                           .value()
-                        const nullData = data.filter(x => x.type === 'null')
-                        const nonNullData = data.filter(x => x.type !== 'null')
-                        return [...nonNullData, ...nullData]
-                     }, [])
-                     const [currentGroupProducts, setCurrentGroupedProduct] =
-                        useState(groupedByType[0].products)
-                     const [currentGroup, setCurrentGroup] = useState(
-                        groupedByType[0].type
-                     )
-
-                     const onRadioClick = e => {
-                        setCurrentGroupedProduct(prev => {
-                           return groupedByType.find(x => x.type === e).products
-                        })
-                        setCurrentGroup(e)
-                     }
-                     useEffect(() => {
-                        const languageTags = document.querySelectorAll(
-                           '[data-translation="true"]'
-                        )
-                        dynamicTrans(languageTags)
-                     }, [currentGroup])
-                     return (
-                        <Scroll.Element
-                           name={eachCategory.name}
-                           className="hern-kiosk__scroll-element"
-                           key={eachCategory.name}
-                        >
-                           <div name={eachCategory.name} ref={menuRef}></div>
-                           {eachCategory?.bannerImageUrl ? (
-                              <HernLazyImage
-                                 // src={eachCategory?.bannerImageUrl}
-                                 dataSrc={eachCategory?.bannerImageUrl}
-                                 className="hern-kiosk__menu-category-banner-img"
-                              />
-                           ) : (
-                              <p
-                                 className="hern-kiosk__menu-category-name"
-                                 data-translation="true"
-                              >
-                                 {eachCategory.name}
-                              </p>
-                           )}
-                           {groupedByType.length > 1 && (
-                              <div className="hern-kiosk__menu-product-type">
-                                 <div className="hern-kiosk__menu-product-type-list">
-                                    {groupedByType.map((eachType, index) => {
-                                       return (
-                                          <button
-                                             onClick={() =>
-                                                onRadioClick(eachType.type)
-                                             }
-                                             // value={eachType.type}
-                                             key={eachType.type}
-                                             className="hern-kiosk__menu-product-type-radio-btn"
-                                             data-translation="true"
-                                             style={{
-                                                backgroundColor:
-                                                   currentGroup ===
-                                                   eachType.type
-                                                      ? config.kioskSettings
-                                                           .theme.primaryColor
-                                                           .value
-                                                      : config.kioskSettings
-                                                           .theme
-                                                           .primaryColorLight
-                                                           .value,
-                                                color:
-                                                   currentGroup ===
-                                                   eachType.type
-                                                      ? '#ffffff'
-                                                      : config.kioskSettings
-                                                           .theme.primaryColor
-                                                           .value,
-                                                borderRadius: '0.5em',
-                                                border:
-                                                   currentGroup ===
-                                                   eachType.type
-                                                      ? `1px solid ${config.kioskSettings.theme.successColor.value}`
-                                                      : 'none',
-                                             }}
-                                          >
-                                             {eachType.type == 'null'
-                                                ? t('Others')
-                                                : eachType.type}
-                                          </button>
-                                       )
-                                    })}
-                                 </div>
-                              </div>
-                           )}
-                           <Row
-                              gutter={[16, 16]}
-                              style={{ marginBottom: '2em' }}
-                           >
-                              {currentGroupProducts.map(
-                                 (eachProduct, index2) => {
-                                    return (
-                                       <Col
-                                          span={8}
-                                          className="gutter-row"
-                                          key={eachProduct?.id}
-                                       >
-                                          <KioskProduct
-                                             config={config}
-                                             productData={eachProduct}
-                                             setCurrentPage={setCurrentPage}
-                                          />
-                                       </Col>
-                                    )
-                                 }
-                              )}
-                           </Row>
-                           <Divider />
-                        </Scroll.Element>
-                     )
-                  })}
+                  {kioskFinalMenu.map((eachCategory, index) => (
+                     <MenuProducts
+                        key={eachCategory.name}
+                        eachCategory={eachCategory}
+                        setCurrentPage={setCurrentPage}
+                        config={config}
+                     />
+                  ))}
                </Content>
             </Layout>
          </Content>
       </Layout>
+   )
+}
+const MenuProducts = ({ setCurrentPage, eachCategory, config }) => {
+   const { t, dynamicTrans, direction } = useTranslation()
+
+   // VegNonVegTYpe change into type
+   const groupedByType = React.useMemo(() => {
+      const data = _.chain(eachCategory.products)
+         .groupBy('subCategory')
+         .map((value, key) => ({
+            type: key,
+            products: value,
+         }))
+         .value()
+      const nullData = data.filter(x => x.type === 'null')
+      const nonNullData = data.filter(x => x.type !== 'null')
+      return [...nonNullData, ...nullData]
+   }, [eachCategory])
+   const [currentGroupProducts, setCurrentGroupedProduct] = useState(
+      groupedByType[0].products
+   )
+   const [currentGroup, setCurrentGroup] = useState(groupedByType[0].type)
+   const onRadioClick = e => {
+      setCurrentGroupedProduct(prev => {
+         return groupedByType.find(x => x.type === e).products
+      })
+      setCurrentGroup(e)
+   }
+   useEffect(() => {
+      const languageTags = document.querySelectorAll(
+         '[data-translation="true"]'
+      )
+      dynamicTrans(languageTags)
+   }, [currentGroup])
+   return (
+      <Scroll.Element
+         name={eachCategory.name}
+         className="hern-kiosk__scroll-element"
+         key={eachCategory.name}
+      >
+         {/* <div name={eachCategory.name} ref={menuRef}></div> */}
+         {eachCategory?.bannerImageUrl ? (
+            <HernLazyImage
+               // src={eachCategory?.bannerImageUrl}
+               dataSrc={eachCategory?.bannerImageUrl}
+               className="hern-kiosk__menu-category-banner-img"
+            />
+         ) : (
+            <p
+               className="hern-kiosk__menu-category-name"
+               data-translation="true"
+            >
+               {eachCategory.name}
+            </p>
+         )}
+         {groupedByType.length > 1 && (
+            <div className="hern-kiosk__menu-product-type">
+               <div className="hern-kiosk__menu-product-type-list">
+                  {groupedByType.map((eachType, index) => {
+                     return (
+                        <button
+                           onClick={() => onRadioClick(eachType.type)}
+                           // value={eachType.type}
+                           key={eachType.type}
+                           className="hern-kiosk__menu-product-type-radio-btn"
+                           data-translation="true"
+                           style={{
+                              backgroundColor:
+                                 currentGroup === eachType.type
+                                    ? config.kioskSettings.theme.primaryColor
+                                         .value
+                                    : config.kioskSettings.theme
+                                         .primaryColorLight.value,
+                              color:
+                                 currentGroup === eachType.type
+                                    ? '#ffffff'
+                                    : config.kioskSettings.theme.primaryColor
+                                         .value,
+                              borderRadius: '0.5em',
+                              border:
+                                 currentGroup === eachType.type
+                                    ? `1px solid ${config.kioskSettings.theme.successColor.value}`
+                                    : 'none',
+                           }}
+                        >
+                           {eachType.type == 'null'
+                              ? t('Others')
+                              : eachType.type}
+                        </button>
+                     )
+                  })}
+               </div>
+            </div>
+         )}
+         <Row gutter={[16, 16]} style={{ marginBottom: '2em' }}>
+            {currentGroupProducts.map((eachProduct, index2) => {
+               return (
+                  <Col span={8} className="gutter-row" key={eachProduct?.id}>
+                     <KioskProduct
+                        config={config}
+                        productData={eachProduct}
+                        setCurrentPage={setCurrentPage}
+                     />
+                  </Col>
+               )
+            })}
+         </Row>
+         <Divider />
+      </Scroll.Element>
    )
 }

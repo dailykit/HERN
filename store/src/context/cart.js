@@ -62,6 +62,7 @@ export const CartProvider = ({ children }) => {
    const [storedCartId, setStoredCartId] = useState(null)
    const [combinedCartItems, setCombinedCartData] = useState(null)
    const [showCartIconToolTip, setShowCartIconToolTip] = useState(false)
+   const [dineInTableInfo, setDineInTableInfo] = useState(null)
    const { isWindowLoading } = useWindowOnload()
 
    React.useEffect(() => {
@@ -372,6 +373,7 @@ export const CartProvider = ({ children }) => {
                locationId: locationId || null,
                brandId: brand?.id,
                address: customerAddress,
+               locationTableId: dineInTableInfo?.id || null,
                ...(oiType === 'Kiosk Ordering' &&
                   !isEmpty(terminalPayment) && {
                      toUseAvailablePaymentOptionId: terminalPayment.id,
@@ -412,6 +414,7 @@ export const CartProvider = ({ children }) => {
                brandId: brand.id,
                paymentCustomerId: user.platform_customer?.paymentCustomerId,
                address: user.platform_customer.defaultCustomerAddress,
+               locationTableId: dineInTableInfo?.id || null,
                customerKeycloakId: user?.keycloakId,
                cartItems: {
                   data: cartItems,
@@ -647,6 +650,8 @@ export const CartProvider = ({ children }) => {
             cartItemsLoading,
             storedCartId,
             showCartIconToolTip,
+            setDineInTableInfo,
+            dineInTableInfo,
             methods: {
                cartItems: {
                   delete: deleteCartItems,
