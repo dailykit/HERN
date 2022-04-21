@@ -118,6 +118,13 @@
       max-width: 100% !important;
    }
 }
+.hern-on-demand-order--product-card-with-bg{
+   height: 490px;
+   background-color: rgba(190, 190, 190, 0.2);
+   @media (max-width:479px){
+      height: 200px;
+   }
+}
 .hern-store__order-category-name-wrapper {
    position: relative;
 }

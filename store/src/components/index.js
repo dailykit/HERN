@@ -22,9 +22,6 @@ const Loader = dynamic(() => import('./loader').then(promise => promise.Loader))
 const StepsNavbar = dynamic(() =>
    import('./steps_navbar').then(promise => promise.StepsNavbar)
 )
-const OnDemandMenu = dynamic(() =>
-   import('./on_demand_menu').then(promise => promise.OnDemandMenu)
-)
 
 const PageLoader = dynamic(() =>
    import('./page_loader').then(promise => promise.PageLoader)
@@ -67,9 +64,6 @@ const CardList = dynamic(() =>
    import('./card_list').then(promise => promise.CardList)
 )
 
-const ProductCard = dynamic(() =>
-   import('./product_card').then(promise => promise.ProductCard)
-)
 const BottomCartBar = dynamic(() =>
    import('./bottom_cart_bar').then(promise => promise.BottomCartBar)
 )
@@ -160,7 +154,7 @@ export {
    Spacer,
    Loader,
    StepsNavbar,
-   OnDemandMenu,
+   // OnDemandMenu,
    PageLoader,
    ProfileSidebar,
    StyledArticle,
@@ -175,7 +169,6 @@ export {
    AddressList,
    AddressListHeader,
    CardList,
-   ProductCard,
    BottomCartBar,
    Divider,
    ModifierPopup,
@@ -224,3 +217,5 @@ export const Tunnel = {
    Body,
 }
 export * from './helper_bar'
+export * from './on_demand_menu'
+export * from './product_card'
