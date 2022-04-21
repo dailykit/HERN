@@ -659,3 +659,14 @@ export const KIOSK = {
       }
    `,
 }
+export const PAYMENT_OPTIONS = {
+   AGGREGATE: gql`
+      subscription paymentOptions {
+         brands_availablePaymentOption_aggregate {
+            aggregate {
+               count
+            }
+         }
+      }
+   `,
+}

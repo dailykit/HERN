@@ -2,7 +2,7 @@ import React from 'react'
 import { DashboardTile } from '@dailykit/ui'
 import { useSubscription } from '@apollo/react-hooks'
 
-import { BRANDS, LOCATIONS, KIOSK } from '../../graphql'
+import { BRANDS, LOCATIONS, KIOSK, PAYMENT_OPTIONS } from '../../graphql'
 import { StyledCardList, StyledHome } from './styled'
 import { useTabs } from '../../../../shared/providers'
 import { Banner } from '../../../../shared/components'
@@ -24,6 +24,11 @@ export const Home = () => {
       loading: loadingLocationKiosk,
       data: { brands_locationKiosk_aggregate = {} } = {}
    } = useSubscription(KIOSK.AGGREGATE)
+
+   const {
+      loading: loadingPaymentOptions,
+      data: { brands_availablePaymentOption_aggregate: paymentOptions = {} } = {}
+   } = useSubscription(PAYMENT_OPTIONS.AGGREGATE)
 
    return (
       <StyledHome>
@@ -61,7 +66,7 @@ export const Home = () => {
                title="Payment Options"
                conf="All available"
                count={
-                  loadingBrands ? '...' : brandsAggregate?.aggregate?.count || 0
+                  loadingPaymentOptions ? '...' : paymentOptions?.aggregate?.count || 0
                }
                onClick={() => addTab('Payment', '/brands/payment')}
                tileSvg={<PaymentSvg />}
