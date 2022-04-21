@@ -199,6 +199,21 @@
 // menu page
 
 // menu section
+.hern-kiosk__promotion-carousel-skeleton{
+   animation: loading 1s linear infinite alternate;
+   height: 100%;
+   width: 50%;
+   margin: 0 4px;
+   
+   @keyframes loading {
+      0% {
+         background-color: hsl(200, 20%, 80%);
+      }
+      100% {
+         background-color: hsl(200, 20%, 95%);
+      }
+   }
+}
 .hern-kiosk__menu-promotion-coupons {
    position: relative;
    // margin: 1em;
