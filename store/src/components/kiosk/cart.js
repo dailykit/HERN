@@ -197,7 +197,9 @@ export const KioskCart = props => {
                      <Header className="hern-kiosk__cart-page-offer">
                         <Offers config={config} />
                      </Header>
-                     {SHOW_FREEBIE_MSG === 'true' && <FreebieMessage />}
+                     {SHOW_FREEBIE_MSG === 'true' && (
+                        <FreebieMessage msg={t('Free 1 Ice Cream Cone')} />
+                     )}
                      <Content className="hern-kiosk__cart-page-price-detail">
                         <div className="hern-kiosk-cart-bill-details">
                            <span>{t('BILL DETAILS')}</span>
@@ -1265,11 +1267,9 @@ const Offers = props => {
    )
 }
 
-const FreebieMessage = () => (
+const FreebieMessage = ({ msg }) => (
    <div className="hern-kiosk__cart-page-freebie">
-      <h2 className="hern-kiosk__cart-page-freebie-content">
-         Free 1 Ice Cream Cone
-      </h2>
+      <h2 className="hern-kiosk__cart-page-freebie-content">{msg}</h2>
       <img
          src="/assets/gifs/gift.gif"
          className="hern-kiosk__cart-page-freebie-gif"

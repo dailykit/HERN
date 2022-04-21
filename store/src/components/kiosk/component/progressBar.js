@@ -157,7 +157,7 @@ export const ProgressBar = props => {
                      color: config.kioskSettings.theme.primaryColor.value,
                   }}
                >
-                  {selectedOrderTab?.label}
+                  {t(selectedOrderTab?.label)}
                </span>
                {(dineInTableInfo?.internalTableLabel ||
                   cartState.cart.locationTableId) && (
