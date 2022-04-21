@@ -669,4 +669,37 @@ export const PAYMENT_OPTIONS = {
          }
       }
    `,
+   LIST: gql`
+      subscription availablePaymentOptions {
+         brands_availablePaymentOption {
+            id
+            label
+            isValid
+            privateCreds
+            publicCreds
+            supportedPaymentOption {
+               paymentOptionLabel
+               supportedPaymentCompany {
+                  label
+               }
+            }
+            SUCCEEDED: cartPayments_aggregate(
+               where: {
+                  paymentStatus: { _eq: "SUCCEEDED" }
+                  isTest: { _eq: false }
+               }
+            ) {
+               aggregate {
+                  count
+                  sum {
+                     amount
+                  }
+                  avg {
+                     amount
+                  }
+               }
+            }
+         }
+      }
+   `,
 }
