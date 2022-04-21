@@ -6,8 +6,9 @@ import { toast } from 'react-toastify'
 import { DragNDrop, InlineLoader, Tooltip } from '../../../../../shared/components'
 import { useDnd } from '../../../../../shared/components/DragNDrop/useDnd'
 import { logger } from '../../../../../shared/utils'
+import { DragIcon } from '../../../assets/icons'
 import { PAYMENT_OPTIONS } from '../../../graphql'
-import { StyledHeader, StyledWrapper } from '../styled'
+import { GridContainer, StyledCardText, StyledCompany, StyledDrag, StyledHeader, StyledWrapper } from '../styled'
 
 export const PaymentOptions = () => {
     const { initiatePriority } = useDnd()
@@ -55,7 +56,19 @@ export const PaymentOptions = () => {
                             schemaname="brands"
                         >
                             {paymentOptions.map(element => (
-                                <p key={element.id}>Payment list</p>
+                                <GridContainer key={element.id}>
+                                    <StyledDrag ><DragIcon /></StyledDrag>
+                                    <StyledCompany>{element.supportedPaymentOption.supportedPaymentCompany.label.charAt(0)
+                                        .toUpperCase() + element.supportedPaymentOption.supportedPaymentCompany.label.slice(1)}</StyledCompany>
+                                    <StyledCardText>
+                                        <span>Label</span>
+                                        <span>{element.label}</span>
+                                    </StyledCardText>
+                                    <StyledCardText>
+                                        <span>Payment Option</span>
+                                        <span>{element.supportedPaymentOption.paymentOptionLabel}</span>
+                                    </StyledCardText>
+                                </GridContainer>
                             )
                             )}
                         </DragNDrop>

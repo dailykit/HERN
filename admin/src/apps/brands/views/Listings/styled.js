@@ -19,3 +19,55 @@ export const StyledHeader = styled.div`
    align-items: center;
    justify-content: space-between;
 `
+export const GridContainer = styled.div`
+   display: grid;
+   grid-template-columns: 4rem 12rem 12rem 12rem auto auto;
+   height: 60px;
+   background: #ffffff;
+   border: 1px solid #e8e8e8;
+   box-sizing: border-box;
+   border-radius: 8px;
+   align-items: center;
+   justify-items: start;
+   margin: 16px;
+`
+export const StyledDrag = styled.div`
+   position: relative;
+   left: 1rem;
+   align-items: center;
+   display: flex;
+`
+export const StyledCompany = styled.div`
+   font-family: 'Roboto';
+   font-style: normal;
+   font-weight: 500;
+   font-size: 16px;
+   line-height: 18px;
+
+   color: #919699;
+`
+export const StyledCardText = styled.div`
+   display: flex;
+   align-items: flex-start;
+   flex-direction: column;
+   align-content: center;
+   font-family: 'Roboto';
+   font-style: normal;
+   font-weight: 500;
+   gap: 4px;
+
+   > span {
+      &:nth-child(1) {
+         font-size: 12px;
+         line-height: 12px;
+         letter-spacing: 0.44px;
+         color: #919699;
+      }
+      &:nth-child(2) {
+         font-size: 18px;
+         line-height: 18px;
+         letter-spacing: 0.44px;
+         color: #555b6e;
+      }
+   }
+`
