@@ -2,7 +2,7 @@
 import React from 'react'
 import { useSubscription } from '@apollo/react-hooks'
 import { toast } from 'react-toastify'
-import { Text, Loader, Flex, ButtonGroup, TextButton } from '@dailykit/ui'
+import { Text, Loader, Flex, ButtonGroup, TextButton, Spacer, Tunnels, Tunnel, useTunnel } from '@dailykit/ui'
 import { Input } from 'antd'
 import { ENVS } from '../../../graphql'
 import { CloseIcon } from '../../../../brands/assets/icons'
@@ -10,6 +10,7 @@ import { Child, CollapsibleWrapper, ResponsiveFlex, Styles } from './styled'
 import { SettingsCard } from './SettingsCard'
 import { Tooltip } from '../../../../../shared/components'
 import axios from 'axios'
+import CreateEnvTunnel from '../../../../../shared/CreateUtils/Settings/Envs'
 
 
 const EnvsList = () => {
@@ -22,6 +23,8 @@ const EnvsList = () => {
     const [componentIsOnView, setIsComponentIsOnView] = React.useState([])
     const [alertShow, setAlertShow] = React.useState(false)
     const { Search } = Input
+    const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
+
 
     const { loading: loadingSettings, error } = useSubscription(ENVS.LIST, {
         onSubscriptionData: ({
@@ -66,6 +69,15 @@ const EnvsList = () => {
                         onClick={() => axios.post(`${window.location.origin}/server/api/envs`)}
                     >
                         Sync
+                    </TextButton>
+                    <Spacer xAxis size={"16px"} />
+                    <TextButton
+                        type="solid"
+                        title='Create Env'
+                        size={24}
+                        onClick={() => openTunnel(1)}
+                    >
+                        Create Envs
                     </TextButton>
                 </ButtonGroup>
                 <Tooltip identifier="products_list_heading" />
@@ -199,6 +211,11 @@ const EnvsList = () => {
                     </Flex>
                 </Styles.SettingWrapper>
             </Styles.Wrapper>
+            <Tunnels tunnels={tunnels}>
+                <Tunnel layer={1} size="md">
+                    <CreateEnvTunnel closeTunnel={closeTunnel} />
+                </Tunnel>
+            </Tunnels>
         </ResponsiveFlex>
     )
 }
