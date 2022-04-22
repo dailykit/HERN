@@ -1,4 +1,7 @@
 import dynamic from 'next/dynamic'
+import { Form } from './form'
+import { Button } from './button'
+
 const PaymentProcessingModal = dynamic(() => import('./paymentProcessingModal'))
 const FloatingBar = dynamic(() => import('./floatingBar'))
 const PaymentOptionsRenderer = dynamic(() => import('./paymentOptionsRenderer'))
@@ -6,16 +9,7 @@ const PayButton = dynamic(() => import('./PayButton'))
 const PrintProcessingModal = dynamic(() => import('./printProcessingModal'))
 
 const SEO = dynamic(() => import('./seo').then(promise => promise.SEO))
-const Text = dynamic(() => import('./form').then(promise => promise.Text))
-const Label = dynamic(() => import('./form').then(promise => promise.Label))
-const Field = dynamic(() => import('./form').then(promise => promise.Field))
-const TextArea = dynamic(() =>
-   import('./form').then(promise => promise.TextArea)
-)
-const DisabledText = dynamic(() =>
-   import('./form').then(promise => promise.DisabledText)
-)
-const Button = dynamic(() => import('./button').then(promise => promise.Button))
+
 const Layout = dynamic(() => import('./layout').then(promise => promise.Layout))
 const Spacer = dynamic(() => import('./spacer').then(promise => promise.Spacer))
 const Loader = dynamic(() => import('./loader').then(promise => promise.Loader))
@@ -195,6 +189,7 @@ export {
    ModifierCategory,
    LanguageSwitch,
    Empty,
+   Form,
 }
 
 const TunnelHeader = dynamic(() =>
@@ -207,7 +202,7 @@ const Body = dynamic(() => import('./tunnel').then(promise => promise.Body))
 const Left = dynamic(() => import('./tunnel').then(promise => promise.Left))
 const Right = dynamic(() => import('./tunnel').then(promise => promise.Right))
 const Bottom = dynamic(() => import('./tunnel').then(promise => promise.Bottom))
-export const Form = { Text, Label, Field, TextArea, DisabledText }
+
 export const Tunnel = {
    Wrapper: TunnelWrapper,
    Header: TunnelHeader,
