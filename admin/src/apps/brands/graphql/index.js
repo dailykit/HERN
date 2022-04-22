@@ -721,4 +721,11 @@ export const PAYMENT_OPTIONS = {
          }
       }
    `,
+   DELETE: gql`
+      mutation deletePaymentOption($id: Int!) {
+         delete_brands_availablePaymentOption(where: { id: { _eq: $id } }) {
+            affected_rows
+         }
+      }
+   `,
 }

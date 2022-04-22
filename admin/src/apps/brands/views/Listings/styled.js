@@ -21,9 +21,9 @@ export const StyledHeader = styled.div`
 `
 export const GridContainer = styled.div`
    display: grid;
-   grid-template-columns: 4rem 12rem 12rem 12rem auto auto;
+   grid-template-columns: 4rem 12rem auto auto 8rem 4rem;
    height: 60px;
-   width: 100%;
+   width: 97%;
    background: #ffffff;
    border: 1px solid #e8e8e8;
    box-sizing: border-box;
@@ -42,6 +42,7 @@ export const StyledCompany = styled.div`
    display: flex;
    position: relative;
    left: 8px;
+   height: 100%;
    font-family: 'Roboto';
    font-style: normal;
    font-weight: 500;
@@ -66,10 +67,12 @@ export const StyledCardText = styled.div`
    align-items: flex-start;
    flex-direction: column;
    align-content: center;
+   justify-content: center;
    font-family: 'Roboto';
    font-style: normal;
    font-weight: 500;
    gap: 4px;
+   height: 100%;
 
    > span {
       &:nth-child(1) {
@@ -86,7 +89,13 @@ export const StyledCardText = styled.div`
          white-space: nowrap;
          overflow: hidden;
          text-overflow: ellipsis;
-         width: 10rem;
+         width: 20rem;
       }
    }
+`
+export const StyledDelete = styled.div`
+   display: flex;
+   cursor: pointer;
+   align-items: center;
+   justify-content: center;
 `

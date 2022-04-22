@@ -1,14 +1,15 @@
 import { useMutation, useSubscription } from '@apollo/react-hooks'
-import { Flex, Form, Text } from '@dailykit/ui'
+import { Flex, Form, IconButton, Text } from '@dailykit/ui'
 import { isEmpty } from 'lodash'
 import React from 'react'
 import { toast } from 'react-toastify'
+import { DeleteIcon } from '../../../../../shared/assets/icons'
 import { DragNDrop, InlineLoader, Tooltip } from '../../../../../shared/components'
 import { useDnd } from '../../../../../shared/components/DragNDrop/useDnd'
 import { logger } from '../../../../../shared/utils'
 import { DragIcon } from '../../../assets/icons'
 import { PAYMENT_OPTIONS } from '../../../graphql'
-import { GridContainer, StyledCardText, StyledCompany, StyledDrag, StyledHeader, StyledWrapper } from '../styled'
+import { GridContainer, StyledCardText, StyledCompany, StyledDelete, StyledDrag, StyledHeader, StyledWrapper } from '../styled'
 
 export const PaymentOptions = () => {
     const { initiatePriority } = useDnd()
@@ -34,6 +35,15 @@ export const PaymentOptions = () => {
             },
         }
     )
+    const [deletePaymentOption] = useMutation(PAYMENT_OPTIONS.DELETE, {
+        onCompleted: () => {
+            toast.success('Payment option deleted!')
+        },
+        onError: error => {
+            toast.error('Something went wrong!')
+            logger(error)
+        },
+    })
 
     //useEffect
     React.useEffect(() => {
@@ -46,7 +56,7 @@ export const PaymentOptions = () => {
         }
     }, [listLoading, paymentOptions])
 
-    //handler
+    //handler 
     const paymentOptionActiveHandler = paymentOption => {
         const value = !paymentOption.isActive
         updatePaymentOption({
@@ -57,7 +67,21 @@ export const PaymentOptions = () => {
                 }
             },
         })
-        // console.log(paymentOption)
+    }
+    const deletePaymentOptionHandler = paymentOption => {
+        if (
+            window.confirm(
+                `Are you sure you want to delete product - ${paymentOption.coupon.code}?`
+            )
+        ) {
+            deletePaymentOption({
+                variables: {
+                    brandId: paymentOption.brandId,
+                    couponId: paymentOption.couponId
+                },
+            })
+        }
+        // console.log(brandCoupon)
     }
 
     if (error) {
@@ -87,7 +111,8 @@ export const PaymentOptions = () => {
                             {paymentOptions.map(element => (
                                 <GridContainer key={element.id}>
                                     <StyledDrag ><DragIcon /></StyledDrag>
-                                    <StyledCompany>
+                                    <StyledCompany title={element.supportedPaymentOption.supportedPaymentCompany.label.charAt(0)
+                                        .toUpperCase() + element.supportedPaymentOption.supportedPaymentCompany.label.slice(1)}>
                                         <img
                                             src={element.supportedPaymentOption.supportedPaymentCompany.logo}
                                             alt="new"
@@ -97,11 +122,11 @@ export const PaymentOptions = () => {
                                         <div>{element.supportedPaymentOption.supportedPaymentCompany.label.charAt(0)
                                             .toUpperCase() + element.supportedPaymentOption.supportedPaymentCompany.label.slice(1)}</div>
                                     </StyledCompany>
-                                    <StyledCardText>
+                                    <StyledCardText title={element.label}>
                                         <span>Label</span>
                                         <span>{element.label}</span>
                                     </StyledCardText>
-                                    <StyledCardText>
+                                    <StyledCardText title={element.supportedPaymentOption.paymentOptionLabel}>
                                         <span>Payment Option</span>
                                         <span>{element.supportedPaymentOption.paymentOptionLabel}</span>
                                     </StyledCardText>
@@ -117,6 +142,15 @@ export const PaymentOptions = () => {
                                             </Form.Toggle>
                                         </Form.Group>
                                     </StyledCardText >
+                                    <StyledDelete>
+                                        <IconButton
+                                            type="ghost"
+                                            title="Click to remove payment option"
+                                            onClick={() => deletePaymentOptionHandler(element)}
+                                        >
+                                            <DeleteIcon color="#FF5A52" />
+                                        </IconButton>
+                                    </StyledDelete>
                                 </GridContainer>
                             )
                             )}
