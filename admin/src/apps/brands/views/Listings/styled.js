@@ -2,7 +2,7 @@ import styled from 'styled-components'
 
 export const StyledWrapper = styled.div`
    > div {
-      margin: 0 16px;
+      padding: 0 16px;
       max-width: 1280px;
       @media screen and (max-width: 767px) {
          width: calc(100vw - 32px);
@@ -23,14 +23,14 @@ export const GridContainer = styled.div`
    display: grid;
    grid-template-columns: 4rem 12rem auto auto 8rem 4rem;
    height: 60px;
-   width: 97%;
+   width: 100%;
    background: #ffffff;
    border: 1px solid #e8e8e8;
    box-sizing: border-box;
    border-radius: 8px;
    align-items: center;
    justify-items: start;
-   margin: 16px;
+   margin: 16px 0;
 `
 export const StyledDrag = styled.div`
    position: relative;

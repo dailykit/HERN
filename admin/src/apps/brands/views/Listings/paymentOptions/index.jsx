@@ -1,11 +1,12 @@
 import { useMutation, useSubscription } from '@apollo/react-hooks'
-import { Flex, Form, IconButton, Text } from '@dailykit/ui'
+import { ComboButton, Flex, Form, IconButton, PlusIcon, Text, Tunnel, Tunnels, useTunnel } from '@dailykit/ui'
 import { isEmpty } from 'lodash'
 import React from 'react'
 import { toast } from 'react-toastify'
 import { DeleteIcon } from '../../../../../shared/assets/icons'
-import { DragNDrop, InlineLoader, Tooltip } from '../../../../../shared/components'
+import { Banner, DragNDrop, InlineLoader, Tooltip } from '../../../../../shared/components'
 import { useDnd } from '../../../../../shared/components/DragNDrop/useDnd'
+import { PaymentOption } from '../../../../../shared/CreateUtils/Brand/PaymentOptions'
 import { logger } from '../../../../../shared/utils'
 import { DragIcon } from '../../../assets/icons'
 import { PAYMENT_OPTIONS } from '../../../graphql'
@@ -13,6 +14,7 @@ import { GridContainer, StyledCardText, StyledCompany, StyledDelete, StyledDrag,
 
 export const PaymentOptions = () => {
     const { initiatePriority } = useDnd()
+    const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
 
     //subscription
     const {
@@ -98,6 +100,10 @@ export const PaymentOptions = () => {
                     </Text>
                     <Tooltip identifier="payment_options_listing_heading" />
                 </Flex>
+                <ComboButton type="solid" onClick={() => openTunnel(1)}>
+                    <PlusIcon color="white" />
+                    Create New
+                </ComboButton>
             </StyledHeader>
             {
                 Boolean(paymentOptions.length) && (
@@ -158,6 +164,12 @@ export const PaymentOptions = () => {
                     </Flex>
                 )
             }
+            <Tunnels tunnels={tunnels}>
+                <Tunnel layer={1} size="md">
+                    <PaymentOption closeTunnel={closeTunnel} />
+                </Tunnel>
+            </Tunnels>
+            <Banner id="brands-app-payment-options-listing-bottom" />
         </StyledWrapper>
     )
 }
