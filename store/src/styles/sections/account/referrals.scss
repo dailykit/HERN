@@ -20,7 +20,9 @@
 .hern-referrals__customer-referral-code {
    display: inline-block;
    border: 1px dashed var(--hern-accent);
-   border-radius: 10px;
+   border-radius: 10px 0px 0px 15px;
+   background: rgba(243, 243, 243, 0.6);
+
    > div {
       padding: 4px;
       > span {
@@ -115,4 +117,13 @@
    padding: 0.25rem 0.5rem;
    min-width: 100px;
    font-weight: 500;
+}
+
+.hern-referrals-illustration-icon {
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   position: relative;
+   top: 98px;
+   left: 5px;
 }

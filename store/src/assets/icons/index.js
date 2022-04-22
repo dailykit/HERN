@@ -102,6 +102,9 @@ const LoginSVG = dynamic(() =>
 const LoyaltyPointsIcon = dynamic(() =>
    import('./LoyaltyPoints').then(promise => promise.LoyaltyPointsIcon)
 )
+const LoyaltyPointsIconNoTrx = dynamic(() =>
+   import('./LoyaltyPoints').then(promise => promise.LoyaltyPointsIconNoTrx)
+)
 const MailIcon = dynamic(() =>
    import('./Mail').then(promise => promise.MailIcon)
 )
@@ -314,6 +317,7 @@ export {
    LockIcon,
    LoginSVG,
    LoyaltyPointsIcon,
+   LoyaltyPointsIconNoTrx,
    MailIcon,
    Menu,
    MenuIcon,

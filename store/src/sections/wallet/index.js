@@ -8,6 +8,7 @@ import { useToasts } from 'react-toast-notifications'
 import { get_env } from '../../utils'
 import { BiClipboard } from 'react-icons/bi'
 import CopyToClipboard from 'react-copy-to-clipboard'
+import { WalletIcon } from '../../assets/icons'
 
 export const Wallet = () => {
    return (
@@ -138,7 +139,10 @@ const Content = () => {
                      </table>
                   </div>
                ) : (
-                  <p class="hern-wallet__no_txn">No transactions available</p>
+                  <p class="hern-wallet__no_txn">
+                     {' '}
+                     <WalletIcon />
+                  </p>
                )}
             </>
          )}

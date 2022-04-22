@@ -38,29 +38,69 @@
    line-height: 2rem;
 }
 .hern-account-loyalty-points__table {
-   margin-top: 0.5rem;
+   margin-top: 6.5rem;
    margin-bottom: 0.5rem;
-   width: 100%;
-   table-layout: auto;
+   width: 140%;
+   border-radius: 10px;
+
    th {
       text-align: left;
+      font-style: oblique;
    }
    tr:nth-of-type(even) {
       background-color: rgba(243, 244, 246, 1);
    }
    tr {
       td:last-child {
-         text-align: right;
+         text-align: left;
+         margin-left: 1%;
       }
    }
 }
 .hern-account-loyalty-points__table__cell {
-   min-width: 100px;
-   border-width: 1px;
-   padding: 0.25rem 0.5rem;
+   background: #f9f9f9;
+   border: 1px solid #e5e5e5;
+   box-sizing: border-box;
+   border-radius: 10px 10px 10px 10px;
+   border-radius: 15px;
+   // min-width: 100px;
+   // border-width: 1px;
+   // padding: 0.25rem 0.5rem;
 }
 .hern-account-loyalty-points__table__comment {
    font-size: 0.875rem;
    line-height: 1.25rem;
-   background-color: rgba(75, 85, 99, 1);
+   background-color: rgb(222, 224, 228);
+}
+
+.hern-account-loyalty-points-available {
+   width: 685px;
+   height: 186px;
+   color: black;
+   background: #ffffff;
+   box-shadow: 0px 0px 1px rgb(29 25 25 / 40%);
+   border-radius: 20px;
+   position: relative;
+   left: 79px;
+}
+
+.hern-account-loyalty-points_transaction_history {
+   color: black;
+   font-size: large;
+   font-weight: bold;
+   margin: 10px;
+   position: relative;
+   bottom: -41px;
+}
+.hern-loyalty-points-icon {
+   margin-top: 10%;
+}
+
+.hern-account-loyalty-points_header_subtitle {
+   color: black;
+   margin-left: 43%;
+   margin-top: -8em;
+   font-weight: bolder;
+   font-size: larger;
+   text-align: center;
 }

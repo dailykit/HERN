@@ -4,6 +4,8 @@ import { useConfig } from '../../lib'
 import { useTranslation, useUser } from '../../context'
 import { ProfileSidebar, Form } from '../../components'
 import * as moment from 'moment'
+import { Right } from '../../components/tunnel'
+import { LoyaltyPointsIcon, LoyaltyPointsIconNoTrx } from '../../assets/icons'
 
 export const LoyaltyPoints = () => {
    return (
@@ -20,7 +22,7 @@ const Content = () => {
    const { t, dynamicTrans, locale } = useTranslation()
    const theme = configOf('theme-color', 'Visual')
 
-   const loyaltyPointConfig = configOf('Loyalty Points ', 'rewards')
+   const loyaltyPointConfig = configOf('Loyalty Points', 'rewards')
    const isLoyaltyPointsAvailable = React.useMemo(() => {
       return loyaltyPointConfig?.['Loyalty Points']?.IsLoyaltyPointsAvailable
          ?.value
@@ -44,29 +46,63 @@ const Content = () => {
                   color: `${theme.accent ? theme.accent : 'rgba(5,150,105,1)'}`,
                }}
             >
-               <span data-translation="true">{t('Loyalty Points')}</span>
+               <span data-translation="true">{t('MY LOYALTY POINTS')}</span>
             </h2>
          </header>
+
+         <div className="hern-account-loyalty-points-available">
+            <LoyaltyPointsIcon />
+            <p className="hern-account-loyalty-points_header_subtitle">
+               <p style={{ fontWeight: 'bold', fontSize: '27px' }}>
+                  {t('Your available loyalty points')}
+               </p>
+               <p
+                  style={{
+                     color: 'green',
+                     fontSize: 'xxx-large',
+                     position: 'relative',
+                     bottom: '-20px',
+                     fontWeight: 'bolder',
+                  }}
+               >
+                  {user?.loyaltyPoint?.points}
+               </p>
+            </p>
+            {/* <Form.Label
+               style={{
+                  color: 'green',
+               }}
+            ></Form.Label> */}
+         </div>
          {isLoyaltyPointsAvailable && !!user.loyaltyPoint ? (
             <>
-               <div>
-                  <Form.Label>{t('Balance')} </Form.Label>
-                  {user.loyaltyPoint.points}
-               </div>
-               <Form.Label>{t('Transactions')}</Form.Label>
-               <table className="hern-account-loyalty-points__table">
-                  <thead>
-                     <tr>
-                        <th>{t('ID')}</th>
-                        <th>{t('Type')}</th>
-                        <th>{t('Points')}</th>
-                        <th>{t('Created At')}</th>
-                     </tr>
-                  </thead>
-                  <tbody>
-                     {user.loyaltyPoint.loyaltyPointTransactions.length > 0 ? (
-                        user.loyaltyPoint.loyaltyPointTransactions.map(txn => (
-                           <tr key={txn.id}>
+               <Form.Label
+                  style={{
+                     position: 'relative',
+                     bottom: '-48px',
+                     color: 'black',
+                     fontSize: 'large',
+                     fontWeight: 'bolder',
+                  }}
+               >
+                  {t('TRANSACTIONS HISTORY')}
+               </Form.Label>
+               {user.loyaltyPoint.loyaltyPointTransactions.length > 0 ? (
+                  <table className="hern-account-loyalty-points__table">
+                     <thead>
+                        <tr>
+                           <th>{t('ID')}</th>
+                           <th>{t('Type')}</th>
+                           <th>{t('Points')}</th>
+                           <th>{t('Created At')}</th>
+                        </tr>
+                     </thead>
+                     <tbody>
+                        {user.loyaltyPoint.loyaltyPointTransactions.map(txn => (
+                           <tr
+                              className="hern-account-loyalty-points__table__cell"
+                              key={txn.id}
+                           >
                               <td className="hern-account-loyalty-points__table__cell">
                                  {txn.id}
                               </td>
@@ -85,20 +121,26 @@ const Content = () => {
                                  )}
                               </td>
                            </tr>
-                        ))
-                     ) : (
-                        <div style={{ textAlign: 'center', color: 'gray' }}>
-                           <span>(</span> {t('not available')}
-                           <span>)</span>
-                        </div>
-                     )}
-                  </tbody>
-               </table>
+                        ))}
+                     </tbody>
+                  </table>
+               ) : (
+                  <div
+                     style={{
+                        position: 'relative',
+                        top: '100px',
+                        left: '320px',
+                     }}
+                  >
+                     <span>
+                        <LoyaltyPointsIconNoTrx />
+                        {/* {t('not avaiable')} */}
+                     </span>
+                  </div>
+               )}
             </>
          ) : (
-            <div style={{ textAlign: 'center', color: 'gray' }}>
-               {t('Loyalty points not available')}
-            </div>
+            <div></div>
          )}
       </section>
    )

@@ -92,8 +92,8 @@ const Content = () => {
                </div>
                <Spacer />
                <div className="hern-referral__referred">
-                  <span> {t('Friends referred by me')} :</span>
-                  <span style={{ color: 'var(--hern-accent)' }}>
+                  <span> {t('Customer Referred')} :</span>
+                  <span style={{ color: 'green', fontWeight: 'bold' }}>
                      &nbsp;{customerReferrals.length}
                   </span>
                </div>
@@ -134,14 +134,7 @@ const Content = () => {
                      </tbody>
                   </table>
                ) : (
-                  <div
-                     style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        marginBottom: '2rem',
-                     }}
-                  >
+                  <div className="hern-referrals-illustration-icon">
                      <EmptyReferralIll />
                   </div>
                )}
