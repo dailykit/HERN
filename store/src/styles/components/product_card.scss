@@ -47,7 +47,9 @@
       top: 0.5em;
       right: 0.5em;
       cursor: pointer;
-      padding-top: 20px;
+      @media (max-width: 479px) {
+         padding-top: 20px;
+      }
    }
 }
 .hern-product-card-image-background {
