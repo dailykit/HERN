@@ -178,9 +178,9 @@
    height: auto;
    min-width: 60px;
    right: 1em;
-   align-items: center;
+   // align-items: center;
    @media (max-width: 479px) {
-      align-items: flex-end;
+      // align-items: flex-end;
    }
    // margin-left: 2.5em;
 }
