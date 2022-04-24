@@ -28,7 +28,6 @@ import dynamic from 'next/dynamic'
 const CartBar = dynamic(() => import('./CartBar').then(mod => mod.default))
 
 export const OnDemandOrder = ({ config }) => {
-   const router = useRouter()
    const { addToast } = useToasts()
    const { dynamicTrans, locale } = useTranslation()
    const { brand, locationId, storeStatus } = useConfig()
@@ -286,7 +285,7 @@ const ProductWithIntersection = ({
    CustomAreaWrapper,
 }) => {
    const productRef = React.useRef()
-
+   const router = useRouter()
    const { entry, isIntersected } = useIntersectionObserver(productRef, {
       rootMargin: '100px 0px 100px 0px ',
    })
