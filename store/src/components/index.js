@@ -1,6 +1,8 @@
 import dynamic from 'next/dynamic'
 import { Form } from './form'
 import { Button } from './button'
+import { HernSkeleton } from './hernSkeleton'
+import { Fulfillment } from './fulfillment'
 
 const PaymentProcessingModal = dynamic(() => import('./paymentProcessingModal'))
 const FloatingBar = dynamic(() => import('./floatingBar'))
@@ -88,9 +90,9 @@ const Recipe = dynamic(() => import('./recipe').then(promise => promise.Recipe))
 const FulfillmentForm = dynamic(() =>
    import('./fulfillment').then(promise => promise.FulfillmentForm)
 )
-const Fulfillment = dynamic(() =>
-   import('./fulfillment').then(promise => promise.Fulfillment)
-)
+// const Fulfillment = dynamic(() =>
+//    import('./fulfillment').then(promise => promise.Fulfillment)
+// )
 const CartPaymentComponent = dynamic(() =>
    import('./cartPayment').then(promise => promise.CartPaymentComponent)
 )
@@ -190,6 +192,7 @@ export {
    LanguageSwitch,
    Empty,
    Form,
+   HernSkeleton,
 }
 
 const TunnelHeader = dynamic(() =>
