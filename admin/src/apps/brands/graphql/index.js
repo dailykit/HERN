@@ -739,6 +739,34 @@ export const PAYMENT_OPTIONS = {
                paymentOptionLabel
                publicCredsConfig
                privateCredsConfig
+               availablePaymentOptions {
+                  description
+                  label
+                  publicCreds
+                  privateCreds
+               }
+            }
+         }
+      }
+   `,
+   UPDATE_LABEL: gql`
+      mutation upsetLabel(
+         $objects: [brands_availablePaymentOption_insert_input!]!
+         $supportedPaymentOptionId: Int!
+      ) {
+         insert_brands_availablePaymentOption(
+            objects: $objects
+            on_conflict: {
+               constraint: availablePaymentOption_label_key
+               where: {
+                  supportedPaymentOptionId: { _eq: $supportedPaymentOptionId }
+               }
+            }
+         ) {
+            affected_rows
+            returning {
+               label
+               id
             }
          }
       }

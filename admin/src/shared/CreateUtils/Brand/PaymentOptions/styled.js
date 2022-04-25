@@ -48,13 +48,14 @@ export const OptionList = styled.div`
    line-height: 18px;
    flex-direction: column;
    color: #555b6e;
-   > div {
-      height: 44px;
-      display: flex;
-      align-items: center;
-      padding: 0 16px;
-      :hover {
-         background: #f3f3f3;
-      }
+`
+export const StyledText = styled.div`
+   height: 44px;
+   display: flex;
+   align-items: center;
+   padding: 0 16px;
+   background: ${props => (props.active ? `#f3f3f3` : `#ffffff `)};
+   :hover {
+      background: #f3f3f3;
    }
 `
