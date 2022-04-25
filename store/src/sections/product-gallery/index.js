@@ -91,7 +91,7 @@ export const ProductGallery = ({ config }) => {
    return (
       <div
          className={classNames('hern-product_gallery__container', {
-            'hern-product-galllery__product__display--1':
+            'hern-product-gallery__product__display--1':
                config?.informationVisibility?.productDetailType?.value?.value,
          })}
       >
@@ -140,7 +140,7 @@ export const ProductGallery = ({ config }) => {
                         margin: '20px 0px',
                      }}
                   >
-                     <Col span={12} style={{ textAlign: 'center' }}>
+                     <Col span={24} style={{ textAlign: 'center' }}>
                         <a
                            class="hern-product_gallery_page-button"
                            href={
