@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Form, Spacer, Tunnel, TunnelHeader, Tunnels, useTunnel } from '@dailykit/ui'
+import { Form, HelperText, Spacer, Tunnel, TunnelHeader, Tunnels, useTunnel } from '@dailykit/ui'
 import { InlineLoader, Tooltip } from '../../../../components'
 import { TunnelBody } from '../../../styled'
 import { OptionList, StyledText } from '../styled'
@@ -119,7 +119,12 @@ export const AvailablePaymentOption = ({ close, companyDetails }) => {
                         label.meta.errors.map((error, index) => (
                             <Form.Error key={index}>{error}</Form.Error>
                         ))}
+                    <HelperText
+                        type="hint"
+                        message="This will be shown at your store."
+                    />
                 </Form.Group>
+
                 }
 
             </TunnelBody>
