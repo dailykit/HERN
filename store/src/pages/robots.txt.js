@@ -1,5 +1,5 @@
 import React from 'react'
-import { getDisallowedPageRoutes } from '../utils/getpageRoutes'
+import { getDisallowedPageRoutes } from '../utils/getPageRoutes'
 
 export const getServerSideProps = async context => {
     const { req, res } = context
