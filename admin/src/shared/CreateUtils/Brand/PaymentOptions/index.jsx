@@ -1,5 +1,5 @@
 import { useSubscription } from '@apollo/react-hooks'
-import { TunnelHeader } from '@dailykit/ui'
+import { Tunnel, TunnelHeader, Tunnels, useTunnel } from '@dailykit/ui'
 import React, { useState } from 'react'
 import { toast } from 'react-toastify'
 import { PAYMENT_OPTIONS } from '../../../../apps/brands/graphql'
@@ -7,16 +7,19 @@ import { InlineLoader, Tooltip } from '../../../components'
 import { logger } from '../../../utils'
 import { TunnelBody } from '../../styled'
 import { CompanyCard, CompanyList } from './styled'
+import { AvailablePaymentOption } from './tunnels/availablePaymentOption'
 
 export const PaymentOption = ({ closeTunnel }) => {
 
     const [companyDetails, setCompanyDetails] = useState(null)
+    const [tunnels, open, close] = useTunnel(1)
 
     //* subscription
     const { loading,
         error,
         data: { brands_supportedPaymentCompany: companyData = [] } = {}
     } = useSubscription(PAYMENT_OPTIONS.COMPANY_LIST)
+
 
     if (error) {
         toast.error('Something went wrong!')
@@ -28,7 +31,7 @@ export const PaymentOption = ({ closeTunnel }) => {
             <TunnelHeader title="Select Payment Company"
                 right={{
                     action: () => {
-                        console.log('customerId', companyDetails);
+                        companyDetails ? open(1) : toast.error('Please select a payment company!')
                     },
                     title: 'Next',
                 }}
@@ -58,6 +61,11 @@ export const PaymentOption = ({ closeTunnel }) => {
                     }
                 </CompanyList>
             </TunnelBody>
+            <Tunnels tunnels={tunnels}>
+                <Tunnel layer={1} size="md">
+                    <AvailablePaymentOption close={close} companyDetails={companyDetails} />
+                </Tunnel>
+            </Tunnels>
         </div>
     )
 }

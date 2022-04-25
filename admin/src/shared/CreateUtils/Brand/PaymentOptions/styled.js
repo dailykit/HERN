@@ -39,3 +39,22 @@ export const CompanyCard = styled.div`
       color: #555b6e;
    }
 `
+export const OptionList = styled.div`
+   display: flex;
+   font-family: 'Roboto';
+   font-style: normal;
+   font-weight: 500;
+   font-size: 16px;
+   line-height: 18px;
+   flex-direction: column;
+   color: #555b6e;
+   > div {
+      height: 44px;
+      display: flex;
+      align-items: center;
+      padding: 0 16px;
+      :hover {
+         background: #f3f3f3;
+      }
+   }
+`
