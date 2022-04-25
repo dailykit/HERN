@@ -1,6 +1,6 @@
 import React from 'react'
 import gql from 'graphql-tag'
-import { getPageRoutes } from '../utils/getpageRoutes'
+import { getPageRoutes } from '../utils/getPageRoutes'
 import { graphQLClient } from '../lib'
 
 const Sitemap = () => { }
