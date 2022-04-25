@@ -109,13 +109,20 @@
    border-radius: 20px;
 }
 .hern-on-demand-product-custom-area--no-full-width {
-   max-width: 30%;
+   max-width: 40%;
    align-items: center;
 }
 .hern-on-demand-order--product-card {
    width: 100%;
    @media (max-width: 479px) {
       max-width: 100% !important;
+   }
+}
+.hern-on-demand-order--product-card-with-bg{
+   height: 490px;
+   background-color: rgba(190, 190, 190, 0.2);
+   @media (max-width:479px){
+      height: 200px;
    }
 }
 .hern-store__order-category-name-wrapper {

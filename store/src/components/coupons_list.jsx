@@ -115,7 +115,7 @@ const Coupons_List = ({
       return !coupon.rewards.some(reward => reward.condition.isValid)
    }
 
-   if (loading) return <Loader />
+   if (loading) return <Loader inline />
    if (isKioskMode || upFrontLayout) {
       const CouponCard = ({ coupon }) => {
          return (
@@ -234,7 +234,13 @@ const Coupons_List = ({
                <div style={{ display: 'flex', alignItems: 'center' }}>
                   {(showListOnCarousel || isKioskMode) && (
                      <ArrowLeftIcon
-                        className="hern-upfront-coupons-list__carousal-left-arrow hern-upfront-coupons-list__carousal-arrow"
+                        className={classNames(
+                           'hern-upfront-coupons-list__carousal-left-arrow hern-upfront-coupons-list__carousal-arrow',
+                           {
+                              'hern-upfront-coupons-list__carousal-arrow-kiosk':
+                                 isKioskMode,
+                           }
+                        )}
                         size={42}
                         onClick={lastCarousal}
                      />
@@ -266,7 +272,13 @@ const Coupons_List = ({
                   </div>
                   {(showListOnCarousel || isKioskMode) && (
                      <ArrowRightIcon
-                        className="hern-upfront-coupons-list__carousal-right-arrow hern-upfront-coupons-list__carousal-arrow"
+                        className={classNames(
+                           'hern-upfront-coupons-list__carousal-right-arrow hern-upfront-coupons-list__carousal-arrow',
+                           {
+                              'hern-upfront-coupons-list__carousal-arrow-kiosk':
+                                 isKioskMode,
+                           }
+                        )}
                         size={42}
                         onClick={nextCarousal}
                      />
