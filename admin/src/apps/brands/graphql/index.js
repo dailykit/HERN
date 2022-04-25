@@ -728,4 +728,19 @@ export const PAYMENT_OPTIONS = {
          }
       }
    `,
+   COMPANY_LIST: gql`
+      subscription paymentCompany {
+         brands_supportedPaymentCompany {
+            label
+            id
+            logo
+            supportedPaymentOptions {
+               id
+               paymentOptionLabel
+               publicCredsConfig
+               privateCredsConfig
+            }
+         }
+      }
+   `,
 }
