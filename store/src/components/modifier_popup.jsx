@@ -122,6 +122,10 @@ export const ModifierPopup = props => {
    const { locationId, storeStatus, configOf } = useConfig()
    const recipeLink = useConfig('Product card').configOf('recipe-link')
 
+   const getPriceWithDiscount = (price, discount) => {
+      return price - (price * discount) / 100
+   }
+
    const recipeButton = {
       show:
          recipeLink?.['Recipe link Button']?.['Show link button']?.value ??
@@ -395,13 +399,14 @@ export const ModifierPopup = props => {
          productData.productOptions.length > 0
       ) {
          return formatCurrency(
-            productData.price -
-               productData.discount +
-               ((productData?.productOptions[0]?.price || 0) -
-                  (productData?.productOptions[0]?.discount || 0))
+            getPriceWithDiscount(productData.price, productData.discount) +
+               getPriceWithDiscount(
+                  productData.productOptions[0]?.price || 0,
+                  productData.productOptions[0]?.discount
+               )
          )
       } else {
-         return formatCurrency(productData.price - productData.discount)
+         return getPriceWithDiscount(productData.price, productData.discount)
       }
    }
 
@@ -644,7 +649,10 @@ export const ModifierPopup = props => {
 
                                        {' (+ '}
                                        {formatCurrency(
-                                          eachOption.price - eachOption.discount
+                                          getPriceWithDiscount(
+                                             eachOption.price,
+                                             eachOption.discount
+                                          )
                                        )}
                                        {')'}
                                     </li>

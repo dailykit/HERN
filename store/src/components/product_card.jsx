@@ -70,6 +70,9 @@ export const ProductCard = props => {
          data.assets.images.length !== 1 &&
          canSwipe && { canSwipe: canSwipe }),
    }
+   const getPriceWithDiscount = (price, discount) => {
+      return price - (price * discount) / 100
+   }
 
    React.useEffect(() => {
       const languageTags = document.querySelectorAll(
@@ -83,19 +86,20 @@ export const ProductCard = props => {
       if (!useForThirdParty) {
          if (data.isPopupAllowed && data.productOptions.length > 0) {
             return (
-               data.price -
-               data.discount +
-               ((data?.productOptions[0]?.price || 0) -
-                  (data?.productOptions[0]?.discount || 0))
+               getPriceWithDiscount(data.price, data.discount) +
+               getPriceWithDiscount(
+                  data?.productOptions[0]?.price || 0,
+                  data?.productOptions[0]?.discount
+               )
             )
          } else {
-            return data.price - data.discount
+            return getPriceWithDiscount(data.price, data.discount)
          }
       }
       // when using this product card some where else
       else {
          if (data.price > 0) {
-            return data.price - data.discount
+            return getPriceWithDiscount(data.price, data.discount)
          } else {
             return null
          }
@@ -267,6 +271,7 @@ export const ProductCard = props => {
                                        )}
                                     </span>
                                  )}
+
                                  {finalProductPrice() &&
                                     finalProductPrice() > 0 && (
                                        <span style={{ marginLeft: '6px' }}>
