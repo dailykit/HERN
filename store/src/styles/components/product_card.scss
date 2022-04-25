@@ -170,6 +170,7 @@
    color: rgba(64, 64, 64, 0.8);
    max-width: 20em;
    margin-bottom: 6px;
+   margin-top: auto;
 }
 .hern-product-card-custom-area {
    // position: absolute;
@@ -195,6 +196,8 @@
    color: #40404099;
    padding-bottom: 16px;
    font-weight: 600;
+   margin-top: auto;
+   margin-bottom: auto;
    cursor: default;
    @media (max-width: 479px) {
       line-height: 12px;
