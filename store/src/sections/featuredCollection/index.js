@@ -28,7 +28,6 @@ import CartBar from '../order/CartBar'
 import { CustomArea } from './productCustomArea'
 
 export const FeaturedCollection = ({ config }) => {
-   const router = useRouter()
    const { addToast } = useToasts()
 
    // context
@@ -299,6 +298,8 @@ const ProductWithIntersection = ({
    CustomAreaWrapper,
    config,
 }) => {
+   const router = useRouter()
+
    const productRef = React.useRef()
 
    const { entry, isIntersected } = useIntersectionObserver(productRef, {
