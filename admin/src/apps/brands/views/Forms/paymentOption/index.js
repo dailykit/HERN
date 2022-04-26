@@ -1,5 +1,5 @@
 import { useMutation, useSubscription } from '@apollo/react-hooks'
-import { Form, Spacer } from '@dailykit/ui'
+import { Flex, Form, Spacer } from '@dailykit/ui'
 import React from 'react'
 import { useParams } from 'react-router-dom'
 import { toast } from 'react-toastify'
@@ -9,20 +9,31 @@ import {
    RevenueIcon,
 } from '../../../../../shared/components/DashboardCardAnalytics/assets/icons'
 import { Card } from '../../../../../shared/components/DashboardCards'
+import { SettingsCard } from '../../../../../shared/CreateUtils/Brand/PaymentOptions/tunnels/AddCredentials/settingsCard'
 import { currencyFmt, get_env, logger } from '../../../../../shared/utils'
 import { PAYMENT_OPTIONS } from '../../../graphql'
 import {
+   CardHeading,
    PageHeader,
    ResponsiveFlex,
    StyledCards,
    StyledCompany,
+   StyledCreds,
    StyledLabel,
    StyledPublish,
 } from './styled'
 
 export const PaymentOption = () => {
    const params = useParams()
-
+   const [isChangeSaved, setIsSavedChange] = React.useState(true)
+   const [mode, setMode] = React.useState('saved')
+   const [saveAllSettings, setSaveAllSettings] = React.useState({})
+   const [componentIsOnView, setIsComponentIsOnView] = React.useState([])
+   const [alertShow, setAlertShow] = React.useState(false)
+   const newMap = [
+      { id: 1, label: 'publicCreds' },
+      { id: 2, label: 'privateCreds' },
+   ]
    //subscription
    const {
       loading,
@@ -135,6 +146,39 @@ export const PaymentOption = () => {
                <Card.Text>Total Revenue Generated So Far</Card.Text>
             </Card>
          </StyledCards>
+         <StyledCreds>
+            {newMap.map(each => {
+               return (
+                  <div key={each.id}>
+                     <CardHeading>
+                        {each.label === 'privateCreds'
+                           ? `Private credentials (${
+                                paymentOption?.privateCreds.private.length || 0
+                             })`
+                           : `Public credentials (${
+                                paymentOption?.publicCreds.public.length || 0
+                             })`}
+                     </CardHeading>
+                     <SettingsCard
+                        option={paymentOption}
+                        key={each?.id}
+                        title={each?.label}
+                        creds={each?.label}
+                        isChangeSaved={isChangeSaved}
+                        setIsSavedChange={setIsSavedChange}
+                        setIsComponentIsOnView={setIsComponentIsOnView}
+                        componentIsOnView={componentIsOnView}
+                        mode={mode}
+                        setMode={setMode}
+                        saveAllSettings={saveAllSettings}
+                        setSaveAllSettings={setSaveAllSettings}
+                        alertShow={alertShow}
+                        setAlertShow={setAlertShow}
+                     />
+                  </div>
+               )
+            })}
+         </StyledCreds>
       </ResponsiveFlex>
    )
 }

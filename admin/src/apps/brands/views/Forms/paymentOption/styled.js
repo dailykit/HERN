@@ -66,8 +66,8 @@ export const StyledPublish = styled.div`
 `
 export const StyledLabel = styled.div`
    display: grid;
-   grid-template-columns: repeat(2, 1fr);
-   gap: 12px 184px;
+   grid-template-columns: repeat(2, 14rem);
+   gap: 12px 16px;
    margin: 32px 0px;
    > div {
       font-family: 'Roboto';
@@ -92,4 +92,22 @@ export const StyledCards = styled.div`
    display: grid;
    grid-template-columns: 2fr 2fr;
    grid-gap: 16px 32px;
+`
+export const StyledCreds = styled.div`
+   display: grid;
+   grid-template-columns: 2fr 2fr;
+   margin: 16px 16px 16px -16px;
+   width: 100%;
+   justify-content: space-between;
+`
+export const CardHeading = styled.div`
+   font-family: 'Roboto';
+   font-style: normal;
+   font-weight: 500;
+   font-size: 20px;
+   line-height: 18px;
+
+   color: #202020;
+   padding-left: 16px;
+   margin-top: 16px;
 `
