@@ -795,4 +795,40 @@ export const PAYMENT_OPTIONS = {
          }
       }
    `,
+   VIEW: gql`
+      query MyQuery($id: Int!) {
+         brands_availablePaymentOption_by_pk(id: $id) {
+            id
+            isActive
+            isValid
+            label
+            privateCreds
+            publicCreds
+            description
+            supportedPaymentOption {
+               paymentOptionLabel
+               supportedPaymentCompany {
+                  label
+                  logo
+               }
+            }
+            SUCCEEDED: cartPayments_aggregate(
+               where: {
+                  paymentStatus: { _eq: "SUCCEEDED" }
+                  isTest: { _eq: false }
+               }
+            ) {
+               aggregate {
+                  count
+                  sum {
+                     amount
+                  }
+                  avg {
+                     amount
+                  }
+               }
+            }
+         }
+      }
+   `,
 }
