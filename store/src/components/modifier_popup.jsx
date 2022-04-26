@@ -337,23 +337,63 @@ export const ModifierPopup = props => {
          ...nestedSelectedModifierOptions.multiple,
       ]
       let allSelectedOptionsPrice = 0
+      let allSelectedOptionsDiscount = 0
       let allNestedSelectedOptionsPrice = 0
-      allSelectedOptions.forEach(
-         x => (allSelectedOptionsPrice += x?.modifierCategoryOptionsPrice || 0)
-      )
-      allNestedSelectedOptions.forEach(
-         x =>
-            (allNestedSelectedOptionsPrice +=
-               x?.modifierCategoryOptionsPrice || 0)
-      )
+      let allNestedSelectedOptionsDiscount = 0
+      allSelectedOptions.forEach(x => {
+         allSelectedOptionsPrice += x?.modifierCategoryOptionsPrice || 0
+         allSelectedOptionsDiscount += x?.modifierCategoryOptionsDiscount || 0
+      })
+      allNestedSelectedOptions.forEach(x => {
+         allNestedSelectedOptionsPrice += x?.modifierCategoryOptionsPrice || 0
+         allNestedSelectedOptionsDiscount +=
+            x?.modifierCategoryOptionsDiscount || 0
+      })
 
-      const totalPrice =
+      const getPriceWithDiscount = (price, discount) => {
+         return price - (price * discount) / 100
+      }
+
+      const totalBaseProductPriceWithDiscount = getPriceWithDiscount(
+         productData.price,
+         productData.discount
+      )
+      const totalProductionOptionsPriceWithDiscount = getPriceWithDiscount(
+         productOptionPrice,
+         productOption.discount
+      )
+      const totalAllSelectedOptionsPriceWithDiscount = getPriceWithDiscount(
+         allSelectedOptionsPrice,
+         allSelectedOptionsDiscount
+      )
+      const totalAllNestedSelectedOptionsPriceWithDiscount =
+         getPriceWithDiscount(
+            allNestedSelectedOptionsPrice,
+            allNestedSelectedOptionsDiscount
+         )
+
+      const totalPriceWithDiscount =
+         productData.price +
          productOptionPrice +
          allSelectedOptionsPrice +
-         productData.price +
          allNestedSelectedOptionsPrice
-      return formatCurrency(totalPrice * quantity)
+      const totalPrice =
+         totalBaseProductPriceWithDiscount +
+         totalProductionOptionsPriceWithDiscount +
+         totalAllSelectedOptionsPriceWithDiscount +
+         totalAllNestedSelectedOptionsPriceWithDiscount
+
+      return {
+         total: totalPrice * quantity,
+         totalWithoutDiscount: totalPriceWithDiscount * quantity,
+         totalDiscount:
+            productData.discount +
+            productOption.discount +
+            allSelectedOptionsDiscount +
+            allNestedSelectedOptionsDiscount,
+      }
    }
+   const { total, totalWithoutDiscount, totalDiscount } = totalAmount()
 
    //increment click
    const incrementClick = () => {
@@ -648,6 +688,16 @@ export const ModifierPopup = props => {
                                        {eachOption.label}
 
                                        {' (+ '}
+                                       {eachOption.discount > 0 && (
+                                          <del
+                                             style={{
+                                                display: 'inline-block',
+                                                padding: '0 6px',
+                                             }}
+                                          >
+                                             {formatCurrency(eachOption.price)}
+                                          </del>
+                                       )}
                                        {formatCurrency(
                                           getPriceWithDiscount(
                                              eachOption.price,
@@ -812,19 +862,55 @@ export const ModifierPopup = props => {
                            ) : (
                               <span>
                                  {t('ADD TO CART')}&nbsp;
-                                 {totalAmount()}
+                                 <span>
+                                    {formatCurrency(total)}
+                                    {totalDiscount > 0 && (
+                                       <del
+                                          style={{
+                                             display: 'inline-block',
+                                             padding: '0 6px',
+                                          }}
+                                       >
+                                          {formatCurrency(totalWithoutDiscount)}
+                                       </del>
+                                    )}
+                                 </span>
                               </span>
                            )
                         ) : (
                            <span>
                               {t('ADD TO CART')}&nbsp;
-                              {totalAmount()}
+                              <span>
+                                 {formatCurrency(total)}
+                                 {totalDiscount > 0 && (
+                                    <del
+                                       style={{
+                                          display: 'inline-block',
+                                          padding: '0 6px',
+                                       }}
+                                    >
+                                       {formatCurrency(totalWithoutDiscount)}
+                                    </del>
+                                 )}
+                              </span>
                            </span>
                         )
                      ) : (
                         <span>
                            {t('ADD TO CART')}&nbsp;
-                           {totalAmount()}
+                           <span>
+                              {formatCurrency(total)}&nbsp;
+                              {totalDiscount > 0 && (
+                                 <del
+                                    style={{
+                                       display: 'inline-block',
+                                       padding: '0 6px',
+                                    }}
+                                 >
+                                    {formatCurrency(totalWithoutDiscount)}&nbsp;
+                                 </del>
+                              )}
+                           </span>
                         </span>
                      )}
                   </Button>
@@ -840,7 +926,7 @@ export const ModifierPopup = props => {
                className="hern-product-modifier-pop-up-add-to-cart-btn"
                onClick={handleAddOnCartOn}
             >
-               ADD TO CART {totalAmount()}
+               ADD TO CART {total}
             </Button> */}
             {modifierImage.showImage && (
                <div className="hern-product-modifier-image-pop-up">
