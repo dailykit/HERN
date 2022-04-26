@@ -22,6 +22,7 @@ export const PageHeader = styled.div`
    justify-content: space-between;
    width: 100%;
    height: 100%;
+   align-items: center;
 `
 export const StyledCompany = styled.div`
    display: flex;
@@ -44,4 +45,20 @@ export const StyledCompany = styled.div`
 
       color: #202020;
    }
+`
+export const StyledPublish = styled.div`
+   font-family: 'Roboto';
+   font-style: normal;
+   font-weight: 500;
+   font-size: 14px;
+   line-height: 18px;
+
+   letter-spacing: 0.16px;
+
+   color: #202020;
+
+   flex: none;
+   order: 0;
+   flex-grow: 0;
+   margin: 0px 12px;
 `
