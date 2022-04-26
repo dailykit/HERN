@@ -47,6 +47,7 @@ export const ProductCard = props => {
       config,
       stepView = false,
    } = props
+   console.log('🚀 ~ file: product_card.jsx ~ line 50 ~ data', data)
    const { t, dynamicTrans, locale } = useTranslation()
    const currentLang = React.useMemo(() => locale, [locale])
    const slideRef = React.useRef()
@@ -260,20 +261,26 @@ export const ProductCard = props => {
                            </div>
                            {showProductPrice && (
                               <div className="hern-product-card__price">
-                                 {!useForThirdParty && data.discount > 0 && (
-                                    <span
-                                       style={{
-                                          textDecoration: 'line-through',
-                                       }}
-                                    >
-                                       {data.productOptions.length > 0
-                                          ? formatCurrency(
-                                               data.price +
-                                                  data.productOptions[0].price
-                                            )
-                                          : formatCurrency(data.price)}
-                                    </span>
-                                 )}
+                                 {!useForThirdParty &&
+                                    (data.discount > 0 ||
+                                       data.productOptions[0]?.discount >
+                                          0) && (
+                                       <span
+                                          style={{
+                                             textDecoration: 'line-through',
+                                             display: 'inline-block',
+                                             padding: '0px 4px',
+                                          }}
+                                       >
+                                          {data.productOptions.length > 0
+                                             ? formatCurrency(
+                                                  data.price +
+                                                     data.productOptions[0]
+                                                        .price
+                                               )
+                                             : formatCurrency(data.price)}
+                                       </span>
+                                    )}
                                  {finalProductPrice() &&
                                     finalProductPrice() > 0 && (
                                        <span style={{ marginLeft: '6px' }}>
