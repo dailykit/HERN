@@ -10,6 +10,7 @@ import {
    PageHeader,
    ResponsiveFlex,
    StyledCompany,
+   StyledLabel,
    StyledPublish,
 } from './styled'
 
@@ -99,6 +100,13 @@ export const PaymentOption = () => {
                </Form.Toggle>
             </Form.Group>
          </PageHeader>
+         <StyledLabel>
+            <div>Payment Option</div>
+            <div>{paymentOption.supportedPaymentOption.paymentOptionLabel}</div>
+
+            <div>Label</div>
+            <div>{paymentOption.label}</div>
+         </StyledLabel>
       </ResponsiveFlex>
    )
 }

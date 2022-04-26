@@ -5,6 +5,8 @@ export const ResponsiveFlex = styled.header`
    padding: 16px 32px;
    align-items: center;
    justify-content: flex-start;
+   align-items: flex-start;
+   flex-direction: column;
 
    @media screen and (max-width: 767px) {
       flex-direction: column;
@@ -32,7 +34,7 @@ export const StyledCompany = styled.div`
       width: 40px;
       height: 40px;
 
-      border: 1px solid #f3f3f3;
+      border: 2px solid #f3f3f3;
       box-sizing: border-box;
       border-radius: 30px;
    }
@@ -61,4 +63,28 @@ export const StyledPublish = styled.div`
    order: 0;
    flex-grow: 0;
    margin: 0px 12px;
+`
+export const StyledLabel = styled.div`
+   display: grid;
+   grid-template-columns: repeat(2, 1fr);
+   gap: 12px 184px;
+   margin: 32px 0px;
+   > div {
+      font-family: 'Roboto';
+      font-style: normal;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      letter-spacing: 0.44px;
+   }
+   div:nth-child(odd) {
+      color: #919699;
+      font-size: 16px;
+      line-height: 18px;
+   }
+   div:nth-child(even) {
+      color: #555b6e;
+      font-size: 18px;
+      line-height: 18px;
+   }
 `
