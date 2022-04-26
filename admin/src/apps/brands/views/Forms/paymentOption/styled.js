@@ -88,3 +88,8 @@ export const StyledLabel = styled.div`
       line-height: 18px;
    }
 `
+export const StyledCards = styled.div`
+   display: grid;
+   grid-template-columns: 2fr 2fr;
+   grid-gap: 16px 32px;
+`

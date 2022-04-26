@@ -1,14 +1,20 @@
 import { useMutation, useSubscription } from '@apollo/react-hooks'
-import { Flex, Form } from '@dailykit/ui'
+import { Form, Spacer } from '@dailykit/ui'
 import React from 'react'
 import { useParams } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import { InlineLoader, Tooltip } from '../../../../../shared/components'
-import { logger } from '../../../../../shared/utils'
+import {
+   OrdersIcon,
+   RevenueIcon,
+} from '../../../../../shared/components/DashboardCardAnalytics/assets/icons'
+import { Card } from '../../../../../shared/components/DashboardCards'
+import { currencyFmt, get_env, logger } from '../../../../../shared/utils'
 import { PAYMENT_OPTIONS } from '../../../graphql'
 import {
    PageHeader,
    ResponsiveFlex,
+   StyledCards,
    StyledCompany,
    StyledLabel,
    StyledPublish,
@@ -107,6 +113,28 @@ export const PaymentOption = () => {
             <div>Label</div>
             <div>{paymentOption.label}</div>
          </StyledLabel>
+         <StyledCards>
+            <Card>
+               <Card.AdditionalBox justifyContent="space-between">
+                  <OrdersIcon />
+               </Card.AdditionalBox>
+               <Card.Value>
+                  {paymentOption.SUCCEEDED.aggregate.count}
+               </Card.Value>
+               <Card.Text>Total No. Of Orders So Far</Card.Text>
+            </Card>
+            <Card>
+               <Card.AdditionalBox justifyContent="space-between">
+                  <RevenueIcon />
+               </Card.AdditionalBox>
+               <Card.Value
+                  currency={currencyFmt[get_env('REACT_APP_CURRENCY')]}
+               >
+                  {paymentOption.SUCCEEDED.aggregate.sum.amount}
+               </Card.Value>
+               <Card.Text>Total Revenue Generated So Far</Card.Text>
+            </Card>
+         </StyledCards>
       </ResponsiveFlex>
    )
 }
