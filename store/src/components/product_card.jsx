@@ -260,18 +260,20 @@ export const ProductCard = props => {
                            </div>
                            {showProductPrice && (
                               <div className="hern-product-card__price">
-                                 {useForThirdParty && data.discount > 0 && (
+                                 {!useForThirdParty && data.discount > 0 && (
                                     <span
                                        style={{
                                           textDecoration: 'line-through',
                                        }}
                                     >
-                                       {formatCurrency(
-                                          data.price - data.discount
-                                       )}
+                                       {data.productOptions.length > 0
+                                          ? formatCurrency(
+                                               data.price +
+                                                  data.productOptions[0].price
+                                            )
+                                          : formatCurrency(data.price)}
                                     </span>
                                  )}
-
                                  {finalProductPrice() &&
                                     finalProductPrice() > 0 && (
                                        <span style={{ marginLeft: '6px' }}>
