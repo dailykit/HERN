@@ -771,4 +771,28 @@ export const PAYMENT_OPTIONS = {
          }
       }
    `,
+   VIEW_CREDS: gql`
+      subscription updateCreds($id: Int_comparison_exp!) {
+         brands_availablePaymentOption(where: { id: $id }) {
+            id
+            description
+            label
+            privateCreds
+            publicCreds
+         }
+      }
+   `,
+   UPDATE_CREDS: gql`
+      mutation updatePayment(
+         $_set: brands_availablePaymentOption_set_input!
+         $id: Int!
+      ) {
+         update_brands_availablePaymentOption(
+            where: { id: { _eq: $id } }
+            _set: $_set
+         ) {
+            affected_rows
+         }
+      }
+   `,
 }

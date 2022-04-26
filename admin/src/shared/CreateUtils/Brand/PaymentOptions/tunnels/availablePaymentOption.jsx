@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { Form, HelperText, Spacer, Tunnel, TunnelHeader, Tunnels, useTunnel } from '@dailykit/ui'
-import { InlineLoader, Tooltip } from '../../../../components'
+import { Tooltip } from '../../../../components'
 import { TunnelBody } from '../../../styled'
 import { OptionList, StyledText } from '../styled'
 import validatorFunc from '../../../validator'
@@ -8,10 +8,13 @@ import { toast } from 'react-toastify'
 import { logger } from '../../../../utils'
 import { useMutation } from '@apollo/react-hooks'
 import { PAYMENT_OPTIONS } from '../../../../../apps/brands/graphql'
+import { AddCredentials } from './AddCredentials'
 
 export const AvailablePaymentOption = ({ close, companyDetails }) => {
-    console.log(companyDetails);
     const [availablePaymentOption, setAvailablePaymentOption] = useState(null)
+    const [paymentId, setPaymentId] = useState(null)
+    const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
+
     const [label, setLabel] = useState(
         {
             value: '',
@@ -28,6 +31,7 @@ export const AvailablePaymentOption = ({ close, companyDetails }) => {
             if (data.insert_brands_availablePaymentOption.affected_rows === 0) {
                 toast.error('Already Present payment method!')
             } else {
+                setPaymentId(data.insert_brands_availablePaymentOption.returning[0].id)
                 toast.success('Updated!')
             }
         },
@@ -74,7 +78,7 @@ export const AvailablePaymentOption = ({ close, companyDetails }) => {
             <TunnelHeader title="Select Payment option"
                 right={{
                     action: () => {
-                        console.log("selection", availablePaymentOption);
+                        openTunnel(1)
                     },
                     title: 'Next',
                 }}
@@ -127,10 +131,13 @@ export const AvailablePaymentOption = ({ close, companyDetails }) => {
                         message="This will be shown at your store."
                     />
                 </Form.Group>
-
                 }
-
             </TunnelBody>
+            <Tunnels tunnels={tunnels}>
+                <Tunnel layer={1} size="md">
+                    <AddCredentials closeTunnel={closeTunnel} paymentId={paymentId} />
+                </Tunnel>
+            </Tunnels>
         </div>
     )
 }
