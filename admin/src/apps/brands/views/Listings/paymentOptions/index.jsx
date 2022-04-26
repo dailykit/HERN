@@ -7,6 +7,7 @@ import { DeleteIcon } from '../../../../../shared/assets/icons'
 import { Banner, DragNDrop, InlineLoader, Tooltip } from '../../../../../shared/components'
 import { useDnd } from '../../../../../shared/components/DragNDrop/useDnd'
 import { PaymentOption } from '../../../../../shared/CreateUtils/Brand/PaymentOptions'
+import { useTabs } from '../../../../../shared/providers'
 import { logger } from '../../../../../shared/utils'
 import { DragIcon } from '../../../assets/icons'
 import { PAYMENT_OPTIONS } from '../../../graphql'
@@ -14,6 +15,7 @@ import { GridContainer, StyledCardText, StyledCompany, StyledDelete, StyledDrag,
 
 export const PaymentOptions = () => {
     const { initiatePriority } = useDnd()
+    const { tab, addTab } = useTabs()
     const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
 
     //subscription
@@ -85,7 +87,12 @@ export const PaymentOptions = () => {
         }
         // console.log(brandCoupon)
     }
-
+    const cellClick = element => {
+        addTab(
+            element?.label || 'N/A',
+            `/brands/payment/${element.id}`
+        )
+    }
     if (error) {
         toast.error('Something went wrong!')
         logger(error)
@@ -115,10 +122,13 @@ export const PaymentOptions = () => {
                             schemaname="brands"
                         >
                             {paymentOptions.map(element => (
-                                <GridContainer key={element.id}>
+                                <GridContainer key={element.id} >
                                     <StyledDrag ><DragIcon /></StyledDrag>
-                                    <StyledCompany title={element.supportedPaymentOption.supportedPaymentCompany.label.charAt(0)
-                                        .toUpperCase() + element.supportedPaymentOption.supportedPaymentCompany.label.slice(1)}>
+                                    <StyledCompany
+                                        title={element.supportedPaymentOption.supportedPaymentCompany.label.charAt(0)
+                                            .toUpperCase() + element.supportedPaymentOption.supportedPaymentCompany.label.slice(1)}
+                                        onClick={() => cellClick(element)}
+                                    >
                                         <img
                                             src={element.supportedPaymentOption.supportedPaymentCompany.logo}
                                             alt="new"
@@ -128,7 +138,7 @@ export const PaymentOptions = () => {
                                         <div>{element.supportedPaymentOption.supportedPaymentCompany.label.charAt(0)
                                             .toUpperCase() + element.supportedPaymentOption.supportedPaymentCompany.label.slice(1)}</div>
                                     </StyledCompany>
-                                    <StyledCardText title={element.label}>
+                                    <StyledCardText title={element.label} onClick={() => cellClick(element)}>
                                         <span>Label</span>
                                         <span>{element.label}</span>
                                     </StyledCardText>
