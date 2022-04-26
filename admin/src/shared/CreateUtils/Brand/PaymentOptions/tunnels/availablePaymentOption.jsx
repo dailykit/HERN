@@ -10,7 +10,7 @@ import { useMutation } from '@apollo/react-hooks'
 import { PAYMENT_OPTIONS } from '../../../../../apps/brands/graphql'
 
 export const AvailablePaymentOption = ({ close, companyDetails }) => {
-
+    console.log(companyDetails);
     const [availablePaymentOption, setAvailablePaymentOption] = useState(null)
     const [label, setLabel] = useState(
         {
@@ -51,9 +51,12 @@ export const AvailablePaymentOption = ({ close, companyDetails }) => {
                 variables: {
                     objects: {
                         label: label.value,
-                        supportedPaymentOptionId: availablePaymentOption,
+                        supportedPaymentOptionId: availablePaymentOption.id,
+                        publicCreds: availablePaymentOption.publicCredsConfig,
+                        privateCreds: availablePaymentOption.privateCredsConfig
+
                     },
-                    supportedPaymentOptionId: availablePaymentOption,
+                    supportedPaymentOptionId: availablePaymentOption.id,
                 }
             })
             setLabel({
@@ -86,8 +89,8 @@ export const AvailablePaymentOption = ({ close, companyDetails }) => {
                         companyDetails.supportedPaymentOptions.map(option => (
                             <StyledText
                                 key={option.id}
-                                onClick={() => setAvailablePaymentOption(option.id)}
-                                active={option.id === availablePaymentOption}
+                                onClick={() => setAvailablePaymentOption(option)}
+                                active={option.id === availablePaymentOption?.id}
                             >
                                 {option.paymentOptionLabel}
                             </StyledText>
