@@ -75,13 +75,12 @@ export const PaymentOptions = () => {
     const deletePaymentOptionHandler = paymentOption => {
         if (
             window.confirm(
-                `Are you sure you want to delete product - ${paymentOption.coupon.code}?`
+                `Are you sure you want to delete payment option - ${paymentOption.label}?`
             )
         ) {
             deletePaymentOption({
                 variables: {
-                    brandId: paymentOption.brandId,
-                    couponId: paymentOption.couponId
+                    id: paymentOption.id,
                 },
             })
         }

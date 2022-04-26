@@ -39,7 +39,7 @@ export const SettingsCard = ({
 
    const [updateCreds] = useMutation(PAYMENT_OPTIONS.UPDATE_CREDS, {
       onCompleted: () => {
-         toast.success('Successfully updated Env')
+         toast.success('Successfully updated payment option creds')
       },
       onError: error => {
          console.log(error)
