@@ -44,6 +44,10 @@ const EarningByCustomer = () => {
                      brandShopDateState.brandShop.shopTitle
                         ? `AND oc.source = \'${brandShopDateState.brandShop.shopTitle}\'`
                         : ''
+                  } ${
+                     brandShopDateState.brandShop.locationId
+                        ? `AND oc."locationId" = ${brandShopDateState.brandShop.locationId}`
+                        : ''
                   }`,
                   customerWhere: 'id IS NOT NULL',
                },
@@ -83,7 +87,7 @@ const EarningByCustomer = () => {
          },
       }
    )
-
+   console.log('earningByCustomer', subsError)
    const { loading: subsCompareLoading, error: subsCompareError } =
       useSubscription(EARNING_BY_CUSTOMERS, {
          variables: {
@@ -101,6 +105,10 @@ const EarningByCustomer = () => {
                   } ${
                      brandShopDateState.brandShop.shopTitle
                         ? `AND oc.source = \'${brandShopDateState.brandShop.shopTitle}\'`
+                        : ''
+                  } ${
+                     brandShopDateState.brandShop.locationId
+                        ? `AND oc."locationId" = \'${brandShopDateState.brandShop.locationId}\'`
                         : ''
                   }`,
                   customerWhere: `id IN (${customerData

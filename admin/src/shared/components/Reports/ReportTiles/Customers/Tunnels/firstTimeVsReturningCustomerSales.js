@@ -44,6 +44,10 @@ const FirstTimeVsReturningCustomerSales = () => {
                      brandShopDateState.brandShop.shopTitle
                         ? `AND b.source = \'${brandShopDateState.brandShop.shopTitle}\'`
                         : ''
+                  } ${
+                     brandShopDateState.brandShop.locationId
+                        ? `AND b."locationId" = ${brandShopDateState.brandShop.locationId}`
+                        : ''
                   }`,
                   groupingSets: `(\"keycloakId\",${brandShopDateState.groupBy.toString()})`,
                   columns:

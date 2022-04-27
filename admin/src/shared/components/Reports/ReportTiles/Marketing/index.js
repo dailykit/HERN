@@ -61,6 +61,7 @@ const MarketingReport = () => {
                      shopTypeProvider
                      datePickerProvider
                      compareProvider
+                     locationProvider
                   >
                      <SalesByCoupons />
                   </BrandShopDate>

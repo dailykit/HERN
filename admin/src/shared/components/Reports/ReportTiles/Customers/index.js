@@ -75,6 +75,7 @@ const CustomerReport = () => {
                      shopTypeProvider
                      datePickerProvider
                      groupTimeProvider
+                     locationProvider
                   >
                      <FirstTimeVsReturningCustomerSales />
                   </BrandShopDate>

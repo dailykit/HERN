@@ -52,7 +52,13 @@ const EarningByProduct = () => {
                      brandShopDateState.brandShop.shopTitle
                         ? `AND c.source = \'${brandShopDateState.brandShop.shopTitle}\'`
                         : ''
-                  }`,
+                  }
+                  ${
+                     brandShopDateState.brandShop.locationId
+                        ? `AND c."locationId" = ${brandShopDateState.brandShop.locationId}`
+                        : ''
+                  }
+                  `,
                   productWhere: 'id IS NOT NULL',
                },
             },
@@ -94,6 +100,11 @@ const EarningByProduct = () => {
                   } ${
                      brandShopDateState.brandShop.shopTitle
                         ? `AND c.source = \'${brandShopDateState.brandShop.shopTitle}\'`
+                        : ''
+                  }
+                  ${
+                     brandShopDateState.brandShop.locationId
+                        ? `AND c."locationId" = ${brandShopDateState.brandShop.locationId}`
                         : ''
                   }`,
                   productWhere: `id IN (${sortedEarningByProductData

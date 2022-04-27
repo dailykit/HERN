@@ -48,6 +48,10 @@ const OrderRejectReport = () => {
                   brandShopDateState.brandShop.shopTitle
                      ? `AND b.source = \'${brandShopDateState.brandShop.shopTitle}\'`
                      : ''
+               } ${
+                  brandShopDateState.brandShop.locationId
+                     ? `AND b."locationId" = \'${brandShopDateState.brandShop.locationId}\'`
+                     : ''
                }`,
                groupingSets: `(${brandShopDateState.groupBy.toString()})`,
                columns: brandShopDateState.groupBy
@@ -81,6 +85,10 @@ const OrderRejectReport = () => {
                } ${
                   brandShopDateState.brandShop.shopTitle
                      ? `AND b.source = \'${brandShopDateState.brandShop.shopTitle}\'`
+                     : ''
+               } ${
+                  brandShopDateState.brandShop.locationId
+                     ? `AND b."locationId" = \'${brandShopDateState.brandShop.locationId}\'`
                      : ''
                }`,
                groupingSets: `(${brandShopDateState.groupBy.toString()})`,

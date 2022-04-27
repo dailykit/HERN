@@ -49,6 +49,10 @@ const SalesByCoupons = () => {
                   brandShop.shopTitle
                      ? `AND oc.source = \'${brandShop.shopTitle}\'`
                      : ''
+               } ${
+                  brandShop.locationId
+                     ? `AND oc."locationId" = ${brandShop.locationId}`
+                     : ''
                }`,
                couponWhere: 'id IS NOT NULL',
             },
@@ -97,6 +101,10 @@ const SalesByCoupons = () => {
                } ${
                   brandShop.shopTitle
                      ? `AND oc.source = \'${brandShop.shopTitle}\'`
+                     : ''
+               } ${
+                  brandShop.locationId
+                     ? `AND oc."locationId" = ${brandShop.locationId}`
                      : ''
                }`,
                couponWhere: `id IN (${sortedEarningByCouponsData

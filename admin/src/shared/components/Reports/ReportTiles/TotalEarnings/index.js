@@ -91,6 +91,7 @@ const TotalEarningReport = () => {
                      shopTypeProvider
                      datePickerProvider
                      compareProvider
+                     locationProvider
                   >
                      <EarningByProduct />
                   </BrandShopDate>
@@ -108,6 +109,7 @@ const TotalEarningReport = () => {
                      shopTypeProvider
                      datePickerProvider
                      compareProvider
+                     locationProvider
                   >
                      <EarningByCustomer />
                   </BrandShopDate>

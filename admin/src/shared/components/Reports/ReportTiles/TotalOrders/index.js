@@ -70,6 +70,7 @@ const OrdersReport = () => {
                      datePickerProvider
                      compareProvider
                      groupTimeProvider
+                     locationProvider
                   >
                      <OrderCancelOrRejectReport />
                   </BrandShopDate>
@@ -87,6 +88,7 @@ const OrdersReport = () => {
                      brandProvider
                      datePickerProvider
                      compareProvider
+                     locationProvider
                   >
                      <OrderByLocation />
                   </BrandShopDate>
