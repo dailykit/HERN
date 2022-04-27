@@ -1,6 +1,6 @@
 import { useMutation, useSubscription } from '@apollo/react-hooks'
 import { Flex, Form, Spacer } from '@dailykit/ui'
-import React from 'react'
+import React, { useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import { InlineLoader, Tooltip } from '../../../../../shared/components'
@@ -12,6 +12,7 @@ import { Card } from '../../../../../shared/components/DashboardCards'
 import { SettingsCard } from '../../../../../shared/CreateUtils/Brand/PaymentOptions/tunnels/AddCredentials/settingsCard'
 import { currencyFmt, get_env, logger } from '../../../../../shared/utils'
 import { PAYMENT_OPTIONS } from '../../../graphql'
+import validatorFunc from '../../validator'
 import {
    CardHeading,
    PageHeader,
@@ -30,18 +31,35 @@ export const PaymentOption = () => {
    const [saveAllSettings, setSaveAllSettings] = React.useState({})
    const [componentIsOnView, setIsComponentIsOnView] = React.useState([])
    const [alertShow, setAlertShow] = React.useState(false)
+   const [paymentOption, setPaymentOption] = useState({})
+   const [load, setLoad] = useState(true)
    const newMap = [
       { id: 1, label: 'publicCreds' },
       { id: 2, label: 'privateCreds' },
    ]
+   const [label, setLabel] = React.useState({
+      value: '',
+      meta: {
+         isTouched: false,
+         isValid: true,
+         errors: [],
+      },
+   })
    //subscription
-   const {
-      loading,
-      error,
-      data: { brands_availablePaymentOption_by_pk: paymentOption = {} } = {},
-   } = useSubscription(PAYMENT_OPTIONS.VIEW, {
+   const { loading, error } = useSubscription(PAYMENT_OPTIONS.VIEW, {
       variables: {
          id: params.id,
+      },
+      onSubscriptionData: data => {
+         console.log(data)
+         const result =
+            data.subscriptionData.data.brands_availablePaymentOption_by_pk
+         setPaymentOption(result)
+         setLabel({
+            ...label,
+            value: result.label,
+         })
+         setLoad(false)
       },
    })
 
@@ -69,13 +87,34 @@ export const PaymentOption = () => {
          },
       })
    }
+   const handleBlur = () => {
+      const val = label.value.trim()
+      const { isValid, errors } = validatorFunc.text(val)
+      if (isValid) {
+         updatePaymentOption({
+            variables: {
+               id: paymentOption.id,
+               _set: {
+                  label: val,
+               },
+            },
+         })
+      }
+      setLabel({
+         ...label,
+         meta: {
+            isTouched: true,
+            isValid,
+            errors,
+         },
+      })
+   }
 
-   console.log(paymentOption)
    if (error) {
       toast.error('Something went wrong!')
       logger(error)
    }
-   if (loading) return <InlineLoader />
+   if (loading || load) return <InlineLoader />
    return (
       <ResponsiveFlex
          container
@@ -121,8 +160,25 @@ export const PaymentOption = () => {
             <div>Payment Option</div>
             <div>{paymentOption.supportedPaymentOption.paymentOptionLabel}</div>
 
-            <div>Label</div>
-            <div>{paymentOption.label}</div>
+            <div htmlFor={`label-${paymentOption.id}`} title="label">
+               Label
+            </div>
+            <Form.Group>
+               <Form.Text
+                  id={`label-${paymentOption.id}`}
+                  name={`label-${paymentOption.id}`}
+                  onBlur={() => handleBlur('label')}
+                  onChange={e => setLabel({ ...label, value: e.target.value })}
+                  value={label.value}
+                  placeholder="Enter label"
+                  hasError={!label.meta.isValid && label.meta.isTouched}
+               />
+               {label.meta.isTouched &&
+                  !label.meta.isValid &&
+                  label.meta.errors.map((error, index) => (
+                     <Form.Error key={index}>{error}</Form.Error>
+                  ))}
+            </Form.Group>
          </StyledLabel>
          <StyledCards>
             <Card>

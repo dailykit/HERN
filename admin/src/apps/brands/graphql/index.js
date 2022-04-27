@@ -796,7 +796,7 @@ export const PAYMENT_OPTIONS = {
       }
    `,
    VIEW: gql`
-      query MyQuery($id: Int!) {
+      subscription availablePayment($id: Int!) {
          brands_availablePaymentOption_by_pk(id: $id) {
             id
             isActive
