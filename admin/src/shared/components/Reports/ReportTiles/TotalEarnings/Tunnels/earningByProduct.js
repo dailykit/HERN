@@ -28,6 +28,9 @@ const EarningByProduct = () => {
    const { brandShopDateState, brandShopDateDispatch } =
       React.useContext(BrandShopDateContext)
    const [status, setStatus] = useState({ loading: true })
+   const [sortedEarningByProductData, setSortedEarningByProductData] = useState(
+      []
+   )
    //subscription for earning by product data
    const { loading: subsLoading, error: subsError } = useSubscription(
       EARNING_BY_PRODUCT,
@@ -63,6 +66,7 @@ const EarningByProduct = () => {
                )
 
             setEarningByProductData(newData)
+            setSortedEarningByProductData(newData)
             setStatus({ ...status, loading: false })
          },
       }
@@ -71,6 +75,7 @@ const EarningByProduct = () => {
    //subscription for earning by product compare data
    const { loading: subsCompareLoading, error: subsCompareError } =
       useSubscription(EARNING_BY_PRODUCT, {
+         skip: brandShopDateState.compare.isSkip,
          variables: {
             earningByProductArgs: {
                params: {
@@ -91,14 +96,13 @@ const EarningByProduct = () => {
                         ? `AND c.source = \'${brandShopDateState.brandShop.shopTitle}\'`
                         : ''
                   }`,
-                  productWhere: `id IN (${earningByProductData
+                  productWhere: `id IN (${sortedEarningByProductData
                      .slice(0, 10)
                      .map(x => x.id)
                      .toString()})`,
                },
             },
          },
-         skip: brandShopDateState.compare.isSkip,
          onSubscriptionData: ({ subscriptionData }) => {
             const newData =
                subscriptionData.data.insights_analytics[0].getEarningsByProducts.map(
@@ -143,7 +147,7 @@ const EarningByProduct = () => {
                   }}
                >
                   <EarningByProductChart
-                     earningByProductChartData={earningByProductData.slice(
+                     earningByProductChartData={sortedEarningByProductData.slice(
                         0,
                         10
                      )}
@@ -165,6 +169,9 @@ const EarningByProduct = () => {
                   <EarningByProductTable
                      earningByProductData={earningByProductData}
                      currency={brandShopDateState.currency}
+                     setSortedEarningByProductData={
+                        setSortedEarningByProductData
+                     }
                   />
                </div>
             </Flex>
@@ -234,7 +241,7 @@ const EarningByProductChart = ({
          setChartData(earningByProductChartData)
          setIsLoading(false)
       }
-   }, [earningByProductCompareData])
+   }, [earningByProductCompareData, earningByProductChartData])
    if (isLoading) {
       return <InlineLoader />
    }

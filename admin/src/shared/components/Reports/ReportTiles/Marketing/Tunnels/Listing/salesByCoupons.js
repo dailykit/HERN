@@ -12,8 +12,9 @@ import {
 } from '@dailykit/ui'
 import { BrandShopDateContext } from '../../../../../BrandShopDateProvider/context'
 import './tableStyle.css'
+
 const SalesByCouponsTable = props => {
-   const { salesByCouponsData } = props
+   const { salesByCouponsData, setSortedEarningByCouponsData } = props
    const { brandShopDateState } = React.useContext(BrandShopDateContext)
    const { currency } = brandShopDateState
    const tableRef = React.useRef()
@@ -214,7 +215,10 @@ const SalesByCouponsTable = props => {
          })
       }
    }
-
+   const dataSorted = (_, rows) => {
+      console.log(rows)
+      setSortedEarningByCouponsData(rows.map(eachRow => eachRow._row.data))
+   }
    return (
       <>
          <Flex container flexDirection="column">
@@ -284,10 +288,11 @@ const SalesByCouponsTable = props => {
                   options={TableOptions}
                   dataLoaded={dataLoaded}
                   className="sales-from-coupons report-table"
+                  dataSorted={dataSorted}
                />
             )}
          </Flex>
       </>
    )
 }
-export default SalesByCouponsTable
+export default React.memo(SalesByCouponsTable)
