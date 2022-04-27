@@ -18,7 +18,6 @@ import {
 import { useTranslation } from '../../context'
 import { useConfig } from '../../lib'
 
-
 const PaymentProcessingModal = ({
    isOpen,
    cartPayment,
@@ -34,7 +33,7 @@ const PaymentProcessingModal = ({
    resetPaymentProviderStates = () => null,
    setIsProcessingPayment = () => null,
    setIsPaymentInitiated = () => null,
-})=> {
+}) => {
    console.log('PaymentProcessingModal')
    const router = useRouter()
    const isKioskMode = isKiosk()
@@ -351,10 +350,12 @@ const PaymentProcessingModal = ({
    // useEffect(() => {
    //    setCountDown(60)
    // }, [cartPayment?.paymentStatus])
-   
-   const PaymentPopUpDesignConfig = useConfig('KioskConfig').KioskConfig
-   const arrowBgColor = PaymentPopUpDesignConfig.kioskSettings.theme.arrowBgColor.value
-   const arrowColor = PaymentPopUpDesignConfig.kioskSettings.theme.arrowColor.value
+
+   const PaymentPopUpDesignConfig = useConfig('KioskConfig')?.KioskConfig
+   const arrowBgColor =
+      PaymentPopUpDesignConfig?.kioskSettings?.theme?.arrowBgColor?.value
+   const arrowColor =
+      PaymentPopUpDesignConfig?.kioskSettings?.theme?.arrowColor?.value
    return (
       <Modal
          title={null}
@@ -374,7 +375,10 @@ const PaymentProcessingModal = ({
             overflowY: 'auto',
          }}
          maskStyle={{
-            backgroundColor: isKioskMode ?  PaymentPopUpDesignConfig.paymentPopupSettings.paymentPopupBackgroundColor.value: '#fff',
+            backgroundColor: isKioskMode
+               ? PaymentPopUpDesignConfig?.paymentPopupSettings
+                    ?.paymentPopupBackgroundColor?.value
+               : '#fff',
          }}
       >
          <CartPageHeader
@@ -388,14 +392,17 @@ const PaymentProcessingModal = ({
                <Wrapper>
                   <div tw="flex flex-col">
                      {/* <h1 tw ="font-extrabold text-4xl text-center margin[2rem 0]"> */}
-                     <h1 style={{
-                        color: PaymentPopUpDesignConfig.paymentPopupSettings.textColor.value, 
-                        }} tw ="font-extrabold text-4xl text-center margin[2rem 0]">
-
+                     <h1
+                        style={{
+                           color: PaymentPopUpDesignConfig.paymentPopupSettings
+                              .textColor.value,
+                        }}
+                        tw="font-extrabold text-4xl text-center margin[2rem 0]"
+                     >
                         {t('Choose a payment method')}
                      </h1>
                      {PaymentOptions.map(option => {
-                        return ( 
+                        return (
                            <>
                               <PayButton
                                  cartId={cartId}
@@ -407,14 +414,18 @@ const PaymentProcessingModal = ({
                                  {t(LABEL[option.label])}
                               </PayButton>
 
-                              <p style={{
-                                 color: PaymentPopUpDesignConfig.paymentPopupSettings.textColor.value, 
-                              }} tw="last:(hidden) font-extrabold margin[2rem 0] text-2xl text-center">   
+                              <p
+                                 style={{
+                                    color: PaymentPopUpDesignConfig
+                                       .paymentPopupSettings.textColor.value,
+                                 }}
+                                 tw="last:(hidden) font-extrabold margin[2rem 0] text-2xl text-center"
+                              >
                                  {t('OR')}
                               </p>
                            </>
-                         )
-                      })}
+                        )
+                     })}
                   </div>
                </Wrapper>
                <Button
@@ -423,9 +434,10 @@ const PaymentProcessingModal = ({
                   onClick={resetPaymentProviderStates}
                >
                   <div tw="flex items-center">
-                     <ArrowLeftIconBG 
-                     bgColor={`${arrowBgColor}`} 
-                     arrowColor={arrowColor} />
+                     <ArrowLeftIconBG
+                        bgColor={`${arrowBgColor}`}
+                        arrowColor={arrowColor}
+                     />
                      <span tw="ml-4 font-bold text-white text-2xl">Back</span>
                   </div>
                </Button>
@@ -521,26 +533,29 @@ const CartPageHeader = ({
 }) => {
    const { configOf } = useConfig('brand')
    const PaymentPopUpDesignConfig = useConfig('KioskConfig')
-   
+   const isKioskMode = isKiosk()
+
    const {
       ShowBrandName: { value: showBrandName } = {},
       ShowBrandLogo: { value: showBrandLogo } = {},
       brandName: { value: brandName } = {},
       logo: { value: logo } = {},
-   } = PaymentPopUpDesignConfig.KioskConfig.kioskSettings
-   const {logoAlignment : 
-      {value: logoAlignment}={}
-   }= PaymentPopUpDesignConfig.KioskConfig.paymentPopupSettings
+   } = !isKioskMode
+      ? configOf('Brand Info')
+      : PaymentPopUpDesignConfig?.KioskConfig?.kioskSettings
+   const logoAlignment =
+      PaymentPopUpDesignConfig?.KioskConfig?.paymentPopupSettings?.logoAlignment
+         ?.value
 
    const theme = configOf('theme-color', 'Visual')?.themeColor
    const themeColor = theme?.accent?.value
       ? theme?.accent?.value
       : 'rgba(5, 150, 105, 1)'
-   const isKioskMode = isKiosk()
    return (
-      <header 
-      className="hern-cart-page__header" 
-      style={{justifyContent:`${logoAlignment.value}`}}>
+      <header
+         className="hern-cart-page__header"
+         style={{ justifyContent: `${logoAlignment?.value}` }}
+      >
          <div>
             {!isKioskMode && isCartPaymentEmpty && (
                <span
@@ -565,7 +580,7 @@ const CartPageHeader = ({
                </span>
             )}
             {showBrandLogo && logo && (
-               <img src={logo} alt={brandName} tw="height[40px]"  />
+               <img src={logo} alt={brandName} tw="height[40px]" />
             )}
             &nbsp;&nbsp;
             {showBrandName && brandName && <span>{brandName}</span>}

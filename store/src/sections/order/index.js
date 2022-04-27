@@ -284,6 +284,7 @@ const ProductWithIntersection = ({
    closeModifier,
    CustomAreaWrapper,
 }) => {
+   const router = useRouter()
    const productRef = React.useRef()
    const router = useRouter()
    const { entry, isIntersected } = useIntersectionObserver(productRef, {
