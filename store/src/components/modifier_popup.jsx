@@ -378,7 +378,7 @@ export const ModifierPopup = props => {
       return {
          total: totalPrice * quantity,
          totalWithoutDiscount: totalWithoutDiscount * quantity,
-         totalDiscount: totalWithoutDiscount - totalPrice,
+         totalDiscount: (totalWithoutDiscount - totalPrice) * quantity,
       }
    }
    const { total, totalWithoutDiscount, totalDiscount } = totalAmount()
@@ -433,7 +433,9 @@ export const ModifierPopup = props => {
                )
          )
       } else {
-         return getPriceWithDiscount(productData.price, productData.discount)
+         return formatCurrency(
+            getPriceWithDiscount(productData.price, productData.discount)
+         )
       }
    }
 
