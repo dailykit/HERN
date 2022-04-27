@@ -1,4 +1,8 @@
+import reshaper from 'arabic-persian-reshaper'
 export const convertArabicForm = text => {
+   text = reshaper.ArabicShaper.convertArabic(text)
+      .replace('\u200b', '')
+      .replace('\u064B', '')
    const form = {
       ا: {
          isolated: 'ﺍ',
@@ -193,9 +197,7 @@ export const convertArabicForm = text => {
 
    let arabicForm = {
       end: {},
-      middle: {},
-      beginning: {},
-      isolated: {}
+      middle: {}
    }
    Object.entries(form).forEach(([key, value]) => {
       if (!value.hasOwnProperty('isAvailable') || !value.isAvailable) {
@@ -204,18 +206,17 @@ export const convertArabicForm = text => {
       }
    })
 
-   console.log(arabicForm)
-
    for (let i = 0; i < text.length; i++) {
       if (arabicForm.end[text[i]]) {
-         console.log(text[i])
-         console.log('inside else if end')
+         // console.log(text[i])
+         // console.log('inside else if end')
          text = text.replace(text[i], arabicForm.end[text[i]].isolated)
       } else if (arabicForm.middle[text[i]]) {
-         console.log(text[i])
-         console.log('inside elseif middle')
+         // console.log(text[i])
+         // console.log('inside elseif middle')
          text = text.replace(text[i], arabicForm.middle[text[i]].beginning)
       }
    }
-   return text
+
+   return text.split('').reverse().join('')
 }
