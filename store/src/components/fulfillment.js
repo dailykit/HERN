@@ -7,12 +7,14 @@ import { getDistance, convertDistance } from 'geolib'
 import moment from 'moment'
 import { CartContext, useTranslation } from '../context'
 import { useQuery } from '@apollo/react-hooks'
-import { Loader } from '.'
+import { Loader, HernSkeleton } from '.'
 import { Delivery, Pickup } from './fulfillmentSection'
 import { RefineLocationPopup } from './refineLocation'
-import { LocationSelectorWrapper } from '../utils'
+import { isClient, LocationSelectorWrapper } from '../utils'
 import classNames from 'classnames'
 import TimeIcon from '../assets/icons/Time'
+
+const isSmallerDevice = isClient && window.innerWidth < 768
 
 export const FulfillmentForm = () => {
    const { orderTabs, selectedOrderTab } = useConfig()
@@ -294,7 +296,23 @@ export const Fulfillment = ({ cart, editable = true }) => {
       }
    }, [cart, brandLocations])
    if (brandLocationLading) {
-      return <Loader inline />
+      if (isSmallerDevice) {
+         return null
+      }
+      return (
+         <div style={{ width: '100%', height: '337px' }}>
+            <HernSkeleton
+               width="100%"
+               height="72px"
+               style={{ marginBottom: '16px' }}
+            />
+            <HernSkeleton
+               width="100%"
+               height="249px"
+               style={{ marginBottom: '16px' }}
+            />
+         </div>
+      )
    }
    return (
       <>
