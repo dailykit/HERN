@@ -71,6 +71,10 @@ const TotalEarningAnalytics = () => {
                   analyticsApiArgState.brandShop.shopTitle
                      ? `AND b.source = \'${analyticsApiArgState.brandShop.shopTitle}\'`
                      : ''
+               } ${
+                  analyticsApiArgState.brandShop.locationId
+                     ? `AND b."locationId" = ${analyticsApiArgState.brandShop.locationId}`
+                     : ''
                }`,
                groupingSets: `(${analyticsApiArgState.groupBy.toString()})`,
                columns: analyticsApiArgState.groupBy
@@ -104,6 +108,10 @@ const TotalEarningAnalytics = () => {
                } ${
                   analyticsApiArgState.brandShop.shopTitle
                      ? `AND b.source = \'${analyticsApiArgState.brandShop.shopTitle}\'`
+                     : ''
+               } ${
+                  analyticsApiArgState.brandShop.locationId
+                     ? `AND b."locationId" = ${analyticsApiArgState.brandShop.locationId}`
                      : ''
                }`,
                groupingSets: `(${analyticsApiArgState.groupBy.toString()})`,

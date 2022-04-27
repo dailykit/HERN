@@ -65,6 +65,7 @@ const TotalEarningTunnel = ({ currency }) => {
       brandId: undefined,
       shopTitle: false,
       brand: undefined,
+      locationId: null,
    })
    const [brands, setBrands] = useState([])
    const { loading: brandLoading } = useSubscription(BRANDS, {
@@ -106,6 +107,10 @@ const TotalEarningTunnel = ({ currency }) => {
                   brandShop.shopTitle
                      ? `AND b.source = \'${brandShop.shopTitle}\'`
                      : ''
+               } ${
+                  brandShop.locationId
+                     ? `AND b."locationId" = ${brandShop.locationId}`
+                     : ''
                }`,
                groupingSets: `(${groupBy.toString()})`,
                columns:
@@ -140,6 +145,10 @@ const TotalEarningTunnel = ({ currency }) => {
                } ${
                   brandShop.shopTitle
                      ? `AND b.source = \'${brandShop.shopTitle}\'`
+                     : ''
+               } ${
+                  brandShop.locationId
+                     ? `AND b."locationId" = ${brandShop.locationId}`
                      : ''
                }`,
                groupingSets: `(${groupBy.toString()})`,

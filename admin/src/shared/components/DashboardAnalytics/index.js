@@ -32,7 +32,7 @@ import {
 import { groupBy } from 'lodash'
 import { reactFormatter, ReactTabulator } from '@dailykit/react-tabulator'
 import { useTabs } from '../../providers'
-import { BRANDS } from './graphQl/subscription'
+import { BRANDS, LOCATIONS } from './graphQl/subscription'
 import {
    TotalEarningTunnel,
    TotalOrderRecTunnel,
@@ -89,6 +89,7 @@ const DashboardAnalytics = ({ children }) => {
       brandId: undefined,
       shopTitle: false,
       brand: undefined,
+      locationId: null,
    })
    const [brands, setBrands] = useState([])
    const { loading: brandLoading } = useSubscription(BRANDS, {
@@ -212,6 +213,71 @@ export const BrandAndShop = ({ brands, setBrandShop, brandShop, global }) => {
                typeName="Brand"
             />
          </Flex>
+         <Spacer size="20px" xAxis />
+         <LocationSelector global={global} setBrandShop={setBrandShop} />
+      </Flex>
+   )
+}
+const LocationSelector = ({ global, setBrandShop }) => {
+   const [locationsList, setLocationsList] = useState([])
+
+   const { analyticsApiArgsDispatch } = React.useContext(
+      AnalyticsApiArgsContext
+   )
+   const { loading: locationsLoading, error: locationsError } = useSubscription(
+      LOCATIONS,
+      {
+         onSubscriptionData: ({ subscriptionData }) => {
+            const locations = subscriptionData.data.brands_location
+            console.log('locations, ', locations, subscriptionData)
+            setLocationsList(
+               [{ title: 'All', locationId: null }, ...locations].map(
+                  (eachLocation, index) => {
+                     return { id: index + 1, ...eachLocation }
+                  }
+               )
+            )
+         },
+      }
+   )
+   const selectedOptionBrand = option => {
+      if (global) {
+         analyticsApiArgsDispatch({
+            type: 'BRANDSHOP',
+            payload: {
+               locationId: option.locationId,
+            },
+         })
+      } else {
+         setBrandShop(prevState => ({
+            ...prevState,
+            locationId: option.locationId,
+         }))
+      }
+   }
+   const searchedOption = option => console.log(option)
+   if (locationsLoading || (locationsLoading && !locationsError)) {
+      return <InlineLoader />
+   }
+
+   if (locationsError) {
+      logger(locationsError)
+      toast.error('Could not get the locations')
+      return <p>Could not get the locations</p>
+   }
+
+   return (
+      <Flex container flexDirection="column" width="30rem">
+         <Text as="text1">Location:</Text>
+         <Spacer size="3px" />
+         <Dropdown
+            type="single"
+            options={locationsList}
+            defaultValue={1}
+            searchedOption={searchedOption}
+            selectedOption={selectedOptionBrand}
+            typeName="Location"
+         />
       </Flex>
    )
 }
