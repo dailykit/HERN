@@ -337,23 +337,25 @@ export const ModifierPopup = props => {
          ...nestedSelectedModifierOptions.multiple,
       ]
       let allSelectedOptionsPrice = 0
-      let allSelectedOptionsDiscount = 0
+      let allSelectedOptionsPriceWithDiscount = 0
       let allNestedSelectedOptionsPrice = 0
-      let allNestedSelectedOptionsDiscount = 0
+      let allNestedSelectedOptionsPriceWithDiscount = 0
       allSelectedOptions.forEach(x => {
          allSelectedOptionsPrice += x?.modifierCategoryOptionsPrice || 0
-         allSelectedOptionsDiscount += x?.modifierCategoryOptionsDiscount || 0
+         allSelectedOptionsPriceWithDiscount +=
+            getPriceWithDiscount(
+               x?.modifierCategoryOptionsPrice,
+               x?.modifierCategoryOptionsDiscount
+            ) || 0
       })
       allNestedSelectedOptions.forEach(x => {
          allNestedSelectedOptionsPrice += x?.modifierCategoryOptionsPrice || 0
-         allNestedSelectedOptionsDiscount +=
-            x?.modifierCategoryOptionsDiscount || 0
+         allNestedSelectedOptionsPriceWithDiscount +=
+            getPriceWithDiscount(
+               x?.modifierCategoryOptionsPrice,
+               x?.modifierCategoryOptionsDiscount
+            ) || 0
       })
-
-      const getPriceWithDiscount = (price, discount) => {
-         return price - (price * discount) / 100
-      }
-
       const totalBaseProductPriceWithDiscount = getPriceWithDiscount(
          productData.price,
          productData.discount
@@ -362,17 +364,7 @@ export const ModifierPopup = props => {
          productOptionPrice,
          productOption.discount
       )
-      const totalAllSelectedOptionsPriceWithDiscount = getPriceWithDiscount(
-         allSelectedOptionsPrice,
-         allSelectedOptionsDiscount
-      )
-      const totalAllNestedSelectedOptionsPriceWithDiscount =
-         getPriceWithDiscount(
-            allNestedSelectedOptionsPrice,
-            allNestedSelectedOptionsDiscount
-         )
-
-      const totalPriceWithDiscount =
+      const totalWithoutDiscount =
          productData.price +
          productOptionPrice +
          allSelectedOptionsPrice +
@@ -380,21 +372,16 @@ export const ModifierPopup = props => {
       const totalPrice =
          totalBaseProductPriceWithDiscount +
          totalProductionOptionsPriceWithDiscount +
-         totalAllSelectedOptionsPriceWithDiscount +
-         totalAllNestedSelectedOptionsPriceWithDiscount
+         allSelectedOptionsPriceWithDiscount +
+         allNestedSelectedOptionsPriceWithDiscount
 
       return {
          total: totalPrice * quantity,
-         totalWithoutDiscount: totalPriceWithDiscount * quantity,
-         totalDiscount:
-            productData.discount +
-            productOption.discount +
-            allSelectedOptionsDiscount +
-            allNestedSelectedOptionsDiscount,
+         totalWithoutDiscount: totalWithoutDiscount * quantity,
+         totalDiscount: totalWithoutDiscount - totalPrice,
       }
    }
    const { total, totalWithoutDiscount, totalDiscount } = totalAmount()
-
    //increment click
    const incrementClick = () => {
       setQuantity(quantity + 1)
