@@ -50,7 +50,10 @@ const Breadcrumbs = () => {
          </Styles.Crumb>
 
          {routes.map((route, index) => (
-            <Styles.Crumb onClick={() => history.push(route.path)} key={`${route.path}-${route.title}`}>
+            <Styles.Crumb
+               onClick={() => history.push(route.path)}
+               key={`${route.path}-${route.title}`}
+            >
                <p
                   title={route.title}
                   style={{
@@ -65,8 +68,6 @@ const Breadcrumbs = () => {
                >
                   {route.title}
                </p>
-            
-               {route.title}
                {routes.length - 1 !== index && (
                   <>
                      &nbsp;

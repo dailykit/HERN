@@ -570,6 +570,14 @@ export const Sidebar = ({ setOpen }) => {
                   title: 'On-Demand Pickup',
                   path: '/menu/recurrences/ONDEMAND_PICKUP',
                },
+               {
+                  title: 'On-Demand DineIn',
+                  path: '/menu/recurrences/ONDEMAND_DINEIN'
+               },
+               {
+                  title: 'Pre-Order DineIn',
+                  path: '/menu/recurrences/SCHEDULED_DINEIN',
+               },
             ],
          },
          {
