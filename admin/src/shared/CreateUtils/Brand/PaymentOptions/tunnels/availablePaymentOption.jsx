@@ -15,16 +15,15 @@ export const AvailablePaymentOption = ({ close, companyDetails }) => {
     const [paymentId, setPaymentId] = useState(null)
     const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
 
-    const [label, setLabel] = useState(
-        {
-            value: '',
-            meta: {
-                isTouched: false,
-                isValid: true,
-                errors: [],
-            },
-        }
-    )
+    const [label, setLabel] = React.useState({
+        id: null,
+        value: '',
+        meta: {
+            isTouched: false,
+            isValid: true,
+            errors: [],
+        },
+    })
 
     const [updateLocation] = useMutation(PAYMENT_OPTIONS.UPDATE_LABEL, {
         onCompleted: (data) => {
@@ -42,19 +41,14 @@ export const AvailablePaymentOption = ({ close, companyDetails }) => {
         },
     })
 
-    const onChange = (field, value) => {
-        setLabel({
-            ...label,
-            value,
-        })
-    }
-    const onBlur = field => {
-        const { isValid, errors } = validatorFunc.text(label.value)
+    const onBlur = () => {
+        const val = label.value.trim()
+        const { isValid, errors } = validatorFunc.text(val)
         if (isValid) {
             updateLocation({
                 variables: {
                     objects: {
-                        label: label.value,
+                        label: val,
                         supportedPaymentOptionId: availablePaymentOption.id,
                         publicCreds: availablePaymentOption.publicCredsConfig,
                         privateCreds: availablePaymentOption.privateCredsConfig
@@ -78,7 +72,7 @@ export const AvailablePaymentOption = ({ close, companyDetails }) => {
             <TunnelHeader title="Select Payment option"
                 right={{
                     action: () => {
-                        openTunnel(1)
+                        label.id === availablePaymentOption.id && label.meta.isValid === true ? openTunnel(1) : toast.error('Label can not be empty!')
                     },
                     title: 'Next',
                 }}
@@ -104,18 +98,18 @@ export const AvailablePaymentOption = ({ close, companyDetails }) => {
                 <Spacer yAxis size="48px" />
                 {availablePaymentOption && <Form.Group>
                     <Form.Label
-                        htmlFor={`Label`}
-                        title={`Label`}
+                        htmlFor={`Label-${availablePaymentOption.id}`}
+                        title={`Label-${availablePaymentOption.id}`}
                     >
                         Label
                     </Form.Label>
                     <Form.Text
-                        id={`Label`}
-                        name={`Label`}
+                        id={`Label-${availablePaymentOption.id}`}
+                        name={`Label-${availablePaymentOption.id}`}
                         value={label.value}
                         placeholder="Enter Label"
-                        onChange={e => onChange('value', e.target.value)}
-                        onBlur={e => onBlur('value', e.target.value)}
+                        onChange={e => setLabel({ ...label, value: e.target.value, id: availablePaymentOption.id })}
+                        onBlur={e => onBlur('label')}
                         hasError={
                             !label.meta.isValid &&
                             label.meta.isTouched
