@@ -13,12 +13,7 @@ import {
 import { useUser } from '.'
 import { useConfig } from '../lib'
 import { useToasts } from 'react-toast-notifications'
-import {
-   combineCartItems,
-   useQueryParamState,
-   useWindowOnload,
-   isKiosk,
-} from '../utils'
+import { combineCartItems, useQueryParamState, isKiosk } from '../utils'
 import { useTranslation } from './language'
 
 export const CartContext = React.createContext()
@@ -63,7 +58,6 @@ export const CartProvider = ({ children }) => {
    const [combinedCartItems, setCombinedCartData] = useState(null)
    const [showCartIconToolTip, setShowCartIconToolTip] = useState(false)
    const [dineInTableInfo, setDineInTableInfo] = useState(null)
-   const { isWindowLoading } = useWindowOnload()
 
    React.useEffect(() => {
       // case 1 - user is not authenticated
@@ -91,7 +85,7 @@ export const CartProvider = ({ children }) => {
       error: getInitialCart,
       data: cartData = {},
    } = useSubscription(GET_CART, {
-      skip: isWindowLoading || !storedCartId,
+      skip: !storedCartId,
       variables: {
          where: {
             id: {
@@ -119,7 +113,7 @@ export const CartProvider = ({ children }) => {
       error: cartItemsError,
       data: cartItemsData,
    } = useSubscription(GET_CART_ITEMS_BY_CART, {
-      skip: isWindowLoading || !storedCartId,
+      skip: !storedCartId,
       variables: {
          where: {
             level: {
@@ -461,9 +455,7 @@ export const CartProvider = ({ children }) => {
                },
             },
          },
-         skip:
-            !(brand?.id && user?.keycloakId && orderTabs.length > 0) ||
-            isWindowLoading,
+         skip: !(brand?.id && user?.keycloakId && orderTabs.length > 0),
          fetchPolicy: 'no-cache',
          onSubscriptionData: ({ subscriptionData }) => {
             console.log('subscriptionData', subscriptionData)
