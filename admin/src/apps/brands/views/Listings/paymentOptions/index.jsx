@@ -153,7 +153,7 @@ export const PaymentOptions = () => {
                                                 onChange={() => paymentOptionActiveHandler(element)}
                                                 value={element.isActive}
                                             >
-                                                Active
+                                                Published
                                             </Form.Toggle>
                                         </Form.Group>
                                     </StyledCardText >

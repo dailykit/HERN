@@ -209,10 +209,13 @@ export const PaymentOption = () => {
                      <CardHeading>
                         {each.label === 'privateCreds'
                            ? `Private credentials (${
-                                paymentOption?.privateCreds.private.length || 0
+                                Object.values(
+                                   paymentOption?.privateCreds.private
+                                ).length || 0
                              })`
                            : `Public credentials (${
-                                paymentOption?.publicCreds.public.length || 0
+                                Object.values(paymentOption?.publicCreds.public)
+                                   .length || 0
                              })`}
                      </CardHeading>
                      <SettingsCard
