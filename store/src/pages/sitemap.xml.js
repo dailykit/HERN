@@ -63,7 +63,7 @@ export const getServerSideProps = async ({ req, res }) => {
       `
 
     //header on the response to signal back to the browser that we're returning an .xml file-----(5)
-    res.setHeader('Content-Type', 'text/xml')
+    res.setHeader('Content-Type', 'application/xml')
     // passing the generated 'sitemap' string-------(6)
     res.write(sitemap)
     res.end()
