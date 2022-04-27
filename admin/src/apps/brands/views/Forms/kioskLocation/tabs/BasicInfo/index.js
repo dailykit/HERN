@@ -75,57 +75,66 @@ export const BasicInfo = () => {
 
    // calling printers data
    // const [printerList, setPrinterList] = React.useState([{printerId:'', printerName: ''}])
-   const { error1, loading1, data1 } = useSubscription(KIOSK.PRINTERS, {
-      onSubscriptionData: ({
-         subscriptionData: {
-            data: { printers = [] },
+   const { PrinterError, PrinterListLoading, PrinterData } = useSubscription(
+      KIOSK.PRINTERS,
+      {
+         onSubscriptionData: ({
+            subscriptionData: {
+               data: { printers = [] },
+            },
+         }) => {
+            // setPrinterList(printers.map(printers =>   ({id: printers.printNodeId, title: printers.name}) ))
+            //  const name1 = printers.map(printers => {
+            //     return { id: printers.printNodeId, title: printers.name, }
+            //  })
+            //  setPrinterList(name1)
+            let printersData = printers.map(printer => {
+               return {
+                  id: printer?.printNodeId || '',
+                  title: printer?.name || '',
+                  description:
+                     printer?.printNodeId +
+                        '-' +
+                        printer?.name +
+                        '-' +
+                        printer?.computer?.name || '',
+               }
+            })
+            setPrinterList(previousData => [...previousData, ...printersData])
+            console.log('printers:', printers, 'printerList:', printerList)
          },
-      }) => {
-         // setPrinterList(printers.map(printers =>   ({id: printers.printNodeId, title: printers.name}) ))
-         //  const name1 = printers.map(printers => {
-         //     return { id: printers.printNodeId, title: printers.name, }
-         //  })
-         //  setPrinterList(name1)
-         let printersData = printers.map(printer => {
-            return {
-               id: printer?.printNodeId || '',
-               title: printer?.name || '',
-               description:
-                  printer?.printNodeId +
-                     '-' +
-                     printer?.name +
-                     '-' +
-                     printer?.computer?.name || '',
-            }
-         })
-         setPrinterList(previousData => [...previousData, ...printersData])
-         console.log('printers:', printers, 'printerList:', printerList)
-      },
-   })
+      }
+   )
    console.log(printerList)
 
-   const { error2, loading2, data2 } = useSubscription(KIOSK.LOCATIONS, {
-      onSubscriptionData: ({
-         subscriptionData: {
-            data: { locations = [] },
+   const { locationError, locationListLoading, locationData } = useSubscription(
+      KIOSK.LOCATIONS,
+      {
+         onSubscriptionData: ({
+            subscriptionData: {
+               data: { locations = [] },
+            },
+         }) => {
+            let locationsData = locations.map(location => {
+               return {
+                  id: location?.id || '',
+                  title: location?.label || '',
+                  description:
+                     location?.id +
+                        '-' +
+                        location?.label +
+                        '-' +
+                        location?.city || '',
+               }
+            })
+            setLocationList(previousLocation => [
+               ...previousLocation,
+               ...locationsData,
+            ])
+            // console.log('locations:', locations, 'locationList:', locationList)
          },
-      }) => {
-         let locationsData = locations.map(location => {
-            return {
-               id: location?.id || '',
-               title: location?.label || '',
-               description:
-                  location?.id + '-' + location?.label + '-' + location?.city ||
-                  '',
-            }
-         })
-         setLocationList(previousLocation => [
-            ...previousLocation,
-            ...locationsData,
-         ])
-         console.log('locations:', locations, 'locationList:', locationList)
-      },
-   })
+      }
+   )
 
    const [updateKiosk] = useMutation(KIOSK.UPDATE_KIOSK, {
       onCompleted: data => {
@@ -255,8 +264,8 @@ export const BasicInfo = () => {
          },
       })
    }
-   if (loading || loading1 || loading2) {
-      console.log('loadings::', loading, loading1)
+   if (loading || PrinterListLoading || locationListLoading) {
+      // console.log('loadings::', loading, PrinterListLoading)
       return <InlineLoader />
    }
    return (

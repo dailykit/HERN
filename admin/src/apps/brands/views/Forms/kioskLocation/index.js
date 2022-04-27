@@ -77,23 +77,26 @@ export const KioskLocation = () => {
       },
    })
 
-   const { error1, loading1, data1 } = useSubscription(BRANDS.LIST, {
-      onSubscriptionData: ({
-         subscriptionData: {
-            data: { brands = {} },
+   const { brandListError, brandListLoading, brandListData } = useSubscription(
+      BRANDS.LIST,
+      {
+         onSubscriptionData: ({
+            subscriptionData: {
+               data: { brands = {} },
+            },
+         }) => {
+            console.log('brands data', brands)
+            const brandsData = brands?.nodes.map(brand => {
+               return {
+                  id: brand?.id || '',
+                  // title: brand?.title || '',
+                  title: brand?.domain || '',
+               }
+            })
+            setBrandList(previousData => [...previousData, ...brandsData])
          },
-      }) => {
-         console.log('brands data', brands)
-         const brandsData = brands?.nodes.map(brand => {
-            return {
-               id: brand?.id || '',
-               // title: brand?.title || '',
-               title: brand?.domain || '',
-            }
-         })
-         setBrandList(previousData => [...previousData, ...brandsData])
-      },
-   })
+      }
+   )
    console.log('brandlist made now::>', brandList)
 
    React.useEffect(() => {
@@ -127,7 +130,7 @@ export const KioskLocation = () => {
       }
    }
 
-   if (loading || loading1) return <InlineLoader />
+   if (loading || brandListLoading) return <InlineLoader />
    if (error) {
       toast.error('Something went wrong!')
       logger(error)
@@ -248,7 +251,7 @@ export const KioskLocation = () => {
                         <div style={{ marginTop: '10px' }}>
                            <Dropdown
                               type="single"
-                              isLoading={loading1}
+                              isLoading={brandListLoading}
                               addOption={brandList}
                               options={brandList}
                               defaultName={title.accessUrl.split('/kiosk')[0]}
@@ -264,7 +267,7 @@ export const KioskLocation = () => {
                                  })
                               }
                               placeholder="Enter brand domain"
-                              addOption={() => console.log('Brand Added')}
+                              // addOption={() => console.log('Brand Added')}
                            />
                         </div>
                      </div>
