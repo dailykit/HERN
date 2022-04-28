@@ -31,6 +31,7 @@ import WebhookSvg from './Webhooks'
 import ApiKeySvg from './ApiKey'
 import BrandLocationsSvg from './brandLocations'
 import KioskLocationsSvg from './KioskLocations'
+import PaymentSvg from './Payment'
 
 export {
    ProductsSvg,
@@ -66,4 +67,5 @@ export {
    ApiKeySvg,
    BrandLocationsSvg,
    KioskLocationsSvg,
+   PaymentSvg,
 }

@@ -676,3 +676,176 @@ export const KIOSK = {
       }
    `,
 }
+export const PAYMENT_OPTIONS = {
+   AGGREGATE: gql`
+      subscription paymentOptions {
+         brands_availablePaymentOption_aggregate {
+            aggregate {
+               count
+            }
+         }
+      }
+   `,
+   LIST: gql`
+      subscription availablePaymentOptions {
+         brands_availablePaymentOption(
+            order_by: { position: desc_nulls_last }
+         ) {
+            id
+            label
+            isValid
+            isActive
+            position
+            description
+            privateCreds
+            publicCreds
+            supportedPaymentOption {
+               paymentOptionLabel
+               supportedPaymentCompany {
+                  label
+                  logo
+               }
+            }
+            SUCCEEDED: cartPayments_aggregate(
+               where: {
+                  paymentStatus: { _eq: "SUCCEEDED" }
+                  isTest: { _eq: false }
+               }
+            ) {
+               aggregate {
+                  count
+                  sum {
+                     amount
+                  }
+                  avg {
+                     amount
+                  }
+               }
+            }
+         }
+      }
+   `,
+   UPDATE: gql`
+      mutation updatePaymantOption(
+         $id: Int!
+         $_set: brands_availablePaymentOption_set_input!
+      ) {
+         update_brands_availablePaymentOption_by_pk(
+            pk_columns: { id: $id }
+            _set: $_set
+         ) {
+            id
+         }
+      }
+   `,
+   DELETE: gql`
+      mutation deletePaymentOption($id: Int!) {
+         delete_brands_availablePaymentOption(where: { id: { _eq: $id } }) {
+            affected_rows
+         }
+      }
+   `,
+   COMPANY_LIST: gql`
+      subscription paymentCompany {
+         brands_supportedPaymentCompany {
+            label
+            id
+            logo
+            supportedPaymentOptions {
+               id
+               paymentOptionLabel
+               publicCredsConfig
+               privateCredsConfig
+               availablePaymentOptions {
+                  description
+                  label
+                  publicCreds
+                  privateCreds
+               }
+            }
+         }
+      }
+   `,
+   UPDATE_LABEL: gql`
+      mutation upsetLabel(
+         $objects: [brands_availablePaymentOption_insert_input!]!
+         $supportedPaymentOptionId: Int!
+      ) {
+         insert_brands_availablePaymentOption(
+            objects: $objects
+            on_conflict: {
+               constraint: availablePaymentOption_label_key
+               where: {
+                  supportedPaymentOptionId: { _eq: $supportedPaymentOptionId }
+               }
+            }
+         ) {
+            affected_rows
+            returning {
+               label
+               id
+            }
+         }
+      }
+   `,
+   VIEW_CREDS: gql`
+      subscription updateCreds($id: Int_comparison_exp!) {
+         brands_availablePaymentOption(where: { id: $id }) {
+            id
+            description
+            label
+            privateCreds
+            publicCreds
+         }
+      }
+   `,
+   UPDATE_CREDS: gql`
+      mutation updatePayment(
+         $_set: brands_availablePaymentOption_set_input!
+         $id: Int!
+      ) {
+         update_brands_availablePaymentOption(
+            where: { id: { _eq: $id } }
+            _set: $_set
+         ) {
+            affected_rows
+         }
+      }
+   `,
+   VIEW: gql`
+      subscription availablePayment($id: Int!) {
+         brands_availablePaymentOption_by_pk(id: $id) {
+            id
+            isActive
+            isValid
+            label
+            privateCreds
+            publicCreds
+            description
+            supportedPaymentOption {
+               paymentOptionLabel
+               supportedPaymentCompany {
+                  label
+                  logo
+               }
+            }
+            SUCCEEDED: cartPayments_aggregate(
+               where: {
+                  paymentStatus: { _eq: "SUCCEEDED" }
+                  isTest: { _eq: false }
+               }
+            ) {
+               aggregate {
+                  count
+                  sum {
+                     amount
+                  }
+                  avg {
+                     amount
+                  }
+               }
+            }
+         }
+      }
+   `,
+}
