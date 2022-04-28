@@ -74,6 +74,9 @@ export const ModifierPopup = props => {
       return groupedData
    }, [productData])
    const [productOptionType, setProductOptionType] = useState(
+      productData.productOptions.find(
+         x => x.id === productData.defaultProductOptionId
+      )?.type ||
       productOptionsGroupedByProductOptionType[0]['type']
    )
 
@@ -581,6 +584,7 @@ export const ModifierPopup = props => {
                                           eachProductOptionType.type
                                        )
                                        setProductOption(
+                                          eachProductOptionType.data.find(x => x.id===productData.defaultProductOptionId) ||
                                           eachProductOptionType.data[0]
                                        )
                                        if (isModifierOptionsViewOpen) {
