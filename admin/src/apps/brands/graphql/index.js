@@ -501,6 +501,7 @@ export const KIOSK = {
             location {
                city
                id
+               label
             }
          }
       }
@@ -624,6 +625,22 @@ export const KIOSK = {
             orderTabId
             posist_tabId
             posist_tabType
+         }
+      }
+   `,
+
+   DELETE_KIOSK_ORDER_TAB: gql`
+      mutation DELETE_KIOSK_ORDER_TAB(
+         $locationKioskId: Int_comparison_exp!
+         $orderTabId: Int_comparison_exp!
+      ) {
+         delete_brands_locationKiosk_orderTab(
+            where: {
+               locationKioskId: $locationKioskId
+               orderTabId: $orderTabId
+            }
+         ) {
+            affected_rows
          }
       }
    `,
