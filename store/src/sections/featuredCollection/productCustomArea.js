@@ -246,6 +246,7 @@ export const CustomArea = props => {
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'space-between',
+                  gap: '8px',
                }}
             >
                <Button
@@ -257,13 +258,18 @@ export const CustomArea = props => {
                      border: `2px solid ${themeColor}`,
                      background: 'transparent',
                      padding: '1.4px 28px',
+                     whiteSpace: 'nowrap',
                      color: themeColor,
                   }}
                >
                   {t("I'LL CHOOSE")}
                </Button>
                <Button
-                  style={{ padding: '.1em 2em' }}
+                  style={{
+                     padding: '.1em 2em',
+                     whiteSpace: 'nowrap',
+                     transform: 'translateY(0)',
+                  }}
                   onClick={async () => {
                      await repeatLastOne(data)
                   }}
