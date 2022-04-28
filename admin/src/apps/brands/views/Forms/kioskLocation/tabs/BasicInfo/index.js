@@ -3,15 +3,7 @@ import { isEmpty } from 'lodash'
 import { toast } from 'react-toastify'
 import { useParams } from 'react-router-dom'
 import { useMutation, useSubscription } from '@apollo/react-hooks'
-import {
-   Flex,
-   Text,
-   Spacer,
-   Form,
-   Dropdown,
-   ButtonGroup,
-   TextButton,
-} from '@dailykit/ui'
+import { Flex, Text, Spacer, Form, Dropdown, ButtonGroup } from '@dailykit/ui'
 import { CopyIcon } from '../../../../../../editor/assets/Icons'
 import validator from '../validator'
 import { KIOSK } from '../../../../../graphql'
@@ -60,7 +52,7 @@ export const BasicInfo = () => {
             printerId: kiosk[0].printerId || '',
             password:
                kiosk[0].password || kiosk[0].kioskLabel + '@' + params.id,
-            location: kiosk[0].location?.city || '',
+            location: kiosk[0].location?.label || '',
             locationId: kiosk[0].location?.id || '',
             meta: {
                isValid: kiosk[0].kioskLabel ? true : false,
@@ -83,57 +75,66 @@ export const BasicInfo = () => {
 
    // calling printers data
    // const [printerList, setPrinterList] = React.useState([{printerId:'', printerName: ''}])
-   const { error1, loading1, data1 } = useSubscription(KIOSK.PRINTERS, {
-      onSubscriptionData: ({
-         subscriptionData: {
-            data: { printers = [] },
+   const { PrinterError, PrinterListLoading, PrinterData } = useSubscription(
+      KIOSK.PRINTERS,
+      {
+         onSubscriptionData: ({
+            subscriptionData: {
+               data: { printers = [] },
+            },
+         }) => {
+            // setPrinterList(printers.map(printers =>   ({id: printers.printNodeId, title: printers.name}) ))
+            //  const name1 = printers.map(printers => {
+            //     return { id: printers.printNodeId, title: printers.name, }
+            //  })
+            //  setPrinterList(name1)
+            let printersData = printers.map(printer => {
+               return {
+                  id: printer?.printNodeId || '',
+                  title: printer?.name || '',
+                  description:
+                     printer?.printNodeId +
+                        '-' +
+                        printer?.name +
+                        '-' +
+                        printer?.computer?.name || '',
+               }
+            })
+            setPrinterList(previousData => [...previousData, ...printersData])
+            console.log('printers:', printers, 'printerList:', printerList)
          },
-      }) => {
-         // setPrinterList(printers.map(printers =>   ({id: printers.printNodeId, title: printers.name}) ))
-         //  const name1 = printers.map(printers => {
-         //     return { id: printers.printNodeId, title: printers.name, }
-         //  })
-         //  setPrinterList(name1)
-         let printersData = printers.map(printer => {
-            return {
-               id: printer?.printNodeId || '',
-               title: printer?.name || '',
-               description:
-                  printer?.printNodeId +
-                     '-' +
-                     printer?.name +
-                     '-' +
-                     printer?.computer?.name || '',
-            }
-         })
-         setPrinterList(previousData => [...previousData, ...printersData])
-         console.log('printers:', printers, 'printerList:', printerList)
-      },
-   })
+      }
+   )
    console.log(printerList)
 
-   const { error2, loading2, data2 } = useSubscription(KIOSK.LOCATIONS, {
-      onSubscriptionData: ({
-         subscriptionData: {
-            data: { locations = [] },
+   const { locationError, locationListLoading, locationData } = useSubscription(
+      KIOSK.LOCATIONS,
+      {
+         onSubscriptionData: ({
+            subscriptionData: {
+               data: { locations = [] },
+            },
+         }) => {
+            let locationsData = locations.map(location => {
+               return {
+                  id: location?.id || '',
+                  title: location?.label || '',
+                  description:
+                     location?.id +
+                        '-' +
+                        location?.label +
+                        '-' +
+                        location?.city || '',
+               }
+            })
+            setLocationList(previousLocation => [
+               ...previousLocation,
+               ...locationsData,
+            ])
+            // console.log('locations:', locations, 'locationList:', locationList)
          },
-      }) => {
-         let locationsData = locations.map(location => {
-            return {
-               id: location?.id || '',
-               title: location?.city || '',
-               description:
-                  location?.id + '-' + location?.label + '-' + location?.city ||
-                  '',
-            }
-         })
-         setLocationList(previousLocation => [
-            ...previousLocation,
-            ...locationsData,
-         ])
-         console.log('locations:', locations, 'locationList:', locationList)
-      },
-   })
+      }
+   )
 
    const [updateKiosk] = useMutation(KIOSK.UPDATE_KIOSK, {
       onCompleted: data => {
@@ -263,7 +264,10 @@ export const BasicInfo = () => {
          },
       })
    }
-
+   if (loading || PrinterListLoading || locationListLoading) {
+      // console.log('loadings::', loading, PrinterListLoading)
+      return <InlineLoader />
+   }
    return (
       <div>
          <Flex padding="16px">
@@ -316,6 +320,7 @@ export const BasicInfo = () => {
                <Form.Group>
                   <Form.Label htmlFor="password" title="password">
                      <ButtonGroup
+                        style={{ gap: '5px' }}
                         onClick={() => {
                            copy(title.password)
                         }}
@@ -326,7 +331,7 @@ export const BasicInfo = () => {
                         </div>{' '}
                      </ButtonGroup>
                   </Form.Label>
-                  <Form.Password
+                  <Form.Text
                      value={title.password}
                      placeholder="Enter access password"
                      id="password"
@@ -371,7 +376,7 @@ export const BasicInfo = () => {
                      options={printerList}
                      selectedOption={e => updateKioskPrinter(e)}
                      placeholder="Enter printer name"
-                     addOption={() => console.log('printer ADDED')}
+                     // addOption={() => console.log('printer ADDED')}
                   />
                </Form.Group>
 
@@ -391,7 +396,7 @@ export const BasicInfo = () => {
                      options={locationList}
                      selectedOption={e => updateKioskLocation(e)}
                      placeholder="Choose kiosk location"
-                     addOption={() => console.log('location ADDED')}
+                     // addOption={() => console.log('location ADDED')}
                   />
                </Form.Group>
             </>

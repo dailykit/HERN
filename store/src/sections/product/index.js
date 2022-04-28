@@ -111,7 +111,8 @@ export const Product = ({ config }) => {
                   }
                )}
             >
-               {showProductDetailOnImage && (
+               {(showProductDetailOnImage ||
+                  isEmpty(productDetails?.productOptions)) && (
                   <ProductInfo productData={productDetails} />
                )}
                <ProductMedia assets={productDetails?.assets} config={config} />
@@ -131,25 +132,26 @@ export const Product = ({ config }) => {
                   }
                )}
             >
-               {!showProductDetailOnImage && (
-                  <ProductCard
-                     data={productDetails}
-                     showProductPrice={false}
-                     showProductDescription={false}
-                     showImage={false}
-                     showProductName={false}
-                     closeModifier={() => console.log('close')}
-                     customAreaFlex={false}
-                     showModifier={true}
-                     customProductDetails={true}
-                     modifierWithoutPopup={true}
-                     showProductCard={false}
-                     stepView={true}
-                     modifierPopupConfig={{
-                        counterButtonPosition: 'BOTTOM',
-                     }}
-                  />
-               )}
+               {!showProductDetailOnImage &&
+                  !isEmpty(productDetails?.productOptions) && (
+                     <ProductCard
+                        data={productDetails}
+                        showProductPrice={false}
+                        showProductDescription={false}
+                        showImage={false}
+                        showProductName={false}
+                        closeModifier={() => console.log('close')}
+                        customAreaFlex={false}
+                        showModifier={true}
+                        customProductDetails={true}
+                        modifierWithoutPopup={true}
+                        showProductCard={false}
+                        stepView={true}
+                        modifierPopupConfig={{
+                           counterButtonPosition: 'BOTTOM',
+                        }}
+                     />
+                  )}
                {showProductDetailOnImage &&
                   !isEmpty(productDetails?.productOptions) && (
                      <ModifierPopup

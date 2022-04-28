@@ -286,7 +286,6 @@ const ProductWithIntersection = ({
 }) => {
    const router = useRouter()
    const productRef = React.useRef()
-
    const { entry, isIntersected } = useIntersectionObserver(productRef, {
       rootMargin: '100px 0px 100px 0px ',
    })
