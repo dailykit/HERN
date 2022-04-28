@@ -65,9 +65,10 @@ const Breadcrumbs = () => {
                         routes.length - 1 == index ? 'ellipsis' : 'unset',
                      width: routes.length - 1 == index ? '100px' : 'auto',
                   }}
-               ></p>
+               >
+                  {route.title}
+               </p>
 
-               {route.title}
                {routes.length - 1 !== index && (
                   <>
                      &nbsp;
