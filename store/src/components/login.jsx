@@ -381,7 +381,7 @@ const OTPLogin = props => {
       onError: () => {},
    })
 
-   const apolloClient = useApolloClient();
+   const apolloClient = useApolloClient()
 
    //resend otp
    const [resendOTP] = useMutation(RESEND_OTP, {
@@ -473,7 +473,7 @@ const OTPLogin = props => {
          const emailRegex =
             /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
          if (isNewUser) {
-            if(!emailRegex.test(form.email)){
+            if (!emailRegex.test(form.email)) {
                setError('Please enter a valid email!')
                addToast(t('Please enter a valid email!'), {
                   appearance: 'error',
@@ -484,9 +484,9 @@ const OTPLogin = props => {
             const data = await apolloClient.query({
                query: PLATFORM_CUSTOMERS,
                variables: { where: { email: { _eq: form.email } } },
-            });
-            const {customers} = data.data;
-            if(customers.length>0){
+            })
+            const { customers } = data.data
+            if (customers.length > 0) {
                setError('This email is already in use!')
                addToast(t('This email is already in use!'), {
                   appearance: 'error',
@@ -619,6 +619,7 @@ const OTPLogin = props => {
                      {t('Phone Number')}
                   </label>
                   <PhoneInput
+                     autoFocus
                      className={`hern-login-v1__otp__phone__input hern-login-v1__otp__phone__input${
                         !(form.phone === '' || form.phone === undefined) &&
                         !(
@@ -691,6 +692,7 @@ const OTPLogin = props => {
                         onChange={onChange}
                         value={form.email}
                         placeholder="Enter your email"
+                        autoFocus
                      />
                   </fieldset>
                )}
@@ -707,6 +709,7 @@ const OTPLogin = props => {
                      value={form.otp}
                      placeholder="Enter the otp"
                      onKeyPress={handleSubmitOTPKeyPress}
+                     autoFocus={!isNewUser}
                   />
                </fieldset>
                {isNewUser && (
