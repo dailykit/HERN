@@ -120,7 +120,7 @@
    // align-items: center;
    align-items: flex-start;
    margin-bottom: 6px;
-   height:min-content;
+   height: min-content;
 }
 .hern-product-card-title {
    display: flex;
@@ -160,6 +160,7 @@
    line-height: 16px;
    margin-bottom: 4px;
    margin-top: 4px;
+   white-space: nowrap;
    @media (max-width: 479px) {
       font-size: 14px;
    }
