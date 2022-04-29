@@ -179,3 +179,23 @@ export const COMBO_PRODUCTS = gql`
       }
    }
 `
+export const BRAND_LOCATIONS = gql`
+   subscription BrandLocations($brandId: Int_comparison_exp!) {
+      brands_location(where: { brand_locations: { brandId: $brandId } }) {
+         id
+         label
+         isActive
+         city
+      }
+   }
+`
+// export const BRAND_LOCATIONS = gql`
+//    subscription BrandLocations {
+//       brands_location {
+//          id
+//          label
+//          isActive
+//          city
+//       }
+//    }
+// `

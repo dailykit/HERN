@@ -1,11 +1,14 @@
 import React from 'react'
-import { Form, TunnelHeader } from '@dailykit/ui'
+import { Form, TunnelHeader,useTunnel,
+   Tunnels,
+   Tunnel, } from '@dailykit/ui'
 import { useMutation, useSubscription } from '@apollo/react-hooks'
 import { reactFormatter, ReactTabulator } from '@dailykit/react-tabulator'
 import { toast } from 'react-toastify'
 import {
    ErrorBoundary,
    InlineLoader,
+   Flex,
 } from '../../../../../../../../shared/components'
 import { logger } from '../../../../../../../../shared/utils'
 import { RecurrenceContext } from '../../../../../../context/recurrence'
@@ -14,9 +17,12 @@ import {
    UPSERT_BRAND_RECURRENCE,
 } from '../../../../../../graphql'
 import { TunnelBody } from '../styled'
+import LinkBrandLocations from './LinkBrandLocations'
 
 const BrandTunnel = ({ closeTunnel }) => {
+   const [brandId, setBrandId] = React.useState()
    const { recurrenceState } = React.useContext(RecurrenceContext)
+   const [tunnels, openTunnelForLocations, closeTunnelForLocations] = useTunnel(1)
 
    const tableRef = React.useRef()
 
@@ -25,7 +31,11 @@ const BrandTunnel = ({ closeTunnel }) => {
       error,
       data: { brandRecurrences = [] } = {},
    } = useSubscription(BRAND_RECURRENCES)
-
+   // console.log('data needed:',brandRecurrences)
+   brandRecurrences.forEach((element)=>{
+      element.linkBrandLocation = 'Link Locations'
+   })
+   // console.log('new data needed:',brandRecurrences)
    const [upsertBrandRecurrence] = useMutation(UPSERT_BRAND_RECURRENCE, {
       onCompleted: data => {
          toast.success('Updated!')
@@ -35,7 +45,17 @@ const BrandTunnel = ({ closeTunnel }) => {
          logger(error)
       },
    })
+   
+   const linkWithBrandLocations =(e) => {
+      openTunnelForLocations(1)
+   }
 
+   const cellClick =(e)=>{ 
+      console.log("cell clicked",e,e.id)
+      setBrandId(e.id)
+      linkWithBrandLocations(e)     
+   }
+   
    const columns = [
       {
          title: 'Title',
@@ -47,6 +67,19 @@ const BrandTunnel = ({ closeTunnel }) => {
          title: 'Domain',
          field: 'domain',
          headerFilter: true,
+      },
+      {  
+         title: 'link brand location',
+         field: 'linkBrandLocation',
+         headerTooltip: function (column) {
+            return (column.getDefinition().title)},
+         cellClick : (e, cell) => {
+            cellClick(cell.getData())
+            // console.log('cell clicked')
+         },
+         //style:
+         // row.getElement().style.color: 'blue',
+         // formatter: tabulatorRow(color:'blue') ,
       },
       {
          title: 'Recurrence Available',
@@ -93,6 +126,11 @@ const BrandTunnel = ({ closeTunnel }) => {
                />
             )}
          </TunnelBody>
+         <Tunnels tunnels={tunnels}>
+            <Tunnel layer={1} size="md">
+               <LinkBrandLocations closeTunnelForLocations={closeTunnelForLocations} brandId={brandId} />
+            </Tunnel>
+         </Tunnels>
       </>
    )
 }
@@ -128,3 +166,4 @@ const ToggleRecurrence = ({ cell, recurrenceId, onChange }) => {
       />
    )
 }
+
