@@ -321,7 +321,10 @@ const OrderInfo = () => {
             </StyledMainBar>
             <StyledSideBar>
                <PaymentCard
-                  cardData={orderData?.cart?.paymentCart || 'N/A'}
+                  cardData={
+                     orderData?.cart?.activeCartPayment?.availablePaymentOption
+                        ?.label || 'N/A'
+                  }
                   billingAddDisplay="none"
                   bgColor="rgba(243,243,243,0.4)"
                   margin="0 0 16px 0"
