@@ -267,3 +267,12 @@ export const BRAND_LISTING = gql`
       }
    }
 `
+export const SALES_BY_COUPONS = gql`
+   subscription SALES_BY_COUPONS(
+      $args: getEarningByCoupons_insights_analytics_args!
+   ) {
+      insights_analytics {
+         getEarningByCoupons(args: $args)
+      }
+   }
+`

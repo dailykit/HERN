@@ -26,6 +26,7 @@ import {
    DetailsComp,
    RewardComp,
    BrandCoupons,
+   CouponInsights,
 } from './components'
 import { logger } from '../../../../../shared/utils'
 import {
@@ -208,22 +209,30 @@ const CouponForm = () => {
                            <Form.Error key={index}>{error}</Form.Error>
                         ))}
                   </Form.Group>
-                  <Flex container alignItems="center" height="100%" style={{position:'relative', top:'13px'}}>
+                  <Flex
+                     container
+                     alignItems="center"
+                     height="100%"
+                     style={{ position: 'relative', top: '13px' }}
+                  >
                      {state.isCouponValid?.status ? (
                         <>
-                           <Flex >
-                              <TickIcon color="#00ff00" stroke={2}/>
+                           <Flex>
+                              <TickIcon color="#00ff00" stroke={2} />
                            </Flex>
-                              <Text as="p">All good!</Text>
-                          
+                           <Text as="p">All good!</Text>
                         </>
                      ) : (
                         <>
-                           <Flex container alignItems="center" height="100%" style={{position:'relative', top:'4px'}}>
+                           <Flex
+                              container
+                              alignItems="center"
+                              height="100%"
+                              style={{ position: 'relative', top: '4px' }}
+                           >
                               <CloseIcon color="#ff0000" />
                            </Flex>
-                              <Text as="p">{state.isCouponValid?.error}</Text>
-                           
+                           <Text as="p">{state.isCouponValid?.error}</Text>
                         </>
                      )}
                      <Spacer xAxis size="16px" />
@@ -232,7 +241,11 @@ const CouponForm = () => {
                         onChange={updatetoggle}
                         value={toggle}
                      >
-                        <Flex container alignItems="center" style={{position:'relative', left:'12px'}}>
+                        <Flex
+                           container
+                           alignItems="center"
+                           style={{ position: 'relative', left: '12px' }}
+                        >
                            <p>Publish</p>
                            <Tooltip identifier="coupon_publish_info" />
                         </Flex>
@@ -265,7 +278,7 @@ const CouponForm = () => {
                         <BrandCoupons />
                      </HorizontalTabPanel>
                      <HorizontalTabPanel>
-                        <InsightDashboard
+                        {/* <InsightDashboard
                            appTitle="CRM App"
                            moduleTitle="Coupon Page"
                            variables={{
@@ -274,7 +287,8 @@ const CouponForm = () => {
                               fromDate: fromDate,
                            }}
                            showInTunnel={false}
-                        />
+                        /> */}
+                        <CouponInsights couponId={couponId} />
                      </HorizontalTabPanel>
                   </HorizontalTabPanels>
                </HorizontalTabs>
