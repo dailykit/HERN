@@ -1,9 +1,8 @@
-import React, { useContext } from 'react'
+import React, { useContext, useEffect } from 'react'
 import { DashboardTile, Text, Tunnel, Tunnels, useTunnel } from '@dailykit/ui'
 import { useSubscription } from '@apollo/react-hooks'
 // import BrandContext from '../../context/Brand'
 // State
-
 import { useTabs } from '../../../../shared/providers'
 import { StyledHome, StyledCardList, StyledHeader } from './styled'
 import { CUSTOMERS_COUNT, COUPON_TOTAL, CAMPAIGN_TOTAL } from '../../graphql'
@@ -30,7 +29,6 @@ const Home = () => {
    const { data: couponTotal } = useSubscription(COUPON_TOTAL)
    const { data: campaignTotal } = useSubscription(CAMPAIGN_TOTAL)
 
-   const [search, setSearch] = React.useState('')
    return (
       <StyledHome>
          <Banner id="crm-app-home-top" />
