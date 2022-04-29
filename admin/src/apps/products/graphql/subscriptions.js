@@ -508,7 +508,7 @@ export const PRODUCT_OPTIONS = gql`
 `
 export const PRODUCT_EARNING_COUNT = gql`
    subscription PRODUCT_EARNING_COUNT(
-      $earningAndCountProductArgs: insights_getEarningByProducts_args!
+      $earningAndCountProductArgs: getEarningsByProducts_insights_analytics_args!
    ) {
       insights_analytics {
          getEarningsByProducts(args: $earningAndCountProductArgs)
