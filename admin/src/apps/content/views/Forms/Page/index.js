@@ -28,9 +28,7 @@ import ContentSelection from './ContentSelection'
 // import BrandContext from '../../../context/Brand'
 import { PagePreviewTunnel } from './Tunnel'
 // for SEO Tools
-import SocialShare from './SEO/SocialShare'
-import SEObasics from './SEO/SEObasics'
-import TwitterCard from './SEO/TwitterCard'
+import { SEObasics, SocialShare, TwitterCard, RichResults } from './SEO'
 import { BrandContext } from '../../../../../App'
 
 const PageForm = () => {
@@ -316,6 +314,7 @@ const PageForm = () => {
                         <SEObasics routeName={pageRoute.value} />
                         <SocialShare routeName={pageRoute.value} />
                         <TwitterCard routeName={pageRoute.value} />
+                        <RichResults routeName={pageRoute.value} />
                      </HorizontalTabPanel>
                   </div>
                </HorizontalTabPanels>
