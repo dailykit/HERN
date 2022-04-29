@@ -23,7 +23,7 @@ import {
 } from '../../../../../../shared/components'
 import { BrandContext } from '../../../../../../App'
 
-const AddressTunnel = ({ id, tunnels, closeTunnel }) => {
+const AddressTunnel = ({ params, tunnels, closeTunnel }) => {
    // const [context, setContext] = useContext(BrandContext)
    const [brandContext, setBrandContext] = useContext(BrandContext)
 
@@ -34,8 +34,8 @@ const AddressTunnel = ({ id, tunnels, closeTunnel }) => {
       data: { brand: { brand_customers = [] } = {} } = {},
    } = useQuery(ALL_DATA, {
       variables: {
-         keycloakId: id,
-         brandId: brandContext.brandId,
+         keycloakId: params.id,
+         brandId: params.brandId,
       },
       onError: error => {
          toast.error('Something went wrong')

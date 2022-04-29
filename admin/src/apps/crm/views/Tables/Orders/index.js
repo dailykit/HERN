@@ -14,7 +14,7 @@ import { currencyFmt, logger } from '../../../../../shared/utils'
 import * as moment from 'moment'
 import { BrandContext } from '../../../../../App'
 
-const OrdersTable = ({ id }) => {
+const OrdersTable = ({ params }) => {
    // const [context, setContext] = useContext(BrandContext)
    const [brandContext, setBrandContext] = useContext(BrandContext)
 
@@ -25,8 +25,8 @@ const OrdersTable = ({ id }) => {
    const history = useHistory()
    const { loading: listLoading } = useQuery(ORDERS_LISTING, {
       variables: {
-         keycloakId: id,
-         brandId: brandContext.brandId,
+         keycloakId: params.id,
+         brandId: params.brandId,
       },
       onCompleted: ({ brand: { brand_customers = [] } = {} } = {}) => {
          const result = brand_customers[0]?.customer?.orders.map(order => ({
