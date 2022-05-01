@@ -5,15 +5,24 @@
    padding-left: 1em;
    padding-right: 1em;
    position: relative;
-   height: 100%;
-   display: flex;
-   flex-direction: column;
+   height: auto;
+   // height: 100%;
+   // display: flex;
+   // flex-direction: column;
    box-shadow: 0px 1px 8px 0px rgb(0 0 0 / 5%);
    @media (max-width: 479px) {
       display: flex;
       flex-direction: row;
       gap: 16px;
       align-items: flex-end;
+   }
+}
+
+.hern-product-card-view-menu{
+   .hern-product-card{
+      display: flex;
+      flex-direction: column;
+      height: 100%;
    }
 }
 
