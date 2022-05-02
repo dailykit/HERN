@@ -1,15 +1,19 @@
 import React from 'react'
-import { CSSTransition } from 'react-transition-group'
 import { Tunnel } from '../components'
 import { LocationSelector } from '../components/locationSelector/index'
+import { useTranslation } from '../context'
 
 export const LocationSelectorWrapper = props => {
    const { showLocationSelectorPopup, setShowLocationSelectionPopup } = props
+   const { t } = useTranslation()
    return (
       <Tunnel.Left
-         title={'Location'}
+         title={<span>{t('Location')}</span>}
          visible={showLocationSelectorPopup}
-         onClose={() => setShowLocationSelectionPopup(false)}
+         onClose={() => {
+            setShowLocationSelectionPopup(false)
+            sessionStorage.setItem('showLocationSelectorAfterPageLoad', 'false')
+         }}
          destroyOnClose={true}
       >
          <LocationSelector {...props} />

@@ -1,0 +1,139 @@
+.hern-featured-coupon {
+   position: relative;
+   max-width: 1440px;
+   height: auto;
+   margin: 0 auto;
+}
+.hern-featured-coupon__background {
+   > img {
+      max-width: 100%;
+      max-height: 100%;
+   }
+   .hern-featured-coupon__background--sm {
+      display: none;
+   }
+}
+.hern-featured-coupon__content {
+   position: absolute;
+   top: 140px;
+   left: 450px;
+   right: 0;
+   bottom: 0;
+}
+
+.hern-featured-coupon__header {
+   font-family: 'Lato';
+   font-style: normal;
+   font-weight: 700;
+   font-size: 48px;
+   line-height: 77px;
+   letter-spacing: 0.02em;
+   color: #000000;
+}
+.hern-featured-coupon__description {
+   padding: 130px 0 84px 0;
+}
+.hern-featured-coupon__title {
+   margin-bottom: 18px;
+}
+.hern-featured-coupon__title,
+.hern-featured-coupon__code {
+   font-family: 'Inter';
+   font-style: normal;
+   font-weight: 600;
+   font-size: 22px;
+   line-height: 34px;
+   letter-spacing: 0.02em;
+   color: #473f3e;
+   > span {
+      font-weight: 700;
+      color: #0d0d0d;
+   }
+}
+
+.hern-featured-coupon__cta {
+   button {
+      padding: 8px 40px;
+      background: #fc806a;
+      border-radius: 20px;
+      font-style: normal;
+      font-weight: 500;
+      font-size: 24px;
+      line-height: 34px;
+      text-align: center;
+      letter-spacing: 0.04em;
+      color: #ffffff;
+      cursor: pointer;
+   }
+}
+/*Media query*/
+@media only screen and (max-width: 1024px) {
+   .hern-featured-coupon__content {
+      top: 64px;
+      left: 300px;
+   }
+   .hern-featured-coupon__header {
+      font-size: 48px;
+   }
+   .hern-featured-coupon__description {
+      padding: 64px 0 64px 0;
+   }
+}
+@media only screen and (max-width: 900px) {
+   .hern-featured-coupon__content {
+      top: 40px;
+      left: 220px;
+   }
+   .hern-featured-coupon__header {
+      font-size: 40px;
+   }
+   .hern-featured-coupon__description {
+      padding: 48px 0 48px 0;
+   }
+   .hern-featured-coupon__title,
+   .hern-featured-coupon__code {
+      font-size: 24px;
+   }
+   .hern-featured-coupon__title {
+      margin-bottom: 8px;
+   }
+   .hern-featured-coupon__cta {
+      button {
+         padding: 8px 40px;
+         font-size: 24px;
+      }
+   }
+}
+@media only screen and (max-width: 767px) {
+   .hern-featured-coupon__content {
+      top: 180px;
+      left: 50px;
+   }
+   .hern-featured-coupon__header {
+      font-size: 28px;
+   }
+   .hern-featured-coupon__description {
+      padding: 32px 0 32px 0;
+   }
+   .hern-featured-coupon__title,
+   .hern-featured-coupon__code {
+      font-size: 14px;
+   }
+   .hern-featured-coupon__title {
+      margin-bottom: 8px;
+   }
+   .hern-featured-coupon__cta {
+      button {
+         padding: 8px 24px;
+         font-size: 14px;
+      }
+   }
+   .hern-featured-coupon__background {
+      > img {
+         display: none;
+      }
+      .hern-featured-coupon__background--sm {
+         display: block;
+      }
+   }
+}

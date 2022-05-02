@@ -6,7 +6,7 @@ import { useToasts } from 'react-toast-notifications'
 import { useMutation, useQuery, useSubscription } from '@apollo/react-hooks'
 
 import { useConfig } from '../../lib'
-import { useUser } from '../../context'
+import { useTranslation, useUser } from '../../context'
 import { PageLoader } from '../../components'
 import {
    ZIPCODE,
@@ -55,7 +55,7 @@ const reducers = (state, { type, payload }) => {
             occurences: payload,
          }
       default:
-         return 'No such type!'
+         return state
    }
 }
 
@@ -85,6 +85,7 @@ export const MenuProvider = ({ isCheckout, children }) => {
    const router = useRouter()
    const { user } = useUser()
    const { addToast } = useToasts()
+   const { t } = useTranslation()
    const { brand, configOf } = useConfig()
    const [cart, setCart] = React.useState({})
    const [fulfillment, setFulfillment] = React.useState({})
@@ -144,7 +145,7 @@ export const MenuProvider = ({ isCheckout, children }) => {
 
    if (!occurenceCustomerLoading && occurenceCustomerError) {
       setIsCustomerLoading(false)
-      addToast('Failed to fetch week details', {
+      addToast(t('Failed to fetch week details'), {
          appearance: 'error',
       })
    }
@@ -156,6 +157,7 @@ export const MenuProvider = ({ isCheckout, children }) => {
             console.log('updateOccurenceCustomer => error =>', error),
       }
    )
+
    const [createCart] = useMutation(MUTATIONS.CART.CREATE, {
       onError: error => console.log('createCart => error =>', error),
    })
@@ -182,6 +184,8 @@ export const MenuProvider = ({ isCheckout, children }) => {
             zipcode: user?.defaultAddress?.zipcode,
          },
       })
+
+   //query
 
    React.useEffect(() => {
       if (!loadingZipcode && !isEmpty(zipcode) && state.week?.fulfillmentDate) {
@@ -320,7 +324,7 @@ export const MenuProvider = ({ isCheckout, children }) => {
             subscription?.occurences?.length === 0 &&
             user?.subscriptionId
          ) {
-            addToast('No weeks are available for menu selection.', {
+            addToast(t('No weeks are available for menu selection.'), {
                appearance: 'error',
             })
          }
@@ -461,7 +465,7 @@ export const MenuProvider = ({ isCheckout, children }) => {
             },
          })
             .then(({ data: { createCartItem = {} } = {} } = {}) => {
-               addToast(`Successfully added the product.`, {
+               addToast(t(`Successfully added the product.`), {
                   appearance: 'info',
                })
 
@@ -487,7 +491,7 @@ export const MenuProvider = ({ isCheckout, children }) => {
                   }
                   if (updateOccurenceCustomer?.isSkipped !== isSkipped) {
                      if (!updateOccurenceCustomer?.isSkipped) {
-                        addToast('This week has been unskipped.', {
+                        addToast(t('This week has been unskipped.'), {
                            appearance: 'info',
                         })
                      }
@@ -513,6 +517,7 @@ export const MenuProvider = ({ isCheckout, children }) => {
                   customerId: user.id,
                   source: 'subscription',
                   paymentStatus: 'PENDING',
+                  locationId: zipcode?.locationId,
                   address: user.defaultAddress,
                   locationId: zipcode?.locationId,
                   fulfillmentInfo: fulfillment,
@@ -602,7 +607,7 @@ export const MenuProvider = ({ isCheckout, children }) => {
                insertCartItem({
                   variables: { object: cart },
                }).then(({ data: { createCartItem = {} } = {} } = {}) => {
-                  addToast(`Successfully added the product.`, {
+                  addToast(t(`Successfully added the product.`), {
                      appearance: 'info',
                   })
                   updateOccurenceCustomer({
@@ -628,7 +633,7 @@ export const MenuProvider = ({ isCheckout, children }) => {
                      }
                      if (updateOccurenceCustomer?.isSkipped !== isSkipped) {
                         if (!updateOccurenceCustomer?.isSkipped) {
-                           addToast('This week has been unskipped.', {
+                           addToast(t('This week has been unskipped.'), {
                               appearance: 'info',
                            })
                         }
@@ -649,6 +654,7 @@ export const MenuProvider = ({ isCheckout, children }) => {
       ].every(node => node)
    )
       return <PageLoader />
+
    return (
       <MenuContext.Provider
          value={{

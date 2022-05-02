@@ -1,5 +1,10 @@
 import React, { useState } from 'react'
-import { CartContext, onDemandMenuContext, useUser } from '../../context'
+import {
+   CartContext,
+   onDemandMenuContext,
+   useUser,
+   useTranslation,
+} from '../../context'
 import {
    Button,
    Divider,
@@ -24,11 +29,11 @@ export const CartDetails = () => {
    const { user, isAuthenticated } = useUser()
    //context data
    const { cart } = cartState
+   const { t } = useTranslation()
 
    const isLoyaltyPointsAvailable =
-      settings?.rewards?.find(
-         setting => setting?.identifier === 'Loyalty Points Availability'
-      )?.value?.['Loyalty Points']?.IsLoyaltyPointsAvailable?.value ?? true
+      settings?.rewards?.['Loyalty Points']?.['Loyalty Points']
+         ?.IsLoyaltyPointsAvailable?.value ?? true
 
    //remove cartItem or cartItems
    const removeCartItems = cartItemIds => {
@@ -49,7 +54,7 @@ export const CartDetails = () => {
          <div className="hern-cart-container">
             <div className="hern-cart-page">
                <div className="hern-cart-content">
-                  <header>Cart</header>
+                  <header>{t('Cart')}</header>
                   <Loader />
                </div>
             </div>
@@ -70,12 +75,14 @@ export const CartDetails = () => {
                   <header>Cart</header>
                   <div className="hern-cart-empty-cart">
                      <EmptyCart />
-                     <span>Oops! Your cart is empty </span>
+                     <span>{t('Oops! Your cart is empty')} </span>
                      <Button
                         className="hern-cart-go-to-menu-btn"
                         onClick={() => {}}
                      >
-                        <Link href="/order">GO TO MENU</Link>
+                        <Link href="/order">
+                           <a>{t('GO TO MENU')}</a>
+                        </Link>
                      </Button>
                   </div>
                </div>
@@ -86,7 +93,9 @@ export const CartDetails = () => {
 
    return (
       <section className="hern-cart-container">
-         <h2>Items({combinedCartItems.length})</h2>
+         <h2>
+            <span>{t('Items')}</span>({combinedCartItems.length})
+         </h2>
          {combinedCartItems.map((product, index) => {
             return (
                <CartCard
@@ -137,7 +146,7 @@ const Tips = props => {
    return (
       <div className="hern-cart__tip">
          <div className="hern-cart__tip-heading">
-            <span>Add a Tip</span>
+            <span>{t('Add a Tip')}</span>
          </div>
          {!customPanel && (
             <div className="hern-cart__tip-tip-options-list">
@@ -178,7 +187,7 @@ const Tips = props => {
                      setCustomPanel(prevState => !prevState)
                   }}
                >
-                  Custom
+                  {t('Custom')}
                </button>
             </div>
          )}
@@ -209,7 +218,7 @@ const Tips = props => {
                      setCustomPanel(prevState => !prevState)
                   }}
                >
-                  ADD
+                  {t('ADD')}
                </button>
                <CloseIcon
                   title="Close"

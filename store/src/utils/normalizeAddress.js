@@ -1,4 +1,4 @@
-import { isEmpty } from 'lodash'
+import isEmpty from 'lodash/isEmpty'
 
 export const normalizeAddress = (address = {}) => {
    if (isEmpty(address)) return 'No Address added yet!'

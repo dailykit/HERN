@@ -6,25 +6,30 @@ import {
    Divider,
    Button,
    Loader,
+   Empty,
 } from '../../components'
 import { useQuery } from '@apollo/react-hooks'
-import _ from 'lodash'
-import { CartContext, onDemandMenuContext } from '../../context'
+import isEmpty from 'lodash/isEmpty'
+import { CartContext, onDemandMenuContext, useTranslation } from '../../context'
 import { PRODUCTS } from '../../graphql'
 import classNames from 'classnames'
 import * as Scroll from 'react-scroll'
-import CartBar from './CartBar'
 import { useConfig } from '../../lib'
-import { setThemeVariable, getRoute } from '../../utils'
+import {
+   setThemeVariable,
+   getRoute,
+   useIntersectionObserver,
+} from '../../utils'
 import { useRouter } from 'next/router'
 import { useToasts } from 'react-toast-notifications'
 import { VegNonVegType } from '../../assets/icons'
 import { CustomArea } from '../featuredCollection/productCustomArea'
+import dynamic from 'next/dynamic'
+const CartBar = dynamic(() => import('./CartBar').then(mod => mod.default))
 
 export const OnDemandOrder = ({ config }) => {
-   const router = useRouter()
    const { addToast } = useToasts()
-
+   const { dynamicTrans, locale } = useTranslation()
    const { brand, locationId, storeStatus } = useConfig()
 
    const menuType = config?.display?.dropdown?.value[0]?.value
@@ -50,6 +55,21 @@ export const OnDemandOrder = ({ config }) => {
       config?.display?.productsScrollWidth?.value ??
       config?.display?.productsScrollWidth?.default ??
       0
+   const showCategoryBackgroundImage =
+      config?.display?.showCategoryBackgroundImage?.value ??
+      config?.display?.showCategoryBackgroundImage?.default ??
+      false
+   // const showCategoryBackgroundImage = false
+   const categoryBackgroundImage =
+      config?.display?.categoryBackgroundImage?.value ??
+      config?.display?.categoryBackgroundImage?.default ??
+      null
+   const showAddToCartButtonFullWidth =
+      config?.display?.showAddToCartButtonFullWidth?.value ??
+      config?.display?.showAddToCartButtonFullWidth?.default ??
+      true
+   const navbarCategoryAlignment =
+      config?.display?.navbarCategoryAlignment?.value?.value ?? 'CENTER'
 
    setThemeVariable('--hern-number-of-products', numberOfProducts)
    setThemeVariable(
@@ -72,6 +92,14 @@ export const OnDemandOrder = ({ config }) => {
       }),
       [brand, locationId]
    )
+   const currentLang = React.useMemo(() => locale, [locale])
+   React.useEffect(() => {
+      const languageTags = document.querySelectorAll(
+         '[data-translation="true"]'
+      )
+      dynamicTrans(languageTags)
+   }, [currentLang])
+
    const { loading: productsLoading, error: productsError } = useQuery(
       PRODUCTS,
       {
@@ -108,9 +136,9 @@ export const OnDemandOrder = ({ config }) => {
                      products: updatedProducts,
                   }
                })
-               setStatus('success')
                setHydratedMenu(updatedMenu)
             }
+            setStatus('success')
          },
          onError: error => {
             setStatus('error')
@@ -120,7 +148,13 @@ export const OnDemandOrder = ({ config }) => {
    )
    const [productModifier, setProductModifier] = useState(null)
    const CustomAreaWrapper = ({ data }) => {
-      return <CustomArea data={data} setProductModifier={setProductModifier} />
+      return (
+         <CustomArea
+            data={data}
+            setProductModifier={setProductModifier}
+            showAddToCartButtonFullWidth={showAddToCartButtonFullWidth}
+         />
+      )
    }
    const closeModifier = () => {
       setProductModifier(null)
@@ -133,6 +167,17 @@ export const OnDemandOrder = ({ config }) => {
    if (isMenuLoading || status === 'loading' || productsLoading) {
       return <Loader type="order-loading" />
    }
+   if (isEmpty(hydratedMenu))
+      return (
+         <Empty
+            title="No items !"
+            description="Looks like store is empty. Wait for some time to order yummy items"
+            route="/"
+            buttonLabel="Back to home"
+            illustration="empty-store"
+         />
+      )
+
    const getWrapperClasses = () => {
       if (menuType === 'fixed-top-nav') {
          if (!showCartOnRight) {
@@ -149,6 +194,7 @@ export const OnDemandOrder = ({ config }) => {
                menuType="navigationAnchorMenu"
                categories={categories}
                showCount={showCategoryLengthOnCategory}
+               navbarAlignment={navbarCategoryAlignment}
             />
          )}
          <div
@@ -170,84 +216,50 @@ export const OnDemandOrder = ({ config }) => {
                   {hydratedMenu.map((eachCategory, index) => {
                      return (
                         <Scroll.Element key={index} name={eachCategory.name}>
-                           <p
-                              className="hern-product-category-heading"
-                              id={`hern-product-category-${eachCategory.name}`}
-                           >
-                              {eachCategory.name}
-                              {showCategoryLengthOnCategoryTitle && (
-                                 <>({eachCategory.products.length})</>
-                              )}
-                           </p>
-                           <div style={{ display: 'flex', flexWrap: 'wrap' }}>
-                              {eachCategory.products.map(
-                                 (eachProduct, index) => {
-                                    const VegNonVegIcon = () => (
-                                       <VegNonVegType
-                                          vegNonVegType={
-                                             eachProduct?.VegNonVegType
-                                          }
-                                       />
-                                    )
-                                    return (
-                                       <div
-                                          key={index}
-                                          className="hern-on-demand-order--product-card"
-                                          style={{
-                                             margin: '0 auto',
-                                             maxWidth:
-                                                numberOfProducts === 4
-                                                   ? '280px'
-                                                   : 'auto',
-                                          }}
-                                       >
-                                          <ProductCard
-                                             iconOnImage={VegNonVegIcon}
-                                             onProductNameClick={() =>
-                                                router.push(
-                                                   getRoute(
-                                                      '/products/' +
-                                                         eachProduct.id
-                                                   )
-                                                )
-                                             }
-                                             onImageClick={() =>
-                                                router.push(
-                                                   getRoute(
-                                                      '/products/' +
-                                                         eachProduct.id
-                                                   )
-                                                )
-                                             }
-                                             key={index}
-                                             data={eachProduct}
-                                             showProductDescription={true}
-                                             showImage={
-                                                eachProduct.assets.images
-                                                   .length > 0
-                                                   ? true
-                                                   : false
-                                             }
-                                             customAreaComponent={
-                                                CustomAreaWrapper
-                                             }
-                                             showModifier={
-                                                productModifier &&
-                                                productModifier.id ===
-                                                   eachProduct.id
-                                             }
-                                             closeModifier={closeModifier}
-                                             customAreaFlex={false}
-                                             modifierWithoutPopup={false}
-                                             modifierPopupConfig={{
-                                                counterButtonPosition: 'BOTTOM',
-                                             }}
-                                             stepView={false}
-                                          />
-                                       </div>
-                                    )
+                           <div
+                              className={classNames(
+                                 'hern-store__order-category-name-wrapper',
+                                 {
+                                    'hern-store__order-category-name-wrapper-with-bg':
+                                       showCategoryBackgroundImage,
                                  }
                               )}
+                           >
+                              {showCategoryBackgroundImage && (
+                                 <div
+                                    className="hern-store__order-category-name-wrapper-bg-image"
+                                    style={{
+                                       backgroundImage: `url(${categoryBackgroundImage})`,
+                                    }}
+                                 ></div>
+                              )}
+                              <p
+                                 className={classNames(
+                                    'hern-product-category-heading',
+                                    {
+                                       'hern-product-category-heading-with-bg':
+                                          showCategoryBackgroundImage,
+                                    }
+                                 )}
+                                 id={`hern-product-category-${eachCategory.name}`}
+                              >
+                                 {eachCategory.name}
+                                 {showCategoryLengthOnCategoryTitle && (
+                                    <>({eachCategory.products.length})</>
+                                 )}
+                              </p>
+                           </div>
+                           <div style={{ display: 'flex', flexWrap: 'wrap' }}>
+                              {eachCategory.products.map(eachProduct => (
+                                 <ProductWithIntersection
+                                    key={eachProduct.id}
+                                    eachProduct={eachProduct}
+                                    numberOfProducts={numberOfProducts}
+                                    productModifier={productModifier}
+                                    closeModifier={closeModifier}
+                                    CustomAreaWrapper={CustomAreaWrapper}
+                                 />
+                              ))}
                            </div>
                            <Divider />
                         </Scroll.Element>
@@ -264,3 +276,74 @@ export const OnDemandOrder = ({ config }) => {
       </>
    )
 }
+
+const ProductWithIntersection = ({
+   eachProduct,
+   numberOfProducts,
+   productModifier,
+   closeModifier,
+   CustomAreaWrapper,
+}) => {
+   const router = useRouter()
+   const productRef = React.useRef()
+   const { entry, isIntersected } = useIntersectionObserver(productRef, {
+      rootMargin: '100px 0px 100px 0px ',
+   })
+   const isVisible = React.useMemo(
+      () => isIntersected || !!entry?.isIntersecting,
+      [entry, isIntersected]
+   )
+   const VegNonVegIcon = () => (
+      <VegNonVegType vegNonVegType={eachProduct?.VegNonVegType} />
+   )
+   return (
+      <div
+         className={classNames('hern-on-demand-order--product-card', {
+            'hern-on-demand-order--product-card-with-bg': !isVisible,
+         })}
+         style={{
+            margin: '0 auto',
+            maxWidth: numberOfProducts === 4 ? '280px' : 'auto',
+         }}
+         ref={productRef}
+      >
+         <ProductWrapper isVisible={isVisible}>
+            <ProductCard
+               iconOnImage={VegNonVegIcon}
+               onProductNameClick={() =>
+                  router.push(getRoute('/products/' + eachProduct.id))
+               }
+               onImageClick={() =>
+                  router.push(getRoute('/products/' + eachProduct.id))
+               }
+               data={eachProduct}
+               showProductDescription={true}
+               showImage={eachProduct.assets.images.length > 0 ? true : false}
+               customAreaComponent={CustomAreaWrapper}
+               showModifier={
+                  productModifier && productModifier.id === eachProduct.id
+               }
+               closeModifier={closeModifier}
+               customAreaFlex={false}
+               modifierWithoutPopup={false}
+               modifierPopupConfig={{
+                  counterButtonPosition: 'BOTTOM',
+               }}
+               stepView={false}
+            />
+         </ProductWrapper>
+      </div>
+   )
+}
+function productPropsAreEqual(prevProps, nextProps) {
+   return (
+      prevProps.isVisible === nextProps.isVisible &&
+      prevProps.children === nextProps.children
+   )
+}
+const ProductWrapper = React.memo(({ children, isVisible }) => {
+   if (isVisible) {
+      return <>{children}</>
+   }
+   return <></>
+}, productPropsAreEqual)

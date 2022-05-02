@@ -316,6 +316,8 @@ export const QUERIES = {
                deliveryPrice
                fulfillmentType
                thirdPartyOrderId
+               deliveryPartnershipId
+               deliveryInfo
                thirdPartyOrder {
                   id
                   source

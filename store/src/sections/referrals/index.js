@@ -2,12 +2,14 @@ import React from 'react'
 import { CopyToClipboard } from 'react-copy-to-clipboard'
 import { useToasts } from 'react-toast-notifications'
 import { useQuery } from '@apollo/react-hooks'
-
+import { CgClipboard } from 'react-icons/cg'
 import { useConfig } from '../../lib'
-import { useUser } from '../../context'
+import { useTranslation, useUser } from '../../context'
 import { get_env } from '../../utils'
 import { Spacer, ProfileSidebar, Form, Button, Loader } from '../../components'
 import { CUSTOMERS_REFERRED } from '../../graphql'
+import { isEmpty } from 'lodash'
+import { EmptyReferralIll } from '../../assets/icons'
 
 export const Referrals = () => {
    return (
@@ -22,9 +24,16 @@ const Content = () => {
    const { addToast } = useToasts()
    const { user } = useUser()
    const { brand, configOf } = useConfig()
-
+   const { t, dynamicTrans, locale } = useTranslation()
    const theme = configOf('theme-color', 'Visual')
-   const referralsAllowed = configOf('Referral', 'rewards')?.isAvailable
+
+   const referralsAllowed = configOf('Referral', 'rewards')
+
+   const isReferralAvailable = React.useMemo(() => {
+      return referralsAllowed?.['Referral']?.IsReferralAvailable?.value
+   }, [referralsAllowed])
+
+   const currentLang = React.useMemo(() => locale, [locale])
 
    const { data: { customerReferrals = [] } = {}, loading } = useQuery(
       CUSTOMERS_REFERRED,
@@ -38,63 +47,104 @@ const Content = () => {
       }
    )
 
+   React.useEffect(() => {
+      const languageTags = document.querySelectorAll(
+         '[data-translation="true"]'
+      )
+      dynamicTrans(languageTags)
+   }, [currentLang])
+
    if (loading) return <Loader inline />
    return (
       <section className="hern-referrals__content">
          <header className="hern-referrals__header">
-            <h2
-               style={{
-                  color: `${
-                     theme?.accent ? theme?.accent : 'rgba(5,150,105,1)'
-                  }`,
-               }}
-               className="hern-referrals__header__title"
-            >
-               Referrals
-            </h2>
+            <h2 className="hern-referrals__header__title">{t('Referrals')}</h2>
          </header>
          {referralsAllowed && !!user.customerReferral && (
             <>
-               <Form.Label>Referral Code</Form.Label>
-               <div className="hern-referrals__customer-referral-code">
-                  {user.customerReferral.referralCode}
+               <div className="hern-referrals__customer-referral-code__title">
+                  {t('Your Referral Code')}
                </div>
-               <CopyToClipboard
-                  text={`${get_env('BASE_BRAND_URL')}/?invite-code=${
-                     user.customerReferral.referralCode
-                  }`}
-                  onCopy={() =>
-                     addToast('Invite like copied!', {
-                        appearance: 'success',
-                     })
-                  }
-               >
-                  <Button size="sm"> Copy invite link </Button>
-               </CopyToClipboard>
+               <div className="hern-referrals__customer-referral-code">
+                  <div>
+                     <span>{user.customerReferral.referralCode}</span>
+                     <CopyToClipboard
+                        text={`${get_env(
+                           'BASE_BRAND_URL'
+                        )}/sign-up?invite-code=${
+                           user.customerReferral.referralCode
+                        }`}
+                        onCopy={() =>
+                           addToast(t('Invite like copied!'), {
+                              appearance: 'success',
+                           })
+                        }
+                     >
+                        <Button
+                           className="hern-referral-code__copy-btn"
+                           size="sm"
+                        >
+                           <CgClipboard />
+                           &nbsp; {t('Copy invite link')}{' '}
+                        </Button>
+                     </CopyToClipboard>
+                  </div>
+               </div>
                <Spacer />
-               <Form.Label>
-                  Customers Referred ({customerReferrals.length}){' '}
-               </Form.Label>
-               <table className="hern-referrals__table">
-                  <thead>
-                     <tr>
-                        <th>First Name</th>
-                        <th>Last Name</th>
-                     </tr>
-                  </thead>
-                  <tbody>
-                     {customerReferrals.map(ref => (
-                        <tr key={ref.id}>
-                           <td className="hern-referrals__table__cell">
-                              {ref.customer.platform_customer.firstName}
-                           </td>
-                           <td className="hern-referrals__table__cell">
-                              {ref.customer.platform_customer.lastName}
-                           </td>
+               <div className="hern-referral__referred">
+                  <span> {t('Friends referred by me')} :</span>
+                  <span style={{ color: 'var(--hern-accent)' }}>
+                     &nbsp;{customerReferrals.length}
+                  </span>
+               </div>
+               {customerReferrals.length > 0 ? (
+                  <table className="hern-referrals__table">
+                     <thead>
+                        <tr>
+                           <th>{t('First Name')}</th>
+                           <th>{t('Last Name')}</th>
                         </tr>
-                     ))}
-                  </tbody>
-               </table>
+                     </thead>
+                     <tbody>
+                        {customerReferrals.map(ref => (
+                           <tr key={ref.id}>
+                              <td
+                                 className="hern-referrals__table__cell"
+                                 data-translation="true"
+                              >
+                                 {!isEmpty(
+                                    ref.customer.platform_customer.firstName
+                                 )
+                                    ? ref.customer.platform_customer.firstName
+                                    : 'N/A'}
+                              </td>
+
+                              <td
+                                 className="hern-referrals__table__cell"
+                                 data-translation="true"
+                              >
+                                 {!isEmpty(
+                                    ref.customer.platform_customer.lastName
+                                 )
+                                    ? ref.customer.platform_customer.lastName
+                                    : 'N/A'}
+                              </td>
+                           </tr>
+                        ))}
+                     </tbody>
+                  </table>
+               ) : (
+                  <div
+                     style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        marginBottom: '2rem',
+                     }}
+                  >
+                     <EmptyReferralIll />
+                  </div>
+               )}
             </>
          )}
       </section>

@@ -5,19 +5,21 @@ import { DineinTable, LocationIcon, ChevronIcon } from '../assets/icons'
 import { BRAND_LOCATIONS } from '../graphql'
 import { getDistance, convertDistance } from 'geolib'
 import moment from 'moment'
-import { CartContext } from '../context'
+import { CartContext, useTranslation } from '../context'
 import { useQuery } from '@apollo/react-hooks'
-import { Loader } from '.'
+import { Loader, HernSkeleton } from '.'
 import { Delivery, Pickup } from './fulfillmentSection'
 import { RefineLocationPopup } from './refineLocation'
-import { LocationSelectorWrapper } from '../utils'
+import { isClient, LocationSelectorWrapper } from '../utils'
 import classNames from 'classnames'
 import TimeIcon from '../assets/icons/Time'
+
+const isSmallerDevice = isClient && window.innerWidth < 768
 
 export const FulfillmentForm = () => {
    const { orderTabs, selectedOrderTab } = useConfig()
    const { cartState } = React.useContext(CartContext)
-
+   const { t } = useTranslation()
    // check whether user select fulfillment type or not
    const selectedFulfillment = React.useMemo(
       () =>
@@ -76,7 +78,7 @@ export const FulfillmentForm = () => {
                      <LocationIcon size={18} />
                   </span>
                   &nbsp; &nbsp;
-                  <h3>Address</h3>
+                  <h3>{t('Address')}</h3>
                </div>
                <span
                   style={{ cursor: isDisabled ? 'not-allowed' : 'pointer' }}
@@ -101,7 +103,7 @@ export const FulfillmentForm = () => {
             {!isDisabled && fulfillementAddressOpen && (
                <>
                   <div className="hern-fulfillment__address__content">
-                     <span>{fulfillmentLabel}</span>
+                     <span>{t(fulfillmentLabel)}</span>
                      <button
                         onClick={() => setShowLocationSelectionPopup(true)}
                      >
@@ -133,8 +135,12 @@ export const FulfillmentForm = () => {
                   </span>
                   &nbsp; &nbsp;
                   <h3>
-                     {selectedFulfillment === 'PICKUP' && 'Pick up time'}
-                     {selectedFulfillment === 'DELIVERY' && 'Delivery time'}
+                     {selectedFulfillment === 'PICKUP' && (
+                        <span>{t('Pick up time')}</span>
+                     )}
+                     {selectedFulfillment === 'DELIVERY' && (
+                        <span>{t('Delivery time')}</span>
+                     )}
                   </h3>
                </div>
                <span
@@ -184,6 +190,8 @@ export const FulfillmentForm = () => {
 
 export const Fulfillment = ({ cart, editable = true }) => {
    const { brand } = useConfig()
+   const { t } = useTranslation()
+
    const title = React.useMemo(() => {
       switch (cart?.fulfillmentInfo?.type) {
          case 'ONDEMAND_DELIVERY':
@@ -288,7 +296,23 @@ export const Fulfillment = ({ cart, editable = true }) => {
       }
    }, [cart, brandLocations])
    if (brandLocationLading) {
-      return <Loader inline />
+      if (isSmallerDevice) {
+         return null
+      }
+      return (
+         <div style={{ width: '100%', height: '337px' }}>
+            <HernSkeleton
+               width="100%"
+               height="72px"
+               style={{ marginBottom: '16px' }}
+            />
+            <HernSkeleton
+               width="100%"
+               height="249px"
+               style={{ marginBottom: '16px' }}
+            />
+         </div>
+      )
    }
    return (
       <>
@@ -300,13 +324,13 @@ export const Fulfillment = ({ cart, editable = true }) => {
                   <DineinTable />
                   <span className="hern-cart__fulfillment-heading-text">
                      {editable
-                        ? 'How would you like to your order?'
-                        : 'Order details'}
+                        ? t('How would you like to your order?')
+                        : t('Order details')}
                   </span>
                </div>
                <div style={{ position: 'relative' }}>
                   <label style={{ marginTop: '5px' }}>
-                     {title}{' '}
+                     {t(title)}{' '}
                      {(cart?.fulfillmentInfo?.type === 'PREORDER_PICKUP' ||
                         cart?.fulfillmentInfo?.type ===
                            'PREORDER_DELIVERY') && (
@@ -341,7 +365,7 @@ export const Fulfillment = ({ cart, editable = true }) => {
                                  {addressInfo.line1}
                               </span>
                               <span className="hern-store-location__store-location-address hern-store-location__store-location-address-line2">
-                                 {addressInfo.line2}
+                                 {/* {addressInfo.line2} */}
                               </span>
                               <span className="hern-store-location__store-location-address hern-store-location__store-location-address-c-s-c-z">
                                  {addressInfo.city} {addressInfo.state}{' '}
@@ -363,7 +387,7 @@ export const Fulfillment = ({ cart, editable = true }) => {
                         </div>
                      </div>
                   ) : (
-                     <p>No address available ! </p>
+                     <p>{t('No address available!')} </p>
                   )}
                </div>
             </div>
@@ -374,7 +398,7 @@ export const Fulfillment = ({ cart, editable = true }) => {
 
 const ConsumerAddress = ({ setShowRefineLocation, showEditIcon }) => {
    const { cartState: { cart } = {} } = React.useContext(CartContext)
-
+   const { t } = useTranslation()
    const address = React.useMemo(() => {
       if (cart?.address) {
          return cart?.address
@@ -385,11 +409,14 @@ const ConsumerAddress = ({ setShowRefineLocation, showEditIcon }) => {
    if (!address) {
       return null
    }
-   const fullAddress = `${address?.line1} ${address?.line2} ${address?.city} ${address?.state} ${address?.country},${address?.zipcode}`
+   const fullAddress = `${address?.line1} ${address?.city} ${address?.state} ${address?.country},${address?.zipcode}`
    const isChangeButtonDisabled =
       !cart?.customerInfo?.customerFirstName ||
       !cart?.customerInfo?.customerLastName ||
       !cart?.customerInfo?.customerPhone
+   {
+      console.log(showEditIcon, 'showEditIcon')
+   }
    return (
       <>
          <address title={fullAddress}>{fullAddress}</address>
@@ -399,7 +426,7 @@ const ConsumerAddress = ({ setShowRefineLocation, showEditIcon }) => {
                className="hern-fulfillment__address__content__change-btn"
                disabled={isChangeButtonDisabled}
             >
-               Change
+               {t('Change')}
             </button>
          )}
       </>

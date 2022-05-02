@@ -436,6 +436,7 @@ export const ZIPCODE = gql`
          deliveryTime
          deliveryPrice
          isPickupActive
+         locationId
          isDeliveryActive
          defaultAutoSelectFulfillmentMode
          pickupOptionId: subscriptionPickupOptionId
@@ -684,31 +685,6 @@ export const INFORMATION_GRID = gql`
             id
             title
             thumbnail
-            description
-         }
-      }
-   }
-`
-
-export const FAQ = gql`
-   subscription faq(
-      $page: String_comparison_exp!
-      $identifier: String_comparison_exp!
-   ) {
-      faq: content_faqs(
-         where: {
-            page: $page
-            isVisible: { _eq: true }
-            identifier: $identifier
-         }
-      ) {
-         id
-         heading
-         subHeading
-         identifier
-         blocks: informationBlocks {
-            id
-            title
             description
          }
       }
@@ -1100,8 +1076,11 @@ export const SEARCH_COUPONS = gql`
 `
 
 export const CART_REWARDS = gql`
-   subscription CartRewards($cartId: Int!, $params: jsonb) {
-      cartRewards(where: { cartId: { _eq: $cartId } }) {
+   subscription CartRewards(
+      $params: jsonb
+      $where: order_cart_rewards_bool_exp!
+   ) {
+      cartRewards(where: $where) {
          reward {
             id
             coupon {
@@ -1351,6 +1330,7 @@ export const PRODUCTS = gql`
          defaultProductOptionId
          defaultCartItem: defaultCartItemByLocation(args: $defaultCartItemArgs)
          productionOptionSelectionStatement
+         subCategory
          productOptions(
             where: { isArchived: { _eq: false } }
             order_by: { position: desc_nulls_last }
@@ -1831,6 +1811,12 @@ export const GET_CART = gql`
          toUseAvailablePaymentOptionId
          posistOrderStatus
          posistOrderResponse
+         locationTableId
+         locationTable {
+            internalTableLabel
+            id
+            seatCover
+         }
          subscriptionOccurence {
             id
             fulfillmentDate
@@ -1972,6 +1958,16 @@ export const BRAND_LOCATIONS = gql`
             doesDeliverOutsideCity
             doesDeliverOutsideState
             operatingTime
+            brand_recurrences(where: { isActive: { _eq: true } }) {
+               recurrence {
+                  rrule
+                  type
+                  timeSlots {
+                     from
+                     to
+                  }
+               }
+            }
          }
       }
    }
@@ -2356,12 +2352,16 @@ export const GET_ORDER_DETAILS = gql`
          paymentStatus
          fulfillmentInfo
          billingDetails
+         cartOwnerBilling
          address
          order {
             created_at
+            deliveryInfo
          }
          cartPayments {
             id
+            amount
+            transactionRemark
          }
          availablePaymentOption {
             label
@@ -2454,10 +2454,8 @@ export const PRODUCT_SEO_SETTINGS_BY_ID = gql`
          description
          name
       }
-      products_productPageSetting(where: { type: { _eq: $type } }) {
-         product_productPageSettings(
-            where: { productId: { _eq: $productId } }
-         ) {
+      products_productSetting(where: { type: { _eq: $type } }) {
+         product_productSettings(where: { productId: { _eq: $productId } }) {
             value
             productId
          }
@@ -2479,4 +2477,40 @@ export const SUPPORTED_PAYMENT_OPTIONS = gql`
          label
       }
    }
+`
+export const LOCATION_TABLES = gql`
+   query LOCATION_TABLES($where: brands_locationTable_bool_exp) {
+      brands_locationTable(where: $where) {
+         id
+         internalTableLabel
+         isActive
+         locationId
+         seatCover
+      }
+   }
+`
+export const COUPON_BY_ID = gql`
+   query coupon($id: Int!) {
+      coupon(id: $id) {
+         code
+         metaDetails
+      }
+   }
+`
+export const GET_PAGE_ROUTES = gql`
+query MyQuery($domain: String!) {
+  brands(where: {_or: [{domain: {_eq: $domain}}, {isDefault: {_eq: true}}]}) {
+    brandPages(where: {isArchived: {_eq: false}, published: {_eq: true}, isAllowedToCrawl: {_eq: true}}) {
+      route
+    }
+  }
+}`
+export const GET_DISALLOWED_PAGE_ROUTES = gql`
+query MyQuery($domain: String!) {
+  brands(where: {_or: [{domain: {_eq: $domain}}, {isDefault: {_eq: true}}]}) {
+    brandPages(where: {isArchived: {_eq: false}, published: {_eq: true}, isAllowedToCrawl: {_eq: false}}) {
+      route
+    }
+  }
+}
 `

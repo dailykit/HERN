@@ -12,11 +12,13 @@ import {
 } from '../../../../components'
 import { useConfig } from '../../../../lib'
 import { PlusIcon, MinusIcon } from '../../../../assets/icons'
+import { useTranslation } from '../../../../context'
 
 const BillingDetails = ({ isCheckout }) => {
    const router = useRouter()
    const { state } = useMenu()
    const { addToast } = useToasts()
+   const { t } = useTranslation()
    const { configOf } = useConfig()
    const [open, toggle] = React.useState(false)
    const { billingDetails: billing = {} } = state?.occurenceCustomer?.cart || {}
@@ -32,7 +34,7 @@ const BillingDetails = ({ isCheckout }) => {
 
    const payEarly = () => {
       if (state.occurenceCustomer?.betweenPause) {
-         addToast('You have paused your plan.', {
+         addToast(t('You have paused your plan.'), {
             appearance: 'warning',
          })
          return
@@ -59,7 +61,7 @@ const BillingDetails = ({ isCheckout }) => {
          )}
          <header className="hern-cart-billing__header">
             <h4 className="hern-cart-billing__heading">
-               Your Weekly Total:{' '}
+               <span> {t('Your Weekly Total:')}</span>
                {itemCountValid
                   ? formatCurrency(billing?.totalPrice?.value)
                   : 'N/A'}
@@ -72,7 +74,7 @@ const BillingDetails = ({ isCheckout }) => {
                className="hern-cart-billing__early-pay-btn"
                onClick={payEarly}
             >
-               EARLY PAY
+               {t('EARLY PAY')}
             </button>
          )}
       </div>

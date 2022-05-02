@@ -3,7 +3,7 @@ import classNames from 'classnames'
 import React, { useState } from 'react'
 import { useToasts } from 'react-toast-notifications'
 import { CloseIcon, LocationIcon } from '../assets/icons'
-import { CartContext, useUser } from '../context'
+import { CartContext, useTranslation, useUser } from '../context'
 import { ZIPCODE_AVAILABILITY } from '../graphql'
 import { Loader } from './loader'
 import { Modal } from 'antd'
@@ -16,6 +16,7 @@ const AddressList = ({
 }) => {
    const { user } = useUser()
    const { addToast } = useToasts()
+   const { t } = useTranslation()
    const { cartState } = React.useContext(CartContext)
 
    const addresses = user?.platform_customer?.addresses || []
@@ -39,7 +40,7 @@ const AddressList = ({
          }
       },
       onError: error => {
-         addToast('Something went wrong', { appearance: 'error' })
+         addToast(t('Something went wrong'), { appearance: 'error' })
          console.log('checkZipcodeValidity -> zipcode -> error', error)
       },
    })
@@ -68,7 +69,9 @@ const AddressList = ({
    return (
       <div className="hern-address-list">
          <div className="hern-address-list__header">
-            <h3 className="hern-address-list__heading">Your saved addresses</h3>
+            <h3 className="hern-address-list__heading">
+               {t('Your saved addresses')}
+            </h3>
             {tunnel && (
                <button className="hern-address-list__close-btn">
                   <CloseIcon
@@ -139,6 +142,7 @@ const AddressList = ({
 
 export default AddressList
 export const AddressListHeader = () => {
+   const { t } = useTranslation()
    return (
       <div
          style={{
@@ -152,7 +156,7 @@ export const AddressListHeader = () => {
             className={'hern-address-list-header__label'}
             htmlFor="address-list-header"
          >
-            Delivery Area
+            {t('Delivery Area')}
          </label>
       </div>
    )

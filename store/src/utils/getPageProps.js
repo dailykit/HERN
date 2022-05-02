@@ -29,11 +29,12 @@ export const getPageProps = async (params, route) => {
 
    //pageModules
    const parsedData = await foldsResolver(
-      dataByRoute.brands_brandPages[0]['brandPageModules']
+      dataByRoute?.brands_brandPages?.[0]?.['brandPageModules'] ?? []
    )
 
    //All the linked CSS and JS files
-   const pageModules = dataByRoute.brands_brandPages[0]['brandPageModules']
+   const pageModules =
+      dataByRoute?.brands_brandPages[0]?.['brandPageModules'] || []
    const fileIds = {
       htmlFileIds: pageModules
          .filter(file => file.fileId !== null)
@@ -46,8 +47,8 @@ export const getPageProps = async (params, route) => {
          where: {
             _or: [
                { brandPage: { route: { _eq: route } } },
-               { brandPageModuleId: { _in: fileIds.htmlFileIds } },
-               { htmlFileId: { _in: fileIds.pageModules } },
+               { brandPageModuleId: { _in: fileIds.pageModules } },
+               { htmlFileId: { _in: fileIds.htmlFileIds } },
                {
                   brand: {
                      _or: [
@@ -67,9 +68,12 @@ export const getPageProps = async (params, route) => {
    //Navigation Menu
    const { brands_navigationMenuItem: navigationMenus } = await client.request(
       NAVIGATION_MENU,
+
       {
          navigationMenuId:
-            dataByRoute.brands_brandPages[0]['brand']['navigationMenuId'],
+            dataByRoute.brands_brandPages?.[0]?.['brand']?.[
+               'navigationMenuId'
+            ] ?? null,
       }
    )
 

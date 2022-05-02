@@ -34,7 +34,6 @@ import {
    PaymentProcessingModal,
    PrintProcessingModal,
 } from '../components'
-import { isEmpty, set } from 'lodash'
 
 const PaymentContext = createContext()
 const inititalState = {
@@ -220,6 +219,8 @@ export const PaymentProvider = ({ children }) => {
                id: cartPayment?.id,
                _set: {
                   paymentStatus: 'CANCELLED',
+                  comment:
+                     'Cancelled by user using back button or dismiss modal',
                },
                _inc: {
                   cancelAttempt: 1,
@@ -249,6 +250,8 @@ export const PaymentProvider = ({ children }) => {
          type: 'UPDATE_INITIAL_STATE',
          payload: {
             isPaymentProcessing: false,
+            isPaymentInitiated: false,
+            paymentLifeCycleState: '',
          },
       })
       const url = isClient ? get_env('BASE_BRAND_URL') : ''
@@ -259,14 +262,17 @@ export const PaymentProvider = ({ children }) => {
       console.log('result', data)
    }
 
-   const initializePayment = requiredCartId => {
+   const initializePayment = (
+      requiredCartId,
+      paymentLifeCycleState = 'INITIALIZE'
+   ) => {
       setCartId(requiredCartId)
       setIsPaymentInitiated(true)
       setIsProcessingPayment(true)
       dispatch({
          type: 'UPDATE_INITIAL_STATE',
          payload: {
-            paymentLifeCycleState: 'INITIALIZE',
+            paymentLifeCycleState,
          },
       })
    }
@@ -284,10 +290,9 @@ export const PaymentProvider = ({ children }) => {
             },
          },
       })
-      if (!isEmpty(settings) && isClient) {
-         const path = settings['printing'].find(
-            item => item?.identifier === 'KioskCustomerTokenTemplate'
-         )?.value?.path?.value
+      if (!_isEmpty(settings) && isClient) {
+         const path =
+            settings['printing']?.['KioskCustomerTokenTemplate']?.path?.value
          const DATA_HUB_HTTPS = get_env('DATA_HUB_HTTPS')
          const { origin } = new URL(DATA_HUB_HTTPS)
          const templateOptions = encodeURI(
@@ -394,8 +399,19 @@ export const PaymentProvider = ({ children }) => {
 
    // setting cartPayment in state
    useEffect(() => {
-      if (!isEmpty(cartPaymentsFromQuery)) {
+      console.log('useEffect for setting cartPayment')
+      if (!cartId) {
+         setCartId(cartState?.cart?.id || null)
+      }
+      if (!_isEmpty(cartPaymentsFromQuery)) {
          setCartPayment(cartPaymentsFromQuery[0])
+         setCartId(cartPaymentsFromQuery[0].cartId)
+         setIsPaymentInitiated(true)
+         setIsProcessingPayment(true)
+      } else {
+         setCartPayment(null)
+         setIsPaymentInitiated(false)
+         setIsProcessingPayment(false)
       }
    }, [cartPaymentsFromQuery])
 
@@ -523,7 +539,9 @@ export const PaymentProvider = ({ children }) => {
                      eventHandler,
                   })
                   console.log('options', options)
-                  await displayRazorpay(options)
+                  if (state.paymentLifeCycleState === 'INITIALIZE') {
+                     await displayRazorpay(options)
+                  }
                })()
             }
          } else if (

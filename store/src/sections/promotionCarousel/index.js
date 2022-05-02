@@ -106,7 +106,12 @@ export const PromotionCarousal = props => {
       }
    }
    if (subsLoading) {
-      return <Loader inline />
+      return (
+         <div style={{ height: '235.5px', width: '100%', display: 'flex' }}>
+            <div className="hern-kiosk__promotion-carousel-skeleton"></div>
+            <div className="hern-kiosk__promotion-carousel-skeleton"></div>
+         </div>
+      )
    }
    if (subsError) {
       return <p>Something went wrong</p>
@@ -123,9 +128,13 @@ export const PromotionCarousal = props => {
             onClick={lastCarousal}
             style={{
                backgroundColor: `${
-                  componentConfig?.kioskSettings?.theme?.secondaryColor
-                     ?.value || theme?.accent
+                  componentConfig?.kioskSettings?.theme?.arrowBgColor?.value ||
+                  theme?.accent
                }99`,
+               color: `${
+                  componentConfig?.kioskSettings?.theme?.arrowColor?.value ||
+                  '#000000'
+               }`,
             }}
          />
          <ArrowRightIcon
@@ -134,9 +143,13 @@ export const PromotionCarousal = props => {
             onClick={nextCarousal}
             style={{
                backgroundColor: `${
-                  componentConfig?.kioskSettings?.theme?.secondaryColor
-                     ?.value || theme?.accent
+                  componentConfig?.kioskSettings?.theme?.arrowBgColor?.value ||
+                  theme?.accent
                }99`,
+               color: `${
+                  componentConfig?.kioskSettings?.theme?.arrowColor?.value ||
+                  '#000000'
+               }`,
             }}
          />
          <Carousel
@@ -144,6 +157,7 @@ export const PromotionCarousal = props => {
             slidesToShow={2}
             slidesToScroll={2}
             infinite={false}
+            style={{ minHeight: '235px' }}
          >
             {data.coupons.map(eachCoupon => {
                if (!eachCoupon.metaDetails?.image) {
@@ -157,6 +171,8 @@ export const PromotionCarousal = props => {
                      <HernLazyImage
                         dataSrc={eachCoupon.metaDetails.image}
                         style={{ padding: '1em' }}
+                        height={225}
+                        width={540}
                      />
                   </div>
                )
@@ -174,6 +190,8 @@ export const PromotionCarousal = props => {
                            onClick={() => {
                               onImageClick(eachImage)
                            }}
+                           height={225}
+                           width={540}
                         />
                      </div>
                   )
@@ -189,6 +207,8 @@ export const PromotionCarousal = props => {
                         <HernLazyImage
                            dataSrc={eachImage}
                            style={{ padding: '1em' }}
+                           height={225}
+                           width={540}
                         />
                      </div>
                   )

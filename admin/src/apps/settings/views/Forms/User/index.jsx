@@ -1,13 +1,13 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { isEmpty } from 'lodash'
 import { toast } from 'react-toastify'
 import { useParams } from 'react-router-dom'
 import { useMutation, useSubscription } from '@apollo/react-hooks'
-import { TextButton, Text, HelperText, Form, Flex } from '@dailykit/ui'
+import { TextButton, Text, HelperText, Form, Flex, Spacer } from '@dailykit/ui'
 
 import validate from './validator'
-import { USERS } from '../../../graphql'
-import { Section, StyledTemp } from './styled'
+import { SCOPE_SELECTOR, USERS } from '../../../graphql'
+import { Section, StyledBrandLocations, StyledBrandName, StyledBrandSelector, StyledBrandSelectorList, StyledTemp } from './styled'
 import { initialState, reducers } from './store'
 import { logger } from '../../../../../shared/utils'
 import { useTabs } from '../../../../../shared/providers'
@@ -17,12 +17,19 @@ import {
    InlineLoader,
    Tooltip,
 } from '../../../../../shared/components'
+import { ArrowDown, ArrowUp } from '../../../../../shared/assets/navBarIcons'
 
 const UserForm = () => {
    const params = useParams()
    const { tab, addTab } = useTabs()
    const [isValid, setIsValid] = React.useState(false)
    const [state, dispatch] = React.useReducer(reducers, initialState)
+   const [scopeList, setScopeList] = React.useState([])
+   const [brandArrowClicked, setBrandArrowClicked] = useState(false)
+   const [displayBrand, setDisplayBrand] = useState(true)
+   const [locationArrowClicked, setLocationArrowClicked] = useState(false)
+
+   //mutation
    const [updateUser, { loading: updatingUser }] = useMutation(USERS.UPDATE, {
       onCompleted: () => {
          toast.success('Updated user successfully!')
@@ -32,6 +39,8 @@ const UserForm = () => {
          toast.error('Could not delete user, please try again!')
       },
    })
+
+   //subscription
    const {
       error,
       loading,
@@ -39,7 +48,29 @@ const UserForm = () => {
    } = useSubscription(USERS.USER, {
       variables: { id: params.id },
    })
+   console.log('user', user)
 
+   const { loading: scopeLoading } = useSubscription(SCOPE_SELECTOR, {
+      variables: {
+         identifier: 'Brand Info',
+      },
+      onSubscriptionData: ({ subscriptionData }) => {
+         const result = subscriptionData.data.brandsAggregate.nodes.map(
+            eachBrand => {
+               return {
+                  id: eachBrand.id,
+                  title: eachBrand.title,
+                  location: eachBrand.brand_locations,
+               }
+            }
+         )
+         // setBrandList(result)
+         console.log('resultScope', result)
+         setScopeList(result)
+      },
+   })
+
+   //useEffects
    React.useEffect(() => {
       if (!tab && !loading && user?.id) {
          addTab(
@@ -51,7 +82,7 @@ const UserForm = () => {
 
    React.useEffect(() => {
       if (!loading && !isEmpty(user)) {
-         const { email, phoneNo, lastName, firstName } = user
+         const { email, phoneNo, lastName, firstName, brand, location } = user
 
          dispatch({
             type: 'SET_FIELD',
@@ -69,6 +100,14 @@ const UserForm = () => {
             type: 'SET_FIELD',
             payload: { field: 'email', value: email || '' },
          })
+         dispatch({
+            type: 'SET_FIELD_BRAND',
+            payload: { field: 'brand', brandId: brand?.id || null, brandName: brand?.title || '--- Choose Brand ---', isTouched: true },
+         })
+         dispatch({
+            type: 'SET_FIELD_LOCATION',
+            payload: { field: 'location', locationId: location?.id || null, locationLabel: location?.label || "--- Choose Location ---", isTouched: true },
+         })
       }
    }, [loading, user])
 
@@ -77,14 +116,16 @@ const UserForm = () => {
          validate.firstName(state.firstName.value).isValid &&
          validate.lastName(state.lastName.value).isValid &&
          validate.email(state.email.value).isValid &&
-         validate.phoneNo(state.phoneNo.value).isValid
+         validate.phoneNo(state.phoneNo.value).isValid &&
+         state.brand.isTouched &&
+         state.location.isTouched
       ) {
          setIsValid(true)
       } else {
          setIsValid(false)
       }
    }, [state])
-
+   console.log("isValid", validate.firstName(state.firstName.value).isValid, state.brand.isTouched, state.location.isTouched);
    const createUser = () => {
       updateUser({
          variables: {
@@ -93,6 +134,8 @@ const UserForm = () => {
                firstName: state.firstName.value,
                lastName: state.lastName.value,
                phoneNo: state.phoneNo.value,
+               brandId: state.brand.brandId,
+               locationId: state.location.locationId,
                ...(!user?.email && { email: state.email.value }),
             },
          },
@@ -268,6 +311,151 @@ const UserForm = () => {
                   message="This is a first time login password, then the user will be asked to set new password."
                />
             </StyledTemp>
+            <Section>
+               <Form.Group>
+                  <Flex container alignItems="center">
+                     <Form.Label htmlFor="brand" title="brand">
+                        Brand*
+                     </Form.Label>
+                     <Tooltip identifier="form_user_field_brand" />
+                  </Flex>
+                  {displayBrand && (
+                     <div>
+                        <StyledBrandSelector>
+                           <StyledBrandName>
+                              <p>{state.brand.brandName}</p>
+                           </StyledBrandName>
+                           <span
+                              onClick={() => {
+                                 setBrandArrowClicked(!brandArrowClicked)
+                                 setLocationArrowClicked(false)
+                              }}
+                           >
+                              {brandArrowClicked ? <ArrowUp /> : <ArrowDown />}
+                           </span>
+                        </StyledBrandSelector>
+                        {brandArrowClicked && (
+                           <StyledBrandSelectorList
+                              active={brandArrowClicked}
+                           >
+                              <div
+                                 key={`allSelected-null`}
+                                 onClick={() => {
+                                    dispatch({
+                                       type: 'SET_FIELD_BRAND',
+                                       payload: { field: "brand", brandId: null, brandName: "All", isTouched: true },
+                                    })
+                                    dispatch({
+                                       type: 'SET_FIELD_LOCATION',
+                                       payload: { field: "location", locationId: null, locationLabel: "--- Choose Location ---", isTouched: false },
+                                    })
+                                    setBrandArrowClicked(false)
+                                 }}
+                              >
+                                 {"Select all Brands"}
+                              </div>
+                              {scopeList.map(brand => (
+                                 <div
+                                    key={brand.id}
+                                    onClick={() => {
+                                       dispatch({
+                                          type: 'SET_FIELD_BRAND',
+                                          payload: { field: "brand", brandId: brand.id, brandName: brand.title, isTouched: true },
+                                       })
+                                       dispatch({
+                                          type: 'SET_FIELD_LOCATION',
+                                          payload: { field: "location", locationId: null, locationLabel: "--- Choose Location ---", isTouched: false },
+                                       })
+                                       setBrandArrowClicked(false)
+                                    }}
+                                 >
+                                    {brand.title}
+                                 </div>
+                              ))}
+                           </StyledBrandSelectorList>
+                        )}
+                     </div>
+                  )}
+               </Form.Group>
+
+               <Form.Group>
+                  <Flex container alignItems="center">
+                     <Form.Label htmlFor="location" title="location">
+                        Location*
+                     </Form.Label>
+                     <Tooltip identifier="form_user_field_location" />
+                  </Flex>
+                  {scopeList[
+                     scopeList.findIndex(obj => obj.id === state.brand.brandId)
+                  ]?.location.length > 0 || state.brand.brandName === "All" ? (
+                     <div>
+                        <StyledBrandLocations>
+                           <div>
+                              {/* <span>Location</span> */}
+                              <span>{state.location.locationLabel}</span>
+                           </div>
+                           <div
+                              onClick={() => {
+                                 setLocationArrowClicked(!locationArrowClicked)
+                                 setBrandArrowClicked(false)
+                              }}
+                           >
+                              {locationArrowClicked ? (
+                                 <ArrowUp />
+                              ) : (
+                                 <ArrowDown />
+                              )}
+                           </div>
+                        </StyledBrandLocations>
+                        {locationArrowClicked && (
+                           <StyledBrandSelectorList
+                              active={brandArrowClicked}
+                           >
+                              <div
+                                 key={`allLocations-null`}
+                                 onClick={() => {
+                                    dispatch({
+                                       type: 'SET_FIELD_LOCATION',
+                                       payload: {
+                                          field: "location", locationId: null, locationLabel: "All", isTouched: true
+                                       },
+                                    })
+                                    setLocationArrowClicked(false)
+                                 }}
+
+                              >
+                                 {"Select All locations"}
+                              </div>
+                              {scopeList[
+                                 scopeList.findIndex(
+                                    obj => obj.id === state.brand.brandId
+                                 )
+                              ]?.location.map(eachLocation => {
+                                 return (
+                                    <div
+                                       key={`${eachLocation.location.id}-${state.brand.brandId}`}
+                                       onClick={() => {
+                                          dispatch({
+                                             type: 'SET_FIELD_LOCATION',
+                                             payload: { field: "location", locationId: eachLocation.location.id, locationLabel: eachLocation.location.label, isTouched: true },
+                                          })
+                                          setLocationArrowClicked(false)
+                                       }}
+                                    >
+                                       {eachLocation.location.label}
+                                    </div>
+                                 )
+                              })}
+                           </StyledBrandSelectorList>
+                        )}
+                     </div>
+                  ) : (
+                     <StyledBrandLocations>
+                        Locations not Available !
+                     </StyledBrandLocations>
+                  )}
+               </Form.Group>
+            </Section>
          </div>
          <Banner id="settings-app-users-user-details-bottom" />
       </Flex>

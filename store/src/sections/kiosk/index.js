@@ -4,7 +4,6 @@ import { useMutation } from '@apollo/react-hooks'
 import { useIdleTimer } from 'react-idle-timer'
 import { Carousel, Layout, Modal } from 'antd'
 import isEmpty from 'lodash/isEmpty'
-import 'antd/dist/antd.css'
 
 import { IdleScreen } from '../../components/kiosk/idleScreen'
 import { KioskHeader } from '../../components/kiosk/header'
@@ -17,6 +16,7 @@ import { KioskCart } from '../../components/kiosk/cart'
 import { DELETE_CART } from '../../graphql'
 import { usePayment } from '../../lib'
 import { InfoBar } from '../../components/kiosk/component'
+import { useKioskMenu } from './utils/useKioskMenu'
 // idle screen component
 // fulfillment component
 // header
@@ -43,6 +43,14 @@ const Kiosk = props => {
    // console.log('kioskConfig', kioskConfig)
 
    const { direction } = useTranslation()
+   const collectionIds = React.useMemo(() => {
+      return kioskConfig.data.collectionData.value.length > 0
+         ? kioskConfig.data.collectionData.value.map(
+              collection => collection.id
+           )
+         : []
+   }, [kioskConfig])
+   const { status: kioskMenuStatus, hydratedMenu } = useKioskMenu(collectionIds)
 
    const { resetPaymentProviderStates } = usePayment()
 
@@ -173,6 +181,8 @@ const Kiosk = props => {
                         config={kioskConfig}
                         setCurrentPage={setCurrentPage}
                         combinedCartItems={combinedCartItems}
+                        hydratedMenu={hydratedMenu}
+                        status={kioskMenuStatus}
                      />
                   </Content>
                )}

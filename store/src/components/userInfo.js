@@ -5,13 +5,14 @@ import { get_env, isClient } from '../utils'
 import { UserIcon } from '../assets/icons'
 import { Button } from './button'
 import { Tunnel } from '.'
-import { useUser, CartContext } from '../context'
+import { useUser, CartContext, useTranslation } from '../context'
 import { useToasts } from 'react-toast-notifications'
 import { UPDATE_PLATFORM_CUSTOMER } from '../graphql'
 import { useMutation } from '@apollo/react-hooks'
 import classNames from 'classnames'
-
+import { useForm } from 'react-hook-form'
 export const UserInfo = props => {
+   const { t } = useTranslation()
    const [isTunnelOpen, setIsTunnelOpen] = useState(false)
    const [isUserFormOpen, setIsUserFormOpen] = useState(false)
    const [settingCartinfo, setSettingCartinfo] = useState(false)
@@ -59,7 +60,7 @@ export const UserInfo = props => {
                      <div style={{ display: 'flex', alignItems: 'center' }}>
                         <UserIcon size={16} />
                         <h2 className="hern-user-info__heading">
-                           User Details
+                           {t('User Details')}
                         </h2>
                      </div>
                   }
@@ -88,7 +89,13 @@ const UserInfoForm = props => {
    const { cartState, methods } = React.useContext(CartContext)
    const { user } = useUser()
    const { addToast } = useToasts()
+   const { t } = useTranslation()
    const { cart } = cartState
+   const {
+      register,
+      handleSubmit,
+      formState: { errors },
+   } = useForm()
    const [savingUserInfo, setSavingUserInfo] = React.useState(false)
    const [firstName, setFirstName] = useState(
       cart?.customerInfo?.customerFirstName ||
@@ -114,22 +121,25 @@ const UserInfoForm = props => {
       },
       onError: error => {
          console.error(error)
-         addToast('Failed to save!', {
+         addToast(<span>{t('Failed to save!')}</span>, {
             appearance: 'error',
          })
       },
    })
 
-   const handleSave = async () => {
+   const handleSave = async data => {
       setSavingUserInfo(true)
       await methods.cart.update({
          variables: {
             id: cart.id,
             _set: {
                customerInfo: {
-                  customerFirstName: firstName,
-                  customerLastName: lastName,
+                  customerFirstName: data.firstName,
+                  customerLastName: data.lastName,
                   customerPhone: mobileNumber,
+                  customerEmail:
+                     cart?.customerInfo?.customerEmail ||
+                     user.platform_customer?.email,
                },
             },
          },
@@ -138,7 +148,10 @@ const UserInfoForm = props => {
          await updateCustomer({
             variables: {
                keycloakId: user.keycloakId,
-               _set: { firstName: firstName, lastName: lastName },
+               _set: {
+                  firstName: data.firstName,
+                  lastName: data.lastName,
+               },
             },
          })
       }
@@ -157,83 +170,97 @@ const UserInfoForm = props => {
    }, [cart])
 
    return (
-      <div
-         className={classNames('hern-user-info', {
-            'hern-user-info__tunnel': tunnel,
-         })}
-      >
-         <div className="hern-user-info__header">
-            <div>
-               <UserIcon size={16} />
-               <h2 className="hern-user-info__heading">User Details</h2>
+      <form onSubmit={handleSubmit(handleSave)}>
+         <div
+            className={classNames('hern-user-info', {
+               'hern-user-info__tunnel': tunnel,
+            })}
+         >
+            <div className="hern-user-info__header">
+               <div>
+                  <UserIcon size={16} />
+                  <h2 className="hern-user-info__heading">
+                     {t('User Details')}
+                  </h2>
+               </div>
+               <Button
+                  type="submit"
+                  disabled={
+                     errors.firstName ||
+                     errors.lastName ||
+                     !mobileNumber?.length ||
+                     !isValidPhoneNumber(mobileNumber)
+                  }
+                  loading={savingUserInfo}
+               >
+                  {t('save')}
+               </Button>
             </div>
-            <Button
-               disabled={
-                  !firstName?.length ||
-                  !lastName?.length ||
-                  !mobileNumber?.length ||
-                  !isValidPhoneNumber(mobileNumber)
-               }
-               onClick={handleSave}
-               loading={savingUserInfo}
-            >
-               save
-            </Button>
-         </div>
-         <div className="hern-user-info__name-field">
-            <fieldset className="hern-user-info__fieldset hern-user-info__fieldset-first-name">
-               <label className="hern-user-info__label">First Name</label>
-               <input
-                  name="user-first-name"
-                  type="text"
-                  className="hern-user-info__input-field"
+            <div className="hern-user-info__name-field">
+               <fieldset className="hern-user-info__fieldset hern-user-info__fieldset-first-name">
+                  <label className="hern-user-info__label">
+                     {t('First Name')}
+                  </label>
+                  <input
+                     type="text"
+                     name="firstName"
+                     defaultValue={user?.platform_customer?.firstName}
+                     required
+                     {...register('firstName', { pattern: /^[a-zA-Z .]+$/ })}
+                     placeholder="Enter your first name"
+                  />
+                  {errors.firstName && errors.firstName.type === 'pattern' && (
+                     <span className="hern-profile__profile-form__error">
+                        Please enter a valid first name.
+                     </span>
+                  )}
+               </fieldset>
+               <fieldset className="hern-user-info__fieldset hern-user-info__fieldset-last-name">
+                  <label className="hern-user-info__label">
+                     {t('Last Name')}
+                  </label>
+                  <input
+                     type="text"
+                     name="lastName"
+                     defaultValue={user?.platform_customer?.lastName}
+                     required
+                     {...register('lastName', { pattern: /^[a-zA-Z .]+$/ })}
+                     placeholder="Enter your last name"
+                  />
+                  {errors.lastName && errors.lastName.type === 'pattern' && (
+                     <span className="hern-profile__profile-form__error">
+                        Please enter a valid last name.
+                     </span>
+                  )}
+               </fieldset>
+            </div>
+            <fieldset className="hern-user-info__fieldset hern-user-info__fieldset-phone-number">
+               <label className="hern-user-info__label">
+                  {t('Phone Number')}
+               </label>
+               <PhoneInput
+                  className={`hern-user-info__phone__input hern-user-info__phone__input${
+                     !(mobileNumber && isValidPhoneNumber(mobileNumber))
+                        ? '-invalid'
+                        : '-valid'
+                  }`}
+                  initialValueFormat="national"
+                  value={mobileNumber}
                   onChange={e => {
-                     setFirstName(e.target.value)
+                     setMobileNumber(e)
                   }}
-                  value={firstName}
-                  placeholder="Enter your first name"
+                  defaultCountry={get_env('COUNTRY_CODE')}
+                  placeholder="Enter your phone number"
                   disabled={!editable}
                />
-            </fieldset>
-            <fieldset className="hern-user-info__fieldset hern-user-info__fieldset-last-name">
-               <label className="hern-user-info__label">Last Name</label>
-               <input
-                  name="user-last-name"
-                  type="text"
-                  className="hern-user-info__input-field"
-                  onChange={e => {
-                     setLastName(e.target.value)
-                  }}
-                  value={lastName}
-                  placeholder="Enter your last name"
-                  disabled={!editable}
-               />
+               <span className="hern-user-info__phone-number-warning">
+                  {mobileNumber &&
+                     !isValidPhoneNumber(mobileNumber) &&
+                     t('Invalid phone number')}
+               </span>
             </fieldset>
          </div>
-         <fieldset className="hern-user-info__fieldset hern-user-info__fieldset-phone-number">
-            <label className="hern-user-info__label">Phone Number</label>
-            <PhoneInput
-               className={`hern-user-info__phone__input hern-user-info__phone__input${
-                  !(mobileNumber && isValidPhoneNumber(mobileNumber))
-                     ? '-invalid'
-                     : '-valid'
-               }`}
-               initialValueFormat="national"
-               value={mobileNumber}
-               onChange={e => {
-                  setMobileNumber(e)
-               }}
-               defaultCountry={get_env('COUNTRY_CODE')}
-               placeholder="Enter your phone number"
-               disabled={!editable}
-            />
-            <span className="hern-user-info__phone-number-warning">
-               {mobileNumber &&
-                  !isValidPhoneNumber(mobileNumber) &&
-                  'Invalid phone number'}
-            </span>
-         </fieldset>
-      </div>
+      </form>
    )
 }
 const UserDetails = ({
@@ -244,7 +271,7 @@ const UserDetails = ({
 }) => {
    const { cartState } = React.useContext(CartContext)
    const isSmallerDevice = isClient && window.innerWidth < 768
-
+   const { t } = useTranslation()
    const hasUserInfo =
       cartState?.cart?.customerInfo?.customerFirstName?.length ||
       cartState?.cart?.customerInfo?.customerLastName?.length ||
@@ -262,7 +289,7 @@ const UserDetails = ({
                onClick={handleEdit}
                className="hern-user-info-tunnel__open-btn"
             >
-               Add user info
+               {t('Add user info')}
             </button>
          ) : (
             <div className="hern-user-info--closed">
@@ -287,7 +314,7 @@ const UserDetails = ({
                      handleEdit()
                   }}
                >
-                  Edit
+                  {t('Edit')}
                </button>
             </div>
          )}

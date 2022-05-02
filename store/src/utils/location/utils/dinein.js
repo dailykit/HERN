@@ -1,15 +1,19 @@
-import { rrulestr } from 'rrule'
+// import { rrulestr } from 'rrule'
+import { isDateValidInRRule } from '../../'
 
 export const isStoreOnDemandDineInAvailable = finalRecurrences => {
    for (let rec in finalRecurrences) {
       const now = new Date() // now
       const start = new Date(now.getTime() - 1000 * 60 * 60 * 24) // yesterday
       const end = new Date(now.getTime() + 1000 * 60 * 60 * 24) // tomorrow
-      const dates = rrulestr(finalRecurrences[rec].recurrence.rrule).between(
-         start,
-         now
+      // const dates = rrulestr(finalRecurrences[rec].recurrence.rrule).between(
+      //    start,
+      //    now
+      // )
+      const isValidDay = isDateValidInRRule(
+         finalRecurrences[rec].recurrence.rrule
       )
-      if (dates.length) {
+      if (isValidDay) {
          if (finalRecurrences[rec].recurrence.timeSlots.length) {
             for (let timeslot of finalRecurrences[rec].recurrence.timeSlots) {
                const timeslotFromArr = timeslot.from.split(':')

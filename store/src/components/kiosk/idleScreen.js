@@ -1,7 +1,6 @@
 import React, { useEffect } from 'react'
 import ReactPlayer from 'react-player'
 import { Slide } from 'react-slideshow-image'
-import 'react-slideshow-image/dist/styles.css'
 
 export const IdleScreen = props => {
    const { config } = props

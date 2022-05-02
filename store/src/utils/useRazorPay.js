@@ -26,8 +26,8 @@ function useRazorPay() {
          return
       }
       if (isClient) {
-         const paymentObject = new window.Razorpay(options)
-         paymentObject.open()
+         const rzp = new window.Razorpay(options)
+         rzp.open()
       }
    }
 

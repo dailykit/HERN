@@ -4,7 +4,7 @@ import { useLazyQuery } from '@apollo/react-hooks'
 import { REFERRER } from '../graphql'
 import { useConfig } from '../lib'
 import { Form } from './form'
-import { useUser } from '../context'
+import { useTranslation, useUser } from '../context'
 import { usePayment } from '../sections/checkout/state'
 import {
    deleteStoredReferralCode,
@@ -18,17 +18,15 @@ export const Referral = () => {
    const { brand } = useConfig()
    const { addToast } = useToasts()
    const { user } = useUser()
-
+   const { t } = useTranslation()
    const storedCode = getStoredReferralCode(null)
    const [referrer, setReferrer] = React.useState('')
 
    const [fetchReferrer, { loading }] = useLazyQuery(REFERRER, {
       onCompleted: data => {
          if (data.customerReferrals.length) {
-            const {
-               firstName,
-               lastName,
-            } = data.customerReferrals[0].customer.platform_customer
+            const { firstName, lastName } =
+               data.customerReferrals[0].customer.platform_customer
             setReferrer(`${firstName} ${lastName}`)
          }
       },
@@ -66,10 +64,10 @@ export const Referral = () => {
          (await isReferralCodeValid(brand.id, state.code.value)) &&
          state.code.value !== user?.customerReferral?.referralCode
       if (!isValid) {
-         addToast('Referral code is not valid!', { appearance: 'error' })
+         addToast(t('Referral code is not valid!'), { appearance: 'error' })
          setReferrer('')
       } else if (isValid && state.code.value) {
-         addToast('Referral code is valid!', { appearance: 'success' })
+         addToast(t('Referral code is valid!'), { appearance: 'success' })
          fetchReferrer({
             variables: {
                brandId: brand.id,
@@ -85,7 +83,7 @@ export const Referral = () => {
 
    return (
       <Styles.Wrapper>
-         <Form.Label>Referral Code</Form.Label>
+         <Form.Label>{t('Referral Code')}</Form.Label>
          {!loading && (
             <Styles.Form>
                <Form.Text
@@ -103,10 +101,12 @@ export const Referral = () => {
                   placeholder="Enter referral code"
                />
                {referrer && (
-                  <Styles.HelpText>referred by: {referrer}</Styles.HelpText>
+                  <Styles.HelpText>
+                     <span>{t('referred by:')}</span> {referrer}
+                  </Styles.HelpText>
                )}
                {!state.code.isValid && (
-                  <Styles.HelpText error>Invalid code!</Styles.HelpText>
+                  <Styles.HelpText error>{t('Invalid code!')}</Styles.HelpText>
                )}
             </Styles.Form>
          )}

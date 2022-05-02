@@ -17,11 +17,12 @@ import {
    setThemeVariable,
    isClient,
 } from '../../utils'
-import { CartContext } from '../../context'
+import { CartContext, useTranslation } from '../../context'
 import { Loader } from '../'
 import { TimeSlots } from './components/timeSlots'
 import { Button } from '../button'
 import classNames from 'classnames'
+import { HernSkeleton } from '../hernSkeleton'
 
 export const Delivery = props => {
    const { setIsEdit } = props
@@ -34,6 +35,9 @@ export const Delivery = props => {
       configOf,
    } = useConfig()
    const theme = configOf('theme-color', 'Visual')
+
+   const { t } = useTranslation()
+
    const { methods, cartState } = React.useContext(CartContext)
    // map orderTabs to get order fulfillment type label
    const orderTabFulfillmentType = React.useMemo(
@@ -58,8 +62,13 @@ export const Delivery = props => {
       } else {
          return JSON.parse(localStorage.getItem('userLocation'))
       }
-   }, [cartState.cart])
-   console.log('cart', cartState)
+   }, [
+      cartState.cart?.address?.lat,
+      cartState.cart?.address?.lng,
+      cartState.cart?.address?.latitude,
+      cartState.cart?.address?.longitude,
+   ])
+   // console.log('cart', cartState)
    const [deliverySlots, setDeliverySlots] = useState(null)
    const [selectedSlot, setSelectedSlot] = useState(null)
    const [fulfillmentTabInfo, setFulfillmentTabInfo] = useState({
@@ -96,7 +105,8 @@ export const Delivery = props => {
             label: (
                <span>
                   <DeliveryNowIcon />
-                  &nbsp;Delivery Now
+                  &nbsp;
+                  <span>{t('Delivery Now')}</span>
                </span>
             ),
             value: 'ONDEMAND_DELIVERY',
@@ -110,7 +120,8 @@ export const Delivery = props => {
             label: (
                <span>
                   <DeliveryLaterIcon />
-                  &nbsp; Schedule Later
+                  &nbsp;
+                  <span>{t('Schedule Later')}</span>
                </span>
             ),
             value: 'PREORDER_DELIVERY',
@@ -147,11 +158,10 @@ export const Delivery = props => {
             return { ...prev, orderTabId }
          })
       }
-   }, [deliveryRadioOptions, cartState.cart])
+   }, [deliveryRadioOptions, cartState.cart?.fulfillmentInfo?.type])
 
    React.useEffect(() => {
       if (consumerAddress && brand.id && fulfillmentType) {
-         console.log('consumerAddress', consumerAddress)
          async function fetchStores() {
             const brandClone = { ...brand }
             const availableStore = await getStoresWithValidations({
@@ -217,13 +227,13 @@ export const Delivery = props => {
                }
             }
             setStores(availableStore)
-            console.log('availableStore', availableStore)
+            // console.log('availableStore', availableStore)
             setIsGetStoresLoading(false)
             setUpdateFulfillmentInfoForNow(false)
          }
          fetchStores()
       }
-   }, [consumerAddress, brand, fulfillmentType])
+   }, [consumerAddress, brand?.id, fulfillmentType])
 
    // this will run when ondemand delivery auto select
    useEffect(() => {
@@ -238,7 +248,12 @@ export const Delivery = props => {
             locationId: stores[0].location.id,
          })
       }
-   }, [fulfillmentType, stores, cartState?.cart, deliveryRadioOptions])
+   }, [
+      fulfillmentType,
+      stores,
+      cartState?.cart?.fulfillmentInfo?.type,
+      deliveryRadioOptions,
+   ])
 
    const onFulfillmentTimeClick = (timestamp, mileRangeId) => {
       const slotInfo = {
@@ -374,7 +389,7 @@ export const Delivery = props => {
       return () => {
          clearInterval(interval)
       }
-   }, [stores, cartState.cart])
+   }, [stores, cartState.cart?.fulfillmentInfo])
 
    React.useEffect(() => {
       if (stores && stores.length > 0) {
@@ -394,7 +409,7 @@ export const Delivery = props => {
                cartTimeSlotTo,
                cartState.cart?.fulfillmentInfo.slot.mileRangeId
             )
-            console.log('isValid', isValid)
+            // console.log('isValid', isValid)
             if (!isValid.status) {
                methods.cart.update({
                   variables: {
@@ -476,7 +491,7 @@ export const Delivery = props => {
             setIsLoading(false)
          }
       }
-   }, [stores, cartState.cart])
+   }, [stores, cartState.cart?.fulfillmentInfo])
 
    const title = React.useMemo(() => {
       switch (cartState.cart?.fulfillmentInfo?.type) {
@@ -485,7 +500,7 @@ export const Delivery = props => {
          default:
             return ''
       }
-   }, [cartState.cart, validMileRangeInfo])
+   }, [cartState.cart?.fulfillmentInfo?.type, validMileRangeInfo?.prepTime])
 
    React.useEffect(() => {
       if (!_.isEmpty(cartState.cart)) {
@@ -508,7 +523,7 @@ export const Delivery = props => {
             setIsLoading(false)
          }
       }
-   }, [cartState.cart])
+   }, [cartState.cart?.fulfillmentInfo])
    const [isMobileViewOpen, setIsMobileViewOpen] = React.useState(true)
    const isSmallerDevice = isClient && window.innerWidth < 768
 
@@ -548,7 +563,11 @@ export const Delivery = props => {
    )
 
    if (isLoading) {
-      return <p>Loading</p>
+      return (
+         <div style={{ height: '168px', width: '100%' }}>
+            <HernSkeleton height="100%" width="100%" />
+         </div>
+      )
    }
    if (
       isSmallerDevice &&
@@ -564,7 +583,7 @@ export const Delivery = props => {
                setIsMobileViewOpen(false)
             }}
          >
-            Add delivery time{' '}
+            {t('Add delivery time')}
          </button>
       )
    }
@@ -614,7 +633,7 @@ export const Delivery = props => {
                         setShowSlots(true)
                      }}
                   >
-                     Change
+                     {t('Change')}
                   </Button>
                )}
             </div>
@@ -625,7 +644,7 @@ export const Delivery = props => {
    return (
       <div className="hern-cart__fulfillment-time-section">
          <div className="hern-cart__fulfillment-time-section-heading">
-            <span>When would you like to order?</span>
+            <span>{t('When would you like to order?')}</span>
          </div>
 
          {deliveryRadioOptions.length > 1 && (
@@ -658,9 +677,11 @@ export const Delivery = props => {
          )}
 
          {!fulfillmentType ? null : isGetStoresLoading ? (
-            <Loader inline />
+            <div style={{ height: '118px', width: '100%' }}>
+               <HernSkeleton height="100%" width="100%" />
+            </div>
          ) : stores.length === 0 ? (
-            <p>No store available</p>
+            <p>{t('No store available')}</p>
          ) : fulfillmentType === 'PREORDER_DELIVERY' ? (
             <TimeSlots
                onFulfillmentTimeClick={onFulfillmentTimeClick}

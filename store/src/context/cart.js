@@ -1,6 +1,5 @@
 import { useMutation, useSubscription } from '@apollo/react-hooks'
 import isEmpty from 'lodash/isEmpty'
-import gql from 'graphql-tag'
 import React, { useEffect, useState, useContext } from 'react'
 import {
    CREATE_CART_ITEMS,
@@ -14,7 +13,8 @@ import {
 import { useUser } from '.'
 import { useConfig } from '../lib'
 import { useToasts } from 'react-toast-notifications'
-import { combineCartItems, useQueryParamState } from '../utils'
+import { combineCartItems, useQueryParamState, isKiosk } from '../utils'
+import { useTranslation } from './language'
 
 export const CartContext = React.createContext()
 
@@ -41,7 +41,14 @@ export const CartProvider = ({ children }) => {
    const { brand, kioskId, selectedOrderTab, locationId, dispatch, orderTabs } =
       useConfig()
    const { addToast } = useToasts()
-   const [oiType] = useQueryParamState('oiType')
+   const { t } = useTranslation()
+   const isKioskMode = isKiosk()
+   const oiType = React.useMemo(() => {
+      if (isKioskMode) {
+         return 'Kiosk Ordering'
+      }
+      return 'Website Ordering'
+   }, [isKioskMode])
    const [isFinalCartLoading, setIsFinalCartLoading] = React.useState(true)
 
    const { isAuthenticated, user, isLoading } = useUser()
@@ -50,16 +57,27 @@ export const CartProvider = ({ children }) => {
    const [storedCartId, setStoredCartId] = useState(null)
    const [combinedCartItems, setCombinedCartData] = useState(null)
    const [showCartIconToolTip, setShowCartIconToolTip] = useState(false)
+   const [dineInTableInfo, setDineInTableInfo] = useState(null)
+
    React.useEffect(() => {
+      // case 1 - user is not authenticated
+      //case 1.1 if there is cart-id in local storage , set storedCartId
+
+      //case 1.2 if not then do nothing,set storedCartId null
+
+      // case 2 - user is authenticated , handled by getCarts
+
+      // case 3 - use is authenticated and clicked on logout, set storedCartId null
+
       const cartId = localStorage.getItem('cart-id')
       if (cartId) {
          setStoredCartId(+cartId)
-         if (!isAuthenticated) {
-            // only set local cart id in headers when not authenticated
-            // when logged in, if it has local cart id then it will try to merge carts
+      } else {
+         if (!isLoading && !isAuthenticated) {
+            setStoredCartId(null)
          }
       }
-   }, [])
+   }, [isAuthenticated, isLoading])
 
    //initial cart when no auth
    const {
@@ -73,7 +91,7 @@ export const CartProvider = ({ children }) => {
             id: {
                _eq: storedCartId,
             },
-            ...(!oiType === 'Kiosk Ordering' && {
+            ...(!(oiType === 'Kiosk Ordering') && {
                paymentStatus: {
                   _eq: 'PENDING',
                },
@@ -104,7 +122,7 @@ export const CartProvider = ({ children }) => {
             cartId: {
                _eq: storedCartId,
             },
-            ...(!oiType === 'Kiosk Ordering' && {
+            ...(!(oiType === 'Kiosk Ordering') && {
                cart: {
                   paymentStatus: {
                      _eq: 'PENDING',
@@ -189,7 +207,7 @@ export const CartProvider = ({ children }) => {
       onError: error => {
          console.log(error)
          setIsFinalCartLoading(false)
-         addToast('Failed to create cart!', {
+         addToast(t('Failed to create cart!'), {
             appearance: 'error',
          })
       },
@@ -200,7 +218,7 @@ export const CartProvider = ({ children }) => {
          if (!(oiType === 'Kiosk Ordering')) {
             // localStorage.removeItem('cart-id')
          }
-         addToast('Update Successfully!', {
+         addToast(t('Update Successfully!'), {
             appearance: 'success',
          })
          console.log('🍾 Cart updated with data!')
@@ -209,7 +227,7 @@ export const CartProvider = ({ children }) => {
       onError: error => {
          console.log(error)
          setIsFinalCartLoading(false)
-         addToast('Failed to update items!', {
+         addToast(t('Failed to update items!'), {
             appearance: 'error',
          })
       },
@@ -239,7 +257,7 @@ export const CartProvider = ({ children }) => {
       onError: error => {
          console.log(error)
          setIsFinalCartLoading(false)
-         addToast('Failed to create items!', {
+         addToast(t('Failed to create items!'), {
             appearance: 'error',
          })
       },
@@ -248,7 +266,6 @@ export const CartProvider = ({ children }) => {
    // delete cartItems
    const [deleteCartItems] = useMutation(DELETE_CART_ITEMS, {
       onCompleted: ({ deleteCartItems = null }) => {
-         console.log('item removed successfully')
          if (
             deleteCartItems &&
             deleteCartItems.returning.length &&
@@ -263,14 +280,16 @@ export const CartProvider = ({ children }) => {
             })
          }
          setIsFinalCartLoading(false)
-         addToast('Item removed!', {
-            appearance: 'success',
-         })
+         if (deleteCartItems && deleteCartItems.returning.length) {
+            addToast(t('Item removed!'), {
+               appearance: 'success',
+            })
+         }
       },
       onError: error => {
          console.log(error)
          setIsFinalCartLoading(false)
-         addToast('Failed to delete items!', {
+         addToast(t('Failed to delete items!'), {
             appearance: 'error',
          })
       },
@@ -348,6 +367,7 @@ export const CartProvider = ({ children }) => {
                locationId: locationId || null,
                brandId: brand?.id,
                address: customerAddress,
+               locationTableId: dineInTableInfo?.id || null,
                ...(oiType === 'Kiosk Ordering' &&
                   !isEmpty(terminalPayment) && {
                      toUseAvailablePaymentOptionId: terminalPayment.id,
@@ -388,6 +408,7 @@ export const CartProvider = ({ children }) => {
                brandId: brand.id,
                paymentCustomerId: user.platform_customer?.paymentCustomerId,
                address: user.platform_customer.defaultCustomerAddress,
+               locationTableId: dineInTableInfo?.id || null,
                customerKeycloakId: user?.keycloakId,
                cartItems: {
                   data: cartItems,
@@ -596,6 +617,7 @@ export const CartProvider = ({ children }) => {
                      localStorage.removeItem('cart-id')
                      setIsFinalCartLoading(false)
                   } else {
+                     setCombinedCartData([])
                      setIsFinalCartLoading(false)
                   }
                }
@@ -620,6 +642,8 @@ export const CartProvider = ({ children }) => {
             cartItemsLoading,
             storedCartId,
             showCartIconToolTip,
+            setDineInTableInfo,
+            dineInTableInfo,
             methods: {
                cartItems: {
                   delete: deleteCartItems,

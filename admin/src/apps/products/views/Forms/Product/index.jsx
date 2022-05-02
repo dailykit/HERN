@@ -28,7 +28,13 @@ import { logger, randomSuffix } from '../../../../../shared/utils'
 import { CloseIcon, TickIcon } from '../../../assets/icons'
 import { ProductProvider } from '../../../context/product'
 import { ModifiersProvider } from '../../../context/product/modifiers'
-import { OPTIONS_FROM_VEG_NONVEG, PRODUCT, PRODUCTS } from '../../../graphql'
+import {
+   INSERT_PRODUCT_CATEGORY,
+   OPTIONS_FROM_VEG_NONVEG,
+   PRODUCT,
+   PRODUCTS,
+   PRODUCT_CATEGORIES,
+} from '../../../graphql'
 import { Assets, Description, Pricing } from './components'
 import CustomizableProductComponents from './CustomizableProductComponents'
 import ProductOptions from './ProductOptions'
@@ -40,6 +46,7 @@ import { InventoryBundleProvider } from '../../../context/product/inventoryBundl
 import ProductInsight from './components/Insight'
 import { MASTER } from '../../../../settings/graphql/index'
 import { SEOSettings } from './components'
+import { ProductSettings } from './ProductSettings'
 const Product = () => {
    const { id: productId } = useParams()
 
@@ -66,6 +73,9 @@ const Product = () => {
    // })
    const [state, setState] = React.useState({})
    const [dropDownOptions, setDropDownOptions] = React.useState([])
+   const [subCategoryOptions, setSubCategoryOptions] = React.useState([])
+   const [searchedCategoryOption, setSearchedCategoryOption] =
+      React.useState('')
    const [searchedOptions, setSearchedOption] = React.useState(null)
    // Subscription
    const { loading, error } = useSubscription(PRODUCT.VIEW, {
@@ -73,7 +83,7 @@ const Product = () => {
          id: productId,
       },
       onSubscriptionData: data => {
-         console.log(data.subscriptionData.data)
+         // console.log(data.subscriptionData.data)
          setState(data.subscriptionData.data.product)
          setTitle({
             ...title,
@@ -103,6 +113,28 @@ const Product = () => {
       },
    })
 
+   useSubscription(PRODUCT_CATEGORIES, {
+      onSubscriptionData: ({ subscriptionData }) => {
+         setSubCategoryOptions(
+            subscriptionData.data.productCategories.map(
+               (eachCategory, index) => ({
+                  ...eachCategory,
+                  id: index + 1,
+                  title: eachCategory.name,
+               })
+            )
+         )
+      },
+   })
+   const [insertProductCategory] = useMutation(INSERT_PRODUCT_CATEGORY, {
+      onCompleted: () => {
+         toast.success('Product Category Added!')
+      },
+      onError: error => {
+         toast.error('Failed to add product category')
+         logger(error)
+      },
+   })
    // Mutation
 
    const [addType] = useMutation(MASTER.VEG_NONVEG.CREATE, {
@@ -311,6 +343,28 @@ const Product = () => {
       })
    }
 
+   const productCategorySelected = option => {
+      updateProduct({
+         variables: {
+            id: state.id,
+            _set: {
+               subCategory: option.title,
+            },
+         },
+      })
+   }
+   const productCategorySearch = text => {
+      setSearchedCategoryOption(text)
+   }
+   const addProductCategory = () => {
+      insertProductCategory({
+         variables: {
+            object: {
+               name: searchedCategoryOption,
+            },
+         },
+      })
+   }
    const addDropDownOptions = () => {
       const object = {
          label: searchedOptions,
@@ -505,6 +559,10 @@ const Product = () => {
                               <Dropdown
                                  typeName="type"
                                  variant="revamp"
+                                 defaultOption={dropDownOptions.find(
+                                    eachOption =>
+                                       eachOption.title === state.VegNonVegType
+                                 )}
                                  options={dropDownOptions}
                                  addOption={addDropDownOptions}
                                  type="single"
@@ -512,6 +570,24 @@ const Product = () => {
                                  selectedOption={selectedOption}
                               />
                            </Form.Group>
+                           <Spacer size="32px" />
+                           <Form.Group>
+                              <Form.Label>Sub Category</Form.Label>
+                              <Dropdown
+                                 typeName="type"
+                                 variant="revamp"
+                                 defaultOption={subCategoryOptions.find(
+                                    eachOption =>
+                                       eachOption.title === state.subCategory
+                                 )}
+                                 options={subCategoryOptions}
+                                 addOption={addProductCategory}
+                                 type="single"
+                                 searchedOption={productCategorySearch}
+                                 selectedOption={productCategorySelected}
+                              />
+                           </Form.Group>
+                           <Spacer size="32px" yaxis />
                         </HorizontalTabPanel>
                         <HorizontalTabPanel>
                            {renderOptions()}
@@ -532,7 +608,7 @@ const Product = () => {
                            <SEOSettings data={state} />
                         </HorizontalTabPanel>
                         <HorizontalTabPanel>
-                           {/* <ProductSettings /> */}
+                           <ProductSettings />
                         </HorizontalTabPanel>
                      </HorizontalTabPanels>
                   </HorizontalTabs>

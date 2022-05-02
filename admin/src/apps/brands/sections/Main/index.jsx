@@ -3,9 +3,12 @@ import { Text } from '@dailykit/ui'
 import { Switch, Route } from 'react-router-dom'
 
 // Views
-import { Home, Brands, Brand, Locations, Location } from '../../views'
+import { Home, Brands, Brand, Locations, Location, KioskLocations, PaymentOption } from '../../views'
+import KioskLocation from '../../views/Forms/kioskLocation'
 import { Flex } from '../../../../shared/components'
 import { useAccess } from '../../../../shared/providers'
+import KioskReportTable from '../../views/Listings/kioskLocations/KioskReportTable'
+import { PaymentOptions } from '../../views/Listings/paymentOptions'
 export default function Main() {
    return (
       <main>
@@ -48,6 +51,46 @@ export default function Main() {
                   message="You do not have sufficient permission to access location details."
                >
                   <Location />
+               </AccessCheck>
+            </Route>
+            <Route path="/brands/kiosks" exact>
+               <AccessCheck
+                  title="KioskLocation"
+                  message="You do not have sufficient permission to access location details."
+               >
+                  <KioskLocations />
+               </AccessCheck>
+            </Route>
+            <Route path="/brands/kiosks/report" exact>
+               <AccessCheck
+                  title="kioskReport"
+                  message="You do not have sufficient permission to access location details."
+               >
+                  <KioskReportTable />
+               </AccessCheck>
+            </Route>
+            <Route path="/brands/kiosks/:id" exact>
+               <AccessCheck
+                  title="kioskLocation"
+                  message="You do not have sufficient permission to access location details."
+               >
+                  <KioskLocation />
+               </AccessCheck>
+            </Route>
+            <Route path="/brands/payment" exact>
+               <AccessCheck
+                  title="payment options"
+                  message="You do not have sufficient permission to access payment details."
+               >
+                  <PaymentOptions />
+               </AccessCheck>
+            </Route>
+            <Route path="/brands/payment/:id" exact>
+               <AccessCheck
+                  title="payment option"
+                  message="You do not have sufficient permission to access payment form."
+               >
+                  <PaymentOption />
                </AccessCheck>
             </Route>
          </Switch>

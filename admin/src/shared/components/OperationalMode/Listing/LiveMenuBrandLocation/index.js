@@ -26,7 +26,7 @@ import {
    HorizontalTabPanel,
 } from '@dailykit/ui'
 import { reactFormatter, ReactTabulator } from '@dailykit/react-tabulator'
-import { StyledGroupBy, StyledTitle } from '../LiveMenu/styled'
+import { StyledTitle } from '../LiveMenu/styled'
 import { logger } from '../../../../utils'
 import { toast } from 'react-toastify'
 import SpecificPriceTunnel from '../LiveMenu/BulkActionTunnel/Tunnel/specificPriceTunnel'
@@ -966,8 +966,6 @@ const ActionBar = ({
             container
             height="80px"
             width="100%"
-            alignItems="center"
-            justifyContent="space-between"
             style={
                width > 500
                   ? { paddingBottom: '2em', gap: '3em' }
@@ -1171,13 +1169,7 @@ const PublishedToggleStatus = ({ cell, update, check }) => {
       />
    )
 }
-function SpecificPrice({
-   cell,
-   addTab,
-   openPopupTunnel,
-   setSelectedRowData,
-   check,
-}) {
+function SpecificPrice({ cell, openPopupTunnel, setSelectedRowData, check }) {
    const openTunnelButton = () => {
       const data = { cellData: cell.getData(), specificId: check }
       // console.log('open tunnel data', data)

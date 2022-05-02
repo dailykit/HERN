@@ -6,12 +6,35 @@ import { useConfig } from '../../../lib'
 import { BRAND_LOCATIONS, LOCATION_KIOSK } from '../../../graphql'
 import { getSettings, isClient } from '../../../utils'
 import { useQuery } from '@apollo/react-hooks'
+import { setThemeVariable } from '../../../utils'
 
 const KioskScreen = props => {
    const { kioskId, kioskDetails, settings } = props
-   const { dispatch, brand } = useConfig()
+   const { dispatch, setIsLoading } = useConfig()
 
    useEffect(() => {
+      const finalKioskConfig =
+         kioskDetails.kioskModuleConfig || settings.kiosk['kiosk-config']
+      if (
+         finalKioskConfig.kioskSettings?.primaryFont?.value?.fontEmbedLink
+            ?.value
+      ) {
+         const fontLink =
+            finalKioskConfig.kioskSettings.primaryFont.value.fontEmbedLink.value
+         const linkElement = document.createElement('link')
+         linkElement.rel = 'stylesheet'
+         linkElement.href = fontLink
+         const headTag = document.getElementsByTagName('head')[0]
+         headTag.appendChild(linkElement)
+         setThemeVariable(
+            '--hern-primary-font',
+            finalKioskConfig.kioskSettings.primaryFont.value.fontFamily.value
+         )
+      }
+      setThemeVariable(
+         '--hern-primary-color',
+         finalKioskConfig.kioskSettings.theme.primaryColor.value
+      )
       dispatch({
          type: 'SET_KIOSK_ID',
          payload: kioskId,
@@ -24,23 +47,35 @@ const KioskScreen = props => {
          type: 'SET_LOCATION_ID',
          payload: kioskDetails.locationId,
       })
+      dispatch({
+         type: 'SET_BRANDID',
+         payload: { id: settings.brandId },
+      })
+      dispatch({
+         type: 'SET_SETTINGS',
+         payload: settings,
+      })
+      dispatch({
+         type: 'SET_KIOSK_POPUP_CONFIG',
+         payload: finalKioskConfig,
+      })
+      setIsLoading(false)
    }, [])
 
    useQuery(BRAND_LOCATIONS, {
-      skip: !brand || !brand?.id,
       variables: {
          where: {
-            brandId: { _eq: brand.id },
+            brandId: { _eq: settings.brandId },
             locationId: { _eq: kioskDetails.locationId },
          },
       },
       onCompleted: data => {
          if (data) {
             dispatch({
-               type: 'SET_STORE_OPERATING_TIME',
+               type: 'SET_KIOSK_RECURRENCES',
                payload:
-                  data.brands_brand_location_aggregate.nodes[0].operatingTime
-                     .operatingTime,
+                  data.brands_brand_location_aggregate.nodes[0]
+                     .brand_recurrences,
             })
          }
       },
