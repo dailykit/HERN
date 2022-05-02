@@ -5,7 +5,11 @@ import { useTranslation, useUser } from '../../context'
 import { ProfileSidebar, Form } from '../../components'
 import * as moment from 'moment'
 import { Right } from '../../components/tunnel'
-import { LoyaltyPointsIcon, LoyaltyPointsIconNoTrx } from '../../assets/icons'
+import {
+   LoyaltyPointsIllustration,
+   LoyaltyPointsIllustrationNoTrx,
+} from '../../assets/icons'
+import { useWindowSize } from '../../utils'
 
 export const LoyaltyPoints = () => {
    return (
@@ -21,7 +25,7 @@ const Content = () => {
    const { configOf, settings } = useConfig()
    const { t, dynamicTrans, locale } = useTranslation()
    const theme = configOf('theme-color', 'Visual')
-
+   const { width, height } = useWindowSize()
    const loyaltyPointConfig = configOf('Loyalty Points', 'rewards')
    const isLoyaltyPointsAvailable = React.useMemo(() => {
       return loyaltyPointConfig?.['Loyalty Points']?.IsLoyaltyPointsAvailable
@@ -49,31 +53,32 @@ const Content = () => {
                <span data-translation="true">{t('MY LOYALTY POINTS')}</span>
             </h2>
          </header>
+         {width > 767 ? (
+            <div className="hern-account-loyalty-points-available">
+               <LoyaltyPointsIllustration height={177} width={227} />
+               <p className="hern-account-loyalty-points_header_subtitle">
+                  <p className="hern-account-loyalty-points-your-available">
+                     {t('Your available loyalty points')}
+                  </p>
+                  <p className="hern-account-loyalty-points-value">
+                     {user?.loyaltyPoint?.points}
+                  </p>
+               </p>
+            </div>
+         ) : (
+            <div className="hern-account-loyalty-points-available">
+               <LoyaltyPointsIllustration height={110} width={130} />
+               <p className="hern-account-loyalty-points_header_subtitle">
+                  <p className="hern-account-loyalty-points-your-available">
+                     {t('Your available loyalty points')}
+                  </p>
+                  <p className="hern-account-loyalty-points-value">
+                     {user?.loyaltyPoint?.points}
+                  </p>
+               </p>
+            </div>
+         )}
 
-         <div className="hern-account-loyalty-points-available">
-            <LoyaltyPointsIcon />
-            <p className="hern-account-loyalty-points_header_subtitle">
-               <p style={{ fontWeight: 'bold', fontSize: '27px' }}>
-                  {t('Your available loyalty points')}
-               </p>
-               <p
-                  style={{
-                     color: 'green',
-                     fontSize: 'xxx-large',
-                     position: 'relative',
-                     bottom: '-20px',
-                     fontWeight: 'bolder',
-                  }}
-               >
-                  {user?.loyaltyPoint?.points}
-               </p>
-            </p>
-            {/* <Form.Label
-               style={{
-                  color: 'green',
-               }}
-            ></Form.Label> */}
-         </div>
          {isLoyaltyPointsAvailable && !!user.loyaltyPoint ? (
             <>
                <Form.Label
@@ -91,49 +96,49 @@ const Content = () => {
                   <table className="hern-account-loyalty-points__table">
                      <thead>
                         <tr>
-                           <th>{t('ID')}</th>
+                           <th>{t('Sr. No.')}</th>
                            <th>{t('Type')}</th>
                            <th>{t('Points')}</th>
                            <th>{t('Created At')}</th>
                         </tr>
                      </thead>
                      <tbody>
-                        {user.loyaltyPoint.loyaltyPointTransactions.map(txn => (
-                           <tr
-                              className="hern-account-loyalty-points__table__cell"
-                              key={txn.id}
-                           >
-                              <td className="hern-account-loyalty-points__table__cell">
-                                 {txn.id}
-                              </td>
-                              <td
-                                 className="hern-account-loyalty-points__table__cell"
-                                 title={txn.type}
-                              >
-                                 {txn.type}
-                              </td>
-                              <td className="hern-account-loyalty-points__table__cell">
-                                 {txn.points}
-                              </td>
-                              <td className="hern-account-loyalty-points__table__cell">
-                                 {moment(txn.created_at).format(
-                                    'MMMM Do YYYY, h:mm:ss a'
-                                 )}
-                              </td>
-                           </tr>
-                        ))}
+                        {user.loyaltyPoint.loyaltyPointTransactions.map(
+                           (txn, index) => (
+                              <tr key={txn.id}>
+                                 <td className="hern-account-loyalty-points__table__cell">
+                                    {index + 1}
+                                 </td>
+                                 <td
+                                    className="hern-account-loyalty-points__table__cell"
+                                    title={txn.type}
+                                 >
+                                    {txn.type}
+                                 </td>
+                                 <td className="hern-account-loyalty-points__table__cell">
+                                    {txn.points}
+                                 </td>
+                                 <td className="hern-account-loyalty-points__table__cell">
+                                    {moment(txn.created_at).format(
+                                       'MMMM Do YYYY, h:mm:ss a'
+                                    )}
+                                 </td>
+                              </tr>
+                           )
+                        )}
                      </tbody>
                   </table>
                ) : (
                   <div
-                     style={{
-                        position: 'relative',
-                        top: '100px',
-                        left: '320px',
-                     }}
+                     className="hern-account-loyalty-points-illustration-no-trx"
+                     //    style={{
+                     //       position: 'relative',
+                     //       top: '100px',
+                     //       left: '320px',
+                     //    }}
                   >
                      <span>
-                        <LoyaltyPointsIconNoTrx />
+                        <LoyaltyPointsIllustrationNoTrx />
                         {/* {t('not avaiable')} */}
                      </span>
                   </div>

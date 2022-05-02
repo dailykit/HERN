@@ -38,17 +38,18 @@
    line-height: 2rem;
 }
 .hern-account-loyalty-points__table {
-   margin-top: 6.5rem;
-   margin-bottom: 0.5rem;
-   width: 140%;
+   margin-top: 4.5rem;
+   margin-bottom: 11.5rem;
+   margin-left: 2.5rem;
+   width: 150%;
    border-radius: 10px;
-
+   height: 35%;
    th {
       text-align: left;
       font-style: oblique;
    }
    tr:nth-of-type(even) {
-      background-color: rgba(243, 244, 246, 1);
+      background-color: rgb(173, 206, 156);
    }
    tr {
       td:last-child {
@@ -61,8 +62,10 @@
    background: #f9f9f9;
    border: 1px solid #e5e5e5;
    box-sizing: border-box;
-   border-radius: 10px 10px 10px 10px;
-   border-radius: 15px;
+   padding: 23px;
+
+   // border-radius: 10px 10px 10px 10px;
+   // border-radius: 15px;
    // min-width: 100px;
    // border-width: 1px;
    // padding: 0.25rem 0.5rem;
@@ -104,3 +107,50 @@
    font-size: larger;
    text-align: center;
 }
+.hern-account-loyalty-points-your-available {
+   font-weight: bold;
+   font-size: 27px;
+}
+.hern-account-loyalty-points-value {
+   color: green;
+   font-size: 50px;
+   position: relative;
+   bottom: -20px;
+   font-weight: bolder;
+}
+.hern-account-loyalty-points-illustration-no-trx {
+   position: relative;
+   top: 100px;
+   left: 320px;
+}
+
+@media screen and (max-width: 767px) {
+   .hern-account-loyalty-points-available {
+      width: 322px;
+      left: -1.5px;
+      height: 124px;
+   }
+
+   .hern-account-loyalty-points__table {
+      margin-left: 0.2rem;
+      width: auto;
+   }
+   .hern-account-loyalty-points-your-available {
+      font-size: 13px;
+      margin-top: 51px;
+   }
+   .hern-account-loyalty-points-value {
+      font-size: 26px;
+      bottom: -2px;
+   }
+   .hern-account-loyalty-points__table__cell {
+      padding: 12px;
+   }
+   .hern-account-loyalty-points-illustration-no-trx {
+      left: 2px;
+   }
+}
+
+// @media screen and(max-width:){
+
+// }

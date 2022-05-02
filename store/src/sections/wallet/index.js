@@ -2,13 +2,13 @@ import React from 'react'
 import { useConfig } from '../../lib'
 import { useTranslation, useUser } from '../../context'
 import { Spacer, ProfileSidebar, Form } from '../../components'
-import { formatCurrency } from '../../utils'
+import { formatCurrency, useWindowSize } from '../../utils'
 import * as moment from 'moment'
 import { useToasts } from 'react-toast-notifications'
 import { get_env } from '../../utils'
 import { BiClipboard } from 'react-icons/bi'
 import CopyToClipboard from 'react-copy-to-clipboard'
-import { WalletIcon } from '../../assets/icons'
+import { WalletIcon, WalletIconResponsive } from '../../assets/icons'
 
 export const Wallet = () => {
    return (
@@ -29,7 +29,7 @@ const Content = () => {
       'Wallet',
       'rewards'
    )?.Wallet?.isWalletAvailable
-
+   const { width, height } = useWindowSize()
    const currentLang = React.useMemo(() => locale, [locale])
    React.useEffect(() => {
       const languageTags = document.querySelectorAll(
@@ -65,13 +65,13 @@ const Content = () => {
                <Spacer />
                <div className="hern-wallet__referral_code_block">
                   <p className="hern-wallet__referral_code_title">
-                     Refer and earn
+                     {/* Refer and earn */}
                   </p>
                   <div className="hern-wallet__referral_code_field">
                      <span className="hern-wallet__referral_code">
-                        {user?.customerReferral?.referralCode}
+                        {/* {user?.customerReferral?.referralCode} */}
                      </span>
-                     <CopyToClipboard
+                     {/* <CopyToClipboard
                         text={`${get_env(
                            'BASE_BRAND_URL'
                         )}/sign-up?invite-code=${
@@ -89,7 +89,7 @@ const Content = () => {
                               Copy Invite Link
                            </span>
                         </button>
-                     </CopyToClipboard>
+                     </CopyToClipboard> */}
                   </div>
                </div>
                <p className="hern-wallet__transaction_title">
@@ -138,10 +138,15 @@ const Content = () => {
                         </tbody>
                      </table>
                   </div>
-               ) : (
-                  <p class="hern-wallet__no_txn">
+               ) : width > 767 ? (
+                  <p class="hern-wallet_no_txn">
                      {' '}
-                     <WalletIcon />
+                     <WalletIcon width={933} height={500} />
+                  </p>
+               ) : (
+                  <p class="hern-wallet_no_txn">
+                     {' '}
+                     <WalletIconResponsive />
                   </p>
                )}
             </>
