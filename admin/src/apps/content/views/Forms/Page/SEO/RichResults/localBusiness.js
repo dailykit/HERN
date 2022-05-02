@@ -49,7 +49,7 @@ const LocalBusiness = ({ update }) => {
                 setForm(prev => ({
                     LocalBusinessJSON: {
                         ...prev.LocalBusinessJSON,
-                        value: seoSettings[0]?.value,
+                        value: seoSettings?.value,
                     },
                 }))
             },
