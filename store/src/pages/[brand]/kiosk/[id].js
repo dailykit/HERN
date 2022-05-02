@@ -6,12 +6,35 @@ import { useConfig } from '../../../lib'
 import { BRAND_LOCATIONS, LOCATION_KIOSK } from '../../../graphql'
 import { getSettings, isClient } from '../../../utils'
 import { useQuery } from '@apollo/react-hooks'
+import { setThemeVariable } from '../../../utils'
 
 const KioskScreen = props => {
    const { kioskId, kioskDetails, settings } = props
    const { dispatch, setIsLoading } = useConfig()
 
    useEffect(() => {
+      const finalKioskConfig =
+         kioskDetails.kioskModuleConfig || settings.kiosk['kiosk-config']
+      if (
+         finalKioskConfig.kioskSettings?.primaryFont?.value?.fontEmbedLink
+            ?.value
+      ) {
+         const fontLink =
+            finalKioskConfig.kioskSettings.primaryFont.value.fontEmbedLink.value
+         const linkElement = document.createElement('link')
+         linkElement.rel = 'stylesheet'
+         linkElement.href = fontLink
+         const headTag = document.getElementsByTagName('head')[0]
+         headTag.appendChild(linkElement)
+         setThemeVariable(
+            '--hern-primary-font',
+            finalKioskConfig.kioskSettings.primaryFont.value.fontFamily.value
+         )
+      }
+      setThemeVariable(
+         '--hern-primary-color',
+         finalKioskConfig.kioskSettings.theme.primaryColor.value
+      )
       dispatch({
          type: 'SET_KIOSK_ID',
          payload: kioskId,
@@ -31,6 +54,10 @@ const KioskScreen = props => {
       dispatch({
          type: 'SET_SETTINGS',
          payload: settings,
+      })
+      dispatch({
+         type: 'SET_KIOSK_POPUP_CONFIG',
+         payload: finalKioskConfig,
       })
       setIsLoading(false)
    }, [])

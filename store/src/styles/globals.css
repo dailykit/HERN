@@ -8,7 +8,8 @@
 
 *,
 body {
-   font-family: 'Lato', sans-serif;
+   /* font-family: 'Nunito', sans-serif; */
+   font-family: var(--hern-primary-font, 'Lato', sans-serif);
 }
 /* 
 body {

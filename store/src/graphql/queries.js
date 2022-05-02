@@ -1329,6 +1329,7 @@ export const PRODUCTS = gql`
          defaultProductOptionId
          defaultCartItem: defaultCartItemByLocation(args: $defaultCartItemArgs)
          productionOptionSelectionStatement
+         subCategory
          productOptions(
             where: { isArchived: { _eq: false } }
             order_by: { position: desc_nulls_last }
@@ -1809,6 +1810,12 @@ export const GET_CART = gql`
          toUseAvailablePaymentOptionId
          posistOrderStatus
          posistOrderResponse
+         locationTableId
+         locationTable {
+            internalTableLabel
+            id
+            seatCover
+         }
          subscriptionOccurence {
             id
             fulfillmentDate
@@ -2470,6 +2477,17 @@ export const SUPPORTED_PAYMENT_OPTIONS = gql`
       }
    }
 `
+export const LOCATION_TABLES = gql`
+   query LOCATION_TABLES($where: brands_locationTable_bool_exp) {
+      brands_locationTable(where: $where) {
+         id
+         internalTableLabel
+         isActive
+         locationId
+         seatCover
+      }
+   }
+`
 export const COUPON_BY_ID = gql`
    query coupon($id: Int!) {
       coupon(id: $id) {
@@ -2477,4 +2495,21 @@ export const COUPON_BY_ID = gql`
          metaDetails
       }
    }
+`
+export const GET_PAGE_ROUTES = gql`
+query MyQuery($domain: String!) {
+  brands(where: {_or: [{domain: {_eq: $domain}}, {isDefault: {_eq: true}}]}) {
+    brandPages(where: {isArchived: {_eq: false}, published: {_eq: true}, isAllowedToCrawl: {_eq: true}}) {
+      route
+    }
+  }
+}`
+export const GET_DISALLOWED_PAGE_ROUTES = gql`
+query MyQuery($domain: String!) {
+  brands(where: {_or: [{domain: {_eq: $domain}}, {isDefault: {_eq: true}}]}) {
+    brandPages(where: {isArchived: {_eq: false}, published: {_eq: true}, isAllowedToCrawl: {_eq: false}}) {
+      route
+    }
+  }
+}
 `

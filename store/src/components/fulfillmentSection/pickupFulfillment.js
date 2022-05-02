@@ -20,6 +20,8 @@ import { CartContext, useTranslation, useUser } from '../../context'
 import { Loader, Button } from '../'
 import moment from 'moment'
 import classNames from 'classnames'
+import { HernSkeleton } from '../hernSkeleton'
+
 export const Pickup = props => {
    const {
       brand,
@@ -508,7 +510,11 @@ export const Pickup = props => {
    }
 
    if (isLoading) {
-      return <p>{t('Loading')}</p>
+      return (
+         <div style={{ height: '168px', width: '100%' }}>
+            <HernSkeleton height="100%" width="100%" />
+         </div>
+      )
    }
 
    if (!showSlots) {

@@ -21,6 +21,7 @@ import {
    RESEND_OTP,
 } from '../graphql'
 import {
+   useApolloClient,
    useLazyQuery,
    useMutation,
    useQuery,
@@ -380,6 +381,8 @@ const OTPLogin = props => {
       onError: () => {},
    })
 
+   const apolloClient = useApolloClient()
+
    //resend otp
    const [resendOTP] = useMutation(RESEND_OTP, {
       onCompleted: () => {
@@ -469,13 +472,28 @@ const OTPLogin = props => {
          }
          const emailRegex =
             /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-         if (isNewUser && !emailRegex.test(form.email)) {
-            setError('Please enter a valid email!')
-            addToast(t('Please enter a valid email!'), {
-               appearance: 'error',
+         if (isNewUser) {
+            if (!emailRegex.test(form.email)) {
+               setError('Please enter a valid email!')
+               addToast(t('Please enter a valid email!'), {
+                  appearance: 'error',
+               })
+               setLoading(false)
+               return
+            }
+            const data = await apolloClient.query({
+               query: PLATFORM_CUSTOMERS,
+               variables: { where: { email: { _eq: form.email } } },
             })
-            setLoading(false)
-            return
+            const { customers } = data.data
+            if (customers.length > 0) {
+               setError('This email is already in use!')
+               addToast(t('This email is already in use!'), {
+                  appearance: 'error',
+               })
+               setLoading(false)
+               return
+            }
          }
 
          setError('')
@@ -601,6 +619,7 @@ const OTPLogin = props => {
                      {t('Phone Number')}
                   </label>
                   <PhoneInput
+                     autoFocus
                      className={`hern-login-v1__otp__phone__input hern-login-v1__otp__phone__input${
                         !(form.phone === '' || form.phone === undefined) &&
                         !(
@@ -673,6 +692,7 @@ const OTPLogin = props => {
                         onChange={onChange}
                         value={form.email}
                         placeholder="Enter your email"
+                        autoFocus
                      />
                   </fieldset>
                )}
@@ -689,6 +709,7 @@ const OTPLogin = props => {
                      value={form.otp}
                      placeholder="Enter the otp"
                      onKeyPress={handleSubmitOTPKeyPress}
+                     autoFocus={!isNewUser}
                   />
                </fieldset>
                {isNewUser && (

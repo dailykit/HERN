@@ -8,12 +8,7 @@ import { Loader } from '../../components'
 import { ProductCard } from '../../components/product_card'
 import { PRODUCTS } from '../../graphql'
 import { useConfig } from '../../lib'
-import {
-   getRoute,
-   isClient,
-   setThemeVariable,
-   useWindowOnload,
-} from '../../utils'
+import { getRoute, isClient, setThemeVariable } from '../../utils'
 import { CustomArea } from '../featuredCollection/productCustomArea'
 
 export const ProductGallery = ({ config }) => {
@@ -23,7 +18,6 @@ export const ProductGallery = ({ config }) => {
    )
    const [status, setStatus] = React.useState('loading')
    const { brand, locationId } = useConfig()
-   const { isWindowLoading } = useWindowOnload()
 
    const argsForByLocation = React.useMemo(
       () => ({
@@ -37,7 +31,6 @@ export const ProductGallery = ({ config }) => {
    const { loading: productsLoading, error: productsError } = useQuery(
       PRODUCTS,
       {
-         skip: isWindowLoading,
          variables: {
             ids: config.data.products.value,
             priceArgs: argsForByLocation,
@@ -91,7 +84,7 @@ export const ProductGallery = ({ config }) => {
    return (
       <div
          className={classNames('hern-product_gallery__container', {
-            'hern-product-galllery__product__display--1':
+            'hern-product-gallery__product__display--1':
                config?.informationVisibility?.productDetailType?.value?.value,
          })}
       >
@@ -140,7 +133,7 @@ export const ProductGallery = ({ config }) => {
                         margin: '20px 0px',
                      }}
                   >
-                     <Col span={12} style={{ textAlign: 'center' }}>
+                     <Col span={24} style={{ textAlign: 'center' }}>
                         <a
                            class="hern-product_gallery_page-button"
                            href={
