@@ -3,6 +3,8 @@ import { Filler, Flex, Spacer, Text } from '@dailykit/ui'
 import React, { useEffect, useState } from 'react'
 import { toast } from 'react-toastify'
 import {
+   Bar,
+   BarChart,
    CartesianGrid,
    Legend,
    Line,
@@ -316,7 +318,7 @@ const EarningByCustomerChart = props => {
       <>
          <Flex height="22rem">
             <ResponsiveContainer width="100%" height="100%">
-               <LineChart
+               <BarChart
                   width={550}
                   height={300}
                   data={chartData}
@@ -328,28 +330,33 @@ const EarningByCustomerChart = props => {
                   }}
                >
                   <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="fullName" />
+                  <XAxis
+                     dataKey="fullName"
+                     tickFormatter={tick =>
+                        tick.toString().length <= 10
+                           ? tick.toString()
+                           : tick.toString().slice(0, 10) + '...'
+                     }
+                  />
                   <YAxis />
                   <Tooltip content={<CustomTooltip />} />
                   <Legend />
-                  <Line
+                  <Bar
                      name="Earning"
                      type="monotone"
                      dataKey="totalAmountPaid"
-                     stroke="#2AC981"
-                     strokeWidth={2}
+                     fill="#2AC981"
                   />
                   {!brandShopDateState.compare.isSkip &&
                      earningByCompareCustomerData && (
-                        <Line
+                        <Bar
                            name="Compare Earning"
                            type="monotone"
                            dataKey="compareTotalAmountPaid"
-                           stroke="#8884d8"
-                           strokeWidth={2}
+                           fill="#8884d8"
                         />
                      )}
-               </LineChart>
+               </BarChart>
             </ResponsiveContainer>
          </Flex>
       </>

@@ -13,6 +13,9 @@ import {
    XAxis,
    YAxis,
    Tooltip,
+   BarChart,
+   Bar,
+   Cell,
 } from 'recharts'
 import { logger } from '../../../../../utils'
 import { BrandShopDateContext } from '../../../../BrandShopDateProvider/context'
@@ -260,7 +263,7 @@ const EarningByProductChart = ({
       <>
          <Flex height="22rem">
             <ResponsiveContainer width="100%" height="100%">
-               <LineChart
+               <BarChart
                   width={550}
                   height={300}
                   data={chartData}
@@ -274,31 +277,32 @@ const EarningByProductChart = ({
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis
                      dataKey="name"
-                     tickFormatter={tick => tick.toString().slice(0, 14)}
+                     tickFormatter={tick =>
+                        tick.toString().slice(0, 10) + '...'
+                     }
                      ticks={earningByProductChartData.map(x => x.name)}
                      // tick={<CustomizedAxisTick />}
                   />
                   <YAxis />
                   <Tooltip content={<CustomTooltip />} />
                   <Legend />
-                  <Line
+                  <Bar
                      name="Earning"
                      type="monotone"
                      dataKey="total"
-                     stroke="#2AC981"
-                     strokeWidth={2}
+                     fill="#2AC981"
                   />
+
                   {!brandShopDateState.compare.isSkip &&
                      earningByProductCompareData && (
-                        <Line
+                        <Bar
                            name="Compare Earning"
                            type="monotone"
                            dataKey="compareTotal"
-                           stroke="#8884d8"
-                           strokeWidth={2}
+                           fill="#8884d8"
                         />
                      )}
-               </LineChart>
+               </BarChart>
             </ResponsiveContainer>
          </Flex>
       </>
