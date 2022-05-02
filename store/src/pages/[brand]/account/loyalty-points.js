@@ -38,6 +38,16 @@ export const getStaticProps = async ({ params }) => {
    const { parsedData, settings, navigationMenus, seoSettings, linkedFiles } =
       await getPageProps(params, '/account/loyalty-points')
 
+   const isLoyaltyPointsAvailable =
+      settings?.rewards?.['Loyalty Points']?.['Loyalty Points']
+         ?.IsLoyaltyPointsAvailable?.value
+
+   if (!isLoyaltyPointsAvailable) {
+      return {
+         notFound: true,
+      }
+   }
+
    return {
       props: {
          folds: parsedData,
