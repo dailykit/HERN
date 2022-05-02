@@ -77,23 +77,26 @@ export const KioskLocation = () => {
       },
    })
 
-   const { error1, loading1, data1 } = useSubscription(BRANDS.LIST, {
-      onSubscriptionData: ({
-         subscriptionData: {
-            data: { brands = {} },
+   const { brandListError, brandListLoading, brandListData } = useSubscription(
+      BRANDS.LIST,
+      {
+         onSubscriptionData: ({
+            subscriptionData: {
+               data: { brands = {} },
+            },
+         }) => {
+            console.log('brands data', brands)
+            const brandsData = brands?.nodes.map(brand => {
+               return {
+                  id: brand?.id || '',
+                  // title: brand?.title || '',
+                  title: brand?.domain || '',
+               }
+            })
+            setBrandList(previousData => [...previousData, ...brandsData])
          },
-      }) => {
-         console.log('brands data', brands)
-         const brandsData = brands?.nodes.map(brand => {
-            return {
-               id: brand?.id || '',
-               // title: brand?.title || '',
-               title: brand?.domain || '',
-            }
-         })
-         setBrandList(previousData => [...previousData, ...brandsData])
-      },
-   })
+      }
+   )
    console.log('brandlist made now::>', brandList)
 
    React.useEffect(() => {
@@ -127,7 +130,7 @@ export const KioskLocation = () => {
       }
    }
 
-   if (loading) return <InlineLoader />
+   if (loading || brandListLoading) return <InlineLoader />
    if (error) {
       toast.error('Something went wrong!')
       logger(error)
@@ -223,6 +226,7 @@ export const KioskLocation = () => {
                         title="Copy Kiosk Access URL"
                      >
                         <ButtonGroup
+                           style={{ gap: '5px' }}
                            onClick={() => {
                               copy(title.accessUrl)
                            }}
@@ -247,7 +251,7 @@ export const KioskLocation = () => {
                         <div style={{ marginTop: '10px' }}>
                            <Dropdown
                               type="single"
-                              isLoading={loading1}
+                              isLoading={brandListLoading}
                               addOption={brandList}
                               options={brandList}
                               defaultName={title.accessUrl.split('/kiosk')[0]}
@@ -263,7 +267,7 @@ export const KioskLocation = () => {
                                  })
                               }
                               placeholder="Enter brand domain"
-                              addOption={() => console.log('brand ADDED')}
+                              // addOption={() => console.log('Brand Added')}
                            />
                         </div>
                      </div>
@@ -274,7 +278,7 @@ export const KioskLocation = () => {
                         // style={{ marginTop: '-2px' }}
                         placeholder="Enter the kiosk label"
                         value={'/kiosk/' + params.id}
-                        disabled={kiosk?.isDefault}
+                        disabled={true}
                         // onChange={e =>
                         //    setTitle({ ...title, value: e.target.value })
                         // }
@@ -287,14 +291,31 @@ export const KioskLocation = () => {
             <Form.Toggle
                name="Active"
                value={kiosk[0]?.isActive}
-               onChange={() =>
-                  update({
-                     variables: {
-                        id: params.id,
-                        _set: { isActive: !kiosk[0].isActive || false },
-                     },
-                  })
-               }
+               onChange={() => {
+                  if (
+                     title.accessUrl &&
+                     kiosk[0]?.printerId &&
+                     kiosk[0]?.location?.id
+                  ) {
+                     update({
+                        variables: {
+                           id: params.id,
+                           _set: { isActive: !kiosk[0].isActive || false },
+                        },
+                     })
+                  }
+                  if (title.accessUrl && kiosk[0]?.printerId) {
+                     toast.error('Location not set')
+                  }
+                  if (kiosk[0]?.printerId && kiosk[0]?.location?.id) {
+                     toast.error('Access URL not set')
+                  }
+                  if (title.accessUrl && kiosk[0]?.location?.id) {
+                     toast.error('Printer not set')
+                  } else {
+                     toast.error('Access URL or Printer or Location not set')
+                  }
+               }}
                style={{ marginTop: '24px' }}
             >
                <Flex container alignItems="center">
