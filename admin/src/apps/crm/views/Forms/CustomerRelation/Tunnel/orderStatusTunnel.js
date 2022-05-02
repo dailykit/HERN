@@ -12,11 +12,13 @@ import {
 } from '../../../../../../shared/components'
 import { useTabs } from '../../../../../../shared/providers'
 import { BrandContext } from '../../../../../../App'
+import { useParams } from 'react-router-dom'
 // import BrandContext from '../../../../context/Brand'
 
 const OrderStatus = ({ tunnels, closeTunnel }) => {
    // const [context, setContext] = useContext(BrandContext)
    const [brandContext, setBrandContext] = useContext(BrandContext)
+   const params = useParams()
 
    const { tab } = useTabs()
    const {
@@ -25,7 +27,7 @@ const OrderStatus = ({ tunnels, closeTunnel }) => {
    } = useQuery(STATUS, {
       variables: {
          oid: tab.data.oid,
-         brandId: brandContext.brandId,
+         brandId: params.brandId,
       },
       onError: error => {
          toast.error('Something went wrong')
