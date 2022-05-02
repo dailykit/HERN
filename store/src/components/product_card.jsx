@@ -47,7 +47,7 @@ export const ProductCard = props => {
       config,
       stepView = false,
    } = props
-   console.log('🚀 ~ file: product_card.jsx ~ line 50 ~ data', data)
+   // console.log('🚀 ~ file: product_card.jsx ~ line 50 ~ data', data)
    const { t, dynamicTrans, locale } = useTranslation()
    const currentLang = React.useMemo(() => locale, [locale])
    const slideRef = React.useRef()

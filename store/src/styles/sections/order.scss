@@ -113,6 +113,11 @@
    align-items: center;
 }
 .hern-on-demand-order--product-card {
+   > .hern-product-card{
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+   }
    width: 100%;
    @media (max-width: 479px) {
       max-width: 100% !important;
