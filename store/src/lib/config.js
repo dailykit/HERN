@@ -4,12 +4,7 @@ import has from 'lodash/has'
 import isEmpty from 'lodash/isEmpty'
 import React from 'react'
 import { ORDER_TAB } from '../graphql'
-import {
-   get_env,
-   isClient,
-   useQueryParamState,
-   useWindowOnload,
-} from '../utils'
+import { get_env, isClient, useQueryParamState } from '../utils'
 const ConfigContext = React.createContext()
 
 const initialState = {
@@ -36,6 +31,7 @@ const initialState = {
       ONDEMAND_DINEIN: false,
       isValidated: false, // show that above two values are validate or not, initially false
    },
+   KioskConfig: null,
 }
 
 const reducers = (state, { type, payload }) => {
@@ -64,6 +60,8 @@ const reducers = (state, { type, payload }) => {
          return { ...state, lastLocationId: payload }
       case 'SET_KIOSK_RECURRENCES':
          return { ...state, kioskRecurrences: payload }
+      case 'SET_KIOSK_POPUP_CONFIG':
+         return { ...state, KioskConfig: payload }
       case 'SET_KIOSK_AVAILABILITY': {
          return {
             ...state,
@@ -87,10 +85,9 @@ export const ConfigProvider = ({ children }) => {
 
    const [showLocationSelectorPopup, setShowLocationSelectionPopup] =
       React.useState(false)
-   const { isWindowLoading } = useWindowOnload()
 
    useQuery(ORDER_TAB, {
-      skip: isWindowLoading || isLoading || !orderInterfaceType,
+      skip: isLoading || !orderInterfaceType,
       variables: {
          where: {
             isActive: { _eq: true },
@@ -153,25 +150,26 @@ export const ConfigProvider = ({ children }) => {
       const oiType = JSON.parse(localStorage.getItem('orderInterfaceType'))
       const oiTypeId = JSON.parse(localStorage.getItem('orderInterfaceTypeId'))
 
-      const urlSearchParams = new URLSearchParams(window.location.search)
-      const params = Object.fromEntries(urlSearchParams.entries())
+      // const urlSearchParams = new URLSearchParams(window.location.search)
+      // const params = Object.fromEntries(urlSearchParams.entries())
+      const pathName = isClient ? window.location.pathname : ''
 
-      if (params && params.oiType) {
+      if (pathName.includes('/kiosk/')) {
          localStorage.setItem(
             'orderInterfaceType',
-            JSON.stringify(params.oiType)
+            JSON.stringify('Kiosk Ordering')
          )
-         setOrderInterfaceType(prev => ({ ...prev, oiType: params.oiType }))
-         if (params.oiTypeId) {
-            localStorage.setItem(
-               'orderInterfaceTypeId',
-               JSON.stringify(params.oiTypeId)
-            )
-            setOrderInterfaceType(prev => ({
-               ...prev,
-               oiTypeId: params.oiTypeId,
-            }))
-         }
+         setOrderInterfaceType(prev => ({ ...prev, oiType: 'Kiosk Ordering' }))
+         // if (params.oiTypeId) {
+         //    localStorage.setItem(
+         //       'orderInterfaceTypeId',
+         //       JSON.stringify(params.oiTypeId)
+         //    )
+         //    setOrderInterfaceType(prev => ({
+         //       ...prev,
+         //       oiTypeId: params.oiTypeId,
+         //    }))
+         // }
       } else {
          localStorage.setItem('orderInterfaceType', JSON.stringify('Website'))
          setOrderInterfaceType(prev => ({
@@ -201,6 +199,7 @@ export const ConfigProvider = ({ children }) => {
             currentAuth,
             setAuth,
             deleteAuth,
+            // KioskConfig,
          }}
       >
          {children}
@@ -227,6 +226,7 @@ export const useConfig = (globalType = '') => {
       currentAuth,
       setAuth,
       deleteAuth,
+      // KioskConfig,
    } = React.useContext(ConfigContext)
 
    const hasConfig = React.useCallback(
@@ -295,5 +295,6 @@ export const useConfig = (globalType = '') => {
       currentAuth,
       setAuth,
       deleteAuth,
+      KioskConfig: state.KioskConfig,
    }
 }

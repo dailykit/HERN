@@ -74,6 +74,9 @@ export const ModifierPopup = props => {
       return groupedData
    }, [productData])
    const [productOptionType, setProductOptionType] = useState(
+      productData.productOptions.find(
+         x => x.id === productData.defaultProductOptionId
+      )?.type ||
       productOptionsGroupedByProductOptionType[0]['type']
    )
 
@@ -121,6 +124,10 @@ export const ModifierPopup = props => {
 
    const { locationId, storeStatus, configOf } = useConfig()
    const recipeLink = useConfig('Product card').configOf('recipe-link')
+
+   const getPriceWithDiscount = (price, discount) => {
+      return price - (price * discount) / 100
+   }
 
    const recipeButton = {
       show:
@@ -171,7 +178,7 @@ export const ModifierPopup = props => {
       ]
       //no modifier available in product options
       if (!productOption.modifier) {
-         console.log('PASS')
+         // console.log('PASS')
          // addToCart({ ...productOption, quantity })
          const cartItem = getCartItemWithModifiers(
             productOption.cartItem,
@@ -237,7 +244,7 @@ export const ModifierPopup = props => {
       }
       let nestedFinalCategories = []
       let nestedFinalErrorCategories = []
-      console.log('finalCategories', finalCategories)
+      // console.log('finalCategories', finalCategories)
       finalCategories.forEach(eachCategory => {
          eachCategory.options.forEach(eachOption => {
             if (eachOption.additionalModifierTemplateId) {
@@ -276,10 +283,10 @@ export const ModifierPopup = props => {
       setErrorCategories(errorState)
       nestedSetErrorCategories(nestedFinalErrorCategories)
       if (errorState.length > 0 || nestedFinalErrorCategories.length > 0) {
-         console.log('FAIL')
+         // console.log('FAIL')
          return
       } else {
-         console.log('PASS')
+         // console.log('PASS')
          const nestedModifierOptionsGroupByParentModifierOptionId =
             allNestedSelectedOptions.length > 0
                ? _.chain(allNestedSelectedOptions)
@@ -297,7 +304,7 @@ export const ModifierPopup = props => {
                allSelectedOptions.map(x => x.cartItem),
                nestedModifierOptionsGroupByParentModifierOptionId
             )
-            console.log('finalCartItem', cartItem)
+            // console.log('finalCartItem', cartItem)
             await addToCart(cartItem, quantity)
          } else {
             const cartItem = getCartItemWithModifiers(
@@ -333,24 +340,51 @@ export const ModifierPopup = props => {
          ...nestedSelectedModifierOptions.multiple,
       ]
       let allSelectedOptionsPrice = 0
+      let allSelectedOptionsPriceWithDiscount = 0
       let allNestedSelectedOptionsPrice = 0
-      allSelectedOptions.forEach(
-         x => (allSelectedOptionsPrice += x?.modifierCategoryOptionsPrice || 0)
+      let allNestedSelectedOptionsPriceWithDiscount = 0
+      allSelectedOptions.forEach(x => {
+         allSelectedOptionsPrice += x?.modifierCategoryOptionsPrice || 0
+         allSelectedOptionsPriceWithDiscount +=
+            getPriceWithDiscount(
+               x?.modifierCategoryOptionsPrice,
+               x?.modifierCategoryOptionsDiscount
+            ) || 0
+      })
+      allNestedSelectedOptions.forEach(x => {
+         allNestedSelectedOptionsPrice += x?.modifierCategoryOptionsPrice || 0
+         allNestedSelectedOptionsPriceWithDiscount +=
+            getPriceWithDiscount(
+               x?.modifierCategoryOptionsPrice,
+               x?.modifierCategoryOptionsDiscount
+            ) || 0
+      })
+      const totalBaseProductPriceWithDiscount = getPriceWithDiscount(
+         productData.price,
+         productData.discount
       )
-      allNestedSelectedOptions.forEach(
-         x =>
-            (allNestedSelectedOptionsPrice +=
-               x?.modifierCategoryOptionsPrice || 0)
+      const totalProductionOptionsPriceWithDiscount = getPriceWithDiscount(
+         productOptionPrice,
+         productOption.discount
       )
-
-      const totalPrice =
+      const totalWithoutDiscount =
+         productData.price +
          productOptionPrice +
          allSelectedOptionsPrice +
-         productData.price +
          allNestedSelectedOptionsPrice
-      return formatCurrency(totalPrice * quantity)
-   }
+      const totalPrice =
+         totalBaseProductPriceWithDiscount +
+         totalProductionOptionsPriceWithDiscount +
+         allSelectedOptionsPriceWithDiscount +
+         allNestedSelectedOptionsPriceWithDiscount
 
+      return {
+         total: totalPrice * quantity,
+         totalWithoutDiscount: totalWithoutDiscount * quantity,
+         totalDiscount: (totalWithoutDiscount - totalPrice) * quantity,
+      }
+   }
+   const { total, totalWithoutDiscount, totalDiscount } = totalAmount()
    //increment click
    const incrementClick = () => {
       setQuantity(quantity + 1)
@@ -395,13 +429,16 @@ export const ModifierPopup = props => {
          productData.productOptions.length > 0
       ) {
          return formatCurrency(
-            productData.price -
-               productData.discount +
-               ((productData?.productOptions[0]?.price || 0) -
-                  (productData?.productOptions[0]?.discount || 0))
+            getPriceWithDiscount(productData.price, productData.discount) +
+               getPriceWithDiscount(
+                  productData.productOptions[0]?.price || 0,
+                  productData.productOptions[0]?.discount
+               )
          )
       } else {
-         return formatCurrency(productData.price - productData.discount)
+         return formatCurrency(
+            getPriceWithDiscount(productData.price, productData.discount)
+         )
       }
    }
 
@@ -461,7 +498,7 @@ export const ModifierPopup = props => {
          closeModifier()
       }
    }
-   console.log('productOption', productOption)
+   // console.log('productOption', productOption)
    return (
       <>
          <div
@@ -547,6 +584,7 @@ export const ModifierPopup = props => {
                                           eachProductOptionType.type
                                        )
                                        setProductOption(
+                                          eachProductOptionType.data.find(x => x.id===productData.defaultProductOptionId) ||
                                           eachProductOptionType.data[0]
                                        )
                                        if (isModifierOptionsViewOpen) {
@@ -643,8 +681,21 @@ export const ModifierPopup = props => {
                                        {eachOption.label}
 
                                        {' (+ '}
+                                       {eachOption.discount > 0 && (
+                                          <del
+                                             style={{
+                                                display: 'inline-block',
+                                                padding: '0 6px',
+                                             }}
+                                          >
+                                             {formatCurrency(eachOption.price)}
+                                          </del>
+                                       )}
                                        {formatCurrency(
-                                          eachOption.price - eachOption.discount
+                                          getPriceWithDiscount(
+                                             eachOption.price,
+                                             eachOption.discount
+                                          )
                                        )}
                                        {')'}
                                     </li>
@@ -804,19 +855,55 @@ export const ModifierPopup = props => {
                            ) : (
                               <span>
                                  {t('ADD TO CART')}&nbsp;
-                                 {totalAmount()}
+                                 <span>
+                                    {formatCurrency(total)}
+                                    {totalDiscount > 0 && (
+                                       <del
+                                          style={{
+                                             display: 'inline-block',
+                                             padding: '0 6px',
+                                          }}
+                                       >
+                                          {formatCurrency(totalWithoutDiscount)}
+                                       </del>
+                                    )}
+                                 </span>
                               </span>
                            )
                         ) : (
                            <span>
                               {t('ADD TO CART')}&nbsp;
-                              {totalAmount()}
+                              <span>
+                                 {formatCurrency(total)}
+                                 {totalDiscount > 0 && (
+                                    <del
+                                       style={{
+                                          display: 'inline-block',
+                                          padding: '0 6px',
+                                       }}
+                                    >
+                                       {formatCurrency(totalWithoutDiscount)}
+                                    </del>
+                                 )}
+                              </span>
                            </span>
                         )
                      ) : (
                         <span>
                            {t('ADD TO CART')}&nbsp;
-                           {totalAmount()}
+                           <span>
+                              {formatCurrency(total)}&nbsp;
+                              {totalDiscount > 0 && (
+                                 <del
+                                    style={{
+                                       display: 'inline-block',
+                                       padding: '0 6px',
+                                    }}
+                                 >
+                                    {formatCurrency(totalWithoutDiscount)}&nbsp;
+                                 </del>
+                              )}
+                           </span>
                         </span>
                      )}
                   </Button>
@@ -832,7 +919,7 @@ export const ModifierPopup = props => {
                className="hern-product-modifier-pop-up-add-to-cart-btn"
                onClick={handleAddOnCartOn}
             >
-               ADD TO CART {totalAmount()}
+               ADD TO CART {total}
             </Button> */}
             {modifierImage.showImage && (
                <div className="hern-product-modifier-image-pop-up">

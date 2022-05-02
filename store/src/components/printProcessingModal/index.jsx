@@ -45,8 +45,8 @@ const PrintProcessingModal = ({
                className="payment_status_loader"
             />
          )
-         title = `${t('Printed your receipt successfully')}`
-         subtitle = `${t('Taking you back to the home page shortly')}`
+         title = 'Printed your receipt successfully'
+         subtitle = 'Taking you back to the home page shortly'
       } else if (printStatus === 'failed') {
          icon = (
             <img

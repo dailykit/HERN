@@ -32,7 +32,6 @@ const SEOSettings = ({ data }) => {
       },
    })
 
-
    const update = ({ id, value }) => {
       updateSetting({
          variables: {

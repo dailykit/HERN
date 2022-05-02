@@ -2,13 +2,16 @@
 import React from 'react'
 import { useSubscription } from '@apollo/react-hooks'
 import { toast } from 'react-toastify'
-import { Text, Loader, Flex } from '@dailykit/ui'
+import { Text, Loader, Flex, ButtonGroup, TextButton, Spacer, Tunnels, Tunnel, useTunnel } from '@dailykit/ui'
 import { Input } from 'antd'
 import { ENVS } from '../../../graphql'
 import { CloseIcon } from '../../../../brands/assets/icons'
 import { Child, CollapsibleWrapper, ResponsiveFlex, Styles } from './styled'
 import { SettingsCard } from './SettingsCard'
 import { Tooltip } from '../../../../../shared/components'
+import axios from 'axios'
+import CreateEnvTunnel from '../../../../../shared/CreateUtils/Settings/Envs'
+
 
 const EnvsList = () => {
     const [allSettings, setAllSettings] = React.useState([])
@@ -20,6 +23,8 @@ const EnvsList = () => {
     const [componentIsOnView, setIsComponentIsOnView] = React.useState([])
     const [alertShow, setAlertShow] = React.useState(false)
     const { Search } = Input
+    const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
+
 
     const { loading: loadingSettings, error } = useSubscription(ENVS.LIST, {
         onSubscriptionData: ({
@@ -52,10 +57,29 @@ const EnvsList = () => {
     console.log("saveAllSettings", saveAllSettings, "isChangeSaved", isChangeSaved, "mode", mode)
     return (
         <ResponsiveFlex maxWidth="1280px" margin="0 auto">
-            <Flex container alignItems="center" style={{ margin: '0px 0px 16px 16px' }}>
+            <Flex container alignItems="center" justifyContent='space-between' style={{ margin: '0px 0px 16px 16px' }}>
                 <Text as="h2" >
                     Envs({allSettings.length || 0})
                 </Text>
+                <ButtonGroup>
+                    <TextButton
+                        type="ghost"
+                        title='Synchronization after changes in env'
+                        size={24}
+                        onClick={() => axios.post(`${window.location.origin}/server/api/envs`)}
+                    >
+                        Sync
+                    </TextButton>
+                    <Spacer xAxis size={"16px"} />
+                    <TextButton
+                        type="solid"
+                        title='Create Env'
+                        size={24}
+                        onClick={() => openTunnel(1)}
+                    >
+                        Create Envs
+                    </TextButton>
+                </ButtonGroup>
                 <Tooltip identifier="products_list_heading" />
             </Flex>
             <Styles.Wrapper>
@@ -187,6 +211,11 @@ const EnvsList = () => {
                     </Flex>
                 </Styles.SettingWrapper>
             </Styles.Wrapper>
+            <Tunnels tunnels={tunnels}>
+                <Tunnel layer={1} size="md">
+                    <CreateEnvTunnel closeTunnel={closeTunnel} />
+                </Tunnel>
+            </Tunnels>
         </ResponsiveFlex>
     )
 }

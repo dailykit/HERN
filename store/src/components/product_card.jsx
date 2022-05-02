@@ -47,6 +47,7 @@ export const ProductCard = props => {
       config,
       stepView = false,
    } = props
+   // console.log('🚀 ~ file: product_card.jsx ~ line 50 ~ data', data)
    const { t, dynamicTrans, locale } = useTranslation()
    const currentLang = React.useMemo(() => locale, [locale])
    const slideRef = React.useRef()
@@ -70,6 +71,9 @@ export const ProductCard = props => {
          data.assets.images.length !== 1 &&
          canSwipe && { canSwipe: canSwipe }),
    }
+   const getPriceWithDiscount = (price, discount) => {
+      return price - (price * discount) / 100
+   }
 
    React.useEffect(() => {
       const languageTags = document.querySelectorAll(
@@ -83,19 +87,20 @@ export const ProductCard = props => {
       if (!useForThirdParty) {
          if (data.isPopupAllowed && data.productOptions.length > 0) {
             return (
-               data.price -
-               data.discount +
-               ((data?.productOptions[0]?.price || 0) -
-                  (data?.productOptions[0]?.discount || 0))
+               getPriceWithDiscount(data.price, data.discount) +
+               getPriceWithDiscount(
+                  data?.productOptions[0]?.price || 0,
+                  data?.productOptions[0]?.discount
+               )
             )
          } else {
-            return data.price - data.discount
+            return getPriceWithDiscount(data.price, data.discount)
          }
       }
       // when using this product card some where else
       else {
          if (data.price > 0) {
-            return data.price - data.discount
+            return getPriceWithDiscount(data.price, data.discount)
          } else {
             return null
          }
@@ -256,17 +261,26 @@ export const ProductCard = props => {
                            </div>
                            {showProductPrice && (
                               <div className="hern-product-card__price">
-                                 {useForThirdParty && data.discount > 0 && (
-                                    <span
-                                       style={{
-                                          textDecoration: 'line-through',
-                                       }}
-                                    >
-                                       {formatCurrency(
-                                          data.price - data.discount
-                                       )}
-                                    </span>
-                                 )}
+                                 {!useForThirdParty &&
+                                    (data.discount > 0 ||
+                                       data.productOptions[0]?.discount >
+                                          0) && (
+                                       <span
+                                          style={{
+                                             textDecoration: 'line-through',
+                                             display: 'inline-block',
+                                             padding: '0px 4px',
+                                          }}
+                                       >
+                                          {data.productOptions.length > 0
+                                             ? formatCurrency(
+                                                  data.price +
+                                                     data.productOptions[0]
+                                                        .price
+                                               )
+                                             : formatCurrency(data.price)}
+                                       </span>
+                                    )}
                                  {finalProductPrice() &&
                                     finalProductPrice() > 0 && (
                                        <span style={{ marginLeft: '6px' }}>

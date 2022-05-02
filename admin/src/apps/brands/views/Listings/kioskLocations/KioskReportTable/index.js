@@ -69,10 +69,59 @@ export const KioskReportTable = () => {
             const foundGroup = groupByOptions.find(y => y.payload == x)
             console.log('foundroup--->', foundGroup, groupByOptions, 'x:>', x)
             console.log('y::>', kioskReportGroupParse, kioskReportGroup)
-            // arr.push(foundGroup.id)
+            arr.push(foundGroup.id)
          })
       }
       return arr.length == 0 ? [4] : arr
+   }
+
+   const selectRows = () => {
+      const kioskReportGroup = localStorage.getItem(
+         'tabulator-kiosk-report_table-group'
+      )
+      const kioskReportGroupParse =
+         kioskReportGroup !== undefined &&
+         kioskReportGroup !== null &&
+         kioskReportGroup.length !== 0
+            ? JSON.parse(kioskReportGroup)
+            : null
+      tableRef.current.table.setGroupBy(
+         kioskReportGroupParse !== null && kioskReportGroupParse.length > 0
+            ? kioskReportGroupParse
+            : 'locationKioskId'
+      )
+
+      tableRef.current.table.setGroupHeader(function (
+         value,
+         count,
+         data1,
+         group
+      ) {
+         let newHeader
+         switch (group._group.field) {
+            case 'locationKioskId':
+               newHeader = 'KioskId'
+               break
+            case 'locationId':
+               newHeader = 'LocationId'
+               break
+            default:
+               break
+         }
+         return `${newHeader} - ${value} || ${count} Kiosk`
+      })
+
+      // const selectedRowsId =
+      //    localStorage.getItem('selected-rows-id_kiosk-report_table') || '[]'
+      // tableRef.current.table.selectRow(JSON.parse(selectedRowsId))
+      // if (JSON.parse(selectedRowsId).length > 0) {
+      //    let newArr = []
+      //    JSON.parse(selectedRowsId).forEach(x => {
+      //       const newFind = data.find(y => y.id == x)
+      //       newArr = [...newArr, newFind]
+      //    })
+      //    this.props.setSelectedRows(newArr)
+      // }
    }
 
    const columns = React.useMemo(() => [
@@ -468,6 +517,7 @@ export const KioskReportTable = () => {
                <ReactTabulator
                   ref={tableRef}
                   data={order_kioskReport ? order_kioskReport : []}
+                  dataLoaded={selectRows}
                   columns={columns}
                   options={{
                      ...tableOptions,

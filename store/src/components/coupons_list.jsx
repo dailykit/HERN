@@ -27,23 +27,21 @@ const Coupons_List = ({
 }) => {
    // use this component for kiosk as well
    const brandConfig = useConfig('rewards').configOf('Coupons Availability')
+   const isKioskMode = isKiosk()
+
    const showListOnCarousel =
       brandConfig['Coupon list orientation']?.showInCarousel?.value ?? false
    const [orderInterfaceType] = useQueryParamState('oiType', 'Website')
-   const { state = {} } =
-      orderInterfaceType === 'Kiosk Ordering' ? {} : useMenu()
+   const { state = {} } = isKioskMode ? {} : useMenu()
    const { brand } = useConfig()
    const { user } = useUser()
    const { id } =
-      orderInterfaceType === 'Kiosk Ordering' || upFrontLayout
-         ? cart
-         : state?.occurenceCustomer?.cart
+      isKioskMode || upFrontLayout ? cart : state?.occurenceCustomer?.cart
    const { t } = useTranslation()
 
    const [availableCoupons, setAvailableCoupons] = React.useState([])
    const [applying, setApplying] = React.useState(false)
    const { width, height } = useWindowSize()
-   const isKioskMode = isKiosk()
 
    const { loading, error } = useSubscription(COUPONS, {
       variables: {
@@ -117,8 +115,8 @@ const Coupons_List = ({
       return !coupon.rewards.some(reward => reward.condition.isValid)
    }
 
-   if (loading) return <Loader />
-   if (orderInterfaceType === 'Kiosk Ordering' || upFrontLayout) {
+   if (loading) return <Loader inline />
+   if (isKioskMode || upFrontLayout) {
       const CouponCard = ({ coupon }) => {
          return (
             <div
@@ -236,7 +234,13 @@ const Coupons_List = ({
                <div style={{ display: 'flex', alignItems: 'center' }}>
                   {(showListOnCarousel || isKioskMode) && (
                      <ArrowLeftIcon
-                        className="hern-upfront-coupons-list__carousal-left-arrow hern-upfront-coupons-list__carousal-arrow"
+                        className={classNames(
+                           'hern-upfront-coupons-list__carousal-left-arrow hern-upfront-coupons-list__carousal-arrow',
+                           {
+                              'hern-upfront-coupons-list__carousal-arrow-kiosk':
+                                 isKioskMode,
+                           }
+                        )}
                         size={42}
                         onClick={lastCarousal}
                      />
@@ -268,7 +272,13 @@ const Coupons_List = ({
                   </div>
                   {(showListOnCarousel || isKioskMode) && (
                      <ArrowRightIcon
-                        className="hern-upfront-coupons-list__carousal-right-arrow hern-upfront-coupons-list__carousal-arrow"
+                        className={classNames(
+                           'hern-upfront-coupons-list__carousal-right-arrow hern-upfront-coupons-list__carousal-arrow',
+                           {
+                              'hern-upfront-coupons-list__carousal-arrow-kiosk':
+                                 isKioskMode,
+                           }
+                        )}
                         size={42}
                         onClick={nextCarousal}
                      />
@@ -281,7 +291,7 @@ const Coupons_List = ({
 
    return (
       <div className="hern-coupons-list">
-         {orderInterfaceType !== 'Kiosk Ordering' && (
+         {!isKioskMode && (
             <div className="hern-coupons-list__header">
                <div className="hern-coupons-list__heading">
                   {t('Available Coupons')}

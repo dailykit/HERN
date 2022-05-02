@@ -22,6 +22,7 @@ import { Loader } from '../'
 import { TimeSlots } from './components/timeSlots'
 import { Button } from '../button'
 import classNames from 'classnames'
+import { HernSkeleton } from '../hernSkeleton'
 
 export const Delivery = props => {
    const { setIsEdit } = props
@@ -562,7 +563,11 @@ export const Delivery = props => {
    )
 
    if (isLoading) {
-      return <p>Loading</p>
+      return (
+         <div style={{ height: '168px', width: '100%' }}>
+            <HernSkeleton height="100%" width="100%" />
+         </div>
+      )
    }
    if (
       isSmallerDevice &&
@@ -672,7 +677,9 @@ export const Delivery = props => {
          )}
 
          {!fulfillmentType ? null : isGetStoresLoading ? (
-            <Loader inline />
+            <div style={{ height: '118px', width: '100%' }}>
+               <HernSkeleton height="100%" width="100%" />
+            </div>
          ) : stores.length === 0 ? (
             <p>{t('No store available')}</p>
          ) : fulfillmentType === 'PREORDER_DELIVERY' ? (
