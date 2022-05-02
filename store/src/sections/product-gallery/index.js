@@ -8,12 +8,7 @@ import { Loader } from '../../components'
 import { ProductCard } from '../../components/product_card'
 import { PRODUCTS } from '../../graphql'
 import { useConfig } from '../../lib'
-import {
-   getRoute,
-   isClient,
-   setThemeVariable,
-   useWindowOnload,
-} from '../../utils'
+import { getRoute, isClient, setThemeVariable } from '../../utils'
 import { CustomArea } from '../featuredCollection/productCustomArea'
 
 export const ProductGallery = ({ config }) => {
@@ -23,7 +18,6 @@ export const ProductGallery = ({ config }) => {
    )
    const [status, setStatus] = React.useState('loading')
    const { brand, locationId } = useConfig()
-   const { isWindowLoading } = useWindowOnload()
 
    const argsForByLocation = React.useMemo(
       () => ({
@@ -37,7 +31,6 @@ export const ProductGallery = ({ config }) => {
    const { loading: productsLoading, error: productsError } = useQuery(
       PRODUCTS,
       {
-         skip: isWindowLoading,
          variables: {
             ids: config.data.products.value,
             priceArgs: argsForByLocation,

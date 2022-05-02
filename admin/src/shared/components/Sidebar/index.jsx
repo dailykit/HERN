@@ -1,4 +1,4 @@
-import React, { Children } from 'react'
+import React, { Children, useContext } from 'react'
 import gql from 'graphql-tag'
 import {
    Flex,
@@ -67,6 +67,8 @@ import CreateCollection from '../../CreateUtils/Menu/createCollection'
 import CreateSubscription from '../../CreateUtils/subscription/createSubscriptions'
 import { StoreIcon } from '../../assets/icons'
 import BrandSelector from './components/BrandSelector'
+import { BrandContext } from '../../../App'
+import { BrandListing } from '../../../apps/crm/components'
 
 const APPS = gql`
    subscription apps {
@@ -88,6 +90,8 @@ export const Sidebar = ({ setOpen }) => {
    const [isActive, setIsActive] = React.useState(false)
    const sideBarRef = React.useRef()
    console.log('pathname', location.pathname.substring(1))
+   const [brandContext, setBrandContext] = useContext(BrandContext)
+   const [brandTunnels, openBrandTunnel, closeBrandTunnel] = useTunnel(1)
 
    const [
       createRecipeTunnels,
@@ -511,7 +515,7 @@ export const Sidebar = ({ setOpen }) => {
             childs: [
                {
                   title: 'View all Customers',
-                  path: '/crm/customers',
+                  path: `/crm/customers-${brandContext.brandName}-${brandContext.brandId}`,
                },
                {
                   title: 'Coupons',
@@ -892,7 +896,12 @@ export const Sidebar = ({ setOpen }) => {
                                           <Styles.PageOneTitle
                                              onClick={() => {
                                                 setIsOpen(null)
-                                                addTab(child.title, child.path)
+                                                {
+                                                   child.title === "View all Customers"
+                                                      ? (brandContext.brandId ? addTab(child.title, child.path) : openBrandTunnel(1))
+                                                      : addTab(child.title, child.path)
+                                                }
+
                                              }}
                                              active={
                                                 isChildOpen === child.title &&
@@ -1220,6 +1229,11 @@ export const Sidebar = ({ setOpen }) => {
             <Tunnels tunnels={createPrintTunnels}>
                <Tunnel layer={1} size="sm">
                   <PrintTunnel closeTunnel={closePrintTunnel} />
+               </Tunnel>
+            </Tunnels>
+            <Tunnels tunnels={brandTunnels}>
+               <Tunnel popup={true} layer={1} size="md">
+                  <BrandListing closeTunnel={closeBrandTunnel} />
                </Tunnel>
             </Tunnels>
          </div>

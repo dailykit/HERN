@@ -30,7 +30,7 @@ function PayButton({
    } = usePayment()
    const { addToast } = useToasts()
    const [cartValidity, setCartValidity] = useState(null)
-   
+
    // query for fetching available payment options
    const {
       loading,
@@ -129,19 +129,30 @@ function PayButton({
          {loading ? (
             <Skeleton.Button active size="large" block={fullWidthSkeleton} />
          ) : (
-            
-            <KioskButton
-               style={{
-                  paddingTop:'10px',
-                  paddingBottom:'10px',
-               }}
-               onClick={onPayClickHandler}
-               disabled={!cartValidity?.status}
-               buttonConfig={config.kioskSettings.buttonSettings}
-               {...props}
-               >
-               {children}
-            </KioskButton>
+            <>
+               {!isKioskMode ? (
+                  <Button
+                     onClick={onPayClickHandler}
+                     disabled={!cartValidity?.status}
+                     {...props}
+                  >
+                     {children}
+                  </Button>
+               ) : (
+                  <KioskButton
+                     style={{
+                        paddingTop: '10px',
+                        paddingBottom: '10px',
+                     }}
+                     onClick={onPayClickHandler}
+                     disabled={!cartValidity?.status}
+                     buttonConfig={config.kioskSettings.buttonSettings}
+                     {...props}
+                  >
+                     {children}
+                  </KioskButton>
+               )}
+            </>
          )}
       </>
    )

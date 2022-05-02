@@ -408,17 +408,17 @@ export const createEnvFiles2 = async () => {
    const grouped = groupBy(envs, 'belongsTo')
 
    const server = {}
+   payment.forEach(node => {
+      Object.values(node.privateCreds.private).forEach(node2 => {
+         server[node2.label] = node2.value
+      })
+   })
+   payment.forEach(node => {
+      Object.values(node.publicCreds.public).forEach(node2 => {
+         server[node2.label] = node2.value
+      })
+   })
 
-   payment.forEach(node => {
-      node.privateCreds.private.forEach(node2 => {
-         server[node2.label] = node2.value
-      })
-   })
-   payment.forEach(node => {
-      node.publicCreds.public.forEach(node2 => {
-         server[node2.label] = node2.value
-      })
-   })
    console.log('server', server)
    get(grouped, 'server', {}).forEach(node => {
       server[node.config.env_details.label] = node.config.env_details.value
@@ -431,13 +431,11 @@ export const createEnvFiles2 = async () => {
 
    const store = {}
 
-   {
-      payment.forEach(node => {
-         node.publicCreds.public.forEach(node2 => {
-            store[node2.label] = node2.value
-         })
+   payment.forEach(node => {
+      Object.values(node.publicCreds.public).forEach(node2 => {
+         store[node2.label] = node2.value
       })
-   }
+   })
    get(grouped, 'store', {}).forEach(node => {
       store[node.config.env_details.label] = node.config.env_details.value
    })
@@ -466,7 +464,7 @@ export const createEnvFiles2 = async () => {
    const admin = {}
 
    payment.forEach(node => {
-      node.publicCreds.public.forEach(node2 => {
+      Object.values(node.publicCreds.public).forEach(node2 => {
          admin[node2.label] = node2.value
       })
    })

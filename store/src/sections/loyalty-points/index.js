@@ -20,7 +20,7 @@ const Content = () => {
    const { t, dynamicTrans, locale } = useTranslation()
    const theme = configOf('theme-color', 'Visual')
 
-   const loyaltyPointConfig = configOf('Loyalty Points ', 'rewards')
+   const loyaltyPointConfig = configOf('Loyalty Points', 'rewards')
    const isLoyaltyPointsAvailable = React.useMemo(() => {
       return loyaltyPointConfig?.['Loyalty Points']?.IsLoyaltyPointsAvailable
          ?.value
