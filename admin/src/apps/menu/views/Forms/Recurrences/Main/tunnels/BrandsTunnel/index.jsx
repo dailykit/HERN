@@ -20,7 +20,7 @@ import { TunnelBody } from '../styled'
 import LinkBrandLocations from './LinkBrandLocations'
 
 const BrandTunnel = ({ closeTunnel }) => {
-   const [brandId, setBrandId] = React.useState()
+   const [brandDetails, setBrandDetails] = React.useState({})
    const { recurrenceState } = React.useContext(RecurrenceContext)
    const [tunnels, openTunnelForLocations, closeTunnelForLocations] = useTunnel(1)
 
@@ -51,8 +51,8 @@ const BrandTunnel = ({ closeTunnel }) => {
    }
 
    const cellClick =(e)=>{ 
-      console.log("cell clicked",e,e.id)
-      setBrandId(e.id)
+      console.log("cell clicked",e,e.id,e.isActive)
+      setBrandDetails(e)
       linkWithBrandLocations(e)     
    }
    
@@ -128,7 +128,7 @@ const BrandTunnel = ({ closeTunnel }) => {
          </TunnelBody>
          <Tunnels tunnels={tunnels}>
             <Tunnel layer={1} size="md">
-               <LinkBrandLocations closeTunnelForLocations={closeTunnelForLocations} brandId={brandId} />
+               <LinkBrandLocations closeTunnelForLocations={closeTunnelForLocations} brandDetails={brandDetails} />
             </Tunnel>
          </Tunnels>
       </>

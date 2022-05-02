@@ -19,7 +19,7 @@ import { repeat } from 'lodash'
 import { Banner, Tooltip } from '../../../components'
 
 
-const LinkBrandLocations = ({ closeTunnelForLocations, brandId }) => {
+const LinkBrandLocations = ({ closeTunnelForLocations, brandDetails }) => {
    const tableRef = React.useRef()
    const { recurrenceState } = React.useContext(RecurrenceContext)
    const [locationList, setLocationList] = React.useState([])
@@ -32,7 +32,7 @@ const LinkBrandLocations = ({ closeTunnelForLocations, brandId }) => {
        locationData } = useSubscription(
     BRAND_LOCATIONS,
     {
-        variables: {brandId: {_eq: brandId}},    
+        variables: {brandId: {_eq: brandDetails.id}},    
         onSubscriptionData: ({
             subscriptionData: {
             data: { brands_location = [] },
@@ -57,7 +57,6 @@ const LinkBrandLocations = ({ closeTunnelForLocations, brandId }) => {
     }
  )
 
-//    console.log("brand location list here",locationList,brandId)
    const close = () => {
       closeTunnelForLocations(1)
    }
@@ -71,7 +70,7 @@ const LinkBrandLocations = ({ closeTunnelForLocations, brandId }) => {
        logger(error)
     },
  })
- 
+   
    const columns = [
     {
        title: 'Label',
@@ -112,6 +111,7 @@ const LinkBrandLocations = ({ closeTunnelForLocations, brandId }) => {
     persistenceMode: 'cookie',
  }
 
+   if (locationListLoading) return <InlineLoader />
    return (
       <>
          <TunnelHeader
@@ -138,13 +138,13 @@ export default LinkBrandLocations
 
 
 
-const ToggleRecurrence = ({ cell, onChange, recurrenceId }) => {
+const ToggleRecurrence = ({ cell,onChange,recurrenceId }) => {
     const brandLocation = React.useRef(cell.getData())
     const [active, setActive] = React.useState(false)
-    // console.log('brand location toggle:', brandLocation)
+   //  console.log('brand location toggle:', brandLocation)
     
     const toggleHandler = value => {
-    //    console.log('values::',value)
+       console.log('values::',value)
        onChange({
           recurrenceId,
           brandLocationId: brandLocation.current.id,
@@ -160,11 +160,11 @@ const ToggleRecurrence = ({ cell, onChange, recurrenceId }) => {
     //    setActive(isActive)
     // }, [brandLocation.current])
  
-    return (
-       <Form.Toggle
-        //   name={`toggle-${brand.current.id}`}
-          value={active}
-          onChange={toggleHandler}
+   return (
+      <Form.Toggle
+          name={`toggle-${brandLocation.current.id}`}
+         value={active}
+         onChange={toggleHandler}
        />
     )
  }
