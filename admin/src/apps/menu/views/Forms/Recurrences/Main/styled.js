@@ -70,6 +70,7 @@ export const SectionTabDay = styled.div`
    line-height: 18px;
    text-align: left;
    color: #202020;
+   flex-basis: 90%;
 `
 export const SectionTabDelete = {
    display: 'flex',

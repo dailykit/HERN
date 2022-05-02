@@ -233,6 +233,7 @@ const Main = () => {
                                     dataSelectedBoxShadow={
                                        '0px 1px 8px rgba(0, 0, 0, 0.1)'
                                     }
+                                    height={'auto'}
                                     dataSelectedBorder={'2px solid #367BF5'}
                                     dataSelectedHoverBorder={
                                        '2px solid #F3F3F3'
