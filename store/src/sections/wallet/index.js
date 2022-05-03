@@ -8,7 +8,10 @@ import { useToasts } from 'react-toast-notifications'
 import { get_env } from '../../utils'
 import { BiClipboard } from 'react-icons/bi'
 import CopyToClipboard from 'react-copy-to-clipboard'
-import { WalletIcon, WalletIconResponsive } from '../../assets/icons'
+import {
+   WalletPageIllustration,
+   WalletPageIllustrationResponsive,
+} from '../../assets/icons'
 
 export const Wallet = () => {
    return (
@@ -141,12 +144,12 @@ const Content = () => {
                ) : width > 767 ? (
                   <p class="hern-wallet_no_txn">
                      {' '}
-                     <WalletIcon width={933} height={500} />
+                     <WalletPageIllustration width={933} height={500} />
                   </p>
                ) : (
                   <p class="hern-wallet_no_txn">
                      {' '}
-                     <WalletIconResponsive />
+                     <WalletPageIllustrationResponsive />
                   </p>
                )}
             </>
