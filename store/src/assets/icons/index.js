@@ -99,8 +99,18 @@ const LockIcon = dynamic(() => import('./Lock'))
 const LoginSVG = dynamic(() =>
    import('./Login').then(promise => promise.LoginSVG)
 )
+const LoyaltyPointsIllustration = dynamic(() =>
+   import('./MyLoyaltyPoints').then(
+      promise => promise.LoyaltyPointsIllustration
+   )
+)
 const LoyaltyPointsIcon = dynamic(() =>
    import('./LoyaltyPoints').then(promise => promise.LoyaltyPointsIcon)
+)
+const LoyaltyPointsIllustrationNoTrx = dynamic(() =>
+   import('./MyLoyaltyPoints').then(
+      promise => promise.LoyaltyPointsIllustrationNoTrx
+   )
 )
 const MailIcon = dynamic(() =>
    import('./Mail').then(promise => promise.MailIcon)
@@ -180,6 +190,9 @@ const VegNonVegType = dynamic(() =>
 )
 const WalletIcon = dynamic(() =>
    import('./Wallet').then(promise => promise.WalletIcon)
+)
+const WalletIconResponsive = dynamic(() =>
+   import('./Wallet').then(promise => promise.WalletIconResponsive)
 )
 const WarningIcon = dynamic(() =>
    import('./Warning').then(promise => promise.WarningIcon)
@@ -314,6 +327,8 @@ export {
    LockIcon,
    LoginSVG,
    LoyaltyPointsIcon,
+   LoyaltyPointsIllustration,
+   LoyaltyPointsIllustrationNoTrx,
    MailIcon,
    Menu,
    MenuIcon,
@@ -361,4 +376,5 @@ export {
    EmptyCloche,
    EmptyStore,
    EmptyReferralIll,
+   WalletIconResponsive,
 }
