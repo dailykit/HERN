@@ -73,11 +73,17 @@ export const ModifierPopup = props => {
          .value()
       return groupedData
    }, [productData])
+   
+   const defaultOptionType = productData.productOptions.find(
+      x => x.id === productData.defaultProductOptionId
+   )?.type
+   
    const [productOptionType, setProductOptionType] = useState(
-      productData.productOptions.find(
-         x => x.id === productData.defaultProductOptionId
-      )?.type ||
-      productOptionsGroupedByProductOptionType[0]['type']
+      defaultOptionType ? 
+         defaultOptionType : 
+         defaultOptionType==null ? 
+            'null' : 
+            productOptionsGroupedByProductOptionType[0]['type']
    )
 
    const showStepViewProductOptionAndModifiers = React.useMemo(
