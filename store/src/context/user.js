@@ -134,7 +134,6 @@ export const UserProvider = ({ children }) => {
       },
       onSubscriptionData: data => {
          const { loyaltyPoints } = data.subscriptionData.data
-         console.log(loyaltyPoints)
          if (loyaltyPoints?.length) {
             dispatch({
                type: 'SET_USER',
