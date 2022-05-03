@@ -92,59 +92,14 @@ const Content = () => {
                </div>
                <Spacer />
                <div className="hern-referral__referred">
-                  <span> {t('Friends referred by me')} :</span>
-                  <span style={{ color: 'var(--hern-accent)' }}>
+                  <span> {t('Friends Referred')} :</span>
+                  <span style={{ color: 'green', fontWeight: 'bold' }}>
                      &nbsp;{customerReferrals.length}
                   </span>
                </div>
-               {customerReferrals.length > 0 ? (
-                  <table className="hern-referrals__table">
-                     <thead>
-                        <tr>
-                           <th>{t('First Name')}</th>
-                           <th>{t('Last Name')}</th>
-                        </tr>
-                     </thead>
-                     <tbody>
-                        {customerReferrals.map(ref => (
-                           <tr key={ref.id}>
-                              <td
-                                 className="hern-referrals__table__cell"
-                                 data-translation="true"
-                              >
-                                 {!isEmpty(
-                                    ref.customer.platform_customer.firstName
-                                 )
-                                    ? ref.customer.platform_customer.firstName
-                                    : 'N/A'}
-                              </td>
-
-                              <td
-                                 className="hern-referrals__table__cell"
-                                 data-translation="true"
-                              >
-                                 {!isEmpty(
-                                    ref.customer.platform_customer.lastName
-                                 )
-                                    ? ref.customer.platform_customer.lastName
-                                    : 'N/A'}
-                              </td>
-                           </tr>
-                        ))}
-                     </tbody>
-                  </table>
-               ) : (
-                  <div
-                     style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        marginBottom: '2rem',
-                     }}
-                  >
-                     <EmptyReferralIll />
-                  </div>
-               )}
+               <div className="hern-referrals-illustration-icon">
+                  <EmptyReferralIll />
+               </div>
             </>
          )}
       </section>
