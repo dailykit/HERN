@@ -241,7 +241,7 @@ export const UPSERT_BRAND_RECURRENCE = gql`
       createBrandRecurrence(
          object: $object
          on_conflict: {
-            constraint: brand_recurrence_pkey
+            constraint: brand_recurrence_brandId_recurrenceId_key
             update_columns: isActive
          }
       ) {
@@ -258,7 +258,7 @@ export const UPSERT_BRAND_LOCATION_RECURRENCE = gql`
       createBrandRecurrence(
          object: $object
          on_conflict: {
-            constraint: brand_recurrence_pkey
+            constraint: brand_recurrence_brandLocationId_recurrenceId_key
             update_columns: isActive
          }
       ) {

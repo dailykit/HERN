@@ -32,9 +32,11 @@ const BrandTunnel = ({ closeTunnel }) => {
       data: { brandRecurrences = [] } = {},
    } = useSubscription(BRAND_RECURRENCES)
    // console.log('data needed:',brandRecurrences)
+   
    brandRecurrences.forEach((element)=>{
       element.linkBrandLocation = 'Link Locations'
    })
+   
    // console.log('new data needed:',brandRecurrences)
    const [upsertBrandRecurrence] = useMutation(UPSERT_BRAND_RECURRENCE, {
       onCompleted: data => {
@@ -52,8 +54,14 @@ const BrandTunnel = ({ closeTunnel }) => {
 
    const cellClick =(e)=>{ 
       console.log("cell clicked",e,e.id,e.isActive)
+      const recurrenceId = recurrenceState.recurrenceId
       setBrandDetails(e)
-      linkWithBrandLocations(e)     
+      if(e.recurrences.some(
+         recurrence =>
+            recurrence.recurrenceId === recurrenceId && recurrence.isActive
+      )){window.alert('link not active')}
+      else{linkWithBrandLocations(e)}
+      // linkWithBrandLocations(e)     
    }
    
    const columns = [
@@ -77,9 +85,20 @@ const BrandTunnel = ({ closeTunnel }) => {
             cellClick(cell.getData())
             // console.log('cell clicked')
          },
-         //style:
-         // row.getElement().style.color: 'blue',
-         // formatter: tabulatorRow(color:'blue') ,
+         formatter:function(cell, formatterParams){
+            const value = cell.getValue();
+            const linkValue = cell.getData()
+            const recurrenceId= recurrenceState.recurrenceId
+            // console.log("see cell value:",cell.getData())
+            if(linkValue.recurrences.some(
+               recurrence =>
+                  recurrence.recurrenceId === recurrenceId && recurrence.isActive
+            )){return "<span style='color:#000000; font-weight:bold; cursor:pointer;'>" + value + "</span>";}
+            
+            else{return "<span style='color:#367BF5; font-weight:bold; cursor:pointer;'>" + value + "</span>";}
+         //   return "<span style='color:#367BF5; font-weight:bold; cursor:pointer;'>" + value + "</span>";
+            
+         },
       },
       {
          title: 'Recurrence Available',

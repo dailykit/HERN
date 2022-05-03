@@ -123,6 +123,21 @@ export const BRAND_RECURRENCES = gql`
       }
    }
 `
+export const BRAND_LOCATION_RECURRENCES = gql`
+   subscription BrandLocationsRecurrences($brandId: Int_comparison_exp!) {
+      brandLocationsRecurrences: brands_location(
+         where: { brand_locations: { brandId: $brandId } }
+      ) {
+         id
+         city
+         label
+         recurrences {
+            recurrenceId
+            isActive
+         }
+      }
+   }
+`
 
 export const INVENTORY_PRODUCTS = gql`
    subscription InventoryProducts($where: products_inventoryProduct_bool_exp) {
@@ -179,23 +194,36 @@ export const COMBO_PRODUCTS = gql`
       }
    }
 `
-export const BRAND_LOCATIONS = gql`
-   subscription BrandLocations($brandId: Int_comparison_exp!) {
-      brands_location(where: { brand_locations: { brandId: $brandId } }) {
-         id
-         label
-         isActive
-         city
-      }
-   }
-`
 // export const BRAND_LOCATIONS = gql`
-//    subscription BrandLocations {
-//       brands_location {
+//    subscription BrandLocations($brandId: Int_comparison_exp!) {
+//       brands_location(where: { brand_locations: { brandId: $brandId } }) {
 //          id
 //          label
 //          isActive
 //          city
+//          recurrences {
+//             recurrenceId
+//             isActive
+//          }
+//          brand_locations {
+//             id
+//          }
 //       }
 //    }
 // `
+export const BRAND_LOCATIONS = gql`
+   subscription BrandLocations($brandId: Int_comparison_exp!) {
+      brands_brand_location(where: { brandId: $brandId }) {
+         id
+         location {
+            id
+            city
+            label
+         }
+         brand_recurrences {
+            isActive
+            recurrenceId
+         }
+      }
+   }
+`
