@@ -31,11 +31,12 @@ import { useTooltip, useTabs } from '../../../../../../shared/providers'
 import { logger } from '../../../../../../shared/utils'
 import options from '../../../tableOptions'
 import { BrandContext } from '../../../../../../App'
+import { useParams } from 'react-router-dom'
 // import BrandContext from '../../../../context/Brand'
 
 const OrderInfo = () => {
    // const [context, setContext] = useContext(BrandContext)
-   const [brandContext, setBrandContext] = useContext(BrandContext)
+   const params = useParams()
 
    const { dispatch, tab } = useTabs()
    const { tooltip } = useTooltip()
@@ -46,7 +47,7 @@ const OrderInfo = () => {
       useQuery(ORDER, {
          variables: {
             orderId: tab.data.oid,
-            brandId: brandContext.brandId,
+            brandId: params.brandId,
          },
          onError: error => {
             toast.error('Something went wrong subscriptionOrder')

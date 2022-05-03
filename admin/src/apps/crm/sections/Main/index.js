@@ -23,7 +23,7 @@ const Main = () => {
       <main>
          <Switch>
             <Route
-               path="/crm/customers/:id"
+               path="/crm/customers-:brandName-:brandId/:id"
                component={CustomerRelation}
                exact
             />

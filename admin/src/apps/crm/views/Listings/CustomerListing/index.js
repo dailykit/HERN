@@ -35,11 +35,13 @@ import { currencyFmt, logger } from '../../../../../shared/utils'
 import options from '../../tableOptions'
 import rRuleDay from '../../../Utils/rruleToText'
 import { TrueIcon, FalseIcon } from '../../../assets'
+import { BrandContext } from '../../../../../App'
 
 const CustomerListing = () => {
    const location = useLocation()
    const brandDetails = useParams()
    // const [context, setContext] = useContext(BrandContext)
+   const [brandContext, setBrandContext] = useContext(BrandContext)
 
    const { addTab, tab } = useTabs()
    const { tooltip } = useTooltip()
@@ -162,6 +164,13 @@ const CustomerListing = () => {
       }
    }, [addTab, tab])
 
+   useEffect(() => {
+      if (brandContext.brandId)
+         addTab(
+            'Customers',
+            `/crm/customers-${brandContext.brandName}-${brandContext.brandId}`
+         )
+   }, [brandContext.brandId])
    // Handler
    const deleteHandler = (e, Customer) => {
       e.stopPropagation()

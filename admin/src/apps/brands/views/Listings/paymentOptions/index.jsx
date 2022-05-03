@@ -1,5 +1,5 @@
 import { useMutation, useSubscription } from '@apollo/react-hooks'
-import { ComboButton, Flex, Form, IconButton, PlusIcon, Text, Tunnel, Tunnels, useTunnel } from '@dailykit/ui'
+import { ButtonGroup, ComboButton, Flex, Form, IconButton, PlusIcon, Spacer, Text, TextButton, Tunnel, Tunnels, useTunnel } from '@dailykit/ui'
 import { isEmpty } from 'lodash'
 import React from 'react'
 import { toast } from 'react-toastify'
@@ -12,6 +12,7 @@ import { logger } from '../../../../../shared/utils'
 import { DragIcon } from '../../../assets/icons'
 import { PAYMENT_OPTIONS } from '../../../graphql'
 import { GridContainer, StyledCardText, StyledCompany, StyledDelete, StyledDrag, StyledHeader, StyledWrapper } from '../styled'
+import axios from 'axios'
 
 export const PaymentOptions = () => {
     const { initiatePriority } = useDnd()
@@ -106,10 +107,22 @@ export const PaymentOptions = () => {
                     </Text>
                     <Tooltip identifier="payment_options_listing_heading" />
                 </Flex>
-                <ComboButton type="solid" onClick={() => openTunnel(1)}>
-                    <PlusIcon color="white" />
-                    Create New
-                </ComboButton>
+                <ButtonGroup>
+                    <TextButton
+                        type="ghost"
+                        title='Synchronization after changes in payment option'
+                        size={24}
+                        onClick={() => axios.post(`${window.location.origin}/server/api/envs`)}
+                    >
+                        Sync Credentials
+                    </TextButton>
+                    <Spacer xAxis size={"16px"} />
+                    <ComboButton type="solid" onClick={() => openTunnel(1)}>
+                        <PlusIcon color="white" />
+                        Create New
+                    </ComboButton>
+                </ButtonGroup>
+
             </StyledHeader>
             {
                 Boolean(paymentOptions.length) && (

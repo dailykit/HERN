@@ -38,6 +38,15 @@ export const getStaticProps = async ({ params }) => {
    const { parsedData, settings, navigationMenus, seoSettings, linkedFiles } =
       await getPageProps(params, '/account/referrals')
 
+   const isReferralAvailable =
+      settings.rewards.Referral.Referral?.IsReferralAvailable?.value
+
+   if (!isReferralAvailable) {
+      return {
+         notFound: true,
+      }
+   }
+
    return {
       props: {
          folds: parsedData,

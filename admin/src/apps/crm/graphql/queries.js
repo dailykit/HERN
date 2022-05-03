@@ -194,26 +194,13 @@ export const ORDER = gql`
                source
                itemTotal
                deliveryPrice
-               billingDetails
                walletAmountUsed
                loyaltyPointsUsed
-               cartItems(where: { level: { _eq: 1 } }) {
-                  id
-                  displayName
-                  displayImage
-                  unitPrice
-                  childs {
-                     displayName
-                     displayImage
-                     unitPrice
-                  }
-               }
                paymentMethodId
-               paymentCart {
-                  brand
-                  last4
-                  expMonth
-                  expYear
+               activeCartPayment {
+                  availablePaymentOption {
+                     label
+                  }
                }
             }
             deliveryService {
