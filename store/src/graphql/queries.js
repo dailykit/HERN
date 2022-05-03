@@ -445,7 +445,6 @@ export const ZIPCODE = gql`
             time
             address
          }
-         locationId
       }
    }
 `
@@ -1789,6 +1788,7 @@ export const GET_CART = gql`
          id
          status
          tax
+         source
          orderId
          discount
          itemTotal
@@ -2244,6 +2244,7 @@ export const GET_CART_PAYMENT_INFO = gql`
          cartId
          cart {
             customerInfo
+            source
          }
          isTest
          paymentStatus
@@ -2498,19 +2499,40 @@ export const COUPON_BY_ID = gql`
    }
 `
 export const GET_PAGE_ROUTES = gql`
-query MyQuery($domain: String!) {
-  brands(where: {_or: [{domain: {_eq: $domain}}, {isDefault: {_eq: true}}]}) {
-    brandPages(where: {isArchived: {_eq: false}, published: {_eq: true}, isAllowedToCrawl: {_eq: true}}) {
-      route
-    }
-  }
-}`
+   query MyQuery($domain: String!) {
+      brands(
+         where: {
+            _or: [{ domain: { _eq: $domain } }, { isDefault: { _eq: true } }]
+         }
+      ) {
+         brandPages(
+            where: {
+               isArchived: { _eq: false }
+               published: { _eq: true }
+               isAllowedToCrawl: { _eq: true }
+            }
+         ) {
+            route
+         }
+      }
+   }
+`
 export const GET_DISALLOWED_PAGE_ROUTES = gql`
-query MyQuery($domain: String!) {
-  brands(where: {_or: [{domain: {_eq: $domain}}, {isDefault: {_eq: true}}]}) {
-    brandPages(where: {isArchived: {_eq: false}, published: {_eq: true}, isAllowedToCrawl: {_eq: false}}) {
-      route
-    }
-  }
-}
+   query MyQuery($domain: String!) {
+      brands(
+         where: {
+            _or: [{ domain: { _eq: $domain } }, { isDefault: { _eq: true } }]
+         }
+      ) {
+         brandPages(
+            where: {
+               isArchived: { _eq: false }
+               published: { _eq: true }
+               isAllowedToCrawl: { _eq: false }
+            }
+         ) {
+            route
+         }
+      }
+   }
 `

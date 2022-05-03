@@ -189,6 +189,7 @@ export const MenuProvider = ({ isCheckout, children }) => {
 
    React.useEffect(() => {
       if (!loadingZipcode && !isEmpty(zipcode) && state.week?.fulfillmentDate) {
+         console.log('zipcode', zipcode)
          if (
             zipcode.isDeliveryActive &&
             zipcode?.deliveryTime?.from &&
@@ -246,10 +247,10 @@ export const MenuProvider = ({ isCheckout, children }) => {
       variables: {
          id: user?.subscriptionId,
          where: {
-            subscriptionOccurenceView: {
-               isValid: { _eq: true },
-               isVisible: { _eq: true },
-            },
+            isValid: { _eq: true },
+            isVisible: { _eq: true },
+            // subscriptionOccurenceView: {
+            // },
             ...(Boolean(router.query.date) && {
                fulfillmentDate: {
                   _eq: router.query.date,
@@ -517,7 +518,6 @@ export const MenuProvider = ({ isCheckout, children }) => {
                   customerId: user.id,
                   source: 'subscription',
                   paymentStatus: 'PENDING',
-                  locationId: zipcode?.locationId,
                   address: user.defaultAddress,
                   locationId: zipcode?.locationId,
                   fulfillmentInfo: fulfillment,

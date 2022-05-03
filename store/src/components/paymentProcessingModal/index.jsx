@@ -15,7 +15,7 @@ import {
    formatTerminalStatus,
    isClient,
 } from '../../utils'
-import { useTranslation } from '../../context'
+import { useTranslation, useUser } from '../../context'
 import { useConfig } from '../../lib'
 
 const PaymentProcessingModal = ({
@@ -41,6 +41,7 @@ const PaymentProcessingModal = ({
    const { width, height } = useWindowSize()
    const [countDown, setCountDown] = useState(null)
    const { t } = useTranslation()
+   const { user } = useUser()
 
    const closeModalHandler = async () => {
       setIsCelebrating(false)
@@ -63,11 +64,21 @@ const PaymentProcessingModal = ({
          // initializePrinting()
          await closeModalHandler()
       } else {
-         if (router.pathname !== `/view-order`) {
+         if (cartPayment?.cart.source === 'subscription') {
             await closeModalHandler()
             setIsProcessingPayment(false)
             setIsPaymentInitiated(false)
-            router.push(`/view-order?id=${cartPayment?.cartId}`)
+            if (user?.isSubscriber) {
+               router.push(`/placing-order?id=${cartPayment?.cartId}`)
+            }
+            router.push(`/get-started/placing-order?id=${cartPayment?.cartId}`)
+         } else {
+            if (router.pathname !== `/view-order`) {
+               await closeModalHandler()
+               setIsProcessingPayment(false)
+               setIsPaymentInitiated(false)
+               router.push(`/view-order?id=${cartPayment?.cartId}`)
+            }
          }
       }
    }
