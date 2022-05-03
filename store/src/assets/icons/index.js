@@ -191,8 +191,15 @@ const VegNonVegType = dynamic(() =>
 const WalletIcon = dynamic(() =>
    import('./Wallet').then(promise => promise.WalletIcon)
 )
-const WalletIconResponsive = dynamic(() =>
-   import('./Wallet').then(promise => promise.WalletIconResponsive)
+const WalletPageIllustration = dynamic(() =>
+   import('./WalletPageIllustration').then(
+      promise => promise.WalletPageIllustration
+   )
+)
+const WalletPageIllustrationResponsive = dynamic(() =>
+   import('./WalletPageIllustration').then(
+      promise => promise.WalletPageIllustrationResponsive
+   )
 )
 const WarningIcon = dynamic(() =>
    import('./Warning').then(promise => promise.WarningIcon)
@@ -372,9 +379,10 @@ export {
    UpVector,
    ProfileSidebarIcon,
    ProductGalleryBG,
+   WalletPageIllustration,
+   WalletPageIllustrationResponsive,
    NoImage,
    EmptyCloche,
    EmptyStore,
    EmptyReferralIll,
-   WalletIconResponsive,
 }
