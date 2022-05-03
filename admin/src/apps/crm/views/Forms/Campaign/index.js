@@ -26,6 +26,7 @@ import {
    DetailsComp,
    RewardComp,
    BrandCampaign,
+   CampaignInsights,
 } from './components'
 import { logger } from '../../../../../shared/utils'
 import {
@@ -215,7 +216,12 @@ const CampaignForm = () => {
                            <Form.Error key={index}>{error}</Form.Error>
                         ))}
                   </Form.Group>
-                  <Flex container alignItems="center" height="100%" style={{position:'relative', top:'13px'}}>
+                  <Flex
+                     container
+                     alignItems="center"
+                     height="100%"
+                     style={{ position: 'relative', top: '13px' }}
+                  >
                      {state.isCampaignValid?.status ? (
                         <>
                            <Flex>
@@ -225,8 +231,13 @@ const CampaignForm = () => {
                         </>
                      ) : (
                         <>
-                           <Flex container alignItems="center" height="100%" style={{position:'relative', top:'4px'}}>
-                              <CloseIcon color="#ff0000" /> 
+                           <Flex
+                              container
+                              alignItems="center"
+                              height="100%"
+                              style={{ position: 'relative', top: '4px' }}
+                           >
+                              <CloseIcon color="#ff0000" />
                            </Flex>
                            <Text as="p">{state.isCampaignValid?.error}</Text>
                         </>
@@ -237,7 +248,11 @@ const CampaignForm = () => {
                         onChange={updatetoggle}
                         value={toggle}
                      >
-                        <Flex container alignItems="center" style={{position:'relative', left:'12px'}}>
+                        <Flex
+                           container
+                           alignItems="center"
+                           style={{ position: 'relative', left: '12px' }}
+                        >
                            <p>Publish</p>
                            <Tooltip identifier="campaign_publish_info" />
                         </Flex>
@@ -271,7 +286,7 @@ const CampaignForm = () => {
                         <BrandCampaign />
                      </HorizontalTabPanel>
                      <HorizontalTabPanel>
-                        <InsightDashboard
+                        {/* <InsightDashboard
                            appTitle="CRM App"
                            moduleTitle="Campaign Page"
                            variables={{
@@ -280,7 +295,8 @@ const CampaignForm = () => {
                               fromDate: fromDate,
                            }}
                            showInTunnel={false}
-                        />
+                        /> */}
+                        <CampaignInsights campaignId={campaignId} />
                      </HorizontalTabPanel>
                   </HorizontalTabPanels>
                </HorizontalTabs>

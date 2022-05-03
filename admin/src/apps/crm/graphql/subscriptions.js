@@ -276,3 +276,28 @@ export const SALES_BY_COUPONS = gql`
       }
    }
 `
+
+export const CAMPAIGN_INSIGHTS = gql`
+   subscription CAMPAIGN_INSIGHTS(
+      $where: crm_campaign_bool_exp!
+      $rewardWhere: crm_rewardHistory_bool_exp!
+   ) {
+      campaigns(where: $where) {
+         id
+         rewardHistories_aggregate(where: $rewardWhere) {
+            aggregate {
+               count
+               sum {
+                  walletAmount
+                  loyaltyPoints
+               }
+            }
+         }
+         metaDetails
+         type
+         rewards {
+            type
+         }
+      }
+   }
+`
