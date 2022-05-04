@@ -27,6 +27,7 @@ export const StoreList = props => {
       setAddress,
       setIsUserExistingAddressSelected,
       isUserExistingAddressSelected,
+      selectedLocationInputDescription,
    } = props
    // console.log('settings', settings)
    const { dispatch, orderTabs } = useConfig()
@@ -104,7 +105,7 @@ export const StoreList = props => {
                lat: address.latitude?.toString(),
                lng: address.longitude?.toString(),
                landmark: address.landmark,
-               searched: '',
+               searched: selectedLocationInputDescription,
             }
             const cartIdInLocal = localStorage.getItem('cart-id')
             if (cartIdInLocal || storedCartId) {
@@ -177,6 +178,7 @@ export const StoreList = props => {
                   longitude: address.lng.toString(),
                })
             )
+            localStorage.removeItem('storeLocation')
             setShowLocationSelectionPopup(false)
          }
       }
@@ -206,6 +208,7 @@ export const StoreList = props => {
             fulfillmentType={fulfillmentType}
             onRefineLocationCloseIconClick={onRefineLocationCloseIconClick}
             onRefineLocationComplete={onRefineLocationComplete}
+            searched={selectedLocationInputDescription}
          />
       )
    }
@@ -257,6 +260,7 @@ export const StoreList = props => {
             address={address}
             fulfillmentType={fulfillmentType}
             onRefineLocationCloseIconClick={onRefineLocationCloseIconClick}
+            searched={selectedLocationInputDescription}
          />
          {stores.map((eachStore, index) => {
             const {
@@ -312,7 +316,7 @@ export const StoreList = props => {
                            lat: storeAddress.lat.toString(),
                            lng: storeAddress.lng.toString(),
                            landmark: '',
-                           searched: '',
+                           searched: selectedLocationInputDescription,
                         }
                         const cartIdInLocal = localStorage.getItem('cart-id')
                         if (cartIdInLocal || storedCartId) {
@@ -365,7 +369,7 @@ export const StoreList = props => {
                            })
                         )
                         localStorage.setItem(
-                           'pickupLocation',
+                           'storeLocation',
                            JSON.stringify(addressToBeSaveInCart)
                         )
                         setSelectedStore(eachStore)

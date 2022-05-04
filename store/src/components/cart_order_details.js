@@ -93,7 +93,7 @@ export const CartOrderDetails = () => {
          {/* List of ordered items   */}
          <CartItems products={cart?.cartItems} border={true} title={true} />
          {/* Cart billing details  */}
-         <CartBillingDetails billing={cart?.billingDetails} />
+         <CartBillingDetails cart={cart} billing={cart?.cartOwnerBilling} />
       </>
    )
 }

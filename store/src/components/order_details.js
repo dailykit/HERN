@@ -70,7 +70,10 @@ const OrderDetails = () => {
             />
          )}
          <Divider />
-         <CartBillingDetails billing={orderDetails?.cart?.billing} />
+         <CartBillingDetails
+            cart={orderDetails?.cart}
+            billing={orderDetails?.cart?.cartOwnerBilling}
+         />
       </div>
    )
 }
