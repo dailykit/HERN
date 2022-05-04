@@ -20,11 +20,18 @@
 .hern-referrals__customer-referral-code {
    display: inline-block;
    border: 1px dashed var(--hern-accent);
-   border-radius: 10px;
+   border-radius: 10px 0px 0px 10px;
+   background: rgba(243, 243, 243, 0.6);
+   height: 34px;
+   width: 350px;
+
    > div {
       padding: 4px;
       > span {
          margin-right: 32px;
+         position: relative;
+         left: 27px;
+         top: 2px;
       }
    }
    @media (max-width: 900px) {
@@ -40,10 +47,25 @@
 .hern-referral-code__copy-btn {
    display: inline-flex;
    align-items: center;
+   border-radius: 0px 10px 10px 0px;
+   font-weight: 500;
+   font-size: 16px;
+   line-height: 18px;
+   padding: 5px 10px;
+   position: relative;
+   left: 347px;
+   bottom: 27px;
+   height: 33px;
+   background: #a4ccb6;
+
    @media (max-width: 900px) {
       width: 100%;
       justify-content: center;
    }
+}
+
+.hern-referral-code__copy-btn:hover {
+   background: #38a169;
 }
 .hern-referrals__content {
    padding-left: 1.5rem;
@@ -90,29 +112,67 @@
    margin: 32px 0 16px 0;
    @media (max-width: 767px) {
       font-size: 20px;
-      line-height: 24px;
+      line-height: 26px;
+      position: relative;
+      top: 31px;
+      font-weight: 800;
    }
 }
 .hern-referrals__table {
-   margin-top: 0.5rem;
+   margin-top: 3.5rem;
    margin-bottom: 0.5rem;
    width: 100%;
    table-layout: auto;
-   max-width: 400px;
-   font-size: 16px;
+   max-width: 404px;
+   font-size: 22px;
    th {
       text-align: left;
       border-width: 1px;
-      padding: 0.25rem 0.5rem;
+      padding: 0.25rem 1.5rem;
       font-weight: 600;
    }
    tr:nth-of-type(even) {
-      background-color: rgba(243, 244, 246, 1);
+      background-color: rgb(197, 201, 209);
    }
 }
 .hern-referrals__table__cell {
    border-width: 1px;
-   padding: 0.25rem 0.5rem;
+   padding: 0.25rem 1.5rem;
    min-width: 100px;
    font-weight: 500;
+}
+
+.hern-referrals-illustration-icon {
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   position: relative;
+   top: 98px;
+   left: 5px;
+}
+
+@media screen and (max-width: 767px) {
+   .hern-referrals__customer-referral-code {
+      border-radius: 10px 10px 10px 10px;
+      height: 34px;
+      width: 330px;
+   }
+   .hern-referrals__customer-referral-code > div > span {
+      margin-bottom: 7px;
+      margin-right: 51px;
+   }
+
+   .hern-referral-code__copy-btn {
+      border-radius: 10px;
+      top: 8px;
+      left: -5px;
+      width: 104%;
+   }
+   .hern-referral-code__copy-btn:hover {
+      background: #38a169;
+   }
+
+   .hern-referrals__table {
+      width: auto;
+   }
 }

@@ -17,12 +17,14 @@ export const ProfileSidebar = ({ toggle = true, logout }) => {
       settings?.availability?.isSubscriptionAvailable?.Subscription
          ?.isSubscriptionAvailable?.value ?? false
    const isLoyaltyPointsAvailable =
-      settings?.rewards?.['Loyalty Points Availability']?.['Loyalty Points']
-         ?.IsLoyaltyPointsAvailable?.value ?? true
-
+      settings?.rewards?.['Loyalty Points']?.['Loyalty Points']
+         ?.IsLoyaltyPointsAvailable?.value
+   const isWalletAvailable =
+      settings?.rewards?.Wallet.Wallet?.isWalletAvailable?.value
+   const isReferralAvailable =
+      settings?.rewards?.Referral.Referral?.IsReferralAvailable?.value
    const loyaltyPointsSettings = configOf('Loyalty Points', 'rewards')
    const walletSettings = configOf('Wallet', 'rewards')
-   const referralsAllowed = configOf('Referral', 'rewards')?.isAvailable
    const { loading, error, data } = useQuery(SUPPORTED_PAYMENT_OPTIONS)
 
    const sidebarLinks = [
@@ -37,10 +39,11 @@ export const ProfileSidebar = ({ toggle = true, logout }) => {
          Icon: ProfileSidebarIcon.Wallet,
       },
       {
-         title: `${loyaltyPointsSettings?.label
-            ? loyaltyPointsSettings.label
-            : 'Loyalty Points'
-            }`,
+         title: `${
+            loyaltyPointsSettings?.label
+               ? loyaltyPointsSettings.label
+               : 'Loyalty Points'
+         }`,
          href: '/account/loyalty-points/',
          Icon: ProfileSidebarIcon.LoyaltyPoints,
       },
@@ -73,6 +76,8 @@ export const ProfileSidebar = ({ toggle = true, logout }) => {
    const conditionalRoutes = {
       '/account/subscriptions/': isSubscriptionStore,
       '/account/loyalty-points/': isLoyaltyPointsAvailable,
+      '/account/wallet/': isWalletAvailable,
+      '/account/referrals/': isReferralAvailable,
       '/account/cards/':
          !error &&
          !loading &&
