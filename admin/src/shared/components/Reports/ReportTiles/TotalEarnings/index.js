@@ -45,7 +45,11 @@ const TotalEarningReport = () => {
                      _gte: moment().subtract(30, 'days').format('YYYY MM DD'),
                   },
                },
-               { created_at: { _lte: moment().format('YYYY MM DD') } },
+               {
+                  created_at: {
+                     _lte: moment().add(1, 'day').format('YYYY MM DD'),
+                  },
+               },
             ],
             isAccepted: { _eq: true },
             cart: { paymentStatus: { _eq: 'SUCCEEDED' } },

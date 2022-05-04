@@ -1,5 +1,6 @@
 import { useSubscription } from '@apollo/react-hooks'
 import { Filler, Flex, Spacer, Text } from '@dailykit/ui'
+import moment from 'moment'
 import React, { useEffect, useState } from 'react'
 import { toast } from 'react-toastify'
 import {
@@ -36,7 +37,13 @@ const EarningByCustomer = () => {
                params: {
                   where: `o.id IS NOT NULL ${
                      brandShopDateState.from && brandShopDateState.to
-                        ? `AND o.created_at >= '${brandShopDateState.from}' AND o.created_at <= '${brandShopDateState.to}'`
+                        ? `AND o.created_at >= '${
+                             brandShopDateState.from
+                          }' AND o.created_at <= '${moment(
+                             brandShopDateState.to
+                          )
+                             .add(1, 'd')
+                             .format('YYYY-MM-DD')}'`
                         : ''
                   } ${
                      brandShopDateState.brandShop.brandId
@@ -98,7 +105,13 @@ const EarningByCustomer = () => {
                   where: `o.id IS NOT NULL ${
                      brandShopDateState.compare.from &&
                      brandShopDateState.compare.to
-                        ? `AND o.created_at >= '${brandShopDateState.compare.from}' AND o.created_at <= '${brandShopDateState.compare.to}'`
+                        ? `AND o.created_at >= '${
+                             brandShopDateState.compare.from
+                          }' AND o.created_at <= '${moment(
+                             brandShopDateState.compare.to
+                          )
+                             .add(1, 'd')
+                             .format('YYYY-MM-DD')}'`
                         : ''
                   } ${
                      brandShopDateState.brandShop.brandId

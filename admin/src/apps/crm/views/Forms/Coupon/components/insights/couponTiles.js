@@ -24,7 +24,9 @@ export const CouponTiles = ({ couponId }) => {
                   `AND oo.created_at >= '${from}'`
                } ${
                   from !== moment('2017 - 01 - 01') &&
-                  `AND oo.created_at < '${to}'`
+                  `AND oo.created_at < '${moment(to)
+                     .add(1, 'd')
+                     .format('YYYY-MM-DD')}'`
                } ${
                   brandShop.brandId
                      ? `AND oo."brandId" = ${brandShop.brandId}`

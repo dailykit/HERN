@@ -62,7 +62,9 @@ const TotalEarningAnalytics = () => {
                   `AND a.created_at >= '${analyticsApiArgState.from}'`
                } ${
                   analyticsApiArgState.from !== moment('2017 - 01 - 01') &&
-                  `AND a.created_at < '${analyticsApiArgState.to}'`
+                  `AND a.created_at < '${moment(analyticsApiArgState.to)
+                     .add(1, 'd')
+                     .format('YYYY-MM-DD')}'`
                } ${
                   analyticsApiArgState.brandShop.brandId
                      ? `AND a."brandId" = ${analyticsApiArgState.brandShop.brandId}`
@@ -96,7 +98,11 @@ const TotalEarningAnalytics = () => {
                where: `"isAccepted" = true AND COALESCE("isRejected", false) = false AND "paymentStatus" = \'SUCCEEDED\' ${
                   analyticsApiArgState.compare.from !==
                      moment('2017 - 01 - 01') &&
-                  `AND a.created_at >= '${analyticsApiArgState.compare.from}'`
+                  `AND a.created_at >= '${moment(
+                     analyticsApiArgState.compare.to
+                  )
+                     .add(1, 'd')
+                     .format('YYYY-MM-DD')}'`
                } ${
                   analyticsApiArgState.compare.from !==
                      moment('2017 - 01 - 01') &&

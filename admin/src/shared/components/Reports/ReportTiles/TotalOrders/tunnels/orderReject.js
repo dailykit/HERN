@@ -39,7 +39,9 @@ const OrderRejectReport = () => {
                   `AND a.created_at >= '${brandShopDateState.from}'`
                } ${
                   brandShopDateState.from !== moment('2017 - 01 - 01') &&
-                  `AND a.created_at < '${brandShopDateState.to}'`
+                  `AND a.created_at < '${moment(brandShopDateState.to)
+                     .add(1, 'd')
+                     .format('YYYY-MM-DD')}'`
                } ${
                   brandShopDateState.brandShop.brandId
                      ? `AND a."brandId" = ${brandShopDateState.brandShop.brandId}`
@@ -77,7 +79,9 @@ const OrderRejectReport = () => {
                } ${
                   brandShopDateState.compare.from !==
                      moment('2017 - 01 - 01') &&
-                  `AND a.created_at < '${brandShopDateState.compare.to}'`
+                  `AND a.created_at < '${moment(brandShopDateState.compare.to)
+                     .add(1, 'd')
+                     .format('YYYY-MM-DD')}'`
                } ${
                   brandShopDateState.brandShop.brandId
                      ? `AND a."brandId" = ${brandShopDateState.brandShop.brandId}`

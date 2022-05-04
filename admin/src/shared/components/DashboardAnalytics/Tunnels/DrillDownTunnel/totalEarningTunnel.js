@@ -98,7 +98,9 @@ const TotalEarningTunnel = ({ currency }) => {
                   `AND a.created_at >= '${from}'`
                } ${
                   from !== moment('2017 - 01 - 01') &&
-                  `AND a.created_at < '${to}'`
+                  `AND a.created_at < '${moment(to)
+                     .add(1, 'd')
+                     .format('YYYY-MM-DD')}'`
                } ${
                   brandShop.brandId
                      ? `AND a."brandId" = ${brandShop.brandId}`
@@ -137,7 +139,9 @@ const TotalEarningTunnel = ({ currency }) => {
                   `AND a.created_at >= '${compare.from}'`
                } ${
                   compare.from !== moment('2017 - 01 - 01') &&
-                  `AND a.created_at < '${compare.to}'`
+                  `AND a.created_at < '${moment(compare.to)
+                     .add(1, 'd')
+                     .format('YYYY-MM-DD')}'`
                } ${
                   brandShop.brandId
                      ? `AND a."brandId" = ${brandShop.brandId}`

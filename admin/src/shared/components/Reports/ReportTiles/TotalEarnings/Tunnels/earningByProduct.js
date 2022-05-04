@@ -1,5 +1,5 @@
 import { useSubscription } from '@apollo/react-hooks'
-import { Flex, Spacer, Text,Filler } from '@dailykit/ui'
+import { Flex, Spacer, Text, Filler } from '@dailykit/ui'
 
 import moment from 'moment'
 import React, { useEffect, useState } from 'react'
@@ -46,7 +46,9 @@ const EarningByProduct = () => {
                      `AND o.created_at >= '${brandShopDateState.from}'`
                   } ${
                      brandShopDateState.from !== moment('2017 - 01 - 01') &&
-                     `AND o.created_at < '${brandShopDateState.to}'`
+                     `AND o.created_at < '${moment(brandShopDateState.to)
+                        .add(1, 'd')
+                        .format('YYYY-MM-DD')}'`
                   } ${
                      brandShopDateState.brandShop.brandId
                         ? `AND o."brandId" = ${brandShopDateState.brandShop.brandId}`
@@ -95,7 +97,11 @@ const EarningByProduct = () => {
                   } ${
                      brandShopDateState.compare.from !==
                         moment('2017 - 01 - 01') &&
-                     `AND o.created_at < '${brandShopDateState.compare.to}'`
+                     `AND o.created_at < '${moment(
+                        brandShopDateState.compare.to
+                     )
+                        .add(1, 'd')
+                        .format('YYYY-MM-DD')}'`
                   } ${
                      brandShopDateState.brandShop.brandId
                         ? `AND o."brandId" = ${brandShopDateState.brandShop.brandId}`

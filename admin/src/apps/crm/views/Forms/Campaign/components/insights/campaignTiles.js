@@ -1,4 +1,5 @@
 import { useSubscription } from '@apollo/react-hooks'
+import moment from 'moment'
 import React from 'react'
 import styled from 'styled-components'
 import { BrandShopDateContext } from '../../../../../../../shared/components/BrandShopDateProvider/context'
@@ -18,7 +19,7 @@ const CampaignTiles = ({ campaignId }) => {
             },
             created_at: {
                _gte: from,
-               _lte: to,
+               _lte: moment(to).add(1, 'day').format('YYYY-MM-DD'),
             },
          },
          rewardWhere: {
