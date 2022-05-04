@@ -45,7 +45,7 @@ const LinkBrandLocations = ({ closeTunnelForLocations, brandDetails }) => {
           let locationsData = brands_brand_location.map(location => {
              return {
                 id: location?.location?.id || '',
-                label: location?.location?.label || '',
+                label: location?.location?.label + ', ' + location?.location?.city || '',
                 description: location?.location?.city || '',
                 recurrences: location?.brand_recurrences || '',
                 brand_locationId: location?.id || '',
@@ -77,11 +77,11 @@ const LinkBrandLocations = ({ closeTunnelForLocations, brandDetails }) => {
        headerFilter: true,
        headerSort: false,
     },
-    {
-       title: 'City',
-       field: 'description',
-       headerFilter: true,
-    },
+   //  {
+   //     title: 'City',
+   //     field: 'description',
+   //     headerFilter: true,
+   //  },
     {
         title: 'Link Location to Recurrence ',  
         headerTooltip: function (column) {
