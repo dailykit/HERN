@@ -1,10 +1,10 @@
 import styled from 'styled-components'
 
 export const StyledWrapper = styled.div`
-.fbContainer{
-   margin-top:0.5em;
-   margin-bottom:22px;
-}
+   .localBuisnessContainer {
+      margin-top: 0.5em;
+      margin-bottom: 22px;
+   }
    .ant-input {
       font-weight: 500;
       font-size: 16px;
