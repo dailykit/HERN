@@ -693,6 +693,7 @@ const BrandInfo = ({ settings, layout }) => {
 }
 const Navigation = ({ newNavigationMenus, settings, layout }) => {
    const { isAuthenticated, user, isLoading } = useUser()
+   const { t } = useTranslation()
    const isSubscriptionStore =
       settings?.availability?.isSubscriptionAvailable?.Subscription
          ?.isSubscriptionAvailable?.value
@@ -774,7 +775,9 @@ const AuthMenu = ({
       showCartIconToolTip,
    } = React.useContext(CartContext)
    const numberOfItemsOnCart =
-      cartState?.cart?.cartItems_aggregate?.aggregate?.count
+      cartState?.cart?.source === 'subscription'
+         ? null
+         : cartState?.cart?.cartItems_aggregate?.aggregate?.count
 
    const loginButtonLabel =
       settings?.brand['Login Illustrations']?.loginButton?.loginbuttonLabel
