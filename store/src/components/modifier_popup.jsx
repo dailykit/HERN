@@ -81,7 +81,7 @@ export const ModifierPopup = props => {
    const [productOptionType, setProductOptionType] = useState(
       defaultOptionType ? 
          defaultOptionType : 
-         defaultOptionType==null ? 
+         defaultOptionType===null ? 
             'null' : 
             productOptionsGroupedByProductOptionType[0]['type']
    )
