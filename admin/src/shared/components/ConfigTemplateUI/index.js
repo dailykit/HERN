@@ -31,7 +31,7 @@ const ConfigUI = ({
    identifier,
    isChangeSaved,
    setIsSavedChange,
-   noneditMode = "noneditMode",
+   noneditMode,
    setLinkedModuleId = null,
    setMode,
    mode = 'editing',
@@ -467,7 +467,7 @@ const ConfigUI = ({
          ) : (
             <Flex container justifyContent="center" padding="16px">
                <Filler
-                  message="No brand's setting selected yet"
+                  message="There are no settings available for this component."
                   width="60%"
                   height="60%"
                />
