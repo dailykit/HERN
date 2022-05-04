@@ -12,46 +12,36 @@ import { Row, Col, Typography, Form, Input, Button, Modal } from 'antd'
 import { LocalBusinessIcon } from '../../../../../../../shared/assets/icons'
 import { SEO_DETAILS } from '../../../../../graphql'
 import { logger } from '../../../../../../../shared/utils'
-import { InfoCircleOutlined } from '@ant-design/icons'
+import ConfigTemplateUI from '../../../../../../../shared/components/ConfigTemplateUI'
 
 const LocalBusiness = ({ update }) => {
     const params = useParams()
     const { pageId, pageName } = useParams()
     const { Title } = Typography
+
+    //for config
+    const [config, setConfig] = React.useState('')
+    const [isChangeSaved, setIsSavedChange] = useState(true)
+
     //for modal
     const [localBusinessJSONModalVisible, setLocalBusinessJSONModalVisible] = useState(false)
-    const showFbPixelModal = () => {
+    const showModal = () => {
         setLocalBusinessJSONModalVisible(true)
     }
-    const handleFbPixelOk = () => {
+    const handleOk = () => {
         setLocalBusinessJSONModalVisible(false)
     }
-    const handleFbPixelCancel = () => {
+    const handleCancel = () => {
         setLocalBusinessJSONModalVisible(false)
     }
     const brandPageId = React.useMemo(() => parseInt(pageId), [])
-    const [form, setForm] = useState({
-        LocalBusinessJSON: {
-            value: '',
-            meta: {
-                isValid: false,
-                isTouched: false,
-                errors: [],
-            },
-        },
-    })
 
     const [seoDetails, { loading: metaDetailsLoading, brandsSEO }] =
         useLazyQuery(SEO_DETAILS, {
             onCompleted: brandsSEO => {
-                const seoSettings =
-                    brandsSEO.brands_brandPage_brandPageSetting_by_pk
-                setForm(prev => ({
-                    LocalBusinessJSON: {
-                        ...prev.LocalBusinessJSON,
-                        value: seoSettings?.value,
-                    },
-                }))
+                const data =
+                    brandsSEO.brands_brandPage_brandPageSetting_by_pk?.value
+                setConfig(data)
             },
             onError: error => {
                 toast.error('Something went wrong')
@@ -69,31 +59,23 @@ const LocalBusiness = ({ update }) => {
         })
     }, [])
 
+
+
     //save changes
     const Save = () => {
         update({
             id: 4,
             brandId: params.id,
-            value: form.LocalBusinessJSON.value,
+            value: config,
         })
         setLocalBusinessJSONModalVisible(false)
     }
 
     if (metaDetailsLoading) return <InlineLoader />
 
-    const onChangeHandler = e => {
-        const { name, value } = e.target
-        setForm(prev => ({
-            ...prev,
-            [name]: {
-                ...prev[name],
-                value,
-            },
-        }))
-    }
 
     return (
-        <div className="metaDetails fbContainer">
+        <div className="metaDetails localBuisnessContainer">
             <Row>
                 <Col span={2}>
                     <LocalBusinessIcon />
@@ -106,15 +88,17 @@ const LocalBusiness = ({ update }) => {
                     />
                 </Col>
                 <Col span={4}>
-                    <Button type="primary" onClick={showFbPixelModal}>
-                        {form.LocalBusinessJSON.value ? "Added" : "Add Local-Buisness"}
+
+                    <Button type="primary" onClick={showModal}>
+                        {config?.richResults?.value ? "Added" : "Add Local-Buisness"}
                     </Button>
+
                     {/* modal for editing */}
                     <Modal
                         title="Simple local business listing"
                         visible={localBusinessJSONModalVisible}
-                        onOk={handleFbPixelOk}
-                        onCancel={handleFbPixelCancel}
+                        onOk={handleOk}
+                        onCancel={handleCancel}
                         footer={[
                             <Button key="submit" type="primary" onClick={() => Save()}>
                                 Save
@@ -122,48 +106,14 @@ const LocalBusiness = ({ update }) => {
                         ]}
                     >
                         <Form layout="vertical">
-                            <Form.Item
-                                label={
-                                    <span
-                                        style={{
-                                            color: '#555B6E',
-                                            fontSize: '16px',
-                                            fontWeight: '600',
-                                        }}
-                                    >
-                                        Paste your Local-Buisness json data
-                                    </span>
-                                }
-                                tooltip={{
-                                    title: 'With Local Business structured data, you can tell Google about your business hours, different departments within a business, reviews for your business, and more.',
-                                    icon: (
-                                        <InfoCircleOutlined
-                                            style={{
-                                                background: '#555B6E',
-                                                color: 'white',
-                                                borderRadius: '50%',
-                                            }}
-                                        />
-                                    ),
-                                }}
-                            >
-                                <Input.TextArea
-                                    strong
-                                    level={5}
-                                    placeholder="Enter local business"
-                                    style={{
-                                        width: '60%',
-                                        border: '2px solid #E4E4E4',
-                                        borderRadius: '4px',
-                                    }}
-                                    className="text-box"
-                                    bordered={false}
-                                    value={form.LocalBusinessJSON.value}
-                                    onChange={onChangeHandler}
-                                    id="LocalBusinessJSON"
-                                    name="LocalBusinessJSON"
-                                />
-                            </Form.Item>
+                            <ConfigTemplateUI
+                                config={config}
+                                setConfig={setConfig}
+                                configSaveHandler={Save}
+                                isChangeSaved={isChangeSaved}
+                                setIsSavedChange={setIsSavedChange}
+                                singleConfigUI={true}
+                            />
                         </Form>
                     </Modal>
                 </Col>
