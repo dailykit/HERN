@@ -28,13 +28,6 @@ const RichResults = () => {
     //passing id and value from localBuisness component for updating
 
     const update = ({ id, value: jsonData }) => {
-        console.log({
-            object: {
-                brandPageId: brandPageId,
-                brandPageSettingId: id,
-                value: jsonData,
-            }
-        })
         upsertSEODetails({
             variables: {
                 object: {
