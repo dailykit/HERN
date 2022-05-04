@@ -453,6 +453,9 @@ export const CartProvider = ({ children }) => {
                customerKeycloakId: {
                   _eq: user?.keycloakId,
                },
+               source: {
+                  _neq: 'subscription',
+               },
             },
          },
          skip: !(brand?.id && user?.keycloakId && orderTabs.length > 0),

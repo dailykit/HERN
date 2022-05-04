@@ -36,11 +36,10 @@ import Link from 'next/link'
 
 export const Checkout = props => {
    const router = useRouter()
-   const { id } = useQueryParams()
+   const { id } = router.query
    const { isAuthenticated, isLoading, user } = useUser()
 
    const { cartState, isFinalCartLoading } = useCart()
-   console.log('myCartState', cartState)
    const { addToast } = useToasts()
    const { t } = useTranslation()
    const authTabRef = React.useRef()
@@ -53,11 +52,11 @@ export const Checkout = props => {
       error,
       data: { cart = { paymentStatus: '', transactionRemark: {} } } = {},
    } = useSubscription(QUERIES.CART_SUBSCRIPTION, {
-      skip: isEmpty(cartState) || !cartState?.cart?.id,
+      skip: isEmpty(id),
       variables: {
-         id: cartState?.cart?.id,
+         id,
       },
-      onSubscriptionData: data => {
+      onSubscriptionData: () => {
          setLoading(false)
       },
    })
@@ -77,30 +76,38 @@ export const Checkout = props => {
       }
    }, [isAuthenticated, isLoading])
 
+   React.useEffect(() => {
+      if (!isEmpty(cartState) && cartState?.cart?.id) {
+         setLoading(false)
+      }
+   }, [cartState?.cart?.id])
+
    if (
       isClient &&
       !new URLSearchParams(location.search).get('id') &&
       cart?.source === 'subscription'
    ) {
       return (
-         <Main>
-            <div tw="pt-4 w-full">
-               <HelperBar>
-                  <HelperBar.Title>
-                     Oh no! Looks like you've wandered on an unknown path, let's
-                     get you to home.
-                  </HelperBar.Title>
-                  <HelperBar.Button
-                     onClick={() =>
-                        (window.location.href =
-                           get_env('BASE_BRAND_URL') + getRoute('/'))
-                     }
-                  >
-                     Go to Home
-                  </HelperBar.Button>
-               </HelperBar>
-            </div>
-         </Main>
+         // <Main>
+         //    <div tw="pt-4 w-full">
+         //       <HelperBar>
+         //          <HelperBar.Title>
+         //             Oh no! Looks like you've wandered on an unknown path, let's
+         //             get you to home.
+         //          </HelperBar.Title>
+         //          <HelperBar.Button onClick={() => router.push('/')}>
+         //             Go to Home
+         //          </HelperBar.Button>
+         //       </HelperBar>
+         //    </div>
+         // </Main>
+         <div className="hern-cart-empty-cart">
+            <EmptyCart />
+            <span>Oops! Your cart is empty </span>
+            <Button className="hern-cart-go-to-menu-btn" onClick={() => {}}>
+               <Link href="/order">GO TO MENU</Link>
+            </Button>
+         </div>
       )
    }
    if (error) {
