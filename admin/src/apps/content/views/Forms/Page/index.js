@@ -10,6 +10,8 @@ import {
    Spacer,
    useTunnel,
    TextButton,
+   Tunnel,
+   Tunnels,
 } from '@dailykit/ui'
 import { useSubscription, useMutation, useQuery } from '@apollo/react-hooks'
 import { useParams } from 'react-router-dom'
@@ -31,11 +33,12 @@ import { PagePreviewTunnel } from './Tunnel'
 import { SEObasics, SocialShare, TwitterCard, RichResults } from './SEO'
 import { BrandContext } from '../../../../../App'
 
+import BrandListing from '../../../utils/BrandListing'
+
 const PageForm = () => {
    const [tunnels, openTunnel, closeTunnel] = useTunnel()
    const { addTab, tab, setTabTitle, closeAllTabs } = useTabs()
-   // const [context, setContext] = useContext(BrandContext)
-   const [brandContext, setBrandContext] = useContext(BrandContext)
+   const [brandContext] = React.useContext(BrandContext)
    const prevBrandId = useRef(brandContext.brandId)
    const { pageId, pageName } = useParams()
    const [pageTitle, setPageTitle] = useState({
@@ -56,6 +59,16 @@ const PageForm = () => {
    })
    const [state, setState] = useState({})
    const [toggle, setToggle] = useState(false)
+
+
+   const [brandListTunnel, openBrandListTunnel, closeBrandListTunnel] =
+      useTunnel(1)
+
+   React.useEffect(() => {
+      if (brandContext.brandId == null) {
+         openBrandListTunnel(1)
+      }
+   }, [brandContext.brandId])
 
    // form validation
    const validatePageName = (value, name) => {
@@ -210,7 +223,7 @@ const PageForm = () => {
       toast.error('Something went wrong')
       logger(pageLoadingError)
    }
-   return (
+   return (<>
       <StyledWrapper>
          <Banner id="content-app-pages-page-details-top" />
          <InputWrapper>
@@ -328,6 +341,14 @@ const PageForm = () => {
          />
          <Banner id="content-app-pages-page-details-bottom" />
       </StyledWrapper>
+      <Tunnels tunnels={brandListTunnel}>
+         <Tunnel popup={true} layer={1} size="md">
+            <BrandListing
+               closeTunnel={closeBrandListTunnel}
+            />
+         </Tunnel>
+      </Tunnels>
+   </>
    )
 }
 
