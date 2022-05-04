@@ -4,15 +4,12 @@ import { useSubscription } from '@apollo/react-hooks'
 import moment from 'moment'
 import { SALES_BY_COUPONS } from '../../../../../graphql/subscriptions'
 import styled from 'styled-components'
-import { NoUnusedVariablesRule } from 'graphql'
 import { currencyFmt } from '../../../../../../../shared/utils'
 export const CouponTiles = ({ couponId }) => {
    const { brandShopDateState } = React.useContext(BrandShopDateContext)
 
    const { from, to, currency, brandShop } = brandShopDateState
-   const [couponInsightDetails, setCouponsInsightDetails] = React.useState(
-      NoUnusedVariablesRule
-   )
+   const [couponInsightDetails, setCouponsInsightDetails] = React.useState([])
    const [couponStatus, setCouponStatus] = useState('loading')
    const {
       loading: subsLoading,
@@ -46,24 +43,30 @@ export const CouponTiles = ({ couponId }) => {
          },
       },
       onSubscriptionData: ({ subscriptionData }) => {
-         const newData =
-            subscriptionData.data.insights_analytics[0].getEarningByCoupons.map(
-               each => {
-                  each.startTimeStamp = each.couponStartTimeStamp
-                     ? moment(each.couponStartTimeStamp).format(
-                          'DD-MMM-YYYY HH:mm'
-                       )
-                     : 'N/A'
-                  each.endTimeStamp = each.couponEndTimeStamp
-                     ? moment(each.couponEndTimeStamp).format(
-                          'DD-MMM-YYYY HH:mm'
-                       )
-                     : 'N/A'
-                  return each
-               }
-            )
-         console.log('couponData', newData)
-         setCouponsInsightDetails(newData)
+         if (
+            subscriptionData.data.insights_analytics[0].getEarningByCoupons &&
+            subscriptionData.data.insights_analytics[0].getEarningByCoupons
+               .length > 0
+         ) {
+            const newData =
+               subscriptionData.data.insights_analytics[0].getEarningByCoupons.map(
+                  each => {
+                     each.startTimeStamp = each.couponStartTimeStamp
+                        ? moment(each.couponStartTimeStamp).format(
+                             'DD-MMM-YYYY HH:mm'
+                          )
+                        : 'N/A'
+                     each.endTimeStamp = each.couponEndTimeStamp
+                        ? moment(each.couponEndTimeStamp).format(
+                             'DD-MMM-YYYY HH:mm'
+                          )
+                        : 'N/A'
+                     return each
+                  }
+               )
+            console.log('couponData', newData)
+            setCouponsInsightDetails(newData)
+         }
          setCouponStatus('success')
       },
    })
@@ -83,6 +86,8 @@ export const CouponTiles = ({ couponId }) => {
                   ? '...'
                   : subsError
                   ? 'Data not found'
+                  : couponInsightDetails.length == 0
+                  ? currencyFmt(0)
                   : currencyFmt(couponInsightDetails[0].totalEarning)}
             </span>
          </Styles.Card>
@@ -100,6 +105,8 @@ export const CouponTiles = ({ couponId }) => {
                   ? '...'
                   : subsError
                   ? 'Data not found'
+                  : couponInsightDetails.length == 0
+                  ? 0
                   : couponInsightDetails[0].count}
             </span>
          </Styles.Card>
