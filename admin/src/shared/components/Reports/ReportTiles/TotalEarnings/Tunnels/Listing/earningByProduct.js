@@ -159,7 +159,6 @@ const EarningByProductTable = React.memo(
       }
 
       const dataSorted = (_, rows) => {
-         console.log(rows)
          setSortedEarningByProductData(rows.map(eachRow => eachRow._row.data))
       }
 

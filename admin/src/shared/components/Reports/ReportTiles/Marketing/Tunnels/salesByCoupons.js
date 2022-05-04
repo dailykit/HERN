@@ -108,7 +108,6 @@ const SalesByCoupons = () => {
                      : ''
                }`,
                couponWhere: `id IN (${sortedEarningByCouponsData
-                  .slice(0, 10)
                   .map(x => x.id)
                   .toString()})`,
             },

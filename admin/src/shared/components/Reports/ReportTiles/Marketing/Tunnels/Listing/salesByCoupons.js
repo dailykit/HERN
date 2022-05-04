@@ -216,7 +216,6 @@ const SalesByCouponsTable = props => {
       }
    }
    const dataSorted = (_, rows) => {
-      console.log(rows)
       setSortedEarningByCouponsData(rows.map(eachRow => eachRow._row.data))
    }
    return (

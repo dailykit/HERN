@@ -1,5 +1,5 @@
 import { useSubscription } from '@apollo/react-hooks'
-import { Flex, Spacer, Text } from '@dailykit/ui'
+import { Flex, Spacer, Text,Filler } from '@dailykit/ui'
 
 import moment from 'moment'
 import React, { useEffect, useState } from 'react'
@@ -111,7 +111,6 @@ const EarningByProduct = () => {
                         : ''
                   }`,
                   productWhere: `id IN (${sortedEarningByProductData
-                     .slice(0, 10)
                      .map(x => x.id)
                      .toString()})`,
                },
@@ -146,6 +145,9 @@ const EarningByProduct = () => {
             message="Could not get Earning by product data"
          />
       )
+   }
+   if (earningByProductData.length == 0) {
+      return <Filler message="Product Report Not Available" />
    }
    return (
       <>
