@@ -98,7 +98,7 @@ export const getStoresWithValidations = async props => {
    if (
       deliverableBrandLocations.length === 0 &&
       (fulfillmentType === 'ONDEMAND_DELIVERY' ||
-         fulfillmentType === 'ONDEMAND_PICKUP')
+         fulfillmentType === 'PREORDER_DELIVERY')
    ) {
       return []
    }
@@ -124,13 +124,19 @@ export const getStoresWithValidations = async props => {
    )
    const finalBrandLocations =
       fulfillmentType === 'ONDEMAND_DELIVERY' ||
-      fulfillmentType === 'ONDEMAND_PICKUP'
+      fulfillmentType === 'PREORDER_DELIVERY'
          ? deliverableBrandLocations
          : brandLocations
-   const sortedStoresByAerialDistance = await getSortedStoresByAerialDistance(
-      finalBrandLocations,
-      address
-   )
+
+   //  In case of Pickup and if we already have locationId so we dont have to calculate the sorted arial distance
+   //  and also it will handel the case for user address not available on pickup fulfillment
+   const sortedStoresByAerialDistance =
+      (fulfillmentType === 'ONDEMAND_PICKUP' ||
+         fulfillmentType === 'PREORDER_PICKUP') &&
+      locationId
+         ? finalBrandLocations
+         : await getSortedStoresByAerialDistance(finalBrandLocations, address)
+
    const sortedStoresByAerialDistanceWithValidation = []
 
    for (let i = 0; i < sortedStoresByAerialDistance.length; i++) {

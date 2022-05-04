@@ -113,7 +113,7 @@ export const CartDetails = () => {
                <LoyaltyPoints cart={cartState.cart} version={2} />
             )}
          <Divider />
-         <CartBillingDetails billing={cart.billing} />
+         <CartBillingDetails cart={cart} billing={cart.cartOwnerBilling} />
       </section>
    )
 }

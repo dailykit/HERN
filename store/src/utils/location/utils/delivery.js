@@ -112,6 +112,11 @@ export const isStoreOnDemandDeliveryAvailable = async (
                         }
                      }
                   }
+               } else {
+                  return {
+                     status: false,
+                     message: 'Sorry, delivery range is not available.',
+                  }
                }
             }
          } else {
@@ -211,6 +216,11 @@ export const isStorePreOrderDeliveryAvailable = async (
                            'Sorry, you seem to be placed far out of our delivery range.',
                      }
                   }
+               }
+            } else {
+               return {
+                  status: false,
+                  message: 'Sorry, delivery range is not available.',
                }
             }
          }

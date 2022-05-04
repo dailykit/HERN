@@ -559,13 +559,11 @@ const LocationInfo = ({ settings, layout, additionalClasses }) => {
    }, [selectedOrderTab])
 
    const storeAddress = React.useMemo(() => {
-      const storeAddress = isClient
-         ? localStorage.getItem('pickupLocation')
-         : ''
+      const storeAddress = isClient ? localStorage.getItem('storeLocation') : ''
 
       if (storeAddress) {
          const parseStoreAddress = JSON.parse(
-            localStorage.getItem('pickupLocation')
+            localStorage.getItem('storeLocation')
          )
          return parseStoreAddress
       } else {
