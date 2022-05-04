@@ -687,6 +687,7 @@ const BrandInfo = ({ settings, layout }) => {
 }
 const Navigation = ({ newNavigationMenus, settings, layout }) => {
    const { isAuthenticated, user, isLoading } = useUser()
+   const { t } = useTranslation()
    const isSubscriptionStore =
       settings?.availability?.isSubscriptionAvailable?.Subscription
          ?.isSubscriptionAvailable?.value
