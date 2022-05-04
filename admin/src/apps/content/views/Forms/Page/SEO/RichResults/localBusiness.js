@@ -113,6 +113,7 @@ const LocalBusiness = ({ update }) => {
                                 isChangeSaved={isChangeSaved}
                                 setIsSavedChange={setIsSavedChange}
                                 singleConfigUI={true}
+                                noneditMode={"noneditMode"}
                             />
                         </Form>
                     </Modal>
