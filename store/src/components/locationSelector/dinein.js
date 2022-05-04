@@ -61,6 +61,10 @@ export const DineIn = props => {
          ? 'ONDEMAND_DELIVERY'
          : 'PREORDER_DELIVERY'
    )
+   const [
+      selectedLocationInputDescription,
+      setSelectedLocationInputDescription,
+   ] = useState(null)
 
    const dineInRadioOptions = React.useMemo(() => {
       let options = []
@@ -233,6 +237,8 @@ export const DineIn = props => {
          }&placeid=${input.place_id}&language=en`
       )
 
+      setSelectedLocationInputDescription(input.description)
+
       const data = await response.json()
       // console.log('this is data', data)
       if (data.status === 'OK' && data.result) {
@@ -268,7 +274,11 @@ export const DineIn = props => {
          if (address.zipcode) {
             setUserCoordinate(prev => ({ ...prev, ...userCoordinate }))
             setIsGetStoresLoading(true)
-            setAddress({ ...userCoordinate, ...address })
+            setAddress({
+               ...userCoordinate,
+               ...address,
+               searched: input.description,
+            })
          } else {
             showWarningPopup()
          }
@@ -439,6 +449,9 @@ export const DineIn = props => {
                fulfillmentType={fulfillmentType}
                storeDistanceValidation={true}
                address={address}
+               selectedLocationInputDescription={
+                  selectedLocationInputDescription
+               }
             />
          )}
       </div>

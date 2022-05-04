@@ -76,6 +76,10 @@ export const Delivery = props => {
    const [showRefineLocation, setShowRefineLocation] = useState(false)
    const [isGetStoresLoading, setIsGetStoresLoading] = useState(true)
    const [stores, setStores] = useState(null)
+   const [
+      selectedLocationInputDescription,
+      setSelectedLocationInputDescription,
+   ] = useState(null)
    const [isUserExistingAddressSelected, setIsUserExistingAddressSelected] =
       useState(false)
 
@@ -222,7 +226,8 @@ export const Delivery = props => {
    }, [isClient])
    const formatAddress = async input => {
       if (!isClient) return 'Runs only on client side.'
-      // console.log('inputfn', input)
+
+      setSelectedLocationInputDescription(input.description)
 
       const response = await fetch(
          `${SERVER_URL}/server/api/place/details/json?key=${
@@ -247,6 +252,7 @@ export const Delivery = props => {
          address.line1 = formatted_address
             .slice(0, formatted_address.length - 3)
             .join(',')
+         address.line2 = ''
          // line to most probably not use
          result.address_components.forEach(node => {
             if (node.types.includes('sublocality_level_3')) {
@@ -274,7 +280,11 @@ export const Delivery = props => {
          if (address.zipcode) {
             setUserCoordinate(prev => ({ ...prev, ...userCoordinate }))
             setIsGetStoresLoading(true)
-            setAddress({ ...userCoordinate, ...address })
+            setAddress({
+               ...userCoordinate,
+               ...address,
+               searched: input.description,
+            })
          } else {
             showWarningPopup()
          }
@@ -459,6 +469,9 @@ export const Delivery = props => {
                   setIsUserExistingAddressSelected
                }
                isUserExistingAddressSelected={isUserExistingAddressSelected}
+               selectedLocationInputDescription={
+                  selectedLocationInputDescription
+               }
             />
          )}
          {(stores == null || stores?.length == 0) && (

@@ -88,6 +88,10 @@ export const Pickup = props => {
    )
    const [isGetStoresLoading, setIsGetStoresLoading] = useState(true)
    const [stores, setStores] = useState(null)
+   const [
+      selectedLocationInputDescription,
+      setSelectedLocationInputDescription,
+   ] = useState(null)
 
    useEffect(() => {
       if (address && brand.id) {
@@ -241,6 +245,8 @@ export const Pickup = props => {
          }&placeid=${input.place_id}&language=en`
       )
 
+      setSelectedLocationInputDescription(input.description)
+
       const data = await response.json()
       // console.log('this is data', data)
       if (data.status === 'OK' && data.result) {
@@ -253,6 +259,7 @@ export const Pickup = props => {
             mainText: input.structured_formatting.main_text,
             secondaryText: input.structured_formatting.secondary_text,
          }
+         address.line2 = ''
          result.address_components.forEach(node => {
             if (node.types.includes('street_number')) {
                address.line2 = `${node.long_name} `
@@ -276,7 +283,11 @@ export const Pickup = props => {
          if (address.zipcode) {
             setUserCoordinate(prev => ({ ...prev, ...userCoordinate }))
             setIsGetStoresLoading(true)
-            setAddress({ ...userCoordinate, address })
+            setAddress({
+               ...userCoordinate,
+               address,
+               searched: input.description,
+            })
          } else {
             showWarningPopup()
          }
@@ -448,6 +459,9 @@ export const Pickup = props => {
                fulfillmentType={fulfillmentType}
                storeDistanceValidation={true}
                address={address}
+               selectedLocationInputDescription={
+                  selectedLocationInputDescription
+               }
             />
          )}
       </div>
