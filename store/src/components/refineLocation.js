@@ -30,6 +30,7 @@ const RefineLocation = props => {
       showRefineLocation,
       setShowRefineLocation,
       showRightButton = false,
+      searched = '',
    } = props
    const { orderTabs, dispatch, brand } = useConfig()
    const { user } = useUser()
@@ -119,7 +120,7 @@ const RefineLocation = props => {
          lat: address.latitude.toString(),
          lng: address.longitude.toString(),
          landmark: additionalAddressInfo?.landmark || '',
-         searched: '',
+         searched: searched,
       }
       if (user?.keycloakId) {
          createAddress({
@@ -189,8 +190,9 @@ const RefineLocation = props => {
       )
       localStorage.setItem(
          'userLocation',
-         JSON.stringify({ ...address, ...additionalAddressInfo })
+         JSON.stringify({ ...address, ...additionalAddressInfo, searched })
       )
+      localStorage.removeItem('storeLocation')
       onRefineLocationComplete && onRefineLocationComplete()
       setShowRefineLocation(false)
    }

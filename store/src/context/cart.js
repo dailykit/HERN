@@ -316,33 +316,43 @@ export const CartProvider = ({ children }) => {
             break
          case 'PREORDER_PICKUP':
             customerAddressFromLocal = JSON.parse(
-               localStorage.getItem('pickupLocation')
+               localStorage.getItem('storeLocation')
             )
             break
          case 'ONDEMAND_PICKUP':
             customerAddressFromLocal = JSON.parse(
-               localStorage.getItem('pickupLocation')
+               localStorage.getItem('storeLocation')
+            )
+            break
+         case 'ONDEMAND_DINEIN':
+            customerAddressFromLocal = JSON.parse(
+               localStorage.getItem('storeLocation')
+            )
+            break
+         case 'SCHEDULE_DINEIN':
+            customerAddressFromLocal = JSON.parse(
+               localStorage.getItem('storeLocation')
             )
             break
       }
 
       const customerAddress = {
-         line1: customerAddressFromLocal?.line1,
-         line2: customerAddressFromLocal?.line2,
-         city: customerAddressFromLocal?.city,
-         state: customerAddressFromLocal?.state,
-         country: customerAddressFromLocal?.country,
-         zipcode: customerAddressFromLocal?.zipcode,
-         notes: customerAddressFromLocal?.notes,
-         label: customerAddressFromLocal?.label,
+         line1: customerAddressFromLocal?.line1 || '',
+         line2: customerAddressFromLocal?.line2 || '',
+         city: customerAddressFromLocal?.city || '',
+         state: customerAddressFromLocal?.state || '',
+         country: customerAddressFromLocal?.country || '',
+         zipcode: customerAddressFromLocal?.zipcode || '',
+         notes: customerAddressFromLocal?.notes || '',
+         label: customerAddressFromLocal?.label || '',
          lat:
             customerAddressFromLocal?.latitude?.toString() ||
             customerAddressFromLocal?.lat?.toString(),
          lng:
             customerAddressFromLocal?.longitude?.toString() ||
             customerAddressFromLocal?.lng?.toString(),
-         landmark: customerAddressFromLocal?.landmark || null,
-         searched: '',
+         landmark: customerAddressFromLocal?.landmark || '',
+         searched: customerAddressFromLocal?.searched || '',
       }
       if (!isAuthenticated) {
          //without login
@@ -521,6 +531,7 @@ export const CartProvider = ({ children }) => {
                         secondaryText: `${addressInCart.city}, ${addressInCart.state} ${addressInCart.zipcode}, ${addressInCart.country}`,
                         state: addressInCart.state,
                         zipcode: addressInCart.zipcode,
+                        searched: addressInCart.searched || '',
                      }
                      const orderTabForLocal =
                         subscriptionData.data.carts[0].fulfillmentInfo?.type ||
@@ -540,7 +551,7 @@ export const CartProvider = ({ children }) => {
                         orderTabForLocal === 'PREORDER_PICKUP'
                      ) {
                         localStorage.setItem(
-                           'pickupLocation',
+                           'storeLocation',
                            JSON.stringify(addressToBeSaveInLocal)
                         )
                      } else if (
