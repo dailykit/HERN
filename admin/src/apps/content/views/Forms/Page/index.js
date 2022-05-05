@@ -161,9 +161,9 @@ const PageForm = () => {
       }
    }, [pageTitle])
 
-   if (brandContext.brandId !== prevBrandId.current) {
-      closeAllTabs()
-   }
+   // if (brandContext.brandId !== prevBrandId.current) {
+   //    closeAllTabs()
+   // }
 
    // page name validation & update name handler
    const onBlur = e => {
