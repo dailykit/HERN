@@ -1,6 +1,7 @@
 import React from 'react'
 import { useTranslation } from '../context'
 import { formatCurrency } from '../utils'
+import { useConfig } from '../lib'
 
 const parseText = (text = '') =>
    text.replace(/\{\{([^}]+)\}\}/g, () => {
@@ -9,6 +10,22 @@ const parseText = (text = '') =>
 
 export const Billing = ({ billing }) => {
    const { dynamicTrans, locale } = useTranslation()
+   const { configOf } = useConfig()
+   const taxDetails = React.useMemo(() => {
+      const taxPercentage = configOf('Tax Percentage', 'sales')[
+         'Tax Percentage'
+      ]?.taxPercentage
+      const isTaxIncluded = configOf('Tax Percentage', 'sales')[
+         'Is Tax Included'
+      ]?.isTaxIncluded
+      return {
+         isTaxInclusive: isTaxIncluded?.value || isTaxIncluded?.default,
+         percentage: taxPercentage?.value || taxPercentage?.default,
+      }
+   }, [
+      configOf('Tax Percentage', 'sales')['Tax Percentage'],
+      configOf('Is Tax Included', 'sales')['Is Tax Included'],
+   ])
    const currentLang = React.useMemo(() => locale, [locale])
    React.useEffect(() => {
       const languageTags = document.querySelectorAll(
@@ -22,141 +39,193 @@ export const Billing = ({ billing }) => {
             <tr>
                <td
                   className="hern-billing__table__cell"
-                  title={billing?.itemTotal?.description}
+                  title={billing?.itemTotal?.description || 'Item Total'}
                >
                   <span data-translation="true">
-                     {billing?.itemTotal?.label}
+                     {billing?.itemTotal?.label || 'Item Total'}
                   </span>
                   <p
                      className="hern-billing__table__cell__comment"
                      data-translation="true"
                   >
-                     {parseText(billing?.itemTotal?.comment)}
+                     {parseText(billing?.itemTotal?.comment) ||
+                        'Includes add on total'}
                   </p>
                </td>
                <td className="hern-billing__table__cell">
-                  {formatCurrency(billing?.itemTotal?.value)}
+                  {formatCurrency(billing?.itemTotal)}
                </td>
             </tr>
             <tr>
                <td
                   className="hern-billing__table__cell"
-                  title={billing?.deliveryPrice?.description}
+                  title={billing?.deliveryPrice?.description || 'Delivery Fee'}
                >
                   <span data-translation="true">
-                     {billing?.deliveryPrice?.label}
+                     {billing?.deliveryPrice?.label || 'Delivery Fee'}
                   </span>
-                  <p
-                     className="hern-billing__table__cell__comment"
-                     data-translation="true"
-                  >
-                     {parseText(billing?.deliveryPrice?.comment)}
-                  </p>
+                  {billing?.deliveryPrice?.comment && (
+                     <p
+                        className="hern-billing__table__cell__comment"
+                        data-translation="true"
+                     >
+                        {parseText(billing?.deliveryPrice?.comment)}
+                     </p>
+                  )}
                </td>
                <td className="hern-billing__table__cell">
-                  {formatCurrency(billing?.deliveryPrice?.value)}
+                  {formatCurrency(billing?.deliveryPrice)}
                </td>
             </tr>
-            {!billing?.isTaxIncluded && (
-               <tr>
-                  <td
-                     className="hern-billing__table__cell"
-                     title={billing?.subTotal?.description}
-                  >
-                     <span data-translation="true">
-                        {billing?.subTotal?.label}
-                     </span>
+            <tr>
+               <td
+                  className="hern-billing__table__cell"
+                  title={billing?.subTotal?.description || 'Sub Total'}
+               >
+                  <span data-translation="true">
+                     {billing?.subTotal?.label || 'Sub Total'}
+                  </span>
+                  {billing?.subTotal?.comment && (
                      <p
                         className="hern-billing__table__cell__comment"
                         data-translation="true"
                      >
                         {parseText(billing?.subTotal?.comment)}
                      </p>
-                  </td>
-                  <td className="hern-billing__table__cell">
-                     {formatCurrency(billing?.subTotal?.value)}
-                  </td>
-               </tr>
+                  )}
+               </td>
+               <td className="hern-billing__table__cell">
+                  {formatCurrency(billing?.subTotal)}
+               </td>
+            </tr>
+
+            {taxDetails.isTaxInclusive ? (
+               <>
+                  {billing.itemTotalInclusiveTax > 0 && (
+                     <tr>
+                        <td
+                           className="hern-billing__table__cell"
+                           title={
+                              billing?.itemTotalInclusiveTax?.description ||
+                              'Tax (Inclusive)'
+                           }
+                        >
+                           <span data-translation="true">
+                              {billing?.itemTotalInclusiveTax?.label ||
+                                 'Tax (Inclusive)'}
+                           </span>
+                           {billing?.itemTotalInclusiveTax?.comment && (
+                              <p
+                                 className="hern-billing__table__cell__comment"
+                                 data-translation="true"
+                              >
+                                 {parseText(
+                                    billing?.itemTotalInclusiveTax?.comment
+                                 )}
+                              </p>
+                           )}
+                        </td>
+                        <td className="hern-billing__table__cell">
+                           {formatCurrency(billing?.itemTotalInclusiveTax)}
+                        </td>
+                     </tr>
+                  )}
+               </>
+            ) : (
+               <>
+                  {billing?.itemTotalTaxExcluded && (
+                     <tr>
+                        <td
+                           className="hern-billing__table__cell"
+                           title={
+                              billing?.itemTotalTaxExcluded?.description ||
+                              'Tax'
+                           }
+                        >
+                           <span data-translation="true">
+                              {billing?.itemTotalTaxExcluded?.label || 'Tax'}
+                           </span>
+                           {billing?.itemTotalTaxExcluded?.comment && (
+                              <p
+                                 className="hern-billing__table__cell__comment"
+                                 data-translation="true"
+                              >
+                                 {parseText(
+                                    billing?.itemTotalTaxExcluded?.comment
+                                 )}
+                              </p>
+                           )}
+                        </td>
+                        <td className="hern-billing__table__cell">
+                           {formatCurrency(billing?.itemTotalTaxExcluded)}
+                        </td>
+                     </tr>
+                  )}
+               </>
             )}
-            {!billing?.isTaxIncluded && (
-               <tr>
-                  <td
-                     className="hern-billing__table__cell"
-                     title={billing?.tax?.description}
-                  >
-                     <span data-translation="true">{billing?.tax?.label}</span>
-                     <p
-                        className="hern-billing__table__cell__comment"
-                        data-translation="true"
-                     >
-                        {parseText(billing?.tax?.comment)}
-                     </p>
-                  </td>
-                  <td className="hern-billing__table__cell">
-                     {formatCurrency(billing?.tax?.value)}
-                  </td>
-               </tr>
-            )}
-            {!!billing?.walletAmountUsed?.value && (
+            {!!billing?.walletAmountUsed && (
                <tr>
                   <td
                      className="hern-billing__table__cell"
                      data-translation="true"
                   >
                      <span data-translation="true">
-                        {billing?.walletAmountUsed?.label}
+                        {billing?.walletAmountUsed?.label || 'Wallet Amount'}
                      </span>
                   </td>
                   <td className="hern-billing__table__cell">
-                     {formatCurrency(billing?.walletAmountUsed?.value)}
+                     {formatCurrency(billing?.walletAmountUsed)}
                   </td>
                </tr>
             )}
-            {!!billing?.loyaltyPointsUsed?.value && (
+            {!!billing?.loyaltyAmountApplied && (
                <tr>
                   <td
                      className="hern-billing__table__cell"
                      data-translation="true"
                   >
-                     {billing?.loyaltyPointsUsed?.label}
+                     {billing?.loyaltyAmountApplied?.label || 'Loyalty Points'}
                   </td>
                   <td className="hern-billing__table__cell">
-                     {billing?.loyaltyPointsUsed?.value}
+                     {billing?.loyaltyAmountApplied}
                   </td>
                </tr>
             )}
-            {!!billing?.discount?.value && (
+            {!!billing?.totalDiscount && (
                <tr>
                   <td
                      className="hern-billing__table__cell"
                      data-translation="true"
                   >
                      <span data-translation="true">
-                        {billing?.discount?.label}
+                        {billing?.totalDiscount?.label || 'Discount'}
                      </span>
                   </td>
                   <td className="hern-billing__table__cell">
-                     {formatCurrency(billing?.discount?.value)}
+                     {formatCurrency(billing?.totalDiscount)}
                   </td>
                </tr>
             )}
             <tr>
                <td
                   className="hern-billing__table__cell"
-                  title={billing?.totalPrice?.description}
+                  title={billing?.totalToPay?.description || 'Total Price'}
                >
                   <span data-translation="true">
-                     {billing?.totalPrice?.label}
+                     {billing?.totalToPay?.label || 'Total Price'}
                   </span>
-                  <p
-                     className="hern-billing__table__cell__comment"
-                     data-translation="true"
-                  >
-                     {parseText(billing?.totalPrice?.comment)}
-                  </p>
+                  {billing?.totalToPay?.comment && (
+                     <p
+                        className="hern-billing__table__cell__comment"
+                        data-translation="true"
+                     >
+                        {parseText(billing?.totalToPay?.comment) ||
+                           'Total Price'}
+                     </p>
+                  )}
                </td>
                <td className="hern-billing__table__cell">
-                  {formatCurrency(billing?.totalPrice?.value)}
+                  {formatCurrency(billing?.totalToPay)}
                </td>
             </tr>
          </tbody>

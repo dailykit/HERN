@@ -20,7 +20,7 @@ const AddOnProducts = () => {
    const { user } = useUser()
    const { state, methods } = useMenu()
    const [tunnel, toggleTunnel] = React.useState(false)
-   const [hasAddOns, setHasAddOns] = React.useState(false)
+   // const [hasAddOns, setHasAddOns] = React.useState(false)
 
    const {
       loading: productsAggregateLoading,
@@ -38,7 +38,7 @@ const AddOnProducts = () => {
          state.isCartFull &&
          productsAggregate?.aggregate?.count > 0
       ) {
-         setHasAddOns(true)
+         // setHasAddOns(true)
          toggleTunnel(state.isCartFull)
       }
    }, [state.isCartFull, productsAggregateLoading])
@@ -48,9 +48,9 @@ const AddOnProducts = () => {
          state?.occurenceCustomer?.cart?.status
       ) && state?.week?.isValid
 
-   // let hasAddOns =
-   //    state?.occurenceCustomer?.cart?.products?.filter(node => node.isAddOn)
-   //       .length > 0
+   let hasAddOns =
+      state?.occurenceCustomer?.cart?.products?.filter(node => node.isAddOn)
+         .length > 0
 
    return (
       <div>

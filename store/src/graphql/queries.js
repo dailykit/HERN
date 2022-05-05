@@ -363,6 +363,7 @@ export const CART_BY_WEEK = gql`
             walletAmountUsed
             loyaltyPointsUsed
             billingDetails
+            cartOwnerBilling
             fulfillmentInfo
             transactionId
             paymentMethodId
@@ -493,6 +494,7 @@ export const CART_SUBSCRIPTION = gql`
          paymentStatus
          deliveryPrice
          billingDetails
+         cartOwnerBilling
          fulfillmentInfo
          transactionId
          transactionRemark

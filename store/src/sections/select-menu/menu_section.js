@@ -13,7 +13,7 @@ export const MenuSection = () => {
    const { configOf } = useConfig('Select-Menu')
    const config = configOf('select-menu-header')
    return (
-      <MenuProvider isCheckout>
+      <MenuProvider test="deepak" isCheckout={true}>
          <main className="hern-select-menu__main">
             <div>
                <WeekPicker isFixed />

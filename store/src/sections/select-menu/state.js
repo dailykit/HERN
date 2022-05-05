@@ -81,7 +81,7 @@ const insertCartId = (node, cartId) => {
    return node
 }
 
-export const MenuProvider = ({ isCheckout, children }) => {
+export const MenuProvider = ({ isCheckout = false, children }) => {
    const router = useRouter()
    const { user } = useUser()
    const { addToast } = useToasts()
@@ -104,7 +104,10 @@ export const MenuProvider = ({ isCheckout, children }) => {
          brand_customerId: user?.brandCustomerId,
       },
       onCompleted: () => {
-         dispatch({ type: 'IS_CART_FULL', payload: false })
+         dispatch({
+            type: 'IS_CART_FULL',
+            payload: false,
+         })
          setIsCustomerLoading(false)
       },
    })
@@ -288,8 +291,13 @@ export const MenuProvider = ({ isCheckout, children }) => {
                   payload: subscription?.occurences[0],
                })
                if (!isCheckout) {
-                  const queryDate = new URL(location.href).searchParams.get('d')
+                  const queryDate =
+                     d || new URL(location.href).searchParams.get('d')
                   if (!queryDate) {
+                     console.log('stateMenu', {
+                        isCheckout,
+                        queryDate,
+                     })
                      router.push(
                         getRoute(
                            '/menu?d=' +
