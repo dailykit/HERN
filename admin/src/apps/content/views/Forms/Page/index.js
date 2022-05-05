@@ -295,8 +295,9 @@ const PageForm = () => {
                                  <Form.Text
                                     id="domain"
                                     name="domain"
-                                    value={brandContext.brandDomain}
+                                    value={"https://" + brandContext.brandDomain}
                                     disabled
+
                                  />
                                  <Form.Text
                                     id="pageRoute"
