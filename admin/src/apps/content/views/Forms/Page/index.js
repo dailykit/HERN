@@ -27,7 +27,6 @@ import {
    Banner,
 } from '../../../../../shared/components'
 import ContentSelection from './ContentSelection'
-// import BrandContext from '../../../context/Brand'
 import { PagePreviewTunnel } from './Tunnel'
 // for SEO Tools
 import { SEObasics, SocialShare, TwitterCard, RichResults } from './SEO'
@@ -223,6 +222,7 @@ const PageForm = () => {
       toast.error('Something went wrong')
       logger(pageLoadingError)
    }
+
    return (<>
       <StyledWrapper>
          <Banner id="content-app-pages-page-details-top" />
@@ -295,7 +295,7 @@ const PageForm = () => {
                                  <Form.Text
                                     id="domain"
                                     name="domain"
-                                    value={brandContext.domain}
+                                    value={brandContext.brandDomain}
                                     disabled
                                  />
                                  <Form.Text
