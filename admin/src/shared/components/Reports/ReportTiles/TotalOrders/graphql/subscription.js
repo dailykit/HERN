@@ -28,7 +28,9 @@ export const ORDER_SUMMARY = gql`
    }
 `
 export const TOTAL_ORDER_RECEIVED = gql`
-   subscription TOTAL_ORDER_RECEIVED($args: insights_getOrdersRecieved_args!) {
+   subscription TOTAL_ORDER_RECEIVED(
+      $args: getOrdersRecieved_insights_analytics_args!
+   ) {
       insights_analytics {
          getOrdersRecieved(args: $args)
       }

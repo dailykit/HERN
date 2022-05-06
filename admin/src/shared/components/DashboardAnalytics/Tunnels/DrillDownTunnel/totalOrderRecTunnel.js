@@ -59,6 +59,7 @@ const TotalOrderRecTunnel = ({ currency }) => {
       brandId: undefined,
       shopTitle: false,
       brand: undefined,
+      locationId: null,
    })
    const [brands, setBrands] = useState([])
    const { loading: brandLoading } = useSubscription(BRANDS, {
@@ -99,6 +100,10 @@ const TotalOrderRecTunnel = ({ currency }) => {
                   brandShop.shopTitle
                      ? `AND b.source = \'${brandShop.shopTitle}\'`
                      : ''
+               } ${
+                  brandShop.locationId
+                     ? `AND b."locationId" = ${brandShop.locationId}`
+                     : ''
                }`,
                groupingSets: `(${groupBy.toString()})`,
                columns: groupBy
@@ -129,6 +134,10 @@ const TotalOrderRecTunnel = ({ currency }) => {
                } ${
                   brandShop.shopTitle
                      ? `AND b.source = \'${brandShop.shopTitle}\'`
+                     : ''
+               } ${
+                  brandShop.locationId
+                     ? `AND b."locationId" = ${brandShop.locationId}`
                      : ''
                }`,
                groupingSets: `(${groupBy.toString()})`,

@@ -64,3 +64,11 @@ export const GET_REGISTERED_CUSTOMER = gql`
       }
    }
 `
+export const LOCATIONS = gql`
+   subscription LOCATIONS {
+      brands_location {
+         locationId: id
+         title: label
+      }
+   }
+`

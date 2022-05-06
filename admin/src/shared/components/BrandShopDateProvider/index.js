@@ -17,7 +17,7 @@ import { logger } from '../../utils'
 import { ErrorState } from '../ErrorState'
 import { InlineLoader } from '../InlineLoader'
 import { BrandShopDateContext, BrandShopDateProvider } from './context'
-import { BRANDS } from './graphql/subscription'
+import { BRANDS, LOCATIONS } from './graphql/subscription'
 import { DatePicker, Space } from 'antd'
 
 const { RangePicker } = DatePicker
@@ -40,6 +40,7 @@ const BrandShopDate = ({
    groupTimeProvider,
    datePickerProvider,
    compareProvider,
+   locationProvider,
 }) => {
    return (
       <BrandShopDateProvider>
@@ -51,6 +52,7 @@ const BrandShopDate = ({
             groupTimeProvider={groupTimeProvider}
             datePickerProvider={datePickerProvider}
             compareProvider={compareProvider}
+            locationProvider={locationProvider}
          >
             {children}
          </BrandShopDateChild>
@@ -67,6 +69,7 @@ const BrandShopDateChild = ({
    groupTimeProvider,
    datePickerProvider,
    compareProvider,
+   locationProvider,
 }) => {
    const [status, setStatus] = useState({
       loading: true,
@@ -126,6 +129,7 @@ const BrandShopDateChild = ({
                brands={brands}
                shopTypeProvider={shopTypeProvider}
                brandProvider={brandProvider}
+               locationProvider={locationProvider}
             />
             <Spacer size="10px" />
             {datePickerProvider && (
@@ -141,7 +145,12 @@ const BrandShopDateChild = ({
 }
 
 //brand and shop provider
-const BrandAndShop = ({ brands, shopTypeProvider, brandProvider }) => {
+const BrandAndShop = ({
+   brands,
+   shopTypeProvider,
+   brandProvider,
+   locationProvider,
+}) => {
    const { brandShopDateDispatch } = React.useContext(BrandShopDateContext)
    const [shopSource] = useState([
       {
@@ -216,6 +225,61 @@ const BrandAndShop = ({ brands, shopTypeProvider, brandProvider }) => {
                />
             </Flex>
          )}
+         {locationProvider && <LocationSelector />}
+      </Flex>
+   )
+}
+
+const LocationSelector = () => {
+   const [locationsList, setLocationsList] = useState([])
+   const { brandShopDateDispatch } = React.useContext(BrandShopDateContext)
+
+   const { loading: locationsLoading, error: locationsError } = useSubscription(
+      LOCATIONS,
+      {
+         onSubscriptionData: ({ subscriptionData }) => {
+            const locations = subscriptionData.data.brands_location
+            console.log('locations, ', locations, subscriptionData)
+            setLocationsList(
+               [{ title: 'All', locationId: null }, ...locations].map(
+                  (eachLocation, index) => {
+                     return { id: index + 1, ...eachLocation }
+                  }
+               )
+            )
+         },
+      }
+   )
+   const selectedOptionBrand = option => {
+      brandShopDateDispatch({
+         type: 'BRANDSHOP',
+         payload: {
+            locationId: option.locationId,
+         },
+      })
+   }
+   const searchedOption = option => console.log(option)
+   if (locationsLoading || (locationsLoading && !locationsError)) {
+      return <InlineLoader />
+   }
+   if (locationsError) {
+      logger(locationsError)
+      toast.error('Could not get the locations')
+      return <p>Could not get the locations</p>
+   }
+   console.log('locationsList', locationsList)
+   return (
+      <Flex container flexDirection="column" width="30rem">
+         <Text as="text1">Location:</Text>
+         <Spacer size="3px" />
+         <Dropdown
+            type="single"
+            options={locationsList}
+            defaultValue={1}
+            searchedOption={searchedOption}
+            selectedOption={selectedOptionBrand}
+            typeName="Location"
+         />
       </Flex>
    )
 }
