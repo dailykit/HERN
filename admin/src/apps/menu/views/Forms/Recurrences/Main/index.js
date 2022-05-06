@@ -80,7 +80,6 @@ const Main = () => {
          setRecurrences(data.subscriptionData.data.recurrences)
       },
    })
-   console.log('new recurrences finding::', recurrences)
    // Mutations
    const [updateRecurrence] = useMutation(UPDATE_RECURRENCE, {
       onCompleted: () => {

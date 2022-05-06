@@ -12,23 +12,15 @@ import { reactFormatter,ReactTabulator } from '@dailykit/react-tabulator'
 import { RecurrenceContext } from '../../../../../../../context/recurrence'
 import { toast } from 'react-toastify'
 import { logger } from '../../../../../../../../../shared/utils'
-import { repeat } from 'lodash'
-import { Banner, Tooltip } from '../../../components'
 
 
 const LinkBrandLocations = ({ closeTunnelForLocations, brandDetails }) => {
    const tableRef = React.useRef()
    const { recurrenceState } = React.useContext(RecurrenceContext)
    const [locationList, setLocationList] = React.useState([])
-   // const [click, setClick] = React.useState(null)
-   // const [title, setTitle] = React.useState([])
 
-   // const {
-   //    loading,
-   //    error,
-   //    data: { brandLocationsRecurrences=[]}={}
-   // } = useSubscription(BRAND_LOCATION_RECURRENCES,{variables: {brandId: {_eq: brandDetails.id}}})
-   // console.log("brandLocationsRecurrences",brandLocationsRecurrences)
+   // use to extract list of locations with thier 
+   // recurrences and brand_locationID
    const { 
        locationError, 
        locationListLoading, 
@@ -60,6 +52,7 @@ const LinkBrandLocations = ({ closeTunnelForLocations, brandDetails }) => {
       closeTunnelForLocations(1)
    }
 
+   //MUTATION
    const [upsertBrandLocationRecurrence] = useMutation(UPSERT_BRAND_LOCATION_RECURRENCE, {
     onCompleted: data => {
        toast.success('Updated!')
@@ -77,11 +70,7 @@ const LinkBrandLocations = ({ closeTunnelForLocations, brandDetails }) => {
        headerFilter: true,
        headerSort: false,
     },
-   //  {
-   //     title: 'City',
-   //     field: 'description',
-   //     headerFilter: true,
-   //  },
+   
     {
         title: 'Link Location to Recurrence ',  
         headerTooltip: function (column) {

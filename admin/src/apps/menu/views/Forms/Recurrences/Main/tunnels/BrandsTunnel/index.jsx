@@ -25,7 +25,6 @@ const BrandTunnel = ({ closeTunnel }) => {
    const [brandDetails, setBrandDetails] = React.useState({})
    const { recurrenceState } = React.useContext(RecurrenceContext)
    const [tunnels, openTunnelForLocations, closeTunnelForLocations] = useTunnel(1)
-   const [locationList, setLocationList] = React.useState([])
    const [brandList, setBrandList] = React.useState([])
    const recurrenceId = recurrenceState.recurrenceId
 
@@ -53,13 +52,15 @@ const BrandTunnel = ({ closeTunnel }) => {
    })
    
    //SUBSCRIPTION
+   // extract list of brands with their details
    const {
       loading,
       error,
       data: { brandRecurrences = [] } = {},
    } = useSubscription(BRAND_RECURRENCES)
-   console.log('data needed:',brandRecurrences)
    
+   // extract list of brand which are linked to particular recurrence in given variable
+   // as well as their linked location are also linked to same recurrence
    const{brandError, brandLoading, brandData} = useSubscription(BRAND_LOCATION_RECURRENCES,
       {
          variables: {recurrenceId: {_eq: recurrenceId}},
@@ -68,31 +69,30 @@ const BrandTunnel = ({ closeTunnel }) => {
                data: {brands = []},
             },
          }) =>{
-            console.log("new brands daata at 00:50", brands)
+            // console.log("new brands daata at 00:50", brands)
             setBrandList(brands)
          }
    })
 
+   // brand_location ids extracted to unlink from particular recurrence
    const activeBrandLocations =[]
    brandList.forEach((ele)=>{
-      console.log("new brands daata at 00:50 ele",ele.brand_locations)
-      // console.log("new brands daata at 00:50 list",newList)
       ele.brand_locations.forEach((element)=>{
          if (element.brand_recurrences.length>0)
          {
             activeBrandLocations.push(element.brand_recurrences[0].brandLocationId)
-            console.log("new brands daata at 00:50 list",element.brand_recurrences[0].brandLocationId)
+            // console.log("new brands daata at 00:50 list",element.brand_recurrences[0].brandLocationId)
          }
       })
    })
 
      
+   // add link location to every element
    brandRecurrences.forEach((element)=>{
       element.linkBrandLocation = 'Link Locations'
    })
       
       
-   // console.log('new data needed:',locationList)
    
    const linkWithBrandLocations =(e) => {
       openTunnelForLocations(1)
@@ -216,15 +216,22 @@ const ToggleRecurrence = ({ cell, recurrenceId, onChange, updateBrands, activeBr
    const [active, setActive] = React.useState(false)
 
    const toggleHandler = value => {
-      console.log(value)
+      // console.log(value)
+      if(active){
       onChange({
          recurrenceId,
          brandId: brand.current.id,
          isActive: !active,
       })
-      if (!active){
+   }
+      else{
          if(window.confirm("Linking this brand will unlink all the locations with this recurrence. Do you want to continue?"))
-         {updateBrands()}
+         {  onChange({
+            recurrenceId,
+            brandId: brand.current.id,
+            isActive: !active,
+         })
+            updateBrands()}
       }
    }
 
