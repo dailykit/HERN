@@ -65,6 +65,7 @@ const TotalEarningTunnel = ({ currency }) => {
       brandId: undefined,
       shopTitle: false,
       brand: undefined,
+      locationId: null,
    })
    const [brands, setBrands] = useState([])
    const { loading: brandLoading } = useSubscription(BRANDS, {
@@ -97,7 +98,9 @@ const TotalEarningTunnel = ({ currency }) => {
                   `AND a.created_at >= '${from}'`
                } ${
                   from !== moment('2017 - 01 - 01') &&
-                  `AND a.created_at < '${to}'`
+                  `AND a.created_at < '${moment(to)
+                     .add(1, 'd')
+                     .format('YYYY-MM-DD')}'`
                } ${
                   brandShop.brandId
                      ? `AND a."brandId" = ${brandShop.brandId}`
@@ -105,6 +108,10 @@ const TotalEarningTunnel = ({ currency }) => {
                } ${
                   brandShop.shopTitle
                      ? `AND b.source = \'${brandShop.shopTitle}\'`
+                     : ''
+               } ${
+                  brandShop.locationId
+                     ? `AND b."locationId" = ${brandShop.locationId}`
                      : ''
                }`,
                groupingSets: `(${groupBy.toString()})`,
@@ -132,7 +139,9 @@ const TotalEarningTunnel = ({ currency }) => {
                   `AND a.created_at >= '${compare.from}'`
                } ${
                   compare.from !== moment('2017 - 01 - 01') &&
-                  `AND a.created_at < '${compare.to}'`
+                  `AND a.created_at < '${moment(compare.to)
+                     .add(1, 'd')
+                     .format('YYYY-MM-DD')}'`
                } ${
                   brandShop.brandId
                      ? `AND a."brandId" = ${brandShop.brandId}`
@@ -140,6 +149,10 @@ const TotalEarningTunnel = ({ currency }) => {
                } ${
                   brandShop.shopTitle
                      ? `AND b.source = \'${brandShop.shopTitle}\'`
+                     : ''
+               } ${
+                  brandShop.locationId
+                     ? `AND b."locationId" = ${brandShop.locationId}`
                      : ''
                }`,
                groupingSets: `(${groupBy.toString()})`,
@@ -257,7 +270,7 @@ const DrillDownLineChart = ({
                   [type]: moment(from).format(),
                   [key1]: 0,
                   [key2]: 0,
-                  ['onDemand' + compareExtension]: 0,
+                  ['ondemand' + compareExtension]: 0,
                   ['subscription' + compareExtension]: 0,
                   ['orderRefs' + type]: null,
                   uniqueId: uniqueId,
@@ -286,8 +299,8 @@ const DrillDownLineChart = ({
                if (matchIndex >= 0) {
                   hourBundle[matchIndex][key1] = eachData.total
                   hourBundle[matchIndex][key2] = eachData.count
-                  hourBundle[matchIndex]['onDemand' + compareExtension] =
-                     eachData.onDemand || 0
+                  hourBundle[matchIndex]['ondemand' + compareExtension] =
+                     eachData.ondemand || 0
                   hourBundle[matchIndex]['subscription' + compareExtension] =
                      eachData.subscription || 0
                   hourBundle[matchIndex]['orderRefs' + type] =
@@ -363,8 +376,8 @@ const DrillDownLineChart = ({
                if (matchIndex >= 0) {
                   daysBundle[matchIndex][key2] = eachData.total
                   daysBundle[matchIndex][key1] = eachData.count
-                  daysBundle[matchIndex]['onDemand' + compareExtension] =
-                     eachData.onDemand || 0
+                  daysBundle[matchIndex]['ondemand' + compareExtension] =
+                     eachData.ondemand || 0
                   daysBundle[matchIndex]['subscription' + compareExtension] =
                      eachData.subscription || 0
                   daysBundle[matchIndex]['orderRefs' + type] =
@@ -436,8 +449,8 @@ const DrillDownLineChart = ({
                if (matchIndex >= 0) {
                   weekBundle[matchIndex][key1] = eachData.count
                   weekBundle[matchIndex][key2] = eachData.total
-                  weekBundle[matchIndex]['onDemand' + compareExtension] =
-                     eachData.onDemand || 0
+                  weekBundle[matchIndex]['ondemand' + compareExtension] =
+                     eachData.ondemand || 0
                   weekBundle[matchIndex]['subscription' + compareExtension] =
                      eachData.subscription || 0
                   weekBundle[matchIndex]['orderRefs' + type] =
@@ -511,8 +524,8 @@ const DrillDownLineChart = ({
                if (matchIndex >= 0) {
                   monthsBundle[matchIndex][key1] = eachData.count
                   monthsBundle[matchIndex][key2] = eachData.total
-                  monthsBundle[matchIndex]['onDemand' + compareExtension] =
-                     eachData.onDemand || 0
+                  monthsBundle[matchIndex]['ondemand' + compareExtension] =
+                     eachData.ondemand || 0
                   monthsBundle[matchIndex]['subscription' + compareExtension] =
                      eachData.subscription || 0
                   monthsBundle[matchIndex]['orderRefs' + type] =
@@ -588,6 +601,7 @@ const DrillDownLineChart = ({
          <ErrorState height="320px" message="Could not get the Insight data" />
       )
    }
+   console.log('dataForGraph', dataForGraph)
    return (
       <>
          <div
@@ -717,6 +731,7 @@ const CustomTooltip = ({
       } else {
          timeToBeShow = moment(date).format('MMM-YYYY')
       }
+      console.log('payload', payload[0].payload)
       return (
          <div
             style={{
@@ -748,12 +763,12 @@ const CustomTooltip = ({
             <Flex>
                {`onDemand`}{' '}
                <span style={{ color: '#2AC981' }}>
-                  {`${currency}${payload[0].payload['onDemand'] || 0} `}
+                  {`${currency}${payload[0].payload['ondemand'] || 0} `}
                </span>
                {!isCompareSkip ? (
                   <span style={{ color: '#8884d8' }}>
                      {`${currency}${
-                        payload[0].payload['onDemand' + 'Compare'] || 0
+                        payload[0].payload['ondemand' + 'Compare'] || 0
                      }`}
                   </span>
                ) : null}

@@ -27,6 +27,7 @@ export const initialState = {
       brandId: undefined,
       shopTitle: false,
       brand: undefined,
+      locationId: null,
    },
    currency: currency[get_env('REACT_APP_CURRENCY')],
 }
