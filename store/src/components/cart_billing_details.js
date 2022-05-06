@@ -105,7 +105,7 @@ export const CartBillingDetails = ({ cart, billing, tip }) => {
                )}
                <li className="hern-cart-billing-details-total-price">
                   <span>{t('Total')}</span>
-                  <span>{formatCurrency(billing.balanceToPay || 0)}</span>
+                  <span>{formatCurrency(billing.totalToPay || 0)}</span>
                </li>
             </ul>
          )}
