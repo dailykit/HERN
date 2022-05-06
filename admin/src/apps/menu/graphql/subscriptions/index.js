@@ -123,21 +123,6 @@ export const BRAND_RECURRENCES = gql`
       }
    }
 `
-export const BRAND_LOCATION_RECURRENCES = gql`
-   subscription BrandLocationsRecurrences($brandId: Int_comparison_exp!) {
-      brandLocationsRecurrences: brands_location(
-         where: { brand_locations: { brandId: $brandId } }
-      ) {
-         id
-         city
-         label
-         recurrences {
-            recurrenceId
-            isActive
-         }
-      }
-   }
-`
 
 export const INVENTORY_PRODUCTS = gql`
    subscription InventoryProducts($where: products_inventoryProduct_bool_exp) {
@@ -194,23 +179,23 @@ export const COMBO_PRODUCTS = gql`
       }
    }
 `
-// export const BRAND_LOCATIONS = gql`
-//    subscription BrandLocations($brandId: Int_comparison_exp!) {
-//       brands_location(where: { brand_locations: { brandId: $brandId } }) {
-//          id
-//          label
-//          isActive
-//          city
-//          recurrences {
-//             recurrenceId
-//             isActive
-//          }
-//          brand_locations {
-//             id
-//          }
-//       }
-//    }
-// `
+export const BRANDS_BRAND_LOCATIONS = gql`
+   subscription Brands_Location {
+      brands_brand_location {
+         location {
+            id
+            city
+            label
+         }
+         brand_recurrences {
+            isActive
+            recurrenceId
+         }
+         id
+         brandId
+      }
+   }
+`
 export const BRAND_LOCATIONS = gql`
    subscription BrandLocations($brandId: Int_comparison_exp!) {
       brands_brand_location(where: { brandId: $brandId }) {
@@ -223,6 +208,23 @@ export const BRAND_LOCATIONS = gql`
          brand_recurrences {
             isActive
             recurrenceId
+         }
+      }
+   }
+`
+export const BRAND_LOCATION_RECURRENCES = gql`
+   subscription BrandLocationRecurrences($recurrenceId: Int_comparison_exp!) {
+      brands(where: { recurrences: { isActive: { _eq: true } } }) {
+         id
+         title
+         brand_locations {
+            brand_recurrences(
+               where: { recurrenceId: $recurrenceId, isActive: { _eq: true } }
+            ) {
+               brandId
+               brandLocationId
+               isActive
+            }
          }
       }
    }

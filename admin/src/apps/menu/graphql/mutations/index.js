@@ -268,3 +268,16 @@ export const UPSERT_BRAND_LOCATION_RECURRENCE = gql`
       }
    }
 `
+export const UPDATE_MULTIPLE_BRAND_LOCATION_RECURRENCE = gql`
+   mutation MyMutation(
+      $where: fulfilment_brand_recurrence_bool_exp!
+      $_set: fulfilment_brand_recurrence_set_input!
+   ) {
+      updateBrandRecurrences(where: $where, _set: $_set) {
+         affected_rows
+         returning {
+            id
+         }
+      }
+   }
+`
