@@ -80,7 +80,7 @@ const Main = () => {
          setRecurrences(data.subscriptionData.data.recurrences)
       },
    })
-
+   console.log('new recurrences finding::', recurrences)
    // Mutations
    const [updateRecurrence] = useMutation(UPDATE_RECURRENCE, {
       onCompleted: () => {
@@ -244,6 +244,7 @@ const Main = () => {
                                     padding={'none'}
                                  >
                                     <StyledInsideSectionTab
+                                       style={{ height: 'auto' }}
                                        onMouseEnter={() =>
                                           handleMouseEnter(index)
                                        }
@@ -253,13 +254,30 @@ const Main = () => {
                                        onClick={() => handleMouseClicked(index)}
                                     >
                                        <StyledSectionTop>
-                                          <SectionTabDay>
-                                             {rrulestr(recurrence.rrule)
-                                                .toText()
-                                                .replace(/^\w/, char =>
-                                                   char.toUpperCase()
+                                          <div>
+                                             <SectionTabDay>
+                                                {rrulestr(recurrence.rrule)
+                                                   .toText()
+                                                   .replace(/^\w/, char =>
+                                                      char.toUpperCase()
+                                                   )}
+                                             </SectionTabDay>
+                                             <Flex
+                                                style={{ marginTop: '10px' }}
+                                             >
+                                                {recurrence.brands.map(
+                                                   (brand, index) => (
+                                                      <Flex>
+                                                         {
+                                                            brand
+                                                               ?.brand_location
+                                                               ?.location.label
+                                                         }
+                                                      </Flex>
+                                                   )
                                                 )}
-                                          </SectionTabDay>
+                                             </Flex>
+                                          </div>
                                           {(mouseState.isHovered[index] ||
                                              mouseClickedState.isClicked[
                                                 index

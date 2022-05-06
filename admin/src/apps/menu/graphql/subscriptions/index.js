@@ -65,6 +65,19 @@ export const RECURRENCES = gql`
          rrule
          type
          isActive
+         brands(
+            where: { isActive: { _eq: true }, brandId: { _is_null: true } }
+         ) {
+            id
+            brand_location {
+               id
+               location {
+                  id
+                  label
+                  city
+               }
+            }
+         }
          timeSlots {
             id
             from
