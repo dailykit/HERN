@@ -133,7 +133,7 @@ export const Billing = ({ billing }) => {
                </>
             ) : (
                <>
-                  {billing?.itemTotalTaxExcluded && (
+                  {billing?.itemTotalTaxExcluded > 0 && (
                      <tr>
                         <td
                            className="hern-billing__table__cell"
@@ -163,7 +163,7 @@ export const Billing = ({ billing }) => {
                   )}
                </>
             )}
-            {!!billing?.walletAmountUsed && (
+            {billing?.walletAmountUsed > 0 && (
                <tr>
                   <td
                      className="hern-billing__table__cell"
@@ -178,7 +178,7 @@ export const Billing = ({ billing }) => {
                   </td>
                </tr>
             )}
-            {!!billing?.loyaltyAmountApplied && (
+            {billing?.loyaltyAmountApplied > 0 && (
                <tr>
                   <td
                      className="hern-billing__table__cell"
@@ -191,7 +191,7 @@ export const Billing = ({ billing }) => {
                   </td>
                </tr>
             )}
-            {!!billing?.totalDiscount && (
+            {billing?.totalDiscount > 0 && (
                <tr>
                   <td
                      className="hern-billing__table__cell"

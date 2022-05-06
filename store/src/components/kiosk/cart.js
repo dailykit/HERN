@@ -251,8 +251,8 @@ export const KioskCart = props => {
                                  <span style={{ fontWeight: 'bold' }}>
                                     {formatCurrency(
                                        (
-                                          cart?.cartOwnerBilling
-                                             ?.balanceToPay || 0
+                                          cart?.cartOwnerBilling?.totalToPay ||
+                                          0
                                        ).toFixed(2)
                                     )}
                                  </span>
@@ -274,7 +274,7 @@ export const KioskCart = props => {
                            <span className="hern-kiosk__cart-place-order-btn-total">
                               {formatCurrency(
                                  (
-                                    cart?.cartOwnerBilling?.balanceToPay || 0
+                                    cart?.cartOwnerBilling?.totalToPay || 0
                                  ).toFixed(2)
                               )}
                            </span>

@@ -112,7 +112,6 @@ export const MenuProvider = ({ isCheckout = false, children }) => {
       },
    })
 
-   console.log(cart, 'Cart')
    React.useEffect(() => {
       if (
          !isCustomerLoading &&
@@ -134,7 +133,6 @@ export const MenuProvider = ({ isCheckout = false, children }) => {
                if (!subscriptionData.data) {
                   return prev
                }
-
                return JSON.parse(JSON.stringify(subscriptionData.data))
             },
          })
@@ -192,7 +190,6 @@ export const MenuProvider = ({ isCheckout = false, children }) => {
 
    React.useEffect(() => {
       if (!loadingZipcode && !isEmpty(zipcode) && state.week?.fulfillmentDate) {
-         console.log('zipcode', zipcode)
          if (
             zipcode.isDeliveryActive &&
             zipcode?.deliveryTime?.from &&
@@ -294,10 +291,6 @@ export const MenuProvider = ({ isCheckout = false, children }) => {
                   const queryDate =
                      d || new URL(location.href).searchParams.get('d')
                   if (!queryDate) {
-                     console.log('stateMenu', {
-                        isCheckout,
-                        queryDate,
-                     })
                      router.push(
                         getRoute(
                            '/menu?d=' +
