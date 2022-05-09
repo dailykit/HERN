@@ -241,13 +241,43 @@ export const UPSERT_BRAND_RECURRENCE = gql`
       createBrandRecurrence(
          object: $object
          on_conflict: {
-            constraint: brand_recurrence_pkey
+            constraint: brand_recurrence_brandId_recurrenceId_key
             update_columns: isActive
          }
       ) {
          brandId
          recurrenceId
          isActive
+      }
+   }
+`
+export const UPSERT_BRAND_LOCATION_RECURRENCE = gql`
+   mutation UpsertBrandLocationRecurrence(
+      $object: fulfilment_brand_recurrence_insert_input!
+   ) {
+      createBrandRecurrence(
+         object: $object
+         on_conflict: {
+            constraint: brand_recurrence_brandLocationId_recurrenceId_key
+            update_columns: isActive
+         }
+      ) {
+         brandLocationId
+         recurrenceId
+         isActive
+      }
+   }
+`
+export const UPDATE_MULTIPLE_BRAND_LOCATION_RECURRENCE = gql`
+   mutation MyMutation(
+      $where: fulfilment_brand_recurrence_bool_exp!
+      $_set: fulfilment_brand_recurrence_set_input!
+   ) {
+      updateBrandRecurrences(where: $where, _set: $_set) {
+         affected_rows
+         returning {
+            id
+         }
       }
    }
 `

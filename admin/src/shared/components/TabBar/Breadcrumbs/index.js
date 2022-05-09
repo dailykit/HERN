@@ -68,7 +68,6 @@ const Breadcrumbs = () => {
                >
                   {route.title}
                </p>
-
                {routes.length - 1 !== index && (
                   <>
                      &nbsp;
