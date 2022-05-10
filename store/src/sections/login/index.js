@@ -1,10 +1,17 @@
 import React from 'react'
 import { Login as AuthMethods } from '../../components'
 import { useConfig } from '../../lib'
+import { useUser } from '../../context'
+import { getRoute } from '../../utils'
+import { useRouter } from 'next/router'
 
 export const Login = ({ config }) => {
    const { configOf } = useConfig()
    const authConfig = configOf('Auth Methods', 'brand')
+
+   const { isAuthenticated, isLoading } = useUser()
+   const router = useRouter()
+
    const loginBy = React.useMemo(() => {
       if (config?.loginSettings?.componentToRender?.value?.value) {
          return config?.loginSettings?.componentToRender?.value?.value
@@ -31,6 +38,12 @@ export const Login = ({ config }) => {
       loginIllustration?.['Login Background Image']?.showBackground?.value ??
       false
 
+   React.useEffect(() => {
+      if (isAuthenticated && !isLoading) {
+         router.push(getRoute('/'))
+      }
+   }, [isLoading, isAuthenticated])
+
    return (
       <div
          style={
@@ -54,15 +67,27 @@ export const Login = ({ config }) => {
             </div>
          )}
          {/**Login Component */}
-         <AuthMethods
-            socialLogin={authConfig.socialLoginMethods?.socialLogin?.value}
-            singleLoginMethod={
-               authConfig.loginSettings?.singleLoginMethod?.value || false
-            }
-            loginBy={loginBy}
-            currentAuth={loginBy}
-            showBackground={showBackground}
-         />
+         {isLoading ? null : isAuthenticated ? (
+            <div
+               style={{
+                  fontWeight: '600',
+                  fontFamily: 'var(--hern-primary-font)',
+                  fontSize: '1.8rem',
+               }}
+            >
+               Seems like you are already logged in redirecting to Home page
+            </div>
+         ) : (
+            <AuthMethods
+               socialLogin={authConfig.socialLoginMethods?.socialLogin?.value}
+               singleLoginMethod={
+                  authConfig.loginSettings?.singleLoginMethod?.value || false
+               }
+               loginBy={loginBy}
+               currentAuth={loginBy}
+               showBackground={showBackground}
+            />
+         )}
       </div>
    )
 }

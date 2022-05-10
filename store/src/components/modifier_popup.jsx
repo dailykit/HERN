@@ -73,11 +73,17 @@ export const ModifierPopup = props => {
          .value()
       return groupedData
    }, [productData])
+   
+   const defaultOptionType = productData.productOptions.find(
+      x => x.id === productData.defaultProductOptionId
+   )?.type
+   
    const [productOptionType, setProductOptionType] = useState(
-      productData.productOptions.find(
-         x => x.id === productData.defaultProductOptionId
-      )?.type ||
-      productOptionsGroupedByProductOptionType[0]['type']
+      defaultOptionType ? 
+         defaultOptionType : 
+         defaultOptionType===null ? 
+            'null' : 
+            productOptionsGroupedByProductOptionType[0]['type']
    )
 
    const showStepViewProductOptionAndModifiers = React.useMemo(
@@ -178,7 +184,7 @@ export const ModifierPopup = props => {
       ]
       //no modifier available in product options
       if (!productOption.modifier) {
-         console.log('PASS')
+         // console.log('PASS')
          // addToCart({ ...productOption, quantity })
          const cartItem = getCartItemWithModifiers(
             productOption.cartItem,
@@ -244,7 +250,7 @@ export const ModifierPopup = props => {
       }
       let nestedFinalCategories = []
       let nestedFinalErrorCategories = []
-      console.log('finalCategories', finalCategories)
+      // console.log('finalCategories', finalCategories)
       finalCategories.forEach(eachCategory => {
          eachCategory.options.forEach(eachOption => {
             if (eachOption.additionalModifierTemplateId) {
@@ -283,10 +289,10 @@ export const ModifierPopup = props => {
       setErrorCategories(errorState)
       nestedSetErrorCategories(nestedFinalErrorCategories)
       if (errorState.length > 0 || nestedFinalErrorCategories.length > 0) {
-         console.log('FAIL')
+         // console.log('FAIL')
          return
       } else {
-         console.log('PASS')
+         // console.log('PASS')
          const nestedModifierOptionsGroupByParentModifierOptionId =
             allNestedSelectedOptions.length > 0
                ? _.chain(allNestedSelectedOptions)
@@ -304,7 +310,7 @@ export const ModifierPopup = props => {
                allSelectedOptions.map(x => x.cartItem),
                nestedModifierOptionsGroupByParentModifierOptionId
             )
-            console.log('finalCartItem', cartItem)
+            // console.log('finalCartItem', cartItem)
             await addToCart(cartItem, quantity)
          } else {
             const cartItem = getCartItemWithModifiers(
@@ -498,7 +504,7 @@ export const ModifierPopup = props => {
          closeModifier()
       }
    }
-   console.log('productOption', productOption)
+   // console.log('productOption', productOption)
    return (
       <>
          <div

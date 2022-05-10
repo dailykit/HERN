@@ -1,5 +1,5 @@
 import { useSubscription } from '@apollo/react-hooks'
-import { Flex, Spacer, Text } from '@dailykit/ui'
+import { Flex, Spacer, Text, Filler } from '@dailykit/ui'
 
 import moment from 'moment'
 import React, { useEffect, useState } from 'react'
@@ -13,6 +13,9 @@ import {
    XAxis,
    YAxis,
    Tooltip,
+   BarChart,
+   Bar,
+   Cell,
 } from 'recharts'
 import { logger } from '../../../../../utils'
 import { BrandShopDateContext } from '../../../../BrandShopDateProvider/context'
@@ -28,6 +31,9 @@ const EarningByProduct = () => {
    const { brandShopDateState, brandShopDateDispatch } =
       React.useContext(BrandShopDateContext)
    const [status, setStatus] = useState({ loading: true })
+   const [sortedEarningByProductData, setSortedEarningByProductData] = useState(
+      []
+   )
    //subscription for earning by product data
    const { loading: subsLoading, error: subsError } = useSubscription(
       EARNING_BY_PRODUCT,
@@ -40,7 +46,9 @@ const EarningByProduct = () => {
                      `AND o.created_at >= '${brandShopDateState.from}'`
                   } ${
                      brandShopDateState.from !== moment('2017 - 01 - 01') &&
-                     `AND o.created_at < '${brandShopDateState.to}'`
+                     `AND o.created_at < '${moment(brandShopDateState.to)
+                        .add(1, 'd')
+                        .format('YYYY-MM-DD')}'`
                   } ${
                      brandShopDateState.brandShop.brandId
                         ? `AND o."brandId" = ${brandShopDateState.brandShop.brandId}`
@@ -49,7 +57,13 @@ const EarningByProduct = () => {
                      brandShopDateState.brandShop.shopTitle
                         ? `AND c.source = \'${brandShopDateState.brandShop.shopTitle}\'`
                         : ''
-                  }`,
+                  }
+                  ${
+                     brandShopDateState.brandShop.locationId
+                        ? `AND c."locationId" = ${brandShopDateState.brandShop.locationId}`
+                        : ''
+                  }
+                  `,
                   productWhere: 'id IS NOT NULL',
                },
             },
@@ -63,6 +77,7 @@ const EarningByProduct = () => {
                )
 
             setEarningByProductData(newData)
+            setSortedEarningByProductData(newData)
             setStatus({ ...status, loading: false })
          },
       }
@@ -71,6 +86,7 @@ const EarningByProduct = () => {
    //subscription for earning by product compare data
    const { loading: subsCompareLoading, error: subsCompareError } =
       useSubscription(EARNING_BY_PRODUCT, {
+         skip: brandShopDateState.compare.isSkip,
          variables: {
             earningByProductArgs: {
                params: {
@@ -81,7 +97,11 @@ const EarningByProduct = () => {
                   } ${
                      brandShopDateState.compare.from !==
                         moment('2017 - 01 - 01') &&
-                     `AND o.created_at < '${brandShopDateState.compare.to}'`
+                     `AND o.created_at < '${moment(
+                        brandShopDateState.compare.to
+                     )
+                        .add(1, 'd')
+                        .format('YYYY-MM-DD')}'`
                   } ${
                      brandShopDateState.brandShop.brandId
                         ? `AND o."brandId" = ${brandShopDateState.brandShop.brandId}`
@@ -90,15 +110,18 @@ const EarningByProduct = () => {
                      brandShopDateState.brandShop.shopTitle
                         ? `AND c.source = \'${brandShopDateState.brandShop.shopTitle}\'`
                         : ''
+                  }
+                  ${
+                     brandShopDateState.brandShop.locationId
+                        ? `AND c."locationId" = ${brandShopDateState.brandShop.locationId}`
+                        : ''
                   }`,
-                  productWhere: `id IN (${earningByProductData
-                     .slice(0, 10)
+                  productWhere: `id IN (${sortedEarningByProductData
                      .map(x => x.id)
                      .toString()})`,
                },
             },
          },
-         skip: brandShopDateState.compare.isSkip,
          onSubscriptionData: ({ subscriptionData }) => {
             const newData =
                subscriptionData.data.insights_analytics[0].getEarningsByProducts.map(
@@ -129,6 +152,9 @@ const EarningByProduct = () => {
          />
       )
    }
+   if (earningByProductData.length == 0) {
+      return <Filler message="Product Report Not Available" />
+   }
    return (
       <>
          <Flex>
@@ -143,7 +169,7 @@ const EarningByProduct = () => {
                   }}
                >
                   <EarningByProductChart
-                     earningByProductChartData={earningByProductData.slice(
+                     earningByProductChartData={sortedEarningByProductData.slice(
                         0,
                         10
                      )}
@@ -165,6 +191,9 @@ const EarningByProduct = () => {
                   <EarningByProductTable
                      earningByProductData={earningByProductData}
                      currency={brandShopDateState.currency}
+                     setSortedEarningByProductData={
+                        setSortedEarningByProductData
+                     }
                   />
                </div>
             </Flex>
@@ -234,7 +263,7 @@ const EarningByProductChart = ({
          setChartData(earningByProductChartData)
          setIsLoading(false)
       }
-   }, [earningByProductCompareData])
+   }, [earningByProductCompareData, earningByProductChartData])
    if (isLoading) {
       return <InlineLoader />
    }
@@ -242,7 +271,7 @@ const EarningByProductChart = ({
       <>
          <Flex height="22rem">
             <ResponsiveContainer width="100%" height="100%">
-               <LineChart
+               <BarChart
                   width={550}
                   height={300}
                   data={chartData}
@@ -256,31 +285,32 @@ const EarningByProductChart = ({
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis
                      dataKey="name"
-                     tickFormatter={tick => tick.toString().slice(0, 14)}
+                     tickFormatter={tick =>
+                        tick.toString().slice(0, 10) + '...'
+                     }
                      ticks={earningByProductChartData.map(x => x.name)}
                      // tick={<CustomizedAxisTick />}
                   />
                   <YAxis />
                   <Tooltip content={<CustomTooltip />} />
                   <Legend />
-                  <Line
+                  <Bar
                      name="Earning"
                      type="monotone"
                      dataKey="total"
-                     stroke="#2AC981"
-                     strokeWidth={2}
+                     fill="#2AC981"
                   />
+
                   {!brandShopDateState.compare.isSkip &&
                      earningByProductCompareData && (
-                        <Line
+                        <Bar
                            name="Compare Earning"
                            type="monotone"
                            dataKey="compareTotal"
-                           stroke="#8884d8"
-                           strokeWidth={2}
+                           fill="#8884d8"
                         />
                      )}
-               </LineChart>
+               </BarChart>
             </ResponsiveContainer>
          </Flex>
       </>

@@ -80,7 +80,6 @@ const Main = () => {
          setRecurrences(data.subscriptionData.data.recurrences)
       },
    })
-
    // Mutations
    const [updateRecurrence] = useMutation(UPDATE_RECURRENCE, {
       onCompleted: () => {
@@ -233,6 +232,7 @@ const Main = () => {
                                     dataSelectedBoxShadow={
                                        '0px 1px 8px rgba(0, 0, 0, 0.1)'
                                     }
+                                    height={'auto'}
                                     dataSelectedBorder={'2px solid #367BF5'}
                                     dataSelectedHoverBorder={
                                        '2px solid #F3F3F3'
@@ -243,6 +243,7 @@ const Main = () => {
                                     padding={'none'}
                                  >
                                     <StyledInsideSectionTab
+                                       style={{ height: 'auto' }}
                                        onMouseEnter={() =>
                                           handleMouseEnter(index)
                                        }
@@ -252,13 +253,30 @@ const Main = () => {
                                        onClick={() => handleMouseClicked(index)}
                                     >
                                        <StyledSectionTop>
-                                          <SectionTabDay>
-                                             {rrulestr(recurrence.rrule)
-                                                .toText()
-                                                .replace(/^\w/, char =>
-                                                   char.toUpperCase()
+                                          <div>
+                                             <SectionTabDay>
+                                                {rrulestr(recurrence.rrule)
+                                                   .toText()
+                                                   .replace(/^\w/, char =>
+                                                      char.toUpperCase()
+                                                   )}
+                                             </SectionTabDay>
+                                             <Flex
+                                                style={{ marginTop: '10px' }}
+                                             >
+                                                {recurrence.brands.map(
+                                                   (brand, index) => (
+                                                      <Flex>
+                                                         {
+                                                            brand
+                                                               ?.brand_location
+                                                               ?.location.label
+                                                         }
+                                                      </Flex>
+                                                   )
                                                 )}
-                                          </SectionTabDay>
+                                             </Flex>
+                                          </div>
                                           {(mouseState.isHovered[index] ||
                                              mouseClickedState.isClicked[
                                                 index

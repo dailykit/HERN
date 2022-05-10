@@ -9,6 +9,11 @@ export const GET_TOTAL_EARNING_ORDER_CUSTOMER_TOP_PRODUCT = gql`
                brandId: { _in: $brandId }
                locationId: { _in: $locationId }
             }
+            _or: [
+               { isRejected: { _eq: false } }
+               { isRejected: { _is_null: true } }
+            ]
+            isAccepted: { _eq: true }
          }
       ) {
          aggregate {
@@ -21,8 +26,16 @@ export const GET_TOTAL_EARNING_ORDER_CUSTOMER_TOP_PRODUCT = gql`
       customers_aggregate(
          where: {
             carts: {
+               paymentStatus: { _eq: "SUCCEEDED" }
                brandId: { _in: $brandId }
                locationId: { _in: $locationId }
+            }
+            orders: {
+               _or: [
+                  { isRejected: { _eq: false } }
+                  { isRejected: { _is_null: true } }
+               ]
+               isAccepted: { _eq: true }
             }
          }
       ) {

@@ -104,9 +104,11 @@ const CustomerOverTimeTable = props => {
    const searchedOption = option => console.log(option)
    // fn run after table data loaded
    const dataLoaded = () => {
-      const defaultShowColumns =
-         localStorage.getItem('customer-overtime-table-show-columns') || []
-      const parseDefaultColumns = JSON.parse(defaultShowColumns)
+      const defaultShowColumns = localStorage.getItem(
+         'customer-overtime-table-show-columns'
+      )
+      const parseDefaultColumns =
+         defaultShowColumns && JSON.parse(defaultShowColumns)
       if (parseDefaultColumns) {
          columns.forEach(eachOption => {
             if (

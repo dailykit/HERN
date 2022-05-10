@@ -51,16 +51,18 @@ const DashboardCards = () => {
    )
    // console.log('brandContextCard', brandContext, subsError)
    // console.log('analyticsData', analyticsData)
-   if (subsLoading || status.loading) {
-      return <InlineLoader />
-   }
    if (subsError) {
       logger(subsError)
       toast.error('Could not get the Insight data')
       return (
-         <ErrorState height="320px" message="Could not get the Insight data" />
+         <ErrorState height="192px" message="Could not get the Insight data" />
       )
    }
+
+   if (subsLoading || status.loading) {
+      return <InlineLoader />
+   }
+
    return (
       <CardContainer bgColor="#FFFFFF" borderColor="#efefef">
          <CardContainer.Title>Here's your progress so far</CardContainer.Title>
