@@ -2497,19 +2497,47 @@ export const COUPON_BY_ID = gql`
    }
 `
 export const GET_PAGE_ROUTES = gql`
-query MyQuery($domain: String!) {
-  brands(where: {_or: [{domain: {_eq: $domain}}, {isDefault: {_eq: true}}]}) {
-    brandPages(where: {isArchived: {_eq: false}, published: {_eq: true}, isAllowedToCrawl: {_eq: true}}) {
-      route
-    }
-  }
-}`
+   query MyQuery($domain: String!) {
+      brands(
+         where: {
+            _or: [{ domain: { _eq: $domain } }, { isDefault: { _eq: true } }]
+         }
+      ) {
+         brandPages(
+            where: {
+               isArchived: { _eq: false }
+               published: { _eq: true }
+               isAllowedToCrawl: { _eq: true }
+            }
+         ) {
+            route
+         }
+      }
+   }
+`
 export const GET_DISALLOWED_PAGE_ROUTES = gql`
-query MyQuery($domain: String!) {
-  brands(where: {_or: [{domain: {_eq: $domain}}, {isDefault: {_eq: true}}]}) {
-    brandPages(where: {isArchived: {_eq: false}, published: {_eq: true}, isAllowedToCrawl: {_eq: false}}) {
-      route
-    }
-  }
-}
+   query MyQuery($domain: String!) {
+      brands(
+         where: {
+            _or: [{ domain: { _eq: $domain } }, { isDefault: { _eq: true } }]
+         }
+      ) {
+         brandPages(
+            where: {
+               isArchived: { _eq: false }
+               published: { _eq: true }
+               isAllowedToCrawl: { _eq: false }
+            }
+         ) {
+            route
+         }
+      }
+   }
+`
+export const LOCATION_KIOSK_VALIDATION = gql`
+   query LOCATION_KIOSK_VALIDATION($where: brands_locationKiosk_bool_exp!) {
+      brands_locationKiosk(where: $where) {
+         id
+      }
+   }
 `
