@@ -4,6 +4,7 @@ import { isEmpty, uniqBy } from 'lodash'
 import { useQuery } from '@apollo/react-hooks'
 import ReactImageFallback from 'react-image-fallback'
 import { useToasts } from 'react-toast-notifications'
+import { useIntl } from 'react-intl'
 
 import { useMenu } from './state'
 import { useConfig } from '../../lib'
@@ -132,6 +133,7 @@ const Product = ({ node, theme, isAdded, noProductImage, buildImageUrl }) => {
    const { addToast } = useToasts()
    const { state, methods } = useMenu()
    const { t, dynamicTrans, locale } = useTranslation()
+   const { formatMessage } = useIntl()
    const openRecipe = () =>
       router.push(getRoute(`/recipes/${node?.productOption?.id}`))
 
@@ -298,8 +300,8 @@ const Product = ({ node, theme, isAdded, noProductImage, buildImageUrl }) => {
                onClick={() => add(node.cartItem, node)}
                title={
                   node.isAvailable
-                     ? t('Add product')
-                     : t('This product is out of stock.')
+                     ? formatMessage({ id: 'Add product' })
+                     : formatMessage({ id: 'This product is out of stock.' })
                }
             >
                {node.isAvailable ? (

@@ -17,7 +17,7 @@ import moment from 'moment'
 import classNames from 'classnames'
 import isNull from 'lodash/isNull'
 import isEmpty from 'lodash/isEmpty'
-
+import { useIntl } from 'react-intl'
 const { Header, Content, Footer } = Layout
 
 export const KioskProduct = props => {
@@ -29,6 +29,7 @@ export const KioskProduct = props => {
 
    const { config, productData, setCurrentPage } = props
    const { t, locale, dynamicTrans } = useTranslation()
+   const { formatMessage } = useIntl()
    const [showModifier, setShowModifier] = useState(false)
    const [availableQuantityInCart, setAvailableQuantityInCart] = useState(0)
    const currentLang = React.useMemo(() => locale, [locale])
@@ -452,7 +453,7 @@ export const KioskProduct = props => {
             </Layout>
          </div>
          <Modal
-            title={t('Repeat last used customization')}
+            title={formatMessage({ id: 'Repeat last used customization' })}
             visible={showChooseIncreaseType}
             centered={true}
             onCancel={() => {
