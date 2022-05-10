@@ -1,31 +1,36 @@
 import React from 'react'
-import { Form, TunnelHeader } from '@dailykit/ui'
+import { Form, TunnelHeader,useTunnel,
+   Tunnels,
+   Tunnel, } from '@dailykit/ui'
 import { useMutation, useSubscription } from '@apollo/react-hooks'
 import { reactFormatter, ReactTabulator } from '@dailykit/react-tabulator'
 import { toast } from 'react-toastify'
 import {
    ErrorBoundary,
    InlineLoader,
+   Flex,
 } from '../../../../../../../../shared/components'
 import { logger } from '../../../../../../../../shared/utils'
 import { RecurrenceContext } from '../../../../../../context/recurrence'
 import {
    BRAND_RECURRENCES,
    UPSERT_BRAND_RECURRENCE,
+   BRAND_LOCATION_RECURRENCES,
+   UPDATE_MULTIPLE_BRAND_LOCATION_RECURRENCE,
 } from '../../../../../../graphql'
 import { TunnelBody } from '../styled'
+import LinkBrandLocations from './LinkBrandLocations'
 
 const BrandTunnel = ({ closeTunnel }) => {
+   const [brandDetails, setBrandDetails] = React.useState({})
    const { recurrenceState } = React.useContext(RecurrenceContext)
+   const [tunnels, openTunnelForLocations, closeTunnelForLocations] = useTunnel(1)
+   const [brandList, setBrandList] = React.useState([])
+   const recurrenceId = recurrenceState.recurrenceId
 
    const tableRef = React.useRef()
 
-   const {
-      loading,
-      error,
-      data: { brandRecurrences = [] } = {},
-   } = useSubscription(BRAND_RECURRENCES)
-
+   //MUTATIONS
    const [upsertBrandRecurrence] = useMutation(UPSERT_BRAND_RECURRENCE, {
       onCompleted: data => {
          toast.success('Updated!')
@@ -36,6 +41,75 @@ const BrandTunnel = ({ closeTunnel }) => {
       },
    })
 
+   const [updateBrandLocationRecurrence] = useMutation(UPDATE_MULTIPLE_BRAND_LOCATION_RECURRENCE, {
+      onCompleted: data => {
+         toast.success('Updated linking!')
+      },
+      onError: error => {
+         toast.error('Something went wrong while linking!')
+         logger(error)
+      },
+   })
+   
+   //SUBSCRIPTION
+   // extract list of brands with their details
+   const {
+      loading,
+      error,
+      data: { brandRecurrences = [] } = {},
+   } = useSubscription(BRAND_RECURRENCES)
+   
+   // extract list of brand which are linked to particular recurrence in given variable
+   // as well as their linked location are also linked to same recurrence
+   const{brandError, brandLoading, brandData} = useSubscription(BRAND_LOCATION_RECURRENCES,
+      {
+         variables: {recurrenceId: {_eq: recurrenceId}},
+         onSubscriptionData: ({
+            subscriptionData:{
+               data: {brands = []},
+            },
+         }) =>{
+            // console.log("new brands daata at 00:50", brands)
+            setBrandList(brands)
+         }
+   })
+
+   // brand_location ids extracted to unlink from particular recurrence
+   const activeBrandLocations =[]
+   brandList.forEach((ele)=>{
+      ele.brand_locations.forEach((element)=>{
+         if (element.brand_recurrences.length>0)
+         {
+            activeBrandLocations.push(element.brand_recurrences[0].brandLocationId)
+            // console.log("new brands daata at 00:50 list",element.brand_recurrences[0].brandLocationId)
+         }
+      })
+   })
+
+     
+   // add link location to every element
+   brandRecurrences.forEach((element)=>{
+      element.linkBrandLocation = 'Link Locations'
+   })
+      
+      
+   
+   const linkWithBrandLocations =(e) => {
+      openTunnelForLocations(1)
+   }
+
+   const cellClick =(e)=>{ 
+      // console.log("cell clicked",e,e.id,e.isActive)
+      const recurrenceId = recurrenceState.recurrenceId
+      setBrandDetails(e)
+      if(e.recurrences.some(
+         recurrence =>
+            recurrence.recurrenceId === recurrenceId && recurrence.isActive
+      )){window.alert('link not active')}
+      else{linkWithBrandLocations(e)}
+      // linkWithBrandLocations(e)     
+   }
+   
    const columns = [
       {
          title: 'Title',
@@ -48,14 +122,47 @@ const BrandTunnel = ({ closeTunnel }) => {
          field: 'domain',
          headerFilter: true,
       },
+      {  
+         title: 'link brand location',
+         field: 'linkBrandLocation',
+         headerTooltip: function (column) {
+            return (column.getDefinition().title)},
+         cellClick : (e, cell) => {
+            cellClick(cell.getData())
+            // console.log('cell clicked')
+         },
+         formatter:function(cell, formatterParams){
+            const value = cell.getValue();
+            const linkValue = cell.getData()
+            const recurrenceId= recurrenceState.recurrenceId
+            // console.log("see cell value:",cell.getData())
+            if(linkValue.recurrences.some(
+               recurrence =>
+                  recurrence.recurrenceId === recurrenceId && recurrence.isActive
+            )){return "<span style='color:#000000; font-weight:bold; '>" + value + "</span>";}
+            
+            else{return "<span style='color:#367BF5; font-weight:bold; cursor:pointer;'>" + value + "</span>";}
+         //   return "<span style='color:#367BF5; font-weight:bold; cursor:pointer;'>" + value + "</span>";
+            
+         },
+      },
       {
          title: 'Recurrence Available',
          formatter: reactFormatter(
             <ToggleRecurrence
                recurrenceId={recurrenceState.recurrenceId}
                onChange={object =>
-                  upsertBrandRecurrence({ variables: { object } })
-               }
+                  upsertBrandRecurrence({ variables: { object } })}
+               updateBrands={() => updateBrandLocationRecurrence ({variables: {where: {
+                  recurrenceId: {_eq: recurrenceId},
+                  brandLocationId: {_in: activeBrandLocations},
+                  isActive: {_eq: true}
+                },
+                  _set: {
+                    isActive: false
+                  }
+                }})}
+               activeBrandLocations={activeBrandLocations}
             />
          ),
       },
@@ -93,23 +200,39 @@ const BrandTunnel = ({ closeTunnel }) => {
                />
             )}
          </TunnelBody>
+         <Tunnels tunnels={tunnels}>
+            <Tunnel layer={1} size="md">
+               <LinkBrandLocations closeTunnelForLocations={closeTunnelForLocations} brandDetails={brandDetails} />
+            </Tunnel>
+         </Tunnels>
       </>
    )
 }
 
 export default BrandTunnel
 
-const ToggleRecurrence = ({ cell, recurrenceId, onChange }) => {
+const ToggleRecurrence = ({ cell, recurrenceId, onChange, updateBrands, activeBrandLocations }) => {
    const brand = React.useRef(cell.getData())
    const [active, setActive] = React.useState(false)
 
    const toggleHandler = value => {
-      console.log(value)
+      // console.log(value)
+      if(active){
       onChange({
          recurrenceId,
          brandId: brand.current.id,
          isActive: !active,
       })
+   }
+      else{
+         if(window.confirm("Linking this brand will unlink all the locations with this recurrence. Do you want to continue?"))
+         {  onChange({
+            recurrenceId,
+            brandId: brand.current.id,
+            isActive: !active,
+         })
+            updateBrands()}
+      }
    }
 
    React.useEffect(() => {
@@ -128,3 +251,4 @@ const ToggleRecurrence = ({ cell, recurrenceId, onChange }) => {
       />
    )
 }
+

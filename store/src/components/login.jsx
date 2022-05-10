@@ -1090,17 +1090,25 @@ const Signup = props => {
       }
    }, [params])
 
-   const [checkCustomerExistence] = useLazyQuery(PLATFORM_CUSTOMERS, {
-      onCompleted: ({ customers = [] }) => {
-         if (customers.length > 0) {
-            setEmailExists(true)
-            addToast(<span>{t('User already exist')}</span>, {
-               appearance: 'info',
-            })
+   const apolloClient = useApolloClient();
+
+   const checkCustomerExistence = async (email) =>{
+      const data = await apolloClient.query({
+         query: PLATFORM_CUSTOMERS,
+         variables: { 
+            where: { email: { _eq: email } } 
          }
-      },
-      onError: () => {},
-   })
+      })
+      const customers = data?.data?.customers
+      if (customers.length > 0) {
+         setEmailError("Email already exists")
+         setEmailExists(true)
+         return true
+      }
+      setEmailError("")
+      setEmailExists(false)
+      return false
+   }
 
    const [insertPlatformCustomer] = useMutation(INSERT_PLATFORM_CUSTOMER, {
       onCompleted: async ({ insertCustomer = {} } = {}) => {
@@ -1165,42 +1173,9 @@ const Signup = props => {
       },
    })
 
-   const [forgotPassword, { loading: forgotPasswordLoading }] = useMutation(
-      FORGOT_PASSWORD,
-      {
-         onCompleted: ({ forgotPassword = {} } = {}) => {
-            if (forgotPassword?.success) {
-               setForgotPasswordText(
-                  <span>
-                     {t(
-                        'An email has been sent to your provided email. Please check your inbox.'
-                     )}
-                  </span>
-               )
-               setTimeout(() => {
-                  setForgotPasswordText('')
-               }, 4000)
-            }
-            addToast(
-               <span>{t('Successfully sent the set password email.')}</span>,
-               {
-                  appearance: 'success',
-               }
-            )
-         },
-         onError: () => {
-            addToast(
-               <span>{t('Failed to send the set password email.')}</span>,
-               {
-                  appearance: 'error',
-               }
-            )
-         },
-      }
-   )
-
    const isValid =
       validateEmail(form.email) &&
+      !emailExists &&
       form.password &&
       form.password.length >= 6 &&
       form.phone &&
@@ -1210,21 +1185,7 @@ const Signup = props => {
    const onEmailBlur = async e => {
       const { value } = e.target
       if (validateEmail(value)) {
-         setEmailError('')
-         // const url =
-         //    new URL(get_env('DATA_HUB_HTTPS')).origin +
-         //    '/server/api/customer/' +
-         //    value
-         // const { status, data } = await axios.get(url)
-         // console.log('existStatus', status, url, typeof data, data)
-         // if (status === 200 && data?.success && data?.data?.id) {
-         //    setEmailExists(true)
-         // } else {
-         //    setEmailExists(false)
-         // }
-         checkCustomerExistence({
-            variables: { where: { email: { _eq: value } } },
-         })
+         await checkCustomerExistence(value)
       } else {
          setEmailError(
             <>
@@ -1254,6 +1215,7 @@ const Signup = props => {
 
    const submit = async () => {
       try {
+         if(await checkCustomerExistence(form.email)){return}
          setError('')
          setLoading(true)
          const isCodeValid = await isReferralCodeValid(
@@ -1337,203 +1299,146 @@ const Signup = props => {
             <span className="hern-signup-v1__signup-error">{emailError}</span>
          )}
          {/* !emailExists */}
-         {!emailExists ? (
-            <>
-               <fieldset
-                  className="hern-login-v1__fieldset"
-                  style={passwordError ? { marginBottom: '0.25rem' } : null}
-               >
-                  <label className="hern-login-v1__label" htmlFor="password">
-                     <span>{t('Password')}</span>
+         <>
+            <fieldset
+               className="hern-login-v1__fieldset"
+               style={passwordError ? { marginBottom: '0.25rem' } : null}
+            >
+               <label className="hern-login-v1__label" htmlFor="password">
+                  <span>{t('Password')}</span>
+               </label>
+               <input
+                  className="hern-login-v1__input"
+                  name="password"
+                  type={showPassword ? 'text' : 'password'}
+                  onChange={onChange}
+                  value={form.password}
+                  placeholder="Enter your password"
+                  onBlur={e =>
+                     e.target.value.length < 6
+                        ? setPasswordError(
+                              <>
+                                 <span>
+                                    {t(
+                                       'Password must be at least 6 letters long'
+                                    )}
+                                 </span>
+                                 <span>{'!'}</span>
+                              </>
+                           )
+                        : setPasswordError('')
+                  }
+               />
+            </fieldset>
+            <div className="hern-signup-v1__password-config">
+               <CheckBoxIcon
+                  showTick={showPassword}
+                  size={18}
+                  onClick={() => {
+                     setShowPassword(prevState => !prevState)
+                  }}
+                  style={{ cursor: 'pointer' }}
+               />
+               <span>{t('Show password')}</span>
+            </div>
+            {passwordError && (
+               <span className="hern-signup-v1__signup-error">
+                  {passwordError}
+               </span>
+            )}
+            <fieldset
+               className="hern-login-v1__fieldset"
+               style={phoneError ? { marginBottom: '0.25rem' } : null}
+            >
+               <label className="hern-login-v1__label" htmlFor="phone">
+                  <span> {t('Phone Number')}</span>
+               </label>
+               <PhoneInput
+                  className={`hern-login-v1__otp__phone__input hern-login-v1__otp__phone__input${
+                     !(form.phone === '' || form.phone === undefined) &&
+                     !(form.phone && isValidPhoneNumber(form.phone))
+                        ? '-invalid'
+                        : '-valid'
+                  }`}
+                  initialValueFormat="national"
+                  value={form.phone}
+                  onChange={e => {
+                     if (
+                        !(e === '' || e === undefined) &&
+                        !(e && isValidPhoneNumber(e))
+                     ) {
+                        setPhoneError('Please enter a valid phone number')
+                     } else {
+                        setPhoneError('')
+                        setForm(form => ({
+                           ...form,
+                           ['phone']: e,
+                        }))
+                     }
+                  }}
+                  defaultCountry={get_env('COUNTRY_CODE')}
+                  placeholder="Enter your phone number"
+               />
+            </fieldset>
+            {phoneError && (
+               <span className="hern-signup-v1__signup-error">
+                  {phoneError}
+               </span>
+            )}
+            {isReferralFieldVisible ? (
+               <fieldset className="hern-login-v1__fieldset">
+                  <label className="hern-login-v1__label" htmlFor="code">
+                     {t('Referral Code')}
                   </label>
                   <input
                      className="hern-login-v1__input"
-                     name="password"
-                     type={showPassword ? 'text' : 'password'}
+                     name="code"
+                     type="text"
                      onChange={onChange}
-                     value={form.password}
-                     placeholder="Enter your password"
-                     onBlur={e =>
-                        e.target.value.length < 6
-                           ? setPasswordError(
-                                <>
-                                   <span>
-                                      {t(
-                                         'Password must be at least 6 letters long'
-                                      )}
-                                   </span>
-                                   <span>{'!'}</span>
-                                </>
-                             )
-                           : setPasswordError('')
-                     }
+                     value={form.code}
+                     placeholder="Enter referral code"
                   />
                </fieldset>
-               <div className="hern-signup-v1__password-config">
-                  <CheckBoxIcon
-                     showTick={showPassword}
-                     size={18}
-                     onClick={() => {
-                        setShowPassword(prevState => !prevState)
-                     }}
-                     style={{ cursor: 'pointer' }}
-                  />
-                  <span>{t('Show password')}</span>
-               </div>
-               {passwordError && (
-                  <span className="hern-signup-v1__signup-error">
-                     {passwordError}
-                  </span>
-               )}
-               <fieldset
-                  className="hern-login-v1__fieldset"
-                  style={phoneError ? { marginBottom: '0.25rem' } : null}
-               >
-                  <label className="hern-login-v1__label" htmlFor="phone">
-                     <span> {t('Phone Number')}</span>
-                  </label>
-                  <PhoneInput
-                     className={`hern-login-v1__otp__phone__input hern-login-v1__otp__phone__input${
-                        !(form.phone === '' || form.phone === undefined) &&
-                        !(form.phone && isValidPhoneNumber(form.phone))
-                           ? '-invalid'
-                           : '-valid'
-                     }`}
-                     initialValueFormat="national"
-                     value={form.phone}
-                     onChange={e => {
-                        if (
-                           !(e === '' || e === undefined) &&
-                           !(e && isValidPhoneNumber(e))
-                        ) {
-                           setPhoneError('Please enter a valid phone number')
-                        } else {
-                           setPhoneError('')
-                           setForm(form => ({
-                              ...form,
-                              ['phone']: e,
-                           }))
-                        }
-                     }}
-                     defaultCountry={get_env('COUNTRY_CODE')}
-                     placeholder="Enter your phone number"
-                  />
-               </fieldset>
-               {phoneError && (
-                  <span className="hern-signup-v1__signup-error">
-                     {phoneError}
-                  </span>
-               )}
-               {isReferralFieldVisible ? (
-                  <fieldset className="hern-login-v1__fieldset">
-                     <label className="hern-login-v1__label" htmlFor="code">
-                        {t('Referral Code')}
-                     </label>
-                     <input
-                        className="hern-login-v1__input"
-                        name="code"
-                        type="text"
-                        onChange={onChange}
-                        value={form.code}
-                        placeholder="Enter referral code"
-                     />
-                  </fieldset>
-               ) : (
-                  <button
-                     className="hern-signup-v1__referral-code"
-                     onClick={() => setIsReferralFieldVisible(true)}
-                  >
-                     {t('Got a referral code?')}
-                  </button>
-               )}
-               <section className="hern-signup-v1__signup__term">
-                  <input
-                     className="hern-signup__signup__term__checkbox"
-                     type="checkbox"
-                     name="terms&copy;conditions"
-                     id="terms&copy;conditions"
-                     onChange={() => setHasAccepted(!hasAccepted)}
-                  />
-                  <label
-                     className="hern-login-v1__label"
-                     htmlFor="terms&copy;conditions"
-                     style={{ marginLeft: '4px' }}
-                  >
-                     {t('I accept')}{' '}
-                     <Link href={getRoute('/terms-and-conditions')}>
-                        <a className="hern-signup__signup__term__link">
-                           {t('terms and conditions')}
-                        </a>
-                     </Link>
-                  </label>
-               </section>
+            ) : (
                <button
-                  className={`hern-signup-v1__signup__submit ${
-                     !hasAccepted || !isValid || loading
-                        ? 'hern-signup-v1__signup__submit--disabled'
-                        : ''
-                  }`}
-                  onClick={() => isValid && submit()}
+                  className="hern-signup-v1__referral-code"
+                  onClick={() => setIsReferralFieldVisible(true)}
                >
-                  {loading ? t('REGISTERING') : t('REGISTER')}
+                  {t('Got a referral code?')}
                </button>
-            </>
-         ) : (
-            <>
-               <p className="hern-signup-v1__signup__email-already-exits">
-                  {t(
-                     'Looks like your email already exists. If you remember your password then go to'
-                  )}
-                  &nbsp;
-                  <button
-                     className="hern-signup-v1__signup__login-switch"
-                     onClick={() => setDefaultLogin('email')}
-                  >
-                     {t('login')}
-                  </button>
-                  &nbsp;or
-               </p>
-               <button
-                  onClick={() =>
-                     forgotPassword({
-                        variables: {
-                           email: form.email,
-                           origin: location.origin,
-                           type: 'set_password',
-                           ...(isClient &&
-                              localStorage.getItem('landed_on') && {
-                                 redirectUrl: localStorage.getItem('landed_on'),
-                              }),
-                        },
-                     })
-                  }
-                  className={`hern-login-v1__login-btn ${
-                     !form.email || forgotPasswordLoading
-                        ? 'hern-login-v1__login-btn--disabled'
-                        : ''
-                  }`}
-                  style={{
-                     height: '40px',
-                     margin: '0',
-                     color: '#ffffff',
-                     backgroundColor: 'var(--hern-accent)',
-                  }}
+            )}
+            <section className="hern-signup-v1__signup__term">
+               <input
+                  className="hern-signup__signup__term__checkbox"
+                  type="checkbox"
+                  name="terms&copy;conditions"
+                  id="terms&copy;conditions"
+                  onChange={() => setHasAccepted(!hasAccepted)}
+               />
+               <label
+                  className="hern-login-v1__label"
+                  htmlFor="terms&copy;conditions"
+                  style={{ marginLeft: '4px' }}
                >
-                  {forgotPasswordLoading ? (
-                     <>
-                        <span>{t('SENDING EMAIL')}</span>
-                     </>
-                  ) : (
-                     t('SEND LOGIN EMAIL')
-                  )}
-               </button>
-               {forgotPasswordText && (
-                  <p className="hern-signup-v1__signup__forgot-text">
-                     {forgotPasswordText}
-                  </p>
-               )}
-            </>
-         )}
+                  {t('I accept')}{' '}
+                  <Link href={getRoute('/terms-and-conditions')}>
+                     <a className="hern-signup__signup__term__link">
+                        {t('terms and conditions')}
+                     </a>
+                  </Link>
+               </label>
+            </section>
+            <button
+               className={`hern-signup-v1__signup__submit ${
+                  !hasAccepted || !isValid || loading
+                     ? 'hern-signup-v1__signup__submit--disabled'
+                     : ''
+               }`}
+               onClick={() => isValid && submit()}
+            >
+               {loading ? t('REGISTERING') : t('REGISTER')}
+            </button>
+         </>
          {error && (
             <span className="hern-signup-v1__signup-error">{error}</span>
          )}
