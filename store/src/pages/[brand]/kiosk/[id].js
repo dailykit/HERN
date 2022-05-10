@@ -49,7 +49,7 @@ const KioskScreen = props => {
       )
       dispatch({
          type: 'SET_KIOSK_ID',
-         payload: kioskId,
+         payload: parseInt(kioskId),
       })
       dispatch({
          type: 'SET_KIOSK_DETAILS',
