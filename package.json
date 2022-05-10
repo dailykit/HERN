@@ -19,7 +19,7 @@
       "start-hasura": "cd hasura && hasura console"
    },
    "dependencies": {
-      "@dailykit/xml-escpos-helper": "^1.0.2",
+      "@dailykit/xml-escpos-helper": "^1.0.3",
       "add": "^2.0.6",
       "apollo-server-express": "^2.25.2",
       "arabic-persian-reshaper": "^1.0.1",
