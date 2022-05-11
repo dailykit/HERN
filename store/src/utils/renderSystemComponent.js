@@ -1,6 +1,9 @@
 import axios from 'axios'
 import ReactHtmlParser, { convertNodeToElement } from 'react-html-parser'
+import _hasIn from 'lodash/hasIn'
 import { renderComponentByName } from '../utils'
+import ScrollAnimation from 'react-animate-on-scroll'
+
 const renderComponent = (fold, options) => {
    try {
       if (fold.component) {
@@ -17,7 +20,6 @@ const renderComponent = (fold, options) => {
          // }
          // parser = new DOMParser()
          // doc = parser.parseFromString(fold.content, 'text/html')
-
          return ReactHtmlParser(fold.content, {
             transform: function (node, index) {
                if (node.type === 'tag' && node.name === 'img') {
@@ -64,7 +66,34 @@ export const renderPageContent = (folds, options) => {
          data-fold-position={fold.position}
          data-fold-type={fold.moduleType}
       >
-         {renderComponent(fold, options)}
+         <RenderComponentWithTransition fold={fold} options={options} />
       </div>
    ))
+}
+
+const RenderComponentWithTransition = ({ fold, options }) => {
+   let animateIn = 'animate__fadeIn'
+   let animateOut = 'animate__fadeOut'
+   if (fold.config) {
+      if (_hasIn(fold.config, 'animation.animateIn')) {
+         animateIn =
+            fold.config.animation.animateIn.value ||
+            fold.config.animation.animateIn.default
+      }
+      if (_hasIn(fold.config, 'animation.animateOut')) {
+         animateOut =
+            fold.config.animation.animateOut.value ||
+            fold.config.animation.animateOut.default
+      }
+   }
+   return (
+      <ScrollAnimation
+         animateIn={animateIn}
+         animateOut={animateOut}
+         animateOnce
+         initiallyVisible
+      >
+         {renderComponent(fold, options)}
+      </ScrollAnimation>
+   )
 }
