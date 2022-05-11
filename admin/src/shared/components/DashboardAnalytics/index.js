@@ -75,10 +75,22 @@ const DashboardAnalyticsProvider = ({ children }) => {
 }
 const DashboardAnalytics = ({ children, brandContext }) => {
    const [from, setFrom] = useState(moment().startOf('y').format('YYYY-MM-DD'))
+   const { analyticsApiArgsDispatch } = React.useContext(
+      AnalyticsApiArgsContext
+   )
    const [to, setTo] = useState(
       localStorage.getItem('analyticsDateTo') || moment().format('YYYY-MM-DD')
    )
-
+   useEffect(() => {
+      if (brandContext.brandId != null) {
+         analyticsApiArgsDispatch({
+            type: 'BRANDSHOP',
+            payload: {
+               brandId: brandContext.brandId,
+            },
+         })
+      }
+   }, [brandContext.brandId])
    // console.log('brand context i am looking', brandContext)
    const [compare, setCompare] = useState({
       isCompare: false,
@@ -157,6 +169,7 @@ export const BrandAndShop = ({ brands, setBrandShop, brandShop, global }) => {
    const { analyticsApiArgsDispatch } = React.useContext(
       AnalyticsApiArgsContext
    )
+
    const [shopSource] = useState([
       {
          id: 1,
@@ -233,11 +246,6 @@ export const BrandAndShop = ({ brands, setBrandShop, brandShop, global }) => {
                />
             </Flex>
          ) : (
-            // setBrandShop(prevState => ({
-            //    ...prevState,
-            //    brandId: brandContext.brandId,
-            // }))
-            // <div>brands</div>
             <Flex container flexDirection="column" width="30rem">
                <Text as="text1">Brand:</Text>
                <Spacer size="3px" />
@@ -255,9 +263,7 @@ export const BrandAndShop = ({ brands, setBrandShop, brandShop, global }) => {
             </Flex>
          )}
          <Spacer size="20px" xAxis />
-         {/* {brandContext.locationLabel.includes('All') && ( */}
          <LocationSelector global={global} setBrandShop={setBrandShop} />
-         {/* )} */}
       </Flex>
    )
 }
@@ -276,7 +282,17 @@ const LocationSelector = ({ global, setBrandShop }) => {
       },
    ]
 
-   // {(brandContext.brandId == null)? (
+   useEffect(() => {
+      if (!brandContext.locationLabel.includes('All')) {
+         analyticsApiArgsDispatch({
+            type: 'BRANDSHOP',
+            payload: {
+               locationId: brandContext.locationId,
+            },
+         })
+      }
+   }, [brandContext.locationId])
+
    const { loading: locationsLoading, error: locationsError } = useSubscription(
       LOCATIONS,
       {

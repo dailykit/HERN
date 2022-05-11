@@ -32,6 +32,7 @@ const { RangePicker } = DatePicker
 //compareProvider -> props to enable compare option
 
 //BrandShopDate component provide shopType, brands, dateRangePicker, compare & group by options
+
 const BrandShopDate = ({
    children,
    from,
@@ -158,6 +159,17 @@ const BrandAndShop = ({
    const brandFromBrandContext = [
       { id: 1, brandId: brandContext.brandId, title: brandContext.brandName },
    ]
+   useEffect(() => {
+      if (brandContext.brandId != null) {
+         brandShopDateDispatch({
+            type: 'BRANDSHOP',
+            payload: {
+               brandId: brandContext.brandId,
+            },
+         })
+      }
+   }, [])
+
    const [shopSource] = useState([
       {
          id: 1,
@@ -241,11 +253,14 @@ const BrandAndShop = ({
                         options={brandFromBrandContext}
                         // defaultValue={1}
                         defaultOption={{
-                           id: brandFromBrandContext[0].brandId,
+                           id: 1,
+                           brandId: brandContext.brandId,
+                           title: brandContext.brandName,
                         }}
                         searchedOption={searchedOption}
                         selectedOption={selectedOptionBrand}
                         typeName="Brand"
+                        // readOnly={true}
                      />
                   </Flex>
                )}
@@ -267,7 +282,16 @@ const LocationSelector = () => {
          title: brandContext.locationLabel,
       },
    ]
-
+   useEffect(() => {
+      if (!brandContext.locationLabel.includes('All')) {
+         brandShopDateDispatch({
+            type: 'BRANDSHOP',
+            payload: {
+               locationId: brandContext.locationId,
+            },
+         })
+      }
+   }, [])
    const { loading: locationsLoading, error: locationsError } = useSubscription(
       LOCATIONS,
       {
@@ -326,7 +350,9 @@ const LocationSelector = () => {
                   options={locationFromBrandContext}
                   // defaultValue={1}
                   defaultOption={{
-                     id: locationFromBrandContext[0].locationId,
+                     id: 1,
+                     locationId: brandContext.locationId,
+                     title: brandContext.locationLabel,
                   }}
                   searchedOption={searchedOption}
                   selectedOption={selectedOptionBrand}
