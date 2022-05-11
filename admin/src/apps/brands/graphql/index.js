@@ -485,6 +485,7 @@ export const KIOSK = {
                KioskLabel: internalLocationKioskLabel
                printerId
                isActive
+               lastActiveTime
             }
          }
       }
@@ -503,6 +504,7 @@ export const KIOSK = {
                id
                label
             }
+            lastActiveTime
          }
       }
    `,

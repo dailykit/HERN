@@ -16,6 +16,7 @@ import {
    InlineLoader,
    Tooltip,
 } from '../../../../../../../shared/components'
+import moment from 'moment'
 
 export const BasicInfo = () => {
    const params = useParams()
@@ -35,6 +36,7 @@ export const BasicInfo = () => {
          errors: [],
       },
    })
+   const [isKioskStatusActive, setIsKioskStatusActive] = React.useState(false)
 
    const { error, loading } = useSubscription(KIOSK.KIOSK, {
       variables: {
@@ -45,13 +47,18 @@ export const BasicInfo = () => {
             data: { kiosk = {} },
          },
       }) => {
-         console.log('data is:', kiosk)
+         // console.log('data is:', kiosk)
+         setIsKioskStatusActive(prev => {
+            const timeDiff = moment
+               .duration(moment().diff(moment(kiosk[0].lastActiveTime)))
+               .asSeconds()
+            return timeDiff < 65
+         })
          setTitle({
             value: kiosk[0].kioskLabel || '',
             accessUrl: kiosk[0].accessUrl || '',
             printerId: kiosk[0].printerId || '',
-            password:
-               kiosk[0].password || kiosk[0].kioskLabel + '@' + params.id,
+            password: kiosk[0].accessPassword,
             location: kiosk[0].location?.label || '',
             locationId: kiosk[0].location?.id || '',
             meta: {
@@ -59,17 +66,9 @@ export const BasicInfo = () => {
                isTouched: false,
                errors: [],
             },
+            lastActiveTime: kiosk[0]?.lastActiveTime,
          })
          setTabTitle(kiosk[0].kioskLabel || '')
-         // if (kiosk[0]?.printerId) {
-         //    setPrinterList(prevPrinterList => [
-         //       ...prevPrinterList,
-         //       {
-         //          id: kiosk[0].printerId || '',
-         //          title: kiosk[0]?.printerId || '',
-         //       },
-         //    ])
-         // }
       },
    })
 
@@ -83,11 +82,6 @@ export const BasicInfo = () => {
                data: { printers = [] },
             },
          }) => {
-            // setPrinterList(printers.map(printers =>   ({id: printers.printNodeId, title: printers.name}) ))
-            //  const name1 = printers.map(printers => {
-            //     return { id: printers.printNodeId, title: printers.name, }
-            //  })
-            //  setPrinterList(name1)
             let printersData = printers.map(printer => {
                return {
                   id: printer?.printNodeId || '',
@@ -272,50 +266,37 @@ export const BasicInfo = () => {
       <div>
          <Flex padding="16px">
             <>
-               {/* <Form.Group>
-                  <Form.Label>Kiosk Name</Form.Label>
-
-                  <Form.Text
-                     id="kioskLabel"
-                     name="kioskLabel"
-                     value={title.value}
-                     placeholder="Enter kiosk name"
-                     onChange={e =>
-                        setTitle({ ...title, value: e.target.value })
-                     }
-                     onBlur={updateKioskLabel}
-                     hasError={!title.meta.isValid && title.isTouched}
-                  />
-                  {title.meta.isTouched &&
-                     !title.meta.isValid &&
-                     title.meta.errors.map((error, index) => (
-                        <Form.Error key={index}>{error}</Form.Error>
-                     ))}
-               </Form.Group>*/}
-
-               {/* <Spacer yAxis size="16px" />
-               <Form.Group>
-                  <Form.Label htmlFor="accessUrl" title="accessUrl">
-                     Access Url*
-                  </Form.Label>
-                  <Form.Text
-                     id="accessUrl"
-                     name="accessUrl"
-                     value={title.accessUrl}
-                     placeholder="Enter access url"
-                     onChange={e =>
-                        setTitle({ ...title, accessUrl: e.target.value })
-                     }
-                     onBlur={updateKioskAccessUrl}
-                     hasError={!title.meta.isValid && title.isTouched}
-                  />
-                  {title.meta.isTouched &&
-                     !title.meta.isValid &&
-                     title.meta.errors.map((error, index) => (
-                        <Form.Error key={index}>{error}</Form.Error>
-                     ))}
-               </Form.Group> */}
-
+               <Flex container alignItems="center">
+                  <Text as="h4">Kiosk Status:</Text>
+                  <Flex container alignItems="center">
+                     <Spacer size="16px" xAxis />
+                     <div
+                        style={{
+                           width: '10px',
+                           height: '10px',
+                           borderRadius: '5px',
+                           backgroundColor: `${
+                              isKioskStatusActive ? '#2EB086' : '#FF4949'
+                           }`,
+                        }}
+                     ></div>
+                     <Spacer size="10px" xAxis />
+                     <Text as="text2">
+                        {isKioskStatusActive ? 'Active' : 'In Active'}
+                     </Text>
+                  </Flex>
+                  <Spacer size="30px" xAxis />
+                  <Flex container alignItems="center">
+                     <Spacer size="16px" xAxis />
+                     <Text as="h4">Last Update:</Text>
+                     <Spacer size="16px" xAxis />
+                     <Text as="text2">
+                        {moment(title.lastActiveTime).format(
+                           'YYYY-MM-DD HH:mm:ss'
+                        )}
+                     </Text>
+                  </Flex>
+               </Flex>
                <Spacer yAxis size="16px" />
                <Form.Group>
                   <Form.Label htmlFor="password" title="password">
