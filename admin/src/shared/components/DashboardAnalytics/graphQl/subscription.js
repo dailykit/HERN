@@ -72,3 +72,11 @@ export const LOCATIONS = gql`
       }
    }
 `
+export const LOCATIONS_WITH_BRANDS = gql`
+   subscription MySubscription($brandId: Int_comparison_exp!) {
+      brands_location(where: { brand_locations: { brandId: $brandId } }) {
+         id
+         label
+      }
+   }
+`
