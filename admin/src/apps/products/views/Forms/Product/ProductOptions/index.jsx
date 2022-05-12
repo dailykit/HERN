@@ -57,6 +57,7 @@ import { useDnd } from '../../../../../../shared/components/DragNDrop/useDnd'
 import { from } from 'apollo-link'
 import { InventoryBundleContext } from '../../../../context/product/inventoryBundle'
 import _ from 'lodash'
+
 const ProductOptions = ({ productId, productName, options, productData }) => {
    const SERVING_TUNNEL_TYPES = ['mealKit', 'readyToEat', 'Meal Kit']
 
@@ -446,8 +447,24 @@ const Option = ({
 
    React.useEffect(() => {
       setHistory({ ...option })
-   }, [option.label, option.price, option.discount, option.quantity])
+   }, [option.label, option.price, option.discount, option.quantity, option.isPublished, option.isAvailable])
 
+   const [isPublished, setIsPublished] = React.useState({
+      value: option.isPublished || '',
+      meta: {
+         isTouched: false,
+         isValid: true,
+         errors: [],
+      },
+   })
+   const [isAvailable, setIsAvailable] = React.useState({
+      value: option.isAvailable || '',
+      meta: {
+         isTouched: false,
+         isValid: true,
+         errors: [],
+      },
+   })
    const [label, setLabel] = React.useState({
       value: option.label || '',
       meta: {
@@ -890,6 +907,8 @@ const Option = ({
                   />
                </Flex>
                <Spacer xAxis size="32px" />
+               
+               <Spacer xAxis size="32px" />
                <Flex width="265px" style={{ marginBottom: '22px' }}>
                   <Form.Label title="option-type">Type</Form.Label>
                   <Dropdown
@@ -920,7 +939,8 @@ const Option = ({
       //    .groupBy("label")
       //    .map((value, key) => ({ label: key, additionalModifiers: value }))
       //    .value()
-      console.log("option", option);
+      // console.log("option", option);
+
 
       return (
          <>
@@ -1030,7 +1050,51 @@ const Option = ({
                <ComboButton type="ghost" onClick={handleAdditionalAddModifier}>
                   <PlusIcon /> Add Additional Modifiers
                </ComboButton>
+            
+               <Flex container>
+               <Form.Toggle
+               name="Publish"
+               value={option.isPublished}
+               onChange={(e)=>{
+                  updateProductOption({
+                     variables: {
+                        id: option.id,
+                        _set: {
+                           isPublished: !option.isPublished,
+                        },
+                     },
+                  })
+               }}
+            >
+               <Flex container alignItems="center">
+                  Published 
+               </Flex>
+            </Form.Toggle>
             </Flex>
+            <Spacer xAxis size="32px" />
+               <Flex container>
+               <Form.Toggle
+               name="Availability"
+               value={option.isAvailable}
+               onChange={() => {
+                     // console.log("Avaialbility changed",option)
+                     updateProductOption({
+                        variables: {
+                           id: option.id,
+                           _set: {
+                              isAvailable: !option.isAvailable,
+                           },
+                        },
+                     })
+               }}
+            >
+               <Flex container alignItems="center">
+                  Availability
+               </Flex>
+            </Form.Toggle>
+            </Flex>
+            </Flex>
+         
          </>
       )
    }

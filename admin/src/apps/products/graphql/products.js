@@ -72,6 +72,7 @@ export const PRODUCT = {
             isPopupAllowed
             isValid
             isPublished
+            isAvailable
             posist_baseItemId
             defaultProductOptionId
             subCategory
@@ -85,6 +86,8 @@ export const PRODUCT = {
                type
                label
                price
+               isPublished
+               isAvailable
                discount
                quantity
                posist_baseItemId
