@@ -36,12 +36,12 @@ export default function Main() {
          />
          <Route exact path="/content/navbarMenu" component={NavigationMenu} />
 
-         <Route exact path="/content/settings">
+         {/* <Route exact path="/content/settings">
             <h1>Setting Page</h1>
          </Route>
          <Route exact path="/content/blocks">
             <h1>Blocks Page</h1>
-         </Route>
+         </Route> */}
          <BrandName>
             <ViewIcon size="24" /> &nbsp;
             <p>Showing information for {brandName} brand</p>
