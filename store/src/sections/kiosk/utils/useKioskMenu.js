@@ -83,10 +83,6 @@ export const useKioskMenu = collectionIds => {
             modifierCategoryOptionPriceArgs: argsForByLocation,
             modifierCategoryOptionDiscountArgs: argsForByLocation,
             modifierCategoryOptionCartItemArgs: argsForByLocation,
-            publishedByLocationProducts: argsForByLocation,
-            availabilityByLocationProducts: argsForByLocation,
-            availabilityByLocationProductOption: argsForByLocation,
-            publishedByLocationProductOption: argsForByLocation,
          },
          // fetchPolicy: 'network-only',
          onCompleted: data => {
@@ -110,7 +106,6 @@ export const useKioskMenu = collectionIds => {
                })
                setStatus('success')
                setHydratedMenu(updatedMenu)
-               console.log('data i am looking', data)
             }
          },
          onError: error => {
