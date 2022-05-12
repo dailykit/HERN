@@ -5,6 +5,7 @@
    min-height: calc(100vh - 128px);
    background-color: #fafbfe;
 }
+
 .hern-our-plans_plans__plans {
    margin: auto;
    max-width: 980px;
@@ -281,6 +282,7 @@
    .hern-our-plans__plan__body {
       padding: 2rem;
       flex-direction: column;
+      align-items: flex-start;
    }
 
    .hern-our-plans__plan__img__wrapper {

@@ -179,7 +179,6 @@ export const Plan = ({ cameFrom = '', plan, handlePlanClick, itemCount }) => {
                               {yieldLabel.plural}
                            </span>
                         </span>
-
                         <span
                            data-translation="true"
                            className="hern-our-plans__plan__servings__label--item"
@@ -280,7 +279,6 @@ export const Plan = ({ cameFrom = '', plan, handlePlanClick, itemCount }) => {
                               />
                            </div>
                         </ul>
-
                         <ul
                            className="hern-our-plans__plan__servings__count-list hern-our-plans__plan__servings__count-list-vertical"
                            style={{
@@ -349,7 +347,6 @@ export const Plan = ({ cameFrom = '', plan, handlePlanClick, itemCount }) => {
                                        item.id === defaultItemCount?.id,
                                  }
                               )
-
                               return (
                                  <li
                                     className={countListClasses}
@@ -388,7 +385,6 @@ export const Plan = ({ cameFrom = '', plan, handlePlanClick, itemCount }) => {
                                        item.id === defaultItemCount?.id,
                                  }
                               )
-
                               return (
                                  <li
                                     className={countListClasses}
@@ -419,7 +415,6 @@ export const Plan = ({ cameFrom = '', plan, handlePlanClick, itemCount }) => {
                               />
                            </div>
                         </ul>
-
                         <ul
                            className="hern-our-plans__plan__items-per-week__count-list hern-our-plans__plan__items-per-week__count-list-vertical"
                            style={{
@@ -434,7 +429,6 @@ export const Plan = ({ cameFrom = '', plan, handlePlanClick, itemCount }) => {
                                        item.id === defaultItemCount?.id,
                                  }
                               )
-
                               return (
                                  <li
                                     className={countListClasses}
