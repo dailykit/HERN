@@ -42,22 +42,21 @@ export const LanguageProvider = ({ children }) => {
       } else {
          changeDirection('ltr')
       }
-
    }, [locale])
 
    const kiosk = isKiosk()
 
    React.useEffect(() => {
       if (!kiosk) {
-         const languageInLocal = isClient ? window.localStorage.getItem('language') : ""
+         const languageInLocal = isClient
+            ? window.localStorage.getItem('language')
+            : ''
          if (languageInLocal == 'ar') {
             changeLocale('ar')
-         }
-         else if (languageInLocal == "en") {
+         } else if (languageInLocal == 'en') {
             changeLocale('en')
          }
       }
-
    }, [])
    return (
       <LanguageContext.Provider
@@ -77,11 +76,9 @@ export const useTranslation = () => {
    const t = text => {
       if (text) {
          return <FormattedMessage id={text} />
-      } else
-         return text
+      } else return text
    }
    const dynamicTrans = langTags => {
-
       langTags.forEach(tag => {
          let langPattern
          if (tag.hasAttribute('data-original-value')) {
@@ -92,7 +89,6 @@ export const useTranslation = () => {
          }
          let innerHTMLToBe = langPattern
          if (locale === 'en') {
-
             if (langPattern && langPattern.match(/\@@AR@@(.*?)\@@AR@@/g)) {
                const arabic = langPattern.match(/\@@AR@@(.*?)\@@AR@@/g)[0]
                innerHTMLToBe = langPattern.replaceAll(arabic, '')
@@ -108,6 +104,15 @@ export const useTranslation = () => {
          }
       })
    }
+
+   const currentLang = React.useMemo(() => locale, [locale])
+
+   React.useEffect(() => {
+      const languageTags = document.querySelectorAll(
+         '[data-translation="true"]'
+      )
+      dynamicTrans(languageTags)
+   }, [currentLang])
 
    return {
       locales,
