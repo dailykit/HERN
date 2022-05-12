@@ -26,12 +26,16 @@ export const Plan = ({ cameFrom = '', plan, handlePlanClick, itemCount }) => {
    const [recipeChevronDirection, setRecipeCheveronDirection] =
       React.useState(true)
 
+   const [isSelectorDropped, setIsSelectorDropped] = React.useState(false)
+
    // handle chevron direction
    const handlePlanChevron = () => {
       setPlanCheveronDirection(prevState => !prevState)
+      setIsSelectorDropped(prevState => !prevState)
    }
    const handleRecipeChevron = () => {
       setRecipeCheveronDirection(prevState => !prevState)
+      setIsSelectorDropped(prevState => !prevState)
    }
 
    React.useEffect(() => {
@@ -191,7 +195,7 @@ export const Plan = ({ cameFrom = '', plan, handlePlanClick, itemCount }) => {
                               : yieldLabel.plural}
                         </span>
                      </span>
-                  ) : plan.servings.length === 2 ? (
+                  ) : plan.servings.length <= 3 ? (
                      <div className="hern-our-plans__plan__servings__wrapper">
                         <span className="hern-our-plans__plan__servings__label--multi">
                            <span>{t('No. of')}</span>{' '}
@@ -276,6 +280,42 @@ export const Plan = ({ cameFrom = '', plan, handlePlanClick, itemCount }) => {
                               />
                            </div>
                         </ul>
+
+                        <ul
+                           className="hern-our-plans__plan__servings__count-list hern-our-plans__plan__servings__count-list-vertical"
+                           style={{
+                              display: isSelectorDropped ? '' : 'none',
+                           }}
+                        >
+                           {plan.servings.map(serving => {
+                              const countListClasses = classNames(
+                                 'hern-our-plans__plan__servings__count-list-item',
+                                 {
+                                    'hern-our-plans__plan__servings__count-list-item--active':
+                                       serving.id === defaultServing?.id,
+                                 }
+                              )
+                              return (
+                                 <li
+                                    className={countListClasses}
+                                    key={serving.id}
+                                    onClick={() => setDefaultServing(serving)}
+                                    style={{ margin: 0 }}
+                                 >
+                                    <div className="hern-our-plans__plan__servings-size">
+                                       <div data-translation="true">
+                                          {serving.size}
+                                       </div>
+                                       {serving?.metaDetails?.label && (
+                                          <div data-translation="true">
+                                             {serving?.metaDetails?.label}
+                                          </div>
+                                       )}
+                                    </div>
+                                 </li>
+                              )
+                           })}
+                        </ul>
                      </div>
                   )}
                </section>{' '}
@@ -292,7 +332,7 @@ export const Plan = ({ cameFrom = '', plan, handlePlanClick, itemCount }) => {
                         </span>
                         {t('per week')}
                      </span>
-                  ) : defaultServing.itemCounts.length === 2 ? (
+                  ) : defaultServing.itemCounts.length <= 3 ? (
                      <div className="hern-our-plans__plan__items-per-week__wrapper">
                         <span className="hern-our-plans__plan__items-per-week__label">
                            <span data-translation="true">
@@ -378,6 +418,43 @@ export const Plan = ({ cameFrom = '', plan, handlePlanClick, itemCount }) => {
                                  }
                               />
                            </div>
+                        </ul>
+
+                        <ul
+                           className="hern-our-plans__plan__items-per-week__count-list hern-our-plans__plan__items-per-week__count-list-vertical"
+                           style={{
+                              display: isSelectorDropped ? '' : 'none',
+                           }}
+                        >
+                           {defaultServing?.itemCounts.map(item => {
+                              const countListClasses = classNames(
+                                 'hern-our-plans__plan__items-per-week__count-list-item',
+                                 {
+                                    'hern-our-plans__plan__items-per-week__count-list-item--active':
+                                       item.id === defaultItemCount?.id,
+                                 }
+                              )
+
+                              return (
+                                 <li
+                                    className={countListClasses}
+                                    key={item.id}
+                                    onClick={() => setDefaultItemCount(item)}
+                                    style={{ margin: 0 }}
+                                 >
+                                    <div className="hern-our-plans__plan__items-per-week__count">
+                                       <div data-translation="true">
+                                          {item.count}
+                                       </div>
+                                       {item?.metaDetails?.label && (
+                                          <div data-translation="true">
+                                             {item?.metaDetails?.label}
+                                          </div>
+                                       )}
+                                    </div>
+                                 </li>
+                              )
+                           })}
                         </ul>
                      </div>
                   )}
