@@ -103,6 +103,7 @@
    flex-direction: column;
    justify-content: space-evenly;
    width: 100%;
+   position: relative;
 }
 
 .hern-our-plans__plan__servings__label,
@@ -140,6 +141,26 @@
 
 .hern-our-plans__plan__servings__count-list-limit li:nth-of-type(4n + 0),
 .hern-our-plans__plan__items-per-week__count-list-limit li:nth-of-type(4n + 0) {
+   display: none;
+}
+
+.hern-our-plans__plan__servings__count-list-vertical,
+.hern-our-plans__plan__items-per-week__count-list-vertical {
+   flex-direction: column;
+   position: absolute;
+   border: 1px solid #efefef;
+   border-radius: 2px;
+   width: auto;
+   background-color: #ffffff;
+   top: 60px;
+   left: 180px;
+   z-index: 1;
+   gap: 13px;
+}
+
+.hern-our-plans__plan__servings__count-list-vertical li:nth-child(-n + 3),
+.hern-our-plans__plan__items-per-week__count-list-vertical
+   li:nth-child(-n + 3) {
    display: none;
 }
 
