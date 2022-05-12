@@ -553,7 +553,9 @@
    text-transform: uppercase;
    color: #5a5a5a;
 }
-
+.hern-kiosk__kiosk-button--disabled {
+   opacity: 0.6;
+}
 // kiosk modifier
 .hern-kiosk__menu-product-modifier-popup {
    position: fixed;
@@ -666,6 +668,9 @@
    border-radius: 0.4em;
    font-size: 1.5em;
    padding: 0.5em 0.8em;
+}
+.hern-kiosk__modifier-product-option--disabled {
+   opacity: 0.6;
 }
 .hern-kiosk__modifier-popup-product-options .ant-radio-button-wrapper {
    font-size: 1.5rem;
