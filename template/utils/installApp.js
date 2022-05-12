@@ -1,5 +1,5 @@
-const fs = require('fs')
-const git = require('isomorphic-git')
+import fs from 'fs'
+import git from 'isomorphic-git'
 git.plugins.set('fs', fs)
 
 const dailygit = require('../functions')
@@ -11,7 +11,7 @@ const addDataFolders = folders => {
          .then(() => git.init({ dir: path }))
          .catch(error => ({
             success: false,
-            error: new Error(error),
+            error: new Error(error)
          }))
    )
 }
@@ -48,9 +48,4 @@ const addExtendedSchemaFiles = (apps, name, root) => {
       })
    })
 }
-
-module.exports = {
-   addDataFolders,
-   addSchemaFolders,
-   addExtendedSchemaFiles,
-}
+export { addDataFolders, addSchemaFolders, addExtendedSchemaFiles }
