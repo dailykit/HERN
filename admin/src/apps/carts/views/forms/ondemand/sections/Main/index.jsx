@@ -34,7 +34,7 @@ import {
 import { SearchIcon, CloseIcon } from '../../../../../../../shared/assets/icons'
 
 export const Main = () => {
-   const { brand } = useManual()
+   const { brand, locationId } = useManual()
    const [menu, setMenu] = React.useState([])
    const [categories, setCategories] = React.useState([])
    const [isMenuEmpty, setIsMenuEmpty] = React.useState(false)
@@ -76,10 +76,25 @@ export const Main = () => {
          setIsMenuLoading(false)
       },
    })
+   const argsForByLocation = React.useMemo(
+      () => ({
+         params: {
+            brandId: brand?.id,
+            locationId: locationId,
+         },
+      }),
+      [brand, locationId]
+   )
+
+   // get on-demand menu
    useQuery(QUERIES.MENU, {
-      skip: !brand?.id,
+      skip: !brand?.id || !locationId,
       variables: {
-         params: { brandId: brand?.id, date: moment().format('YYYY-MM-DD') },
+         params: {
+            brandId: brand?.id,
+            date: moment().format('YYYY-MM-DD'),
+            locationId,
+         },
       },
       onCompleted: async (data = {}) => {
          try {
@@ -93,7 +108,7 @@ export const Main = () => {
                setIsMenuLoading(false)
                return
             }
-            const [_data] = data.menu
+            const [_data] = data.onDemand_getMenuV2copy
             const { data: { menu = [] } = {} } = _data
             setCategories(menu)
             const ids = menu.map(({ products }) => products).flat()
@@ -106,10 +121,13 @@ export const Main = () => {
             }
             await fetchProducts({
                variables: {
-                  where: {
-                     isArchived: { _eq: false },
-                     id: { _in: ids },
-                  },
+                  ids: ids,
+                  priceArgs: argsForByLocation,
+                  discountArgs: argsForByLocation,
+                  defaultCartItemArgs: argsForByLocation,
+                  productOptionPriceArgs: argsForByLocation,
+                  productOptionDiscountArgs: argsForByLocation,
+                  productOptionCartItemArgs: argsForByLocation,
                },
             })
          } catch (error) {

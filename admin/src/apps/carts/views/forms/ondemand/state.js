@@ -33,6 +33,7 @@ const initial = {
    loyaltyPoints: {},
    productId: null,
    cart: {},
+   location: { id: null },
 }
 
 const reducers = (state, { type, payload }) => {
@@ -48,6 +49,7 @@ const reducers = (state, { type, payload }) => {
             billing: payload.billing,
             fulfillment: payload.fulfillment,
             loyaltyPoints: payload.loyaltyPoints,
+            location: payload.location,
          }
       case 'SET_CUSTOMER':
          return {
@@ -167,6 +169,9 @@ export const ManualProvider = ({ children }) => {
                      used: cart.loyaltyPointsUsed,
                      usable: cart.loyaltyPointsUsable,
                   },
+                  location: {
+                     id: cart.locationId,
+                  },
                },
             })
             dispatch({ type: 'SET_CART', payload: cart })
@@ -181,19 +186,6 @@ export const ManualProvider = ({ children }) => {
          setIsCartLoading(false)
       },
    })
-   useQuery(QUERIES.ORGANIZATION, {
-      onCompleted: ({ organizations = [] }) => {
-         if (organizations.length > 0) {
-            const [organization] = organizations
-            dispatch({ type: 'SET_ORGANIZATION', payload: organization })
-         }
-         setOrganizationLoading(false)
-      },
-      onError: () => {
-         setOrganizationLoading(false)
-         toast.error('Failed to fetch organization details!')
-      },
-   })
 
    if (!loading && error) {
       setIsCartLoading(false)
@@ -201,7 +193,7 @@ export const ManualProvider = ({ children }) => {
       toast.error('Something went wrong, please refresh the page.')
       return
    }
-   if (organizationLoading || isCartLoading) return <InlineLoader />
+   if (isCartLoading) return <InlineLoader />
    if (cartError.trim())
       return (
          <Flex container alignItems="center" justifyContent="center">
@@ -227,6 +219,7 @@ export const ManualProvider = ({ children }) => {
             organization: state.organization,
             paymentMethod: state.paymentMethod,
             loyaltyPoints: state.loyaltyPoints,
+            locationId: state.location?.id,
             tunnels: {
                address: addressTunnels,
                fulfillment: fulfillmentTunnels,

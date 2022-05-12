@@ -29,35 +29,47 @@ const ProductCards = ({ data, isLoading, input }) => {
    )
 
    const renderPrice = product => {
-      if (product.isPopupAllowed) {
-         if (product.discount) {
+      if (product.isPopupAllowed && product.productOptions.length > 0) {
+         const defaultProductOption =
+            product.productOptions.find(
+               productOption =>
+                  productOption.id === product.defaultProductOptionId
+            ) || product.productOptions[0]
+         const totalProductPrice = product.price + defaultProductOption.price
+
+         if (product.discount && defaultProductOption.discount) {
             return (
                <Flex container alignItems="center">
                   <Styles.Price strike>
-                     {currencyFmt(product.price)}
+                     {currencyFmt(totalProductPrice)}
                   </Styles.Price>{' '}
                   <Styles.Price>
                      {currencyFmt(
-                        calcDiscountedPrice(product.price, product.discount)
+                        calcDiscountedPrice(product.price, product.discount) +
+                           calcDiscountedPrice(
+                              defaultProductOption.price,
+                              defaultProductOption.discount
+                           )
                      )}
                   </Styles.Price>
                </Flex>
             )
          }
-         return <Styles.Price>{currencyFmt(product.price)}</Styles.Price>
+         return <Styles.Price>{currencyFmt(totalProductPrice)}</Styles.Price>
       } else {
          const totalPrice =
-            product.defaultCartItem.unitPrice +
-            product.defaultCartItem.childs?.data?.reduce(
-               (acc, op) => acc + op.unitPrice,
-               0
-            )
+            product.defaultCartItem?.unitPrice ||
+            0 +
+               product.defaultCartItem?.childs?.data?.reduce(
+                  (acc, op) => acc + op.unitPrice,
+                  0
+               )
 
          return <Styles.Price>{currencyFmt(totalPrice)}</Styles.Price>
       }
    }
    const openTunnels = product => {
-      if (product.isPopupAllowed) {
+      if (product.isPopupAllowed && product.productOptions.length > 0) {
          dispatch({
             type: 'SET_PRODUCT_ID',
             payload: product.id,
@@ -104,7 +116,8 @@ const ProductCards = ({ data, isLoading, input }) => {
             <Styles.Card key={product.id}>
                <aside>
                   {product.assets?.images &&
-                  product.assets?.images?.length > 0 ? (
+                  product.assets?.images?.length > 0 &&
+                  product.assets?.images[0] ? (
                      <img
                         alt={product.name}
                         src={buildImageUrl('56x56', product.assets?.images[0])}
@@ -125,7 +138,10 @@ const ProductCards = ({ data, isLoading, input }) => {
                         data-product-id={product.id}
                         onClick={() => openTunnels(product)}
                      >
-                        ADD {product.isPopupAllowed && '+'}
+                        ADD{' '}
+                        {product.isPopupAllowed &&
+                           product.productOptions?.length > 0 &&
+                           '+'}
                      </TextButton>
                   )}
                </Flex>

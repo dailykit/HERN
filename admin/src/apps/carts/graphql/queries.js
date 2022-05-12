@@ -12,6 +12,7 @@ export const QUERIES = {
                itemTotal
                totalPrice
                customerId
+               locationId
                customerInfo
                paymentStatus
                deliveryPrice
@@ -291,48 +292,94 @@ export const QUERIES = {
       },
    },
    MENU: gql`
-      query menu($params: jsonb!) {
-         menu: onDemand_getMenuV2(args: { params: $params }) {
+      query PRODUCTS_BY_CATEGORY($params: jsonb!) {
+         onDemand_getMenuV2copy(args: { params: $params }) {
             data
+            id
          }
       }
    `,
    PRODUCTS: {
       LIST: gql`
-         query products($where: products_product_bool_exp = {}) {
-            products(where: $where) {
+         query products(
+            $ids: [Int!]!
+            $priceArgs: priceByLocation_products_product_args!
+            $discountArgs: discountByLocation_products_product_args!
+            $defaultCartItemArgs: defaultCartItemByLocation_products_product_args!
+            $productOptionCartItemArgs: cartItemByLocation_products_productOption_args!
+            $productOptionDiscountArgs: discountByLocation_products_productOption_args!
+            $productOptionPriceArgs: priceByLocation_products_productOption_args!
+         ) {
+            products(where: { isArchived: { _eq: false }, id: { _in: $ids } }) {
                id
                name
                type
                assets
                tags
+               VegNonVegType
                additionalText
                description
-               price
-               discount
+               price: priceByLocation(args: $priceArgs)
+               discount: discountByLocation(args: $discountArgs)
                isPopupAllowed
                isPublished
                defaultProductOptionId
-               defaultCartItem
+               defaultCartItem: defaultCartItemByLocation(
+                  args: $defaultCartItemArgs
+               )
+               productionOptionSelectionStatement
+               subCategory
+               productOptions(
+                  where: { isArchived: { _eq: false } }
+                  order_by: { position: desc_nulls_last }
+               ) {
+                  id
+                  position
+                  type
+                  label
+                  price: priceByLocation(args: $productOptionPriceArgs)
+                  discount: discountByLocation(args: $productOptionDiscountArgs)
+                  cartItem: cartItemByLocation(args: $productOptionCartItemArgs)
+               }
             }
          }
       `,
       ONE: gql`
-         query product($id: Int!) {
+         subscription product(
+            $id: Int!
+            $priceArgs: priceByLocation_products_product_args!
+            $discountArgs: discountByLocation_products_product_args!
+            $defaultCartItemArgs: defaultCartItemByLocation_products_product_args!
+            $productOptionCartItemArgs: cartItemByLocation_products_productOption_args!
+            $productOptionDiscountArgs: discountByLocation_products_productOption_args!
+            $productOptionPriceArgs: priceByLocation_products_productOption_args!
+            $modifierCategoryOptionCartItemArgs: cartItemByLocation_onDemand_modifierCategoryOption_args!
+            $modifierCategoryOptionDiscountArgs: discountByLocation_onDemand_modifierCategoryOption_args!
+            $modifierCategoryOptionPriceArgs: priceByLocation_onDemand_modifierCategoryOption_args!
+         ) {
             product(id: $id) {
                id
                name
                type
-               price
-               discount
+               additionalText
+               description
+               price: priceByLocation(args: $priceArgs)
+               discount: discountByLocation(args: $discountArgs)
                defaultProductOptionId
-               defaultCartItem
-               productOptions {
+               defaultCartItem: defaultCartItemByLocation(
+                  args: $defaultCartItemArgs
+               )
+
+               productOptions(
+                  where: { isArchived: { _eq: false } }
+                  order_by: { position: desc_nulls_last }
+               ) {
                   id
                   label
-                  price
-                  discount
-                  cartItem
+                  type
+                  price: priceByLocation(args: $productOptionPriceArgs)
+                  discount: discountByLocation(args: $productOptionDiscountArgs)
+                  cartItem: cartItemByLocation(args: $productOptionCartItemArgs)
                   modifier {
                      id
                      categories(where: { isVisible: { _eq: true } }) {
@@ -344,11 +391,17 @@ export const QUERIES = {
                         options(where: { isVisible: { _eq: true } }) {
                            id
                            name
-                           price
-                           discount
+                           price: priceByLocation(
+                              args: $modifierCategoryOptionPriceArgs
+                           )
+                           discount: discountByLocation(
+                              args: $modifierCategoryOptionDiscountArgs
+                           )
                            image
                            isActive
-                           cartItem
+                           cartItem: cartItemByLocation(
+                              args: $modifierCategoryOptionCartItemArgs
+                           )
                         }
                      }
                   }
