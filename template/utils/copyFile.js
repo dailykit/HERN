@@ -1,10 +1,10 @@
-const fs = require('fs')
-const path = require('path')
-const axios = require('axios')
-const functions = require('../functions')
-const resolvers = require('../schema/resolvers')
-const checkExist = require('./checkExist')
-const get_env = require('../../get_env')
+import fs from 'fs'
+import path from 'path'
+import axios from 'axios'
+import functions from '../functions'
+import checkExist from './checkExist'
+import resolvers from '../schema/resolvers'
+import get_env from '../../get_env'
 
 const copyFile = async (filePath, dest) => {
    console.log(filePath, dest)
@@ -15,10 +15,10 @@ const copyFile = async (filePath, dest) => {
 
       const { id } = await resolvers.mutations.Mutation.createFile(
          '_',
-         (args = {
+         {
             path: dest,
             content: data
-         }),
+         },
          { root: FS_PATH }
       )
 
@@ -71,4 +71,4 @@ const copyFile = async (filePath, dest) => {
    }
 }
 
-module.exports = copyFile
+export default copyFile
