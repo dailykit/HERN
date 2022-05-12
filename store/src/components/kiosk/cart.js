@@ -36,7 +36,7 @@ import {
 import { PRODUCTS, GET_MODIFIER_BY_ID } from '../../graphql'
 import { useConfig, usePayment } from '../../lib'
 import { KioskModifier } from './component'
-import { useLazyQuery, useQuery } from '@apollo/react-hooks'
+import { useLazyQuery, useQuery, useSubscription } from '@apollo/react-hooks'
 import KioskButton from './component/button'
 import { ProgressBar } from './component/progressBar'
 import { Coupon } from '../coupon'
@@ -319,8 +319,13 @@ export const KioskCart = props => {
 const CartCard = props => {
    // productData --> product data from cart
    const { config, productData, removeCartItems, quantity = 0 } = props
-   const { brand, kioskDetails, isConfigLoading, selectedOrderTab } =
-      useConfig()
+   const {
+      brand,
+      kioskDetails,
+      isConfigLoading,
+      selectedOrderTab,
+      brandLocation,
+   } = useConfig()
    const { addToCart } = React.useContext(CartContext)
    const { t, dynamicTrans, locale } = useTranslation()
    const { formatMessage } = useIntl()
@@ -358,9 +363,10 @@ const CartCard = props => {
          params: {
             brandId: brand?.id,
             locationId: kioskDetails?.locationId,
+            brand_locationId: brandLocation?.id,
          },
       }),
-      [brand]
+      [brand, kioskDetails?.locationId, brandLocation?.id]
    )
 
    //fetch product detail which to be increase or edit
@@ -371,8 +377,12 @@ const CartCard = props => {
          priceArgs: argsForByLocation,
          discountArgs: argsForByLocation,
          defaultCartItemArgs: argsForByLocation,
+         productAvailabilityArgs: argsForByLocation,
+         productPublishArgs: argsForByLocation,
          productOptionPriceArgs: argsForByLocation,
          productOptionDiscountArgs: argsForByLocation,
+         productOptionAvailabilityArgs: argsForByLocation,
+         productOptionPublishArgs: argsForByLocation,
          productOptionCartItemArgs: argsForByLocation,
          modifierCategoryOptionPriceArgs: argsForByLocation,
          modifierCategoryOptionDiscountArgs: argsForByLocation,

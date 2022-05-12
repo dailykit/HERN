@@ -1317,6 +1317,10 @@ export const PRODUCTS = gql`
       $modifierCategoryOptionCartItemArgs: cartItemByLocation_onDemand_modifierCategoryOption_args!
       $modifierCategoryOptionDiscountArgs: discountByLocation_onDemand_modifierCategoryOption_args!
       $modifierCategoryOptionPriceArgs: priceByLocation_onDemand_modifierCategoryOption_args!
+      $productAvailabilityArgs: availabilityByLocation_products_product_args!
+      $productPublishArgs: publishedByLocation_products_product_args!
+      $productOptionAvailabilityArgs: availabilityByLocation_products_productOption_args!
+      $productOptionPublishArgs: publishedByLocation_products_productOption_args!
    ) {
       products(where: { isArchived: { _eq: false }, id: { _in: $ids } }) {
          id
@@ -1330,7 +1334,8 @@ export const PRODUCTS = gql`
          price: priceByLocation(args: $priceArgs)
          discount: discountByLocation(args: $discountArgs)
          isPopupAllowed
-         isPublished
+         isPublished: publishedByLocation(args: $productPublishArgs)
+         isAvailable: availabilityByLocation(args: $productAvailabilityArgs)
          defaultProductOptionId
          defaultCartItem: defaultCartItemByLocation(args: $defaultCartItemArgs)
          productionOptionSelectionStatement
@@ -1346,6 +1351,10 @@ export const PRODUCTS = gql`
             price: priceByLocation(args: $productOptionPriceArgs)
             discount: discountByLocation(args: $productOptionDiscountArgs)
             cartItem: cartItemByLocation(args: $productOptionCartItemArgs)
+            isPublished: publishedByLocation(args: $productOptionPublishArgs)
+            isAvailable: availabilityByLocation(
+               args: $productOptionAvailabilityArgs
+            )
             additionalModifiers(where: { isActive: { _eq: true } }) {
                type
                label
