@@ -1,4 +1,4 @@
-import { useQuery } from '@apollo/react-hooks'
+import { useQuery, useSubscription } from '@apollo/react-hooks'
 import React, { useState, useEffect } from 'react'
 import { Loader } from '../..'
 import { PRODUCTS } from '../../../graphql'
@@ -17,7 +17,8 @@ import {
 import { HernLazyImage } from '../../../utils/hernImage'
 
 export const ProductGalleryKiosk = ({ config }) => {
-   const { brand, isConfigLoading, kioskDetails, configOf } = useConfig()
+   const { brand, isConfigLoading, kioskDetails, configOf, brandLocation } =
+      useConfig()
    const { locale, dynamicTrans, t } = useTranslation()
 
    const argsForByLocation = React.useMemo(
@@ -25,9 +26,10 @@ export const ProductGalleryKiosk = ({ config }) => {
          params: {
             brandId: brand?.id,
             locationId: kioskDetails?.locationId,
+            brand_locationId: brandLocation?.id,
          },
       }),
-      [brand, kioskDetails]
+      [brand, kioskDetails?.locationId, brandLocation?.id]
    )
 
    const theme = configOf('theme-color', 'Visual')
@@ -63,8 +65,12 @@ export const ProductGalleryKiosk = ({ config }) => {
             priceArgs: argsForByLocation,
             discountArgs: argsForByLocation,
             defaultCartItemArgs: argsForByLocation,
+            productAvailabilityArgs: argsForByLocation,
+            productPublishArgs: argsForByLocation,
             productOptionPriceArgs: argsForByLocation,
             productOptionDiscountArgs: argsForByLocation,
+            productOptionAvailabilityArgs: argsForByLocation,
+            productOptionPublishArgs: argsForByLocation,
             productOptionCartItemArgs: argsForByLocation,
             modifierCategoryOptionPriceArgs: argsForByLocation,
             modifierCategoryOptionDiscountArgs: argsForByLocation,

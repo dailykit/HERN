@@ -67,21 +67,26 @@ export const PromotionCarousal = props => {
          return []
       }
    }, [componentConfig])
-   const { data: productsData } = useQuery(PRODUCTS, {
+   const { data: productsData } = useSubscription(PRODUCTS, {
       skip: productIds?.length === 0,
       variables: {
          ids: productIds,
          priceArgs: argsForByLocation,
          discountArgs: argsForByLocation,
          defaultCartItemArgs: argsForByLocation,
+         productAvailabilityArgs: argsForByLocation,
+         productPublishArgs: argsForByLocation,
          productOptionPriceArgs: argsForByLocation,
          productOptionDiscountArgs: argsForByLocation,
+         productOptionAvailabilityArgs: argsForByLocation,
+         productOptionPublishArgs: argsForByLocation,
          productOptionCartItemArgs: argsForByLocation,
          modifierCategoryOptionPriceArgs: argsForByLocation,
          modifierCategoryOptionDiscountArgs: argsForByLocation,
          modifierCategoryOptionCartItemArgs: argsForByLocation,
       },
    })
+   console.log('productsData: ', productsData, productIds)
    const theme = configOf('theme-color', 'Visual')
    const onImageClick = imageDetail => {
       if (imageDetail.belongsTo === 'PRODUCT') {
