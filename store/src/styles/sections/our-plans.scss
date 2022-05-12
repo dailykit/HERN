@@ -3,6 +3,7 @@
 /*Plans component*/
 .hern-our-plans__main {
    min-height: calc(100vh - 128px);
+   background-color: #fafbfe;
 }
 .hern-our-plans_plans__plans {
    margin: auto;
@@ -19,11 +20,10 @@
 /*Plans component */
 .hern-our-plans_plans__list {
    margin: auto;
-   max-width: 980px;
    width: calc(100vw - 40px);
-   display: grid;
-   grid-gap: 24px;
-   grid-template-columns: 1fr 1fr;
+   display: flex;
+   max-width: 1153px;
+   flex-direction: column;
    padding: 24px 0;
 }
 .hern-our-plans_plans__list--count1 {
@@ -33,39 +33,45 @@
 
 /*Plan component*/
 .hern-our-plans__plan {
-   border-radius: 0.5rem;
-   border-width: 1px;
+   border-radius: 2px;
    height: fit-content;
+   margin-bottom: 21px;
+   box-shadow: 0px 0px 17px rgba(0, 0, 0, 0.06);
 }
 .hern-our-plans__plan--count1 {
    max-width: 490px;
    width: 100%;
 }
 
-.hern-our-plans__plan__img-wrapper {
-   object-fit: cover;
-   height: 200px;
-   width: 100%;
-   padding-bottom: 16px;
+.hern-our-plans__plan__img__wrapper {
+   width: 80px;
+   height: 80px;
+   border-radius: 50%;
+   position: absolute;
+   left: -40px;
 }
 .hern-our-plans__plan__img {
-   height: 100%;
    width: 100%;
-   object-fit: cover;
-   border-top-left-radius: 0.5rem;
-   border-top-right-radius: 0.5rem;
+   height: 100%;
+   border-radius: 50%;
 }
 .hern-our-plans__plan__body {
-   padding-bottom: 1rem;
-   padding-right: 1rem;
-   padding-left: 1rem;
+   padding: 1rem;
+   display: flex;
+   align-items: center;
+   justify-content: space-between;
+   position: relative;
+   background-color: #ffffff;
 }
 
 .hern-our-plans__plan__title {
    margin-bottom: 0.5rem;
+   margin-left: 80px;
    font-weight: 500;
+   font-size: 16px;
    letter-spacing: 0.025em;
    color: rgba(5, 150, 105, 1);
+   width: 200px;
    /* ${theme?.accent && `color: ${theme?.accent}`} */
 }
 .hern-our-plans__plan__icon {
@@ -84,7 +90,7 @@
 
 .hern-our-plans__plan__servings,
 .hern-our-plans__plan__items-per-week {
-   width: 100%;
+   width: 250px;
    margin-bottom: 1rem;
    display: flex;
    align-items: center;
@@ -101,58 +107,74 @@
 
 .hern-our-plans__plan__servings__label,
 .hern-our-plans__plan__items-per-week__label {
-   text-transform: uppercase;
+   text-transform: capitalize;
    letter-spacing: 0.05em;
-   color: rgba(75, 85, 99, 1);
-   font-weight: 500;
-   font-size: 0.875rem;
+   color: #8d8d8d;
+   font-weight: 300;
+   font-size: 16px;
    line-height: 1.25rem;
 }
 .hern-our-plans__plan__servings__label--multi,
 .hern-our-plans__plan__items-per-week__label--multi {
-   margin-bottom: 0.5rem;
+   color: #8d8d8d;
+   font-weight: 300;
+   font-size: 16px;
+   display: block;
+}
+
+.hern-our-plans__plan__servings__label--item {
+   font-weight: 500;
+   font-size: 15px;
+   color: #222222;
+   margin-right: 5px;
 }
 
 .hern-our-plans__plan__servings__count-list,
 .hern-our-plans__plan__items-per-week__count-list {
    border-radius: 4px;
    padding: 0.25rem;
-   border-width: 1px;
    width: 100%;
    display: flex;
    align-items: center;
-   justify-content: space-between;
 }
+
+.hern-our-plans__plan__servings__count-list-limit li:nth-of-type(4n + 0),
+.hern-our-plans__plan__items-per-week__count-list-limit li:nth-of-type(4n + 0) {
+   display: none;
+}
+
 .hern-our-plans__plan__servings__count-list-item,
 .hern-our-plans__plan__items-per-week__count-list-item {
    border-radius: 2px;
-   /* color: #fff; */
+   color: #aeaeae;
    width: 100%;
-   min-height: 3rem;
-   min-width: 7rem;
+   height: 30px;
+   width: 48px;
    cursor: pointer;
    font-size: 0.875rem;
+   font-weight: 600;
    line-height: 1.25rem;
-   margin-right: 0.25rem;
+   margin-right: 13px;
    display: flex;
    justify-content: center;
    align-items: center;
+   background-color: #efefef;
 }
 .hern-our-plans__plan__servings__count-list-item--active,
 .hern-our-plans__plan__items-per-week__count-list-item--active {
    color: #fff;
-   background-color: rgba(5, 150, 105, 1);
+   background: #004e64;
 }
 .hern-our-plans__plan__servings__count-list-item:hover,
 .hern-our-plans__plan__items-per-week__count-list-item:hover {
    color: #fff;
-   background-color: rgba(110, 231, 183, 1);
-   border-radius: 0.25rem;
+   background-color: #4c4c4c;
+   border-radius: 2px;
 }
 
 .hern-our-plans__price {
    display: flex;
-   align-items: ceniter;
+   align-items: center;
    flex-direction: column;
    width: 100%;
    padding-top: 0.75rem;
@@ -221,26 +243,46 @@
 }
 
 .hern-our-plans__select-plan__btn {
-   width: 100%;
-   height: 3rem;
-   background-color: rgba(96, 165, 250, 1);
-   text-transform: uppercase;
+   width: 144px;
+   text-transform: capitalize;
    letter-spacing: 0.05em;
    font-weight: 500;
+   font-size: 15.8px;
+   padding: 5px 25px;
    color: rgba(255, 255, 255, 1);
-   border-radius: 9999px;
+   border-radius: 3px;
+   box-shadow: 0px 0px 21px rgba(0, 0, 0, 0.1);
    cursor: pointer;
    /* ${bg && `background-color: ${bg};`} */
 }
 
 @media screen and (max-width: 786px) {
-   .hern-our-plans_plans__list {
-      grid-template-columns: 1fr;
-   }
    .hern-our-plans__plan__body {
-      padding-bottom: 2rem;
-      padding-right: 2rem;
-      padding-left: 2rem;
+      padding: 2rem;
+      flex-direction: column;
+   }
+
+   .hern-our-plans__plan__img__wrapper {
+      width: 100%;
+      height: auto;
+      border-radius: 2px;
+      position: relative;
+      left: 0;
+
+      .hern-our-plans__plan__img {
+         border-radius: 2px;
+      }
+   }
+
+   .hern-our-plans__plan__title {
+      font-size: 20px;
+      margin: 0.5rem 0rem;
+      text-align: center;
+      width: 100%;
+   }
+
+   .hern-our-plans__select-plan__btn {
+      width: 100%;
    }
 }
 
