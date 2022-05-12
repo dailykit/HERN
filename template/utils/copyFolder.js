@@ -1,7 +1,8 @@
-const fs = require('fs')
-const copyFile = require('./copyFile')
-const functions = require('../functions')
-const get_env = require('../../get_env')
+import fs from 'fs'
+import copyFile from './copyFile'
+import functions from '../functions'
+import get_env from '../../get_env'
+
 const copyFolder = async (src, dest) => {
    try {
       const FS_PATH = await get_env('FS_PATH')
@@ -22,4 +23,4 @@ const copyFolder = async (src, dest) => {
    }
 }
 
-module.exports = copyFolder
+export default copyFolder

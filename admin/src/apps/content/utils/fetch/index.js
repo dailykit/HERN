@@ -1,9 +1,5 @@
 export const getFullPath = path => {
-   const host =
-      window._env_.NODE_ENV === 'development'
-         ? 'https://test.dailykit.org'
-         : window.location.origin
-
+   const host = window.location.origin
    const url = `${host}/template/files${path}`
    return url
 }

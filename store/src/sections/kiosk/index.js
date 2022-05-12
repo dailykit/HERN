@@ -13,10 +13,11 @@ import { useConfig } from '../../lib'
 import { combineCartItems, isClient, useQueryParamState } from '../../utils'
 import { MenuSection } from '../../components/kiosk/menu'
 import { KioskCart } from '../../components/kiosk/cart'
-import { DELETE_CART } from '../../graphql'
+import { DELETE_CART, UPDATE_LOCATION_KIOSK } from '../../graphql'
 import { usePayment } from '../../lib'
 import { InfoBar } from '../../components/kiosk/component'
 import { useKioskMenu } from './utils/useKioskMenu'
+import moment from 'moment'
 // idle screen component
 // fulfillment component
 // header
@@ -38,6 +39,7 @@ const Kiosk = props => {
       isIdleScreen,
       setIsIdleScreen,
       clearCurrentPage,
+      kioskId,
    } = useConfig()
    const { kioskConfig } = props
    // console.log('kioskConfig', kioskConfig)
@@ -149,6 +151,27 @@ const Kiosk = props => {
          modal.destroy()
       }, kioskConfig.idlePageSettings.idleScreenWarningTime.value * 1000)
    }
+   const [updateLocationKiosk] = useMutation(UPDATE_LOCATION_KIOSK)
+   const updateKioskLastActiveTime = () => {
+      updateLocationKiosk({
+         variables: {
+            where: {
+               id: {
+                  _eq: kioskId,
+               },
+            },
+            _set: {
+               lastActiveTime: new Date().toISOString(),
+            },
+         },
+      })
+   }
+   React.useEffect(() => {
+      updateKioskLastActiveTime()
+      setInterval(() => {
+         updateKioskLastActiveTime()
+      }, 60000)
+   }, [])
    if (isIdleScreen) {
       return <IdleScreen config={kioskConfig} resetStates={resetStates} />
    }

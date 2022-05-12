@@ -199,12 +199,12 @@
 // menu page
 
 // menu section
-.hern-kiosk__promotion-carousel-skeleton{
+.hern-kiosk__promotion-carousel-skeleton {
    animation: loading 1s linear infinite alternate;
    height: 100%;
    width: 50%;
    margin: 0 4px;
-   
+
    @keyframes loading {
       0% {
          background-color: hsl(200, 20%, 80%);
@@ -837,7 +837,7 @@
 .hern-kiosk__cart-card-header {
    display: flex;
    justify-content: space-between;
-   .hern-image__image-container{
+   .hern-image__image-container {
       height: 10em;
    }
 }
@@ -1137,7 +1137,7 @@
    margin-bottom: 1em;
    justify-content: space-around;
    background: #ffffff;
-   .hern-image__image-container{
+   .hern-image__image-container {
       display: flex;
       align-items: center;
       justify-content: center;
@@ -1244,4 +1244,62 @@
    line-height: 33px;
    color: #612889;
    margin: 0 15px;
+}
+
+// login container
+.hern-kiosk__kiosk-login-logo {
+   height: 10em;
+   width: 10em;
+}
+.hern-kiosk__login-validation {
+   display: flex;
+   justify-content: center;
+   align-items: center;
+   height: 100vh;
+   > span {
+      font-size: 15px;
+      color: #cfcfcf;
+   }
+}
+.hern-kiosk__login-container {
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   height: 100vh;
+   flex-direction: column;
+   background-color: #eff4f7;
+}
+.hern-kiosk__kiosk-info-container {
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   flex-direction: column;
+   margin: 40px;
+   span {
+      font-size: 24px;
+      font-weight: 700;
+      margin-top: 7px;
+   }
+}
+.hern-kiosk__login-content {
+   display: flex;
+   justify-content: center;
+   align-items: center;
+   flex-direction: column;
+   .ant-input {
+      height: 30px;
+   }
+   .ant-input::placeholder {
+      font-size: 20px;
+      line-height: 3;
+   }
+}
+.hern-kiosk__login-button {
+   margin: 18px;
+   padding: 0 20px;
+}
+.hern-kiosk_error-message {
+   color: #f00;
+   font-size: 16px;
+   margin-top: 18px;
 }

@@ -2541,3 +2541,10 @@ export const GET_DISALLOWED_PAGE_ROUTES = gql`
       }
    }
 `
+export const LOCATION_KIOSK_VALIDATION = gql`
+   query LOCATION_KIOSK_VALIDATION($where: brands_locationKiosk_bool_exp!) {
+      brands_locationKiosk(where: $where) {
+         id
+      }
+   }
+`

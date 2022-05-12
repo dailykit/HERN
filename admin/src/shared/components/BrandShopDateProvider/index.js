@@ -10,7 +10,7 @@ import {
 } from '@dailykit/ui'
 
 import moment from 'moment'
-import React, { useEffect } from 'react'
+import React, { useEffect, useContext } from 'react'
 import { useState } from 'react'
 import { toast } from 'react-toastify'
 import { logger } from '../../utils'
@@ -19,6 +19,7 @@ import { InlineLoader } from '../InlineLoader'
 import { BrandShopDateContext, BrandShopDateProvider } from './context'
 import { BRANDS, LOCATIONS } from './graphql/subscription'
 import { DatePicker, Space } from 'antd'
+import { BrandContext } from '../../../App'
 
 const { RangePicker } = DatePicker
 
@@ -31,6 +32,7 @@ const { RangePicker } = DatePicker
 //compareProvider -> props to enable compare option
 
 //BrandShopDate component provide shopType, brands, dateRangePicker, compare & group by options
+
 const BrandShopDate = ({
    children,
    from,
@@ -152,6 +154,22 @@ const BrandAndShop = ({
    locationProvider,
 }) => {
    const { brandShopDateDispatch } = React.useContext(BrandShopDateContext)
+   const [brandContext, setBrandContext] = useContext(BrandContext)
+
+   const brandFromBrandContext = [
+      { id: 1, brandId: brandContext.brandId, title: brandContext.brandName },
+   ]
+   useEffect(() => {
+      if (brandContext.brandId != null) {
+         brandShopDateDispatch({
+            type: 'BRANDSHOP',
+            payload: {
+               brandId: brandContext.brandId,
+            },
+         })
+      }
+   }, [])
+
    const [shopSource] = useState([
       {
          id: 1,
@@ -212,18 +230,41 @@ const BrandAndShop = ({
             </>
          )}
          {brandProvider && (
-            <Flex container flexDirection="column" width="30rem">
-               <Text as="text1">Brand:</Text>
-               <Spacer size="3px" />
-               <Dropdown
-                  type="single"
-                  options={brands}
-                  defaultValue={1}
-                  searchedOption={searchedOption}
-                  selectedOption={selectedOptionBrand}
-                  typeName="Brand"
-               />
-            </Flex>
+            <>
+               {brandContext.brandId == null ? (
+                  <Flex container flexDirection="column" width="30rem">
+                     <Text as="text1">Brand:</Text>
+                     <Spacer size="3px" />
+                     <Dropdown
+                        type="single"
+                        options={brands}
+                        defaultValue={1}
+                        searchedOption={searchedOption}
+                        selectedOption={selectedOptionBrand}
+                        typeName="Brand"
+                     />
+                  </Flex>
+               ) : (
+                  <Flex container flexDirection="column" width="30rem">
+                     <Text as="text1">Brand:</Text>
+                     <Spacer size="3px" />
+                     <Dropdown
+                        type="single"
+                        options={brandFromBrandContext}
+                        // defaultValue={1}
+                        defaultOption={{
+                           id: 1,
+                           brandId: brandContext.brandId,
+                           title: brandContext.brandName,
+                        }}
+                        searchedOption={searchedOption}
+                        selectedOption={selectedOptionBrand}
+                        typeName="Brand"
+                        // readOnly={true}
+                     />
+                  </Flex>
+               )}
+            </>
          )}
          {locationProvider && <LocationSelector />}
       </Flex>
@@ -233,7 +274,24 @@ const BrandAndShop = ({
 const LocationSelector = () => {
    const [locationsList, setLocationsList] = useState([])
    const { brandShopDateDispatch } = React.useContext(BrandShopDateContext)
-
+   const [brandContext, setBrandContext] = useContext(BrandContext)
+   const locationFromBrandContext = [
+      {
+         id: 1,
+         locationId: brandContext.locationId,
+         title: brandContext.locationLabel,
+      },
+   ]
+   useEffect(() => {
+      if (!brandContext.locationLabel.includes('All')) {
+         brandShopDateDispatch({
+            type: 'BRANDSHOP',
+            payload: {
+               locationId: brandContext.locationId,
+            },
+         })
+      }
+   }, [])
    const { loading: locationsLoading, error: locationsError } = useSubscription(
       LOCATIONS,
       {
@@ -267,20 +325,42 @@ const LocationSelector = () => {
       toast.error('Could not get the locations')
       return <p>Could not get the locations</p>
    }
-   console.log('locationsList', locationsList)
+   // console.log('locationsList', locationsList)
    return (
-      <Flex container flexDirection="column" width="30rem">
-         <Text as="text1">Location:</Text>
-         <Spacer size="3px" />
-         <Dropdown
-            type="single"
-            options={locationsList}
-            defaultValue={1}
-            searchedOption={searchedOption}
-            selectedOption={selectedOptionBrand}
-            typeName="Location"
-         />
-      </Flex>
+      <>
+         {brandContext.locationLabel.includes('All') ? (
+            <Flex container flexDirection="column" width="30rem">
+               <Text as="text1">Location:</Text>
+               <Spacer size="3px" />
+               <Dropdown
+                  type="single"
+                  options={locationsList}
+                  defaultValue={1}
+                  searchedOption={searchedOption}
+                  selectedOption={selectedOptionBrand}
+                  typeName="Location"
+               />
+            </Flex>
+         ) : (
+            <Flex container flexDirection="column" width="30rem">
+               <Text as="text1">Location:</Text>
+               <Spacer size="3px" />
+               <Dropdown
+                  type="single"
+                  options={locationFromBrandContext}
+                  // defaultValue={1}
+                  defaultOption={{
+                     id: 1,
+                     locationId: brandContext.locationId,
+                     title: brandContext.locationLabel,
+                  }}
+                  searchedOption={searchedOption}
+                  selectedOption={selectedOptionBrand}
+                  typeName="Location"
+               />
+            </Flex>
+         )}
+      </>
    )
 }
 
