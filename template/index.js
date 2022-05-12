@@ -4,8 +4,6 @@ import path from 'path'
 import fs from 'fs'
 import { GraphQLClient, gql } from 'graphql-request'
 
-import checkExist from './utils/checkExist'
-import copyFolder from './utils/copyFolder'
 import get_env from '../get_env'
 
 // const checkExist = require('./utils/checkExist')
