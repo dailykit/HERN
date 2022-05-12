@@ -238,6 +238,20 @@ const Product = () => {
          },
       })
    }
+   const toggleAvailable = () => {
+      const val = !state.isAvailable
+      if (val && !state.isValid.status) {
+         return toast.error('Product should be valid!')
+      }
+      return updateProduct({
+         variables: {
+            id: state.id,
+            _set: {
+               isAvailable: val,
+            },
+         },
+      })
+   }
    const togglePopup = () => {
       const val = !state.isPopupAllowed
       return updateProduct({
@@ -310,6 +324,7 @@ const Product = () => {
          discount: state.discount,
          isPopupAllowed: state.isPopupAllowed,
          isPublished: state.isPublished,
+         isAvailable: state.isAvailable,
          posist_baseItemId: state.posist_baseItemId,
          productOptions: {
             data: generatedProductOptions,
@@ -421,7 +436,8 @@ const Product = () => {
                               <Form.Error key={index}>{error}</Form.Error>
                            ))}
                      </Form.Group>
-
+                     
+                     <Flex container>
                      <Form.Toggle
                         name="published"
                         value={state.isPublished}
@@ -436,6 +452,21 @@ const Product = () => {
                            <Tooltip identifier="simple_recipe_product_publish" />
                         </Flex>
                      </Form.Toggle>
+                     <Form.Toggle
+                        name="available"
+                        value={state.isAvailable}
+                        onChange={toggleAvailable}
+                     >
+                        <Flex
+                           container
+                           alignItems="center"
+                           style={{ paddingRight: '0px' }}
+                        >
+                           Availability
+                           <Tooltip identifier="simple_recipe_product_publish" />
+                        </Flex>
+                     </Form.Toggle>
+                     </Flex>
                   </Flex>
                </ResponsiveFlex>
 
