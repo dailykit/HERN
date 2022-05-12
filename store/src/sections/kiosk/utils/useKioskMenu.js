@@ -1,10 +1,10 @@
-import { useQuery } from '@apollo/react-hooks'
+import { useQuery, useSubscription } from '@apollo/react-hooks'
 import React, { useState } from 'react'
 import { PRODUCTS, PRODUCTS_BY_CATEGORY } from '../../../graphql'
 import { useConfig } from '../../../lib'
 
 export const useKioskMenu = collectionIds => {
-   const { brand, isConfigLoading, kioskDetails } = useConfig()
+   const { brand, isConfigLoading, kioskDetails, brandLocation } = useConfig()
    const [menuData, setMenuData] = useState({
       categories: [],
       allProductIds: [],
@@ -18,9 +18,10 @@ export const useKioskMenu = collectionIds => {
          params: {
             brandId: brand?.id,
             locationId: kioskDetails?.locationId,
+            brand_locationId: brandLocation?.id,
          },
       }),
-      [brand, kioskDetails?.locationId]
+      [brand, kioskDetails?.locationId, brandLocation?.id]
    )
 
    const date = React.useMemo(() => new Date(Date.now()).toISOString(), [])
@@ -35,6 +36,7 @@ export const useKioskMenu = collectionIds => {
                collectionIdArray: collectionIds,
             }),
             locationId: kioskDetails?.locationId,
+            brand_locationId: brandLocation?.id,
          },
       },
       onCompleted: data => {
@@ -71,8 +73,12 @@ export const useKioskMenu = collectionIds => {
             priceArgs: argsForByLocation,
             discountArgs: argsForByLocation,
             defaultCartItemArgs: argsForByLocation,
+            productAvailabilityArgs: argsForByLocation,
+            productPublishArgs: argsForByLocation,
             productOptionPriceArgs: argsForByLocation,
             productOptionDiscountArgs: argsForByLocation,
+            productOptionAvailabilityArgs: argsForByLocation,
+            productOptionPublishArgs: argsForByLocation,
             productOptionCartItemArgs: argsForByLocation,
             modifierCategoryOptionPriceArgs: argsForByLocation,
             modifierCategoryOptionDiscountArgs: argsForByLocation,
