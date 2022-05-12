@@ -1236,6 +1236,7 @@ export const BRAND_PAGE = gql`
             id
             internalModuleIdentifier
             config
+            animationConfig
             moduleType
             isHidden
             fileId

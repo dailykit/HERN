@@ -74,24 +74,58 @@ export const renderPageContent = (folds, options) => {
 const RenderComponentWithTransition = ({ fold, options }) => {
    let animateIn = 'animate__fadeIn'
    let animateOut = 'animate__fadeOut'
-   if (fold.config) {
-      if (_hasIn(fold.config, 'animation.animateIn')) {
+   let duration = 1
+   let delay = 0
+   let initiallyVisible = true
+   let animateOnce = true
+   let animatePreScroll = true
+
+   if (fold.animationConfig) {
+      if (_hasIn(fold.animationConfig, 'animation.animateIn')) {
          animateIn =
-            fold.config.animation.animateIn.value ||
-            fold.config.animation.animateIn.default
+            fold.animationConfig.animation.animateIn.value ||
+            fold.animationConfig.animation.animateIn.default
       }
-      if (_hasIn(fold.config, 'animation.animateOut')) {
+      if (_hasIn(fold.animationConfig, 'animation.animateOut')) {
          animateOut =
-            fold.config.animation.animateOut.value ||
-            fold.config.animation.animateOut.default
+            fold.animationConfig.animation.animateOut.value ||
+            fold.animationConfig.animation.animateOut.default
+      }
+      if (_hasIn(fold.animationConfig, 'animation.duration')) {
+         duration =
+            fold.animationConfig.animation.duration.value ||
+            fold.animationConfig.animation.duration.default
+      }
+      if (_hasIn(fold.animationConfig, 'animation.delay')) {
+         delay =
+            fold.animationConfig.animation.delay.value ||
+            fold.animationConfig.animation.delay.default
+      }
+      if (_hasIn(fold.animationConfig, 'animation.initiallyVisible')) {
+         initiallyVisible =
+            fold.animationConfig.animation.initiallyVisible.value ||
+            fold.animationConfig.animation.initiallyVisible.default
+      }
+      if (_hasIn(fold.animationConfig, 'animation.animateOnce')) {
+         animateOnce =
+            fold.animationConfig.animation.animateOnce.value ||
+            fold.animationConfig.animation.animateOnce.default
+      }
+      if (_hasIn(fold.animationConfig, 'animation.animatePreScroll')) {
+         animatePreScroll =
+            fold.animationConfig.animation.animatePreScroll.value ||
+            fold.animationConfig.animation.animatePreScroll.default
       }
    }
    return (
       <ScrollAnimation
          animateIn={animateIn}
          animateOut={animateOut}
-         animateOnce
-         initiallyVisible
+         animateOnce={animateOnce}
+         initiallyVisible={initiallyVisible}
+         animatePreScroll={animatePreScroll}
+         duration={duration}
+         delay={delay}
       >
          {renderComponent(fold, options)}
       </ScrollAnimation>

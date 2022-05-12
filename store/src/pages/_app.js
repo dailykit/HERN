@@ -1,6 +1,6 @@
-import App from 'next/app'
 import { UserProvider } from '../context'
 import { Provider as AuthProvider } from 'next-auth/client'
+import { PageTransition } from 'next-page-transitions'
 import {
    ApolloProvider,
    ConfigProvider,
@@ -27,7 +27,14 @@ const options = {
 // initializing react pixel
 isClient && ReactPixel.init(pixelId, {}, options)
 
-const AppWrapper = ({ Component, pageProps }) => {
+const transitionClasses = {
+   enter: 'animate__animated',
+   enterActive: 'animate__bounceInLeft',
+   exit: 'animate__animated',
+   exitActive: 'animate__bounceOutRight',
+}
+
+const AppWrapper = ({ Component, pageProps, router }) => {
    return (
       <AuthProvider session={pageProps.session}>
          <ApolloProvider>
@@ -44,7 +51,15 @@ const AppWrapper = ({ Component, pageProps }) => {
                            <UserProvider>
                               <CartProvider>
                                  <PaymentProvider>
-                                    <Component {...pageProps} />
+                                    <PageTransition
+                                       timeout={300}
+                                       classNames={transitionClasses}
+                                    >
+                                       <Component
+                                          {...pageProps}
+                                          key={router.route}
+                                       />
+                                    </PageTransition>
                                  </PaymentProvider>
                               </CartProvider>
                            </UserProvider>
