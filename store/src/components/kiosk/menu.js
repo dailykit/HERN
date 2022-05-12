@@ -4,7 +4,6 @@ import { Col, Layout, Menu, Row, Spin, Switch } from 'antd'
 import { useQueryParamState, formatCurrency } from '../../utils'
 import { CartContext, useTranslation } from '../../context'
 import { KioskProduct } from './component'
-import { PRODUCTS_BY_CATEGORY, PRODUCTS } from '../../graphql'
 import { useConfig } from '../../lib'
 import { useQuery } from '@apollo/react-hooks'
 import { CartIcon } from '../../assets/icons'
@@ -74,8 +73,19 @@ const KioskMenu = props => {
    const { isStoreAvailable } = useConfig()
 
    const menuRef = React.useRef()
+   const kioskFinalMenu = React.useMemo(() => {
+      if (showVegMenuOnly) {
+         return vegMenu
+      } else {
+         return kioskMenus
+      }
+   }, [kioskMenus, showVegMenuOnly])
+
    const [selectedCategory, setSelectedCategory] = useState(
-      (categoryId && categoryId.toString()) || '0'
+      (categoryId && categoryId.toString()) ||
+         kioskFinalMenu
+            .findIndex(x => x.isCategoryPublished && x.isCategoryAvailable)
+            .toString()
    )
    const [showVegMenuOnly, setShowVegMenuOnly] = useState(false)
    const [vegMenu, setVegMenu] = useState(null)
@@ -108,13 +118,6 @@ const KioskMenu = props => {
          .filter(eachCategory => eachCategory.products.length > 0)
       setVegMenu(filteredVegMenu)
    }, [kioskMenus])
-   const kioskFinalMenu = React.useMemo(() => {
-      if (showVegMenuOnly) {
-         return vegMenu
-      } else {
-         return kioskMenus
-      }
-   }, [kioskMenus, showVegMenuOnly])
 
    return (
       <Layout
@@ -134,6 +137,9 @@ const KioskMenu = props => {
                defaultSelectedKeys={[selectedCategory]}
             >
                {kioskFinalMenu.map((eachCategory, index) => {
+                  if (!eachCategory.isCategoryPublished) {
+                     return null
+                  }
                   return (
                      <Menu.Item key={index} style={{ height: '13em' }}>
                         <div
@@ -298,7 +304,7 @@ const KioskMenu = props => {
                                           ? t('Item')
                                           : t('Items')}{' '}
                                        {formatCurrency(
-                                          cart?.cartOwnerBilling?.balanceToPay
+                                          cart?.cartOwnerBilling?.totalToPay
                                        )}
                                     </span>
                                     <div
@@ -427,6 +433,9 @@ const MenuProducts = ({ setCurrentPage, eachCategory, config }) => {
          )}
          <Row gutter={[16, 16]} style={{ marginBottom: '2em' }}>
             {currentGroupProducts.map((eachProduct, index2) => {
+               if (!eachProduct.isPublished) {
+                  return null
+               }
                return (
                   <Col span={8} className="gutter-row" key={eachProduct?.id}>
                      <KioskProduct

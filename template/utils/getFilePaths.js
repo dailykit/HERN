@@ -1,5 +1,5 @@
-const path = require('path')
-const fs = require('fs')
+import fs from 'fs'
+import path from 'path'
 
 export const getFilePaths = folder => {
    const filepaths = []
@@ -17,5 +17,3 @@ export const getFilePaths = folder => {
    })
    return filepaths
 }
-
-module.exports = { getFilePaths }

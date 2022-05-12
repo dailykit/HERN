@@ -35,14 +35,14 @@ const CreateKiosk = ({ closeTunnel }) => {
    const [createKiosk, { loading }] = useMutation(KIOSK.CREATE_KIOSKS, {
       onCompleted: input => {
          {
-            console.log('input coming for new kiosk===>', input)
+            // console.log('input coming for new kiosk===>', input)
             if (click === 'SaveAndOpen') {
                input.insert_brands_locationKiosk.returning.map(separateTab => {
                   addTab(separateTab.name, `/brands/kiosks/${separateTab.id}`)
                })
             }
          }
-         console.log('The input contains:', input)
+         // console.log('The input contains:', input)
          setKiosk([
             {
                internalLocationKioskLabel: {
@@ -66,6 +66,10 @@ const CreateKiosk = ({ closeTunnel }) => {
       try {
          const objects = kiosk.filter(Boolean).map(kiosk => ({
             internalLocationKioskLabel: `${kiosk.internalLocationKioskLabel.value}`,
+            accessPassword: `${kiosk.internalLocationKioskLabel.value.replace(
+               /\s/g,
+               ''
+            )}@123`,
          }))
          if (!objects.length) {
             throw Error('Nothing to add!')
@@ -88,16 +92,16 @@ const CreateKiosk = ({ closeTunnel }) => {
             updatedKiosk[i].internalLocationKioskLabel
          const internalLocationKioskLabelMeta =
             updatedKiosk[i].internalLocationKioskLabel.meta
-         console.log('label is===>>>', `internalLocationKioskLabel-${i}`)
+         // console.log('label is===>>>', `internalLocationKioskLabel-${i}`)
          internalLocationKioskLabelIs.value = value
          internalLocationKioskLabelMeta.isTouched = true
          internalLocationKioskLabelMeta.errors = validator.text(value).errors
          internalLocationKioskLabelMeta.isValid = validator.text(value).isValid
          setKiosk([...updatedKiosk])
-         console.log('Kiosk Name::::', kiosk)
+         // console.log('Kiosk Name::::', kiosk)
       }
    }
-   console.log('kiosk :>> ', kiosk)
+   // console.log('kiosk :>> ', kiosk)
 
    const save = type => {
       setClick(type)

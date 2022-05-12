@@ -665,7 +665,7 @@ const RegisterPanel = ({ setCurrent }) => {
             setStoredReferralCode(form.code)
          }
 
-         const url = `${get_env('BASE_BRAND_URL')}/api/hash`
+         const url = `/api/hash`
          const { data } = await axios.post(url, { password: form.password })
 
          if (data?.success && data?.hash) {

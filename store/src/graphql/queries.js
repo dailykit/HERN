@@ -363,6 +363,7 @@ export const CART_BY_WEEK = gql`
             walletAmountUsed
             loyaltyPointsUsed
             billingDetails
+            cartOwnerBilling
             fulfillmentInfo
             transactionId
             paymentMethodId
@@ -407,6 +408,7 @@ export const CART_BY_WEEK_SUBSCRIPTION = gql`
             walletAmountUsed
             loyaltyPointsUsed
             billingDetails
+            cartOwnerBilling
             fulfillmentInfo
             transactionId
             paymentMethodId
@@ -493,12 +495,14 @@ export const CART_SUBSCRIPTION = gql`
          paymentStatus
          deliveryPrice
          billingDetails
+         cartOwnerBilling
          fulfillmentInfo
          transactionId
          transactionRemark
          stripeInvoiceId
          stripeInvoiceDetails
          customerKeycloakId
+         customerInfo
          retryPaymentMethod
          activeCartPaymentId
          activeCartPayment {
@@ -559,6 +563,7 @@ export const CART_STATUS = gql`
          paymentStatus
          fulfillmentInfo
          billingDetails
+         cartOwnerBilling
          customerKeycloakId
          amount
          products: cartItems(where: { level: { _eq: 1 } }) {
@@ -1312,6 +1317,10 @@ export const PRODUCTS = gql`
       $modifierCategoryOptionCartItemArgs: cartItemByLocation_onDemand_modifierCategoryOption_args!
       $modifierCategoryOptionDiscountArgs: discountByLocation_onDemand_modifierCategoryOption_args!
       $modifierCategoryOptionPriceArgs: priceByLocation_onDemand_modifierCategoryOption_args!
+      $productAvailabilityArgs: availabilityByLocation_products_product_args!
+      $productPublishArgs: publishedByLocation_products_product_args!
+      $productOptionAvailabilityArgs: availabilityByLocation_products_productOption_args!
+      $productOptionPublishArgs: publishedByLocation_products_productOption_args!
    ) {
       products(where: { isArchived: { _eq: false }, id: { _in: $ids } }) {
          id
@@ -1325,9 +1334,12 @@ export const PRODUCTS = gql`
          price: priceByLocation(args: $priceArgs)
          discount: discountByLocation(args: $discountArgs)
          isPopupAllowed
-         isPublished
+         isPublished: publishedByLocation(args: $productPublishArgs)
+         isAvailable: availabilityByLocation(args: $productAvailabilityArgs)
          defaultProductOptionId
          defaultCartItem: defaultCartItemByLocation(args: $defaultCartItemArgs)
+         publishedByLocation(args: $publishedByLocationProducts)
+         availabilityByLocation(args: $availabilityByLocationProducts)
          productionOptionSelectionStatement
          subCategory
          productOptions(
@@ -1338,9 +1350,17 @@ export const PRODUCTS = gql`
             position
             type
             label
+            isPublished
+            isAvailable
+            availabilityByLocation(args: $availabilityByLocationProductOption)
+            publishedByLocation(args: $publishedByLocationProductOption)
             price: priceByLocation(args: $productOptionPriceArgs)
             discount: discountByLocation(args: $productOptionDiscountArgs)
             cartItem: cartItemByLocation(args: $productOptionCartItemArgs)
+            isPublished: publishedByLocation(args: $productOptionPublishArgs)
+            isAvailable: availabilityByLocation(
+               args: $productOptionAvailabilityArgs
+            )
             additionalModifiers(where: { isActive: { _eq: true } }) {
                type
                label
@@ -1788,6 +1808,7 @@ export const GET_CART = gql`
          id
          status
          tax
+         source
          orderId
          discount
          itemTotal
@@ -2243,6 +2264,7 @@ export const GET_CART_PAYMENT_INFO = gql`
          cartId
          cart {
             customerInfo
+            source
          }
          isTest
          paymentStatus
@@ -2497,19 +2519,47 @@ export const COUPON_BY_ID = gql`
    }
 `
 export const GET_PAGE_ROUTES = gql`
-query MyQuery($domain: String!) {
-  brands(where: {_or: [{domain: {_eq: $domain}}, {isDefault: {_eq: true}}]}) {
-    brandPages(where: {isArchived: {_eq: false}, published: {_eq: true}, isAllowedToCrawl: {_eq: true}}) {
-      route
-    }
-  }
-}`
+   query MyQuery($domain: String!) {
+      brands(
+         where: {
+            _or: [{ domain: { _eq: $domain } }, { isDefault: { _eq: true } }]
+         }
+      ) {
+         brandPages(
+            where: {
+               isArchived: { _eq: false }
+               published: { _eq: true }
+               isAllowedToCrawl: { _eq: true }
+            }
+         ) {
+            route
+         }
+      }
+   }
+`
 export const GET_DISALLOWED_PAGE_ROUTES = gql`
-query MyQuery($domain: String!) {
-  brands(where: {_or: [{domain: {_eq: $domain}}, {isDefault: {_eq: true}}]}) {
-    brandPages(where: {isArchived: {_eq: false}, published: {_eq: true}, isAllowedToCrawl: {_eq: false}}) {
-      route
-    }
-  }
-}
+   query MyQuery($domain: String!) {
+      brands(
+         where: {
+            _or: [{ domain: { _eq: $domain } }, { isDefault: { _eq: true } }]
+         }
+      ) {
+         brandPages(
+            where: {
+               isArchived: { _eq: false }
+               published: { _eq: true }
+               isAllowedToCrawl: { _eq: false }
+            }
+         ) {
+            route
+         }
+      }
+   }
+`
+export const LOCATION_KIOSK_VALIDATION = gql`
+   query LOCATION_KIOSK_VALIDATION($where: brands_locationKiosk_bool_exp!) {
+      brands_locationKiosk(where: $where) {
+         id
+      }
+   }
 `

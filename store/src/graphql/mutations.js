@@ -528,3 +528,16 @@ export const SEND_MAIL = gql`
       }
    }
 `
+
+export const UPDATE_LOCATION_KIOSK = gql`
+   mutation UPDATE_LOCATION_KIOSK(
+      $where: brands_locationKiosk_bool_exp!
+      $_set: brands_locationKiosk_set_input!
+   ) {
+      update_brands_locationKiosk(where: $where, _set: $_set) {
+         returning {
+            id
+         }
+      }
+   }
+`
