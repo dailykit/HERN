@@ -1,0 +1,58 @@
+.hern-modifier-option-card {
+   display: flex;
+   align-items: center;
+   margin: 0;
+   padding: 5px 8px;
+   font-size: 14px;
+   line-height: 20px;
+   color: #404040;
+   font-style: normal;
+   font-weight: normal;
+   justify-content: space-between;
+   cursor: pointer;
+   position: relative;
+   margin: 4px 0;
+   // min-height: 30px;
+}
+.hern-modifier-option-card-left {
+   display: flex;
+   align-items: center;
+}
+.hern-modifier-option-card-right {
+   display: flex;
+   align-items: center;
+}
+.hern-modifier-option-card-checkIcon {
+   position: relative;
+   // top: 3px;
+   margin-right: 10px;
+}
+.hern-modifier-option-price {
+   margin: 0 6px;
+}
+.hern-modifier-option-showImageIcon {
+   margin: 0 4px;
+}
+.hern-modifier-option-card-customize {
+   text-decoration: underline;
+}
+.hern-modifier-option-card-customize-on-left-check-zero-price {
+   position: absolute;
+   font-size: 12px;
+   line-height: 12px;
+   right: 0;
+}
+.hern-modifier-option-card-customize-on-right-check {
+   position: absolute;
+   bottom: -6px;
+   font-size: 12px;
+   line-height: 12px;
+   right: 0px;
+}
+.hern-modifier-option-card-customize-on-left-check-with-price {
+   position: absolute;
+   font-size: 12px;
+   line-height: 12px;
+   right: 0;
+   bottom: -5px;
+}

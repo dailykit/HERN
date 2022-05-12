@@ -49,7 +49,9 @@ const AcceptedAndRejectedAnalytics = () => {
                   `a.created_at >= '${analyticsApiArgState.from}'`
                } ${
                   analyticsApiArgState.from !== moment('2017 - 01 - 01') &&
-                  `AND a.created_at < '${analyticsApiArgState.to}'`
+                  `AND a.created_at < '${moment(analyticsApiArgState.to)
+                     .add(1, 'd')
+                     .format('YYYY-MM-DD')}'`
                } ${
                   analyticsApiArgState.brandShop.brandId
                      ? `AND a."brandId" = ${analyticsApiArgState.brandShop.brandId}`
@@ -57,6 +59,10 @@ const AcceptedAndRejectedAnalytics = () => {
                } ${
                   analyticsApiArgState.brandShop.shopTitle
                      ? `AND b.source = \'${analyticsApiArgState.brandShop.shopTitle}\'`
+                     : ''
+               } ${
+                  analyticsApiArgState.brandShop.locationId
+                     ? `AND b."locationId" = ${analyticsApiArgState.brandShop.locationId}`
                      : ''
                }`,
                groupingSets: `(${analyticsApiArgState.groupBy.toString()})`,
@@ -84,7 +90,11 @@ const AcceptedAndRejectedAnalytics = () => {
                   } ${
                      analyticsApiArgState.compare.from !==
                         moment('2017 - 01 - 01') &&
-                     `AND a.created_at < '${analyticsApiArgState.compare.to}'`
+                     `AND a.created_at < '${moment(
+                        analyticsApiArgState.compare.to
+                     )
+                        .add(1, 'd')
+                        .format('YYYY-MM-DD')}'`
                   } ${
                      analyticsApiArgState.brandShop.brandId
                         ? `AND a."brandId" = ${analyticsApiArgState.brandShop.brandId}`
@@ -92,6 +102,10 @@ const AcceptedAndRejectedAnalytics = () => {
                   } ${
                      analyticsApiArgState.brandShop.shopTitle
                         ? `AND b.source = \'${analyticsApiArgState.brandShop.shopTitle}\'`
+                        : ''
+                  } ${
+                     analyticsApiArgState.brandShop.locationId
+                        ? `AND b."locationId" = ${analyticsApiArgState.brandShop.locationId}`
                         : ''
                   }`,
                   groupingSets: `(${analyticsApiArgState.groupBy.toString()})`,
@@ -113,29 +127,29 @@ const AcceptedAndRejectedAnalytics = () => {
          },
       }
    )
-   console.log('compare query', {
-      where: `${
-         analyticsApiArgState.compare.from !== moment('2017 - 01 - 01') &&
-         `a.created_at >= '${analyticsApiArgState.compare.from}' `
-      } ${
-         analyticsApiArgState.compare.from !== moment('2017 - 01 - 01') &&
-         `AND a.created_at < '${analyticsApiArgState.compare.to}' `
-      } ${
-         analyticsApiArgState.brandShop.brandId
-            ? `AND a."brandId" = ${analyticsApiArgState.brandShop.brandId}`
-            : ''
-      } ${
-         analyticsApiArgState.brandShop.shopTitle
-            ? `AND b.source = \'${analyticsApiArgState.brandShop.shopTitle}\'`
-            : ''
-      }`,
-      groupingSets: `(${analyticsApiArgState.groupBy.toString()})`,
-      columns: analyticsApiArgState.groupBy
-         .map(group => {
-            return `EXTRACT(${group.toUpperCase()} FROM a.created_at) AS \"${group.toLowerCase()}\"`
-         })
-         .join(','),
-   })
+   // console.log('compare query', {
+   //    where: `${
+   //       analyticsApiArgState.compare.from !== moment('2017 - 01 - 01') &&
+   //       `a.created_at >= '${analyticsApiArgState.compare.from}' `
+   //    } ${
+   //       analyticsApiArgState.compare.from !== moment('2017 - 01 - 01') &&
+   //       `AND a.created_at < '${analyticsApiArgState.compare.to}' `
+   //    } ${
+   //       analyticsApiArgState.brandShop.brandId
+   //          ? `AND a."brandId" = ${analyticsApiArgState.brandShop.brandId}`
+   //          : ''
+   //    } ${
+   //       analyticsApiArgState.brandShop.shopTitle
+   //          ? `AND b.source = \'${analyticsApiArgState.brandShop.shopTitle}\'`
+   //          : ''
+   //    }`,
+   //    groupingSets: `(${analyticsApiArgState.groupBy.toString()})`,
+   //    columns: analyticsApiArgState.groupBy
+   //       .map(group => {
+   //          return `EXTRACT(${group.toUpperCase()} FROM a.created_at) AS \"${group.toLowerCase()}\"`
+   //       })
+   //       .join(','),
+   // })
    const dataCompareMachine = data => {
       const result = {}
       const present = insights_analytics[0]

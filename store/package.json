@@ -2,6 +2,7 @@
    "name": "sub-shop",
    "version": "0.1.0",
    "private": true,
+   "sideEffects": false,
    "scripts": {
       "dev": "next dev",
       "build": "next build",
@@ -15,6 +16,8 @@
       "@emotion/core": "^10.0.28",
       "@emotion/react": "^11.1.4",
       "@emotion/styled": "^10.0.27",
+      "@next/bundle-analyzer": "^12.1.0",
+      "@react-google-maps/api": "^2.8.1",
       "@stripe/react-stripe-js": "^1.1.2",
       "@stripe/stripe-js": "^1.11.0",
       "@svgr/webpack": "^5.5.0",
@@ -39,16 +42,20 @@
       "ejs": "^3.1.6",
       "express": "^4.17.1",
       "geolib": "^3.3.3",
+      "glob": "^7.2.0",
       "google-map-react": "^2.1.10",
       "graphql": "^15.4.0",
       "graphql-request": "^3.4.0",
       "graphql-tag": "^2.11.0",
       "isomorphic-fetch": "^2.2.1",
       "jwt-decode": "^3.1.2",
+      "lazysizes": "^5.3.2",
       "lodash": "^4.17.20",
       "moment": "^2.29.1",
-      "next": "12",
+      "next": "^12.1.0",
       "next-auth": "^3.27.1",
+      "next-sitemap": "^1.6.133",
+      "nextjs-cors": "^2.1.1",
       "postcss": "^8.3.0",
       "postcss-import": "^12.0.1",
       "postcss-preset-env": "^6.7.0",
@@ -62,7 +69,9 @@
       "react-error-boundary": "^3.1.4",
       "react-facebook-pixel": "^1.0.4",
       "react-google-places-autocomplete": "^2.1.0",
+      "react-hook-form": "^7.28.1",
       "react-html-parser": "^2.0.2",
+      "react-icons": "^4.3.1",
       "react-idle-timer": "^4.6.4",
       "react-image-fallback": "^8.0.0",
       "react-intl": "^5.21.2",
@@ -75,6 +84,7 @@
       "rrule": "^2.6.6",
       "sass": "^1.38.2",
       "serve-static": "^1.14.1",
+      "sitemap": "^7.1.1",
       "styled-components": "^5.3.0",
       "subscriptions-transport-ws": "^0.9.18",
       "uuid": "^8.3.2",
@@ -91,5 +101,8 @@
       "twin": {
          "preset": "styled-components"
       }
+   },
+   "resolutions": {
+      "typeorm": "0.2.41"
    }
 }

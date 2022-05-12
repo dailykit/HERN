@@ -10,6 +10,8 @@ import {
    Spacer,
    useTunnel,
    TextButton,
+   Tunnel,
+   Tunnels,
 } from '@dailykit/ui'
 import { useSubscription, useMutation, useQuery } from '@apollo/react-hooks'
 import { useParams } from 'react-router-dom'
@@ -25,18 +27,18 @@ import {
    Banner,
 } from '../../../../../shared/components'
 import ContentSelection from './ContentSelection'
-import BrandContext from '../../../context/Brand'
 import { PagePreviewTunnel } from './Tunnel'
 // for SEO Tools
-import SocialShare from './SEO/SocialShare'
-import SEObasics from './SEO/SEObasics'
-import TwitterCard from './SEO/TwitterCard'
+import { SEObasics, SocialShare, TwitterCard, RichResults } from './SEO'
+import { BrandContext } from '../../../../../App'
+
+import BrandListing from '../../../utils/BrandListing'
 
 const PageForm = () => {
    const [tunnels, openTunnel, closeTunnel] = useTunnel()
    const { addTab, tab, setTabTitle, closeAllTabs } = useTabs()
-   const [context, setContext] = useContext(BrandContext)
-   const prevBrandId = useRef(context.brandId)
+   const [brandContext] = React.useContext(BrandContext)
+   const prevBrandId = useRef(brandContext.brandId)
    const { pageId, pageName } = useParams()
    const [pageTitle, setPageTitle] = useState({
       value: '',
@@ -56,6 +58,16 @@ const PageForm = () => {
    })
    const [state, setState] = useState({})
    const [toggle, setToggle] = useState(false)
+
+
+   const [brandListTunnel, openBrandListTunnel, closeBrandListTunnel] =
+      useTunnel(1)
+
+   React.useEffect(() => {
+      if (brandContext.brandId == null) {
+         openBrandListTunnel(1)
+      }
+   }, [brandContext.brandId])
 
    // form validation
    const validatePageName = (value, name) => {
@@ -148,9 +160,9 @@ const PageForm = () => {
       }
    }, [pageTitle])
 
-   if (context.brandId !== prevBrandId.current) {
-      closeAllTabs()
-   }
+   // if (brandContext.brandId !== prevBrandId.current) {
+   //    closeAllTabs()
+   // }
 
    // page name validation & update name handler
    const onBlur = e => {
@@ -210,7 +222,8 @@ const PageForm = () => {
       toast.error('Something went wrong')
       logger(pageLoadingError)
    }
-   return (
+
+   return (<>
       <StyledWrapper>
          <Banner id="content-app-pages-page-details-top" />
          <InputWrapper>
@@ -282,8 +295,9 @@ const PageForm = () => {
                                  <Form.Text
                                     id="domain"
                                     name="domain"
-                                    value={context.brandDomain}
+                                    value={"https://" + brandContext.brandDomain}
                                     disabled
+
                                  />
                                  <Form.Text
                                     id="pageRoute"
@@ -314,6 +328,7 @@ const PageForm = () => {
                         <SEObasics routeName={pageRoute.value} />
                         <SocialShare routeName={pageRoute.value} />
                         <TwitterCard routeName={pageRoute.value} />
+                        <RichResults routeName={pageRoute.value} />
                      </HorizontalTabPanel>
                   </div>
                </HorizontalTabPanels>
@@ -327,6 +342,14 @@ const PageForm = () => {
          />
          <Banner id="content-app-pages-page-details-bottom" />
       </StyledWrapper>
+      <Tunnels tunnels={brandListTunnel}>
+         <Tunnel popup={true} layer={1} size="md">
+            <BrandListing
+               closeTunnel={closeBrandListTunnel}
+            />
+         </Tunnel>
+      </Tunnels>
+   </>
    )
 }
 

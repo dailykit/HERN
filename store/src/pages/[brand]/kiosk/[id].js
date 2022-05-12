@@ -3,17 +3,53 @@ import React, { useEffect } from 'react'
 import { graphQLClient } from '../../../lib'
 import Kiosk from '../../../sections/kiosk'
 import { useConfig } from '../../../lib'
-import { LOCATION_KIOSK } from '../../../graphql'
+import {
+   BRAND_LOCATIONS,
+   LOCATION_KIOSK,
+   LOCATION_KIOSK_VALIDATION,
+} from '../../../graphql'
 import { getSettings, isClient } from '../../../utils'
+import { useQuery, useLazyQuery } from '@apollo/react-hooks'
+import { setThemeVariable } from '../../../utils'
+import { Input } from 'antd'
+import KioskButton from '../../../components/kiosk/component/button'
 
 const KioskScreen = props => {
    const { kioskId, kioskDetails, settings } = props
-   const { dispatch } = useConfig()
+   const { dispatch, setIsLoading } = useConfig()
+   const [password, setPassword] = React.useState({
+      value: '',
+      isInvalid: false,
+   })
+
+   const [isValidationLoading, setIsValidationLoading] = React.useState(true)
 
    useEffect(() => {
+      const finalKioskConfig =
+         kioskDetails.kioskModuleConfig || settings.kiosk['kiosk-config']
+      if (
+         finalKioskConfig.kioskSettings?.primaryFont?.value?.fontEmbedLink
+            ?.value
+      ) {
+         const fontLink =
+            finalKioskConfig.kioskSettings.primaryFont.value.fontEmbedLink.value
+         const linkElement = document.createElement('link')
+         linkElement.rel = 'stylesheet'
+         linkElement.href = fontLink
+         const headTag = document.getElementsByTagName('head')[0]
+         headTag.appendChild(linkElement)
+         setThemeVariable(
+            '--hern-primary-font',
+            finalKioskConfig.kioskSettings.primaryFont.value.fontFamily.value
+         )
+      }
+      setThemeVariable(
+         '--hern-primary-color',
+         finalKioskConfig.kioskSettings.theme.primaryColor.value
+      )
       dispatch({
          type: 'SET_KIOSK_ID',
-         payload: kioskId,
+         payload: parseInt(kioskId),
       })
       dispatch({
          type: 'SET_KIOSK_DETAILS',
@@ -23,7 +59,145 @@ const KioskScreen = props => {
          type: 'SET_LOCATION_ID',
          payload: kioskDetails.locationId,
       })
+      dispatch({
+         type: 'SET_BRANDID',
+         payload: { id: settings.brandId },
+      })
+      dispatch({
+         type: 'SET_SETTINGS',
+         payload: settings,
+      })
+      dispatch({
+         type: 'SET_KIOSK_POPUP_CONFIG',
+         payload: finalKioskConfig,
+      })
+      setIsLoading(false)
    }, [])
+
+   const [
+      validatePassword,
+      { loading, data: { brands_locationKiosk = [] } = {} },
+   ] = useLazyQuery(LOCATION_KIOSK_VALIDATION, {
+      onCompleted: data => {
+         if (data.brands_locationKiosk.length === 0) {
+            setPassword(prev => ({ ...prev, isInvalid: true }))
+         } else {
+            const passwordInLocal = sessionStorage.getItem('kiosk-ref-key')
+            if (passwordInLocal) {
+               setPassword(prev => ({ ...prev, value: passwordInLocal }))
+            } else {
+               sessionStorage.setItem('kiosk-ref-key', password.value)
+            }
+         }
+         setIsValidationLoading(false)
+      },
+   })
+
+   React.useEffect(() => {
+      const passwordInLocal = sessionStorage.getItem('kiosk-ref-key')
+      if (passwordInLocal) {
+         validatePassword({
+            variables: {
+               where: {
+                  id: {
+                     _eq: kioskId,
+                  },
+                  accessPassword: {
+                     _eq: passwordInLocal,
+                  },
+               },
+            },
+         })
+      } else {
+         setIsValidationLoading(false)
+      }
+   }, [])
+   useQuery(BRAND_LOCATIONS, {
+      variables: {
+         where: {
+            brandId: { _eq: settings.brandId },
+            locationId: { _eq: kioskDetails.locationId },
+         },
+      },
+      onCompleted: data => {
+         if (data) {
+            dispatch({
+               type: 'SET_KIOSK_RECURRENCES',
+               payload:
+                  data.brands_brand_location_aggregate.nodes[0]
+                     .brand_recurrences,
+            })
+         }
+      },
+   })
+   const handleLoginClick = () => {
+      validatePassword({
+         variables: {
+            where: {
+               id: {
+                  _eq: kioskId,
+               },
+               accessPassword: {
+                  _eq: password.value,
+               },
+            },
+         },
+      })
+   }
+   if (isValidationLoading) {
+      return (
+         <div className="hern-kiosk__login-validation">
+            <span>Loading...</span>
+         </div>
+      )
+   }
+   if (brands_locationKiosk.length === 0) {
+      const config =
+         kioskDetails.kioskModuleConfig || settings.kiosk['kiosk-config']
+      return (
+         <div className="hern-kiosk__login-container">
+            <div className="hern-kiosk__kiosk-info-container">
+               <img
+                  src={config.kioskSettings.logo.value}
+                  className="hern-kiosk__kiosk-login-logo"
+               />
+               <span>{kioskDetails.internalLocationKioskLabel}</span>
+            </div>
+            <div className="hern-kiosk__login-content">
+               <Input.Password
+                  placeholder="Enter Password"
+                  onChange={e => {
+                     e.persist()
+                     setPassword(prev => ({
+                        ...prev,
+                        value: e.target.value,
+                        isInvalid: false,
+                     }))
+                  }}
+                  onKeyPress={event => {
+                     if (event.key === 'Enter') {
+                        handleLoginClick()
+                     }
+                  }}
+               />{' '}
+               {password.isInvalid && (
+                  <span className="hern-kiosk_error-message">
+                     Incorrect Password
+                  </span>
+               )}
+               <KioskButton
+                  customClass="hern-kiosk__login-button"
+                  size="large"
+                  onClick={handleLoginClick}
+                  buttonConfig={config?.kioskSettings?.buttonSettings}
+                  disabled={loading}
+               >
+                  {loading ? 'Loading...' : 'Login'}
+               </KioskButton>
+            </div>
+         </div>
+      )
+   }
    return (
       <div>
          <Kiosk
@@ -50,7 +224,7 @@ export async function getStaticProps({ params }) {
          kioskDetails: kioskDetails.brands_locationKiosk_by_pk,
          settings: settings,
       },
-      revalidate: 60,
+      // revalidate: 60,
    }
 }
 export async function getStaticPaths() {

@@ -23,7 +23,11 @@ import {
    UpVector,
 } from '../../assets/icons'
 import { useTranslation, CartContext } from '../../context'
-import { KioskCounterButton } from './component'
+import {
+   DineInTableSelection,
+   KioskCounterButton,
+   ProductGalleryKiosk,
+} from './component'
 import {
    formatCurrency,
    getCartItemWithModifiers,
@@ -37,6 +41,9 @@ import KioskButton from './component/button'
 import { ProgressBar } from './component/progressBar'
 import { Coupon } from '../coupon'
 import isEmpty from 'lodash/isEmpty'
+import { HernLazyImage } from '../../utils/hernImage'
+import isNull from 'lodash/isNull'
+import { get_env } from '../../utils'
 
 const { Header, Content, Footer } = Layout
 
@@ -49,7 +56,7 @@ export const KioskCart = props => {
    const { t, direction } = useTranslation()
    const { setIsProcessingPayment, setIsPaymentInitiated, updatePaymentState } =
       usePayment()
-
+   const SHOW_FREEBIE_MSG = get_env('SHOW_FREEBIE_MSG')
    //remove cartItem or cartItems
    const removeCartItems = cartItemIds => {
       methods.cartItems.delete({
@@ -93,16 +100,11 @@ export const KioskCart = props => {
    }
 
    return (
-      <Layout style={{ height: '100%', overflowY: 'hidden' }}>
-         <div
-            style={{
-               background: `${config.kioskSettings.theme.primaryColorLight.value}`,
-               padding: '1em 2em',
-               height: '6em',
-            }}
-         >
-            <ProgressBar config={config} setCurrentPage={setCurrentPage} />
-         </div>
+      <Layout
+         style={{ height: '100%', overflowY: 'hidden', background: '#fff' }}
+         className="hern-kiosk__cart-container"
+      >
+         <ProgressBar config={config} setCurrentPage={setCurrentPage} />
          {/* <Header className="hern-kiosk__cart-section-header">
             <Row className="hern-kiosk__cart-section-header-row">
                <Col span={4}>
@@ -189,11 +191,15 @@ export const KioskCart = props => {
                      </div>
                   </div>
                </Content>
+               <ProductGalleryKiosk config={config} />
                <Footer className="hern-kiosk__cart-page-footer">
                   <Layout>
                      <Header className="hern-kiosk__cart-page-offer">
                         <Offers config={config} />
                      </Header>
+                     {SHOW_FREEBIE_MSG === 'true' && (
+                        <FreebieMessage msg={t('Free 1 Ice Cream Cone')} />
+                     )}
                      <Content className="hern-kiosk__cart-page-price-detail">
                         <div className="hern-kiosk-cart-bill-details">
                            <span>{t('BILL DETAILS')}</span>
@@ -263,6 +269,7 @@ export const KioskCart = props => {
                         <KioskButton
                            customClass="hern-kiosk__cart-place-order-btn"
                            onClick={placeOrderHandler}
+                           buttonConfig={config.kioskSettings.buttonSettings}
                         >
                            <span className="hern-kiosk__cart-place-order-btn-total">
                               {formatCurrency(
@@ -290,12 +297,20 @@ export const KioskCart = props => {
                               />
                            )}
                         </KioskButton>
+
                         {/* </PayButton> */}
                      </Footer>
                   </Layout>
                </Footer>
             </>
          )}
+         {/* <DineInTableSelection
+            showDineInTableSelection={showDineInTableSelection}
+            onClose={() => {
+               setShowDineInTableSelection(false)
+            }}
+            config={config}
+         /> */}
       </Layout>
    )
 }
@@ -303,7 +318,8 @@ export const KioskCart = props => {
 const CartCard = props => {
    // productData --> product data from cart
    const { config, productData, removeCartItems, quantity = 0 } = props
-   const { brand, kioskDetails, isConfigLoading } = useConfig()
+   const { brand, kioskDetails, isConfigLoading, selectedOrderTab } =
+      useConfig()
    const { addToCart } = React.useContext(CartContext)
    const { t, dynamicTrans, locale } = useTranslation()
 
@@ -601,23 +617,327 @@ const CartCard = props => {
    }, [locale, showAdditionalDetailsOnCard])
    return (
       <div className="hern-kiosk__cart-card">
-         <img
-            src={productData.image}
-            alt="p-image"
-            className="hern-kiosk__cart-card-p-image"
-         />
-         <div className="hern-kiosk__cart-card-p-mid">
-            <div className="hern-kiosk__cart-card-p-details">
-               <div style={{ display: 'flex', alignItems: 'center' }}>
-                  <span
-                     className="hern-kiosk__cart-card-p-name"
-                     style={{ color: '#5A5A5A' }}
-                     data-translation="true"
-                     data-original-value={productData.name}
-                  >
-                     {productData.name}
-                  </span>{' '}
+         <div className="hern-kiosk__cart-card-header">
+            {!(isNull(productData.image) && isEmpty(productData.image)) ? (
+               <HernLazyImage
+                  dataSrc={productData.image}
+                  alt="p-image"
+                  className="hern-kiosk__cart-card-p-image"
+                  width={152}
+                  height={152}
+                  style={{
+                     ...(config.kioskSettings.allowTilt.value && {
+                        clipPath: 'polygon(0 0, 100% 0, 100% 100%, 0 97%)',
+                     }),
+                  }}
+               />
+            ) : (
+               <>
+                  <img
+                     src={config.productSettings.defaultImage.value}
+                     alt="p-image"
+                     width={152}
+                     height={152}
+                  />
+               </>
+            )}
+
+            <div className="hern-kiosk__cart-card-p-mid">
+               <div className="hern-kiosk__cart-card-p-details">
+                  <div style={{ display: 'flex', alignItems: 'center' }}>
+                     <span
+                        className="hern-kiosk__cart-card-p-name"
+                        style={{ color: '#5A5A5A' }}
+                        data-translation="true"
+                     >
+                        {productData.name}
+                     </span>{' '}
+                     {productData.childs.length > 0 &&
+                        !config.cartCardSettings.showCustomizeOptionInRow
+                           .value && (
+                           <>
+                              {showAdditionalDetailsOnCard ? (
+                                 <UpVector
+                                    style={{ marginLeft: '1em' }}
+                                    onClick={() => {
+                                       setShowAdditionalDetailsOnCard(
+                                          !showAdditionalDetailsOnCard
+                                       )
+                                    }}
+                                 />
+                              ) : (
+                                 <DownVector
+                                    style={{ marginLeft: '1em' }}
+                                    onClick={() => {
+                                       setShowAdditionalDetailsOnCard(
+                                          !showAdditionalDetailsOnCard
+                                       )
+                                    }}
+                                 />
+                              )}
+                           </>
+                        )}
+                  </div>
+                  {showAdditionalDetailsOnCard &&
+                     !config.cartCardSettings.showCustomizeOptionInRow
+                        .value && (
+                        <div className="hern-kiosk-cart-product-modifiers">
+                           {/* <span className="hern-kiosk-cart-product-modifiers-heading">
+                        Product Option:
+                     </span> */}
+                           <div className="hern-kiosk-cart-product-modifiers-product-option">
+                              <span data-translation="true">
+                                 {productData.childs[0].productOption.label ||
+                                    'N/A'}
+                              </span>{' '}
+                              {productData.childs[0].price !== 0 && (
+                                 <div
+                                    style={{
+                                       fontSize: '1.5em',
+                                       marginTop: '10px',
+                                    }}
+                                 >
+                                    {
+                                       <>
+                                          {productData.childs[0].discount >
+                                             0 && (
+                                             <span
+                                                style={{
+                                                   textDecoration:
+                                                      'line-through',
+                                                }}
+                                             >
+                                                {formatCurrency(
+                                                   productData.childs[0].price
+                                                )}
+                                             </span>
+                                          )}
+                                          <span style={{ marginLeft: '6px' }}>
+                                             {formatCurrency(
+                                                productData.childs[0].price -
+                                                   productData.childs[0]
+                                                      .discount
+                                             )}
+                                          </span>
+                                       </>
+                                    }
+                                 </div>
+                              )}
+                           </div>
+                           <div className="hern-kiosk-cart-product-modifiers-list">
+                              {productData.childs[0].childs.some(
+                                 each => each.modifierOption
+                              ) && (
+                                 <>
+                                    <ul>
+                                       {productData.childs.length > 0 &&
+                                          productData.childs[0].childs.map(
+                                             (modifier, index) =>
+                                                modifier.modifierOption ? (
+                                                   <li
+                                                      key={index}
+                                                      className="hern-kiosk__parent-modifier-list"
+                                                   >
+                                                      <div className="hern-kiosk__modifier-details">
+                                                         <span data-translation="true">
+                                                            {
+                                                               modifier
+                                                                  .modifierOption
+                                                                  .name
+                                                            }
+                                                         </span>
+
+                                                         {modifier.price !==
+                                                            0 && (
+                                                            <div>
+                                                               {
+                                                                  <>
+                                                                     {modifier.discount >
+                                                                        0 && (
+                                                                        <span
+                                                                           style={{
+                                                                              textDecoration:
+                                                                                 'line-through',
+                                                                           }}
+                                                                        >
+                                                                           {formatCurrency(
+                                                                              modifier.price
+                                                                           )}
+                                                                        </span>
+                                                                     )}
+                                                                     <span
+                                                                        style={{
+                                                                           marginLeft:
+                                                                              '6px',
+                                                                        }}
+                                                                     >
+                                                                        {formatCurrency(
+                                                                           modifier.price -
+                                                                              modifier.discount
+                                                                        )}
+                                                                     </span>
+                                                                  </>
+                                                               }
+                                                            </div>
+                                                         )}
+                                                      </div>
+                                                      {modifier.childs.length >
+                                                         0 && (
+                                                         <ul>
+                                                            {modifier.childs.map(
+                                                               (
+                                                                  eachNestedModifier,
+                                                                  index
+                                                               ) => {
+                                                                  return (
+                                                                     <li
+                                                                        key={
+                                                                           index
+                                                                        }
+                                                                     >
+                                                                        <span data-translation="true">
+                                                                           {
+                                                                              eachNestedModifier
+                                                                                 .modifierOption
+                                                                                 .name
+                                                                           }
+                                                                        </span>
+                                                                        {eachNestedModifier.price !==
+                                                                           0 && (
+                                                                           <div>
+                                                                              {
+                                                                                 <>
+                                                                                    {eachNestedModifier.discount >
+                                                                                       0 && (
+                                                                                       <span
+                                                                                          style={{
+                                                                                             textDecoration:
+                                                                                                'line-through',
+                                                                                          }}
+                                                                                       >
+                                                                                          {formatCurrency(
+                                                                                             eachNestedModifier.price
+                                                                                          )}
+                                                                                       </span>
+                                                                                    )}
+                                                                                    <span
+                                                                                       style={{
+                                                                                          marginLeft:
+                                                                                             '6px',
+                                                                                       }}
+                                                                                    >
+                                                                                       {formatCurrency(
+                                                                                          eachNestedModifier.price -
+                                                                                             eachNestedModifier.discount
+                                                                                       )}
+                                                                                    </span>
+                                                                                 </>
+                                                                              }
+                                                                           </div>
+                                                                        )}
+                                                                     </li>
+                                                                  )
+                                                               }
+                                                            )}
+                                                         </ul>
+                                                      )}
+                                                   </li>
+                                                ) : null
+                                          )}
+                                    </ul>
+                                 </>
+                              )}
+                           </div>
+                        </div>
+                     )}
+               </div>
+               <KioskCounterButton
+                  config={config}
+                  quantity={productData.ids.length}
+                  onMinusClick={() => {
+                     removeCartItems([
+                        productData.ids[productData.ids.length - 1],
+                     ])
+                  }}
+                  onPlusClick={() => {
+                     if (productData.childs.length > 0) {
+                        setShowChooseIncreaseType(true)
+                     } else {
+                        setCartDetailSelectedProduct(productData)
+                        setModifyProductId(productData.productId)
+                        setForRepeatLastOne(true)
+                     }
+                  }}
+                  style={{
+                     border: `1px solid ${config.kioskSettings.theme.primaryColor.value}`,
+                     width: '15em',
+                     justifyContent: 'space-around',
+                  }}
+               />
+            </div>
+            <div className="hern-kiosk__cart-card-actions">
+               <div className="hern-kiosk__cart-card-action-buttons">
                   {productData.childs.length > 0 && (
+                     <EditIcon
+                        stroke={config.cartCardSettings.editIconColor.value}
+                        fill={config.cartCardSettings.editIconColor.value}
+                        style={{ cursor: 'pointer', margin: '0 .5em' }}
+                        title="Edit"
+                        size={50}
+                        onClick={() => {
+                           setModifierType('edit')
+                           setCartDetailSelectedProduct(productData)
+                           setModifyProductId(productData.productId)
+                           setShowModifier(true)
+                        }}
+                     />
+                  )}
+                  <DeleteIcon
+                     stroke={config.cartCardSettings.editIconColor.value}
+                     style={{ cursor: 'pointer', margin: '0 0 0 .5em' }}
+                     title="Delete"
+                     size={50}
+                     onClick={() => {
+                        removeCartItems(productData.ids)
+                     }}
+                  />
+               </div>
+               <div
+                  className="hern-kiosk__cart-cards-price"
+                  style={{ color: '#5A5A5A' }}
+               >
+                  {getTotalPrice.totalDiscount > 0 && (
+                     <>
+                        <span style={{ textDecoration: 'line-through' }}>
+                           {' '}
+                           {formatCurrency(getTotalPrice.totalPrice)}
+                        </span>
+                        <br />
+                     </>
+                  )}
+                  <span>
+                     {getTotalPrice.totalPrice !== 0
+                        ? formatCurrency(
+                             getTotalPrice.totalPrice -
+                                getTotalPrice.totalDiscount
+                          )
+                        : null}
+                  </span>
+               </div>
+            </div>
+         </div>
+         {productData.childs.length > 0 &&
+            config.cartCardSettings.showCustomizeOptionInRow.value && (
+               <div className="hern-kiosk__cart-card-footer">
+                  <div
+                     className="hern-kiosk__cart-card-footer-label"
+                     onClick={() => {
+                        setShowAdditionalDetailsOnCard(
+                           !showAdditionalDetailsOnCard
+                        )
+                     }}
+                  >
+                     <span>Customize</span>
                      <>
                         {showAdditionalDetailsOnCard ? (
                            <UpVector
@@ -639,208 +959,173 @@ const CartCard = props => {
                            />
                         )}
                      </>
-                  )}
-               </div>
-               {showAdditionalDetailsOnCard && (
-                  <div className="hern-kiosk-cart-product-modifiers">
-                     {/* <span className="hern-kiosk-cart-product-modifiers-heading">
+                  </div>
+                  {showAdditionalDetailsOnCard && (
+                     <div className="hern-kiosk-cart-product-modifiers">
+                        {/* <span className="hern-kiosk-cart-product-modifiers-heading">
                         Product Option:
                      </span> */}
-                     <div className="hern-kiosk-cart-product-modifiers-product-option">
-                        <span
-                           data-translation="true"
-                           data-original-value={
-                              productData.childs[0].productOption.label || 'N/A'
-                           }
-                        >
-                           {productData.childs[0].productOption.label || 'N/A'}
-                        </span>{' '}
-                        {productData.childs[0].price !== 0 && (
-                           <div
-                              style={{
-                                 fontSize: '1.5em',
-                                 marginTop: '10px',
-                              }}
-                           >
-                              {
-                                 <>
-                                    {productData.childs[0].discount > 0 && (
-                                       <span
-                                          style={{
-                                             textDecoration: 'line-through',
-                                          }}
-                                       >
+                        <div className="hern-kiosk-cart-product-modifiers-product-option">
+                           <span data-translation="true">
+                              {productData.childs[0].productOption.label ||
+                                 'N/A'}
+                           </span>{' '}
+                           {productData.childs[0].price !== 0 && (
+                              <div
+                                 style={{
+                                    fontSize: '1.5em',
+                                    marginTop: '10px',
+                                 }}
+                              >
+                                 {
+                                    <>
+                                       {productData.childs[0].discount > 0 && (
+                                          <span
+                                             style={{
+                                                textDecoration: 'line-through',
+                                             }}
+                                          >
+                                             {formatCurrency(
+                                                productData.childs[0].price
+                                             )}
+                                          </span>
+                                       )}
+                                       <span style={{ marginLeft: '6px' }}>
                                           {formatCurrency(
-                                             productData.childs[0].price
+                                             productData.childs[0].price -
+                                                productData.childs[0].discount
                                           )}
                                        </span>
-                                    )}
-                                    <span style={{ marginLeft: '6px' }}>
-                                       {formatCurrency(
-                                          productData.childs[0].price -
-                                             productData.childs[0].discount
-                                       )}
-                                    </span>
-                                 </>
-                              }
-                           </div>
-                        )}
-                     </div>
-                     <div className="hern-kiosk-cart-product-modifiers-list">
-                        {productData.childs[0].childs.some(
-                           each => each.modifierOption
-                        ) && (
-                           <>
-                              <ul>
-                                 {productData.childs.length > 0 &&
-                                    productData.childs[0].childs.map(
-                                       (modifier, index) =>
-                                          modifier.modifierOption ? (
-                                             <li
-                                                key={index}
-                                                className="hern-kiosk__parent-modifier-list"
-                                             >
-                                                <div className="hern-kiosk__modifier-details">
-                                                   <span
-                                                      data-translation="true"
-                                                      data-original-value={
-                                                         modifier.modifierOption
-                                                            .name
-                                                      }
-                                                   >
-                                                      {
-                                                         modifier.modifierOption
-                                                            .name
-                                                      }
-                                                   </span>
-
-                                                   {modifier.price !== 0 && (
-                                                      <div>
+                                    </>
+                                 }
+                              </div>
+                           )}
+                        </div>
+                        <div className="hern-kiosk-cart-product-modifiers-list">
+                           {productData.childs[0].childs.some(
+                              each => each.modifierOption
+                           ) && (
+                              <>
+                                 <ul>
+                                    {productData.childs.length > 0 &&
+                                       productData.childs[0].childs.map(
+                                          (modifier, index) =>
+                                             modifier.modifierOption ? (
+                                                <li
+                                                   key={index}
+                                                   className="hern-kiosk__parent-modifier-list"
+                                                >
+                                                   <div className="hern-kiosk__modifier-details">
+                                                      <span data-translation="true">
                                                          {
-                                                            <>
-                                                               {modifier.discount >
-                                                                  0 && (
+                                                            modifier
+                                                               .modifierOption
+                                                               .name
+                                                         }
+                                                      </span>
+
+                                                      {modifier.price !== 0 && (
+                                                         <div>
+                                                            {
+                                                               <>
+                                                                  {modifier.discount >
+                                                                     0 && (
+                                                                     <span
+                                                                        style={{
+                                                                           textDecoration:
+                                                                              'line-through',
+                                                                        }}
+                                                                     >
+                                                                        {formatCurrency(
+                                                                           modifier.price
+                                                                        )}
+                                                                     </span>
+                                                                  )}
                                                                   <span
                                                                      style={{
-                                                                        textDecoration:
-                                                                           'line-through',
+                                                                        marginLeft:
+                                                                           '6px',
                                                                      }}
                                                                   >
                                                                      {formatCurrency(
-                                                                        modifier.price
+                                                                        modifier.price -
+                                                                           modifier.discount
                                                                      )}
                                                                   </span>
-                                                               )}
-                                                               <span
-                                                                  style={{
-                                                                     marginLeft:
-                                                                        '6px',
-                                                                  }}
-                                                               >
-                                                                  {formatCurrency(
-                                                                     modifier.price -
-                                                                        modifier.discount
-                                                                  )}
-                                                               </span>
-                                                            </>
-                                                         }
-                                                      </div>
-                                                   )}
-                                                </div>
-                                                {modifier.childs.length > 0 && (
-                                                   <ul>
-                                                      {modifier.childs.map(
-                                                         (
-                                                            eachNestedModifier,
-                                                            index
-                                                         ) => {
-                                                            return (
-                                                               <li key={index}>
-                                                                  <span
-                                                                     data-translation="true"
-                                                                     data-original-value={
-                                                                        eachNestedModifier
-                                                                           .modifierOption
-                                                                           .name
-                                                                     }
+                                                               </>
+                                                            }
+                                                         </div>
+                                                      )}
+                                                   </div>
+                                                   {modifier.childs.length >
+                                                      0 && (
+                                                      <ul>
+                                                         {modifier.childs.map(
+                                                            (
+                                                               eachNestedModifier,
+                                                               index
+                                                            ) => {
+                                                               return (
+                                                                  <li
+                                                                     key={index}
                                                                   >
-                                                                     {
-                                                                        eachNestedModifier
-                                                                           .modifierOption
-                                                                           .name
-                                                                     }
-                                                                  </span>
-                                                                  {eachNestedModifier.price !==
-                                                                     0 && (
-                                                                     <div>
+                                                                     <span data-translation="true">
                                                                         {
-                                                                           <>
-                                                                              {eachNestedModifier.discount >
-                                                                                 0 && (
+                                                                           eachNestedModifier
+                                                                              .modifierOption
+                                                                              .name
+                                                                        }
+                                                                     </span>
+                                                                     {eachNestedModifier.price !==
+                                                                        0 && (
+                                                                        <div>
+                                                                           {
+                                                                              <>
+                                                                                 {eachNestedModifier.discount >
+                                                                                    0 && (
+                                                                                    <span
+                                                                                       style={{
+                                                                                          textDecoration:
+                                                                                             'line-through',
+                                                                                       }}
+                                                                                    >
+                                                                                       {formatCurrency(
+                                                                                          eachNestedModifier.price
+                                                                                       )}
+                                                                                    </span>
+                                                                                 )}
                                                                                  <span
                                                                                     style={{
-                                                                                       textDecoration:
-                                                                                          'line-through',
+                                                                                       marginLeft:
+                                                                                          '6px',
                                                                                     }}
                                                                                  >
                                                                                     {formatCurrency(
-                                                                                       eachNestedModifier.price
+                                                                                       eachNestedModifier.price -
+                                                                                          eachNestedModifier.discount
                                                                                     )}
                                                                                  </span>
-                                                                              )}
-                                                                              <span
-                                                                                 style={{
-                                                                                    marginLeft:
-                                                                                       '6px',
-                                                                                 }}
-                                                                              >
-                                                                                 {formatCurrency(
-                                                                                    eachNestedModifier.price -
-                                                                                       eachNestedModifier.discount
-                                                                                 )}
-                                                                              </span>
-                                                                           </>
-                                                                        }
-                                                                     </div>
-                                                                  )}
-                                                               </li>
-                                                            )
-                                                         }
-                                                      )}
-                                                   </ul>
-                                                )}
-                                             </li>
-                                          ) : null
-                                    )}
-                              </ul>
-                           </>
-                        )}
+                                                                              </>
+                                                                           }
+                                                                        </div>
+                                                                     )}
+                                                                  </li>
+                                                               )
+                                                            }
+                                                         )}
+                                                      </ul>
+                                                   )}
+                                                </li>
+                                             ) : null
+                                       )}
+                                 </ul>
+                              </>
+                           )}
+                        </div>
                      </div>
-                  </div>
-               )}
-            </div>
-            <KioskCounterButton
-               config={config}
-               quantity={productData.ids.length}
-               onMinusClick={() => {
-                  removeCartItems([productData.ids[productData.ids.length - 1]])
-               }}
-               onPlusClick={() => {
-                  if (productData.childs.length > 0) {
-                     setShowChooseIncreaseType(true)
-                  } else {
-                     setCartDetailSelectedProduct(productData)
-                     setModifyProductId(productData.productId)
-                     setForRepeatLastOne(true)
-                  }
-               }}
-               style={{
-                  border: '1px solid #0F6BB1',
-                  width: '20em',
-                  justifyContent: 'space-around',
-               }}
-            />
-         </div>
+                  )}
+               </div>
+            )}
          <Modal
             title={t('Repeat last used customization')}
             visible={showChooseIncreaseType}
@@ -868,9 +1153,11 @@ const CartCard = props => {
                   }}
                   style={{
                      border: `2px solid ${config.kioskSettings.theme.secondaryColor.value}`,
-                     background: 'transparent',
+                     background: 'transparent !important',
                      padding: '.1em 2em',
+                     color: `${config.kioskSettings.theme.primaryColor.value}`,
                   }}
+                  buttonConfig={config.kioskSettings.buttonSettings}
                >
                   {t(`I'LL CHOOSE`)}
                </KioskButton>
@@ -881,59 +1168,13 @@ const CartCard = props => {
                      setModifyProductId(productData.productId)
                      setForRepeatLastOne(true)
                   }}
+                  buttonConfig={config.kioskSettings.buttonSettings}
                >
                   {t('REPEAT LAST ONE')}
                </KioskButton>
             </div>
          </Modal>
-         <div className="hern-kiosk__cart-card-actions">
-            <div className="hern-kiosk__cart-card-action-buttons">
-               {productData.childs.length > 0 && (
-                  <EditIcon
-                     stroke={config.kioskSettings.theme.primaryColor.value}
-                     style={{ cursor: 'pointer', margin: '0 .5em' }}
-                     title="Edit"
-                     size={50}
-                     onClick={() => {
-                        setModifierType('edit')
-                        setCartDetailSelectedProduct(productData)
-                        setModifyProductId(productData.productId)
-                        setShowModifier(true)
-                     }}
-                  />
-               )}
-               <DeleteIcon
-                  stroke={config.kioskSettings.theme.primaryColor.value}
-                  style={{ cursor: 'pointer', margin: '0 0 0 .5em' }}
-                  title="Delete"
-                  size={50}
-                  onClick={() => {
-                     removeCartItems(productData.ids)
-                  }}
-               />
-            </div>
-            <div
-               className="hern-kiosk__cart-cards-price"
-               style={{ color: '#5A5A5A' }}
-            >
-               {getTotalPrice.totalDiscount > 0 && (
-                  <>
-                     <span style={{ textDecoration: 'line-through' }}>
-                        {' '}
-                        {formatCurrency(getTotalPrice.totalPrice)}
-                     </span>
-                     <br />
-                  </>
-               )}
-               <span>
-                  {getTotalPrice.totalPrice !== 0
-                     ? formatCurrency(
-                          getTotalPrice.totalPrice - getTotalPrice.totalDiscount
-                       )
-                     : null}
-               </span>
-            </div>
-         </div>
+
          {modifyProduct && showModifier && (
             <KioskModifier
                config={config}
@@ -1025,3 +1266,13 @@ const Offers = props => {
       </div>
    )
 }
+
+const FreebieMessage = ({ msg }) => (
+   <div className="hern-kiosk__cart-page-freebie">
+      <h2 className="hern-kiosk__cart-page-freebie-content">{msg}</h2>
+      <img
+         src="/assets/gifs/gift.gif"
+         className="hern-kiosk__cart-page-freebie-gif"
+      />
+   </div>
+)

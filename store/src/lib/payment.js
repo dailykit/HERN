@@ -18,7 +18,7 @@ import {
    CREATE_PRINT_JOB,
    UPDATE_CART,
 } from '../graphql'
-import { useUser, useCart } from '../context'
+import { useUser, useCart, useTranslation } from '../context'
 import { useConfig } from '../lib'
 import {
    getRazorpayOptions,
@@ -34,7 +34,6 @@ import {
    PaymentProcessingModal,
    PrintProcessingModal,
 } from '../components'
-import { isEmpty, set } from 'lodash'
 
 const PaymentContext = createContext()
 const inititalState = {
@@ -93,7 +92,7 @@ export const PaymentProvider = ({ children }) => {
    const [isProcessingPayment, setIsProcessingPayment] = useState(false)
    const [isPaymentInitiated, setIsPaymentInitiated] = useState(false)
    const { user, isAuthenticated, isLoading } = useUser()
-   const { brand, kioskDetails, settings, selectedOrderTab } = useConfig()
+   const { kioskDetails, settings, selectedOrderTab, configOf } = useConfig()
    const { displayRazorpay } = useRazorPay()
    const { displayPaytm } = usePaytm()
    const {
@@ -103,10 +102,12 @@ export const PaymentProvider = ({ children }) => {
    } = useTerminalPay()
    const { cartState } = useCart()
    const { addToast } = useToasts()
+   const { t } = useTranslation()
 
    const BY_PASS_TERMINAL_PAYMENT = get_env('BY_PASS_TERMINAL_PAYMENT')
    const ALLOW_POSIST_PUSH_ORDER = get_env('ALLOW_POSIST_PUSH_ORDER')
-
+   const brand = configOf('Brand Info', 'brand')
+   const theme = configOf('theme-color', 'Visual')?.themeColor
    // subscription to get cart payment info
    const {
       data: { cartPayments: cartPaymentsFromQuery = [] } = {},
@@ -131,7 +132,7 @@ export const PaymentProvider = ({ children }) => {
    const [updateCartPayment] = useMutation(UPDATE_CART_PAYMENT, {
       onError: error => {
          console.error(error)
-         addToast('Something went wrong!', { appearance: 'error' })
+         addToast(`${t('Something went wrong')}`, { appearance: 'error' })
       },
    })
 
@@ -139,7 +140,7 @@ export const PaymentProvider = ({ children }) => {
    const [updateCart] = useMutation(UPDATE_CART, {
       onError: error => {
          console.error(error)
-         addToast('Something went wrong!', { appearance: 'error' })
+         addToast(`${t('Something went wrong')}`, { appearance: 'error' })
       },
    })
 
@@ -172,15 +173,16 @@ export const PaymentProvider = ({ children }) => {
          },
          onError: error => {
             console.error(error)
-            addToast('Something went wrong!', { appearance: 'error' })
+            addToast(`${t('Something went wrong')}`, { appearance: 'error' })
             dispatch({
                type: 'UPDATE_INITIAL_STATE',
                payload: {
                   printDetails: {
                      ...state.printDetails,
                      printStatus: 'failed',
-                     message:
-                        'Something went wrong while printing, please try again!',
+                     message: `${t(
+                        'Something went wrong while printing please try again!'
+                     )}`,
                   },
                },
             })
@@ -217,6 +219,8 @@ export const PaymentProvider = ({ children }) => {
                id: cartPayment?.id,
                _set: {
                   paymentStatus: 'CANCELLED',
+                  comment:
+                     'Cancelled by user using back button or dismiss modal',
                },
                _inc: {
                   cancelAttempt: 1,
@@ -246,9 +250,11 @@ export const PaymentProvider = ({ children }) => {
          type: 'UPDATE_INITIAL_STATE',
          payload: {
             isPaymentProcessing: false,
+            isPaymentInitiated: false,
+            paymentLifeCycleState: '',
          },
       })
-      const url = isClient ? window.location.origin : ''
+      const url = isClient ? get_env('BASE_BRAND_URL') : ''
       const { data } = await axios.post(
          `${url}/server/api/payment/handle-payment-webhook`,
          response
@@ -256,14 +262,17 @@ export const PaymentProvider = ({ children }) => {
       console.log('result', data)
    }
 
-   const initializePayment = requiredCartId => {
+   const initializePayment = (
+      requiredCartId,
+      paymentLifeCycleState = 'INITIALIZE'
+   ) => {
       setCartId(requiredCartId)
       setIsPaymentInitiated(true)
       setIsProcessingPayment(true)
       dispatch({
          type: 'UPDATE_INITIAL_STATE',
          payload: {
-            paymentLifeCycleState: 'INITIALIZE',
+            paymentLifeCycleState,
          },
       })
    }
@@ -281,10 +290,9 @@ export const PaymentProvider = ({ children }) => {
             },
          },
       })
-      if (!isEmpty(settings) && isClient) {
-         const path = settings['printing'].find(
-            item => item?.identifier === 'KioskCustomerTokenTemplate'
-         )?.value?.path?.value
+      if (!_isEmpty(settings) && isClient) {
+         const path =
+            settings['printing']?.['KioskCustomerTokenTemplate']?.path?.value
          const DATA_HUB_HTTPS = get_env('DATA_HUB_HTTPS')
          const { origin } = new URL(DATA_HUB_HTTPS)
          const templateOptions = encodeURI(
@@ -391,8 +399,19 @@ export const PaymentProvider = ({ children }) => {
 
    // setting cartPayment in state
    useEffect(() => {
-      if (!isEmpty(cartPaymentsFromQuery)) {
+      console.log('useEffect for setting cartPayment')
+      if (!cartId) {
+         setCartId(cartState?.cart?.id || null)
+      }
+      if (!_isEmpty(cartPaymentsFromQuery)) {
          setCartPayment(cartPaymentsFromQuery[0])
+         setCartId(cartPaymentsFromQuery[0].cartId)
+         setIsPaymentInitiated(true)
+         setIsProcessingPayment(true)
+      } else {
+         setCartPayment(null)
+         setIsPaymentInitiated(false)
+         setIsProcessingPayment(false)
       }
    }, [cartPaymentsFromQuery])
 
@@ -476,21 +495,20 @@ export const PaymentProvider = ({ children }) => {
 
    // useEffect which checks the payment company and payment related status and does required actions
    useEffect(() => {
-      console.log(
-         'useEffect=>',
-         !_isEmpty(cartPayment),
-         !_isEmpty(cartPayment?.transactionRemark),
-         _has(
-            cartPayment,
-            'availablePaymentOption.supportedPaymentOption.supportedPaymentCompany.label'
-         ),
-         !isCartPaymentLoading
-      )
+      // console.log(
+      //    'useEffect=>',
+      //    !_isEmpty(cartPayment),
+      //    !_isEmpty(cartPayment?.transactionRemark),
+      //    _has(
+      //       cartPayment,
+      //       'availablePaymentOption.supportedPaymentOption.supportedPaymentCompany.label'
+      //    ),
+      //    !isCartPaymentLoading
+      // )
 
       if (
          isPaymentInitiated &&
          !_isEmpty(cartPayment) &&
-         // !_isEmpty(cartPayment?.transactionRemark) &&
          _has(
             cartPayment,
             'availablePaymentOption.supportedPaymentOption.supportedPaymentCompany.label'
@@ -506,17 +524,24 @@ export const PaymentProvider = ({ children }) => {
          ) {
             console.log('inside payment provider useEffect 1', cartPayment)
 
-            if (cartPayment.paymentStatus === 'CREATED') {
+            if (
+               cartPayment.paymentStatus === 'CREATED' &&
+               !_isEmpty(cartPayment?.stripeInvoiceId)
+            ) {
                ;(async () => {
                   const options = getRazorpayOptions({
                      orderDetails: cartPayment.transactionRemark,
-                     paymentInfo: state.paymentInfo,
-                     profileInfo: state.profileInfo,
+                     brand,
+                     theme,
+                     paymentInfo: cartPayment.availablePaymentOption,
+                     profileInfo: cartPayment.cart.customerInfo,
                      ondismissHandler: () => onCancelledHandler(),
                      eventHandler,
                   })
                   console.log('options', options)
-                  await displayRazorpay(options)
+                  if (state.paymentLifeCycleState === 'INITIALIZE') {
+                     await displayRazorpay(options)
+                  }
                })()
             }
          } else if (
@@ -547,7 +572,6 @@ export const PaymentProvider = ({ children }) => {
       }
    }, [
       cartPayment?.paymentStatus,
-      cartPayment?.transactionRemark,
       cartPayment?.transactionId,
       cartPayment?.stripeInvoiceId,
       cartPayment?.actionUrl,
@@ -584,6 +608,8 @@ export const PaymentProvider = ({ children }) => {
                PaymentOptions={cartState.kioskPaymentOptions}
                initializePrinting={initializePrinting}
                resetPaymentProviderStates={resetPaymentProviderStates}
+               setIsProcessingPayment={setIsProcessingPayment}
+               setIsPaymentInitiated={setIsPaymentInitiated}
             />
          )}
          {state.printDetails.isPrintInitiated && (

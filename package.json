@@ -3,23 +3,26 @@
    "version": "1.22.11",
    "main": "index.js",
    "repository": "https://github.com/dailykit/hern.git",
-   "author": "Praveen Bisht <prvnbist@gmail.com>",
+   "author": "Dailykit",
    "license": "MIT",
    "scripts": {
       "install:packages": "yarn && cd store && yarn && cd ../admin && yarn",
-      "dev": "concurrently \"nodemon -r esm index.js\" \"cd store && yarn dev\" \"cd admin && yarn start\"",
+      "dev": "concurrently \"nodemon -r esm index.js\" \"nodemon -r esm template.js\" \"cd store && yarn dev\" \"cd admin && yarn start\"",
+      "template": "concurrently \"nodemon -r esm index.js --config nodemon.json\" \"nodemon -r esm template.js --config templateNodemon.json\"",
       "dev-mac": "concurrently \"nodemon -r esm index.js\" \"cd store && yarn dev\" \"cd admin && yarn start-mac\"",
       "build": "cd store && yarn build && cd ../admin && yarn build",
-      "prod": "concurrently \"nodemon -r esm index.js\" \"cd store && yarn start\"",
-      "dev:server": "concurrently \"nodemon -r esm index.js\" \"cd store && yarn dev\"",
+      "build-store": "cd store && yarn build",
+      "prod": "concurrently \"nodemon -r esm index.js --config nodemon.json\" \"nodemon -r esm template.js --config templateNodemon.json\" \"cd store && yarn start\"",
+      "dev:server": "concurrently \"nodemon -r esm index.js\" \"nodemon -r esm template.js\" \"cd store && yarn dev\"",
       "download-graphql": "chmod +x ./fetchgraphqlschema.sh && ./fetchgraphqlschema.sh",
       "lint:graphql": "eslint **/graphql/*.js > graphqlerrors.txt",
       "start-hasura": "cd hasura && hasura console"
    },
    "dependencies": {
-      "@tillpos/xml-escpos-helper": "^0.2.2",
+      "@dailykit/xml-escpos-helper": "^1.0.3",
       "add": "^2.0.6",
       "apollo-server-express": "^2.25.2",
+      "arabic-persian-reshaper": "^1.0.1",
       "aws-sdk": "^2.678.0",
       "axios": "^0.21.1",
       "babel-eslint": "^10.1.0",
@@ -40,6 +43,7 @@
       "graphql-request": "^3.4.0",
       "graphql-tools": "^4.0.6",
       "http-proxy-middleware": "^2.0.0",
+      "iconv-lite": "^0.6.3",
       "ics": "^2.31.0",
       "isomorphic-git": "0.75.0",
       "jsonwebtoken": "^8.5.1",
@@ -66,10 +70,12 @@
       "rrule": "2.6.4",
       "sharp": "^0.29.1",
       "ssh2": "^0.8.9",
+      "ssl-checker": "^2.0.7",
       "stripe": "^8.168.0",
       "table": "^6.8.0",
       "tar-fs": "^2.1.1",
       "twilio": "^3.67.2",
+      "url": "^0.11.0",
       "yarn": "^1.22.11",
       "zlib": "^1.0.5"
    },
@@ -80,11 +86,5 @@
       "eslint-plugin-prettier": "^3.4.0",
       "nodemon": "^2.0.3",
       "prettier": "^2.3.2"
-   },
-   "nodemonConfig": {
-      "ignore": [
-         "store",
-         "admin"
-      ]
    }
 }

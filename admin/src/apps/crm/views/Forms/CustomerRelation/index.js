@@ -45,25 +45,25 @@ import {
 } from './Tunnel'
 import { currencyFmt, logger } from '../../../../../shared/utils'
 import { useTabs } from '../../../../../shared/providers'
-import BrandContext from '../../../context/Brand'
+// import BrandContext from '../../../context/Brand'
 import {
    Banner,
    InlineLoader,
    InsightDashboard,
 } from '../../../../../shared/components'
+import { BrandContext } from '../../../../../App'
 
 const CustomerRelation = ({ match }) => {
-   const [context, setContext] = useContext(BrandContext)
-   console.log({ context })
-   const prevBrandId = useRef(context.brandId)
+   // const [context, setContext] = useContext(BrandContext)
+   const [brandContext, setBrandContext] = useContext(BrandContext)
+
+   console.log({ match })
+   const prevBrandId = useRef(brandContext.brandId)
    const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
    const [tunnels1, openTunnel1, closeTunnel1] = useTunnel(1)
 
-   const [
-      walletTxnTunnels,
-      openWalletTxnTunnel,
-      closeWalletTxnTunnel,
-   ] = useTunnel(1)
+   const [walletTxnTunnels, openWalletTxnTunnel, closeWalletTxnTunnel] =
+      useTunnel(1)
    const [walletId, setWalletId] = React.useState(null)
    const [
       loyaltyPointsTxnTunnels,
@@ -73,23 +73,24 @@ const CustomerRelation = ({ match }) => {
    const [loyaltyPointId, setLoyaltyPointId] = React.useState(null)
 
    const { dispatch, tab, closeAllTabs } = useTabs()
+   console.log(tab)
    const history = useHistory()
-   const {
-      data: { customers = [] } = {},
-      loading: customerloading,
-   } = useSubscription(CUSTOMER_ISTEST, {
-      variables: { keycloakId: match.params.id, brandId: context.brandId },
-   })
+   const { data: { customers = [] } = {}, loading: customerloading } =
+      useSubscription(CUSTOMER_ISTEST, {
+         variables: {
+            keycloakId: match.params.id,
+            brandId: match.params.brandId,
+         },
+      })
    const {
       data: { brand: { brand_customers: walletNreferral = [] } = {} } = {},
       loading: walletNreferralLoading,
    } = useSubscription(WALLET_N_REFERRAL, {
-      variables: { keycloakId: match.params.id, brandId: context.brandId },
+      variables: { keycloakId: match.params.id, brandId: match.params.brandId },
       onSubscriptionData: data => {
          if (data.subscriptionData.data.brand?.brand_customers?.length) {
-            const [
-               brandCustomer,
-            ] = data.subscriptionData.data.brand?.brand_customers
+            const [brandCustomer] =
+               data.subscriptionData.data.brand?.brand_customers
             if (brandCustomer.customer?.wallets?.length) {
                const [wallet] = brandCustomer.customer.wallets
                console.log('Setting wallet id: ', wallet.id)
@@ -101,12 +102,14 @@ const CustomerRelation = ({ match }) => {
    const { data, loading: loyaltyPointLoading } = useSubscription(
       LOYALTYPOINT_COUNT,
       {
-         variables: { keycloakId: match.params.id, brandId: context.brandId },
+         variables: {
+            keycloakId: match.params.id,
+            brandId: match.params.brandId,
+         },
          onSubscriptionData: data => {
             if (data.subscriptionData.data.brand?.brand_customers?.length) {
-               const [
-                  brandCustomer,
-               ] = data.subscriptionData.data.brand?.brand_customers
+               const [brandCustomer] =
+                  data.subscriptionData.data.brand?.brand_customers
                if (brandCustomer.customer?.loyaltyPoints?.length) {
                   const [loyaltyPoint] = brandCustomer.customer.loyaltyPoints
                   setLoyaltyPointId(loyaltyPoint.id)
@@ -119,7 +122,7 @@ const CustomerRelation = ({ match }) => {
       data: { brand: { brand_customers: signUpCount = [] } = {} } = {},
       loading: signUpLoading,
    } = useSubscription(SIGNUP_COUNT, {
-      variables: { keycloakId: match.params.id, brandId: context.brandId },
+      variables: { keycloakId: match.params.id, brandId: match.params.brandId },
    })
    const {
       loading: listLoading,
@@ -127,7 +130,7 @@ const CustomerRelation = ({ match }) => {
    } = useQuery(CUSTOMER_DATA, {
       variables: {
          keycloakId: match.params.id,
-         brandId: context.brandId,
+         brandId: match.params.brandId,
       },
       onError: error => {
          toast.error('Something went wrong!')
@@ -140,7 +143,7 @@ const CustomerRelation = ({ match }) => {
    } = useQuery(SUBSCRIPTION, {
       variables: {
          keycloakId: match.params.id,
-         brandId: context.brandId,
+         brandId: match.params.brandId,
       },
       onError: error => {
          toast.error('Something went wrong1')
@@ -153,7 +156,7 @@ const CustomerRelation = ({ match }) => {
    } = useQuery(SUBSCRIPTION_PLAN, {
       variables: {
          keycloakId: match.params.id,
-         brandId: context.brandId,
+         brandId: match.params.brandId,
       },
       onError: error => {
          toast.error('Something went wrong2')
@@ -199,14 +202,14 @@ const CustomerRelation = ({ match }) => {
       setActiveCard('Orders')
    }, [])
 
-   // if (context.brandId !== prevBrandId.current) {
+   // if (match.params.brandId !== prevBrandId.current) {
    //    closeAllTabs()
    // }
 
    const renderTable = React.useCallback(() => {
       switch (tab?.data?.activeCard) {
          case 'Orders':
-            return <OrdersTable id={match.params.id} />
+            return <OrdersTable params={match.params} />
          case 'Referrals':
             return <ReferralTable />
          case 'Wallet':
@@ -246,7 +249,7 @@ const CustomerRelation = ({ match }) => {
             <Flex container>
                <StyledSideBar>
                   <CustomerCard
-                     brand={context}
+                     brand={match.params}
                      customer={customerData[0]?.customer}
                      walletAmount={currencyFmt(
                         walletNreferral[0]?.customer?.wallets[0].amount || 0
@@ -336,13 +339,13 @@ const CustomerRelation = ({ match }) => {
                tunnels={tunnels}
                openTunnel={openTunnel}
                closeTunnel={closeTunnel}
-               id={match.params.id}
+               params={match.params}
             />
             <AddressTunnel
                tunnels={tunnels1}
                openTunnel={openTunnel1}
                closeTunnel={closeTunnel1}
-               id={match.params.id}
+               params={match.params}
             />
             <Tunnels tunnels={walletTxnTunnels}>
                <Tunnel layer={1}>

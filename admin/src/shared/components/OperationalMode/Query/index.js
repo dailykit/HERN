@@ -98,9 +98,10 @@ export const BRANDS_LOCATION_ID = gql`
    subscription brandLocationId($id: Int!) {
       brands(where: { id: { _eq: $id } }) {
          brand_locations {
-            locationId
+            id
             location {
                label
+               id
             }
          }
       }

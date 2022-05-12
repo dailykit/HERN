@@ -211,8 +211,88 @@ export const PLANS = {
       }
    `,
 }
-
+export const BRAND_COUPONS = {
+   LIST: gql`
+      subscription brandCoupons($brandId: Int_comparison_exp!) {
+         brandCoupons(
+            where: { brandId: $brandId }
+            order_by: { position: desc_nulls_last }
+         ) {
+            id
+            brandId
+            couponId
+            isActive
+            position
+            coupon {
+               code
+            }
+         }
+      }
+   `,
+   TUNNEL_LIST: gql`
+      subscription couponList($brandId: Int!) {
+         coupons(
+            order_by: { isActive: desc_nulls_last }
+            where: {
+               _not: {
+                  brands: {
+                     brand: { brand_coupons: { brandId: { _eq: $brandId } } }
+                  }
+               }
+            }
+         ) {
+            code
+            id
+            metaDetails
+            isActive
+         }
+      }
+   `,
+   UPSERT_BRAND_COUPONS: gql`
+      mutation upsertBrandCoupons($objects: [crm_brand_coupon_insert_input!]!) {
+         createBrandCoupons(
+            objects: $objects
+            on_conflict: {
+               constraint: brand_coupon_id_key
+               update_columns: isActive
+            }
+         ) {
+            affected_rows
+         }
+      }
+   `,
+   DELETE: gql`
+      mutation deleteBrandCoupon($brandId: Int!, $couponId: Int!) {
+         deleteBrandCoupon(brandId: $brandId, couponId: $couponId) {
+            id
+         }
+      }
+   `,
+   UPDATE: gql`
+      mutation updateBrandCoupon(
+         $_set: crm_brand_coupon_set_input!
+         $brandId: Int!
+         $couponId: Int!
+      ) {
+         updateBrandCoupon(
+            pk_columns: { brandId: $brandId, couponId: $couponId }
+            _set: $_set
+         ) {
+            id
+         }
+      }
+   `,
+}
 export const LOCATIONS = {
+   AGGREGATE: gql`
+      subscription locations {
+         brands_location_aggregate {
+            aggregate {
+               count
+            }
+         }
+      }
+   `,
    LIST: gql`
       subscription locations($identifier: String!) {
          brands_location(order_by: { id: asc }) {
@@ -274,13 +354,16 @@ export const LOCATIONS = {
    VIEW: gql`
       subscription viewLocation($id: Int!) {
          brands_location(where: { id: { _eq: $id } }) {
+            locationAddress
+            id
+            lat
+            lng
             city
+            state
             country
+            zipcode
             isActive
             label
-            state
-            zipcode
-            locationAddress
          }
       }
    `,
@@ -288,7 +371,10 @@ export const LOCATIONS = {
 export const BRAND_LOCATION = {
    VIEW: gql`
       subscription linkedBrands($locationId: Int!, $identifier: String!) {
-         brands_brand_location(where: { locationId: { _eq: $locationId } }) {
+         brands_brand_location(
+            where: { locationId: { _eq: $locationId } }
+            order_by: { brand: { title: asc, created_at: asc_nulls_first } }
+         ) {
             brandId
             doesDeliver
             doesDeliverOutsideCity
@@ -343,11 +429,16 @@ export const BRAND_LOCATION = {
    `,
 }
 export const BRAND_ID_LIST = gql`
-   subscription brandId($identifier: String!) {
+   subscription brandId($identifier: String!, $locationId: Int!) {
       brandsAggregate(
-         order_by: { id: asc }
-         where: { isArchived: { _eq: false } }
+         order_by: { title: asc }
+         where: {
+            _not: { brand_locations: { locationId: { _eq: $locationId } } }
+         }
       ) {
+         aggregate {
+            count
+         }
          nodes {
             title
             id
@@ -361,12 +452,402 @@ export const BRAND_ID_LIST = gql`
       }
    }
 `
-
 // getting brandSettingId using identifier
 export const BRAND_ID = gql`
- query MyQuery($identifier: String_comparison_exp!) {
-  brands_brand_brandSetting(where: {brandSetting: {identifier: $identifier}}, limit: 1) {
-    brandSettingId
-  }
-}
+   query MyQuery($identifier: String_comparison_exp!) {
+      brands_brand_brandSetting(
+         where: { brandSetting: { identifier: $identifier } }
+         limit: 1
+      ) {
+         brandSettingId
+      }
+   }
 `
+export const KIOSK = {
+   AGGREGATE: gql`
+      subscription KIOSK {
+         brands_locationKiosk_aggregate {
+            aggregate {
+               count
+            }
+         }
+      }
+   `,
+   LIST: gql`
+      subscription KIOSK_LIST {
+         kiosk: brands_locationKiosk_aggregate {
+            aggregate {
+               count
+            }
+            nodes {
+               id
+               accessUrl
+               KioskLabel: internalLocationKioskLabel
+               printerId
+               isActive
+               lastActiveTime
+            }
+         }
+      }
+   `,
+   KIOSK: gql`
+      subscription Kiosk($id: Int_comparison_exp!) {
+         kiosk: brands_locationKiosk(where: { id: $id }) {
+            id
+            accessUrl
+            accessPassword
+            kioskLabel: internalLocationKioskLabel
+            isActive
+            printerId
+            location {
+               city
+               id
+               label
+            }
+            lastActiveTime
+         }
+      }
+   `,
+   CREATE_KIOSK: gql`
+      mutation CREATE_KIOSK($object: brands_locationKiosk_insert_input!) {
+         insert_brands_locationKiosk_one(object: $object) {
+            id
+         }
+      }
+   `,
+   CREATE_KIOSKS: gql`
+      mutation CREATE_KIOSKS($objects: [brands_locationKiosk_insert_input!]!) {
+         insert_brands_locationKiosk(objects: $objects) {
+            returning {
+               id
+            }
+            affected_rows
+         }
+      }
+   `,
+   PRINTERS: gql`
+      subscription PRINTERS {
+         printers {
+            name
+            printNodeId
+            computerId
+            computer {
+               name
+            }
+         }
+      }
+   `,
+
+   LOCATIONS: gql`
+      subscription locationList {
+         locations: brands_location {
+            id
+            city
+            isActive
+            lat
+            lng
+            label
+         }
+      }
+   `,
+
+   GET_KIOSKS: gql`
+      subscription GET_KIOSK($id: Int!) {
+         kiosk: brands_locationKiosk_by_pk(id: $id) {
+            accessPassword
+            accessUrl
+            id
+            internalLocationKioskLabel
+            isActive
+            kioskModuleConfig
+            locationId
+            printerId
+            orderTabs {
+               orderPrefix
+               posist_tabId
+               posist_tabType
+               orderTabId
+               OrderTab {
+                  label
+               }
+            }
+         }
+      }
+   `,
+   ORDER_TAB_LIST: gql`
+      query OrderTabList {
+         brands_orderTab(
+            where: { availableOrderInterfaceLabel: { _eq: "Kiosk Ordering" } }
+         ) {
+            label
+            id
+         }
+      }
+   `,
+
+   UPDATE_KIOSK: gql`
+      mutation UPDATE_KIOSK(
+         $id: Int!
+         $_set: brands_locationKiosk_set_input = {}
+      ) {
+         update_brands_locationKiosk_by_pk(
+            pk_columns: { id: $id }
+            _set: $_set
+         ) {
+            id
+         }
+      }
+   `,
+
+   CREATE_KIOSK_ORDER_TAB: gql`
+      mutation CREATE_KIOSK_ORDER_TAB(
+         $objects: [brands_locationKiosk_orderTab_insert_input!]!
+      ) {
+         insert_brands_locationKiosk_orderTab(objects: $objects) {
+            affected_rows
+         }
+      }
+   `,
+
+   UPDATE_KIOSK_ORDER_TAB: gql`
+      mutation UPDATE_KIOSK_ORDER_TAB(
+         $orderTabId: Int!
+         $locationKioskId: Int!
+         $_set: brands_locationKiosk_orderTab_set_input = {}
+      ) {
+         update_brands_locationKiosk_orderTab_by_pk(
+            pk_columns: {
+               locationKioskId: $locationKioskId
+               orderTabId: $orderTabId
+            }
+            _set: $_set
+         ) {
+            locationKioskId
+            orderPrefix
+            orderTabId
+            posist_tabId
+            posist_tabType
+         }
+      }
+   `,
+
+   DELETE_KIOSK_ORDER_TAB: gql`
+      mutation DELETE_KIOSK_ORDER_TAB(
+         $locationKioskId: Int_comparison_exp!
+         $orderTabId: Int_comparison_exp!
+      ) {
+         delete_brands_locationKiosk_orderTab(
+            where: {
+               locationKioskId: $locationKioskId
+               orderTabId: $orderTabId
+            }
+         ) {
+            affected_rows
+         }
+      }
+   `,
+
+   KIOSK_REPORT: gql`
+      subscription kiosk_report {
+         order_kioskReport {
+            amount
+            auth
+            bankId
+            cardNumber
+            cardType
+            city
+            date
+            dateTime
+            id
+            internalLocationKioskLabel
+            isTest
+            label
+            locationId
+            outlet
+            locationKioskId
+            par
+            paymentStatus
+            paymentType
+            posist_sourceName
+            posist_sourceOrderId
+            posist_tabType
+            terminalId
+            time
+            zipcode
+         }
+      }
+   `,
+}
+export const PAYMENT_OPTIONS = {
+   AGGREGATE: gql`
+      subscription paymentOptions {
+         brands_availablePaymentOption_aggregate {
+            aggregate {
+               count
+            }
+         }
+      }
+   `,
+   LIST: gql`
+      subscription availablePaymentOptions {
+         brands_availablePaymentOption(
+            order_by: { position: desc_nulls_last }
+         ) {
+            id
+            label
+            isValid
+            isActive
+            position
+            description
+            privateCreds
+            publicCreds
+            supportedPaymentOption {
+               paymentOptionLabel
+               supportedPaymentCompany {
+                  label
+                  logo
+               }
+            }
+            SUCCEEDED: cartPayments_aggregate(
+               where: {
+                  paymentStatus: { _eq: "SUCCEEDED" }
+                  isTest: { _eq: false }
+               }
+            ) {
+               aggregate {
+                  count
+                  sum {
+                     amount
+                  }
+                  avg {
+                     amount
+                  }
+               }
+            }
+         }
+      }
+   `,
+   UPDATE: gql`
+      mutation updatePaymantOption(
+         $id: Int!
+         $_set: brands_availablePaymentOption_set_input!
+      ) {
+         update_brands_availablePaymentOption_by_pk(
+            pk_columns: { id: $id }
+            _set: $_set
+         ) {
+            id
+         }
+      }
+   `,
+   DELETE: gql`
+      mutation deletePaymentOption($id: Int!) {
+         delete_brands_availablePaymentOption(where: { id: { _eq: $id } }) {
+            affected_rows
+         }
+      }
+   `,
+   COMPANY_LIST: gql`
+      subscription paymentCompany {
+         brands_supportedPaymentCompany {
+            label
+            id
+            logo
+            supportedPaymentOptions {
+               id
+               paymentOptionLabel
+               publicCredsConfig
+               privateCredsConfig
+               availablePaymentOptions {
+                  description
+                  label
+                  publicCreds
+                  privateCreds
+               }
+            }
+         }
+      }
+   `,
+   UPDATE_LABEL: gql`
+      mutation upsetLabel(
+         $objects: [brands_availablePaymentOption_insert_input!]!
+         $supportedPaymentOptionId: Int!
+      ) {
+         insert_brands_availablePaymentOption(
+            objects: $objects
+            on_conflict: {
+               constraint: availablePaymentOption_label_key
+               where: {
+                  supportedPaymentOptionId: { _eq: $supportedPaymentOptionId }
+               }
+            }
+         ) {
+            affected_rows
+            returning {
+               label
+               id
+            }
+         }
+      }
+   `,
+   VIEW_CREDS: gql`
+      subscription updateCreds($id: Int_comparison_exp!) {
+         brands_availablePaymentOption(where: { id: $id }) {
+            id
+            description
+            label
+            privateCreds
+            publicCreds
+         }
+      }
+   `,
+   UPDATE_CREDS: gql`
+      mutation updatePayment(
+         $_set: brands_availablePaymentOption_set_input!
+         $id: Int!
+      ) {
+         update_brands_availablePaymentOption(
+            where: { id: { _eq: $id } }
+            _set: $_set
+         ) {
+            affected_rows
+         }
+      }
+   `,
+   VIEW: gql`
+      subscription availablePayment($id: Int!) {
+         brands_availablePaymentOption_by_pk(id: $id) {
+            id
+            isActive
+            isValid
+            label
+            privateCreds
+            publicCreds
+            description
+            supportedPaymentOption {
+               paymentOptionLabel
+               supportedPaymentCompany {
+                  label
+                  logo
+               }
+            }
+            SUCCEEDED: cartPayments_aggregate(
+               where: {
+                  paymentStatus: { _eq: "SUCCEEDED" }
+                  isTest: { _eq: false }
+               }
+            ) {
+               aggregate {
+                  count
+                  sum {
+                     amount
+                  }
+                  avg {
+                     amount
+                  }
+               }
+            }
+         }
+      }
+   `,
+}

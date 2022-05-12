@@ -12,7 +12,7 @@ export const CUSTOMERS_COUNT = gql`
 
 export const CUSTOMERS_DATA_OVERTIME = gql`
    subscription CUSTOMERS_DATA_OVERTIME(
-      $args: insights_getCustomerByGroupby_args!
+      $args: getCustomersByGroupBy_insights_analytics_args!
    ) {
       insights_analytics {
          getCustomersByGroupBy(args: $args)
@@ -20,7 +20,7 @@ export const CUSTOMERS_DATA_OVERTIME = gql`
    }
 `
 export const FIRST_TIME_VS_RETURNING_CUSTOMER_SALES = gql`
-   subscription firstTime($args: insights_getTotalEarnings_args!) {
+   subscription firstTime($args: getTotalEarnings_insights_analytics_args!) {
       insights_analytics {
          getTotalEarnings(args: $args)
       }

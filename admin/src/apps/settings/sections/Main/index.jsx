@@ -18,7 +18,7 @@ import {
 } from '../../views'
 import { useAccess } from '../../../../shared/providers'
 import { ErrorBoundary, Flex } from '../../../../shared/components'
-import { MarketPlace } from '../../views/Listings'
+import { EnvsList, MarketPlace } from '../../views/Listings'
 
 const Main = () => {
    return (
@@ -107,6 +107,14 @@ const Main = () => {
                message="You do not have sufficient permission to see market place."
             >
                <MarketPlace />
+            </AccessCheck>
+         </Route>
+         <Route path="/settings/envs" exact>
+            <AccessCheck
+               title="envs"
+               message="You do not have sufficient permission to see envs list."
+            >
+               <EnvsList />
             </AccessCheck>
          </Route>
       </>

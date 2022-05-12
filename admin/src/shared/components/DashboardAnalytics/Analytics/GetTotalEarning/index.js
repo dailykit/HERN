@@ -62,7 +62,9 @@ const TotalEarningAnalytics = () => {
                   `AND a.created_at >= '${analyticsApiArgState.from}'`
                } ${
                   analyticsApiArgState.from !== moment('2017 - 01 - 01') &&
-                  `AND a.created_at < '${analyticsApiArgState.to}'`
+                  `AND a.created_at < '${moment(analyticsApiArgState.to)
+                     .add(1, 'd')
+                     .format('YYYY-MM-DD')}'`
                } ${
                   analyticsApiArgState.brandShop.brandId
                      ? `AND a."brandId" = ${analyticsApiArgState.brandShop.brandId}`
@@ -70,6 +72,10 @@ const TotalEarningAnalytics = () => {
                } ${
                   analyticsApiArgState.brandShop.shopTitle
                      ? `AND b.source = \'${analyticsApiArgState.brandShop.shopTitle}\'`
+                     : ''
+               } ${
+                  analyticsApiArgState.brandShop.locationId
+                     ? `AND b."locationId" = ${analyticsApiArgState.brandShop.locationId}`
                      : ''
                }`,
                groupingSets: `(${analyticsApiArgState.groupBy.toString()})`,
@@ -92,7 +98,11 @@ const TotalEarningAnalytics = () => {
                where: `"isAccepted" = true AND COALESCE("isRejected", false) = false AND "paymentStatus" = \'SUCCEEDED\' ${
                   analyticsApiArgState.compare.from !==
                      moment('2017 - 01 - 01') &&
-                  `AND a.created_at >= '${analyticsApiArgState.compare.from}'`
+                  `AND a.created_at >= '${moment(
+                     analyticsApiArgState.compare.to
+                  )
+                     .add(1, 'd')
+                     .format('YYYY-MM-DD')}'`
                } ${
                   analyticsApiArgState.compare.from !==
                      moment('2017 - 01 - 01') &&
@@ -104,6 +114,10 @@ const TotalEarningAnalytics = () => {
                } ${
                   analyticsApiArgState.brandShop.shopTitle
                      ? `AND b.source = \'${analyticsApiArgState.brandShop.shopTitle}\'`
+                     : ''
+               } ${
+                  analyticsApiArgState.brandShop.locationId
+                     ? `AND b."locationId" = ${analyticsApiArgState.brandShop.locationId}`
                      : ''
                }`,
                groupingSets: `(${analyticsApiArgState.groupBy.toString()})`,
@@ -144,7 +158,7 @@ const TotalEarningAnalytics = () => {
 
       setEarningCompare(prevState => ({ ...prevState, compareResult: result }))
    }
-   console.log('Loading', subsLoading, insights_analytics)
+   // console.log('Loading', subsLoading, insights_analytics)
    if (subsLoading || compareLoading) {
       return <InlineLoader />
    }

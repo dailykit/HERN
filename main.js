@@ -1,8 +1,5 @@
 import cors from 'cors'
 
-import request from 'request'
-import fs from 'fs'
-import path from 'path'
 import express from 'express'
 import morgan from 'morgan'
 import AWS from 'aws-sdk'
@@ -12,8 +9,7 @@ import depthLimit from 'graphql-depth-limit'
 import get_env from './get_env'
 
 import ServerRouter from './server'
-import schema from './template/schema'
-import TemplateRouter from './template'
+import schema from './dailygit/schema'
 import { createEnvFiles, syncEnvsFromPlatform } from './server/entities'
 import ayrshareSchema from './server/ayrshare/src/schema/index'
 
@@ -92,13 +88,15 @@ handles template endpoints for ex. serving labels, sachets, emails in pdf or htm
 
 /template/?template={"name":"bill1","type":"bill","format":"pdf"}&data={"id":"1181"}
 */
-app.use('/template', TemplateRouter)
 
 const isProd = process.env.NODE_ENV === 'production'
 
-const proxy = createProxyMiddleware({
-   target: 'http://localhost:3000',
+const templateProxy = createProxyMiddleware({
+   target: 'http://localhost:5000',
    changeOrigin: true,
+   pathRewrite: {
+      '^/template': ''
+   },
    onProxyReq: (proxyReq, req) => {
       if (req.body) {
          const bodyData = JSON.stringify(req.body)
@@ -108,103 +106,6 @@ const proxy = createProxyMiddleware({
       }
    }
 })
-
-/*
-request on test.dailykit.org forwards to http://localhost:3000
-*/
-app.use('/api/:path(*)', proxy)
-app.use('/_next/image', proxy)
-app.use('/assets/:path(*)', proxy)
-
-const RESTRICTED_FILES = ['env-config.js', 'favicon', '.next', '_next']
-
-/*
-catches routes of subscription shop
-
-test.dailykit.org/menu
-*/
-const serveSubscription = async (req, res, next) => {
-   //     Subscription shop: Browser <-> Express <-> NextJS
-   try {
-      const { path: routePath } = req.params
-      const { preview } = req.query
-      const { host } = req.headers
-      const brand = host.replace(':', '')
-
-      /*
-      -> user requests test.dailykit.org/menu
-      -> extracts brand i.e test.dailykit.org
-      -> test.dailykit.org/test.dailykit.org/menu
-      -> network request to above url and returns response back to browser
-
-      during development
-         -> serves via running next dev
-      during production
-         -> serves via running next build && next start
-      */
-      if (process.env.NODE_ENV === 'development') {
-         const url = RESTRICTED_FILES.some(file => routePath.includes(file))
-            ? `http://localhost:3000/${routePath}`
-            : `http://localhost:3000/${brand}/${routePath}`
-         request(url, (error, _, body) => {
-            if (error) {
-               throw error
-            } else {
-               res.send(body)
-            }
-         })
-      } else {
-         const isAllowed = !RESTRICTED_FILES.some(file =>
-            routePath.includes(file)
-         )
-         if (isAllowed) {
-            const filePath =
-               routePath === ''
-                  ? path.join(
-                       __dirname,
-                       `./store/.next/server/pages/${brand}.html`
-                    )
-                  : path.join(
-                       __dirname,
-                       `./store/.next/server/pages/${brand}/${routePath}.html`
-                    )
-
-            /*
-               SSR: Server Side Rendering
-               ISR: Incremental Server Regeneration
-               SSG: Server Side Generation
-
-               with preview requests are served via .next
-            */
-            if (fs.existsSync(filePath) && preview !== 'true') {
-               res.sendFile(filePath)
-            } else {
-               const url = RESTRICTED_FILES.some(file =>
-                  routePath.includes(file)
-               )
-                  ? `http://localhost:3000/${routePath}`
-                  : `http://localhost:3000/${brand}/${routePath}`
-               request(url, (error, _, body) => {
-                  if (error) {
-                     console.log(error)
-                  } else {
-                     res.send(body)
-                  }
-               })
-            }
-         } else if (routePath.includes('env-config.js')) {
-            res.sendFile(path.join(__dirname, 'store/public/env-config.js'))
-         } else {
-            res.sendFile(
-               path.join(__dirname, routePath.replace('_next', 'store/.next'))
-            )
-         }
-      }
-   } catch (error) {
-      res.status(404).json({ success: false, error: 'Page not found!' })
-   }
-}
-
 /*
 manages files in templates folder
 */
@@ -227,8 +128,8 @@ const apolloserver = new ApolloServer({
       media: await get_env('MEDIA_PATH')
    })
 })
-
 apolloserver.applyMiddleware({ app, path: `/template/graphql` })
+app.use('/template', templateProxy)
 
 // ohyay remote schema integration
 const ohyayApolloserver = new ApolloServer({
@@ -273,8 +174,6 @@ const ayrshareApolloserver = new ApolloServer({
 })
 
 ayrshareApolloserver.applyMiddleware({ app, path: '/ayrshare/graphql' })
-
-app.use('/:path(*)', serveSubscription)
 
 app.listen(PORT, () => {
    console.log(`Server started on ${PORT}`)

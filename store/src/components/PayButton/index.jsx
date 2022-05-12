@@ -3,17 +3,19 @@ import { useMutation, useSubscription } from '@apollo/react-hooks'
 import isEmpty from 'lodash/isEmpty'
 import { Skeleton } from 'antd'
 import { useToasts } from 'react-toast-notifications'
-
+import KioskButton from '../kiosk/component/button'
 import { Button } from '../button'
 import * as QUERIES from '../../graphql'
-import { usePayment } from '../../lib'
 import { isKiosk, useTerminalPay } from '../../utils'
+import { usePayment } from '../../lib'
 
 function PayButton({
    children,
    selectedAvailablePaymentOptionId = null,
    cartId = null,
    fullWidthSkeleton = true,
+   setPaymentTunnelOpen,
+   config,
    ...props
 }) {
    const isKioskMode = isKiosk()
@@ -26,7 +28,6 @@ function PayButton({
       initializePayment,
       setPaymentInfo,
    } = usePayment()
-   const { checkTerminalStatus } = useTerminalPay()
    const { addToast } = useToasts()
    const [cartValidity, setCartValidity] = useState(null)
 
@@ -55,12 +56,10 @@ function PayButton({
          ?.supportedPaymentCompany?.label === 'stripe'
 
    const onPayClickHandler = async () => {
+      setPaymentTunnelOpen && setPaymentTunnelOpen(false)
       console.log('PayButton: onPayClickHandler')
       if (isKioskMode) {
          console.log('inside kiosk condition')
-         const response = await checkTerminalStatus()
-         if (response && response === 'BUSY')
-            return addToast('Terminal is busy', { appearance: 'error' })
          if (cartId) {
             initializePayment(cartId)
             updatePaymentState({
@@ -85,14 +84,14 @@ function PayButton({
             !isEmpty(cartValidity) &&
             cartValidity.status
          ) {
-            initializePayment(cartId)
             // setIsProcessingPayment(true)
             // setIsPaymentInitiated(true)
             // updatePaymentState({
             //    paymentLifeCycleState: 'INCREMENT_PAYMENT_RETRY_ATTEMPT',
             // })
+            initializePayment(cartId)
 
-            updateCart({
+            await updateCart({
                variables: {
                   id: cartId,
                   _inc: { paymentRetryAttempt: 1 },
@@ -130,13 +129,30 @@ function PayButton({
          {loading ? (
             <Skeleton.Button active size="large" block={fullWidthSkeleton} />
          ) : (
-            <Button
-               onClick={onPayClickHandler}
-               disabled={!cartValidity?.status}
-               {...props}
-            >
-               {children}
-            </Button>
+            <>
+               {!isKioskMode ? (
+                  <Button
+                     onClick={onPayClickHandler}
+                     disabled={!cartValidity?.status}
+                     {...props}
+                  >
+                     {children}
+                  </Button>
+               ) : (
+                  <KioskButton
+                     style={{
+                        paddingTop: '10px',
+                        paddingBottom: '10px',
+                     }}
+                     onClick={onPayClickHandler}
+                     disabled={!cartValidity?.status}
+                     buttonConfig={config.kioskSettings.buttonSettings}
+                     {...props}
+                  >
+                     {children}
+                  </KioskButton>
+               )}
+            </>
          )}
       </>
    )

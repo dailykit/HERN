@@ -1,13 +1,13 @@
 import React from 'react'
 import { useRouter } from 'next/router'
 import { useUser } from '../../../context'
+import { SEO, Layout, ExternalJSCSSFiles } from '../../../components'
 import {
-   SEO,
-   Layout,
-   LoginWarning,
-   ExternalJSCSSFiles,
-} from '../../../components'
-import { getPageProps, isClient, renderPageContent } from '../../../utils'
+   getPageProps,
+   isClient,
+   renderPageContent,
+   getRoute,
+} from '../../../utils'
 
 const SelectMenu = props => {
    const { settings, linkedFiles, folds, seoSettings } = props
@@ -16,19 +16,15 @@ const SelectMenu = props => {
    React.useEffect(() => {
       if (!isAuthenticated && !isLoading) {
          isClient && localStorage.setItem('landed_on', location.href)
-         // router.push(getRoute('/get-started/register'))
+         router.push(getRoute('/login'))
       }
    }, [isAuthenticated, isLoading])
-
-
 
    return (
       <Layout settings={settings}>
          <SEO seoSettings={seoSettings} />
          <ExternalJSCSSFiles externalFiles={linkedFiles} />
-         {!isAuthenticated && !isLoading ? (
-            <LoginWarning />
-         ) : (
+         {isAuthenticated && !isLoading && (
             <main>{renderPageContent(folds)}</main>
          )}
       </Layout>
@@ -43,7 +39,7 @@ export async function getStaticProps({ params }) {
 
    return {
       props: { folds: parsedData, linkedFiles, settings, seoSettings },
-      revalidate: 60, // will be passed to the page component as props
+      // revalidate: 60, // will be passed to the page component as props
    }
 }
 

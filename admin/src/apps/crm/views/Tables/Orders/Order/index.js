@@ -30,12 +30,18 @@ import {
 } from './styled'
 import options from '../../../tableOptions'
 import { currencyFmt, logger } from '../../../../../../shared/utils'
-import BrandContext from '../../../../context/Brand'
+// import BrandContext from '../../../../context/Brand'
 import * as moment from 'moment'
+import { BrandContext } from '../../../../../../App'
+import { useParams } from 'react-router-dom'
 
 const OrderInfo = () => {
-   const [context, setContext] = useContext(BrandContext)
+   // const [context, setContext] = useContext(BrandContext)
+   const [brandContext, setBrandContext] = useContext(BrandContext)
+
    const { dispatch, tab } = useTabs()
+   const params = useParams()
+   console.log('order', params)
    const { tooltip } = useTooltip()
    const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
    const [tunnels1, openTunnel1, closeTunnel1] = useTunnel(1)
@@ -45,11 +51,12 @@ const OrderInfo = () => {
    const { loading } = useQuery(ORDER, {
       variables: {
          orderId: tab.data.oid,
-         brandId: context.brandId,
+         brandId: params.brandId,
       },
       onCompleted: ({ brand: { brand_Orders = [] } = {} } = {}) => {
-         const quantity = combineCartItems(brand_Orders[0]?.cart?.cartItems)
-            .length
+         const quantity = combineCartItems(
+            brand_Orders[0]?.cart?.cartItems
+         ).length
          console.log('quantity', quantity)
          setOrderData(brand_Orders[0])
          const result = brand_Orders[0]?.cart?.cartItems?.map(item => {
@@ -314,7 +321,10 @@ const OrderInfo = () => {
             </StyledMainBar>
             <StyledSideBar>
                <PaymentCard
-                  cardData={orderData?.cart?.paymentCart || 'N/A'}
+                  cardData={
+                     orderData?.cart?.activeCartPayment?.availablePaymentOption
+                        ?.label || 'N/A'
+                  }
                   billingAddDisplay="none"
                   bgColor="rgba(243,243,243,0.4)"
                   margin="0 0 16px 0"

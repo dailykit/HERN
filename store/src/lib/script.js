@@ -1,22 +1,21 @@
 import React from 'react'
-import { isEmpty } from 'lodash'
-
+// import { isEmpty } from 'lodash'
+import isEmpty from 'lodash/isEmpty'
 import { useConfig } from '.'
 import { isClient } from '../utils'
 
 export const ScriptProvider = ({ children }) => {
-   const { configOf } = useConfig('app')
+   const { scripts } = useConfig('app').configOf('Scripts')
 
    React.useEffect(() => {
-      const scripts = configOf('Scripts')?.scripts
-      if (!isEmpty(scripts?.value)) {
+      if (scripts?.value) {
+         const parsedScript = JSON.parse(scripts?.value)[0]
          const {
             startHead = [],
             endHead = [],
             startBody = [],
             endBody = [],
-         } = scripts?.value
-
+         } = parsedScript
          if (isClient) {
             // MOUNT IN STARTING OF HEAD
             if (!isEmpty(startHead)) {
@@ -36,7 +35,7 @@ export const ScriptProvider = ({ children }) => {
             }
          }
       }
-   }, [])
+   }, [scripts])
    return <>{children}</>
 }
 
@@ -44,6 +43,7 @@ const loadScript = (node, position, parent) => {
    const { tag, type, code } = node
    const parentContainer = document.querySelector(parent)
    const fragment = document.createDocumentFragment()
+
    if (type === 'inline' && tag === 'script') {
       const script = document.createElement('script')
       script.innerHTML = code.replace('<script>', '').replace('</script>', '')
@@ -62,8 +62,18 @@ const loadScript = (node, position, parent) => {
       fragment.appendChild(element)
    } else if (type === 'inline' && tag === 'noscript') {
       // TODO: handle noscript markup injection
+      const noscript = document.createElement('noscript')
+      noscript.innerHTML = code
+         .replace('<noscript>', '')
+         .replace('</noscript>', '')
+      fragment.appendChild(noscript)
+   } else if (tag === 'none') {
+      //when no tag is specified the tags will directly be appended in parent element(works for non-script tags)
+      const element = document.createElement('wrapper')
+      element.innerHTML = code
+      const node = element.childNodes
+      fragment.appendChild(...element.childNodes)
    }
-
    if (position === 'start') {
       parentContainer.prepend(fragment)
    } else if (position === 'end') {

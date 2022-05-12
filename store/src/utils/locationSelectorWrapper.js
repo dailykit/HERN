@@ -1,17 +1,22 @@
 import React from 'react'
-import { CSSTransition } from 'react-transition-group'
-import { LocationSelector } from '../components'
+import { Tunnel } from '../components'
+import { LocationSelector } from '../components/locationSelector/index'
+import { useTranslation } from '../context'
 
 export const LocationSelectorWrapper = props => {
-   const { showLocationSelectorPopup } = props
+   const { showLocationSelectorPopup, setShowLocationSelectionPopup } = props
+   const { t } = useTranslation()
    return (
-      <CSSTransition
-         in={showLocationSelectorPopup}
-         timeout={100}
-         unmountOnExit
-         classNames="hern-store-location-selector__css-transition"
+      <Tunnel.Left
+         title={<span>{t('Location')}</span>}
+         visible={showLocationSelectorPopup}
+         onClose={() => {
+            setShowLocationSelectionPopup(false)
+            sessionStorage.setItem('showLocationSelectorAfterPageLoad', 'false')
+         }}
+         destroyOnClose={true}
       >
          <LocationSelector {...props} />
-      </CSSTransition>
+      </Tunnel.Left>
    )
 }

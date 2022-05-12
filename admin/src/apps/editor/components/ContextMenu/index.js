@@ -1,6 +1,7 @@
 import React from 'react'
 import { toast } from 'react-toastify'
 import { Spacer } from '@dailykit/ui'
+import { Popconfirm } from 'antd'
 import { Menu, MenuOptions, MenuOption } from './style'
 import {
    CreateFile,
@@ -102,52 +103,58 @@ const ContextMenu = ({ style, node }) => {
 
    return (
       <>
-         <Menu style={style}>
-            <MenuOptions>
-               {node.type === 'folder' ? (
-                  <>
-                     {options.map(option => {
-                        if (
-                           option.type === 'folder' ||
-                           option.action === 'create'
-                        ) {
-                           return (
-                              <MenuOption
-                                 key={option.id}
-                                 onClick={() => optionHandler(option)}
-                              >
-                                 {fetchIcon(option.action, option.type)}
-                                 <Spacer xAxis size="4px" />
-                                 {option.value}
-                              </MenuOption>
-                           )
-                        }
-                     })}
-                  </>
-               ) : (
-                  <>
-                     {options.map(option => {
-                        if (
-                           (option.type === 'file' &&
-                              option.action !== 'create') ||
-                           option.action === 'copy'
-                        ) {
-                           return (
-                              <MenuOption
-                                 key={option.id}
-                                 onClick={() => optionHandler(option)}
-                              >
-                                 {fetchIcon(option.action, option.type)}
-                                 <Spacer xAxis size="4px" />
-                                 {option.value}
-                              </MenuOption>
-                           )
-                        }
-                     })}
-                  </>
-               )}
-            </MenuOptions>
-         </Menu>
+         <Popconfirm
+            zIndex={100}
+            autoAdjustOverflow
+            title="Please Select option"
+         >
+            <Menu style={style}>
+               <MenuOptions>
+                  {node.type === 'folder' ? (
+                     <>
+                        {options.map(option => {
+                           if (
+                              option.type === 'folder' ||
+                              option.action === 'create'
+                           ) {
+                              return (
+                                 <MenuOption
+                                    key={option.id}
+                                    onClick={() => optionHandler(option)}
+                                 >
+                                    {fetchIcon(option.action, option.type)}
+                                    <Spacer xAxis size="4px" />
+                                    {option.value}
+                                 </MenuOption>
+                              )
+                           }
+                        })}
+                     </>
+                  ) : (
+                     <>
+                        {options.map(option => {
+                           if (
+                              (option.type === 'file' &&
+                                 option.action !== 'create') ||
+                              option.action === 'copy'
+                           ) {
+                              return (
+                                 <MenuOption
+                                    key={option.id}
+                                    onClick={() => optionHandler(option)}
+                                 >
+                                    {fetchIcon(option.action, option.type)}
+                                    <Spacer xAxis size="4px" />
+                                    {option.value}
+                                 </MenuOption>
+                              )
+                           }
+                        })}
+                     </>
+                  )}
+               </MenuOptions>
+            </Menu>
+         </Popconfirm>
       </>
    )
 }

@@ -3,29 +3,25 @@ import moment from 'moment'
 import { toast } from 'react-toastify'
 import {
    Text,
-   Loader,
    Flex,
    IconButton,
    Spacer,
    Dropdown,
    ButtonGroup,
    TextButton,
-   Collapsible,
    DropdownButton,
 } from '@dailykit/ui'
 import { useSubscription, useQuery, useMutation } from '@apollo/react-hooks'
 import { ReactTabulator, reactFormatter } from '@dailykit/react-tabulator'
-import { useLocation } from 'react-router-dom'
+import { useLocation, useParams } from 'react-router-dom'
 import { StyledWrapper } from './styled'
 import { HeadingTile } from '../../../components'
-import BrandContext from '../../../context/Brand'
+// import BrandContext from '../../../context/Brand'
 import {
    CUSTOMERS_COUNT,
    TOTAL_REVENUE,
-   CUSTOMERS_LISTING,
    CUSTOMERS_LISTING_2,
    CUSTOMER_ARCHIVED,
-   UNIQUE_SUBSCRIPTION_FILTER_VALUES,
 } from '../../../graphql'
 import {
    Tooltip,
@@ -39,10 +35,14 @@ import { currencyFmt, logger } from '../../../../../shared/utils'
 import options from '../../tableOptions'
 import rRuleDay from '../../../Utils/rruleToText'
 import { TrueIcon, FalseIcon } from '../../../assets'
+import { BrandContext } from '../../../../../App'
 
 const CustomerListing = () => {
    const location = useLocation()
-   const [context, setContext] = useContext(BrandContext)
+   const brandDetails = useParams()
+   // const [context, setContext] = useContext(BrandContext)
+   const [brandContext, setBrandContext] = useContext(BrandContext)
+
    const { addTab, tab } = useTabs()
    const { tooltip } = useTooltip()
    const tableRef = useRef(null)
@@ -62,7 +62,7 @@ const CustomerListing = () => {
    // Subscription
    const { loading, error1 } = useSubscription(TOTAL_REVENUE, {
       variables: {
-         brandId: context.brandId,
+         brandId: brandDetails.brandId,
       },
       onSubscriptionData: data => {
          setRevenue(
@@ -73,7 +73,7 @@ const CustomerListing = () => {
    })
    const { customerCountLoading, error2 } = useSubscription(CUSTOMERS_COUNT, {
       variables: {
-         brandId: context.brandId,
+         brandId: brandDetails.brandId,
       },
       onSubscriptionData: data => {
          setCustomerCount(
@@ -99,7 +99,7 @@ const CustomerListing = () => {
    // Query
    const { loading: listloading } = useQuery(CUSTOMERS_LISTING_2, {
       variables: {
-         brandId: context.brandId,
+         brandId: brandDetails.brandId,
          order_by: [
             { isSubscriber: 'desc' },
             { isSubscriberTimeStamp: 'desc' },
@@ -164,6 +164,13 @@ const CustomerListing = () => {
       }
    }, [addTab, tab])
 
+   useEffect(() => {
+      if (brandContext.brandId)
+         addTab(
+            'Customers',
+            `/crm/customers-${brandContext.brandName}-${brandContext.brandId}`
+         )
+   }, [brandContext.brandId])
    // Handler
    const deleteHandler = (e, Customer) => {
       e.stopPropagation()
@@ -299,13 +306,12 @@ const CustomerListing = () => {
    const downloadXlsxData = () => {
       tableRef.current.table.download('xlsx', 'customers_table.xlsx')
    }
-   const clearCustomerPersistence= () =>
-      {
-         localStorage.removeItem('tabulator-customer_table-columns')
-         localStorage.removeItem('tabulator-customer_table-sort')
-         localStorage.removeItem('tabulator-customer_table-filter') 
-         localStorage.removeItem('tabulator-customer_table-group')
-      }
+   const clearCustomerPersistence = () => {
+      localStorage.removeItem('tabulator-customer_table-columns')
+      localStorage.removeItem('tabulator-customer_table-sort')
+      localStorage.removeItem('tabulator-customer_table-filter')
+      localStorage.removeItem('tabulator-customer_table-group')
+   }
    const defaultIDS = () => {
       let arr = []
       const customerGroup = localStorage.getItem(
@@ -350,19 +356,19 @@ const CustomerListing = () => {
          field: 'action',
          headerHorzAlign: 'center',
          frozen: true,
-         hozAlign: 'center',      
+         hozAlign: 'center',
          cellClick: (e, cell) => {
             e.stopPropagation()
             deleteHandler(e, cell._cell.row.data)
          },
          formatter: reactFormatter(<DeleteButton />),
-         
+
          titleFormatter: function (cell) {
             cell.getElement().style.textAlign = 'center'
             return '' + cell.getValue()
          },
          width: 100,
-      }, 
+      },
       {
          title: 'Personal Contact',
          columns: [
@@ -572,7 +578,7 @@ const CustomerListing = () => {
             },
          ],
       },
-      
+
       {
          title: 'Created',
          field: 'signUpOn',
@@ -623,7 +629,7 @@ const CustomerListing = () => {
                width="25%"
                alignItems="center"
                justifyContent="space-between"
-             >
+            >
                <Text as="title">
                   Customers(
                   {customerCount})
@@ -646,7 +652,7 @@ const CustomerListing = () => {
                >
                   <TextButton
                      onClick={() => {
-                        clearCustomerPersistence ()
+                        clearCustomerPersistence()
                      }}
                      type="ghost"
                      size="sm"
@@ -674,45 +680,44 @@ const CustomerListing = () => {
                      </DropdownButton.Options>
                   </DropdownButton>
 
-               <Spacer size="15px" xAxis />
-               <Text as="text1">Group By:</Text>
-               <Spacer size="5px" xAxis />
-               <Dropdown
-                  type="multi"
-                  variant="revamp"
-                  disabled={true}
-                  defaultIds={defaultIDS()}
-                  options={groupByOptions}
-                  searchedOption={() => {}}
-                  selectedOption={value => {
-                     localStorage.setItem(
-                        'tabulator-customer_table-group',
-                        JSON.stringify(value.map(x => x.payLoad))
-                     )
-                     tableRef.current.table.setGroupBy(
-                        value.map(x => x.payLoad)
-                     )
-                  }}
-                  typeName="groupBy"
-               />
-               
-            </Flex>         
+                  <Spacer size="15px" xAxis />
+                  <Text as="text1">Group By:</Text>
+                  <Spacer size="5px" xAxis />
+                  <Dropdown
+                     type="multi"
+                     variant="revamp"
+                     disabled={true}
+                     defaultIds={defaultIDS()}
+                     options={groupByOptions}
+                     searchedOption={() => {}}
+                     selectedOption={value => {
+                        localStorage.setItem(
+                           'tabulator-customer_table-group',
+                           JSON.stringify(value.map(x => x.payLoad))
+                        )
+                        tableRef.current.table.setGroupBy(
+                           value.map(x => x.payLoad)
+                        )
+                     }}
+                     typeName="groupBy"
+                  />
+               </Flex>
                <Flex
-                   container
-                   as="header"
-                   width="20%"
-                   alignItems="center"
-                   justifyContent="flex-end"
+                  container
+                  as="header"
+                  width="20%"
+                  alignItems="center"
+                  justifyContent="flex-end"
                >
                   <ButtonGroup align="left">
-                  <TextButton
-                     type="ghost"
-                     size="sm"
-                     onClick={() => clearHeaderFilter()}
-                  >
-                     Clear All Filter
-                  </TextButton>
-               </ButtonGroup>
+                     <TextButton
+                        type="ghost"
+                        size="sm"
+                        onClick={() => clearHeaderFilter()}
+                     >
+                        Clear All Filter
+                     </TextButton>
+                  </ButtonGroup>
                </Flex>
             </Flex>
          </Flex>
@@ -726,12 +731,12 @@ const CustomerListing = () => {
                   ...options,
                   placeholder: 'No Customers Available Yet !',
                   columnHeaderVertAlign: 'bottom',
-                  persistenceID : 'customer_table'
+                  persistenceID: 'customer_table',
                }}
                ref={tableRef}
                className="crmCustomerTable"
             />
-         )} 
+         )}
          <InsightDashboard
             appTitle="CRM App"
             moduleTitle="Customer Listing"

@@ -159,3 +159,8 @@ $variants: (
       }
    }
 }
+.hern-tunnel__ant__bottom {
+   .ant-drawer-content-wrapper {
+      height: calc(100vh - 64px) !important;
+   }
+}

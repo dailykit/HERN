@@ -35,7 +35,8 @@ import {
    sendStripeInvoice,
    sendSMS,
    updateDailyosStripeStatus,
-   getAccountDetails
+   getAccountDetails,
+   SSLRouter
 } from './entities'
 
 import { PrintRouter } from './entities/print'
@@ -45,7 +46,8 @@ import {
    printLabel,
    handleThirdPartyOrder,
    createCronEvent,
-   createScheduledEvent
+   createScheduledEvent,
+   sendOtp
 } from './entities/events'
 import { emailTemplateHandler } from './entities/emails'
 
@@ -104,6 +106,7 @@ router.post('/event/print-kot', printKOT)
 router.post('/event/order/third-party', handleThirdPartyOrder)
 router.post('/event/create-cron-event', createCronEvent)
 router.post('/event/create-new-scheduled-event', createScheduledEvent)
+router.post('/event/send-otp', sendOtp)
 
 router.use('/api/developer', DeveloperRouter)
 
@@ -113,5 +116,7 @@ router.use('/api/store', StoreRouter)
 router.post('/api/envs', populate_env)
 
 router.get('/images/:url(*)', handleImage)
+
+router.use('/api/ssl', SSLRouter)
 
 export default router

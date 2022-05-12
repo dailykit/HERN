@@ -1,3 +1,4 @@
+// transition for location selector component
 .hern-store-location-selector__css-transition-enter {
    .hern-store-location-selector-container {
       transform: translate(-100%);
@@ -40,6 +41,7 @@
    height: calc(100vh - 116px);
    overflow-y: auto;
    padding-bottom: 1em;
+   position: relative;
 }
 
 .hern-store-location-selector-container {
@@ -60,11 +62,14 @@
    display: flex;
    justify-content: space-between;
    align-items: center;
+   background: #ffffff;
    > span {
       margin-left: 1em;
    }
 }
-
+.hern-refine-location__change-btn {
+   cursor: pointer;
+}
 .hern-store-location-selector__fulfillment-selector {
    display: flex;
    padding: 1em 1em 0 1em;
@@ -95,15 +100,18 @@
    padding: 0 10px;
    outline: none;
    width: 100%;
+   font-size: 16px;
 }
 
 .hern-store-location-selector-main__get-current-location {
-   height: 60px;
-   border: 1px solid #ebebeb;
+   height: 40px;
    display: flex;
    align-items: center;
-   padding: 1em;
+   padding: 10px;
    cursor: pointer;
+   position: absolute;
+   right: 0;
+   top: 0;
    > span {
       margin-left: 1em;
    }
@@ -121,7 +129,7 @@
 }
 
 .hern-store-location-selector__user-address-info-text {
-   font-size: 14px;
+   font-size: 16px;
    line-height: 14px;
    color: #404040;
 }

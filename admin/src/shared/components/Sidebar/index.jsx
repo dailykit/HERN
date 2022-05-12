@@ -1,4 +1,4 @@
-import React, { Children } from 'react'
+import React, { Children, useContext } from 'react'
 import gql from 'graphql-tag'
 import {
    Flex,
@@ -66,6 +66,9 @@ import CreateCampaign from '../../CreateUtils/crm/createCampaign'
 import CreateCollection from '../../CreateUtils/Menu/createCollection'
 import CreateSubscription from '../../CreateUtils/subscription/createSubscriptions'
 import { StoreIcon } from '../../assets/icons'
+import BrandSelector from './components/BrandSelector'
+import { BrandContext } from '../../../App'
+import { BrandListing } from '../../../apps/crm/components'
 
 const APPS = gql`
    subscription apps {
@@ -87,6 +90,8 @@ export const Sidebar = ({ setOpen }) => {
    const [isActive, setIsActive] = React.useState(false)
    const sideBarRef = React.useRef()
    console.log('pathname', location.pathname.substring(1))
+   const [brandContext, setBrandContext] = useContext(BrandContext)
+   const [brandTunnels, openBrandTunnel, closeBrandTunnel] = useTunnel(1)
 
    const [
       createRecipeTunnels,
@@ -138,6 +143,7 @@ export const Sidebar = ({ setOpen }) => {
          addTab(name, `/inventory/work-orders/sachet/${id}`)
       },
    })
+
    // Purchase Order
    const [createPackagingOrder] = useMutation(CREATE_PURCHASE_ORDER, {
       onCompleted: data => {
@@ -153,6 +159,7 @@ export const Sidebar = ({ setOpen }) => {
          addTab(tabTitle, `/inventory/purchase-orders/item/${id}`)
       },
    })
+
    // Packagings
    const [createPackaging] = useMutation(CREATE_PACKAGING, {
       onError: error => {
@@ -220,6 +227,7 @@ export const Sidebar = ({ setOpen }) => {
          },
       })
    }
+
    // Stations
    const [createStation] = useMutation(STATIONS.CREATE, {
       onCompleted: ({ insertStation = {} }) => {
@@ -309,14 +317,12 @@ export const Sidebar = ({ setOpen }) => {
    useOnClickOutside(sideBarRef, () => {
       setIsOpen(null)
    })
-
    const pathNameHandle = (pathname) => {
       if (pathname === '/') {
          return 'home'
       }
       return pathname.substring(1)
    }
-
    const appMenuItems = {
       data: [
          {
@@ -509,7 +515,7 @@ export const Sidebar = ({ setOpen }) => {
             childs: [
                {
                   title: 'View all Customers',
-                  path: '/crm/customers',
+                  path: `/crm/customers-${brandContext.brandName}-${brandContext.brandId}`,
                },
                {
                   title: 'Coupons',
@@ -567,6 +573,14 @@ export const Sidebar = ({ setOpen }) => {
                {
                   title: 'On-Demand Pickup',
                   path: '/menu/recurrences/ONDEMAND_PICKUP',
+               },
+               {
+                  title: 'On-Demand DineIn',
+                  path: '/menu/recurrences/ONDEMAND_DINEIN'
+               },
+               {
+                  title: 'Pre-Order DineIn',
+                  path: '/menu/recurrences/SCHEDULED_DINEIN',
                },
             ],
          },
@@ -794,11 +808,13 @@ export const Sidebar = ({ setOpen }) => {
          },
       ],
    }
+   const [mouseOver, setMouseOver] = React.useState(false)
 
    return (
       <div>
          <div>
-            <Styles.Sidebar ref={sideBarRef}>
+            <Styles.Sidebar ref={sideBarRef} onMouseOver={() => setMouseOver(true)}
+               onMouseLeave={() => setMouseOver(false)}>
                <Styles.Close>
                   {/* <IconButton type="ghost" onClick={() => setOpen(false)}>
                      <RoundedCloseIcon />
@@ -807,271 +823,279 @@ export const Sidebar = ({ setOpen }) => {
                {loading ? (
                   <InlineLoader />
                ) : (
-                  appMenuItems.data.map(app => (
-                     <Styles.AppItem key={app.id}>
-                        <Styles.Choices
-                           type="ghost"
-                           size="sm"
-                           container
-                           alignItems="center"
-                           title={app.title}
-                           onClick={() => {
-                              setIsOpen(
-                                 isOpen === null || isOpen !== app.title
-                                    ? app.title
-                                    : null
-                              )
-                              setIsChildOpen(null)
-                              setIsActive(app.title)
-                           }}
-                           active={
-                              pathNameHandle(location.pathname)
-                                 .includes(pathNameHandle(app.path)) ||
-                              (isChildOpen === null &&
-                                 isOpen === app.title &&
-                                 app.title)
-                           }
-                        >
-                           <Styles.IconText>
-                              <Styles.AppIcon>
-                                 <app.icon
-                                    active={pathNameHandle(location.pathname)
-                                       .includes(pathNameHandle(app.path))}
-                                 />{' '}
-                              </Styles.AppIcon>
-                              <Styles.AppTitle
-                                 onClick={event => {
-                                    event.stopPropagation()
-                                    setIsActive(app.title)
-                                    addTab(app.title, app.path)
-                                 }}
-                              >
-                                 {app.title}
-                              </Styles.AppTitle>
-                           </Styles.IconText>
-                           {app.childs.length > 0 &&
-                              (isOpen === app.title ? (
-                                 <ArrowUp />
-                              ) : (
-                                 <ArrowDown />
-                              ))}
-                        </Styles.Choices>
-
-                        <Styles.Pages>
-                           {isOpen === app.title &&
-                              app.childs.map(child => (
-                                 <Styles.PageBox
-                                    active={
-                                       isChildOpen === child.title &&
-                                       isChildrenOpen === null
-                                    }
+                  <>
+                     <BrandSelector mouseOver={mouseOver} />
+                     {appMenuItems.data.map(app => (
+                        <Styles.AppItem key={app.path}>
+                           <Styles.Choices
+                              type="ghost"
+                              size="sm"
+                              container
+                              alignItems="center"
+                              title={app.title}
+                              onClick={() => {
+                                 setIsOpen(
+                                    isOpen === null || isOpen !== app.title
+                                       ? app.title
+                                       : null
+                                 )
+                                 setIsChildOpen(null)
+                                 setIsActive(app.title)
+                              }}
+                              active={
+                                 pathNameHandle(location.pathname)
+                                    .includes(pathNameHandle(app.path)) ||
+                                 (isChildOpen === null &&
+                                    isOpen === app.title &&
+                                    app.title)
+                              }
+                           >
+                              <Styles.IconText>
+                                 <Styles.AppIcon>
+                                    <app.icon
+                                       active={pathNameHandle(location.pathname)
+                                          .includes(pathNameHandle(app.path))}
+                                    />{' '}
+                                 </Styles.AppIcon>
+                                 <Styles.AppTitle
+                                    onClick={event => {
+                                       event.stopPropagation()
+                                       setIsActive(app.title)
+                                       addTab(app.title, app.path)
+                                    }}
                                  >
-                                    <Styles.Choices
-                                       onClick={() => {
-                                          setIsChildOpen(
-                                             isChildOpen === null ||
-                                                isChildOpen !== child.title
-                                                ? child.title
-                                                : null
-                                          )
-                                          setIsChildrenOpen(null)
-                                       }}
+                                    {app.title}
+                                 </Styles.AppTitle>
+                              </Styles.IconText>
+                              {app.childs.length > 0 &&
+                                 (isOpen === app.title ? (
+                                    <ArrowUp />
+                                 ) : (
+                                    <ArrowDown />
+                                 ))}
+                           </Styles.Choices>
+
+                           <Styles.Pages>
+                              {isOpen === app.title &&
+                                 app.childs.map(child => (
+                                    <Styles.PageBox
+                                       key={child.path}
                                        active={
                                           isChildOpen === child.title &&
                                           isChildrenOpen === null
                                        }
-                                       key={child.path}
-                                       title={child.title}
                                     >
-                                       <Styles.PageOneTitle
+                                       <Styles.Choices
                                           onClick={() => {
-                                             setIsOpen(null)
-                                             addTab(child.title, child.path)
+                                             setIsChildOpen(
+                                                isChildOpen === null ||
+                                                   isChildOpen !== child.title
+                                                   ? child.title
+                                                   : null
+                                             )
+                                             setIsChildrenOpen(null)
                                           }}
                                           active={
                                              isChildOpen === child.title &&
                                              isChildrenOpen === null
                                           }
+                                          title={child.title}
                                        >
-                                          {child.title}
-                                       </Styles.PageOneTitle>
-                                       {child.children &&
-                                          (isChildOpen === child.title ? (
-                                             <ArrowUp />
-                                          ) : (
-                                             <ArrowDown />
-                                          ))}
-                                    </Styles.Choices>
+                                          <Styles.PageOneTitle
+                                             onClick={() => {
+                                                setIsOpen(null)
+                                                {
+                                                   child.title === "View all Customers"
+                                                      ? (brandContext.brandId ? addTab(child.title, child.path) : openBrandTunnel(1))
+                                                      : addTab(child.title, child.path)
+                                                }
 
-                                    <Styles.Pages>
-                                       {isChildOpen === child.title &&
-                                          child.children?.map(children => {
-                                             return (
-                                                <Styles.Choices
-                                                   onClick={() => {
-                                                      setIsChildrenOpen(
-                                                         children.title
-                                                      )
-                                                      setIsOpen(null)
-                                                      switch (
-                                                      children.payload
-                                                      ) {
-                                                         // case 'simple': return handleCreateProduct(children.payload);
-                                                         // case 'combo': return handleCreateProduct(children.payload);
-                                                         // case 'customizable': return handleCreateProduct(children.payload);
-                                                         case 'product':
-                                                            return openCreateProductTunnel(
-                                                               3
-                                                            )
-                                                         case 'recipe':
-                                                            return openCreateRecipeTunnel(
-                                                               1
-                                                            )
-                                                         case 'ingredient':
-                                                            return openCreateIngredientTunnel(
-                                                               1
-                                                            )
-                                                         case 'supplier':
-                                                            return openCreateSupplierTunnel(
-                                                               1
-                                                            )
-                                                         case 'item':
-                                                            return openCreateItemTunnel(
-                                                               1
-                                                            )
-                                                         case 'Work Order Bulk':
-                                                            return createBulkWorkOrder()
-                                                         case 'Work Order Sachet':
-                                                            return createSachetWorkOrder()
-                                                         case 'Purchase Order Packaging':
-                                                            return createPackagingOrder()
-                                                         case 'Purchase Order Purchase':
-                                                            return createItemPurchaseOrder()
-                                                         case 'SACHET_PACKAGE':
-                                                            return createPackagingHandler(
-                                                               children.payload
-                                                            )
-                                                         case 'EXPLORE PACKAGING HUB':
-                                                            return addTab(
-                                                               'Packaging Hub',
-                                                               '/inventory/packaging-hub'
-                                                            )
-                                                         case 'Subscription':
-                                                            return openSubscriptionTunnel(
-                                                               1
-                                                            )
-                                                         case 'coupon':
-                                                            return openCouponTunnel(
-                                                               1
-                                                            )
-                                                         case 'Campaign':
-                                                            return openCampaignTunnel(
-                                                               1
-                                                            )
-                                                         case 'collection':
-                                                            return openCollectionTunnel(
-                                                               1
-                                                            )
-                                                         case 'station':
-                                                            return createStationHandler()
-                                                         case 'brand':
-                                                            return openCreateBrandTunnel(
-                                                               1
-                                                            )
-                                                         case 'user':
-                                                            return addUser()
-                                                         case 'Admin':
-                                                            return addTab(
-                                                               children.payload,
-                                                               `/settings/roles/${children.id} `
-                                                            )
-                                                         case 'Operator':
-                                                            return addTab(
-                                                               children.payload,
-                                                               `/settings/roles/${children.id} `
-                                                            )
-                                                         case 'Manager':
-                                                            return addTab(
-                                                               children.payload,
-                                                               `/settings/roles/${children.id} `
-                                                            )
-                                                         case 'units':
-                                                            return openCreateUnitTunnel(
-                                                               1
-                                                            )
-                                                         case 'processing':
-                                                            return openCreateProcessingTunnel(
-                                                               1
-                                                            )
-                                                         case 'Cuisines':
-                                                            return openCreateCuisinesTunnel(
-                                                               1
-                                                            )
-                                                         case 'ProductCategories':
-                                                            return openCreateProductCategoriesTunnel(
-                                                               1
-                                                            )
-                                                         case 'IngredientCategories':
-                                                            return openCreateIngredientCategoriesTunnel(
-                                                               1
-                                                            )
-                                                         case 'AccompanimentTypes':
-                                                            return openCreateAccompanimentTypesTunnel(
-                                                               1
-                                                            )
-                                                         case 'Allergens':
-                                                            return openCreateAllergensTunnel(
-                                                               1
-                                                            )
-                                                         case 'Check':
-                                                            return createSafetyCheck()
-                                                         case 'Print':
-                                                            return openPrintTunnel(
-                                                               1
-                                                            )
+                                             }}
+                                             active={
+                                                isChildOpen === child.title &&
+                                                isChildrenOpen === null
+                                             }
+                                          >
+                                             {child.title}
+                                          </Styles.PageOneTitle>
+                                          {child.children &&
+                                             (isChildOpen === child.title ? (
+                                                <ArrowUp />
+                                             ) : (
+                                                <ArrowDown />
+                                             ))}
+                                       </Styles.Choices>
 
-                                                         default:
-                                                            return <h1>null</h1>
-                                                      }
-                                                   }}
-                                                   active={
-                                                      isChildrenOpen ===
-                                                      children.title
-                                                   }
-                                                >
-                                                   {
-                                                      <Styles.PageTwoTitle
-                                                         active={
-                                                            isChildrenOpen ===
+                                       <Styles.Pages>
+                                          {isChildOpen === child.title &&
+                                             child.children?.map(children => {
+                                                return (
+                                                   <Styles.Choices
+                                                      onClick={() => {
+                                                         setIsChildrenOpen(
                                                             children.title
+                                                         )
+                                                         setIsOpen(null)
+                                                         switch (
+                                                         children.payload
+                                                         ) {
+                                                            // case 'simple': return handleCreateProduct(children.payload);
+                                                            // case 'combo': return handleCreateProduct(children.payload);
+                                                            // case 'customizable': return handleCreateProduct(children.payload);
+                                                            case 'product':
+                                                               return openCreateProductTunnel(
+                                                                  3
+                                                               )
+                                                            case 'recipe':
+                                                               return openCreateRecipeTunnel(
+                                                                  1
+                                                               )
+                                                            case 'ingredient':
+                                                               return openCreateIngredientTunnel(
+                                                                  1
+                                                               )
+                                                            case 'supplier':
+                                                               return openCreateSupplierTunnel(
+                                                                  1
+                                                               )
+                                                            case 'item':
+                                                               return openCreateItemTunnel(
+                                                                  1
+                                                               )
+                                                            case 'Work Order Bulk':
+                                                               return createBulkWorkOrder()
+                                                            case 'Work Order Sachet':
+                                                               return createSachetWorkOrder()
+                                                            case 'Purchase Order Packaging':
+                                                               return createPackagingOrder()
+                                                            case 'Purchase Order Purchase':
+                                                               return createItemPurchaseOrder()
+                                                            case 'SACHET_PACKAGE':
+                                                               return createPackagingHandler(
+                                                                  children.payload
+                                                               )
+                                                            case 'EXPLORE PACKAGING HUB':
+                                                               return addTab(
+                                                                  'Packaging Hub',
+                                                                  '/inventory/packaging-hub'
+                                                               )
+                                                            case 'Subscription':
+                                                               return openSubscriptionTunnel(
+                                                                  1
+                                                               )
+                                                            case 'coupon':
+                                                               return openCouponTunnel(
+                                                                  1
+                                                               )
+                                                            case 'Campaign':
+                                                               return openCampaignTunnel(
+                                                                  1
+                                                               )
+                                                            case 'collection':
+                                                               return openCollectionTunnel(
+                                                                  1
+                                                               )
+                                                            case 'station':
+                                                               return createStationHandler()
+                                                            case 'brand':
+                                                               return openCreateBrandTunnel(
+                                                                  1
+                                                               )
+                                                            case 'user':
+                                                               return addUser()
+                                                            case 'Admin':
+                                                               return addTab(
+                                                                  children.payload,
+                                                                  `/settings/roles/${children.id} `
+                                                               )
+                                                            case 'Operator':
+                                                               return addTab(
+                                                                  children.payload,
+                                                                  `/settings/roles/${children.id} `
+                                                               )
+                                                            case 'Manager':
+                                                               return addTab(
+                                                                  children.payload,
+                                                                  `/settings/roles/${children.id} `
+                                                               )
+                                                            case 'units':
+                                                               return openCreateUnitTunnel(
+                                                                  1
+                                                               )
+                                                            case 'processing':
+                                                               return openCreateProcessingTunnel(
+                                                                  1
+                                                               )
+                                                            case 'Cuisines':
+                                                               return openCreateCuisinesTunnel(
+                                                                  1
+                                                               )
+                                                            case 'ProductCategories':
+                                                               return openCreateProductCategoriesTunnel(
+                                                                  1
+                                                               )
+                                                            case 'IngredientCategories':
+                                                               return openCreateIngredientCategoriesTunnel(
+                                                                  1
+                                                               )
+                                                            case 'AccompanimentTypes':
+                                                               return openCreateAccompanimentTypesTunnel(
+                                                                  1
+                                                               )
+                                                            case 'Allergens':
+                                                               return openCreateAllergensTunnel(
+                                                                  1
+                                                               )
+                                                            case 'Check':
+                                                               return createSafetyCheck()
+                                                            case 'Print':
+                                                               return openPrintTunnel(
+                                                                  1
+                                                               )
+
+                                                            default:
+                                                               return <h1>null</h1>
                                                          }
-                                                         title={children.title}
-                                                      >
-                                                         {children.linking ? (
-                                                            <a
-                                                               href={
-                                                                  children.linking
-                                                               }
-                                                            >
-                                                               {children.title}
-                                                            </a>
-                                                         ) : (
-                                                            children.title
-                                                         )}
-                                                      </Styles.PageTwoTitle>
-                                                   }
-                                                </Styles.Choices>
-                                             )
-                                          })}
-                                    </Styles.Pages>
-                                 </Styles.PageBox>
-                              ))}
-                        </Styles.Pages>
-                     </Styles.AppItem>
-                  ))
-               )}
-            </Styles.Sidebar>
-         </div>
+                                                      }}
+                                                      active={
+                                                         isChildrenOpen ===
+                                                         children.title
+                                                      }
+                                                   >
+                                                      {
+                                                         <Styles.PageTwoTitle
+                                                            active={
+                                                               isChildrenOpen ===
+                                                               children.title
+                                                            }
+                                                            title={children.title}
+                                                         >
+                                                            {children.linking ? (
+                                                               <a
+                                                                  href={
+                                                                     children.linking
+                                                                  }
+                                                               >
+                                                                  {children.title}
+                                                               </a>
+                                                            ) : (
+                                                               children.title
+                                                            )}
+                                                         </Styles.PageTwoTitle>
+                                                      }
+                                                   </Styles.Choices>
+                                                )
+                                             })}
+                                       </Styles.Pages>
+                                    </Styles.PageBox>
+                                 ))}
+                           </Styles.Pages>
+                        </Styles.AppItem>
+                     ))
+                     }
+                  </>)}
+            </Styles.Sidebar >
+         </div >
          <div>
             <Tunnels tunnels={createRecipeTunnels}>
                <Tunnel layer={1} size="md">
@@ -1215,7 +1239,12 @@ export const Sidebar = ({ setOpen }) => {
                   <PrintTunnel closeTunnel={closePrintTunnel} />
                </Tunnel>
             </Tunnels>
+            <Tunnels tunnels={brandTunnels}>
+               <Tunnel popup={true} layer={1} size="md">
+                  <BrandListing closeTunnel={closeBrandTunnel} />
+               </Tunnel>
+            </Tunnels>
          </div>
-      </div>
+      </div >
    )
 }

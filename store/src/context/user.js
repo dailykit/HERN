@@ -14,6 +14,10 @@ import {
 } from '../graphql'
 import { PageLoader } from '../components'
 import { isClient, processUser, get_env } from '../utils'
+import {
+   getStoredReferralCode,
+   deleteStoredReferralCode,
+} from '../utils/referrals'
 const ReactPixel = isClient ? require('react-facebook-pixel').default : null
 
 const UserContext = React.createContext()
@@ -64,7 +68,7 @@ export const UserProvider = ({ children }) => {
    const [isLoading, setIsLoading] = React.useState(true)
    const [keycloakId, setKeycloakId] = React.useState('')
    const [session, loadingSession] = useSession()
-   console.log('session from userprovider', session)
+   // console.log('session from userprovider', session)
 
    const [createCustomer] = useMutation(MUTATIONS.CUSTOMER.CREATE, {
       onError: error => console.log('createCustomer => error => ', error),
@@ -106,11 +110,15 @@ export const UserProvider = ({ children }) => {
                            data: {
                               brandId: brand.id,
                               subscriptionOnboardStatus: 'SELECT_DELIVERY',
+                              metaDetails: {
+                                 referredByCode: getStoredReferralCode(null),
+                              },
                            },
                         },
                      },
                   },
                })
+               deleteStoredReferralCode()
             }
          },
          onError: () => {
@@ -126,6 +134,7 @@ export const UserProvider = ({ children }) => {
       },
       onSubscriptionData: data => {
          const { loyaltyPoints } = data.subscriptionData.data
+         console.log(loyaltyPoints)
          if (loyaltyPoints?.length) {
             dispatch({
                type: 'SET_USER',

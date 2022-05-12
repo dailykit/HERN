@@ -1,10 +1,13 @@
+import classNames from 'classnames'
 import React from 'react'
 import { Slide } from 'react-slideshow-image'
-import 'react-slideshow-image/dist/styles.css'
-import { formatCurrency } from '../utils'
+import { useTranslation } from '../context'
+import { formatCurrency, isClient } from '../utils'
+import { HernLazyImage } from '../utils/hernImage'
 import { ModifierPopup } from './index'
-import classNames from 'classnames'
-import { EditIcon } from '../assets/icons'
+// if (isClient) {
+//    import('lazysizes/plugins/unveilhooks/ls.unveilhooks').then(module => module)
+// }
 
 export const ProductCard = props => {
    const {
@@ -37,10 +40,16 @@ export const ProductCard = props => {
       contentAreaCustomStyle = {},
       modifierWithoutPopup = false,
       showProductDetails = true,
+      productDetailType = 1,
       customProductDetails = false,
       showProductCard = true,
+      className = '',
+      config,
+      stepView = false,
    } = props
-
+   // console.log('🚀 ~ file: product_card.jsx ~ line 50 ~ data', data)
+   const { t, dynamicTrans, locale } = useTranslation()
+   const currentLang = React.useMemo(() => locale, [locale])
    const slideRef = React.useRef()
    const properties = {
       duration: 5000,
@@ -62,52 +71,87 @@ export const ProductCard = props => {
          data.assets.images.length !== 1 &&
          canSwipe && { canSwipe: canSwipe }),
    }
+   const getPriceWithDiscount = (price, discount) => {
+      return price - (price * discount) / 100
+   }
+
+   React.useEffect(() => {
+      const languageTags = document.querySelectorAll(
+         '[data-translation="true"]'
+      )
+      dynamicTrans(languageTags)
+   }, [currentLang])
+
    const finalProductPrice = () => {
       // use for product card
       if (!useForThirdParty) {
          if (data.isPopupAllowed && data.productOptions.length > 0) {
-            return formatCurrency(
-               data.price -
-                  data.discount +
-                  ((data?.productOptions[0]?.price || 0) -
-                     (data?.productOptions[0]?.discount || 0))
+            return (
+               getPriceWithDiscount(data.price, data.discount) +
+               getPriceWithDiscount(
+                  data?.productOptions[0]?.price || 0,
+                  data?.productOptions[0]?.discount
+               )
             )
          } else {
-            return formatCurrency(data.price - data.discount)
+            return getPriceWithDiscount(data.price, data.discount)
          }
       }
       // when using this product card some where else
       else {
          if (data.price > 0) {
-            return formatCurrency(data.price - data.discount)
+            return getPriceWithDiscount(data.price, data.discount)
          } else {
             return null
          }
       }
    }
-
+   const productImageSize = React.useMemo(() => {
+      const innerWidth = isClient ? window.innerWidth : ''
+      if (0 <= innerWidth && innerWidth <= 468) {
+         return {
+            width: 120,
+            height: 120,
+         }
+      } else if (469 <= innerWidth && innerWidth <= 900) {
+         return {
+            width: 190,
+            height: 190,
+         }
+      } else if (901 <= innerWidth) {
+         return {
+            width: 280,
+            height: 280,
+         }
+      }
+   }, [])
    return (
       <>
          {showProductCard && (
-            <div className="hern-product-card">
+            <div className={classNames('hern-product-card', className)}>
                {showImage && (
                   <div className="hern-product-card-image-container">
                      <Slide ref={slideRef} {...properties}>
                         {data.assets.images.map((each, index) => {
                            return (
-                              <div key={index}>
-                                 <div
+                              <div key={each}>
+                                 {/* <div
                                     className={classNames(
-                                       'hern-product-card-image-background',
+                                       'lazyload hern-product-card-image-background',
                                        {
                                           'hern-product-card-image-background--aspect-ratio':
                                              maintainRatio,
                                        }
                                     )}
-                                    style={{ backgroundImage: `url(${each})` }}
-                                 ></div>
-                                 <img
-                                    src={each}
+                                    // style={{
+                                    //    backgroundImage: `url(https://dailykit-502-chefbaskit1.s3.us-east-2.amazonaws.com/images/64330-Lal-Maas.jpg)`,
+                                    // }}
+                                    data-bg={each}
+                                 ></div> */}
+                                 <HernLazyImage
+                                    // src={each}
+                                    dataSrc={each}
+                                    alt={data.name}
                                     className={classNames(
                                        'hern-product-card__image',
                                        {
@@ -116,12 +160,16 @@ export const ProductCard = props => {
                                        }
                                     )}
                                     onClick={e => {
-                                       e.stopPropagation()
-                                       onImageClick ? onImageClick() : null
+                                       if (onImageClick) {
+                                          e.stopPropagation()
+                                          onImageClick()
+                                       }
                                     }}
                                     style={{
                                        cursor: onImageClick ? 'pointer' : null,
                                     }}
+                                    width={productImageSize.width}
+                                    height={productImageSize.height}
                                  />
                               </div>
                            )
@@ -131,8 +179,10 @@ export const ProductCard = props => {
                         <div
                            className="hern-product-card-on-image-icon"
                            onClick={e => {
-                              e.stopPropagation()
-                              onIconOnImageClick ? onIconOnImageClick() : null
+                              if (onIconOnImageClick) {
+                                 e.stopPropagation()
+                                 onIconOnImageClick()
+                              }
                            }}
                         >
                            <IconOnImage />
@@ -147,36 +197,109 @@ export const ProductCard = props => {
                   })}
                   style={contentAreaCustomStyle}
                   onClick={e => {
-                     e.stopPropagation()
-                     onProductCardContentClick
-                        ? onProductCardContentClick
-                        : null
+                     if (onProductCardContentClick) {
+                        e.stopPropagation()
+                        onProductCardContentClick()
+                     }
                   }}
                >
                   {AdditionalIcon && (
                      <div
                         className="hern-product-card-additional-icon"
                         onClick={e => {
-                           e.stopPropagation()
-                           onAdditionalIconClick
-                              ? onAdditionalIconClick()
-                              : null
+                           if (onAdditionalIconClick) {
+                              e.stopPropagation()
+                              onAdditionalIconClick()
+                           }
                         }}
                      >
                         <AdditionalIcon />
                      </div>
                   )}
-                  {showProductDetails && (
-                     <div className="hern-product-card-details">
-                        <div className="hern-product-card-title">
+                  {showProductDetails &&
+                     (productDetailType == 1 ? (
+                        <div className="hern-product-card-details">
+                           <div className="hern-product-card-title">
+                              {showProductName && (
+                                 <div
+                                    className="hern-product-card__name"
+                                    onClick={e => {
+                                       if (onProductNameClick) {
+                                          e.stopPropagation()
+                                          onProductNameClick()
+                                       }
+                                    }}
+                                    title={data?.name}
+                                    style={{
+                                       cursor: onProductNameClick
+                                          ? 'pointer'
+                                          : null,
+                                    }}
+                                 >
+                                    {data.name}
+                                 </div>
+                              )}
+                              {data?.childs?.length > 0 && (
+                                 <div className="hern-product-card-productOption-label">
+                                    {data.childs[0].productOption.label ||
+                                       'N/A'}
+                                 </div>
+                              )}
+                              {ShowImageIcon && (
+                                 <div
+                                    className="hern-product-card-show-image-icon"
+                                    onClick={e => {
+                                       if (onShowImageIconClick) {
+                                          e.stopPropagation()
+                                          onShowImageIconClick()
+                                       }
+                                    }}
+                                 >
+                                    <ShowImageIcon />
+                                 </div>
+                              )}
+                           </div>
+                           {showProductPrice && (
+                              <div className="hern-product-card__price">
+                                 {!useForThirdParty &&
+                                    (data.discount > 0 ||
+                                       data.productOptions[0]?.discount >
+                                          0) && (
+                                       <span
+                                          style={{
+                                             textDecoration: 'line-through',
+                                             display: 'inline-block',
+                                             padding: '0px 4px',
+                                          }}
+                                       >
+                                          {data.productOptions.length > 0
+                                             ? formatCurrency(
+                                                  data.price +
+                                                     data.productOptions[0]
+                                                        .price
+                                               )
+                                             : formatCurrency(data.price)}
+                                       </span>
+                                    )}
+                                 {finalProductPrice() &&
+                                    finalProductPrice() > 0 && (
+                                       <span style={{ marginLeft: '6px' }}>
+                                          {formatCurrency(finalProductPrice())}
+                                       </span>
+                                    )}
+                              </div>
+                           )}
+                        </div>
+                     ) : (
+                        <div className="hern-product-card-details-2">
                            {showProductName && (
                               <div
                                  className="hern-product-card__name"
                                  onClick={e => {
-                                    e.stopPropagation()
-                                    onProductNameClick
-                                       ? onProductNameClick()
-                                       : null
+                                    if (onProductNameClick) {
+                                       e.stopPropagation()
+                                       onProductNameClick()
+                                    }
                                  }}
                                  title={data?.name}
                                  style={{
@@ -188,46 +311,11 @@ export const ProductCard = props => {
                                  {data.name}
                               </div>
                            )}
-                           {data?.childs?.length > 0 && (
-                              <div className="hern-product-card-productOption-label">
-                                 {data.childs[0].productOption.label || 'N/A'}
-                              </div>
-                           )}
-                           {ShowImageIcon && (
-                              <div
-                                 className="hern-product-card-show-image-icon"
-                                 onClick={e => {
-                                    e.stopPropagation()
-                                    onShowImageIconClick
-                                       ? onShowImageIconClick()
-                                       : null
-                                 }}
-                              >
-                                 <ShowImageIcon />
-                              </div>
-                           )}
                         </div>
-                        {showProductPrice && (
-                           <div className="hern-product-card__price">
-                              {useForThirdParty && data.discount > 0 && (
-                                 <span
-                                    style={{
-                                       textDecoration: 'line-through',
-                                    }}
-                                 >
-                                    {formatCurrency(data.price)}
-                                 </span>
-                              )}
-                              <span style={{ marginLeft: '6px' }}>
-                                 {finalProductPrice()}
-                              </span>
-                           </div>
-                        )}
-                        {showProductAdditionalText && data?.additionalText && (
-                           <div className="hern-product-card__additional-text">
-                              {data.additionalText}
-                           </div>
-                        )}
+                     ))}
+                  {showProductAdditionalText && data?.additionalText && (
+                     <div className="hern-product-card__additional-text">
+                        {data.additionalText}
                      </div>
                   )}
                   {showProductDescription && (
@@ -235,7 +323,9 @@ export const ProductCard = props => {
                         className="hern-product-card__description"
                         title={data?.description}
                      >
-                        {data?.description?.slice(0, 50)}
+                        <span data-translation="true">
+                           {data?.description?.slice(0, 50)}
+                        </span>
                         {data?.description?.length > 50 && '...'}
                      </div>
                   )}
@@ -265,6 +355,11 @@ export const ProductCard = props => {
                showModifierImage={modifierPopupConfig?.showModifierImage}
                modifierWithoutPopup={modifierWithoutPopup}
                customProductDetails={customProductDetails}
+               config={config}
+               stepView={stepView}
+               counterButtonPosition={
+                  modifierPopupConfig?.counterButtonPosition
+               }
             />
          )}
       </>

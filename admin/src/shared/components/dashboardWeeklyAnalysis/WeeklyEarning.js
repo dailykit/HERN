@@ -34,7 +34,7 @@ const WeeklyEarning = ({ onClick }) => {
       },
    })
 
-   console.log('Loading', subsLoading, insights_analytics)
+   // console.log('Loading', subsLoading, insights_analytics)
    if (subsLoading) {
       return <InlineLoader />
    }
@@ -46,10 +46,10 @@ const WeeklyEarning = ({ onClick }) => {
          <ErrorState height="320px" message="Could not get the Insight data" />
       )
    }
-   console.log(
-      'WeeklyEarning:::',
-      insights_analytics[0].getTotalEarnings.slice(1)
-   )
+   // console.log(
+   //    'WeeklyEarning:::',
+   //    insights_analytics[0].getTotalEarnings.slice(1)
+   // )
    return (
       <Card onClick={onClick} title="Click to see earning report">
          <CardText>Total Earning in last week</CardText>

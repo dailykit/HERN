@@ -1,18 +1,17 @@
 import React, { useEffect } from 'react'
 import ReactPlayer from 'react-player'
 import { Slide } from 'react-slideshow-image'
-import 'react-slideshow-image/dist/styles.css'
 
 export const IdleScreen = props => {
    const { config } = props
    const [playing, setPlaying] = React.useState(0)
    const properties = {
       duration: 3000,
-      autoplay: true,
       transitionDuration: 500,
       infinite: true,
       easing: 'ease',
       arrows: false,
+      autoplay: config.idlePageSettings.idlePageImage.value.url.length > 1,
    }
    useEffect(() => {
       const b = document.querySelector('body')
@@ -78,26 +77,28 @@ export const IdleScreen = props => {
                )}
             </Slide>
          )}
-         <footer
-            style={{
-               backgroundColor: `${config.kioskSettings.theme.primaryColor.value}`,
-            }}
-         >
-            <img
-               src={config.kioskSettings.logo.value}
-               alt="logo"
-               className="hern-kiosk__idle-screen-footer-logo"
-            />
-            <span
-               className="hern-kiosk__idle-screen-page-text"
+         {config.idlePageSettings.showTouchToContinueFooter.value && (
+            <footer
                style={{
-                  color: `${config.idlePageSettings.idlePageTextColor.value}`,
+                  backgroundColor: `${config.kioskSettings.theme.primaryColor.value}`,
                }}
             >
-               {config.idlePageSettings.idlePageText.value ||
-                  config.idlePageText.value}
-            </span>
-         </footer>
+               <img
+                  src={config.kioskSettings.logo.value}
+                  alt="logo"
+                  className="hern-kiosk__idle-screen-footer-logo"
+               />
+               <span
+                  className="hern-kiosk__idle-screen-page-text"
+                  style={{
+                     color: `${config.idlePageSettings.idlePageTextColor.value}`,
+                  }}
+               >
+                  {config.idlePageSettings.idlePageText.value ||
+                     config.idlePageText.value}
+               </span>
+            </footer>
+         )}
       </div>
    )
 }

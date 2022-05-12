@@ -113,6 +113,23 @@ const Subscriptions = dynamic(() =>
 const CartOrderDetails = dynamic(() =>
    import('../sections/view-order').then(promise => promise.CartOrderDetails)
 )
+const Testimonials = dynamic(() =>
+   import('../sections/testimonials').then(promise => promise.Testimonials)
+)
+const SliderSection2 = dynamic(() =>
+   import('../sections/slider-section-2').then(
+      promise => promise.SliderSection2
+   )
+)
+const FeaturedCoupon = dynamic(() =>
+   import('../sections/featured-coupon').then(promise => promise.FeaturedCoupon)
+)
+const FrequentlyAskedQuestions = dynamic(() =>
+   import('../sections/faq-section').then(
+      promise => promise.FrequentlyAskedQuestions
+   )
+)
+
 export const renderComponentByName = (fold, options) => {
    const getProps = component => {
       if (options) {
@@ -166,7 +183,7 @@ export const renderComponentByName = (fold, options) => {
       [brand]/login
       */
       case 'Login':
-         return <Login />
+         return <Login config={fold.config} />
       /*ROUTES :
       [brand]/terms-and-condition
       */
@@ -304,19 +321,20 @@ export const renderComponentByName = (fold, options) => {
       case 'CartOrderDetails':
          return <CartOrderDetails />
 
-      /*
-      Global
-      */
+      /** Global  */
       case 'ProductGallery':
          return <ProductGallery config={fold.config} />
-
-      /*
-      Global
-      */
+      case 'Testimonials':
+         return <Testimonials config={fold.config} />
       case 'SliderSection':
          return <SliderSection config={fold.config} />
-
       case 'ContactUs':
          return <ContactUs config={fold.config} />
+      case 'SliderSection2':
+         return <SliderSection2 config={fold.config} />
+      case 'FeaturedCoupon':
+         return <FeaturedCoupon config={fold.config} />
+      case 'FrequentlyAskedQuestions':
+         return <FrequentlyAskedQuestions config={fold.config} />
    }
 }

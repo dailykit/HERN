@@ -436,6 +436,7 @@ export const ZIPCODE = gql`
          deliveryTime
          deliveryPrice
          isPickupActive
+         locationId
          isDeliveryActive
          defaultAutoSelectFulfillmentMode
          pickupOptionId: subscriptionPickupOptionId
@@ -683,31 +684,6 @@ export const INFORMATION_GRID = gql`
             id
             title
             thumbnail
-            description
-         }
-      }
-   }
-`
-
-export const FAQ = gql`
-   subscription faq(
-      $page: String_comparison_exp!
-      $identifier: String_comparison_exp!
-   ) {
-      faq: content_faqs(
-         where: {
-            page: $page
-            isVisible: { _eq: true }
-            identifier: $identifier
-         }
-      ) {
-         id
-         heading
-         subHeading
-         identifier
-         blocks: informationBlocks {
-            id
-            title
             description
          }
       }
@@ -1099,8 +1075,11 @@ export const SEARCH_COUPONS = gql`
 `
 
 export const CART_REWARDS = gql`
-   subscription CartRewards($cartId: Int!, $params: jsonb) {
-      cartRewards(where: { cartId: { _eq: $cartId } }) {
+   subscription CartRewards(
+      $params: jsonb
+      $where: order_cart_rewards_bool_exp!
+   ) {
+      cartRewards(where: $where) {
          reward {
             id
             coupon {
@@ -1282,17 +1261,6 @@ export const BRAND_PAGE = gql`
          brand {
             navigationMenuId
          }
-         brandPagesLinkedFiles(order_by: { position: desc_nulls_last }) {
-            position
-            fileId
-            fileType
-            id
-            linkedFile {
-               id
-               fileName
-               path
-            }
-         }
       }
    }
 `
@@ -1360,6 +1328,8 @@ export const PRODUCTS = gql`
          isPublished
          defaultProductOptionId
          defaultCartItem: defaultCartItemByLocation(args: $defaultCartItemArgs)
+         productionOptionSelectionStatement
+         subCategory
          productOptions(
             where: { isArchived: { _eq: false } }
             order_by: { position: desc_nulls_last }
@@ -1406,6 +1376,89 @@ export const PRODUCTS = gql`
                         isActive
                         additionalModifierTemplateId
                         isAdditionalModifierRequired
+                        additionalModifierTemplate {
+                           id
+                           name
+                           categories(
+                              where: { isVisible: { _eq: true } }
+                              order_by: { position: desc_nulls_last }
+                           ) {
+                              id
+                              name
+                              isRequired
+                              type
+                              limits
+                              options(
+                                 where: { isVisible: { _eq: true } }
+                                 order_by: { position: desc_nulls_last }
+                              ) {
+                                 id
+                                 name
+                                 price: priceByLocation(
+                                    args: $modifierCategoryOptionPriceArgs
+                                 )
+                                 discount: discountByLocation(
+                                    args: $modifierCategoryOptionDiscountArgs
+                                 )
+                                 quantity
+                                 image
+                                 isActive
+                                 additionalModifierTemplateId
+                                 isAdditionalModifierRequired
+                                 sachetItemId
+                                 ingredientSachetId
+                                 cartItem: cartItemByLocation(
+                                    args: $modifierCategoryOptionCartItemArgs
+                                 )
+                                 additionalModifierTemplate {
+                                    id
+                                    name
+                                    categories(
+                                       where: { isVisible: { _eq: true } }
+                                       order_by: { position: desc_nulls_last }
+                                    ) {
+                                       id
+                                       name
+                                       isRequired
+                                       type
+                                       limits
+                                       options(
+                                          where: { isVisible: { _eq: true } }
+                                          order_by: {
+                                             position: desc_nulls_last
+                                          }
+                                       ) {
+                                          id
+                                          name
+                                          price: priceByLocation(
+                                             args: $modifierCategoryOptionPriceArgs
+                                          )
+                                          discount: discountByLocation(
+                                             args: $modifierCategoryOptionDiscountArgs
+                                          )
+                                          quantity
+                                          image
+                                          isActive
+                                          additionalModifierTemplateId
+                                          isAdditionalModifierRequired
+                                          sachetItemId
+                                          ingredientSachetId
+                                          cartItem: cartItemByLocation(
+                                             args: $modifierCategoryOptionCartItemArgs
+                                          )
+                                          additionalModifierTemplate {
+                                             categories {
+                                                options {
+                                                   name
+                                                }
+                                             }
+                                          }
+                                       }
+                                    }
+                                 }
+                              }
+                           }
+                        }
                         sachetItemId
                         ingredientSachetId
                         cartItem: cartItemByLocation(
@@ -1449,6 +1502,130 @@ export const PRODUCTS = gql`
                      cartItem: cartItemByLocation(
                         args: $modifierCategoryOptionCartItemArgs
                      )
+                     additionalModifierTemplate {
+                        id
+                        name
+                        categories(
+                           where: { isVisible: { _eq: true } }
+                           order_by: { position: desc_nulls_last }
+                        ) {
+                           id
+                           name
+                           isRequired
+                           type
+                           limits
+                           options(
+                              where: { isVisible: { _eq: true } }
+                              order_by: { position: desc_nulls_last }
+                           ) {
+                              id
+                              name
+                              price: priceByLocation(
+                                 args: $modifierCategoryOptionPriceArgs
+                              )
+                              discount: discountByLocation(
+                                 args: $modifierCategoryOptionDiscountArgs
+                              )
+                              quantity
+                              image
+                              isActive
+                              additionalModifierTemplateId
+                              isAdditionalModifierRequired
+                              sachetItemId
+                              ingredientSachetId
+                              cartItem: cartItemByLocation(
+                                 args: $modifierCategoryOptionCartItemArgs
+                              )
+                              additionalModifierTemplate {
+                                 id
+                                 name
+                                 categories(
+                                    where: { isVisible: { _eq: true } }
+                                    order_by: { position: desc_nulls_last }
+                                 ) {
+                                    id
+                                    name
+                                    isRequired
+                                    type
+                                    limits
+                                    options(
+                                       where: { isVisible: { _eq: true } }
+                                       order_by: { position: desc_nulls_last }
+                                    ) {
+                                       id
+                                       name
+                                       price: priceByLocation(
+                                          args: $modifierCategoryOptionPriceArgs
+                                       )
+                                       discount: discountByLocation(
+                                          args: $modifierCategoryOptionDiscountArgs
+                                       )
+                                       quantity
+                                       image
+                                       isActive
+                                       additionalModifierTemplateId
+                                       isAdditionalModifierRequired
+                                       sachetItemId
+                                       ingredientSachetId
+                                       cartItem: cartItemByLocation(
+                                          args: $modifierCategoryOptionCartItemArgs
+                                       )
+                                       additionalModifierTemplate {
+                                          id
+                                          name
+                                          categories(
+                                             where: { isVisible: { _eq: true } }
+                                             order_by: {
+                                                position: desc_nulls_last
+                                             }
+                                          ) {
+                                             id
+                                             name
+                                             isRequired
+                                             type
+                                             limits
+                                             options(
+                                                where: {
+                                                   isVisible: { _eq: true }
+                                                }
+                                                order_by: {
+                                                   position: desc_nulls_last
+                                                }
+                                             ) {
+                                                id
+                                                name
+                                                price: priceByLocation(
+                                                   args: $modifierCategoryOptionPriceArgs
+                                                )
+                                                discount: discountByLocation(
+                                                   args: $modifierCategoryOptionDiscountArgs
+                                                )
+                                                quantity
+                                                image
+                                                isActive
+                                                additionalModifierTemplateId
+                                                isAdditionalModifierRequired
+                                                sachetItemId
+                                                ingredientSachetId
+                                                cartItem: cartItemByLocation(
+                                                   args: $modifierCategoryOptionCartItemArgs
+                                                )
+                                                additionalModifierTemplate {
+                                                   categories {
+                                                      options {
+                                                         name
+                                                      }
+                                                   }
+                                                }
+                                             }
+                                          }
+                                       }
+                                    }
+                                 }
+                              }
+                           }
+                        }
+                     }
                   }
                }
             }
@@ -1606,8 +1783,8 @@ export const PRODUCT_DETAILS = gql`
    }
 `
 export const GET_CART = gql`
-   subscription cart($id: Int!) {
-      cart(id: $id) {
+   subscription cart($where: order_cart_bool_exp!) {
+      carts(where: $where) {
          id
          status
          tax
@@ -1633,13 +1810,18 @@ export const GET_CART = gql`
          toUseAvailablePaymentOptionId
          posistOrderStatus
          posistOrderResponse
+         locationTableId
+         locationTable {
+            internalTableLabel
+            id
+            seatCover
+         }
          subscriptionOccurence {
             id
             fulfillmentDate
          }
          address
          fulfillmentInfo
-
          cartItems_aggregate(where: { level: { _eq: 1 } }) {
             aggregate {
                count
@@ -1677,6 +1859,10 @@ export const GET_CARTS = gql`
    subscription GET_CARTS($where: order_cart_bool_exp!) {
       carts(where: $where) {
          id
+         address
+         fulfillmentInfo
+         locationId
+         orderTabId
       }
    }
 `
@@ -1770,12 +1956,23 @@ export const BRAND_LOCATIONS = gql`
             orderExperienceOptionType
             doesDeliverOutsideCity
             doesDeliverOutsideState
+            operatingTime
+            brand_recurrences(where: { isActive: { _eq: true } }) {
+               recurrence {
+                  rrule
+                  type
+                  timeSlots {
+                     from
+                     to
+                  }
+               }
+            }
          }
       }
    }
 `
 export const PREORDER_DELIVERY_BRAND_RECURRENCES = gql`
-   query BRAND_ONDEMAND_DELIVERY_RECURRENCES(
+   query PREORDER_DELIVERY_BRAND_RECURRENCES(
       $where: fulfilment_brand_recurrence_bool_exp!
    ) {
       brandRecurrences(where: $where) {
@@ -1944,7 +2141,7 @@ export const SCHEDULED_DINEIN_BRAND_RECURRENCES = gql`
 `
 export const GET_BRAND_LOCATION = gql`
    query GET_BRAND_LOCATION($where: brands_brand_location_bool_exp!) {
-      brands_brand_location(where: $where) {
+      brandLocations: brands_brand_location(where: $where) {
          id
          brandId
          location {
@@ -1981,8 +2178,8 @@ export const GET_JS_CSS_FILES = gql`
 `
 
 export const GET_CART_ITEMS_BY_CART = gql`
-   subscription GET_CART_ITEMS_BY_CART($id: Int!) {
-      cartItems(where: { level: { _eq: 1 }, cartId: { _eq: $id } }) {
+   subscription GET_CART_ITEMS_BY_CART($where: order_cartItem_bool_exp!) {
+      cartItems(where: $where) {
          cartItemId: id
          parentCartItemId
          addOnLabel
@@ -1992,7 +2189,7 @@ export const GET_CART_ITEMS_BY_CART = gql`
          discount
          name: displayName
          image: displayImage
-         childs {
+         childs(where: { ingredientId: { _is_null: true } }) {
             price: unitPrice
             name: displayName
             discount
@@ -2000,7 +2197,7 @@ export const GET_CART_ITEMS_BY_CART = gql`
                id
                label
             }
-            childs {
+            childs(where: { ingredientId: { _is_null: true } }) {
                displayName
                price: unitPrice
                discount
@@ -2008,7 +2205,7 @@ export const GET_CART_ITEMS_BY_CART = gql`
                   id
                   name
                }
-               childs {
+               childs(where: { ingredientId: { _is_null: true } }) {
                   displayName
                   price: unitPrice
                   discount
@@ -2044,6 +2241,9 @@ export const GET_CART_PAYMENT_INFO = gql`
          amount
          cancelAttempt
          cartId
+         cart {
+            customerInfo
+         }
          isTest
          paymentStatus
          paymentType
@@ -2151,12 +2351,16 @@ export const GET_ORDER_DETAILS = gql`
          paymentStatus
          fulfillmentInfo
          billingDetails
+         cartOwnerBilling
          address
          order {
             created_at
+            deliveryInfo
          }
          cartPayments {
             id
+            amount
+            transactionRemark
          }
          availablePaymentOption {
             label
@@ -2207,21 +2411,61 @@ export const GET_ORDER_DETAILS = gql`
       }
    }
 `
+
+export const GET_ALL_RECURRENCES = gql`
+   query GET_ALL_RECURRENCES($where: fulfilment_brand_recurrence_bool_exp!) {
+      brandRecurrences(where: $where) {
+         brandId
+         brandLocationId
+         recurrenceId
+         recurrence {
+            id
+            rrule
+            type
+            timeSlots {
+               from
+               to
+               pickUpPrepTime
+               id
+               pickUpLeadTime
+               slotInterval
+               mileRanges {
+                  id
+                  from
+                  city
+                  distanceType
+                  to
+                  zipcodes
+                  state
+                  prepTime
+                  geoBoundary
+                  isExcluded
+                  leadTime
+               }
+            }
+         }
+      }
+   }
+`
 export const PRODUCT_SEO_SETTINGS_BY_ID = gql`
    query PRODUCT_SEO_SETTINGS($productId: Int!, $type: String!) {
       products(where: { id: { _eq: $productId } }) {
          description
          name
-         assets
       }
-      products_productPageSetting(where: { type: { _eq: $type } }) {
-         product_productPageSettings(
-            where: { productId: { _eq: $productId } }
-         ) {
+      products_productSetting(where: { type: { _eq: $type } }) {
+         product_productSettings(where: { productId: { _eq: $productId } }) {
             value
             productId
          }
          identifier
+      }
+      brands {
+         brand_brandSettings(
+            where: { brandSettingId: { _eq: 33 }, brandId: { _eq: 1 } }
+         ) {
+            value
+         }
       }
    }
 `
@@ -2230,6 +2474,70 @@ export const SUPPORTED_PAYMENT_OPTIONS = gql`
       brands_supportedPaymentCompany {
          id
          label
+      }
+   }
+`
+export const LOCATION_TABLES = gql`
+   query LOCATION_TABLES($where: brands_locationTable_bool_exp) {
+      brands_locationTable(where: $where) {
+         id
+         internalTableLabel
+         isActive
+         locationId
+         seatCover
+      }
+   }
+`
+export const COUPON_BY_ID = gql`
+   query coupon($id: Int!) {
+      coupon(id: $id) {
+         code
+         metaDetails
+      }
+   }
+`
+export const GET_PAGE_ROUTES = gql`
+   query MyQuery($domain: String!) {
+      brands(
+         where: {
+            _or: [{ domain: { _eq: $domain } }, { isDefault: { _eq: true } }]
+         }
+      ) {
+         brandPages(
+            where: {
+               isArchived: { _eq: false }
+               published: { _eq: true }
+               isAllowedToCrawl: { _eq: true }
+            }
+         ) {
+            route
+         }
+      }
+   }
+`
+export const GET_DISALLOWED_PAGE_ROUTES = gql`
+   query MyQuery($domain: String!) {
+      brands(
+         where: {
+            _or: [{ domain: { _eq: $domain } }, { isDefault: { _eq: true } }]
+         }
+      ) {
+         brandPages(
+            where: {
+               isArchived: { _eq: false }
+               published: { _eq: true }
+               isAllowedToCrawl: { _eq: false }
+            }
+         ) {
+            route
+         }
+      }
+   }
+`
+export const LOCATION_KIOSK_VALIDATION = gql`
+   query LOCATION_KIOSK_VALIDATION($where: brands_locationKiosk_bool_exp!) {
+      brands_locationKiosk(where: $where) {
+         id
       }
    }
 `

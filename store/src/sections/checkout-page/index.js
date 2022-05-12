@@ -8,7 +8,13 @@ import { useConfig, usePayment } from '../../lib'
 import * as Icon from '../../assets/icons'
 import OrderInfo from '../../sections/OrderInfo'
 import { OnDemandCart } from '../cart'
-import { isClient, formatCurrency, getRoute, useQueryParams } from '../../utils'
+import {
+   isClient,
+   formatCurrency,
+   getRoute,
+   useQueryParams,
+   get_env,
+} from '../../utils'
 import {
    Loader,
    Button,
@@ -21,7 +27,7 @@ import {
    PaymentProvider,
    PaymentSection,
 } from '../../sections/checkout'
-import { useUser, useCart } from '../../context'
+import { useUser, useCart, useTranslation } from '../../context'
 import * as QUERIES from '../../graphql'
 import { isEmpty } from 'lodash'
 import { EmptyCart } from '../../assets/icons'
@@ -44,6 +50,7 @@ export const Checkout = props => {
    } = usePayment()
    const { cartState } = useCart()
    const { addToast } = useToasts()
+   const { t } = useTranslation()
    const authTabRef = React.useRef()
    const { configOf } = useConfig()
    const [otpPageUrl, setOtpPageUrl] = React.useState('')
@@ -90,7 +97,7 @@ export const Checkout = props => {
                   _set: {
                      paymentMethodId: isStripe
                         ? paymentInfo?.selectedAvailablePaymentOption
-                             ?.selectedPaymentMethodId || null
+                           ?.selectedPaymentMethodId || null
                         : null,
                      toUseAvailablePaymentOptionId:
                         paymentInfo?.selectedAvailablePaymentOption?.id,
@@ -100,7 +107,7 @@ export const Checkout = props => {
          },
          onError: error => {
             console.log('updatePlatformCustomer -> error -> ', error)
-            addToast('Failed to update the user profile!', {
+            addToast(t('Failed to update the user profile!'), {
                appearance: 'success',
             })
          },
@@ -161,8 +168,8 @@ export const Checkout = props => {
                   </HelperBar.Title>
                   <HelperBar.Button
                      onClick={() =>
-                        (window.location.href =
-                           window.location.origin + getRoute('/'))
+                     (window.location.href =
+                        get_env('BASE_BRAND_URL') + getRoute('/'))
                      }
                   >
                      Go to Home
@@ -197,8 +204,8 @@ export const Checkout = props => {
                   </HelperBar.Title>
                   <HelperBar.Button
                      onClick={() =>
-                        (window.location.href =
-                           window.location.origin + getRoute('/'))
+                     (window.location.href =
+                        get_env('BASE_BRAND_URL') + getRoute('/'))
                      }
                   >
                      Go to Home
@@ -213,7 +220,7 @@ export const Checkout = props => {
          <div className="hern-cart-empty-cart">
             <EmptyCart />
             <span>Oops! Your cart is empty </span>
-            <Button className="hern-cart-go-to-menu-btn" onClick={() => {}}>
+            <Button className="hern-cart-go-to-menu-btn" onClick={() => { }}>
                <Link href="/order">GO TO MENU</Link>
             </Button>
          </div>
@@ -231,7 +238,7 @@ export const Checkout = props => {
    //                <HelperBar.Button
    //                   onClick={() =>
    //                      (window.location.href =
-   //                         window.location.origin + getRoute('/'))
+   //                         get_env('BASE_BRAND_URL') + getRoute('/'))
    //                   }
    //                >
    //                   Go to Home

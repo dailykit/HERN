@@ -20,7 +20,7 @@ export const RoundCheckBoxIcon = props => {
    )
 }
 export const NoTickRoundCheckBoxIcon = props => {
-   const { fill, size, ...rest } = props
+   const { fill, size, stroke = '#00406A', ...rest } = props
    return (
       <svg
          width={size}
@@ -37,8 +37,8 @@ export const NoTickRoundCheckBoxIcon = props => {
             height="49"
             rx="24.5"
             fill={fill}
-            fill-opacity="0.85"
-            stroke="#00406A"
+            fillOpacity="0.85"
+            stroke={stroke}
          />
       </svg>
    )

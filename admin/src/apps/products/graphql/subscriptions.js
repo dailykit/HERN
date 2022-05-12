@@ -508,7 +508,7 @@ export const PRODUCT_OPTIONS = gql`
 `
 export const PRODUCT_EARNING_COUNT = gql`
    subscription PRODUCT_EARNING_COUNT(
-      $earningAndCountProductArgs: insights_getEarningByProducts_args!
+      $earningAndCountProductArgs: getEarningsByProducts_insights_analytics_args!
    ) {
       insights_analytics {
          getEarningsByProducts(args: $earningAndCountProductArgs)
@@ -611,6 +611,13 @@ export const OPTIONS_FROM_RECIPE_COMPONENT = gql`
    subscription OPTIONS_FROM_VEG_NONVEG {
       master_recipeComponent {
          label
+      }
+   }
+`
+export const PRODUCT_CATEGORIES = gql`
+   subscription PRODUCT_CATEGORIES {
+      productCategories {
+         name
       }
    }
 `

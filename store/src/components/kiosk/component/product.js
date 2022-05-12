@@ -12,6 +12,11 @@ import { KioskModifier, KioskCounterButton } from '.'
 import { GET_MODIFIER_BY_ID } from '../../../graphql'
 import { useQuery } from '@apollo/react-hooks'
 import { useConfig } from '../../../lib'
+import { HernLazyImage } from '../../../utils/hernImage'
+import moment from 'moment'
+import classNames from 'classnames'
+import isNull from 'lodash/isNull'
+import isEmpty from 'lodash/isEmpty'
 
 const { Header, Content, Footer } = Layout
 
@@ -19,7 +24,8 @@ export const KioskProduct = props => {
    // context
    const { cartState, methods, addToCart, combinedCartItems } =
       React.useContext(CartContext)
-   const { brand, isConfigLoading, kioskDetails } = useConfig()
+   const { brand, isConfigLoading, kioskDetails, isStoreAvailable } =
+      useConfig()
 
    const { config, productData, setCurrentPage } = props
    const { t, locale, dynamicTrans } = useTranslation()
@@ -245,34 +251,121 @@ export const KioskProduct = props => {
       addToCart(cartItem, 1)
       setShowChooseIncreaseType(false)
    }
-
+   const showAddToCartButton = React.useMemo(() => {
+      // if product has modifier option then add to cart handle by modifier
+      if (productData.productOptions.length > 0 && productData.isPopupAllowed) {
+         return true
+      } else {
+         // else we will hide add to cart button
+         if (isStoreAvailable) {
+            return true
+         } else {
+            return false
+         }
+      }
+   }, [isStoreAvailable])
    return (
       <>
-         <div className="hern-kiosk__menu-product">
+         <div
+            className="hern-kiosk__menu-product"
+            style={{
+               ...(!config.productSettings.showProductCardFullView.value && {
+                  filter:
+                     'drop-shadow(0px 0.64912px 3.2456px rgba(0, 107, 177, 0.4))',
+               }),
+            }}
+         >
             <Layout style={{ height: '100%' }}>
-               <Header className="hern-kiosk__menu-product-header">
-                  <div className="hern-kiosk__menu-product-background-shadow"></div>
+               <Header
+                  className={classNames('hern-kiosk__menu-product-header', {
+                     'hern-kiosk__menu-product-header--full-view':
+                        config.productSettings.showProductCardFullView.value,
+                  })}
+               >
+                  {!config.productSettings.showProductCardFullView.value && (
+                     <div className="hern-kiosk__menu-product-background-shadow"></div>
+                  )}
 
                   {productData.assets.images.length === 0 ? (
                      <img src={config.productSettings.defaultImage.value} />
                   ) : (
                      <Carousel>
-                        {productData.assets.images.map((eachImage, index) => (
-                           <div
-                              className="product_image"
-                              style={{
-                                 height: '20em !important',
-                                 width: '20em !important',
-                              }}
-                              key={eachImage}
-                           >
-                              <img
-                                 src={eachImage}
-                                 key={index}
-                                 // style={{ height: '100%', width: '100%' }}
-                              />
-                           </div>
-                        ))}
+                        {productData.assets.images.map((eachImage, index) => {
+                           return (
+                              <div
+                                 className="product_image"
+                                 style={{
+                                    height: '20em !important',
+                                    width: '20em !important',
+                                 }}
+                                 key={eachImage}
+                              >
+                                 {isNull(eachImage) || isEmpty(eachImage) ? (
+                                    <img
+                                       src={
+                                          config.productSettings.defaultImage
+                                             .value
+                                       }
+                                       style={{
+                                          width: `${
+                                             config.productSettings
+                                                .showProductCardFullView.value
+                                                ? '240px'
+                                                : '187px'
+                                          }`,
+                                          height: `${
+                                             config.productSettings
+                                                .showProductCardFullView.value
+                                                ? '240px'
+                                                : '187px'
+                                          }`,
+                                       }}
+                                    />
+                                 ) : (
+                                    <HernLazyImage
+                                       // src={eachImage}
+                                       // key={index}
+                                       dataSrc={eachImage}
+                                       width={
+                                          config.productSettings
+                                             .showProductCardFullView.value
+                                             ? 240
+                                             : 187
+                                       }
+                                       height={
+                                          config.productSettings
+                                             .showProductCardFullView.value
+                                             ? 240
+                                             : 187
+                                       }
+                                       style={{
+                                          ...(config.kioskSettings.allowTilt
+                                             .value && {
+                                             clipPath:
+                                                'polygon(0 0, 100% 0, 100% 100%, 0 97%)',
+                                          }),
+                                       }}
+                                       onClick={() => {
+                                          if (showAddToCartButton) {
+                                             if (
+                                                productData.productOptions
+                                                   .length > 0 &&
+                                                productData.isPopupAllowed
+                                             ) {
+                                                setShowModifier(true)
+                                             } else {
+                                                addToCart(
+                                                   productData.defaultCartItem,
+                                                   1
+                                                )
+                                             }
+                                          }
+                                       }}
+                                    />
+                                 )}
+                              </div>
+                           )
+                        })}
                      </Carousel>
                   )}
                </Header>
@@ -288,7 +381,6 @@ export const KioskProduct = props => {
                      <span
                         className="hern-kiosk__menu-product-name"
                         data-translation="true"
-                        data-original-value={productData.name}
                      >
                         {productData.name}
                      </span>
@@ -296,38 +388,42 @@ export const KioskProduct = props => {
                         <span
                            className="hern-kiosk__menu-product-description"
                            data-translation="true"
-                           data-original-value={productData.additionalText}
                         >
                            {productData.additionalText}
                         </span>
                      )}
+                     <span className="hern-kiosk__menu-product-price">
+                        {/* <sup></sup> */}
+                        {formatCurrency(
+                           productData.price -
+                              productData.discount +
+                              (productData?.productOptions[0]?.price ||
+                                 0 - productData?.productOptions[0]?.discount ||
+                                 0)
+                        )}
+                     </span>
                   </div>
-                  <span className="hern-kiosk__menu-product-price">
-                     {/* <sup></sup> */}
-                     {formatCurrency(
-                        productData.price -
-                           productData.discount +
-                           (productData?.productOptions[0]?.price ||
-                              0 - productData?.productOptions[0]?.discount ||
-                              0)
-                     )}
-                  </span>
                   {availableQuantityInCart === 0 ? (
-                     <KioskButton
-                        onClick={() => {
-                           // setShowModifier(true)
-                           if (
-                              productData.productOptions.length > 0 &&
-                              productData.isPopupAllowed
-                           ) {
-                              setShowModifier(true)
-                           } else {
-                              addToCart(productData.defaultCartItem, 1)
-                           }
-                        }}
-                     >
-                        {t('Add To Cart')}
-                     </KioskButton>
+                     showAddToCartButton ? (
+                        <KioskButton
+                           onClick={() => {
+                              // setShowModifier(true)
+                              if (
+                                 productData.productOptions.length > 0 &&
+                                 productData.isPopupAllowed
+                              ) {
+                                 setShowModifier(true)
+                              } else {
+                                 addToCart(productData.defaultCartItem, 1)
+                              }
+                           }}
+                           buttonConfig={config.kioskSettings.buttonSettings}
+                        >
+                           {isStoreAvailable
+                              ? t('Add To Cart')
+                              : t('View Product')}
+                        </KioskButton>
+                     ) : null
                   ) : (
                      <KioskCounterButton
                         config={config}
@@ -379,9 +475,11 @@ export const KioskProduct = props => {
                   }}
                   style={{
                      border: `2px solid ${config.kioskSettings.theme.secondaryColor.value}`,
-                     background: 'transparent',
+                     background: 'transparent !important',
                      padding: '.1em 2em',
+                     color: `${config.kioskSettings.theme.primaryColor.value}`,
                   }}
+                  buttonConfig={config.kioskSettings.buttonSettings}
                >
                   {t("I'LL CHOOSE")}
                </KioskButton>
@@ -390,6 +488,7 @@ export const KioskProduct = props => {
                   onClick={() => {
                      repeatLastOne(productData)
                   }}
+                  buttonConfig={config.kioskSettings.buttonSettings}
                >
                   {t('REPEAT LAST ONE')}
                </KioskButton>
@@ -403,6 +502,7 @@ export const KioskProduct = props => {
                }}
                productData={productData}
                setCurrentPage={setCurrentPage}
+               key={productData.id}
             />
          )}
       </>

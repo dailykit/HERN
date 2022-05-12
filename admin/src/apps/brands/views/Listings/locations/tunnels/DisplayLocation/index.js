@@ -7,7 +7,7 @@ import { LocationMarkerIcon } from '../../../../../assets/icons'
 import { Marker } from 'google-map-react'
 import { StyledAddress, StyledAddressHeading } from './styled'
 
-const DisplayLocation = ({ closeTunnel, selectedRowData }) => {
+const DisplayLocation = ({ closeTunnel, selectedRowData, openTunnel }) => {
    console.log('selectedRowData', selectedRowData)
 
    const UserLocationMarker = () => {
@@ -33,7 +33,17 @@ const DisplayLocation = ({ closeTunnel, selectedRowData }) => {
    }
    return (
       <>
-         <TunnelHeader title="Your Store on Map" close={() => closeTunnel(2)} />
+         <TunnelHeader
+            title="Your Store on Map"
+            close={() => closeTunnel(2)}
+            right={{
+               title: 'Edit',
+               action: () => {
+                  openTunnel(3)
+                  closeTunnel(2)
+               },
+            }}
+         />
          <div>
             <div
                style={{

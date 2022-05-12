@@ -9,7 +9,7 @@ import { getRoute, get_env } from '../../../utils'
 const client = async () => {
    try {
       const content = await fs.readFileSync(
-         process.cwd() + '/public/env-config.js',
+         process.cwd() + '/../hern/env-config.js',
          'utf-8'
       )
       const config = JSON.parse(content.replace('window._env_ = ', ''))

@@ -15,7 +15,7 @@ import { useSubscription, useQuery, useMutation } from '@apollo/react-hooks'
 import { ReactTabulator, reactFormatter } from '@dailykit/react-tabulator'
 import { useLocation } from 'react-router-dom'
 import { StyledWrapper } from './styled'
-import BrandContext from '../../../context/Brand'
+// import BrandContext from '../../../context/Brand'
 import {
    BRAND_PAGES_LISTING,
    BRAND_TOTAL_PAGES,
@@ -30,21 +30,24 @@ import PageCreationTunnel from './Tunnel'
 import { currencyFmt, logger } from '../../../../../shared/utils'
 import options from '../tableOption'
 import { toast } from 'react-toastify'
+import { BrandContext } from '../../../../../App'
 
 const PageListing = () => {
    const location = useLocation()
    const [tunnels, openTunnel, closeTunnel] = useTunnel()
-   const [context, setContext] = useContext(BrandContext)
+   // const [context, setContext] = useContext(BrandContext)
+   const [brandContext, setBrandContext] = useContext(BrandContext)
+
    const { addTab, tab, closeAllTabs } = useTabs()
    const { tooltip } = useTooltip()
    const tableRef = useRef(null)
    const [pageList, setPageList] = useState(undefined)
-   const prevBrandId = useRef(context.brandId)
+   const prevBrandId = useRef(brandContext.brandId)
 
    //    Subscription for page listing
    const { loading, error } = useSubscription(BRAND_PAGES_LISTING, {
       variables: {
-         brandId: context.brandId,
+         brandId: brandContext.brandId,
       },
       onSubscriptionData: data => {
          const result = data.subscriptionData.data.brands_brandPages.map(
@@ -52,7 +55,7 @@ const PageListing = () => {
                return {
                   id: page.id,
                   internalPageName: page.internalPageName,
-                  url: `${context.brandDomain}${page.route}`,
+                  url: `${brandContext?.domain || ''}${page.route}`,
                   pageVisit: 'N/A',
                   published: page.published,
                }
@@ -71,7 +74,7 @@ const PageListing = () => {
       error: totalPagesError,
    } = useSubscription(BRAND_TOTAL_PAGES, {
       variables: {
-         brandId: context.brandId,
+         brandId: brandContext.brandId,
       },
    })
 
@@ -113,7 +116,7 @@ const PageListing = () => {
       ) {
          deletePage({
             variables: {
-               brandId: context.brandId,
+               brandId: brandContext.brandId,
                pageId: page.id,
             },
          })
@@ -244,7 +247,7 @@ const PageListing = () => {
       },
    ]
 
-   if (context.brandId !== prevBrandId.current) {
+   if (brandContext.brandId !== prevBrandId.current) {
       closeAllTabs()
    }
 
@@ -265,7 +268,7 @@ const PageListing = () => {
             justifyContent="space-between"
          >
             <Flex container alignItems="center">
-               <Text as="h2" style={{ marginBottom: '0em' }}  >
+               <Text as="h2" style={{ marginBottom: '0em' }}>
                   Page(
                   {count})
                </Text>

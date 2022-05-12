@@ -25,7 +25,7 @@ import {
    PaymentProvider,
    PaymentSection,
 } from '../../sections/checkout'
-import { useUser } from '../../context'
+import { useTranslation, useUser } from '../../context'
 import { UPDATE_BRAND_CUSTOMER, UPDATE_CART_PAYMENT } from '../../graphql'
 
 const ReactPixel = isClient ? require('react-facebook-pixel').default : null
@@ -63,6 +63,7 @@ const PaymentContent = () => {
    const { user } = useUser()
    const { state } = usePayment()
    const { addToast } = useToasts()
+   const { t } = useTranslation()
    const { displayRazorpay } = useRazorPay()
    const authTabRef = React.useRef()
    const { brand, configOf } = useConfig()
@@ -97,7 +98,7 @@ const PaymentContent = () => {
 
    React.useEffect(() => {
       if (!loading && !isEmpty(cart)) {
-         ;(async () => {
+         ; (async () => {
             const status = cart.paymentStatus
             const remark = cart.transactionRemark
             const next_action = cart.transactionRemark?.next_action
@@ -161,14 +162,14 @@ const PaymentContent = () => {
       {
          onError: error => {
             console.log(error)
-            addToast('Referral code not applied!', { appearance: 'error' })
+            addToast(t('Referral code not applied!'), { appearance: 'error' })
          },
       }
    )
    const [updateCartPayment] = useMutation(UPDATE_CART_PAYMENT, {
       onError: error => {
          console.log(error)
-         addToast('Something went wrong!', { appearance: 'error' })
+         addToast(t('Something went wrong!'), { appearance: 'error' })
       },
    })
 
@@ -220,7 +221,7 @@ const PaymentContent = () => {
                   },
                })
             }
-         } catch (error) {}
+         } catch (error) { }
 
          try {
             if (
@@ -237,7 +238,7 @@ const PaymentContent = () => {
                   },
                })
             }
-         } catch (error) {}
+         } catch (error) { }
 
          try {
             if (isClient) {
@@ -253,7 +254,7 @@ const PaymentContent = () => {
                   },
                })
             }
-         } catch (error) {}
+         } catch (error) { }
       },
       onError: error => {
          addToast(error.message, { appearance: 'error' })
@@ -276,7 +277,7 @@ const PaymentContent = () => {
          },
          onError: error => {
             console.log('updatePlatformCustomer -> error -> ', error)
-            addToast('Failed to update the user profile!', {
+            addToast(t('Failed to update the user profile!'), {
                appearance: 'success',
             })
          },
@@ -364,7 +365,7 @@ const PaymentContent = () => {
    }
 
    React.useEffect(() => {
-      ;(async () => {
+      ; (async () => {
          console.log('inside useEffect', cart)
          if (
             cart &&
@@ -474,8 +475,8 @@ const PaymentContent = () => {
                   </HelperBar.Title>
                   <HelperBar.Button
                      onClick={() =>
-                        (window.location.href =
-                           window.location.origin + getRoute('/'))
+                     (window.location.href =
+                        get_env('BASE_BRAND_URL') + getRoute('/'))
                      }
                   >
                      Go to Home
@@ -510,8 +511,8 @@ const PaymentContent = () => {
                   </HelperBar.Title>
                   <HelperBar.Button
                      onClick={() =>
-                        (window.location.href =
-                           window.location.origin + getRoute('/'))
+                     (window.location.href =
+                        get_env('BASE_BRAND_URL') + getRoute('/'))
                      }
                   >
                      Go to Home
@@ -532,8 +533,8 @@ const PaymentContent = () => {
                   </HelperBar.SubTitle>
                   <HelperBar.Button
                      onClick={() =>
-                        (window.location.href =
-                           window.location.origin + getRoute('/'))
+                     (window.location.href =
+                        get_env('BASE_BRAND_URL') + getRoute('/'))
                      }
                   >
                      Go to Home

@@ -14,12 +14,10 @@
    height: 100%;
    display: -moz-box;
    display: flex;
-   -moz-box-pack: end;
-   justify-content: flex-end;
    margin: 0;
    padding: 0;
    align-items: center;
-   @media screen and (max-width: 768px) {
+   @media screen and (max-width: 767px) {
       -moz-box-orient: vertical !important;
       -moz-box-direction: normal !important;
       flex-direction: column !important;
@@ -72,6 +70,7 @@
    a {
       cursor: pointer;
       color: rgba(31, 41, 55, 1) !important;
+      white-space: nowrap;
    }
    a:hover {
       text-decoration: none;
@@ -124,4 +123,44 @@
 .hern-header__avatar__skeleton {
    @extend %loading;
    @extend .hern-header__avatar;
+}
+.hern-navbar-cart-tooltip {
+   position: absolute;
+   white-space: nowrap;
+   // bottom: -30px;
+   transform: translateY(32px);
+   padding: 4px 8px;
+   border-radius: 5px;
+   animation: cart-tool-tip-store 3s ease-in-out infinite;
+   right: -54px;
+}
+
+@keyframes cart-tool-tip-store {
+   0% {
+      transform: translateY(32px);
+   }
+   50% {
+      transform: translateY(37px);
+   }
+   100% {
+      transform: translateY(32px);
+   }
+}
+.hern-navbar-cart-tooltip__tip {
+   content: '';
+   width: 15px;
+   height: 15px;
+   position: absolute;
+   transform: rotate(45deg);
+   left: 42%;
+   top: -3px;
+   z-index: -1000;
+}
+@media (min-width: 768px) {
+   .hern-navbar-cart-tooltip {
+      right: unset;
+   }
+   .hern-navbar-cart-tooltip__tip {
+      left: 44%;
+   }
 }

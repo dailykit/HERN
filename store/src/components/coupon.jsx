@@ -7,23 +7,29 @@ import { useConfig } from '../lib'
 import { useMenu, MenuProvider } from '../sections/select-menu'
 import { CouponsList } from './coupons_list'
 import { Loader } from './loader'
-import { Tunnel } from './tunnel'
-import { useQueryParamState } from '../utils'
-import { CouponIcon } from '../assets/icons'
+import { Tunnel } from '.'
+import { useQueryParamState, isKiosk } from '../utils'
+import { CouponIcon, ChevronIcon, CouponTicketIcon } from '../assets/icons'
 import { Button } from '.'
 
-const Coupon_ = ({ cart, config, upFrontLayout = false }) => {
+const Coupon_ = ({
+   cart,
+   config,
+   upFrontLayout = false,
+   tunnel = false,
+   listOntunnnel = true,
+}) => {
    // use this component for kiosk as well
    const [orderInterfaceType] = useQueryParamState('oiType', 'Website')
-   const { state = {} } =
-      orderInterfaceType === 'Kiosk Ordering' ? {} : useMenu()
+   const isKioskMode = React.useMemo(() => {
+      return isKiosk()
+   }, [])
+   const { state = {} } = isKioskMode ? {} : useMenu()
    const { user } = useUser()
    const { addToast } = useToasts()
    const { brand, configOf } = useConfig()
    const { id } =
-      orderInterfaceType === 'Kiosk Ordering' || upFrontLayout
-         ? cart
-         : state?.occurenceCustomer?.cart
+      isKioskMode || upFrontLayout ? cart : state?.occurenceCustomer?.cart
    const { t } = useTranslation()
 
    const theme = configOf('theme-color', 'visual')
@@ -31,6 +37,8 @@ const Coupon_ = ({ cart, config, upFrontLayout = false }) => {
 
    const [isCouponListOpen, setIsCouponListOpen] = React.useState(false)
    const [isCouponFormOpen, setIsCouponFormOpen] = React.useState(false)
+   const [isCouponListTunnelOpen, setIsCouponListTunnelOpen] =
+      React.useState(false)
    const [typedCode, setTypedCode] = React.useState('')
 
    // Mutation
@@ -38,7 +46,7 @@ const Coupon_ = ({ cart, config, upFrontLayout = false }) => {
       MUTATIONS.CART_REWARDS.CREATE,
       {
          onCompleted: () => {
-            addToast('Coupon applied!', { appearance: 'success' })
+            addToast(t('Coupon applied!'), { appearance: 'success' })
             setIsCouponListOpen(false)
             setIsCouponFormOpen(false)
          },
@@ -80,15 +88,17 @@ const Coupon_ = ({ cart, config, upFrontLayout = false }) => {
                      },
                   })
                } else {
-                  addToast('Coupon is not applicable!', { appearance: 'error' })
+                  addToast(t('Coupon is not applicable!'), {
+                     appearance: 'error',
+                  })
                }
             } else {
-               addToast('Coupon is not valid!', { appearance: 'error' })
+               addToast(t('Coupon is not valid!'), { appearance: 'error' })
             }
          },
          onError: error => {
             console.log(error)
-            addToast('Something went wrong!', { appearance: 'error' })
+            addToast(t('Something went wrong!'), { appearance: 'error' })
          },
          fetchPolicy: 'cache-and-network',
       }
@@ -96,7 +106,19 @@ const Coupon_ = ({ cart, config, upFrontLayout = false }) => {
 
    const { data, error } = useSubscription(CART_REWARDS, {
       variables: {
-         cartId: id,
+         where: {
+            cartId: {
+               _eq: id,
+            },
+            cart: {
+               paymentStatus: {
+                  _eq: 'PENDING',
+               },
+               status: {
+                  _eq: 'CART_PENDING',
+               },
+            },
+         },
          params: {
             cartId: id,
             keycloakId: user?.keycloakId,
@@ -111,7 +133,7 @@ const Coupon_ = ({ cart, config, upFrontLayout = false }) => {
                console.log('Coupon is valid!')
             } else {
                console.log('Coupon is not valid anymore!')
-               addToast('Coupon is not valid!', { appearance: 'error' })
+               addToast(t('Coupon is not valid!'), { appearance: 'error' })
                deleteCartRewards()
             }
          }
@@ -143,27 +165,23 @@ const Coupon_ = ({ cart, config, upFrontLayout = false }) => {
          })
       } catch (err) {
          console.log(err)
-         addToast('Something went wrong!', { appearance: 'error' })
+         addToast(t('Something went wrong!'), { appearance: 'error' })
       }
    }
 
    if (
       !data?.cartRewards[0]?.reward?.coupon?.code &&
-      (isCouponFormOpen ||
-         orderInterfaceType === 'Kiosk Ordering' ||
-         upFrontLayout)
+      (isCouponFormOpen || isKioskMode || upFrontLayout)
    ) {
       return (
          <>
             <form
                className={
-                  orderInterfaceType === 'Kiosk Ordering'
-                     ? 'hern-kiosk-coupon__form'
-                     : 'hern-coupon__form'
+                  isKioskMode ? 'hern-kiosk-coupon__form' : 'hern-coupon__form'
                }
                onSubmit={handleSubmit}
             >
-               {orderInterfaceType !== 'Kiosk Ordering' && !upFrontLayout && (
+               {!isKioskMode && !upFrontLayout && (
                   <button
                      className="hern-coupon__see-all-btn"
                      style={{
@@ -177,20 +195,18 @@ const Coupon_ = ({ cart, config, upFrontLayout = false }) => {
                )}
                <div
                   className={
-                     orderInterfaceType === 'Kiosk Ordering'
+                     isKioskMode
                         ? 'hern-kiosk-coupon__input-wrapper'
                         : upFrontLayout
                         ? 'hern-upfront-coupon__input-wrapper'
                         : 'hern-coupon__input-wrapper'
                   }
                >
-                  {orderInterfaceType != 'Kiosk Ordering' && upFrontLayout && (
-                     <CouponHeader />
-                  )}
+                  {false && !isKioskMode && upFrontLayout && <CouponHeader />}
 
                   <label
                      className={
-                        orderInterfaceType === 'Kiosk Ordering'
+                        isKioskMode
                            ? 'hern-kiosk-coupon__input-label'
                            : upFrontLayout
                            ? 'hern-upfront-coupon__input-label'
@@ -202,7 +218,7 @@ const Coupon_ = ({ cart, config, upFrontLayout = false }) => {
                   </label>
                   <input
                      className={
-                        orderInterfaceType === 'Kiosk Ordering'
+                        isKioskMode
                            ? 'hern-kiosk-coupon__input'
                            : upFrontLayout
                            ? 'hern-upfront-coupon__input'
@@ -221,7 +237,7 @@ const Coupon_ = ({ cart, config, upFrontLayout = false }) => {
                {!upFrontLayout ? (
                   <button
                      className={
-                        orderInterfaceType === 'Kiosk Ordering'
+                        isKioskMode
                            ? 'hern-kiosk-coupon__form__apply-btn'
                            : 'hern-coupon__form__apply-btn'
                      }
@@ -229,7 +245,7 @@ const Coupon_ = ({ cart, config, upFrontLayout = false }) => {
                      disabled={searching || applying}
                      color={theme?.accent?.value}
                      style={{
-                        ...(orderInterfaceType === 'Kiosk Ordering' && {
+                        ...(isKioskMode && {
                            border: `2px solid ${config.kioskSettings.theme.secondaryColor.value}`,
                            background: 'transparent',
                            padding: '.1em 2em',
@@ -240,15 +256,38 @@ const Coupon_ = ({ cart, config, upFrontLayout = false }) => {
                   </button>
                ) : (
                   <Button
-                     className="hern-upfront-coupon__form__apply-btn"
                      disabled={searching || applying}
                      type="submit"
+                     variant="outline"
                   >
                      {searching || applying ? <Loader inline /> : t('Apply')}
                   </Button>
                )}
             </form>
-            {(orderInterfaceType === 'Kiosk Ordering' || upFrontLayout) && (
+            {!isKioskMode && (
+               <Button
+                  onClick={() => setIsCouponListTunnelOpen(true)}
+                  variant="ghost"
+               >
+                  {t('View Offers')}
+               </Button>
+            )}
+            {listOntunnnel && (
+               <Tunnel.Right
+                  title="Coupon"
+                  visible={isCouponListTunnelOpen}
+                  onClose={() => setIsCouponListTunnelOpen(false)}
+               >
+                  <CouponsList
+                     createOrderCartRewards={createOrderCartRewards}
+                     closeTunnel={() => setIsCouponListOpen(false)}
+                     cart={cart}
+                     config={config}
+                     upFrontLayout={upFrontLayout}
+                  />
+               </Tunnel.Right>
+            )}
+            {!listOntunnnel && upFrontLayout && (
                <CouponsList
                   createOrderCartRewards={createOrderCartRewards}
                   closeTunnel={() => setIsCouponListOpen(false)}
@@ -257,8 +296,17 @@ const Coupon_ = ({ cart, config, upFrontLayout = false }) => {
                   upFrontLayout={upFrontLayout}
                />
             )}
-            {orderInterfaceType !== 'Kiosk Ordering' && !upFrontLayout && (
-               <Tunnel
+            {isKioskMode && (
+               <CouponsList
+                  createOrderCartRewards={createOrderCartRewards}
+                  closeTunnel={() => setIsCouponListOpen(false)}
+                  cart={cart}
+                  config={config}
+                  upFrontLayout={upFrontLayout}
+               />
+            )}
+            {!isKioskMode && !upFrontLayout && (
+               <Tunnel.Wrapper
                   isOpen={isCouponListOpen}
                   toggleTunnel={setIsCouponListOpen}
                   style={{ zIndex: 1030 }}
@@ -268,7 +316,7 @@ const Coupon_ = ({ cart, config, upFrontLayout = false }) => {
                      closeTunnel={() => setIsCouponListOpen(false)}
                      cart={cart}
                   />
-               </Tunnel>
+               </Tunnel.Wrapper>
             )}
          </>
       )
@@ -278,7 +326,7 @@ const Coupon_ = ({ cart, config, upFrontLayout = false }) => {
          className="hern-coupon"
          style={{
             color: `var(--hern-accent)`,
-            ...(orderInterfaceType === 'Kiosk Ordering' && {
+            ...(isKioskMode && {
                borderRadius: '1em',
                marginTop: '2.5em',
             }),
@@ -289,7 +337,7 @@ const Coupon_ = ({ cart, config, upFrontLayout = false }) => {
                <div>
                   <div
                      className={
-                        orderInterfaceType === 'Kiosk Ordering'
+                        isKioskMode
                            ? 'hern-kiosk-coupon__coupon-code'
                            : 'hern-coupon__coupon-code'
                      }
@@ -298,7 +346,7 @@ const Coupon_ = ({ cart, config, upFrontLayout = false }) => {
                   </div>
                   <div
                      className={
-                        orderInterfaceType === 'Kiosk Ordering'
+                        isKioskMode
                            ? 'hern-kiosk-coupon__coupon-comment'
                            : 'hern-coupon__coupon-comment'
                      }
@@ -308,7 +356,7 @@ const Coupon_ = ({ cart, config, upFrontLayout = false }) => {
                </div>
                <button
                   className={
-                     orderInterfaceType === 'Kiosk Ordering'
+                     isKioskMode
                         ? 'hern-kiosk-coupon__coupon__cancel-btn'
                         : 'hern-coupon__coupon__cancel-btn'
                   }
@@ -329,14 +377,35 @@ const Coupon_ = ({ cart, config, upFrontLayout = false }) => {
       </div>
    )
 }
-export const Coupon = props => (
-   <>
+export const Coupon = props => {
+   const { tunnel = false } = props
+   const [isCouponTunnelOpen, setIsCouponTunnelOpen] = React.useState(false)
+   if (tunnel) {
+      return (
+         <>
+            <CouponTunnlelTrigger
+               setIsCouponTunnelOpen={setIsCouponTunnelOpen}
+            />
+            <Tunnel.Right
+               title="Coupon"
+               visible={isCouponTunnelOpen}
+               onClose={() => setIsCouponTunnelOpen(false)}
+            >
+               <MenuProvider>
+                  <Coupon_ {...props} />
+               </MenuProvider>
+            </Tunnel.Right>
+         </>
+      )
+   }
+   return (
       <MenuProvider>
          <Coupon_ {...props} />
       </MenuProvider>
-   </>
-)
+   )
+}
 export const CouponHeader = () => {
+   const { t } = useTranslation()
    return (
       <div
          style={{
@@ -350,8 +419,31 @@ export const CouponHeader = () => {
             className={'hern-upfront-coupon-header__label'}
             htmlFor="coupon-header"
          >
-            Apply Coupons
+            {t('Apply Coupons')}
          </label>
+      </div>
+   )
+}
+const CouponTunnlelTrigger = ({ setIsCouponTunnelOpen }) => {
+   const { t } = useTranslation()
+   return (
+      <div className="hern-upfront-coupon-header__tunnel">
+         <div>
+            <span>
+               <CouponTicketIcon />
+            </span>
+            <div>
+               <h4>{t('Apply Coupon')}</h4>
+               <button onClick={() => setIsCouponTunnelOpen(true)}>
+                  <span>{t('View All Offers')}</span>
+                  <ChevronIcon />
+               </button>
+            </div>
+         </div>
+         <button onClick={() => setIsCouponTunnelOpen(true)}>
+            <span>{t('Apply')}</span>
+            <ChevronIcon />
+         </button>
       </div>
    )
 }

@@ -316,6 +316,8 @@ export const QUERIES = {
                deliveryPrice
                fulfillmentType
                thirdPartyOrderId
+               deliveryPartnershipId
+               deliveryInfo
                thirdPartyOrder {
                   id
                   source
@@ -337,6 +339,12 @@ export const QUERIES = {
                   paymentStatus
                   fulfillmentInfo
                   customer: customerInfo
+                  products: cartItems(where: { level: { _eq: 1 } }) {
+                     id
+                     displayName
+                     displayUnit
+                     unitPrice
+                  }
                   subscriptionOccurence {
                      id
                      itemCount: subscriptionItemCount {
@@ -356,10 +364,10 @@ export const QUERIES = {
                      id
                      onBrandName: brand_brandSettings(
                         where: {
-                           brandSetting: { identifier: { _eq: "Brand Name" } }
+                           brandSetting: { identifier: { _eq: "Brand Info" } }
                         }
                      ) {
-                        name: value(path: "name")
+                        value
                      }
                      brandSettings: brand_brandSettings(
                         where: {
@@ -371,10 +379,10 @@ export const QUERIES = {
                      }
                      brandLogo: brand_brandSettings(
                         where: {
-                           brandSetting: { identifier: { _eq: "Brand Logo" } }
+                           brandSetting: { identifier: { _eq: "Brand Info" } }
                         }
                      ) {
-                        url: value(path: "brandLogo.value")
+                        value
                      }
                   }
                   cartItems_aggregate(

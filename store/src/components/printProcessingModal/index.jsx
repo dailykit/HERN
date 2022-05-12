@@ -6,7 +6,7 @@ import { Result, Spin, Button, Modal } from 'antd'
 import { Wrapper } from './styles'
 import { Button as StyledButton } from '../button'
 import { useWindowSize, isKiosk, isClient } from '../../utils'
-import { useCart } from '../../context'
+import { useCart, useTranslation } from '../../context'
 import { useConfig } from '../../lib'
 
 const PrintProcessingModal = ({
@@ -15,8 +15,6 @@ const PrintProcessingModal = ({
    initializePrinting = () => null,
    resetPaymentProviderStates = () => null,
 }) => {
-   console.log('PrintProcessingModal')
-
    const router = useRouter()
    const isKioskMode = isKiosk()
    const { width, height } = useWindowSize()
@@ -27,6 +25,7 @@ const PrintProcessingModal = ({
    } = printDetails
    const { setStoredCartId } = useCart()
    const { setIsIdleScreen, clearCurrentPage } = useConfig()
+   const { t } = useTranslation()
 
    const showPrintingStatus = () => {
       let icon = (
@@ -59,7 +58,7 @@ const PrintProcessingModal = ({
          subtitle = message
          extra = [
             <Button type="primary" onClick={initializePrinting}>
-               Retry Print Receipt
+               {t('Retry Print Receipt')}
             </Button>,
          ]
       }
@@ -108,8 +107,8 @@ const PrintProcessingModal = ({
          <Wrapper>
             <Result
                icon={showPrintingStatus().icon}
-               title={showPrintingStatus().title}
-               subTitle={showPrintingStatus().subtitle}
+               title={t(showPrintingStatus().title)}
+               subTitle={t(showPrintingStatus().subtitle)}
                extra={showPrintingStatus().extra}
             />
 

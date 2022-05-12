@@ -96,7 +96,6 @@ const CreateCollection = ({ close }) => {
          console.log('Collection Name::::', collection)
       }
    }
-   console.log('collection :>> ', collection)
 
    // const onBlur = (e, i) => {
    //    const { name, value } = e.target

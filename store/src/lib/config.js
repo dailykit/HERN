@@ -1,12 +1,10 @@
+import { useQuery } from '@apollo/react-hooks'
+// import { has, isEmpty } from 'lodash'
+import has from 'lodash/has'
+import isEmpty from 'lodash/isEmpty'
 import React from 'react'
-import { groupBy, has, isEmpty } from 'lodash'
-import { useQuery, useSubscription } from '@apollo/react-hooks'
-
-import { get_env, isClient, useQueryParamState } from '../utils'
-import { PageLoader } from '../components'
-import { SETTINGS } from '../graphql/queries'
 import { ORDER_TAB } from '../graphql'
-
+import { get_env, isClient, useQueryParamState } from '../utils'
 const ConfigContext = React.createContext()
 
 const initialState = {
@@ -26,6 +24,14 @@ const initialState = {
       message: '',
       loading: true,
    },
+   lastLocationId: null,
+   kioskRecurrences: null,
+   kioskAvailability: {
+      ONDEMAND_PICKUP: false,
+      ONDEMAND_DINEIN: false,
+      isValidated: false, // show that above two values are validate or not, initially false
+   },
+   KioskConfig: null,
 }
 
 const reducers = (state, { type, payload }) => {
@@ -50,6 +56,18 @@ const reducers = (state, { type, payload }) => {
          return { ...state, userLocation: payload }
       case 'SET_STORE_STATUS':
          return { ...state, storeStatus: payload }
+      case 'SET_LAST_LOCATION_ID':
+         return { ...state, lastLocationId: payload }
+      case 'SET_KIOSK_RECURRENCES':
+         return { ...state, kioskRecurrences: payload }
+      case 'SET_KIOSK_POPUP_CONFIG':
+         return { ...state, KioskConfig: payload }
+      case 'SET_KIOSK_AVAILABILITY': {
+         return {
+            ...state,
+            kioskAvailability: { ...state.kioskAvailability, ...payload },
+         }
+      }
       default:
          return state
    }
@@ -63,23 +81,10 @@ export const ConfigProvider = ({ children }) => {
       'currentPage',
       'fulfillmentPage'
    )
+   const [currentAuth, setAuth, deleteAuth] = useQueryParamState('auth')
 
-   const { loading, data: { settings = [] } = {} } = useSubscription(SETTINGS, {
-      variables: {
-         domain: {
-            _eq: isClient ? window.location.hostname : null,
-         },
-      },
-   })
-
-   const transform = React.useCallback(
-      ({ value, meta }) => ({
-         value,
-         type: meta.type,
-         identifier: meta.identifier,
-      }),
-      []
-   )
+   const [showLocationSelectorPopup, setShowLocationSelectionPopup] =
+      React.useState(false)
 
    useQuery(ORDER_TAB, {
       skip: isLoading || !orderInterfaceType,
@@ -127,22 +132,6 @@ export const ConfigProvider = ({ children }) => {
       }
    }
 
-   React.useEffect(() => {
-      if (!loading) {
-         if (!isEmpty(settings)) {
-            dispatch({
-               type: 'SET_BRANDID',
-               payload: { id: settings[0].brandId },
-            })
-            dispatch({
-               type: 'SET_SETTINGS',
-               payload: groupBy(settings.map(transform), 'type'),
-            })
-         }
-         setIsLoading(false)
-      }
-   }, [loading, settings])
-
    const buildImageUrl = React.useCallback((size, url) => {
       const server_url = `${
          new URL(get_env('DATA_HUB_HTTPS')).origin
@@ -161,25 +150,26 @@ export const ConfigProvider = ({ children }) => {
       const oiType = JSON.parse(localStorage.getItem('orderInterfaceType'))
       const oiTypeId = JSON.parse(localStorage.getItem('orderInterfaceTypeId'))
 
-      const urlSearchParams = new URLSearchParams(window.location.search)
-      const params = Object.fromEntries(urlSearchParams.entries())
-      console.log('these are params', params)
-      if (params && params.oiType) {
+      // const urlSearchParams = new URLSearchParams(window.location.search)
+      // const params = Object.fromEntries(urlSearchParams.entries())
+      const pathName = isClient ? window.location.pathname : ''
+
+      if (pathName.includes('/kiosk/')) {
          localStorage.setItem(
             'orderInterfaceType',
-            JSON.stringify(params.oiType)
+            JSON.stringify('Kiosk Ordering')
          )
-         setOrderInterfaceType(prev => ({ ...prev, oiType: params.oiType }))
-         if (params.oiTypeId) {
-            localStorage.setItem(
-               'orderInterfaceTypeId',
-               JSON.stringify(params.oiTypeId)
-            )
-            setOrderInterfaceType(prev => ({
-               ...prev,
-               oiTypeId: params.oiTypeId,
-            }))
-         }
+         setOrderInterfaceType(prev => ({ ...prev, oiType: 'Kiosk Ordering' }))
+         // if (params.oiTypeId) {
+         //    localStorage.setItem(
+         //       'orderInterfaceTypeId',
+         //       JSON.stringify(params.oiTypeId)
+         //    )
+         //    setOrderInterfaceType(prev => ({
+         //       ...prev,
+         //       oiTypeId: params.oiTypeId,
+         //    }))
+         // }
       } else {
          localStorage.setItem('orderInterfaceType', JSON.stringify('Website'))
          setOrderInterfaceType(prev => ({
@@ -203,6 +193,13 @@ export const ConfigProvider = ({ children }) => {
             currentPage,
             setIsIdleScreen,
             clearCurrentPage,
+            showLocationSelectorPopup,
+            setShowLocationSelectionPopup,
+            setIsLoading,
+            currentAuth,
+            setAuth,
+            deleteAuth,
+            // KioskConfig,
          }}
       >
          {children}
@@ -223,6 +220,13 @@ export const useConfig = (globalType = '') => {
       currentPage,
       setIsIdleScreen,
       clearCurrentPage,
+      showLocationSelectorPopup,
+      setShowLocationSelectionPopup,
+      setIsLoading,
+      currentAuth,
+      setAuth,
+      deleteAuth,
+      // KioskConfig,
    } = React.useContext(ConfigContext)
 
    const hasConfig = React.useCallback(
@@ -230,12 +234,9 @@ export const useConfig = (globalType = '') => {
          const type = localType || globalType
          if (isEmpty(state.settings)) return false
          if (identifier && type && has(state.settings, type)) {
-            const index = state.settings[type].findIndex(
-               node => node.identifier === identifier
-            )
-            if (index === -1) return false
-            if (isEmpty(state.settings[type][index].value)) return false
-            return true
+            const identifierValue = state.settings[type][identifier]
+            if (identifierValue) return true
+            return false
          }
          return false
       },
@@ -247,15 +248,20 @@ export const useConfig = (globalType = '') => {
          const type = localType || globalType
          if (isEmpty(state.settings)) return {}
          if (identifier && type && has(state.settings, type)) {
-            return (
-               state.settings[type].find(node => node.identifier === identifier)
-                  ?.value || {}
-            )
+            return state.settings[type][identifier] || {}
          }
          return {}
       },
       [state, globalType]
    )
+
+   // this is final availability for store like PICKUP_AVAILABLE || DINE_AVAILABLE
+   const isStoreAvailable = React.useMemo(() => {
+      return (
+         state.kioskAvailability['ONDEMAND_PICKUP'] ||
+         state.kioskAvailability['ONDEMAND_DINEIN']
+      )
+   }, [state.kioskAvailability])
 
    return {
       configOf,
@@ -280,5 +286,15 @@ export const useConfig = (globalType = '') => {
       userLocation: state.userLocation,
       storeStatus: state.storeStatus,
       clearCurrentPage,
+      showLocationSelectorPopup,
+      setShowLocationSelectionPopup,
+      kioskRecurrences: state.kioskRecurrences,
+      isStoreAvailable,
+      kioskAvailability: state.kioskAvailability,
+      setIsLoading,
+      currentAuth,
+      setAuth,
+      deleteAuth,
+      KioskConfig: state.KioskConfig,
    }
 }

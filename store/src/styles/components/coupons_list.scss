@@ -154,6 +154,9 @@
       display: none;
    }
 }
+.hern-upfront-coupons-list__carousal-arrow-kiosk{
+   width: auto;
+}
 .hern-upfront-coupons-list__carousal-left-arrow {
    left: -1%;
 }
@@ -193,7 +196,7 @@
    justify-content: space-between;
    border-radius: 8px;
    border: 1px dashed rgba(64, 64, 64, 0.6);
-   min-height: 15rem;
+   // min-height: 15rem;
 }
 .hern-upfront-coupons-list__coupon__scissor-icon {
    position: relative;

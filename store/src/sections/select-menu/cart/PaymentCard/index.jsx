@@ -115,7 +115,7 @@ const PaymentCard = () => {
                </div>
             </section>
          </section>
-         <Tunnel
+         <Tunnel.Wrapper
             isOpen={isCardListOpen}
             toggleTunnel={setIsCardListOpen}
             style={{ zIndex: 1030 }}
@@ -136,7 +136,7 @@ const PaymentCard = () => {
                   })
                }
             />
-         </Tunnel>
+         </Tunnel.Wrapper>
       </div>
    )
 }

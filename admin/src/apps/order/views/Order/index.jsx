@@ -123,7 +123,7 @@ const Order = () => {
       skip: !order?.cartId,
       variables: {
          where: {
-            // levelType: { _eq: 'orderItem' },
+            ...(!isSwitchedToTreeview && { levelType: { _eq: 'orderItem' } }),
             cartId: {
                _eq: order?.cartId,
             },
@@ -145,7 +145,7 @@ const Order = () => {
    }
 
    React.useEffect(() => {
-      if (!productsLoading && !isEmpty(products)) {
+      if (isSwitchedToTreeview && !productsLoading && !isEmpty(products)) {
          const treeViewArray = getTreeViewArray({
             dataset: products,
             rootIdKeyName: 'id',
@@ -160,7 +160,7 @@ const Order = () => {
             payload: product,
          })
       }
-   }, [productsLoading, products])
+   }, [productsLoading, products, isSwitchedToTreeview])
 
    // React.useEffect(() => {
    //    if (!isEmpty(products)) {
@@ -326,10 +326,8 @@ const Order = () => {
                args: {
                   name: 'printKOT',
                   payload: {
-                     new: {
-                        id: order.id,
-                        status: 'ORDER_UNDER_PROCESSING',
-                     },
+                     id: order.id,
+                     status: 'ORDER_UNDER_PROCESSING',
                   },
                },
             },
@@ -350,10 +348,9 @@ const Order = () => {
    const viewKOT = React.useCallback(() => {
       const kots = async () => {
          try {
+            const origin = get_env('REACT_APP_DAILYOS_SERVER_URI')
             const { data: { data = {}, success } = {} } = await axios.get(
-               `${get_env('REACT_APP_DAILYOS_SERVER_URI')}/api/kot-urls?id=${
-                  order.id
-               }`
+               `${origin}/api/kot-urls?id=${order.id}`
             )
             if (success) {
                data.forEach(node => window.open(node.url, '_blank'))

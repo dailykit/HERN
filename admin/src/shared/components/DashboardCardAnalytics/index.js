@@ -1,18 +1,13 @@
 import { useSubscription } from '@apollo/react-hooks'
-import { Text } from '@dailykit/ui'
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import { toast } from 'react-toastify'
 import { get_env, logger } from '../../utils'
 import { Card, CardContainer, Cards } from '../DashboardCards'
 import { ErrorState } from '../ErrorState'
 import { InlineLoader } from '../InlineLoader'
-import {
-   CustomerIcon,
-   RevenueIcon,
-   OrdersIcon,
-   ProductIcon,
-} from './assets/icons'
+import { CustomerIcon, RevenueIcon, OrdersIcon } from './assets/icons'
 import { GET_TOTAL_EARNING_ORDER_CUSTOMER_TOP_PRODUCT } from './graphql/subscription'
+import { BrandContext } from './../../../../src/App'
 //currencies
 const currency = {
    USD: '$',
@@ -24,6 +19,7 @@ const DashboardCards = () => {
    const [status, setStatus] = useState({
       loading: true,
    })
+   const [brandContext] = useContext(BrandContext)
    const { loading: subsLoading, error: subsError } = useSubscription(
       GET_TOTAL_EARNING_ORDER_CUSTOMER_TOP_PRODUCT,
       {
@@ -32,8 +28,13 @@ const DashboardCards = () => {
          //       params: { where: '"paymentStatus"=\'SUCCEEDED\'' },
          //    },
          // },
+         skip: brandContext.isLoading,
+         variables: {
+            brandId: brandContext.brandId,
+            locationId: brandContext.locationId,
+         },
          onSubscriptionData: ({ subscriptionData }) => {
-            console.log('subscription data', subscriptionData)
+            // console.log('subscription data', subscriptionData)
             const total = {}
             total.totalEarnings =
                subscriptionData.data.ordersAggregate.aggregate.sum.amountPaid
@@ -48,17 +49,20 @@ const DashboardCards = () => {
          },
       }
    )
-   console.log('analyticsData', analyticsData)
-   if (subsLoading || status.loading) {
-      return <InlineLoader />
-   }
+   // console.log('brandContextCard', brandContext, subsError)
+   // console.log('analyticsData', analyticsData)
    if (subsError) {
       logger(subsError)
       toast.error('Could not get the Insight data')
       return (
-         <ErrorState height="320px" message="Could not get the Insight data" />
+         <ErrorState height="192px" message="Could not get the Insight data" />
       )
    }
+
+   if (subsLoading || status.loading) {
+      return <InlineLoader />
+   }
+
    return (
       <CardContainer bgColor="#FFFFFF" borderColor="#efefef">
          <CardContainer.Title>Here's your progress so far</CardContainer.Title>

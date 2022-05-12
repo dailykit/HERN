@@ -4,7 +4,6 @@ import { Loader } from '@dailykit/ui'
 import { useTabsInfo, useGlobalContext } from '../../context'
 import { useTabs } from '../../../../shared/providers'
 import { get_env } from '../../../../shared/utils'
-
 // Components
 import TreeView from '../TreeView'
 import ContextMenu from '../ContextMenu'
@@ -18,6 +17,7 @@ import { toast } from 'react-toastify'
 
 // Helpers
 import toggleNode from '../../utils/toggleNode'
+import { isEmpty } from 'lodash'
 
 const FileExplorer = () => {
    const { addTab } = useTabs()
@@ -78,7 +78,34 @@ const FileExplorer = () => {
    React.useEffect(() => {
       const { getFolderWithFiles: files } = queryData || {}
       if (files) {
-         setData(files.children)
+         const updateFiles = (nodes, result = []) => {
+            nodes.map(node => {
+               if (node.type === 'folder') {
+                  if (!isEmpty(node.children)) {
+                     const updatedChildren = updateFiles(node.children)
+                     result.push({
+                        ...node,
+                        children: updatedChildren,
+                        isLeaf: false,
+                     })
+                  } else {
+                     result.push({
+                        ...node,
+                        isLeaf: false,
+                     })
+                  }
+               } else {
+                  result.push({
+                     ...node,
+                     isLeaf: true,
+                  })
+               }
+            })
+            return result
+         }
+         const updatedFiles = updateFiles(files.children)
+         console.log('updatedFiles', updatedFiles)
+         setData(updatedFiles)
       }
    }, [queryData])
 
@@ -87,19 +114,19 @@ const FileExplorer = () => {
       setData(mutated)
    }
 
-   const onSelection = async (node, nodeIndex) => {
-      if (node.type === 'folder') {
-         await onToggle(node.path)
-         if (data.length && data[nodeIndex] && data[nodeIndex].isOpen) {
-            onToggleInfo({
-               name: node.name,
-               path: node.path.replace(get_env('REACT_APP_ROOT_FOLDER'), ''),
-               type: node.type,
-            })
-         } else {
-            onToggleInfo({})
-         }
-      }
+   const onSelection = async node => {
+      // if (node.type === 'folder') {
+      //    await onToggle(node.path)
+      //    if (data.length && data[nodeIndex] && data[nodeIndex].isOpen) {
+      //       onToggleInfo({
+      //          name: node.name,
+      //          path: node.path.replace(get_env('REACT_APP_ROOT_FOLDER'), ''),
+      //          type: node.type,
+      //       })
+      //    } else {
+      //       onToggleInfo({})
+      //    }
+      // }
       if (node.type === 'file') {
          fileRef.current = node
          getFileQuery({

@@ -40,7 +40,7 @@ const CustomerSalesTable = props => {
             each.date = moment(each.present).format('MMM YYYY')
          }
          each.totalSale =
-            each.totalFirstpresent || 0 + each.totalReturnpresent || 0
+            (each.totalFirstpresent || 0) + (each.totalReturnpresent || 0)
          return each
       })
       setTableData(manipulateData)
@@ -189,11 +189,11 @@ const CustomerSalesTable = props => {
    const searchedOption = option => console.log(option)
    // fn run after table data loaded
    const dataLoaded = () => {
-      const defaultShowColumns =
-         localStorage.getItem(
-            'first-time-vs-return-customer-table-show-columns'
-         ) || []
-      const parseDefaultColumns = JSON.parse(defaultShowColumns)
+      const defaultShowColumns = localStorage.getItem(
+         'first-time-vs-return-customer-table-show-columns'
+      )
+      const parseDefaultColumns =
+         defaultShowColumns && JSON.parse(defaultShowColumns)
       if (parseDefaultColumns) {
          columns.forEach(eachOption => {
             if (

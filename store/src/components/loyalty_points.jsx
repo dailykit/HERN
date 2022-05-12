@@ -21,7 +21,6 @@ export const LoyaltyPoints = ({ cart, version = 1 }) => {
          ? cart.loyaltyPointsUsed
          : cart.loyaltyPointsUsable
    )
-
    const [updateCart] = useMutation(MUTATIONS.CART.UPDATE, {
       onCompleted: () => console.log('Loyalty points added!'),
       onError: error => console.log(error),
@@ -61,7 +60,6 @@ export const LoyaltyPoints = ({ cart, version = 1 }) => {
          >
             {isVersion2 && <LoyaltyPointsIcon />}
             <label
-               className="hern-loyalty-points__label"
                className={classNames('hern-loyalty-points__label', {
                   'hern-loyalty-points__label-v2': isVersion2,
                })}
@@ -75,7 +73,6 @@ export const LoyaltyPoints = ({ cart, version = 1 }) => {
    if (!user?.keycloakId) {
       return (
          <div
-            className="hern-loyalty-points"
             className={classNames('hern-loyalty-points', {
                'hern-loyalty-points-v2': isVersion2,
             })}
@@ -86,11 +83,10 @@ export const LoyaltyPoints = ({ cart, version = 1 }) => {
       )
    }
 
-   if (!cart.loyaltyPointsUsable) return null
+   if (!cart.loyaltyPointsUsable && !cart.loyaltyPointsUsed) return null
 
    return (
       <div
-         className="hern-loyalty-points"
          className={classNames('hern-loyalty-points', {
             'hern-loyalty-points-v2': isVersion2,
          })}
@@ -120,8 +116,8 @@ export const LoyaltyPoints = ({ cart, version = 1 }) => {
                   onSubmit={handleSubmit}
                   style={{ ...(isVersion2 && { alignItems: 'flex-end' }) }}
                >
-                  <div>
-                     <LoyaltyPointsHeader />
+                  <div style={{ width: '100%' }}>
+                     {/* <LoyaltyPointsHeader /> */}
                      {description && (
                         <span className="loyalty-points__tooltip">
                            <Info size={18} />
@@ -132,19 +128,26 @@ export const LoyaltyPoints = ({ cart, version = 1 }) => {
                         className="hern-loyalty-points__input"
                         type="number"
                         min="0"
-                        max={cart.loyaltyPointsUsable}
+                        placeholder="enter your Loyalty Points"
                         required
-                        value={points}
+                        value={points === 0 ? '' : points}
                         id="loyalty-points"
                         onChange={e => setPoints(e.target.value)}
                      />
                   </div>
-                  <Button type="submit">Add</Button>
+                  <Button variant="outline" type="submit">
+                     Add
+                  </Button>
                </form>
                <div className="hern-loyalty-points__help">
-                  <small>Max usable: {cart.loyaltyPointsUsable}</small>
+                  <small>
+                     You can use max {cart.loyaltyPointsUsable} Points
+                  </small>
                   {!!user.loyaltyPoint && (
-                     <small>Balance: {user.loyaltyPoint?.points}</small>
+                     <p>
+                        <LoyaltyPointsIcon color="#FFDD15" size={20} />
+                        {user.loyaltyPoint?.points}
+                     </p>
                   )}
                </div>
             </>

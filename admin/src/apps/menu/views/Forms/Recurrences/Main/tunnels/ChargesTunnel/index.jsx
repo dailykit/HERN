@@ -95,7 +95,7 @@ const ChargesTunnel = ({ closeTunnel }) => {
             createCharges({
                variables: {
                   objects: {
-                     mileRangeId: recurrenceState.mileRangeId,
+                     mileRangeId: recurrenceState.mileRange.id,
                      orderValueFrom: +from.value,
                      orderValueUpto: +to.value,
                      charge: +charge.value,

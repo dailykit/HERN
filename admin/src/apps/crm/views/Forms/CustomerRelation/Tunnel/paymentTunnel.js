@@ -11,17 +11,20 @@ import {
    Banner,
 } from '../../../../../../shared/components'
 import { toast } from 'react-toastify'
-import BrandContext from '../../../../context/Brand'
+import { BrandContext } from '../../../../../../App'
+// import BrandContext from '../../../../context/Brand'
 
-const TunnelVision = ({ id, tunnels, closeTunnel }) => {
-   const [context, setContext] = useContext(BrandContext)
+const TunnelVision = ({ params, tunnels, closeTunnel }) => {
+   // const [context, setContext] = useContext(BrandContext)
+   const [brandContext, setBrandContext] = useContext(BrandContext)
+
    const {
       loading: listLoading,
       data: { brand: { brand_customers: allCards = [] } = {} } = {},
    } = useQuery(ALL_DATA, {
       variables: {
-         keycloakId: id,
-         brandId: context.brandId,
+         keycloakId: params.id,
+         brandId: params.brandId,
       },
       onError: error => {
          toast.error('Something went wrong')

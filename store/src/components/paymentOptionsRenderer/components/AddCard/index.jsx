@@ -8,7 +8,7 @@ import { useMutation } from '@apollo/react-hooks'
 
 import { CardForm } from '../CardForm'
 import { useConfig, usePayment } from '../../../../lib'
-import { useUser } from '../../../../context'
+import { useTranslation, useUser } from '../../../../context'
 import * as QUERIES from '../../../../graphql'
 import PayButton from '../../../PayButton'
 import {
@@ -26,6 +26,7 @@ import { isClient, get_env, formatCurrency } from '../../../../utils'
 
 export const AddCard = ({ cartId, balanceToPay = 0 }) => {
    const { addToast } = useToasts()
+   const { t } = useTranslation()
    const { user } = useUser()
    const { configOf, brand } = useConfig()
    const { setPaymentInfo, paymentInfo } = usePayment()
@@ -46,7 +47,7 @@ export const AddCard = ({ cartId, balanceToPay = 0 }) => {
          },
          onError: error => {
             console.log('updatePlatformCustomer -> error -> ', error)
-            addToast('Something went wrong!', {
+            addToast(t('Something went wrong!'), {
                appearance: 'error',
             })
          },
@@ -273,7 +274,7 @@ const OutlineButton = styled(Button)`
 const createSetupIntent = async customer => {
    try {
       console.log({ customer })
-      const origin = isClient ? window.location.origin : ''
+      const origin = isClient ? get_env('BASE_BRAND_URL') : ''
       const url = `${origin}/server/api/payment/setup-intent`
       const { data } = await axios.post(url, {
          customer,

@@ -6,17 +6,18 @@ import classNames from 'classnames'
 import { useMenu } from './state'
 import { Loader } from '../../components'
 import { getRoute } from '../../utils'
+import { useTranslation } from '../../context'
 
 export const WeekPicker = ({ isFixed }) => {
    const router = useRouter()
    const { state, dispatch } = useMenu()
-
+   const { t } = useTranslation()
    if (state.isOccurencesLoading) return <Loader inline />
    if (!state?.week?.id) return null
    if (isFixed) {
       return (
          <span className="hern-select-menu__week-picker">
-            Showing menu of:&nbsp;
+            <span>{t("Showing menu of:")}</span>&nbsp;
             {moment(state?.week?.fulfillmentDate)
                .weekday(1)
                .format('ddd MMM D')}

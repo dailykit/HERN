@@ -1,15 +1,15 @@
 import React from 'react'
-import { get_env, compileEJSFile } from '../utils'
-import ReactHTMLParser, { convertNodeToElement } from 'react-html-parser'
+import { get_env } from '../utils'
+import ReactHTMLParser from 'react-html-parser'
 import axios from 'axios'
+import { compileEJSFile } from '../utils/renderTemplateFile'
 
 export const TemplateFile = ({ path = '/navigation-menu/index.ejs', data }) => {
    const [templateString, setTemplateString] = React.useState('')
    const [templateData, setTemplateData] = React.useState(data)
 
    React.useEffect(() => {
-      const url = `${get_env('EXPRESS_URL')}/template/files${path}`
-      console.log(url)
+      const url = `${get_env('BASE_BRAND_URL')}/template/files${path}`
       const fetchData = async () => {
          const { data } = await axios.get(url)
 
@@ -21,22 +21,6 @@ export const TemplateFile = ({ path = '/navigation-menu/index.ejs', data }) => {
    React.useEffect(() => {
       setTemplateData(data)
    }, [data])
-
-   const htmlParserTransform = (node, index) => {
-      if (node.type === 'tag' && node?.attribs?.onclick) {
-         return (
-            <div
-               data-div-info="template-listener-wrapper"
-               key={index}
-               onClick={new Function(node.attribs.onclick)}
-            >
-               {convertNodeToElement(node)}
-            </div>
-         )
-      } else {
-         return convertNodeToElement(node)
-      }
-   }
 
    return (
       <div>{ReactHTMLParser(compileEJSFile(templateString, templateData))}</div>

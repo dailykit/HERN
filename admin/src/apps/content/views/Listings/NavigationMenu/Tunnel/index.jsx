@@ -15,7 +15,7 @@ import {
    NAVIGATION_MENU_INFO,
    UPDATE_NAVIGATION_MENU,
 } from '../../../../graphql'
-import BrandContext from '../../../../context/Brand'
+// import BrandContext from '../../../../context/Brand'
 import NavMenuContext from '../../../../context/NavMenu'
 import { useNavbarMenu } from '../../../../context/Mutation'
 import { useTabs } from '../../../../../../shared/providers'
@@ -26,13 +26,15 @@ import {
    Banner,
 } from '../../../../../../shared/components'
 import { createDataTree } from '../../../../utils/getTreeViewArray'
+import { BrandContext } from '../../../../../../App'
 
 const NavigationMenuTunnel = ({ close }) => {
    const { createMenuItem } = useNavbarMenu()
    const { addTab, tab, setTabTitle, closeAllTabs } = useTabs()
-   const [context, setContext] = useContext(BrandContext)
+   // const [context, setContext] = useContext(BrandContext)
+   const [brandContext, setBrandContext] = useContext(BrandContext)
    const [navMenuContext, setNavMenuContext] = useContext(NavMenuContext)
-   const { brandId } = context
+   const { brandId } = brandContext
    const prevBrandId = useRef(brandId)
    const [menuTitle, setMenuTitle] = useState({
       value: '',

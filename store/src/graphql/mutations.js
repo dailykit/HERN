@@ -402,7 +402,6 @@ export const INSERT_OTP_TRANSACTION = gql`
    mutation insertOtp($object: platform_otp_transaction_insert_input!) {
       insertOtp: insert_platform_otp_transaction_one(object: $object) {
          id
-         code
       }
    }
 `
@@ -490,6 +489,18 @@ export const UPDATE_CART_PAYMENT = gql`
       }
    }
 `
+export const UPDATE_CART_PAYMENTS = gql`
+   mutation UPDATE_CART_PAYMENTS(
+      $where: order_cartPayment_bool_exp!
+      $_set: order_cartPayment_set_input!
+   ) {
+      updateCartPayments(where: $where, _set: $_set) {
+         returning {
+            id
+         }
+      }
+   }
+`
 export const CREATE_PRINT_JOB = gql`
    mutation CREATE_PRINT_JOB(
       $contentType: String!
@@ -514,6 +525,19 @@ export const SEND_MAIL = gql`
    mutation MyMutation($emailInput: EmailInput!) {
       sendEmail(emailInput: $emailInput) {
          success
+      }
+   }
+`
+
+export const UPDATE_LOCATION_KIOSK = gql`
+   mutation UPDATE_LOCATION_KIOSK(
+      $where: brands_locationKiosk_bool_exp!
+      $_set: brands_locationKiosk_set_input!
+   ) {
+      update_brands_locationKiosk(where: $where, _set: $_set) {
+         returning {
+            id
+         }
       }
    }
 `

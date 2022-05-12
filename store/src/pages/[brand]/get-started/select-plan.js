@@ -6,12 +6,7 @@ import {
    isClient,
    renderPageContent,
 } from '../../../utils'
-import {
-   SEO,
-   Layout,
-   LoginWarning,
-   ExternalJSCSSFiles,
-} from '../../../components'
+import { SEO, Layout, ExternalJSCSSFiles } from '../../../components'
 import { useUser } from '../../../context'
 
 const SelectPlan = props => {
@@ -21,7 +16,7 @@ const SelectPlan = props => {
    React.useEffect(() => {
       if (!isAuthenticated && !isLoading) {
          isClient && localStorage.setItem('landed_on', location.href)
-         // router.push(getRoute('/get-started/register'))
+         router.push(getRoute('/login'))
       }
    }, [isAuthenticated, isLoading])
 
@@ -38,9 +33,7 @@ const SelectPlan = props => {
       <Layout settings={settings}>
          <SEO seoSettings={seoSettings} />
          <ExternalJSCSSFiles externalFiles={linkedFiles} />
-         {!isAuthenticated && !isLoading ? (
-            <LoginWarning />
-         ) : (
+         {isAuthenticated && !isLoading && (
             <main>{renderPageContent(folds)}</main>
          )}
       </Layout>
@@ -55,7 +48,7 @@ export const getStaticProps = async ({ params }) => {
 
    return {
       props: { folds: parsedData, linkedFiles, settings, seoSettings },
-      revalidate: 60,
+      // revalidate: 60,
    }
 }
 export const getStaticPaths = () => {

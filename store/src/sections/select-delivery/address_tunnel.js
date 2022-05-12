@@ -4,7 +4,7 @@ import { useToasts } from 'react-toast-notifications'
 import GooglePlacesAutocomplete from 'react-google-places-autocomplete'
 
 import { useDelivery } from './state'
-import { useUser, CartContext } from '../../context'
+import { useUser, CartContext, useTranslation } from '../../context'
 import { MUTATIONS } from '../../graphql'
 import { CloseIcon } from '../../assets/icons'
 import { useScript, isClient, get_env, useOnClickOutside } from '../../utils'
@@ -26,6 +26,7 @@ export const AddressTunnel = props => {
 
    const { user } = useUser()
    const { addToast } = useToasts()
+   const { t, dynamicTrans } = useTranslation()
    const { methods } = React.useContext(CartContext)
    const { state, dispatch } = outside
       ? { state: {}, dispatch: {} }
@@ -51,13 +52,12 @@ export const AddressTunnel = props => {
       }
    })
 
-   console.log('dispatch', dispatch)
    const [formStatus, setFormStatus] = React.useState('PENDING')
    const [address, setAddress] = React.useState(null)
    const [createAddress] = useMutation(MUTATIONS.CUSTOMER.ADDRESS.CREATE, {
       onCompleted: () => {
          setFormStatus('SAVED')
-         addToast('Address has been saved.', {
+         addToast(t('Address has been saved.'), {
             appearance: 'success',
          })
          if (!outside) {
@@ -103,7 +103,7 @@ export const AddressTunnel = props => {
             lat: result.geometry.location.lat.toString(),
             lng: result.geometry.location.lng.toString(),
          }
-         console.log('resultAddress', result.address_components)
+         // console.log('resultAddress', result.address_components)
          result.address_components.forEach(node => {
             if (node.types.includes('street_number')) {
                address.line2 = `${node.long_name} `
@@ -157,7 +157,7 @@ export const AddressTunnel = props => {
          lat: userLocationInLocal.latitude.toString(),
          lng: userLocationInLocal.longitude.toString(),
          line2: userLocationInLocal.address.mainText,
-         searched: '',
+         searched: userLocationInLocal.searched || '',
       }
       if (user?.keycloakId) {
          if (outside) {
@@ -207,9 +207,9 @@ export const AddressTunnel = props => {
          <div className="hern-address__address-form" ref={userAddressFormRef}>
             <Form.Field>
                <Form.Label>
-                  Apartment/Building Info/Street info*{' '}
+                  {t('Apartment/Building Info/Street info*')}
                   <span className="hern-address-warning">
-                     {addressWarnings?.line1 ? 'fill this field' : null}
+                     {addressWarnings?.line1 ? t('fill this field') : null}
                   </span>
                </Form.Label>
                <Form.Text
@@ -233,7 +233,7 @@ export const AddressTunnel = props => {
                />
             </Form.Field>
             <Form.Field>
-               <Form.Label>Landmark</Form.Label>
+               <Form.Label>{t('Landmark')}</Form.Label>
                <Form.Text
                   type="text"
                   value={address?.landmark || ''}
@@ -248,7 +248,7 @@ export const AddressTunnel = props => {
             </Form.Field>
 
             <Form.Field>
-               <Form.Label>Label</Form.Label>
+               <Form.Label>{t('Label')}</Form.Label>
                <Form.Text
                   type="text"
                   value={address?.label || ''}
@@ -259,7 +259,7 @@ export const AddressTunnel = props => {
                />
             </Form.Field>
             <Form.Field>
-               <Form.Label>Dropoff Instructions</Form.Label>
+               <Form.Label>{t('Dropoff Instructions')}</Form.Label>
                <Form.TextArea
                   type="text"
                   value={address?.notes || ''}
@@ -278,8 +278,9 @@ export const AddressTunnel = props => {
          <>
             <section className="hern-delivery__address-tunnel__address-search">
                <Form.Label>
-                  Search{selectedOrderTab ? ' ' + selectedOrderTab.label : ''}{' '}
-                  Address
+                  <span>{t('Search')}</span>
+                  {selectedOrderTab ? ' ' + selectedOrderTab.label : ''}
+                  <span>{t('Address')}</span>
                </Form.Label>
                {loaded && !error && (
                   <GooglePlacesAutocomplete
@@ -297,9 +298,11 @@ export const AddressTunnel = props => {
                   >
                      <Form.Field>
                         <Form.Label>
-                           Apartment/Building Info/Street info*{' '}
+                           {t('Apartment/Building Info/Street info*')}
                            <span className="hern-address-warning">
-                              {addressWarnings.line1 ? 'fill this field' : null}
+                              {addressWarnings.line1
+                                 ? t('fill this field')
+                                 : null}
                            </span>
                         </Form.Label>
                         <Form.Text
@@ -323,7 +326,7 @@ export const AddressTunnel = props => {
                         />
                      </Form.Field>
                      <Form.Field>
-                        <Form.Label>Landmark</Form.Label>
+                        <Form.Label>{t('Landmark')}</Form.Label>
                         <Form.Text
                            type="text"
                            value={address.landmark || ''}
@@ -338,7 +341,7 @@ export const AddressTunnel = props => {
                      </Form.Field>
 
                      <Form.Field>
-                        <Form.Label>Label</Form.Label>
+                        <Form.Label>{t('Label')}</Form.Label>
                         <Form.Text
                            type="text"
                            value={address.label || ''}
@@ -349,7 +352,7 @@ export const AddressTunnel = props => {
                         />
                      </Form.Field>
                      <Form.Field>
-                        <Form.Label>Dropoff Instructions</Form.Label>
+                        <Form.Label>{t('Dropoff Instructions')}</Form.Label>
                         <Form.TextArea
                            type="text"
                            value={address.notes || ''}
@@ -368,12 +371,12 @@ export const AddressTunnel = props => {
       )
    }
    return (
-      <Tunnel
+      <Tunnel.Wrapper
          isOpen={state.address.tunnel}
          toggleTunnel={() => toggleTunnel(false)}
          size="sm"
       >
-         <Tunnel.Header title="Add Address">
+         <Tunnel.Header title={t('Add Address')}>
             <Button size="sm" onClick={() => toggleTunnel(false)}>
                <CloseIcon
                   size={20}
@@ -383,7 +386,7 @@ export const AddressTunnel = props => {
          </Tunnel.Header>
          <Tunnel.Body>
             <section className="hern-delivery__address-tunnel__address-search">
-               <Form.Label>Search Address</Form.Label>
+               <Form.Label>{t('Search Address')}</Form.Label>
                {loaded && !error && (
                   <GooglePlacesAutocomplete
                      onSelect={data => formatAddress(data)}
@@ -394,7 +397,7 @@ export const AddressTunnel = props => {
                <>
                   <Form.Field>
                      <Form.Label>
-                        Apartment/Building Info/Street info*
+                        {t('Apartment/Building Info/Street info*')}
                      </Form.Label>
                      <Form.Text
                         type="text"
@@ -406,7 +409,7 @@ export const AddressTunnel = props => {
                      />
                   </Form.Field>
                   <Form.Field>
-                     <Form.Label>Line 2</Form.Label>
+                     <Form.Label>{t('Line 2')}</Form.Label>
                      <Form.Text
                         type="text"
                         placeholder="Enter line 2"
@@ -417,7 +420,7 @@ export const AddressTunnel = props => {
                      />
                   </Form.Field>
                   <Form.Field>
-                     <Form.Label>Landmark</Form.Label>
+                     <Form.Label>{t('Landmark')}</Form.Label>
                      <Form.Text
                         type="text"
                         value={address.landmark || ''}
@@ -429,7 +432,7 @@ export const AddressTunnel = props => {
                   </Form.Field>
 
                   <Form.Field>
-                     <Form.Label>City*</Form.Label>
+                     <Form.Label>{t('City*')}</Form.Label>
                      <Form.Text
                         type="text"
                         placeholder="Enter city"
@@ -440,22 +443,22 @@ export const AddressTunnel = props => {
                      />
                   </Form.Field>
                   <Form.Field>
-                     <Form.Label>State</Form.Label>
+                     <Form.Label>{t('State')}</Form.Label>
                      <Form.Text readOnly value={address.state} />
                   </Form.Field>
 
                   <div className="hern-delivery__address-tunnel__country-zip-code">
                      <Form.Field>
-                        <Form.Label>Country</Form.Label>
+                        <Form.Label>{t('Country')}</Form.Label>
                         <Form.Text readOnly value={address.country} />
                      </Form.Field>
                      <Form.Field>
-                        <Form.Label>Zipcode</Form.Label>
+                        <Form.Label>{t('Zipcode')}</Form.Label>
                         <Form.Text readOnly value={address.zipcode} />
                      </Form.Field>
                   </div>
                   <Form.Field>
-                     <Form.Label>Label</Form.Label>
+                     <Form.Label>{t('Label')}</Form.Label>
                      <Form.Text
                         type="text"
                         value={address.label || ''}
@@ -466,7 +469,7 @@ export const AddressTunnel = props => {
                      />
                   </Form.Field>
                   <Form.Field>
-                     <Form.Label>Dropoff Instructions</Form.Label>
+                     <Form.Label>{t('Dropoff Instructions')}</Form.Label>
                      <Form.TextArea
                         type="text"
                         value={address.notes || ''}
@@ -485,12 +488,16 @@ export const AddressTunnel = props => {
                         formStatus === 'SAVING'
                      }
                   >
-                     {formStatus === 'SAVING' ? 'Saving...' : 'Save Address'}
+                     {formStatus === 'SAVING' ? (
+                        <span>{t('Saving...')}</span>
+                     ) : (
+                        <span>{t('Save Address')}</span>
+                     )}
                   </Button>
                   <Spacer />
                </>
             )}
          </Tunnel.Body>
-      </Tunnel>
+      </Tunnel.Wrapper>
    )
 }

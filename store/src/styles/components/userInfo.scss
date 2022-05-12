@@ -1,31 +1,120 @@
 .hern-user-info {
-   margin: 10px;
-   padding: 10px 0;
+   padding: 16px;
+   margin-bottom: 16px;
+   background-color: #fff;
+}
+.hern-user-info__inside-tunnel {
+   padding: 0;
+   .hern-user-info__name-field {
+      padding: 0;
+      display: block;
+   }
+   .hern-user-info__fieldset {
+      margin: 0;
+      margin-bottom: 24px;
+   }
+   .hern-user-info__fieldset-phone-number {
+      padding: 0;
+      width: 100%;
+   }
+}
+
+.hern-user-info--closed {
+   display: flex;
+   justify-content: space-between;
+   padding: 12px 16px;
+   background: #ebf6f0;
+   margin-bottom: 16px;
+   > button {
+      border: none;
+      outline: none;
+      font-weight: bold;
+      font-size: 16px;
+      line-height: 16px;
+      color: var(--hern-accent);
+   }
+   > div {
+      display: flex;
+      align-items: center;
+      > div {
+         font-weight: 600;
+         font-size: 18px;
+         line-height: 22px;
+         color: rgba(64, 64, 64, 0.8);
+         margin-right: 8px;
+      }
+      > span {
+         padding: 4px;
+         border-radius: 50%;
+         background: #ffffff;
+         box-shadow: 0px 1px 8px rgba(0, 0, 0, 0.05);
+         display: inline-block;
+         margin-right: 8px;
+      }
+   }
+   .hern-user-info--closed__phone-no {
+      display: inline-block;
+      margin-left: 12px;
+      font-weight: 600;
+      font-size: 12px;
+      line-height: 12px;
+      color: rgba(64, 64, 64, 0.6);
+   }
+   @media only screen and (max-width: 767px) {
+      border-radius: 0;
+      > button {
+         font-size: 14px;
+      }
+      > div {
+         > div {
+            font-size: 14px;
+         }
+      }
+   }
 }
 .hern-user-info__name-field {
    display: flex;
+   padding: 0 32px;
+}
+.hern-user-info__header {
+   display: flex;
+   align-items: center;
+   border-bottom: 1px solid #f3f3f3;
+   padding-bottom: 16px;
+   margin-bottom: 8px;
+   justify-content: space-between;
+   > div {
+      display: flex;
+      align-items: center;
+   }
+}
+.hern-user-info__header--title {
+   margin: 0;
+   padding: 0;
+   border: none;
 }
 .hern-user-info__heading {
    font-weight: 600;
-   font-size: 20px;
-   line-height: 22px;
-   color: rgba(64, 64, 64, 0.8);
+   font-size: 16px;
+   line-height: 16px;
+   color: rgba(64, 64, 64, 0.6);
    margin: 0 10px;
+   font-family: Nunito;
 }
 .hern-user-info__input-field {
    height: 40px;
-   background: #f4f4f4;
-   border-radius: 8px;
    padding: 0 10px;
    outline: none;
+   border-bottom: 1.5px solid rgba(64, 64, 64, 0.25);
    &:focus {
-      outline: 1px solid #367bf5;
+      border-bottom: 1.5px solid var(--hern-accent);
    }
 }
 .hern-user-info__fieldset {
    display: flex;
    flex-direction: column;
    margin: 4px 0;
+   width: 100%;
 }
 .hern-user-info__fieldset-first-name {
    margin-right: 1.5em;
@@ -36,12 +125,11 @@
 .hern-user-info__phone__input {
    input {
       height: 40px;
-      background: #f4f4f4;
-      border-radius: 8px;
       padding: 0 10px;
       outline: none;
+      border-bottom: 1.5px solid rgba(64, 64, 64, 0.25);
       &:focus {
-         outline: 1px solid #367bf5;
+         border-bottom: 1.5px solid var(--hern-accent);
       }
    }
 }
@@ -54,6 +142,7 @@
 }
 .hern-user-info__fieldset-phone-number {
    width: 50%;
+   padding: 0 32px;
 }
 .hern-user-info__save-button {
    margin-right: 5px;
@@ -90,4 +179,78 @@
 .hern-user-info__footer-text {
    margin-left: 2px;
    margin-top: 1px;
+}
+.hern-user-info__label {
+   font-size: 12px;
+   line-height: 12px;
+   color: rgba(64, 64, 64, 0.6);
+}
+.hern-user-info__tunnel {
+   box-shadow: none;
+   padding: 0;
+   margin: 0;
+   display: flex;
+   flex-direction: column;
+   .hern-user-info__name-field {
+      flex-direction: column;
+      padding: 0;
+   }
+   .hern-user-info__fieldset-phone-number {
+      width: 100%;
+      padding: 0;
+      margin-bottom: 16px;
+   }
+   .hern-user-info__fieldset-last-name {
+      margin: 0;
+   }
+   .hern-user-info__header {
+      order: 1;
+      > div {
+         display: none;
+      }
+      button {
+         width: 100%;
+         display: flex;
+         justify-content: center;
+         align-items: center;
+      }
+   }
+}
+.hern-user-info-tunnel__open-btn {
+   position: fixed;
+   left: 0;
+   right: 0;
+   bottom: 0;
+   width: 100%;
+   background-color: var(--hern-accent);
+   padding: 16px 0;
+   border: none;
+   outline: none;
+   font-size: 16px;
+   font-weight: bold;
+   color: #fff;
+}
+.hern-profile__profile-form__error {
+   color: #bf1650;
+}
+.hern-login-close__btn {
+   display: none;
+}
+@media only screen and (max-width: 768px) {
+   .hern-on-demand-cart-section__left {
+      position: relative;
+      .hern-user-type__wrapper {
+         padding: 16px 0;
+      }
+      .hern-login-v1-content {
+         height: calc(100vh - 108px);
+         width: auto;
+      }
+      .hern-login-close__btn {
+         display: block;
+         position: absolute;
+         top: 32px;
+         right: 20px;
+      }
+   }
 }

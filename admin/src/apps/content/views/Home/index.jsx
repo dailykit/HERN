@@ -7,7 +7,7 @@ import {
    FOLD_AGGREGATE,
    MENU_AGGREGATE,
 } from '../../graphql'
-import BrandContext from '../../context/Brand'
+// import BrandContext from '../../context/Brand'
 import { StyledCardList, StyledHome } from './styled'
 import { Banner, InlineLoader } from '../../../../shared/components'
 import { logger } from '../../../../shared/utils'
@@ -19,11 +19,14 @@ import {
    SettingsSvg,
    SubscriptionSvg,
 } from '../../../../shared/assets/illustrationTileSvg'
+import { BrandContext } from '../../../../App'
 
 export const Home = () => {
    const { addTab } = useTabs()
-   const [context, setContext] = useContext(BrandContext)
-   const { brandId } = context
+   // const [context, setContext] = useContext(BrandContext)
+   const [brandContext, setBrandContext] = useContext(BrandContext)
+
+   const { brandId } = brandContext
 
    // page count subscription
    const {

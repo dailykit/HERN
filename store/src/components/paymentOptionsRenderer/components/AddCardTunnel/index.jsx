@@ -38,7 +38,7 @@ export const AddCardTunnel = () => {
    }, [user])
 
    return (
-      <Tunnel
+      <Tunnel.Wrapper
          size="sm"
          toggleTunnel={toggleTunnel}
          isOpen={paymentInfo.tunnel.isVisible}
@@ -60,14 +60,14 @@ export const AddCardTunnel = () => {
                <CardForm intent={intent} />
             </Skeleton>
          </Tunnel.Body>
-      </Tunnel>
+      </Tunnel.Wrapper>
    )
 }
 
 const createSetupIntent = async customer => {
    try {
       console.log({ customer })
-      const origin = isClient ? window.location.origin : ''
+      const origin = isClient ? get_env('BASE_BRAND_URL') : ''
       const url = `${origin}/server/api/payment/setup-intent`
       const { data } = await axios.post(url, {
          customer,

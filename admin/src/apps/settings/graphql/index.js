@@ -393,6 +393,14 @@ export const USERS = {
             phoneNo
             tempPassword
             keycloakId
+            location {
+               label
+               id
+            }
+            brand {
+               id
+               title
+            }
          }
       }
    `,
@@ -631,11 +639,11 @@ export const MASTER = {
       LIST_ONE: gql`
          subscription productCategory($name: String = "") {
             productCategory(name: $name) {
-            iconUrl
-            imageUrl
-            bannerImageUrl
-            name
-            metaDetails
+               iconUrl
+               imageUrl
+               bannerImageUrl
+               name
+               metaDetails
             }
          }
       `,
@@ -667,12 +675,28 @@ export const MASTER = {
          }
       `,
       UPDATE: gql`
-         mutation updateProductCategory($name: String = "", $iconUrl: String = "", $imageUrl: String = "", $bannerImageUrl: String = "", $metaDetails: jsonb = "", $updatedName: String = "") {
-            updateProductCategory(pk_columns: {name: $name}, _set: {iconUrl: $iconUrl, imageUrl: $imageUrl, bannerImageUrl: $bannerImageUrl, metaDetails: $metaDetails, name: $updatedName}) {
-            name
+         mutation updateProductCategory(
+            $name: String = ""
+            $iconUrl: String = ""
+            $imageUrl: String = ""
+            $bannerImageUrl: String = ""
+            $metaDetails: jsonb = ""
+            $updatedName: String = ""
+         ) {
+            updateProductCategory(
+               pk_columns: { name: $name }
+               _set: {
+                  iconUrl: $iconUrl
+                  imageUrl: $imageUrl
+                  bannerImageUrl: $bannerImageUrl
+                  metaDetails: $metaDetails
+                  name: $updatedName
+               }
+            ) {
+               name
             }
          }
-      `
+      `,
    },
    INGREDIENT_CATEGORY: {
       LIST: gql`
@@ -1012,6 +1036,71 @@ export const APPS = {
                   id
                   title
                }
+            }
+         }
+      }
+   `,
+}
+export const SCOPE_SELECTOR = gql`
+   subscription brandId($identifier: String!) {
+      brandsAggregate(order_by: { id: asc }) {
+         aggregate {
+            count
+         }
+         nodes {
+            title
+            id
+            domain
+            isDefault
+            brand_brandSettings(
+               where: { brandSetting: { identifier: { _eq: $identifier } } }
+            ) {
+               value
+            }
+            brand_locations {
+               location {
+                  id
+                  label
+               }
+            }
+         }
+      }
+   }
+`
+export const ENVS = {
+   LIST: gql`
+      subscription envsList {
+         settings_env(
+            order_by: { config: desc_nulls_last }
+            where: { isUserInput: { _eq: true } }
+         ) {
+            config
+            id
+            title
+            belongsTo
+         }
+      }
+   `,
+   UPDATE: gql`
+      mutation updateEnv($id: Int!, $_set: settings_env_set_input!) {
+         update_settings_env(where: { id: { _eq: $id } }, _set: $_set) {
+            affected_rows
+            returning {
+               id
+               config
+            }
+         }
+      }
+   `,
+   CREATE: gql`
+      mutation createEnvs($objects: [settings_env_insert_input!]!) {
+         insert_settings_env(
+            on_conflict: { constraint: env_title_belongsTo_key }
+            objects: $objects
+         ) {
+            affected_rows
+            returning {
+               title
             }
          }
       }

@@ -13,15 +13,19 @@ import { HelperBar } from '../helper_bar'
 import PayButton from '../PayButton'
 import { useUser } from '../../context'
 import * as QUERIES from '../../graphql'
-import { isClient, formatCurrency, getRoute } from '../../utils'
+import { isClient, formatCurrency, getRoute, get_env } from '../../utils'
 
-export default function PaymentOptionsRenderer({ cartId }) {
+export default function PaymentOptionsRenderer({
+   cartId,
+   setPaymentTunnelOpen,
+}) {
    const { setPaymentInfo, paymentInfo } = usePayment()
    const { user } = useUser()
    const { configOf } = useConfig()
    const { addToast } = useToasts()
    const theme = configOf('theme-color', 'Visual')
    const [isLoading, setIsLoading] = React.useState(true)
+   const [isUpdating, setIsUpdating] = React.useState(false)
    // query for fetching available payment options
    const {
       loading,
@@ -45,6 +49,14 @@ export default function PaymentOptionsRenderer({ cartId }) {
       },
    })
 
+   // update cartPayment mutation
+   const [updateCartPayments] = useMutation(QUERIES.UPDATE_CART_PAYMENTS, {
+      onError: error => {
+         console.log(error)
+         addToast(error.message, { appearance: 'error' })
+      },
+   })
+
    const showPaymentIcon = label => {
       let icon = null
       if (['Debit/Credit Card', 'Debit/Credit Cards'].includes(label)) {
@@ -59,12 +71,30 @@ export default function PaymentOptionsRenderer({ cartId }) {
       return icon
    }
 
-   const onPaymentMethodChange = id => {
+   const onPaymentMethodChange = async id => {
       if (id) {
          const availablePaymentOptionToCart =
             cart.availablePaymentOptionToCart.find(option => option.id === id)
-         console.log(availablePaymentOptionToCart)
-         updateCart({
+         await updateCartPayments({
+            variables: {
+               where: {
+                  cartId: {
+                     _eq: cartId,
+                  },
+                  paymentStatus: {
+                     _nin: ['SUCCEEDED'],
+                  },
+                  isResultShown: {
+                     _eq: false,
+                  },
+               },
+               _set: {
+                  paymentStatus: 'CANCELLED',
+                  isResultShown: true,
+               },
+            },
+         })
+         await updateCart({
             variables: {
                id: cartId,
                _set: {
@@ -88,7 +118,7 @@ export default function PaymentOptionsRenderer({ cartId }) {
    }, [loading, cart])
    return (
       <Wrapper>
-         <SectionTitle theme={theme}>Select Payment Method</SectionTitle>
+         {/* <SectionTitle theme={theme}>Select Payment Method</SectionTitle> */}
          <Skeleton
             active
             loading={isLoading}
@@ -102,6 +132,7 @@ export default function PaymentOptionsRenderer({ cartId }) {
                         cart.availablePaymentOptionToCart.map(option => (
                            <PaymentOptionCard
                               key={option?.id}
+                              setPaymentTunnelOpen={setPaymentTunnelOpen}
                               title={
                                  option?.label ||
                                  option?.supportedPaymentOption
@@ -139,7 +170,7 @@ export default function PaymentOptionsRenderer({ cartId }) {
                                  <HelperBar.Button
                                     onClick={() =>
                                        (window.location.href =
-                                          window.location.origin +
+                                          get_env('BASE_BRAND_URL') +
                                           getRoute('/'))
                                     }
                                  >
@@ -173,7 +204,7 @@ const Main = styled.main`
 
 const SectionTitle = styled.h3(
    ({ theme }) => css`
-      ${tw`text-green-600 text-lg mb-8`}
+      ${tw`text-green-600 text-xl mb-8`}
       ${theme?.accent && `color: ${theme.accent}`}
    `
 )
@@ -188,6 +219,7 @@ const PaymentOptionCard = ({
    cartId = null,
    isLoginRequired = false,
    canShowWhileLoggedIn = true,
+   setPaymentTunnelOpen,
 }) => {
    const { user, isAuthenticated } = useUser()
    const { setPaymentInfo, paymentInfo } = usePayment()
@@ -206,12 +238,13 @@ const PaymentOptionCard = ({
    }
    return (
       <StyledWrapper>
-         <p tw="font-semibold text-sm text-gray-500 mb-2">{title}</p>
+         {/* <p tw="font-semibold text-lg text-gray-500 mb-2">{title}</p> */}
          <div
             css={[
-               tw`flex flex-col p-4 rounded-md border[1px solid rgba(64, 64, 64, 0.25)] hover:(cursor-pointer box-shadow[ 0px 2px 4px rgba(0, 0, 0, 0.2)] )`,
+               tw`flex flex-col  rounded-md border[1px solid rgba(64, 64, 64, 0.25)] hover:(cursor-pointer box-shadow[ 0px 2px 4px rgba(0, 0, 0, 0.2)] )`,
                isSelected && tw`box-shadow[ 0px 2px 4px rgba(0, 0, 0, 0.2)]`,
             ]}
+            style={{ padding: '8px' }}
             onClick={onClick}
          >
             <div
@@ -224,13 +257,21 @@ const PaymentOptionCard = ({
                      tw`flex-col items-start sm:(flex-row items-center)`,
                ]}
             >
-               <div tw="flex">
+               <div tw="flex items-center">
                   <span>{icon}</span>
-                  <div tw="flex flex-col ml-2">
-                     <h2 tw="mb-0 text-lg color[#202020] font-semibold">
+                  <div tw="flex flex-col ml-8">
+                     <h2
+                        tw="mb-0 color[#202020] font-semibold"
+                        style={{ fontSize: '18px', fontFamily: 'Nunito' }}
+                     >
                         {title}
                      </h2>
-                     <p tw="text-xs italic text-gray-500 mb-0">{description}</p>
+                     <p
+                        style={{ fontSize: '12px' }}
+                        tw="text-xs italic text-gray-500 mb-0"
+                     >
+                        {description}
+                     </p>
                   </div>
                </div>
                {isSelected ? (
@@ -243,6 +284,7 @@ const PaymentOptionCard = ({
                            className="payButton"
                            cartId={cartId}
                            fullWidthSkeleton={false}
+                           setPaymentTunnelOpen={setPaymentTunnelOpen}
                         >
                            Pay Now {formatCurrency(balanceToPay)}
                         </PayButton>

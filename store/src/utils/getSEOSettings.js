@@ -1,7 +1,7 @@
 import { BRAND_SETTINGS_BY_TYPE, PRODUCT_SEO_SETTINGS_BY_ID } from '../graphql'
 import { graphQLClient } from '../lib'
-import _ from 'lodash'
-
+// import _ from 'lodash'
+import isEmpty from 'lodash/isEmpty'
 
 export const getSEOSettings = async (domain, dataByRoute) => {
    const client = await graphQLClient()
@@ -22,7 +22,7 @@ export const getSEOSettings = async (domain, dataByRoute) => {
 
    // ASSIGNING SEO settings ACCORDING TO PRIORITY*************
    const getSEOValue = (property, type) => {
-      const value = !_.isEmpty(
+      const value = !isEmpty(
          pageLevelSEOSettings?.find(
             setting => setting?.brandPageSetting?.identifier === type
          )?.value?.[property]
@@ -46,46 +46,49 @@ export const getSEOSettings = async (domain, dataByRoute) => {
       ogImage: getSEOValue('ogImage', 'og-card'),
       ogTitle: getSEOValue('ogTitle', 'og-card'),
       ogDescription: getSEOValue('ogDescription', 'og-card'),
+      ogUrl: getSEOValue('ogURL', 'og-card'),
       googleAnalyticsId: getSEOValue('googleAnalyticsId', 'googleAnalyticsId'),
-      facebookPixelId: getSEOValue('fbPixelId', 'facebookPixelId')
+      facebookPixelId: getSEOValue('fbPixelId', 'facebookPixelId'),
+      additionalTags: getSEOValue('additionalTags', 'additionalTags'),
+      richResults: getSEOValue('richResults', 'richResults')
    }
 
    return settings
 }
 
 //****PRODUCT SETTINGS FOR PRODUCT PAGE */
-export const getProductSEOSettings = async (productId) => {
+export const getProductSEOSettings = async productId => {
    const client = await graphQLClient()
 
    //calling product info and seodetails
-   const { products_productPageSetting: ProductPageSettings, products } =
-      await client.request(PRODUCT_SEO_SETTINGS_BY_ID, {
-         productId,
-         type: 'seo',
-      })
+   const {
+      products_productPageSetting: ProductPageSettings,
+      products,
+      brands,
+   } = await client.request(PRODUCT_SEO_SETTINGS_BY_ID, {
+      productId,
+      type: 'seo',
+   })
 
    //assigning product info as defaultSettings
    const defaultProductSettings = [
       {
-         "value": {
-            "metaTitle": products[0]?.name,
-            "metaDescription": products[0]?.description,
-            "favicon": products[0]?.assets?.images[0]
-         }
-
-      }
+         value: {
+            metaTitle: products[0]?.name,
+            metaDescription: products[0]?.description,
+            favicon: brands[0].brand_brandSettings[0].value.favicon,
+         },
+      },
    ]
 
    // ASSIGNING SEO settings ACCORDING TO PRIORITY*************
    const getSEOValue = (property, type) => {
-      const value = !_.isEmpty(
-         ProductPageSettings?.find(
-            setting => setting?.identifier === type
-         )?.product_productPageSettings[0]?.value?.[property]
+      const value = !isEmpty(
+         ProductPageSettings?.find(setting => setting?.identifier === type)
+            ?.product_productPageSettings[0]?.value?.[property]
       )
-         ? ProductPageSettings?.find(
-            setting => setting?.identifier === type
-         )?.product_productPageSettings[0]?.value?.[property]
+         ? ProductPageSettings?.find(setting => setting?.identifier === type)
+            ?.product_productPageSettings[0]?.value?.[property]
          : defaultProductSettings?.[0]?.value?.[property]
       return value
    }
@@ -97,12 +100,16 @@ export const getProductSEOSettings = async (productId) => {
       favicon: getSEOValue('favicon', 'basic-seo'),
       twitterImage: getSEOValue('twitterImage', 'twitter-card') || null,
       twitterTitle: getSEOValue('twitterTitle', 'twitter-card') || null,
-      twitterDescription: getSEOValue('twitterDescription', 'twitter-card') || null,
+      twitterDescription:
+         getSEOValue('twitterDescription', 'twitter-card') || null,
       ogImage: getSEOValue('ogImage', 'og-card') || null,
       ogTitle: getSEOValue('ogTitle', 'og-card') || null,
       ogDescription: getSEOValue('ogDescription', 'og-card') || null,
-      googleAnalyticsId: getSEOValue('googleAnalyticsId', 'googleAnalyticsId') || null,
-      facebookPixelId: getSEOValue('fbPixelId', 'facebookPixelId') || null
+      ogUrl: getSEOValue('ogURL', 'og-card') || null,
+      googleAnalyticsId:
+         getSEOValue('googleAnalyticsId', 'googleAnalyticsId') || null,
+      facebookPixelId: getSEOValue('fbPixelId', 'facebookPixelId') || null,
+      richResults: getSEOValue('richResults', 'richResults') || null
    }
 
    return settings

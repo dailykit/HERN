@@ -44,7 +44,9 @@ const OrderReceivedAnalytics = () => {
                   `AND a.created_at >= '${analyticsApiArgState.from}'`
                } ${
                   analyticsApiArgState.from !== moment('2017 - 01 - 01') &&
-                  `AND a.created_at < '${analyticsApiArgState.to}'`
+                  `AND a.created_at < '${moment(analyticsApiArgState.to)
+                     .add(1, 'd')
+                     .format('YYYY-MM-DD')}'`
                } ${
                   analyticsApiArgState.brandShop.brandId
                      ? `AND a."brandId" = ${analyticsApiArgState.brandShop.brandId}`
@@ -52,6 +54,10 @@ const OrderReceivedAnalytics = () => {
                } ${
                   analyticsApiArgState.brandShop.shopTitle
                      ? `AND b.source = \'${analyticsApiArgState.brandShop.shopTitle}\'`
+                     : ''
+               } ${
+                  analyticsApiArgState.brandShop.locationId
+                     ? `AND b."locationId" = ${analyticsApiArgState.brandShop.locationId}`
                      : ''
                }`,
                groupingSets: `(${analyticsApiArgState.groupBy.toString()})`,
@@ -78,7 +84,9 @@ const OrderReceivedAnalytics = () => {
                } ${
                   analyticsApiArgState.compare.from !==
                      moment('2017 - 01 - 01') &&
-                  `AND a.created_at < '${analyticsApiArgState.compare.to}'`
+                  `AND a.created_at < '${moment(analyticsApiArgState.compare.to)
+                     .add(1, 'd')
+                     .format('YYYY-MM-DD')}'`
                } ${
                   analyticsApiArgState.brandShop.brandId
                      ? `AND a."brandId" = ${analyticsApiArgState.brandShop.brandId}`
@@ -86,6 +94,10 @@ const OrderReceivedAnalytics = () => {
                } ${
                   analyticsApiArgState.brandShop.shopTitle
                      ? `AND b.source = \'${analyticsApiArgState.brandShop.shopTitle}\'`
+                     : ''
+               } ${
+                  analyticsApiArgState.brandShop.locationId
+                     ? `AND b."locationId" = ${analyticsApiArgState.brandShop.locationId}`
                      : ''
                }`,
                groupingSets: `(${analyticsApiArgState.groupBy.toString()})`,
@@ -114,20 +126,20 @@ const OrderReceivedAnalytics = () => {
             ...prevState,
             data: subscriptionData.data.insights_analytics[0],
          }))
-         console.log(
-            'order compare data',
-            subscriptionData.data.insights_analytics[0]
-         )
+         // console.log(
+         //    'order compare data',
+         //    subscriptionData.data.insights_analytics[0]
+         // )
          dataCompareMachine(subscriptionData.data.insights_analytics[0])
       },
    })
-   console.log(
-      'insight data order',
-      insights_analytics,
-      subsLoading,
-      compareLoading
-   )
-   console.log('global order compare', analyticsApiArgState.compare)
+   // console.log(
+   //    'insight data order',
+   //    insights_analytics,
+   //    subsLoading,
+   //    compareLoading
+   // )
+   // console.log('global order compare', analyticsApiArgState.compare)
    const dataCompareMachine = data => {
       const result = {}
       const present = insights_analytics[0]

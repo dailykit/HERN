@@ -3,7 +3,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { useQuery } from '@apollo/react-hooks'
 import classNames from 'classnames'
-
+import { useTranslation } from './../context'
 import { useConfig } from '../lib'
 import { getRoute } from '../utils'
 import { ProfileSidebarIcon } from '../assets/icons'
@@ -12,25 +12,20 @@ import { SUPPORTED_PAYMENT_OPTIONS } from '../graphql'
 export const ProfileSidebar = ({ toggle = true, logout }) => {
    const { configOf, settings } = useConfig()
    const router = useRouter()
+   const { t } = useTranslation()
    const isSubscriptionStore =
-      settings?.availability?.find(
-         i => i.identifier === 'isSubscriptionAvailable'
-      )?.value?.Subscription?.isSubscriptionAvailable?.value ?? false
+      settings?.availability?.isSubscriptionAvailable?.Subscription
+         ?.isSubscriptionAvailable?.value ?? false
    const isLoyaltyPointsAvailable =
-      settings?.rewards?.find(
-         setting => setting?.identifier === 'Loyalty Points Availability'
-      )?.value?.['Loyalty Points']?.IsLoyaltyPointsAvailable?.value ?? true
-
+      settings?.rewards?.['Loyalty Points']?.['Loyalty Points']
+         ?.IsLoyaltyPointsAvailable?.value
+   const isWalletAvailable =
+      settings?.rewards?.Wallet.Wallet?.isWalletAvailable?.value
+   const isReferralAvailable =
+      settings?.rewards?.Referral.Referral?.IsReferralAvailable?.value
    const loyaltyPointsSettings = configOf('Loyalty Points', 'rewards')
    const walletSettings = configOf('Wallet', 'rewards')
-   const referralsAllowed = configOf('Referral', 'rewards')?.isAvailable
    const { loading, error, data } = useQuery(SUPPORTED_PAYMENT_OPTIONS)
-   console.log(
-      'Data',
-      loading,
-      error,
-      data?.brands_supportedPaymentCompany.some(pm => pm.label === 'stripe')
-   )
 
    const sidebarLinks = [
       {
@@ -81,6 +76,8 @@ export const ProfileSidebar = ({ toggle = true, logout }) => {
    const conditionalRoutes = {
       '/account/subscriptions/': isSubscriptionStore,
       '/account/loyalty-points/': isLoyaltyPointsAvailable,
+      '/account/wallet/': isWalletAvailable,
+      '/account/referrals/': isReferralAvailable,
       '/account/cards/':
          !error &&
          !loading &&
@@ -106,7 +103,7 @@ export const ProfileSidebar = ({ toggle = true, logout }) => {
                   <Link href={getRoute(node.href)} key={node.href} passHref>
                      <span className={manuItemClasses}>
                         <Icon />
-                        <span>{node.title}</span>
+                        <span>{t(node.title)}</span>
                      </span>
                   </Link>
                )

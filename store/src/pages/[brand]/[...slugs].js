@@ -2,6 +2,7 @@ import React from 'react'
 import { SEO, Layout, ExternalJSCSSFiles } from '../../components'
 import { renderPageContent, getPageProps } from '../../utils'
 import 'regenerator-runtime'
+import { isEmpty } from 'lodash'
 
 const Index = props => {
    const { folds, settings, navigationMenus, seoSettings, linkedFiles } = props
@@ -26,6 +27,11 @@ export const getStaticProps = async ({ params }) => {
       linkedFiles,
    } = await getPageProps(params, '/' + params.slugs.join('/'))
 
+   if (isEmpty(parsedData)) {
+      return {
+         notFound: true,
+      }
+   }
    return {
       props: {
          params,
@@ -36,7 +42,7 @@ export const getStaticProps = async ({ params }) => {
          seoSettings,
          linkedFiles,
       },
-      revalidate: 60, // will be passed to the page component as props
+      // revalidate: 60, // will be passed to the page component as props
    }
 }
 export async function getStaticPaths() {

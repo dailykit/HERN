@@ -1,18 +1,12 @@
 import React from 'react'
 import { useRouter } from 'next/router'
 import { useUser } from '../../../context'
-import {
-   SEO,
-   Layout,
-   LoginWarning,
-   ExternalJSCSSFiles,
-} from '../../../components'
-
+import { SEO, Layout, ExternalJSCSSFiles } from '../../../components'
 import {
    getPageProps,
-   getRoute,
-   processExternalFiles,
    renderPageContent,
+   isClient,
+   getRoute,
 } from '../../../utils'
 
 const LoyaltyPointsPage = props => {
@@ -23,7 +17,7 @@ const LoyaltyPointsPage = props => {
    React.useEffect(() => {
       if (!isAuthenticated && !isLoading) {
          isClient && localStorage.setItem('landed_on', location.href)
-         // router.push(getRoute('/get-started/register'))
+         router.push(getRoute('/login'))
       }
    }, [isAuthenticated, isLoading])
 
@@ -31,9 +25,7 @@ const LoyaltyPointsPage = props => {
       <Layout settings={settings} navigationMenus={navigationMenus}>
          <SEO seoSettings={seoSettings} />
          <ExternalJSCSSFiles externalFiles={linkedFiles} />
-         {!isAuthenticated && !isLoading ? (
-            <LoginWarning />
-         ) : (
+         {isAuthenticated && !isLoading && (
             <main>{renderPageContent(folds)}</main>
          )}
       </Layout>
@@ -46,6 +38,16 @@ export const getStaticProps = async ({ params }) => {
    const { parsedData, settings, navigationMenus, seoSettings, linkedFiles } =
       await getPageProps(params, '/account/loyalty-points')
 
+   const isLoyaltyPointsAvailable =
+      settings?.rewards?.['Loyalty Points']?.['Loyalty Points']
+         ?.IsLoyaltyPointsAvailable?.value
+
+   if (!isLoyaltyPointsAvailable) {
+      return {
+         notFound: true,
+      }
+   }
+
    return {
       props: {
          folds: parsedData,
@@ -54,7 +56,7 @@ export const getStaticProps = async ({ params }) => {
          navigationMenus,
          seoSettings,
       },
-      revalidate: 60, // will be passed to the page component as props
+      // revalidate: 60, // will be passed to the page component as props
    }
 }
 export async function getStaticPaths() {
