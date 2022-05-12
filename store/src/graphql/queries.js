@@ -1338,8 +1338,6 @@ export const PRODUCTS = gql`
          isAvailable: availabilityByLocation(args: $productAvailabilityArgs)
          defaultProductOptionId
          defaultCartItem: defaultCartItemByLocation(args: $defaultCartItemArgs)
-         publishedByLocation(args: $publishedByLocationProducts)
-         availabilityByLocation(args: $availabilityByLocationProducts)
          productionOptionSelectionStatement
          subCategory
          productOptions(
@@ -1350,10 +1348,6 @@ export const PRODUCTS = gql`
             position
             type
             label
-            isPublished
-            isAvailable
-            availabilityByLocation(args: $availabilityByLocationProductOption)
-            publishedByLocation(args: $publishedByLocationProductOption)
             price: priceByLocation(args: $productOptionPriceArgs)
             discount: discountByLocation(args: $productOptionDiscountArgs)
             cartItem: cartItemByLocation(args: $productOptionCartItemArgs)
