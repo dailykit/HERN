@@ -94,7 +94,7 @@ export const CartBillingDetails = ({ cart, billing, tip }) => {
                {user?.keycloakId && billing.walletAmountUsed > 0 && (
                   <li>
                      <span>{t('Wallet amount used')}</span>
-                     <span>{billing.walletAmountUsed}</span>
+                     <span>- {formatCurrency(billing.walletAmountUsed)}</span>
                   </li>
                )}
                {tip && tip !== 0 && (

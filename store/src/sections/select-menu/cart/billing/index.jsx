@@ -1,6 +1,7 @@
 import React from 'react'
 import { useRouter } from 'next/router'
 import { useToasts } from 'react-toast-notifications'
+import isEmpty from 'lodash/isEmpty'
 
 import { useMenu } from '../../state'
 import { formatCurrency, getRoute } from '../../../../utils'
@@ -21,16 +22,25 @@ const BillingDetails = ({ isCheckout }) => {
    const { t } = useTranslation()
    const { configOf } = useConfig()
    const [open, toggle] = React.useState(false)
-   const { billingDetails: billing = {} } = state?.occurenceCustomer?.cart || {}
+   const { cartOwnerBilling: billing = {} } =
+      state?.occurenceCustomer?.cart || {}
    const { itemCountValid = false } =
       state?.occurenceCustomer?.validStatus || {}
-
-   const couponsAllowed = configOf('Coupons', 'rewards')?.isAvailable
-   const walletAllowed = configOf('Wallet', 'rewards')?.isAvailable
-   const loyaltyPointsAllowed = configOf(
-      'Loyalty Points',
-      'rewards'
-   )?.isAvailable
+   const { Coupons } = configOf('Coupons Availability', 'rewards')
+   const { Wallet } = configOf('Wallet', 'rewards')
+   const loyaltyPoint = configOf('Loyalty Points', 'rewards')['Loyalty Points']
+   const couponsAllowed =
+      Coupons?.areCouponsAvailable?.value ||
+      Coupons?.areCouponsAvailable?.default ||
+      false
+   const walletAllowed =
+      Wallet?.isWalletAvailable?.value ||
+      Wallet?.isWalletAvailable?.default ||
+      false
+   const loyaltyPointsAllowed =
+      loyaltyPoint?.IsLoyaltyPointsAvailable?.value ||
+      loyaltyPoint?.IsLoyaltyPointsAvailable?.default ||
+      false
 
    const payEarly = () => {
       if (state.occurenceCustomer?.betweenPause) {
@@ -46,25 +56,24 @@ const BillingDetails = ({ isCheckout }) => {
 
    return (
       <div>
-         {itemCountValid && state?.occurenceCustomer?.cart && (
+         {itemCountValid && !isEmpty(state?.occurenceCustomer?.cart) && (
             <>
                {couponsAllowed && (
                   <Coupon cart={state?.occurenceCustomer?.cart} />
                )}
-               {walletAllowed && (
+               {walletAllowed && !isEmpty(state?.occurenceCustomer?.cart) && (
                   <WalletAmount cart={state?.occurenceCustomer?.cart} />
                )}
-               {loyaltyPointsAllowed && (
-                  <LoyaltyPoints cart={state?.occurenceCustomer?.cart} />
-               )}
+               {loyaltyPointsAllowed &&
+                  !isEmpty(state?.occurenceCustomer?.cart) && (
+                     <LoyaltyPoints cart={state?.occurenceCustomer?.cart} />
+                  )}
             </>
          )}
          <header className="hern-cart-billing__header">
             <h4 className="hern-cart-billing__heading">
                <span> {t('Your Weekly Total:')}</span>
-               {itemCountValid
-                  ? formatCurrency(billing?.totalPrice?.value)
-                  : 'N/A'}
+               {itemCountValid ? formatCurrency(billing?.totalToPay) : 'N/A'}
             </h4>
             {itemCountValid && <Toggle open={open} toggle={toggle} />}
          </header>

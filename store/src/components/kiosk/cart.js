@@ -44,6 +44,7 @@ import isEmpty from 'lodash/isEmpty'
 import { HernLazyImage } from '../../utils/hernImage'
 import isNull from 'lodash/isNull'
 import { get_env } from '../../utils'
+import { useIntl } from 'react-intl'
 
 const { Header, Content, Footer } = Layout
 
@@ -251,8 +252,8 @@ export const KioskCart = props => {
                                  <span style={{ fontWeight: 'bold' }}>
                                     {formatCurrency(
                                        (
-                                          cart?.cartOwnerBilling
-                                             ?.balanceToPay || 0
+                                          cart?.cartOwnerBilling?.totalToPay ||
+                                          0
                                        ).toFixed(2)
                                     )}
                                  </span>
@@ -274,7 +275,7 @@ export const KioskCart = props => {
                            <span className="hern-kiosk__cart-place-order-btn-total">
                               {formatCurrency(
                                  (
-                                    cart?.cartOwnerBilling?.balanceToPay || 0
+                                    cart?.cartOwnerBilling?.totalToPay || 0
                                  ).toFixed(2)
                               )}
                            </span>
@@ -327,7 +328,7 @@ const CartCard = props => {
    } = useConfig()
    const { addToCart } = React.useContext(CartContext)
    const { t, dynamicTrans, locale } = useTranslation()
-
+   const { formatMessage } = useIntl()
    const [modifyProductId, setModifyProductId] = useState(null)
    const [modifyProduct, setModifyProduct] = useState(null)
    const [modifierType, setModifierType] = useState(null)
@@ -1137,7 +1138,7 @@ const CartCard = props => {
                </div>
             )}
          <Modal
-            title={t('Repeat last used customization')}
+            title={formatMessage({ id: 'Repeat last used customization' })}
             visible={showChooseIncreaseType}
             centered={true}
             onCancel={() => {

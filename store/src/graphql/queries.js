@@ -363,6 +363,7 @@ export const CART_BY_WEEK = gql`
             walletAmountUsed
             loyaltyPointsUsed
             billingDetails
+            cartOwnerBilling
             fulfillmentInfo
             transactionId
             paymentMethodId
@@ -407,6 +408,7 @@ export const CART_BY_WEEK_SUBSCRIPTION = gql`
             walletAmountUsed
             loyaltyPointsUsed
             billingDetails
+            cartOwnerBilling
             fulfillmentInfo
             transactionId
             paymentMethodId
@@ -493,12 +495,14 @@ export const CART_SUBSCRIPTION = gql`
          paymentStatus
          deliveryPrice
          billingDetails
+         cartOwnerBilling
          fulfillmentInfo
          transactionId
          transactionRemark
          stripeInvoiceId
          stripeInvoiceDetails
          customerKeycloakId
+         customerInfo
          retryPaymentMethod
          activeCartPaymentId
          activeCartPayment {
@@ -559,6 +563,7 @@ export const CART_STATUS = gql`
          paymentStatus
          fulfillmentInfo
          billingDetails
+         cartOwnerBilling
          customerKeycloakId
          amount
          products: cartItems(where: { level: { _eq: 1 } }) {
@@ -1797,6 +1802,7 @@ export const GET_CART = gql`
          id
          status
          tax
+         source
          orderId
          discount
          itemTotal
@@ -2252,6 +2258,7 @@ export const GET_CART_PAYMENT_INFO = gql`
          cartId
          cart {
             customerInfo
+            source
          }
          isTest
          paymentStatus

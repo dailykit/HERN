@@ -13,10 +13,10 @@ export const WalletAmount = ({ cart, version }) => {
    const { configOf } = useConfig()
    const walletSettings = configOf('Wallet', 'rewards')
    const isVersion2 = React.useMemo(() => version === 2, [version])
-   console.log('cartInWalletAmount', cart, user)
    const [amount, setAmount] = React.useState(cart.walletAmountUsable)
 
    const [updateCart] = useMutation(MUTATIONS.CART.UPDATE, {
+      refetchQueries: ['subscriptionOccurenceCustomer'],
       onCompleted: () => console.log('Wallet amount added!'),
       onError: error => console.log(error),
    })

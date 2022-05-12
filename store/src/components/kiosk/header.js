@@ -5,10 +5,12 @@ import { useTranslation } from '../../context'
 import KioskButton from './component/button'
 import { ReloadIcon } from '../../assets/icons'
 import { isClient } from '../../utils'
+import { useIntl } from 'react-intl'
 
 export const KioskHeader = props => {
    const { config } = props
    const { t } = useTranslation()
+   const { formatMessage } = useIntl()
    const [showReloadWarningPopup, setShowReloadWarningPopup] =
       React.useState(false)
    return (
@@ -23,7 +25,9 @@ export const KioskHeader = props => {
          />
 
          <Modal
-            title={t('Current changes will lose do you wish to continue?')}
+            title={formatMessage({
+               id: 'Current changes will lose do you wish to continue?',
+            })}
             visible={showReloadWarningPopup}
             centered={true}
             onCancel={() => {
