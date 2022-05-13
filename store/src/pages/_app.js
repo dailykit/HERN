@@ -1,13 +1,12 @@
 import { UserProvider } from '../context'
 import { Provider as AuthProvider } from 'next-auth/client'
-import { PageTransition } from 'next-page-transitions'
 import {
    ApolloProvider,
    ConfigProvider,
    ScriptProvider,
    PaymentProvider,
 } from '../lib'
-import { get_env, isClient } from '../utils'
+import { get_env, isClient, RenderPageWithTransition } from '../utils'
 import { ToastProvider } from 'react-toast-notifications'
 import GlobalStyles from '../styles/global'
 import '../styles/globals.css'
@@ -27,14 +26,10 @@ const options = {
 // initializing react pixel
 isClient && ReactPixel.init(pixelId, {}, options)
 
-const transitionClasses = {
-   enter: 'animate__animated',
-   enterActive: 'animate__bounceInLeft',
-   exit: 'animate__animated',
-   exitActive: 'animate__bounceOutRight',
-}
-
 const AppWrapper = ({ Component, pageProps, router }) => {
+   const animationConfig = pageProps.settings
+      ? pageProps.settings.animationConfig
+      : null
    return (
       <AuthProvider session={pageProps.session}>
          <ApolloProvider>
@@ -51,15 +46,15 @@ const AppWrapper = ({ Component, pageProps, router }) => {
                            <UserProvider>
                               <CartProvider>
                                  <PaymentProvider>
-                                    <PageTransition
-                                       timeout={300}
-                                       classNames={transitionClasses}
+                                    <RenderPageWithTransition
+                                       animationConfig={animationConfig}
+                                       key={router.route}
                                     >
                                        <Component
                                           {...pageProps}
                                           key={router.route}
                                        />
-                                    </PageTransition>
+                                    </RenderPageWithTransition>
                                  </PaymentProvider>
                               </CartProvider>
                            </UserProvider>

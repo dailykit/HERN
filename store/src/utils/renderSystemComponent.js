@@ -1,7 +1,7 @@
 import axios from 'axios'
-import ReactHtmlParser, { convertNodeToElement } from 'react-html-parser'
-import _hasIn from 'lodash/hasIn'
-import { renderComponentByName } from '../utils'
+import ReactHtmlParser from 'react-html-parser'
+import { getAnimationConfig } from './getAnimationConfig'
+import { renderComponentByName } from './renderComponentByName'
 import ScrollAnimation from 'react-animate-on-scroll'
 
 const renderComponent = (fold, options) => {
@@ -66,56 +66,33 @@ export const renderPageContent = (folds, options) => {
          data-fold-position={fold.position}
          data-fold-type={fold.moduleType}
       >
-         <RenderComponentWithTransition fold={fold} options={options} />
+         <RenderComponentWithTransition
+            animationConfig={fold.animationConfig}
+            options={options}
+         >
+            {renderComponent(fold, options)}
+         </RenderComponentWithTransition>
       </div>
    ))
 }
 
-const RenderComponentWithTransition = ({ fold, options }) => {
-   let animateIn = 'animate__fadeIn'
-   let animateOut = 'animate__fadeOut'
-   let duration = 1
-   let delay = 0
-   let initiallyVisible = true
-   let animateOnce = true
-   let animatePreScroll = true
+export const RenderComponentWithTransition = ({
+   animationConfig,
+   children,
+}) => {
+   const {
+      isAnimationRequired,
+      animateIn,
+      animateOut,
+      duration,
+      delay,
+      initiallyVisible,
+      animateOnce,
+      animatePreScroll,
+   } = getAnimationConfig(animationConfig)
 
-   if (fold.animationConfig) {
-      if (_hasIn(fold.animationConfig, 'animation.animateIn')) {
-         animateIn =
-            fold.animationConfig.animation.animateIn.value ||
-            fold.animationConfig.animation.animateIn.default
-      }
-      if (_hasIn(fold.animationConfig, 'animation.animateOut')) {
-         animateOut =
-            fold.animationConfig.animation.animateOut.value ||
-            fold.animationConfig.animation.animateOut.default
-      }
-      if (_hasIn(fold.animationConfig, 'animation.duration')) {
-         duration =
-            fold.animationConfig.animation.duration.value ||
-            fold.animationConfig.animation.duration.default
-      }
-      if (_hasIn(fold.animationConfig, 'animation.delay')) {
-         delay =
-            fold.animationConfig.animation.delay.value ||
-            fold.animationConfig.animation.delay.default
-      }
-      if (_hasIn(fold.animationConfig, 'animation.initiallyVisible')) {
-         initiallyVisible =
-            fold.animationConfig.animation.initiallyVisible.value ||
-            fold.animationConfig.animation.initiallyVisible.default
-      }
-      if (_hasIn(fold.animationConfig, 'animation.animateOnce')) {
-         animateOnce =
-            fold.animationConfig.animation.animateOnce.value ||
-            fold.animationConfig.animation.animateOnce.default
-      }
-      if (_hasIn(fold.animationConfig, 'animation.animatePreScroll')) {
-         animatePreScroll =
-            fold.animationConfig.animation.animatePreScroll.value ||
-            fold.animationConfig.animation.animatePreScroll.default
-      }
+   if (!isAnimationRequired) {
+      return children
    }
    return (
       <ScrollAnimation
@@ -127,7 +104,7 @@ const RenderComponentWithTransition = ({ fold, options }) => {
          duration={duration}
          delay={delay}
       >
-         {renderComponent(fold, options)}
+         {children}
       </ScrollAnimation>
    )
 }

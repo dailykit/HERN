@@ -1226,6 +1226,7 @@ export const BRAND_PAGE = gql`
          isArchived
          published
          route
+         animationConfig
          brandPageSettings {
             value
             brandPageSetting {
