@@ -433,7 +433,13 @@ const MenuProducts = ({ setCurrentPage, eachCategory, config }) => {
          )}
          <Row gutter={[16, 16]} style={{ marginBottom: '2em' }}>
             {currentGroupProducts.map((eachProduct, index2) => {
-               if (!eachProduct.isPublished) {
+               const publishedProductOptions =
+                  eachProduct.productOptions.length > 0 &&
+                  eachProduct.productOptions.filter(
+                     option => option.isPublished
+                  ).length == 0
+
+               if (!eachProduct.isPublished || publishedProductOptions) {
                   return null
                }
                return (
