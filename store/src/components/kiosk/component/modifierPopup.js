@@ -49,7 +49,10 @@ export const KioskModifier = props => {
    // component state
    const [selectedProductOption, setSelectedProductOption] = useState(
       productData.productOptions.find(
-         x => x.id === productData.defaultProductOptionId
+         x =>
+            x.id === productData.defaultProductOptionId &&
+            x.isPublished &&
+            x.isAvailable
       ) || productData.productOptions.find(x => x.isPublished && x.isAvailable)
    )
    const [quantity, setQuantity] = useState(1)
@@ -1676,7 +1679,7 @@ const ModifierOptionsList = forwardRef((props, ref) => {
       modifierOptionId,
       setChildChangingToggle,
    } = props
-   const { brand, isConfigLoading, kioskDetails } = useConfig()
+   const { brand, isConfigLoading, kioskDetails, brandLocation } = useConfig()
    const [errorCategories, setErrorCategories] = useState([])
    const [nestedSelectedOptions, setNestedSelectedOptions] = useState({
       single: [],
@@ -1689,9 +1692,10 @@ const ModifierOptionsList = forwardRef((props, ref) => {
          params: {
             brandId: brand?.id,
             locationId: kioskDetails?.locationId,
+            brand_locationId: brandLocation?.id,
          },
       }),
-      [brand]
+      [brand, brandLocation?.id, kioskDetails?.locationId]
    )
    const {
       loading: templateLoading,

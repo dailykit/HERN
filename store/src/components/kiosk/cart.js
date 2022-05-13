@@ -360,11 +360,9 @@ const CartCard = props => {
    const getTotalPrice = React.useMemo(() => price(productData), [productData])
    const argsForByLocation = React.useMemo(
       () => ({
-         params: {
-            brandId: brand?.id,
-            locationId: kioskDetails?.locationId,
-            brand_locationId: brandLocation?.id,
-         },
+         brandId: brand?.id,
+         locationId: kioskDetails?.locationId,
+         brand_locationId: brandLocation?.id,
       }),
       [brand, kioskDetails?.locationId, brandLocation?.id]
    )
