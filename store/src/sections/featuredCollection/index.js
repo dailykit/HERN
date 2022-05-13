@@ -117,11 +117,9 @@ export const FeaturedCollection = ({ config }) => {
 
    const argsForByLocation = React.useMemo(
       () => ({
-         params: {
-            brandId: brand?.id,
-            locationId: locationId,
-            brand_locationId: brandLocation?.id,
-         },
+         brandId: brand?.id,
+         locationId: locationId,
+         brand_locationId: brandLocation?.id,
       }),
       [brand, locationId, brandLocation?.id]
    )
