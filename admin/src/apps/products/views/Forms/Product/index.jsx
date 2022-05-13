@@ -452,6 +452,7 @@ const Product = () => {
                            <Tooltip identifier="simple_recipe_product_publish" />
                         </Flex>
                      </Form.Toggle>
+                     <Spacer xAxis size="10px" />
                      <Form.Toggle
                         name="available"
                         value={state.isAvailable}

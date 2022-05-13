@@ -11,7 +11,7 @@ import { HernLazyImage } from '../../utils/hernImage'
 
 export const PromotionCarousal = props => {
    const { config: componentConfig } = props
-   const { brand, locationId } = useConfig()
+   const { brand, locationId, brandLocation } = useConfig()
    const { configOf, isStoreAvailable } = useConfig()
    const { addToCart } = useCart()
 
@@ -38,14 +38,16 @@ export const PromotionCarousal = props => {
       },
    })
    // get all products from productIds getting from PRODUCT_BY_CATEGORY
+
    const argsForByLocation = React.useMemo(
       () => ({
          params: {
             brandId: brand?.id,
             locationId: locationId,
+            brand_locationId: brandLocation?.id,
          },
       }),
-      [brand]
+      [brand, locationId, brandLocation?.id]
    )
 
    // take all productIds from promotion carousal images
@@ -67,26 +69,15 @@ export const PromotionCarousal = props => {
          return []
       }
    }, [componentConfig])
-   const { data: productsData } = useSubscription(PRODUCTS, {
+
+   const { data: productsData } = useQuery(PRODUCTS, {
       skip: productIds?.length === 0,
       variables: {
          ids: productIds,
-         priceArgs: argsForByLocation,
-         discountArgs: argsForByLocation,
-         defaultCartItemArgs: argsForByLocation,
-         productAvailabilityArgs: argsForByLocation,
-         productPublishArgs: argsForByLocation,
-         productOptionPriceArgs: argsForByLocation,
-         productOptionDiscountArgs: argsForByLocation,
-         productOptionAvailabilityArgs: argsForByLocation,
-         productOptionPublishArgs: argsForByLocation,
-         productOptionCartItemArgs: argsForByLocation,
-         modifierCategoryOptionPriceArgs: argsForByLocation,
-         modifierCategoryOptionDiscountArgs: argsForByLocation,
-         modifierCategoryOptionCartItemArgs: argsForByLocation,
+         params: argsForByLocation,
       },
    })
-   console.log('productsData: ', productsData, productIds)
+   // console.log('productsData: ', productsData, productIds)
    const theme = configOf('theme-color', 'Visual')
    const onImageClick = imageDetail => {
       if (imageDetail.belongsTo === 'PRODUCT') {

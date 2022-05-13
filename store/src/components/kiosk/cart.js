@@ -374,19 +374,7 @@ const CartCard = props => {
       skip: !modifyProductId,
       variables: {
          ids: modifyProductId,
-         priceArgs: argsForByLocation,
-         discountArgs: argsForByLocation,
-         defaultCartItemArgs: argsForByLocation,
-         productAvailabilityArgs: argsForByLocation,
-         productPublishArgs: argsForByLocation,
-         productOptionPriceArgs: argsForByLocation,
-         productOptionDiscountArgs: argsForByLocation,
-         productOptionAvailabilityArgs: argsForByLocation,
-         productOptionPublishArgs: argsForByLocation,
-         productOptionCartItemArgs: argsForByLocation,
-         modifierCategoryOptionPriceArgs: argsForByLocation,
-         modifierCategoryOptionDiscountArgs: argsForByLocation,
-         modifierCategoryOptionCartItemArgs: argsForByLocation,
+         params: argsForByLocation,
       },
       onCompleted: data => {
          // use for repeat last one order
