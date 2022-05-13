@@ -17,6 +17,7 @@ import BrandShopDate from '../../../BrandShopDateProvider'
 import styled from 'styled-components'
 import SalesByCoupons from './Tunnels/salesByCoupons'
 import { MarketingIcon } from '../../../../assets/icons'
+import CampaignInsights from './Tunnels/campaignsInsight'
 //currencies
 const currency = {
    USD: '$',
@@ -25,7 +26,7 @@ const currency = {
 }
 const MarketingReport = () => {
    const [marketingTunnels, openMarketingTunnel, closeMarketingTunnel] =
-      useTunnel(1)
+      useTunnel(2)
    const {
       loading: subsLoading,
       error: subsError,
@@ -39,7 +40,11 @@ const MarketingReport = () => {
                      _gte: moment().subtract(30, 'days').format('YYYY MM DD'),
                   },
                },
-               { created_at: { _lte: moment().format('YYYY MM DD') } },
+               {
+                  created_at: {
+                     _lte: moment().add(1, 'day').format('YYYY MM DD'),
+                  },
+               },
             ],
             rewardHistories: { id: { _is_null: false } },
          },
@@ -61,8 +66,25 @@ const MarketingReport = () => {
                      shopTypeProvider
                      datePickerProvider
                      compareProvider
+                     locationProvider
                   >
                      <SalesByCoupons />
+                  </BrandShopDate>
+               </TunnelBody>
+            </Tunnel>
+            <Tunnel size="full" layer={2}>
+               <TunnelHeader
+                  title="Campaign Insight"
+                  close={() => closeMarketingTunnel(2)}
+                  description="This is a description"
+               />
+               <TunnelBody>
+                  <BrandShopDate
+                     brandProvider
+                     datePickerProvider
+                     compareProvider
+                  >
+                     <CampaignInsights />
                   </BrandShopDate>
                </TunnelBody>
             </Tunnel>
@@ -131,6 +153,20 @@ const MarketingReport = () => {
                         onClick={() => openMarketingTunnel(1)}
                      >
                         Sales from coupons
+                     </Text>
+                     <Text
+                        as="text2"
+                        title="View sales from coupons"
+                        style={{
+                           marginLeft: '8px',
+                           fontWeight: '400',
+                           cursor: 'pointer',
+                           color: '#367bf5',
+                           lineHeight: '24px',
+                        }}
+                        onClick={() => openMarketingTunnel(2)}
+                     >
+                        Campaign Insights
                      </Text>
                   </Flex>
                </Flex>

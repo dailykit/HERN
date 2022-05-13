@@ -1,5 +1,5 @@
 import { useSubscription } from '@apollo/react-hooks'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useContext } from 'react'
 import styled from 'styled-components'
 import './style.css'
 import './tableStyle.css'
@@ -32,7 +32,11 @@ import {
 import { groupBy } from 'lodash'
 import { reactFormatter, ReactTabulator } from '@dailykit/react-tabulator'
 import { useTabs } from '../../providers'
-import { BRANDS } from './graphQl/subscription'
+import {
+   BRANDS,
+   LOCATIONS,
+   LOCATIONS_WITH_BRANDS,
+} from './graphQl/subscription'
 import {
    TotalEarningTunnel,
    TotalOrderRecTunnel,
@@ -49,8 +53,9 @@ import {
    SubscribedCustomerAnalytics,
    RegisteredCustomerAnalytics,
 } from './Analytics'
-const { RangePicker } = DatePicker
+import { BrandContext } from '../../../App'
 
+const { RangePicker } = DatePicker
 //currencies
 const currency = {
    USD: '$',
@@ -58,17 +63,35 @@ const currency = {
    EUR: '€',
 }
 const DashboardAnalyticsProvider = ({ children }) => {
+   const [brandContext, setBrandContext] = useContext(BrandContext)
+
    return (
       <AnalyticsApiArgsProvider>
-         <DashboardAnalytics>{children}</DashboardAnalytics>
+         <DashboardAnalytics brandContext={brandContext}>
+            {children}
+         </DashboardAnalytics>
       </AnalyticsApiArgsProvider>
    )
 }
-const DashboardAnalytics = ({ children }) => {
+const DashboardAnalytics = ({ children, brandContext }) => {
    const [from, setFrom] = useState(moment().startOf('y').format('YYYY-MM-DD'))
+   const { analyticsApiArgsDispatch } = React.useContext(
+      AnalyticsApiArgsContext
+   )
    const [to, setTo] = useState(
       localStorage.getItem('analyticsDateTo') || moment().format('YYYY-MM-DD')
    )
+   useEffect(() => {
+      if (brandContext.brandId != null) {
+         analyticsApiArgsDispatch({
+            type: 'BRANDSHOP',
+            payload: {
+               brandId: brandContext.brandId,
+            },
+         })
+      }
+   }, [brandContext.brandId])
+   // console.log('brand context i am looking', brandContext)
    const [compare, setCompare] = useState({
       isCompare: false,
       data: null,
@@ -89,6 +112,7 @@ const DashboardAnalytics = ({ children }) => {
       brandId: undefined,
       shopTitle: false,
       brand: undefined,
+      locationId: null,
    })
    const [brands, setBrands] = useState([])
    const { loading: brandLoading } = useSubscription(BRANDS, {
@@ -137,9 +161,15 @@ const DashboardAnalytics = ({ children }) => {
 }
 export default DashboardAnalyticsProvider
 export const BrandAndShop = ({ brands, setBrandShop, brandShop, global }) => {
+   const [brandContext, setBrandContext] = useContext(BrandContext)
+
+   const brandFromBrandContext = [
+      { id: 1, brandId: brandContext.brandId, title: brandContext.brandName },
+   ]
    const { analyticsApiArgsDispatch } = React.useContext(
       AnalyticsApiArgsContext
    )
+
    const [shopSource] = useState([
       {
          id: 1,
@@ -173,6 +203,7 @@ export const BrandAndShop = ({ brands, setBrandShop, brandShop, global }) => {
       }
    }
    const selectedOptionBrand = option => {
+      // console.log('brand context i am looking brand', option)
       if (global) {
          analyticsApiArgsDispatch({
             type: 'BRANDSHOP',
@@ -182,6 +213,7 @@ export const BrandAndShop = ({ brands, setBrandShop, brandShop, global }) => {
          })
       } else {
          setBrandShop(prevState => ({ ...prevState, brandId: option.id }))
+         // console.log('brand context i am looking brandShop', brandShop)
       }
    }
    const searchedOption = option => console.log(option)
@@ -200,19 +232,145 @@ export const BrandAndShop = ({ brands, setBrandShop, brandShop, global }) => {
             />
          </Flex>
          <Spacer size="20px" xAxis />
-         <Flex container flexDirection="column" width="30rem">
-            <Text as="text1">Brand:</Text>
-            <Spacer size="3px" />
-            <Dropdown
-               type="single"
-               options={brands}
-               defaultValue={1}
-               searchedOption={searchedOption}
-               selectedOption={selectedOptionBrand}
-               typeName="Brand"
-            />
-         </Flex>
+         {brandContext.brandId == null ? (
+            <Flex container flexDirection="column" width="30rem">
+               <Text as="text1">Brand:</Text>
+               <Spacer size="3px" />
+               <Dropdown
+                  type="single"
+                  options={brands}
+                  defaultValue={1}
+                  searchedOption={searchedOption}
+                  selectedOption={selectedOptionBrand}
+                  typeName="Brand"
+               />
+            </Flex>
+         ) : (
+            <Flex container flexDirection="column" width="30rem">
+               <Text as="text1">Brand:</Text>
+               <Spacer size="3px" />
+               <Dropdown
+                  type="single"
+                  options={brandFromBrandContext}
+                  // defaultValue={1}
+                  defaultOption={{
+                     id: brandFromBrandContext[0].brandId,
+                  }}
+                  searchedOption={searchedOption}
+                  selectedOption={selectedOptionBrand}
+                  typeName="Brand"
+               />
+            </Flex>
+         )}
+         <Spacer size="20px" xAxis />
+         <LocationSelector global={global} setBrandShop={setBrandShop} />
       </Flex>
+   )
+}
+const LocationSelector = ({ global, setBrandShop }) => {
+   const [locationsList, setLocationsList] = useState([])
+
+   const { analyticsApiArgsDispatch } = React.useContext(
+      AnalyticsApiArgsContext
+   )
+   const [brandContext, setBrandContext] = useContext(BrandContext)
+   const locationFromBrandContext = [
+      {
+         id: 1,
+         locationId: brandContext.locationId,
+         title: brandContext.locationLabel,
+      },
+   ]
+
+   useEffect(() => {
+      if (!brandContext.locationLabel.includes('All')) {
+         analyticsApiArgsDispatch({
+            type: 'BRANDSHOP',
+            payload: {
+               locationId: brandContext.locationId,
+            },
+         })
+      }
+   }, [brandContext.locationId])
+
+   const { loading: locationsLoading, error: locationsError } = useSubscription(
+      LOCATIONS,
+      {
+         onSubscriptionData: ({ subscriptionData }) => {
+            const locations = subscriptionData.data.brands_location
+            // console.log('locations, ', locations, subscriptionData)
+            setLocationsList(
+               [{ title: 'All', locationId: null }, ...locations].map(
+                  (eachLocation, index) => {
+                     return { id: index + 1, ...eachLocation }
+                  }
+               )
+            )
+         },
+      }
+   )
+   // ):(<div></div>)
+   // }
+
+   const selectedOptionBrand = option => {
+      if (global) {
+         analyticsApiArgsDispatch({
+            type: 'BRANDSHOP',
+            payload: {
+               locationId: option.locationId,
+            },
+         })
+      } else {
+         setBrandShop(prevState => ({
+            ...prevState,
+            locationId: option.locationId,
+         }))
+      }
+   }
+   const searchedOption = option => console.log(option)
+   if (locationsLoading || (locationsLoading && !locationsError)) {
+      return <InlineLoader />
+   }
+
+   if (locationsError) {
+      logger(locationsError)
+      toast.error('Could not get the locations')
+      return <p>Could not get the locations</p>
+   }
+
+   return (
+      <>
+         {brandContext.locationLabel.includes('All') ? (
+            <Flex container flexDirection="column" width="30rem">
+               <Text as="text1">Location:</Text>
+               <Spacer size="3px" />
+               <Dropdown
+                  type="single"
+                  options={locationsList}
+                  defaultValue={1}
+                  searchedOption={searchedOption}
+                  selectedOption={selectedOptionBrand}
+                  typeName="Location"
+               />
+            </Flex>
+         ) : (
+            <Flex container flexDirection="column" width="30rem">
+               <Text as="text1">Location:</Text>
+               <Spacer size="3px" />
+               <Dropdown
+                  type="single"
+                  options={locationFromBrandContext}
+                  // defaultValue={1}
+                  defaultOption={{
+                     id: locationFromBrandContext[0].locationId,
+                  }}
+                  searchedOption={searchedOption}
+                  selectedOption={selectedOptionBrand}
+                  typeName="Location"
+               />
+            </Flex>
+         )}
+      </>
    )
 }
 export const DateRangePicker = ({
@@ -1114,3 +1272,10 @@ const TunnelBody = styled.div`
    height: calc(100% - 103px);
    overflow: auto;
 `
+
+// if brandName="All" and locationLabel = "all locations"
+// { brands and location}
+// elif  locationId not null or true
+// {no location}
+// elif locationLabel = "all locations" and brandId not null or true
+// {only location}

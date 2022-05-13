@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { Modal } from 'antd'
 import isEmpty from 'lodash/isEmpty'
+import { useIntl } from 'react-intl'
 
 import { DeleteIcon, EditIcon, ChevronIcon } from '../assets/icons'
 import { useTranslation, CartContext } from '../context'
@@ -20,9 +21,10 @@ import { HernLazyImage } from '../utils/hernImage'
 const CartCard = props => {
    // productData --> product data from cart
    const { productData, removeCartItems, quantity = 0 } = props
-   const { brand, kioskDetails, isConfigLoading } = useConfig()
+   const { brand, locationId, isConfigLoading, brandLocation } = useConfig()
    const { addToCart } = React.useContext(CartContext)
    const { t, dynamicTrans, locale } = useTranslation()
+   const { formatMessage } = useIntl()
 
    const [modifyProductId, setModifyProductId] = useState(null)
    const [modifyProduct, setModifyProduct] = useState(null)
@@ -57,10 +59,11 @@ const CartCard = props => {
       () => ({
          params: {
             brandId: brand?.id,
-            locationId: kioskDetails?.locationId,
+            locationId: locationId,
+            brand_locationId: brandLocation?.id,
          },
       }),
-      [brand]
+      [brand, locationId, brandLocation?.id]
    )
 
    //fetch product detail which to be increase or edit
@@ -68,15 +71,7 @@ const CartCard = props => {
       skip: !modifyProductId,
       variables: {
          ids: modifyProductId,
-         priceArgs: argsForByLocation,
-         discountArgs: argsForByLocation,
-         defaultCartItemArgs: argsForByLocation,
-         productOptionPriceArgs: argsForByLocation,
-         productOptionDiscountArgs: argsForByLocation,
-         productOptionCartItemArgs: argsForByLocation,
-         modifierCategoryOptionPriceArgs: argsForByLocation,
-         modifierCategoryOptionDiscountArgs: argsForByLocation,
-         modifierCategoryOptionCartItemArgs: argsForByLocation,
+         params: argsForByLocation,
       },
       onCompleted: data => {
          // use for repeat last one order
@@ -578,7 +573,7 @@ const CartCard = props => {
             />
          )}
          <Modal
-            title={t('Repeat last used customization')}
+            title={formatMessage({ id: 'Repeat last used customization' })}
             visible={showChooseIncreaseType}
             centered={true}
             onCancel={() => {

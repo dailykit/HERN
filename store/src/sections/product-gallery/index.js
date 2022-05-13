@@ -17,31 +17,24 @@ export const ProductGallery = ({ config }) => {
       config.informationVisibility.productOrientation.value.value
    )
    const [status, setStatus] = React.useState('loading')
-   const { brand, locationId } = useConfig()
+   const { brand, locationId, brandLocation } = useConfig()
 
    const argsForByLocation = React.useMemo(
       () => ({
          params: {
             brandId: brand?.id,
             locationId: locationId,
+            brand_locationId: brandLocation?.id,
          },
       }),
-      [brand, locationId]
+      [brand, locationId, brandLocation?.id]
    )
    const { loading: productsLoading, error: productsError } = useQuery(
       PRODUCTS,
       {
          variables: {
             ids: config.data.products.value,
-            priceArgs: argsForByLocation,
-            discountArgs: argsForByLocation,
-            defaultCartItemArgs: argsForByLocation,
-            productOptionPriceArgs: argsForByLocation,
-            productOptionDiscountArgs: argsForByLocation,
-            productOptionCartItemArgs: argsForByLocation,
-            modifierCategoryOptionPriceArgs: argsForByLocation,
-            modifierCategoryOptionDiscountArgs: argsForByLocation,
-            modifierCategoryOptionCartItemArgs: argsForByLocation,
+            params: argsForByLocation,
          },
          fetchPolicy: 'network-only',
          onCompleted: data => {

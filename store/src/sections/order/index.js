@@ -30,7 +30,7 @@ const CartBar = dynamic(() => import('./CartBar').then(mod => mod.default))
 export const OnDemandOrder = ({ config }) => {
    const { addToast } = useToasts()
    const { dynamicTrans, locale } = useTranslation()
-   const { brand, locationId, storeStatus } = useConfig()
+   const { brand, locationId, storeStatus, brandLocation } = useConfig()
 
    const menuType = config?.display?.dropdown?.value[0]?.value
       ? config?.display?.dropdown?.value[0]?.value
@@ -88,9 +88,10 @@ export const OnDemandOrder = ({ config }) => {
          params: {
             brandId: brand?.id,
             locationId: locationId,
+            brand_locationId: brandLocation?.id,
          },
       }),
-      [brand, locationId]
+      [brand, locationId, brandLocation?.id]
    )
    const currentLang = React.useMemo(() => locale, [locale])
    React.useEffect(() => {
@@ -106,15 +107,7 @@ export const OnDemandOrder = ({ config }) => {
          skip: isMenuLoading,
          variables: {
             ids: allProductIds,
-            priceArgs: argsForByLocation,
-            discountArgs: argsForByLocation,
-            defaultCartItemArgs: argsForByLocation,
-            productOptionPriceArgs: argsForByLocation,
-            productOptionDiscountArgs: argsForByLocation,
-            productOptionCartItemArgs: argsForByLocation,
-            modifierCategoryOptionPriceArgs: argsForByLocation,
-            modifierCategoryOptionDiscountArgs: argsForByLocation,
-            modifierCategoryOptionCartItemArgs: argsForByLocation,
+            params: argsForByLocation,
          },
          // fetchPolicy: 'network-only',
          onCompleted: data => {

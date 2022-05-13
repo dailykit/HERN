@@ -31,7 +31,8 @@ export const FeaturedCollection = ({ config }) => {
    const { addToast } = useToasts()
 
    // context
-   const { brand, isConfigLoading, locationId, storeStatus } = useConfig()
+   const { brand, isConfigLoading, locationId, storeStatus, brandLocation } =
+      useConfig()
 
    // component state
    const [hydratedMenu, setHydratedMenu] = React.useState([])
@@ -119,9 +120,10 @@ export const FeaturedCollection = ({ config }) => {
          params: {
             brandId: brand?.id,
             locationId: locationId,
+            brand_locationId: brandLocation?.id,
          },
       }),
-      [brand, locationId]
+      [brand, locationId, brandLocation?.id]
    )
    const { loading: productsLoading, error: productsError } = useQuery(
       PRODUCTS,
@@ -129,15 +131,7 @@ export const FeaturedCollection = ({ config }) => {
          skip: isMenuLoading,
          variables: {
             ids: allProductIds,
-            priceArgs: argsForByLocation,
-            discountArgs: argsForByLocation,
-            defaultCartItemArgs: argsForByLocation,
-            productOptionPriceArgs: argsForByLocation,
-            productOptionDiscountArgs: argsForByLocation,
-            productOptionCartItemArgs: argsForByLocation,
-            modifierCategoryOptionPriceArgs: argsForByLocation,
-            modifierCategoryOptionDiscountArgs: argsForByLocation,
-            modifierCategoryOptionCartItemArgs: argsForByLocation,
+            params: argsForByLocation,
          },
          // fetchPolicy: 'network-only',
          onCompleted: data => {

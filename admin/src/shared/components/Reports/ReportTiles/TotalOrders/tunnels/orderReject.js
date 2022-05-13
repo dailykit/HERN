@@ -6,10 +6,10 @@ import moment from 'moment'
 import { useSubscription } from '@apollo/react-hooks'
 import { BrandShopDateContext } from '../../../../BrandShopDateProvider/context'
 import {
+   Bar,
+   BarChart,
    CartesianGrid,
    Legend,
-   Line,
-   LineChart,
    ResponsiveContainer,
    Tooltip,
    XAxis,
@@ -39,7 +39,9 @@ const OrderRejectReport = () => {
                   `AND a.created_at >= '${brandShopDateState.from}'`
                } ${
                   brandShopDateState.from !== moment('2017 - 01 - 01') &&
-                  `AND a.created_at < '${brandShopDateState.to}'`
+                  `AND a.created_at < '${moment(brandShopDateState.to)
+                     .add(1, 'd')
+                     .format('YYYY-MM-DD')}'`
                } ${
                   brandShopDateState.brandShop.brandId
                      ? `AND a."brandId" = ${brandShopDateState.brandShop.brandId}`
@@ -47,6 +49,10 @@ const OrderRejectReport = () => {
                } ${
                   brandShopDateState.brandShop.shopTitle
                      ? `AND b.source = \'${brandShopDateState.brandShop.shopTitle}\'`
+                     : ''
+               } ${
+                  brandShopDateState.brandShop.locationId
+                     ? `AND b."locationId" = \'${brandShopDateState.brandShop.locationId}\'`
                      : ''
                }`,
                groupingSets: `(${brandShopDateState.groupBy.toString()})`,
@@ -73,7 +79,9 @@ const OrderRejectReport = () => {
                } ${
                   brandShopDateState.compare.from !==
                      moment('2017 - 01 - 01') &&
-                  `AND a.created_at < '${brandShopDateState.compare.to}'`
+                  `AND a.created_at < '${moment(brandShopDateState.compare.to)
+                     .add(1, 'd')
+                     .format('YYYY-MM-DD')}'`
                } ${
                   brandShopDateState.brandShop.brandId
                      ? `AND a."brandId" = ${brandShopDateState.brandShop.brandId}`
@@ -81,6 +89,10 @@ const OrderRejectReport = () => {
                } ${
                   brandShopDateState.brandShop.shopTitle
                      ? `AND b.source = \'${brandShopDateState.brandShop.shopTitle}\'`
+                     : ''
+               } ${
+                  brandShopDateState.brandShop.locationId
+                     ? `AND b."locationId" = \'${brandShopDateState.brandShop.locationId}\'`
                      : ''
                }`,
                groupingSets: `(${brandShopDateState.groupBy.toString()})`,
@@ -504,7 +516,7 @@ const OrderRejectedChart = ({
       <>
          <Flex height="22rem">
             <ResponsiveContainer width="100%" height="100%">
-               <LineChart
+               <BarChart
                   width={500}
                   height={300}
                   data={dataForGraph}
@@ -559,24 +571,22 @@ const OrderRejectedChart = ({
                      }}
                   />
                   <Legend />
-                  <Line
+                  <Bar
                      type="monotone"
                      name="Rejected Orders"
                      dataKey="count"
-                     stroke="#2AC981"
-                     activeDot={{ r: 8 }}
+                     fill="#2AC981"
                   />
                   {!brandShopDateState.compare.isSkip &&
                      brandShopDateState.compare.data && (
-                        <Line
+                        <Bar
                            type="monotone"
                            name="Rejected Orders Compare"
                            dataKey="countCompare"
-                           stroke="#8884d8"
-                           activeDot={{ r: 8 }}
+                           fill="#8884d8"
                         />
                      )}
-               </LineChart>
+               </BarChart>
             </ResponsiveContainer>
          </Flex>
       </>

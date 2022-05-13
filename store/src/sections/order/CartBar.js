@@ -27,7 +27,7 @@ const CartBar = () => {
    const { cartState, methods, addToCart, combinedCartItems } =
       React.useContext(CartContext)
    const { onDemandMenu } = React.useContext(onDemandMenuContext)
-   const { brand, locationId } = useConfig()
+   const { brand, locationId, brandLocation } = useConfig()
    //context data
    const { cart } = cartState
    //component state
@@ -43,9 +43,10 @@ const CartBar = () => {
          params: {
             brandId: brand?.id,
             locationId: locationId,
+            brand_locationId: brandLocation?.id,
          },
       }),
-      [brand]
+      [brand, locationId, brandLocation?.id]
    )
 
    //fetch product detail which to be increase or edit
@@ -53,15 +54,7 @@ const CartBar = () => {
       skip: !increaseProductId,
       variables: {
          ids: increaseProductId,
-         priceArgs: argsForByLocation,
-         discountArgs: argsForByLocation,
-         defaultCartItemArgs: argsForByLocation,
-         productOptionPriceArgs: argsForByLocation,
-         productOptionDiscountArgs: argsForByLocation,
-         productOptionCartItemArgs: argsForByLocation,
-         modifierCategoryOptionPriceArgs: argsForByLocation,
-         modifierCategoryOptionDiscountArgs: argsForByLocation,
-         modifierCategoryOptionCartItemArgs: argsForByLocation,
+         params: argsForByLocation,
       },
       onCompleted: data => {
          if (data) {

@@ -17,7 +17,7 @@ export const FulfillmentSection = props => {
       dispatch,
    } = useConfig()
    const { t, direction, dynamicTrans, locale } = useTranslation()
-   console.log('config', config)
+   // console.log('config', config)
    const { methods, setDineInTableInfo, storedCartId } = useCart()
    const [showDineInTableSelection, setShowDineInTableSelection] =
       useState(false)

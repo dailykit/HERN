@@ -4,6 +4,7 @@ import { isEmpty, uniqBy } from 'lodash'
 import { useQuery } from '@apollo/react-hooks'
 import ReactImageFallback from 'react-image-fallback'
 import { useToasts } from 'react-toast-notifications'
+import { useIntl } from 'react-intl'
 
 import { useMenu } from './state'
 import { useConfig } from '../../lib'
@@ -75,9 +76,7 @@ export const Menu = () => {
          '[data-translation="true"]'
       )
       dynamicTrans(languageTags)
-
    }, [currentLang])
-
 
    if (loading) return <SkeletonProduct />
    if (isEmpty(categories))
@@ -134,6 +133,7 @@ const Product = ({ node, theme, isAdded, noProductImage, buildImageUrl }) => {
    const { addToast } = useToasts()
    const { state, methods } = useMenu()
    const { t, dynamicTrans, locale } = useTranslation()
+   const { formatMessage } = useIntl()
    const openRecipe = () =>
       router.push(getRoute(`/recipes/${node?.productOption?.id}`))
 
@@ -268,22 +268,27 @@ const Product = ({ node, theme, isAdded, noProductImage, buildImageUrl }) => {
             )}
          </div>
          {node.addOnLabel && (
-            <span className="hern-select-menu__menu__product__add-on-label" data-translation="true"  >
+            <span
+               className="hern-select-menu__menu__product__add-on-label"
+               data-translation="true"
+            >
                {node.addOnLabel}
             </span>
          )}
          <section className="hern-select-menu__menu__product__link">
             <CheckIcon size={16} className={checkIconClasses} />
             <a theme={theme} onClick={openRecipe}>
-               <span data-translation="true" >{product.name}</span>
-               {"-"}
-               <span data-translation="true" >{product.label}</span>
+               <span data-translation="true">{product.name}</span>
+               {'-'}
+               <span data-translation="true">{product.label}</span>
             </a>
          </section>
-         <p className="hern-select-menu__menu__product__link__additional-text" data-translation="true" >
+         <p
+            className="hern-select-menu__menu__product__link__additional-text"
+            data-translation="true"
+         >
             {product?.additionalText}
          </p>
-         {console.log(state.occurenceCustomer?.validStatus?.itemCountValid)}
          {canAdd() && (
             <button
                className={btnClasses}
@@ -295,8 +300,8 @@ const Product = ({ node, theme, isAdded, noProductImage, buildImageUrl }) => {
                onClick={() => add(node.cartItem, node)}
                title={
                   node.isAvailable
-                     ? <span>{t('Add product')}</span>
-                     : <span>{t('This product is out of stock.')}</span>
+                     ? formatMessage({ id: 'Add product' })
+                     : formatMessage({ id: 'This product is out of stock.' })
                }
             >
                {node.isAvailable ? (

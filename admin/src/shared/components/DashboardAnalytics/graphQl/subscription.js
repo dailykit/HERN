@@ -64,3 +64,19 @@ export const GET_REGISTERED_CUSTOMER = gql`
       }
    }
 `
+export const LOCATIONS = gql`
+   subscription LOCATIONS {
+      brands_location {
+         locationId: id
+         title: label
+      }
+   }
+`
+export const LOCATIONS_WITH_BRANDS = gql`
+   subscription MySubscription($brandId: Int_comparison_exp!) {
+      brands_location(where: { brand_locations: { brandId: $brandId } }) {
+         id
+         label
+      }
+   }
+`

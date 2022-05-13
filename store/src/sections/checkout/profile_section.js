@@ -36,7 +36,6 @@ export const ProfileSection = () => {
             title={{ width: 550 }}
             paragraph={{ rows: 4, width: Array(5).fill(550) }}
          >
-            <form onSubmit={handleSubmit(onSubmit)}></form>
             <Form.Field tw="w-full md:w-3/12">
                <Form.Label>First name*</Form.Label>
                <Form.Text
@@ -68,9 +67,9 @@ export const ProfileSection = () => {
                   placeholder="Enter your phone no. eg. 987 987 9876"
                />
             </Form.Field>
-            {!user?.isSubscriber && !user?.customerReferral?.referredByCode && (
+            {/* {!user?.isSubscriber && !user?.customerReferral?.referredByCode && (
                <Referral />
-            )}
+            )} */}
          </Skeleton>
       </main>
    )

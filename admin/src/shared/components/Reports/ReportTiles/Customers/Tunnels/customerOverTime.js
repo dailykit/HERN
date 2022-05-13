@@ -37,7 +37,9 @@ const CustomerOverTime = () => {
                   `cc.created_at >= '${from}'`
                } ${
                   from !== moment('2017 - 01 - 01') &&
-                  `AND cc.created_at < '${to}'`
+                  `AND cc.created_at < '${moment(to)
+                     .add(1, 'day')
+                     .format('YYYY-MM-DD')}'`
                } ${
                   brandShop.brandId
                      ? `AND bc."brandId" = ${brandShop.brandId}`
@@ -67,7 +69,9 @@ const CustomerOverTime = () => {
                      `cc.created_at >= '${compare.from}'`
                   } ${
                      compare.from !== moment('2017 - 01 - 01') &&
-                     `AND cc.created_at < '${compare.to}'`
+                     `AND cc.created_at < '${moment(compare.to)
+                        .add(1, 'day')
+                        .format('YYYY-MM-DD')}'`
                   } ${
                      brandShop.brandId
                         ? `AND bc."brandId" = ${brandShop.brandId}`

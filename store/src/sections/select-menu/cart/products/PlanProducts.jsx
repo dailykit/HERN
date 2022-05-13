@@ -14,7 +14,6 @@ const PlanProducts = ({ noSkip, isCheckout }) => {
    const { addToast } = useToasts()
    const { t } = useTranslation()
    const { state, methods, dispatch } = useMenu()
-
    const [upsertOccurenceCustomer] = useMutation(
       MUTATIONS.OCCURENCE.CUSTOMER.UPSERT,
       {

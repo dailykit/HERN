@@ -41,7 +41,7 @@ const LiveMenuBrandLocation = () => {
    const brandDetail = useParams()
    const { width } = useWindowSize()
 
-   console.log('brandDetail:::', brandDetail)
+   // console.log('brandDetail:::', brandDetail)
    return (
       <>
          <Flex>
@@ -230,6 +230,13 @@ const LiveMenuProductTable = ({ brandDetail }) => {
          field: 'specificDiscount',
          headerFilter: true,
          hozAlign: 'center',
+      },
+      {
+         title: 'Product Category',
+         field: 'category',
+         headerFilter: true,
+         hozAlign: 'center',
+         width: 150,
       },
       {
          title: 'Published',
@@ -511,6 +518,7 @@ const LiveMenuProductOptionTable = ({ brandDetail }) => {
                // )
                return {
                   id: productOptions.id,
+                  label: productOptions.label,
                   name: productOptions.product.name,
                   brandId: brandDetail.brandId,
                   brand_locationId: brandDetail.brandLocationId,
@@ -598,7 +606,14 @@ const LiveMenuProductOptionTable = ({ brandDetail }) => {
          hozAlign: 'center',
          width: 80,
       },
-
+      {
+         title: 'Label',
+         field: 'label',
+         headerFilter: true,
+         frozen: true,
+         hozAlign: 'center',
+         width: 120,
+      },
       {
          title: 'Product Name',
          field: 'name',
@@ -629,6 +644,13 @@ const LiveMenuProductOptionTable = ({ brandDetail }) => {
          field: 'specificDiscount',
          headerFilter: true,
          hozAlign: 'center',
+      },
+      {
+         title: 'Product Category',
+         field: 'category',
+         headerFilter: true,
+         hozAlign: 'center',
+         width: 150,
       },
       {
          title: 'Published',

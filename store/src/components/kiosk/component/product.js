@@ -13,11 +13,12 @@ import { GET_MODIFIER_BY_ID } from '../../../graphql'
 import { useQuery } from '@apollo/react-hooks'
 import { useConfig } from '../../../lib'
 import { HernLazyImage } from '../../../utils/hernImage'
+import { getPriceWithDiscount } from '../../../utils'
 import moment from 'moment'
 import classNames from 'classnames'
 import isNull from 'lodash/isNull'
 import isEmpty from 'lodash/isEmpty'
-
+import { useIntl } from 'react-intl'
 const { Header, Content, Footer } = Layout
 
 export const KioskProduct = props => {
@@ -29,6 +30,7 @@ export const KioskProduct = props => {
 
    const { config, productData, setCurrentPage } = props
    const { t, locale, dynamicTrans } = useTranslation()
+   const { formatMessage } = useIntl()
    const [showModifier, setShowModifier] = useState(false)
    const [availableQuantityInCart, setAvailableQuantityInCart] = useState(0)
    const currentLang = React.useMemo(() => locale, [locale])
@@ -264,6 +266,57 @@ export const KioskProduct = props => {
          }
       }
    }, [isStoreAvailable])
+   const defaultProductOption = React.useMemo(() => {
+      if (productData.productOptions.length === 0) {
+         return {}
+      }
+      return (
+         productData.productOptions.find(
+            x => x.id === productData.defaultProductOptionId
+         ) ||
+         productData.productOptions.find(x => x.isPublished && x.isAvailable)
+      )
+   }, [productData])
+
+   const handelAddToCartClick = () => {
+      // product availability
+      if (productData.isAvailable) {
+         if (showAddToCartButton) {
+            if (
+               productData.productOptions.length > 0 &&
+               productData.isPopupAllowed
+            ) {
+               const availableProductOptions =
+                  productData.productOptions.filter(
+                     option => option.isAvailable
+                  ).length
+               if (availableProductOptions > 0) {
+                  setShowModifier(true)
+               }
+            } else {
+               addToCart(productData.defaultCartItem, 1)
+            }
+         }
+      }
+   }
+   const isProductOutOfStock = React.useMemo(() => {
+      if (productData.isAvailable) {
+         if (
+            productData.productOptions.length > 0 &&
+            productData.isPopupAllowed
+         ) {
+            const availableProductOptions = productData.productOptions.filter(
+               option => option.isAvailable
+            ).length
+            if (availableProductOptions > 0) {
+               return false
+            } else {
+               return true
+            }
+         }
+      }
+      return false
+   }, [productData])
    return (
       <>
          <div
@@ -346,20 +399,7 @@ export const KioskProduct = props => {
                                           }),
                                        }}
                                        onClick={() => {
-                                          if (showAddToCartButton) {
-                                             if (
-                                                productData.productOptions
-                                                   .length > 0 &&
-                                                productData.isPopupAllowed
-                                             ) {
-                                                setShowModifier(true)
-                                             } else {
-                                                addToCart(
-                                                   productData.defaultCartItem,
-                                                   1
-                                                )
-                                             }
-                                          }
+                                          handelAddToCartClick()
                                        }}
                                     />
                                  )}
@@ -395,11 +435,14 @@ export const KioskProduct = props => {
                      <span className="hern-kiosk__menu-product-price">
                         {/* <sup></sup> */}
                         {formatCurrency(
-                           productData.price -
-                              productData.discount +
-                              (productData?.productOptions[0]?.price ||
-                                 0 - productData?.productOptions[0]?.discount ||
-                                 0)
+                           getPriceWithDiscount(
+                              productData.price,
+                              productData.discount
+                           ) +
+                              getPriceWithDiscount(
+                                 defaultProductOption?.price || 0,
+                                 defaultProductOption?.discount || 0
+                              )
                         )}
                      </span>
                   </div>
@@ -408,19 +451,15 @@ export const KioskProduct = props => {
                         <KioskButton
                            onClick={() => {
                               // setShowModifier(true)
-                              if (
-                                 productData.productOptions.length > 0 &&
-                                 productData.isPopupAllowed
-                              ) {
-                                 setShowModifier(true)
-                              } else {
-                                 addToCart(productData.defaultCartItem, 1)
-                              }
+                              handelAddToCartClick()
                            }}
+                           disabled={isProductOutOfStock}
                            buttonConfig={config.kioskSettings.buttonSettings}
                         >
                            {isStoreAvailable
-                              ? t('Add To Cart')
+                              ? isProductOutOfStock
+                                 ? t('Out Of Stock')
+                                 : t('Add To Cart')
                               : t('View Product')}
                         </KioskButton>
                      ) : null
@@ -452,7 +491,7 @@ export const KioskProduct = props => {
             </Layout>
          </div>
          <Modal
-            title={t('Repeat last used customization')}
+            title={formatMessage({ id: 'Repeat last used customization' })}
             visible={showChooseIncreaseType}
             centered={true}
             onCancel={() => {

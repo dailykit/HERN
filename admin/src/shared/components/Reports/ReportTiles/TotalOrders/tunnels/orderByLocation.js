@@ -37,7 +37,11 @@ const OrderByLocation = () => {
                         _gte: from,
                      },
                   },
-                  { created_at: { _lte: to } },
+                  {
+                     created_at: {
+                        _lte: moment(to).add(1, 'd').format('YYYY-MM-DD'),
+                     },
+                  },
                ],
                isAccepted: { _eq: true },
                cart: {
@@ -46,7 +50,14 @@ const OrderByLocation = () => {
                      source: { _eq: brandShop.shopTitle },
                   }),
                },
-               isRejected: { _is_null: true },
+               _or: [
+                  {
+                     isRejected: {
+                        _is_null: true,
+                     },
+                  },
+                  { isRejected: { _eq: false } },
+               ],
                ...(brandShop.brandId && {
                   brandId: { _eq: brandShop.brandId },
                }),
@@ -95,7 +106,13 @@ const OrderByLocation = () => {
                         _gte: compare.from,
                      },
                   },
-                  { created_at: { _lte: compare.to } },
+                  {
+                     created_at: {
+                        _lte: moment(compare.to)
+                           .add(1, 'day')
+                           .format('YYYY-MM-DD'),
+                     },
+                  },
                ],
                isAccepted: { _eq: true },
                cart: {
