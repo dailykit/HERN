@@ -41,7 +41,7 @@ const LiveMenuBrandLocation = () => {
    const brandDetail = useParams()
    const { width } = useWindowSize()
 
-   console.log('brandDetail:::', brandDetail)
+   // console.log('brandDetail:::', brandDetail)
    return (
       <>
          <Flex>

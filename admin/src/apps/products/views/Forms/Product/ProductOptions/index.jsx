@@ -1053,17 +1053,32 @@ const Option = ({
             
                <Flex container>
                <Form.Toggle
-               name="Publish"
+               name={`${option.name}-${option.id}-Publish`}
                value={option.isPublished}
-               onChange={(e)=>{
-                  updateProductOption({
-                     variables: {
-                        id: option.id,
-                        _set: {
-                           isPublished: !option.isPublished,
+               onChange={() => {
+                  if(productData.defaultProductOptionId === option.id){
+                     if(window.confirm("You are going to switch off you default product option")){
+                        updateProductOption({
+                           variables: {
+                              id: option.id,
+                              _set: {
+                                 isPublished: !option.isPublished,
+                              },
+                           },
+                        })
+                        // to nullify the default product option
+                        handleRemoveDefaultProductOption()
+                     }
+                  }
+                  else{   updateProductOption({
+                        variables: {
+                           id: option.id,
+                           _set: {
+                              isPublished: !option.isPublished,
+                           },
                         },
-                     },
-                  })
+                     })
+                  }
                }}
             >
                <Flex container alignItems="center">
@@ -1074,11 +1089,24 @@ const Option = ({
             <Spacer xAxis size="32px" />
                <Flex container>
                <Form.Toggle
-               name="Availability"
+               name={`${option.name}-${option.id}-Available`}
                value={option.isAvailable}
                onChange={() => {
-                     // console.log("Avaialbility changed",option)
-                     updateProductOption({
+                  if(productData.defaultProductOptionId === option.id){
+                     if(window.confirm("You are going to switch off you default product option")){
+                        updateProductOption({
+                           variables: {
+                              id: option.id,
+                              _set: {
+                                 isAvailable: !option.isAvailable,
+                              },
+                           },
+                        })
+                        // to nullify the default product option
+                        handleRemoveDefaultProductOption()
+                     }
+                  }
+                  else{   updateProductOption({
                         variables: {
                            id: option.id,
                            _set: {
@@ -1086,6 +1114,7 @@ const Option = ({
                            },
                         },
                      })
+                  }
                }}
             >
                <Flex container alignItems="center">
