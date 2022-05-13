@@ -24,7 +24,7 @@ import { AddCardTunnel } from '../AddCardTunnel'
 // import { PaymentForm } from '../payment_form'
 import { isClient, get_env, formatCurrency } from '../../../../utils'
 
-export const AddCard = ({ cartId, balanceToPay = 0 }) => {
+export const AddCard = ({ cartId, balanceToPay = 0, metaData = {} }) => {
    const { addToast } = useToasts()
    const { t } = useTranslation()
    const { user } = useUser()
@@ -199,6 +199,8 @@ export const AddCard = ({ cartId, balanceToPay = 0 }) => {
                            className="payButton"
                            cartId={cartId}
                            fullWidthSkeleton={false}
+                           balanceToPay={balanceToPay}
+                           metaData={metaData}
                         >
                            Pay Now {formatCurrency(balanceToPay)}
                         </PayButton>

@@ -8,6 +8,7 @@ import { Button } from '../button'
 import * as QUERIES from '../../graphql'
 import { isKiosk, useTerminalPay } from '../../utils'
 import { usePayment } from '../../lib'
+import { useUser } from '../../context'
 
 function PayButton({
    children,
@@ -30,6 +31,7 @@ function PayButton({
       initializePayment,
       setPaymentInfo,
    } = usePayment()
+   const { user } = useUser();
    const { addToast } = useToasts()
    const [cartValidity, setCartValidity] = useState(null)
 
@@ -130,7 +132,7 @@ function PayButton({
                object: {
                   paymentRetryAttempt: 1,
                   amount: balanceToPay,
-                  isTest: true,
+                  isTest: user.isTest,
                   usedAvailablePaymentOptionId: paymentInfo.selectedAvailablePaymentOption.id,
                   metaData: metaData
                }

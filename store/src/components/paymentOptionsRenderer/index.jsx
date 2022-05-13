@@ -418,7 +418,11 @@ const PaymentOptionCard = ({
             {paymentInfo?.selectedAvailablePaymentOption?.supportedPaymentOption
                ?.supportedPaymentCompany.label === 'stripe' &&
                isSelected && (
-                  <AddCard cartId={cartId} balanceToPay={balanceToPay} />
+                  <AddCard 
+                     cartId={cartId} 
+                     balanceToPay={balanceToPay}
+                     metaData={metaData} 
+                  />
                )}
          </div>
       </StyledWrapper>
