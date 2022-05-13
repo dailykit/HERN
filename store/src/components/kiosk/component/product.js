@@ -277,6 +277,46 @@ export const KioskProduct = props => {
          productData.productOptions.find(x => x.isPublished && x.isAvailable)
       )
    }, [productData])
+
+   const handelAddToCartClick = () => {
+      // product availability
+      if (productData.isAvailable) {
+         if (showAddToCartButton) {
+            if (
+               productData.productOptions.length > 0 &&
+               productData.isPopupAllowed
+            ) {
+               const availableProductOptions =
+                  productData.productOptions.filter(
+                     option => option.isAvailable
+                  ).length
+               if (availableProductOptions > 0) {
+                  setShowModifier(true)
+               }
+            } else {
+               addToCart(productData.defaultCartItem, 1)
+            }
+         }
+      }
+   }
+   const isProductOutOfStock = React.useMemo(() => {
+      if (productData.isAvailable) {
+         if (
+            productData.productOptions.length > 0 &&
+            productData.isPopupAllowed
+         ) {
+            const availableProductOptions = productData.productOptions.filter(
+               option => option.isAvailable
+            ).length
+            if (availableProductOptions > 0) {
+               return false
+            } else {
+               return true
+            }
+         }
+      }
+      return false
+   }, [productData])
    return (
       <>
          <div
@@ -359,22 +399,7 @@ export const KioskProduct = props => {
                                           }),
                                        }}
                                        onClick={() => {
-                                          if (productData.isAvailable) {
-                                             if (showAddToCartButton) {
-                                                if (
-                                                   productData.productOptions
-                                                      .length > 0 &&
-                                                   productData.isPopupAllowed
-                                                ) {
-                                                   setShowModifier(true)
-                                                } else {
-                                                   addToCart(
-                                                      productData.defaultCartItem,
-                                                      1
-                                                   )
-                                                }
-                                             }
-                                          }
+                                          handelAddToCartClick()
                                        }}
                                     />
                                  )}
@@ -426,24 +451,15 @@ export const KioskProduct = props => {
                         <KioskButton
                            onClick={() => {
                               // setShowModifier(true)
-                              if (productData.isAvailable) {
-                                 if (
-                                    productData.productOptions.length > 0 &&
-                                    productData.isPopupAllowed
-                                 ) {
-                                    setShowModifier(true)
-                                 } else {
-                                    addToCart(productData.defaultCartItem, 1)
-                                 }
-                              }
+                              handelAddToCartClick()
                            }}
-                           disabled={!productData.isAvailable}
+                           disabled={isProductOutOfStock}
                            buttonConfig={config.kioskSettings.buttonSettings}
                         >
                            {isStoreAvailable
-                              ? productData.isAvailable
-                                 ? t('Add To Cart')
-                                 : t('Out Of Stock')
+                              ? isProductOutOfStock
+                                 ? t('Out Of Stock')
+                                 : t('Add To Cart')
                               : t('View Product')}
                         </KioskButton>
                      ) : null

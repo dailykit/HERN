@@ -3,8 +3,8 @@ import { useQuery } from '@apollo/react-hooks'
 import has from 'lodash/has'
 import isEmpty from 'lodash/isEmpty'
 import React from 'react'
-import { ORDER_TAB } from '../graphql'
-import { get_env, isClient, useQueryParamState } from '../utils'
+import { GET_BRAND_LOCATION, ORDER_TAB } from '../graphql'
+import { get_env, isClient, isKiosk, useQueryParamState } from '../utils'
 const ConfigContext = React.createContext()
 
 const initialState = {
@@ -91,6 +91,28 @@ export const ConfigProvider = ({ children }) => {
 
    const [showLocationSelectorPopup, setShowLocationSelectionPopup] =
       React.useState(false)
+
+   useQuery(GET_BRAND_LOCATION, {
+      skip: !state.brand?.id || !state.locationId || isKiosk(),
+      variables: {
+         where: {
+            brandId: {
+               _eq: state.brand?.id,
+            },
+            locationId: {
+               _eq: state.locationId,
+            },
+         },
+      },
+      onCompleted: data => {
+         if (data && data.brandLocations.length > 0) {
+            dispatch({
+               type: 'SET_BRAND_LOCATION',
+               payload: data.brandLocations[0],
+            })
+         }
+      },
+   })
 
    useQuery(ORDER_TAB, {
       skip: isLoading || !orderInterfaceType,
