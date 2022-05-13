@@ -22,6 +22,7 @@ export const LoyaltyPoints = ({ cart, version = 1 }) => {
          : cart.loyaltyPointsUsable
    )
    const [updateCart] = useMutation(MUTATIONS.CART.UPDATE, {
+      refetchQueries: ['subscriptionOccurenceCustomer'],
       onCompleted: () => console.log('Loyalty points added!'),
       onError: error => console.log(error),
    })

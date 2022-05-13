@@ -32,6 +32,7 @@ const initialState = {
       isValidated: false, // show that above two values are validate or not, initially false
    },
    KioskConfig: null,
+   brandLocation: null,
 }
 
 const reducers = (state, { type, payload }) => {
@@ -68,6 +69,11 @@ const reducers = (state, { type, payload }) => {
             kioskAvailability: { ...state.kioskAvailability, ...payload },
          }
       }
+      case 'SET_BRAND_LOCATION':
+         return {
+            ...state,
+            brandLocation: payload,
+         }
       default:
          return state
    }
@@ -296,5 +302,6 @@ export const useConfig = (globalType = '') => {
       setAuth,
       deleteAuth,
       KioskConfig: state.KioskConfig,
+      brandLocation: state.brandLocation,
    }
 }

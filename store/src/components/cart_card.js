@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { Modal } from 'antd'
 import isEmpty from 'lodash/isEmpty'
+import { useIntl } from 'react-intl'
 
 import { DeleteIcon, EditIcon, ChevronIcon } from '../assets/icons'
 import { useTranslation, CartContext } from '../context'
@@ -23,6 +24,7 @@ const CartCard = props => {
    const { brand, kioskDetails, isConfigLoading } = useConfig()
    const { addToCart } = React.useContext(CartContext)
    const { t, dynamicTrans, locale } = useTranslation()
+   const { formatMessage } = useIntl()
 
    const [modifyProductId, setModifyProductId] = useState(null)
    const [modifyProduct, setModifyProduct] = useState(null)
@@ -578,7 +580,7 @@ const CartCard = props => {
             />
          )}
          <Modal
-            title={t('Repeat last used customization')}
+            title={formatMessage({ id: 'Repeat last used customization' })}
             visible={showChooseIncreaseType}
             centered={true}
             onCancel={() => {

@@ -463,6 +463,9 @@ export const CartProvider = ({ children }) => {
                customerKeycloakId: {
                   _eq: user?.keycloakId,
                },
+               source: {
+                  _neq: 'subscription',
+               },
             },
          },
          skip: !(brand?.id && user?.keycloakId && orderTabs.length > 0),
@@ -539,7 +542,7 @@ export const CartProvider = ({ children }) => {
                            eachOrderTab =>
                               eachOrderTab.id ===
                               subscriptionData.data.carts[0].orderTabId
-                        ).orderFulfillmentTypeLabel
+                        )?.orderFulfillmentTypeLabel
                      const locationIdForLocal =
                         subscriptionData.data.carts[0].locationId
                      localStorage.setItem(

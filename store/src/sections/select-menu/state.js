@@ -32,7 +32,6 @@ const initialState = {
 }
 
 const reducers = (state, { type, payload }) => {
-
    switch (type) {
       case 'SET_WEEK': {
          return {
@@ -57,7 +56,6 @@ const reducers = (state, { type, payload }) => {
          }
       default:
          return state
-
    }
 }
 
@@ -83,7 +81,7 @@ const insertCartId = (node, cartId) => {
    return node
 }
 
-export const MenuProvider = ({ isCheckout, children }) => {
+export const MenuProvider = ({ isCheckout = false, children }) => {
    const router = useRouter()
    const { user } = useUser()
    const { addToast } = useToasts()
@@ -106,12 +104,14 @@ export const MenuProvider = ({ isCheckout, children }) => {
          brand_customerId: user?.brandCustomerId,
       },
       onCompleted: () => {
-         dispatch({ type: 'IS_CART_FULL', payload: false })
+         dispatch({
+            type: 'IS_CART_FULL',
+            payload: false,
+         })
          setIsCustomerLoading(false)
       },
    })
 
-   console.log(cart, 'Cart')
    React.useEffect(() => {
       if (
          !isCustomerLoading &&
@@ -133,7 +133,6 @@ export const MenuProvider = ({ isCheckout, children }) => {
                if (!subscriptionData.data) {
                   return prev
                }
-
                return JSON.parse(JSON.stringify(subscriptionData.data))
             },
          })
@@ -187,8 +186,7 @@ export const MenuProvider = ({ isCheckout, children }) => {
          },
       })
 
-   //query 
-
+   //query
 
    React.useEffect(() => {
       if (!loadingZipcode && !isEmpty(zipcode) && state.week?.fulfillmentDate) {
@@ -249,10 +247,10 @@ export const MenuProvider = ({ isCheckout, children }) => {
       variables: {
          id: user?.subscriptionId,
          where: {
-            subscriptionOccurenceView: {
-               isValid: { _eq: true },
-               isVisible: { _eq: true },
-            },
+            isValid: { _eq: true },
+            isVisible: { _eq: true },
+            // subscriptionOccurenceView: {
+            // },
             ...(Boolean(router.query.date) && {
                fulfillmentDate: {
                   _eq: router.query.date,
@@ -290,12 +288,13 @@ export const MenuProvider = ({ isCheckout, children }) => {
                   payload: subscription?.occurences[0],
                })
                if (!isCheckout) {
-                  const queryDate = new URL(location.href).searchParams.get('d')
+                  const queryDate =
+                     d || new URL(location.href).searchParams.get('d')
                   if (!queryDate) {
                      router.push(
                         getRoute(
                            '/menu?d=' +
-                           subscription?.occurences[0].fulfillmentDate
+                              subscription?.occurences[0].fulfillmentDate
                         )
                      )
                   }
@@ -311,8 +310,8 @@ export const MenuProvider = ({ isCheckout, children }) => {
                      router.push(
                         getRoute(
                            '/menu?d=' +
-                           subscription?.occurences[validWeekIndex]
-                              .fulfillmentDate
+                              subscription?.occurences[validWeekIndex]
+                                 .fulfillmentDate
                         )
                      )
                   }
@@ -383,11 +382,12 @@ export const MenuProvider = ({ isCheckout, children }) => {
       })
    }
 
-   const store = configOf('Store Availability', 'availability')?.storeAvailability
-
+   const store = configOf(
+      'Store Availability',
+      'availability'
+   )?.storeAvailability
    const addProduct = (item, product) => {
       dispatch({ type: 'CART_STATE', payload: 'SAVING' })
-
 
       const isSkipped = occurenceCustomer?.isSkipped
       if (occurenceCustomer?.validStatus?.hasCart) {
@@ -519,8 +519,8 @@ export const MenuProvider = ({ isCheckout, children }) => {
                   customerId: user.id,
                   source: 'subscription',
                   paymentStatus: 'PENDING',
-                  locationId: zipcode?.locationId,
                   address: user.defaultAddress,
+                  locationId: zipcode?.locationId,
                   fulfillmentInfo: fulfillment,
                   customerKeycloakId: user.keycloakId,
                   subscriptionOccurenceId: state.week.id,
@@ -654,7 +654,6 @@ export const MenuProvider = ({ isCheckout, children }) => {
          !Boolean(state.week?.id),
       ].every(node => node)
    )
-
       return <PageLoader />
 
    return (

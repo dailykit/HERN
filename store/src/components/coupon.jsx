@@ -4,7 +4,7 @@ import { useToasts } from 'react-toast-notifications'
 import { useUser, useTranslation } from '../context'
 import { CART_REWARDS, MUTATIONS, SEARCH_COUPONS } from '../graphql'
 import { useConfig } from '../lib'
-import { useMenu, MenuProvider } from '../sections/select-menu'
+// import { useMenu, MenuProvider } from '../sections/select-menu'
 import { CouponsList } from './coupons_list'
 import { Loader } from './loader'
 import { Tunnel } from '.'
@@ -24,12 +24,10 @@ const Coupon_ = ({
    const isKioskMode = React.useMemo(() => {
       return isKiosk()
    }, [])
-   const { state = {} } = isKioskMode ? {} : useMenu()
    const { user } = useUser()
    const { addToast } = useToasts()
    const { brand, configOf } = useConfig()
-   const { id } =
-      isKioskMode || upFrontLayout ? cart : state?.occurenceCustomer?.cart
+   const { id } = cart
    const { t } = useTranslation()
 
    const theme = configOf('theme-color', 'visual')
@@ -45,6 +43,7 @@ const Coupon_ = ({
    const [createOrderCartRewards, { loading: applying }] = useMutation(
       MUTATIONS.CART_REWARDS.CREATE,
       {
+         refetchQueries: ['subscriptionOccurenceCustomer'],
          onCompleted: () => {
             addToast(t('Coupon applied!'), { appearance: 'success' })
             setIsCouponListOpen(false)
@@ -60,7 +59,6 @@ const Coupon_ = ({
       SEARCH_COUPONS,
       {
          onCompleted: data => {
-            console.log(data)
             if (data.coupons.length) {
                const [coupon] = data.coupons
                const objects = []
@@ -144,6 +142,7 @@ const Coupon_ = ({
    }
 
    const [deleteCartRewards] = useMutation(MUTATIONS.CART_REWARDS.DELETE, {
+      refetchQueries: ['subscriptionOccurenceCustomer'],
       variables: {
          cartId: id,
       },
@@ -391,18 +390,12 @@ export const Coupon = props => {
                visible={isCouponTunnelOpen}
                onClose={() => setIsCouponTunnelOpen(false)}
             >
-               <MenuProvider>
-                  <Coupon_ {...props} />
-               </MenuProvider>
+               <Coupon_ {...props} />
             </Tunnel.Right>
          </>
       )
    }
-   return (
-      <MenuProvider>
-         <Coupon_ {...props} />
-      </MenuProvider>
-   )
+   return <Coupon_ {...props} />
 }
 export const CouponHeader = () => {
    const { t } = useTranslation()

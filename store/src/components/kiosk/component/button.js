@@ -12,7 +12,9 @@ const KioskButton = props => {
    if (buttonConfig.buttonType.value.value == 'GRADIENT') {
       return (
          <button
-            className={`hern-kiosk__kiosk-button ${customClass}`}
+            className={`hern-kiosk__kiosk-button ${
+               disabled ? 'hern-kiosk__kiosk-button--disabled' : ''
+            } ${customClass}`}
             onClick={onClick}
             style={style}
             disabled={disabled}

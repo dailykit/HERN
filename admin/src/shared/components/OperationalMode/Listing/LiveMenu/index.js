@@ -231,6 +231,13 @@ const LiveMenuProductTable = ({ brandDetail }) => {
          headerFilter: true,
       },
       {
+         title: 'Product Category',
+         field: 'category',
+         headerFilter: true,
+         hozAlign: 'center',
+         width: 150,
+      },
+      {
          title: 'Published',
          field: 'isPublished',
          hozAlign: 'center',
@@ -508,6 +515,7 @@ const LiveMenuProductOptionTable = ({ brandDetail }) => {
                // )
                return {
                   id: productOptions.id,
+                  label: productOptions.label,
                   name: productOptions.product.name,
                   brandId: brandDetail.brandId,
                   brand_locationId: brandDetail.brandLocationId
@@ -597,7 +605,17 @@ const LiveMenuProductOptionTable = ({ brandDetail }) => {
          //    console.log('cell clicked ', e, cell)
          // },
       },
-
+      {
+         title: 'Label',
+         field: 'label',
+         headerFilter: true,
+         frozen: true,
+         width: 120,
+         hozAlign: 'center',
+         // cellClick: function (e, cell) {
+         //    console.log('cell clicked ', e, cell)
+         // },
+      },
       {
          title: 'Product Name',
          field: 'name',
@@ -629,6 +647,13 @@ const LiveMenuProductOptionTable = ({ brandDetail }) => {
          field: 'specificDiscount',
          headerFilter: true,
          hozAlign: 'center',
+      },
+      {
+         title: 'Product Category',
+         field: 'category',
+         headerFilter: true,
+         hozAlign: 'center',
+         width: 150,
       },
       {
          title: 'Published',

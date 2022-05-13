@@ -1090,22 +1090,22 @@ const Signup = props => {
       }
    }, [params])
 
-   const apolloClient = useApolloClient();
+   const apolloClient = useApolloClient()
 
-   const checkCustomerExistence = async (email) =>{
+   const checkCustomerExistence = async email => {
       const data = await apolloClient.query({
          query: PLATFORM_CUSTOMERS,
-         variables: { 
-            where: { email: { _eq: email } } 
-         }
+         variables: {
+            where: { email: { _eq: email } },
+         },
       })
       const customers = data?.data?.customers
       if (customers.length > 0) {
-         setEmailError("Email already exists")
+         setEmailError('Email already exists')
          setEmailExists(true)
          return true
       }
-      setEmailError("")
+      setEmailError('')
       setEmailExists(false)
       return false
    }
@@ -1215,7 +1215,9 @@ const Signup = props => {
 
    const submit = async () => {
       try {
-         if(await checkCustomerExistence(form.email)){return}
+         if (await checkCustomerExistence(form.email)) {
+            return
+         }
          setError('')
          setLoading(true)
          const isCodeValid = await isReferralCodeValid(
@@ -1236,7 +1238,7 @@ const Signup = props => {
             setStoredReferralCode(form.code)
          }
 
-         const url = `${get_env('BASE_BRAND_URL')}/api/hash`
+         const url = `/api/hash`
          const { data } = await axios.post(url, { password: form.password })
 
          if (data?.success && data?.hash) {
@@ -1317,15 +1319,15 @@ const Signup = props => {
                   onBlur={e =>
                      e.target.value.length < 6
                         ? setPasswordError(
-                              <>
-                                 <span>
-                                    {t(
-                                       'Password must be at least 6 letters long'
-                                    )}
-                                 </span>
-                                 <span>{'!'}</span>
-                              </>
-                           )
+                             <>
+                                <span>
+                                   {t(
+                                      'Password must be at least 6 letters long'
+                                   )}
+                                </span>
+                                <span>{'!'}</span>
+                             </>
+                          )
                         : setPasswordError('')
                   }
                />
