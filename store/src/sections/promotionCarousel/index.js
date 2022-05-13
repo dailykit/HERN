@@ -74,19 +74,7 @@ export const PromotionCarousal = props => {
       skip: productIds?.length === 0,
       variables: {
          ids: productIds,
-         priceArgs: argsForByLocation,
-         discountArgs: argsForByLocation,
-         defaultCartItemArgs: argsForByLocation,
-         productAvailabilityArgs: argsForByLocation,
-         productPublishArgs: argsForByLocation,
-         productOptionPriceArgs: argsForByLocation,
-         productOptionDiscountArgs: argsForByLocation,
-         productOptionAvailabilityArgs: argsForByLocation,
-         productOptionPublishArgs: argsForByLocation,
-         productOptionCartItemArgs: argsForByLocation,
-         modifierCategoryOptionPriceArgs: argsForByLocation,
-         modifierCategoryOptionDiscountArgs: argsForByLocation,
-         modifierCategoryOptionCartItemArgs: argsForByLocation,
+         params: argsForByLocation,
       },
    })
    // console.log('productsData: ', productsData, productIds)
