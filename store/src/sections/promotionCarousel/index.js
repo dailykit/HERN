@@ -86,7 +86,7 @@ export const PromotionCarousal = props => {
          modifierCategoryOptionCartItemArgs: argsForByLocation,
       },
    })
-   console.log('productsData: ', productsData, productIds)
+   // console.log('productsData: ', productsData, productIds)
    const theme = configOf('theme-color', 'Visual')
    const onImageClick = imageDetail => {
       if (imageDetail.belongsTo === 'PRODUCT') {
