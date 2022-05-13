@@ -14,6 +14,8 @@ function PayButton({
    selectedAvailablePaymentOptionId = null,
    cartId = null,
    fullWidthSkeleton = true,
+   balanceToPay = 0,
+   metaData = {},
    setPaymentTunnelOpen,
    config,
    ...props
@@ -32,16 +34,18 @@ function PayButton({
    const [cartValidity, setCartValidity] = useState(null)
 
    // query for fetching available payment options
-   const {
-      loading,
-      error,
-      data: { cart = {} } = {},
-   } = useSubscription(QUERIES.GET_PAYMENT_OPTIONS, {
-      skip: !cartId,
-      variables: {
-         id: cartId,
-      },
-   })
+   if(cartId){
+      var {
+         loading,
+         error,
+         data: { cart = {} } = {},
+      } = useSubscription(QUERIES.GET_PAYMENT_OPTIONS, {
+         skip: !cartId,
+         variables: {
+            id: cartId,
+         },
+      })
+   }
 
    // update cart mutation
    const [updateCart] = useMutation(QUERIES.UPDATE_CART, {
@@ -51,6 +55,17 @@ function PayButton({
       },
    })
 
+   // create cartPayment mutation
+   const [createCartPayment] = useMutation(QUERIES.CREATE_CART_PAYMENT, {
+      onError: error => {
+         console.log(error)
+         addToast(error.message, { appearance: 'error' })
+      },
+      onCompleted: (data) => {
+         initializePayment(null, data.createCartPayment.id)
+      }
+   })
+
    const isStripe =
       paymentInfo?.selectedAvailablePaymentOption?.supportedPaymentOption
          ?.supportedPaymentCompany?.label === 'stripe'
@@ -58,71 +73,87 @@ function PayButton({
    const onPayClickHandler = async () => {
       setPaymentTunnelOpen && setPaymentTunnelOpen(false)
       console.log('PayButton: onPayClickHandler')
-      if (isKioskMode) {
-         console.log('inside kiosk condition')
-         if (cartId) {
-            initializePayment(cartId)
-            updatePaymentState({
-               paymentLifeCycleState: 'INCREMENT_PAYMENT_RETRY_ATTEMPT',
-            })
+      if(cartId){
+         if (isKioskMode) {
+            console.log('inside kiosk condition')
+            if (cartId) {
+               initializePayment(cartId)
+               updatePaymentState({
+                  paymentLifeCycleState: 'INCREMENT_PAYMENT_RETRY_ATTEMPT',
+               })
 
-            updateCart({
-               variables: {
-                  id: cartId,
-                  _inc: { paymentRetryAttempt: 1 },
-                  _set: {
-                     toUseAvailablePaymentOptionId:
-                        selectedAvailablePaymentOptionId,
+               updateCart({
+                  variables: {
+                     id: cartId,
+                     _inc: { paymentRetryAttempt: 1 },
+                     _set: {
+                        toUseAvailablePaymentOptionId:
+                           selectedAvailablePaymentOptionId,
+                     },
                   },
-               },
-            })
-         }
-      } else {
-         if (
-            !isEmpty(paymentInfo) &&
-            cartId &&
-            !isEmpty(cartValidity) &&
-            cartValidity.status
-         ) {
-            // setIsProcessingPayment(true)
-            // setIsPaymentInitiated(true)
-            // updatePaymentState({
-            //    paymentLifeCycleState: 'INCREMENT_PAYMENT_RETRY_ATTEMPT',
-            // })
-            initializePayment(cartId)
+               })
+            }
+         } else {
+            if (
+               !isEmpty(paymentInfo) &&
+               cartId &&
+               !isEmpty(cartValidity) &&
+               cartValidity.status
+            ) {
+               // setIsProcessingPayment(true)
+               // setIsPaymentInitiated(true)
+               // updatePaymentState({
+               //    paymentLifeCycleState: 'INCREMENT_PAYMENT_RETRY_ATTEMPT',
+               // })
+               initializePayment(cartId)
 
-            await updateCart({
-               variables: {
-                  id: cartId,
-                  _inc: { paymentRetryAttempt: 1 },
-                  _set: {
-                     ...(isStripe && {
-                        paymentMethodId:
-                           paymentInfo?.selectedAvailablePaymentOption
-                              ?.selectedPaymentMethodId,
-                     }),
-                     toUseAvailablePaymentOptionId:
-                        paymentInfo?.selectedAvailablePaymentOption?.id,
+               await updateCart({
+                  variables: {
+                     id: cartId,
+                     _inc: { paymentRetryAttempt: 1 },
+                     _set: {
+                        ...(isStripe && {
+                           paymentMethodId:
+                              paymentInfo?.selectedAvailablePaymentOption
+                                 ?.selectedPaymentMethodId,
+                        }),
+                        toUseAvailablePaymentOptionId:
+                           paymentInfo?.selectedAvailablePaymentOption?.id,
+                     },
                   },
-               },
-            })
+               })
+            }
          }
+      }else{
+         createCartPayment({
+            variables:{
+               object: {
+                  paymentRetryAttempt: 1,
+                  amount: balanceToPay,
+                  isTest: true,
+                  usedAvailablePaymentOptionId: paymentInfo.selectedAvailablePaymentOption.id,
+                  metaData: metaData
+               }
+            }
+         })
       }
    }
 
-   useEffect(() => {
-      if (!loading && !isEmpty(cart)) {
-         setCartValidity(cart?.isCartValid)
-         if (isEmpty(paymentInfo.selectedAvailablePaymentOption)) {
-            setPaymentInfo({
-               selectedAvailablePaymentOption: {
-                  ...paymentInfo.selectedAvailablePaymentOption,
-                  ...cart.availablePaymentOptionToCart[0],
-               },
-            })
+   if(cartId){
+      useEffect(() => {
+         if (!loading && !isEmpty(cart)) {
+            setCartValidity(cart?.isCartValid)
+            if (isEmpty(paymentInfo.selectedAvailablePaymentOption)) {
+               setPaymentInfo({
+                  selectedAvailablePaymentOption: {
+                     ...paymentInfo.selectedAvailablePaymentOption,
+                     ...cart.availablePaymentOptionToCart[0],
+                  },
+               })
+            }
          }
-      }
-   }, [cart, loading])
+      }, [cart, loading])
+   }
 
    return (
       <>
@@ -133,7 +164,7 @@ function PayButton({
                {!isKioskMode ? (
                   <Button
                      onClick={onPayClickHandler}
-                     disabled={!cartValidity?.status}
+                     disabled={cartId && !cartValidity?.status}
                      {...props}
                   >
                      {children}

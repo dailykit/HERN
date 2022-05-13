@@ -1,7 +1,7 @@
 import React from 'react'
 import { useConfig } from '../../lib'
 import { useTranslation, useUser } from '../../context'
-import { Spacer, ProfileSidebar, Form } from '../../components'
+import { Spacer, ProfileSidebar, Form, WalletTopUp } from '../../components'
 import { formatCurrency, useWindowSize } from '../../utils'
 import * as moment from 'moment'
 import { useToasts } from 'react-toast-notifications'
@@ -71,35 +71,8 @@ const Content = () => {
                   </span>
                </div>
                <Spacer />
-               <div className="hern-wallet__referral_code_block">
-                  <p className="hern-wallet__referral_code_title">
-                     {/* Refer and earn */}
-                  </p>
-                  <div className="hern-wallet__referral_code_field">
-                     <span className="hern-wallet__referral_code">
-                        {/* {user?.customerReferral?.referralCode} */}
-                     </span>
-                     {/* <CopyToClipboard
-                        text={`${get_env(
-                           'BASE_BRAND_URL'
-                        )}/sign-up?invite-code=${
-                           user?.customerReferral?.referralCode
-                        }`}
-                        onCopy={() =>
-                           addToast(t('Invite like copied!'), {
-                              appearance: 'success',
-                           })
-                        }
-                     >
-                        <button className="hern-wallet__referral_code_copy">
-                           <BiClipboard />
-                           <span style={{ marginLeft: '5px' }}>
-                              Copy Invite Link
-                           </span>
-                        </button>
-                     </CopyToClipboard> */}
-                  </div>
-               </div>
+               <WalletTopUp />
+               <Spacer />
                <p className="hern-wallet__transaction_title">
                   {t('TRANSACTION HISTORY')}
                </p>
