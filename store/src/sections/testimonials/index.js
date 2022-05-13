@@ -10,6 +10,7 @@ export const Testimonials = ({ config }) => {
    const variant = config?.display?.variant?.value?.value
    const header = config?.data?.title?.value
    const subHeading = config?.data?.subTitle?.value
+   const numberOfSliderToShow = +config?.data?.numberOfSlidesToShow?.value ?? 1
 
    const carouselRef = React.createRef()
    const testimonialImageSize = React.useMemo(() => {
@@ -31,21 +32,53 @@ export const Testimonials = ({ config }) => {
          }
       }
    }, [])
+   const numberOfTestimonialsToShow = React.useMemo(() => {
+      if (isClient) {
+         if (numberOfSliderToShow === 1) {
+            return 1
+         } else if (0 <= innerWidth && innerWidth <= 468) {
+            return 1
+         } else if (469 <= innerWidth && innerWidth <= 1149) {
+            return 2
+         } else if (1150 <= innerWidth) {
+            return 3
+         }
+      }
+   }, [])
+
    return (
       <div className="hern-testimonials__container">
          {(!variant || variant === 'slider-with-image') && (
             <div className="hern-testimonials">
-               <Carousel ref={carouselRef} dots={false}>
+               <span
+                  className="hern-testimonials__arrow-left"
+                  role="button"
+                  onClick={() => carouselRef.current.prev()}
+               >
+                  <BiChevronLeft color="#fff" size={20} />
+               </span>
+               <Carousel
+                  ref={carouselRef}
+                  slidesToShow={numberOfTestimonialsToShow}
+                  slidesToScroll={1}
+                  dots={false}
+               >
                   {content.map(({ userName, img, review, location }) => (
                      <div>
-                        <div className="hern-testimonials__wrapper">
-                           <span
-                              className="hern-testimonials__arrow-left"
-                              role="button"
-                              onClick={() => carouselRef.current.prev()}
-                           >
-                              <BiChevronLeft color="#fff" size={20} />
-                           </span>
+                        <div
+                           style={
+                              numberOfSliderToShow === 1
+                                 ? {
+                                      display: 'flex',
+                                   }
+                                 : {
+                                      display: 'block',
+                                      padding: '64px 0',
+                                      maxWidth: '300px',
+                                   }
+                           }
+                           className="hern-testimonials__wrapper"
+                        >
                            <div className="hern-testimonials__image">
                               <HernLazyImage dataSrc={img} alt={userName} />
                            </div>
@@ -59,17 +92,17 @@ export const Testimonials = ({ config }) => {
                                  <span>{location}</span>
                               </h4>
                            </div>
-                           <span
-                              className="hern-testimonials__arrow-right"
-                              role="button"
-                              onClick={() => carouselRef.current.next()}
-                           >
-                              <BiChevronRight color="#fff" size={20} />
-                           </span>
                         </div>
                      </div>
                   ))}
                </Carousel>
+               <span
+                  className="hern-testimonials__arrow-right"
+                  role="button"
+                  onClick={() => carouselRef.current.next()}
+               >
+                  <BiChevronRight color="#fff" size={20} />
+               </span>
             </div>
          )}
 
