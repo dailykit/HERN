@@ -12,6 +12,7 @@ import { DeliveryDateSection } from './delivery_date_section'
 import { DeliveryProvider, useDelivery } from './state'
 import { AddressSection } from './address_section'
 import { DeliverySection } from './delivery_section'
+import { SectionTitle } from './section_title'
 
 export const Delivery = () => {
    return (
@@ -23,7 +24,7 @@ export const Delivery = () => {
 const DeliveryContent = () => {
    const router = useRouter()
    const { user } = useUser()
-   const { state } = useDelivery()
+   const { state, dispatch } = useDelivery()
    const { addToast } = useToasts()
    const { brand, configOf } = useConfig()
    const { t, dynamicTrans, locale } = useTranslation()
@@ -34,10 +35,12 @@ const DeliveryContent = () => {
          })
          router.push(
             getRoute(
-               `/get-started/select-menu/?date=${state.delivery_date.selected.fulfillmentDate
-               }${state.skip_list.length > 0
-                  ? `&previous=${state.skip_list}`
-                  : ''
+               `/get-started/select-menu/?date=${
+                  state.delivery_date.selected.fulfillmentDate
+               }${
+                  state.skip_list.length > 0
+                     ? `&previous=${state.skip_list}`
+                     : ''
                }`
             )
          )
@@ -82,36 +85,89 @@ const DeliveryContent = () => {
 
    //config properties
    const theme = configOf('theme-color', 'Visual')
-   const backgroundFromConfig = configOf('select-delivery-background', 'Select-Delivery')?.background
-   const deliveryDayLabelFromConfig = configOf('delivery-day', 'Select-Delivery')?.Delivery?.deliveryDayLabel
-   const firstDeliveryDayLabelFromConfig = configOf('first-delivery', 'Select-Delivery')?.firstDelivery?.firstDeliveryDayLabel
+   const backgroundFromConfig = configOf(
+      'select-delivery-background',
+      'Select-Delivery'
+   )?.background
+   const deliveryDayLabelFromConfig = configOf(
+      'delivery-day',
+      'Select-Delivery'
+   )?.Delivery?.deliveryDayLabel
+   const firstDeliveryDayLabelFromConfig = configOf(
+      'first-delivery',
+      'Select-Delivery'
+   )?.firstDelivery?.firstDeliveryDayLabel
 
-   const brandTextColor = {
-      color: theme?.accent ? theme.accent : 'rgba(5, 150, 105, 1)',
+   const addressLabelFromConfig = configOf('address', 'Select-Delivery')
+      ?.address?.selectAddress
+
+   const toggleTunnel = value => {
+      dispatch({ type: 'TOGGLE_TUNNEL', payload: value })
    }
    return (
-      <main className="hern-delivery__main" style={backgroundFromConfig && {
-         backgroundImage: "url(" + backgroundFromConfig?.BackgroundImage?.value + ")",
-         backgroundColor: backgroundFromConfig?.backgroundColor?.value
-      }}>
-         <header className="hern-delivery__header">
-            <h2 className="hern-delivery__title" style={brandTextColor}>
-               {t('Delivery')}
-            </h2>
-         </header>
-         <AddressSection />
-         <h3 className="hern-delivery__section-title" style={brandTextColor}>
-            {<span data-translation="true">{deliveryDayLabelFromConfig?.value}</span> || t('Delivery Day')}
-         </h3>
-         <DeliverySection />
-         <h3 className="hern-delivery__section-title" style={brandTextColor}>
-            {<span data-translation="true" >{firstDeliveryDayLabelFromConfig?.value}</span> || t('Select your first delivery date')}
-         </h3>
-         <DeliveryDateSection />
+      <main
+         className="hern-delivery__main"
+         style={
+            backgroundFromConfig && {
+               backgroundImage:
+                  'url(' + backgroundFromConfig?.BackgroundImage?.value + ')',
+               backgroundColor: backgroundFromConfig?.backgroundColor?.value,
+            }
+         }
+      >
+         <section className="hern-delivery__section">
+            <header className="hern-delivery__address-section__header">
+               <SectionTitle
+                  count={1}
+                  title={
+                     addressLabelFromConfig?.value ? (
+                        <p data-translation="true">
+                           {addressLabelFromConfig?.value}
+                        </p>
+                     ) : (
+                        t('Select a delivery Address')
+                     )
+                  }
+               />
+
+               <Button bg={theme?.accent} onClick={() => toggleTunnel(true)}>
+                  {t('Add Address')}
+               </Button>
+            </header>
+            <AddressSection />
+         </section>
+         <section className="hern-delivery__section">
+            <SectionTitle
+               count={2}
+               title={
+                  deliveryDayLabelFromConfig?.value ? (
+                     <p data-translation="true">
+                        {deliveryDayLabelFromConfig?.value}
+                     </p>
+                  ) : (
+                     t('Select a delivery day to get started')
+                  )
+               }
+            />
+            <DeliverySection />
+         </section>
+         <section className="hern-delivery__section">
+            <SectionTitle
+               count={3}
+               title={
+                  firstDeliveryDayLabelFromConfig?.value ? (
+                     <p data-translation="true">
+                        {firstDeliveryDayLabelFromConfig?.value}
+                     </p>
+                  ) : (
+                     t('Select your first delivery date')
+                  )
+               }
+            />
+            <DeliveryDateSection />
+         </section>
          <div className="hern-delivery__continue">
-            <Button bg={theme?.accent} onClick={nextStep}
-               disabled={!isValid()}
-            >
+            <Button bg={theme?.accent} onClick={nextStep} disabled={!isValid()}>
                {t('Continue')}
             </Button>
          </div>

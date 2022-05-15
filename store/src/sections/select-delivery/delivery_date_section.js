@@ -47,10 +47,10 @@ export const DeliveryDateSection = () => {
             variables: {
                id: state.delivery.selected.id,
                where: {
-                  isValid: { _eq: true },
-                  isVisible: { _eq: true },
-                  // subscriptionOccurenceView: {
-                  // },
+                  subscriptionOccurenceView: {
+                     isValid: { _eq: true },
+                     isVisible: { _eq: true },
+                  },
                },
             },
          })
@@ -78,17 +78,13 @@ export const DeliveryDateSection = () => {
    if (Object.keys(state.delivery.selected).length === 0)
       return (
          <>
-            <HelperBar type="info">
-               <HelperBar.SubTitle>
-                  {getStartedDate?.value ? (
-                     <span data-translation="true">
-                        {getStartedDate?.value}
-                     </span>
-                  ) : (
-                     t('Select a delivery day to get started')
-                  )}
-               </HelperBar.SubTitle>
-            </HelperBar>
+            <div className="hern-select-delivery__message">
+               {getStartedDate?.value ? (
+                  <span data-translation="true">{getStartedDate?.value}</span>
+               ) : (
+                  t('Select a delivery day to get started')
+               )}
+            </div>
          </>
       )
 
@@ -133,9 +129,6 @@ export const DeliveryDateSection = () => {
                   key={occurence.id}
                   onClick={() => occurenceSelection(occurence)}
                >
-                  <div className="hern-delivery__delivery-date__check-icon__wrapper">
-                     <CheckIcon size={18} className={iconClasses} />
-                  </div>
                   <label className="hern-delivery__delivery-date__list-item__label">
                      {formatDate(occurence.fulfillmentDate, {
                         year: 'numeric',

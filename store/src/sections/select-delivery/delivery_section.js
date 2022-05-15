@@ -12,6 +12,7 @@ import { ITEM_COUNT } from '../../graphql'
 import { CheckIcon, TickIcon, CrossIcon } from '../../assets/icons'
 import { Loader, HelperBar } from '../../components'
 import classNames from 'classnames'
+import { useRouter } from 'next/router'
 
 export const DeliverySection = ({ planId }) => {
    const { user } = useUser()
@@ -19,6 +20,7 @@ export const DeliverySection = ({ planId }) => {
    const { t, dynamicTrans, locale } = useTranslation()
    const { configOf } = useConfig()
    const { state, dispatch } = useDelivery()
+   const router = useRouter()
    const [fetchDays, { loading, data: { itemCount = {} } = {} }] = useLazyQuery(
       ITEM_COUNT,
       {
@@ -67,23 +69,28 @@ export const DeliverySection = ({ planId }) => {
       dispatch({ type: 'SET_DAY', payload: day })
    }
 
-   if (loading)
-      return (
-         <>
-            <Loader inline />
-         </>
-      )
+   if (loading) return <Loader inline />
 
    //config properties
-   const addressLabelFromConfig = configOf('address', 'Select-Delivery')?.address?.getStarted
-   const unavailableDaysFromConfig = configOf('address', 'Select-Delivery')?.deliveryUnavailable
+   const addressLabelFromConfig = configOf('address', 'Select-Delivery')
+      ?.address?.getStarted
+   const unavailableDaysFromConfig = configOf(
+      'address',
+      'Select-Delivery'
+   )?.deliveryUnavailable
 
    if (isEmpty(state.address.selected))
       return (
          <>
             <HelperBar type="info">
                <HelperBar.SubTitle>
-                  {addressLabelFromConfig?.value ? <span data-translation="true" >{addressLabelFromConfig?.value}</span> : t('Select an address to get started')}
+                  {addressLabelFromConfig?.value ? (
+                     <span data-translation="true">
+                        {addressLabelFromConfig?.value}
+                     </span>
+                  ) : (
+                     t('Select an address to get started')
+                  )}
                </HelperBar.SubTitle>
             </HelperBar>
          </>
@@ -92,11 +99,13 @@ export const DeliverySection = ({ planId }) => {
       return (
          <HelperBar type="warning">
             <HelperBar.SubTitle>
-               {unavailableDaysFromConfig?.noDays?.value ? <span data-translation="true" >
-                  {unavailableDaysFromConfig?.noDays?.value}
-               </span> :
-                  t('No days are available for delivery on this address.')}
-
+               {unavailableDaysFromConfig?.noDays?.value ? (
+                  <span data-translation="true">
+                     {unavailableDaysFromConfig?.noDays?.value}
+                  </span>
+               ) : (
+                  t('No days are available for delivery on this address.')
+               )}
             </HelperBar.SubTitle>
             <HelperBar.Button
                onClick={() => router.push(getRoute('/get-started/select-plan'))}
@@ -111,14 +120,19 @@ export const DeliverySection = ({ planId }) => {
          {isEmpty(itemCount?.valid) && !isEmpty(itemCount?.invalid) && (
             <HelperBar type="warning">
                <HelperBar.SubTitle>
-                  {unavailableDaysFromConfig?.followingDays?.value ? <span data-translation="true"  >
-                     {unavailableDaysFromConfig?.followingDays?.value}
-                  </span> : t('Following days are not available for delivery on this address.')}
+                  {unavailableDaysFromConfig?.followingDays?.value ? (
+                     <span data-translation="true">
+                        {unavailableDaysFromConfig?.followingDays?.value}
+                     </span>
+                  ) : (
+                     t(
+                        'Following days are not available for delivery on this address.'
+                     )
+                  )}
                   {/* {unavailableDaysFromConfig?.followingDays?.value || 'Following days are not available for delivery on this address.'} */}
                </HelperBar.SubTitle>
             </HelperBar>
-         )
-         }
+         )}
          <ul className="hern-delivery__delivery-days__list">
             {itemCount?.valid?.map(day => {
                const iconClasses = classNames(
@@ -141,11 +155,11 @@ export const DeliverySection = ({ planId }) => {
                      onClick={() => daySelection(day)}
                      className={dateClasses}
                   >
-                     <div className="hern-delivery__delivery-days__check-icon__wrapper">
-                        <CheckIcon className={iconClasses} size={18} />
-                     </div>
                      <section className="hern-delivery__delivery-days__content">
-                        <label className="hern-delivery__delivery-days__label" data-translation="true"  >
+                        <label
+                           className="hern-delivery__delivery-days__label"
+                           data-translation="true"
+                        >
                            {rrulestr(day.rrule).toText()}
                         </label>
                         {day.zipcodes.length > 0 && (
@@ -165,10 +179,21 @@ export const DeliverySection = ({ planId }) => {
                                     )}
                                  </span>
                                  <p>
-                                    {day.zipcodes[0].deliveryPrice === 0
-                                       ? <span> {t('Free Delivery')}</span>
-                                       : <><span> {t('Delivery at')}</span>
-                                          <span>{formatCurrency(day.zipcodes[0].deliveryPrice)}</span></>}
+                                    {day.zipcodes[0].deliveryPrice === 0 ? (
+                                       <span> {t('Free Delivery')}&nbsp;</span>
+                                    ) : (
+                                       <>
+                                          <span>
+                                             {' '}
+                                             {t('Delivery at')} &nbsp;
+                                          </span>
+                                          <span>
+                                             {formatCurrency(
+                                                day.zipcodes[0].deliveryPrice
+                                             )}
+                                          </span>
+                                       </>
+                                    )}
                                  </p>
                               </section>
                               {day.zipcodes[0].isPickupActive && (
@@ -195,14 +220,11 @@ export const DeliverySection = ({ planId }) => {
                      className="hern-delivery__delivery-days__list-item hern-delivery__delivery-days__list-item--invalid"
                      title="Not available on this zipcode"
                   >
-                     <div className="hern-delivery__delivery-days__check-icon__wrapper">
-                        <CheckIcon
-                           className="hern-delivery__delivery-days__check-icon"
-                           size={18}
-                        />
-                     </div>
                      <section className="hern-delivery__delivery-days__content">
-                        <label className="hern-delivery__delivery-days__label" data-translation="true" >
+                        <label
+                           className="hern-delivery__delivery-days__label"
+                           data-translation="true"
+                        >
                            {rrulestr(day.rrule).toText()}
                         </label>
                         {day.zipcodes.length > 0 && (
@@ -222,10 +244,18 @@ export const DeliverySection = ({ planId }) => {
                                     )}
                                  </span>
                                  <p>
-                                    {day.zipcodes[0].deliveryPrice === 0
-                                       ? <span> {t('Free Delivery')}</span>
-                                       : <><span> {t('Delivery at')}</span>
-                                          <span>{formatCurrency(day.zipcodes[0].deliveryPrice)}</span></>}
+                                    {day.zipcodes[0].deliveryPrice === 0 ? (
+                                       <span> {t('Free Delivery')}</span>
+                                    ) : (
+                                       <>
+                                          <span> {t('Delivery at')}</span>
+                                          <span>
+                                             {formatCurrency(
+                                                day.zipcodes[0].deliveryPrice
+                                             )}
+                                          </span>
+                                       </>
+                                    )}
                                  </p>
                               </section>
                               <section className="hern-delivery__delivery-days__fulfillment__pickup">
