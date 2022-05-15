@@ -1,16 +1,12 @@
 .hern-steps-navbar {
-   height: 64px;
-   display: grid;
-   z-index: 1000;
-   grid-template-columns: auto 1fr auto;
+   height: 200px;
    width: 100%;
-   background: #fff;
-   position: fixed;
-   top: 0;
-   left: 0;
-   right: 0;
-   align-items: center;
-   border-bottom-width: 1px;
+   color: #fff;
+   > div {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+   }
    @media (max-width: 767px) {
       display: flex;
    }
@@ -18,10 +14,9 @@
 .hern-steps-navbar__brand {
    text-decoration: none;
    height: 100%;
-   padding: 0 1.5rem;
+   padding: 12px;
    display: flex;
    align-items: center;
-   border-right-width: 1px;
    color: rgba(31, 41, 55, 1);
 }
 .hern-steps-navbar__brand__img {
@@ -31,7 +26,7 @@
    margin-left: 0.5rem;
 }
 .hern-steps-navbar__progress {
-   min-width: 720px;
+   max-width: 600px;
    display: flex;
    flex-direction: column;
    justify-content: center;
@@ -79,15 +74,52 @@
    grid-template-columns: repeat(4, minmax(0, 1fr));
 }
 .hern-steps-navbar__step {
-   font-size: 0.875rem;
-   line-height: 1.25rem;
-   text-align: center;
-   color: rgba(156, 163, 175, 1);
+   position: relative;
+   display: flex;
+   align-items: center;
+   > div {
+      box-shadow: 0px 0px 6.33342px rgba(0, 0, 0, 0.1);
+      border-radius: 50%;
+      background-color: #fff;
+   }
+
+   > div > span {
+      white-space: nowrap;
+      overflow: hidden;
+      position: absolute;
+      left: 0;
+      color: #b1b1b1;
+      font-style: normal;
+      font-weight: 600;
+      font-size: 14px;
+      line-height: 18px;
+      margin-top: 6px;
+   }
+   .hern-steps-navbar__step__icon {
+      height: 60px;
+      width: 60px;
+      border-radius: 50%;
+      background-color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 6px;
+   }
 }
+
 .hern-steps-navbar__step--active {
    @extend .hern-steps-navbar__step;
    color: rgba(75, 85, 99, 1);
    cursor: pointer;
+   .hern-steps-navbar__step__icon {
+      background-color: var(--hern-accent);
+   }
+   .hern-steps-navbar__step__tail {
+      background-color: var(--hern-accent);
+   }
+   > div > span {
+      color: #3f4441;
+   }
 }
 
 .hern-steps-navbar__logout {
@@ -95,11 +127,23 @@
    margin-left: auto;
 }
 .hern-steps-navbar__logout__btn {
-   padding: 0.25rem 0.5rem;
-   color: rgba(220, 38, 38, 1);
+   border: 0.3px solid #3f4441;
+   border-radius: 2px;
+   padding: 0.25rem 1rem;
+   color: #3f4441;
    border-radius: 0.25rem;
    -webkit-border-radius: 0.25rem;
    -moz-border-radius: 0.25rem;
    -ms-border-radius: 0.25rem;
    -o-border-radius: 0.25rem;
+   font-weight: 500;
+}
+
+.hern-steps-navbar__step__tail {
+   color: #fff;
+   display: inline-block;
+   height: 6px;
+   width: 100px;
+   box-shadow: 0px 0px 7.16509px rgba(0, 0, 0, 0.09);
+   border-radius: 2.68691px;
 }
