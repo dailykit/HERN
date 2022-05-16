@@ -25,8 +25,13 @@ export const KioskProduct = props => {
    // context
    const { cartState, methods, addToCart, combinedCartItems } =
       React.useContext(CartContext)
-   const { brand, isConfigLoading, kioskDetails, isStoreAvailable } =
-      useConfig()
+   const {
+      brand,
+      isConfigLoading,
+      kioskDetails,
+      isStoreAvailable,
+      brandLocation,
+   } = useConfig()
 
    const { config, productData, setCurrentPage } = props
    const { t, locale, dynamicTrans } = useTranslation()
@@ -62,9 +67,10 @@ export const KioskProduct = props => {
          params: {
             brandId: brand?.id,
             locationId: kioskDetails?.locationId,
+            brand_locationId: brandLocation?.id,
          },
       }),
-      [brand]
+      [brand, kioskDetails?.locationId, brandLocation?.id]
    )
 
    const { data: additionalModifierTemplates } = useQuery(GET_MODIFIER_BY_ID, {
@@ -266,17 +272,45 @@ export const KioskProduct = props => {
          }
       }
    }, [isStoreAvailable])
+
+   const isProductOutOfStock = React.useMemo(() => {
+      if (productData.isAvailable) {
+         if (
+            productData.productOptions.length > 0 &&
+            productData.isPopupAllowed
+         ) {
+            const availableProductOptions = productData.productOptions.filter(
+               option => option.isPublished && option.isAvailable
+            ).length
+            if (availableProductOptions > 0) {
+               return false
+            } else {
+               return true
+            }
+         } else {
+            return false
+         }
+      }
+      return true
+   }, [productData])
+
    const defaultProductOption = React.useMemo(() => {
       if (productData.productOptions.length === 0) {
          return {}
       }
+      if (isProductOutOfStock) {
+         return productData.productOptions[0]
+      }
       return (
          productData.productOptions.find(
-            x => x.id === productData.defaultProductOptionId
+            x =>
+               x.id === productData.defaultProductOptionId &&
+               x.isPublished &&
+               x.isAvailable
          ) ||
          productData.productOptions.find(x => x.isPublished && x.isAvailable)
       )
-   }, [productData])
+   }, [productData, isProductOutOfStock])
 
    const handelAddToCartClick = () => {
       // product availability
@@ -288,7 +322,7 @@ export const KioskProduct = props => {
             ) {
                const availableProductOptions =
                   productData.productOptions.filter(
-                     option => option.isAvailable
+                     option => option.isAvailable && option.isPublished
                   ).length
                if (availableProductOptions > 0) {
                   setShowModifier(true)
@@ -299,24 +333,7 @@ export const KioskProduct = props => {
          }
       }
    }
-   const isProductOutOfStock = React.useMemo(() => {
-      if (productData.isAvailable) {
-         if (
-            productData.productOptions.length > 0 &&
-            productData.isPopupAllowed
-         ) {
-            const availableProductOptions = productData.productOptions.filter(
-               option => option.isAvailable
-            ).length
-            if (availableProductOptions > 0) {
-               return false
-            } else {
-               return true
-            }
-         }
-      }
-      return false
-   }, [productData])
+
    return (
       <>
          <div
