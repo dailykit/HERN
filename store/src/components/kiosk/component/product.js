@@ -272,42 +272,7 @@ export const KioskProduct = props => {
          }
       }
    }, [isStoreAvailable])
-   const defaultProductOption = React.useMemo(() => {
-      if (productData.productOptions.length === 0) {
-         return {}
-      }
-      return (
-         productData.productOptions.find(
-            x =>
-               x.id === productData.defaultProductOptionId &&
-               x.isPublished &&
-               x.isAvailable
-         ) ||
-         productData.productOptions.find(x => x.isPublished && x.isAvailable)
-      )
-   }, [productData])
 
-   const handelAddToCartClick = () => {
-      // product availability
-      if (productData.isAvailable) {
-         if (showAddToCartButton) {
-            if (
-               productData.productOptions.length > 0 &&
-               productData.isPopupAllowed
-            ) {
-               const availableProductOptions =
-                  productData.productOptions.filter(
-                     option => option.isAvailable
-                  ).length
-               if (availableProductOptions > 0) {
-                  setShowModifier(true)
-               }
-            } else {
-               addToCart(productData.defaultCartItem, 1)
-            }
-         }
-      }
-   }
    const isProductOutOfStock = React.useMemo(() => {
       if (productData.isAvailable) {
          if (
@@ -315,7 +280,7 @@ export const KioskProduct = props => {
             productData.isPopupAllowed
          ) {
             const availableProductOptions = productData.productOptions.filter(
-               option => option.isAvailable
+               option => option.isPublished && option.isAvailable
             ).length
             if (availableProductOptions > 0) {
                return false
@@ -328,6 +293,47 @@ export const KioskProduct = props => {
       }
       return true
    }, [productData])
+
+   const defaultProductOption = React.useMemo(() => {
+      if (productData.productOptions.length === 0) {
+         return {}
+      }
+      if (isProductOutOfStock) {
+         return productData.productOptions[0]
+      }
+      return (
+         productData.productOptions.find(
+            x =>
+               x.id === productData.defaultProductOptionId &&
+               x.isPublished &&
+               x.isAvailable
+         ) ||
+         productData.productOptions.find(x => x.isPublished && x.isAvailable)
+      )
+   }, [productData, isProductOutOfStock])
+
+   const handelAddToCartClick = () => {
+      // product availability
+      if (productData.isAvailable) {
+         if (showAddToCartButton) {
+            if (
+               productData.productOptions.length > 0 &&
+               productData.isPopupAllowed
+            ) {
+               const availableProductOptions =
+                  productData.productOptions.filter(
+                     option => option.isAvailable && option.isPublished
+                  ).length
+               if (availableProductOptions > 0) {
+                  setShowModifier(true)
+               }
+            } else {
+               addToCart(productData.defaultCartItem, 1)
+            }
+         }
+      }
+   }
+
    return (
       <>
          <div
