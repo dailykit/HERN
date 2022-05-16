@@ -18,13 +18,13 @@ export const getAnimationConfig = animationConfig => {
       if (isAnimationRequired) {
          if (_hasIn(animationConfig, 'animation.animateIn')) {
             animateIn =
-               animationConfig.animation.animateIn.value ||
-               animationConfig.animation.animateIn.default
+               animationConfig.animation.animateIn.value.value ||
+               animationConfig.animation.animateIn.default.value
          }
          if (_hasIn(animationConfig, 'animation.animateOut')) {
             animateOut =
-               animationConfig.animation.animateOut.value ||
-               animationConfig.animation.animateOut.default
+               animationConfig.animation.animateOut.value.value ||
+               animationConfig.animation.animateOut.default.value
          }
          if (_hasIn(animationConfig, 'animation.duration')) {
             duration =
