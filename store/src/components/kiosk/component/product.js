@@ -25,8 +25,13 @@ export const KioskProduct = props => {
    // context
    const { cartState, methods, addToCart, combinedCartItems } =
       React.useContext(CartContext)
-   const { brand, isConfigLoading, kioskDetails, isStoreAvailable } =
-      useConfig()
+   const {
+      brand,
+      isConfigLoading,
+      kioskDetails,
+      isStoreAvailable,
+      brandLocation,
+   } = useConfig()
 
    const { config, productData, setCurrentPage } = props
    const { t, locale, dynamicTrans } = useTranslation()
@@ -62,9 +67,10 @@ export const KioskProduct = props => {
          params: {
             brandId: brand?.id,
             locationId: kioskDetails?.locationId,
+            brand_locationId: brandLocation?.id,
          },
       }),
-      [brand]
+      [brand, kioskDetails?.locationId, brandLocation?.id]
    )
 
    const { data: additionalModifierTemplates } = useQuery(GET_MODIFIER_BY_ID, {
@@ -272,7 +278,10 @@ export const KioskProduct = props => {
       }
       return (
          productData.productOptions.find(
-            x => x.id === productData.defaultProductOptionId
+            x =>
+               x.id === productData.defaultProductOptionId &&
+               x.isPublished &&
+               x.isAvailable
          ) ||
          productData.productOptions.find(x => x.isPublished && x.isAvailable)
       )
@@ -313,9 +322,11 @@ export const KioskProduct = props => {
             } else {
                return true
             }
+         } else {
+            return false
          }
       }
-      return false
+      return true
    }, [productData])
    return (
       <>

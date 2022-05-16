@@ -23,11 +23,9 @@ export const ProductGalleryKiosk = ({ config }) => {
 
    const argsForByLocation = React.useMemo(
       () => ({
-         params: {
-            brandId: brand?.id,
-            locationId: kioskDetails?.locationId,
-            brand_locationId: brandLocation?.id,
-         },
+         brandId: brand?.id,
+         locationId: kioskDetails?.locationId,
+         brand_locationId: brandLocation?.id,
       }),
       [brand, kioskDetails?.locationId, brandLocation?.id]
    )
