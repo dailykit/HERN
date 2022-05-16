@@ -34,7 +34,7 @@ export const DineInTableSelection = props => {
          },
       },
    })
-   console.log('data', data)
+   // console.log('data', data)
    const DineInFooter = () => {
       return (
          <KioskButton

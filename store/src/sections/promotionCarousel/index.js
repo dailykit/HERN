@@ -83,13 +83,22 @@ export const PromotionCarousal = props => {
             const clickedProduct = productsData.products.find(
                product => product.id == imageDetail.productId
             )
-            if (clickedProduct) {
+            const isProductAvailable =
+               clickedProduct?.isAvailable && clickedProduct?.isPublished
+
+            if (clickedProduct && isProductAvailable) {
                if (
                   clickedProduct.productOptions.length > 0 &&
                   clickedProduct.isPopupAllowed
                ) {
-                  setShowModifierPopup(true)
-                  setProductData(clickedProduct)
+                  const isProductOptionsAvailable =
+                     productData.productOptions.filter(
+                        option => option.isPublished && option.isAvailable
+                     ).length > 0
+                  if (isProductOptionsAvailable) {
+                     setShowModifierPopup(true)
+                     setProductData(clickedProduct)
+                  }
                } else {
                   if (isStoreAvailable) {
                      addToCart(clickedProduct.defaultCartItem, 1)
