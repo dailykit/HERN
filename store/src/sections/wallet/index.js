@@ -5,13 +5,10 @@ import { Spacer, ProfileSidebar, Form } from '../../components'
 import { formatCurrency, useWindowSize } from '../../utils'
 import * as moment from 'moment'
 import { useToasts } from 'react-toast-notifications'
-import { get_env } from '../../utils'
-import { BiClipboard } from 'react-icons/bi'
-import CopyToClipboard from 'react-copy-to-clipboard'
-import {
-   WalletPageIllustration,
-   WalletPageIllustrationResponsive,
-} from '../../assets/icons'
+import { getRoute } from '../../utils'
+import { AiOutlineArrowRight } from 'react-icons/ai'
+import { WalletPageIllustration } from '../../assets/icons'
+import Link from 'next/link'
 
 export const Wallet = () => {
    return (
@@ -141,16 +138,25 @@ const Content = () => {
                         </tbody>
                      </table>
                   </div>
-               ) : width > 767 ? (
-                  <p class="hern-wallet_no_txn">
-                     {' '}
-                     <WalletPageIllustration width={933} height={500} />
-                  </p>
                ) : (
-                  <p class="hern-wallet_no_txn">
-                     {' '}
-                     <WalletPageIllustrationResponsive />
-                  </p>
+                  <div className="hern-wallet-wallet-illustration">
+                     <WalletPageIllustration />
+                     <p>
+                        Oops! it’s look like you don’t have any transaction
+                        history yet
+                     </p>
+                     <Link href={getRoute('/account/referrals')}>
+                        <a>
+                           Refer and Earn
+                           <span>
+                              <AiOutlineArrowRight
+                                 color="var(--hern-accent)"
+                                 size={16}
+                              />
+                           </span>
+                        </a>
+                     </Link>
+                  </div>
                )}
             </>
          )}

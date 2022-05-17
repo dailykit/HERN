@@ -46,6 +46,7 @@ export const ProductCard = props => {
       className = '',
       config,
       stepView = false,
+      autoPlaySlider = false,
    } = props
    // console.log('🚀 ~ file: product_card.jsx ~ line 50 ~ data', data)
    const { t, dynamicTrans, locale } = useTranslation()
@@ -131,7 +132,11 @@ export const ProductCard = props => {
             <div className={classNames('hern-product-card', className)}>
                {showImage && (
                   <div className="hern-product-card-image-container">
-                     <Slide ref={slideRef} {...properties}>
+                     <Slide
+                        ref={slideRef}
+                        infinite={autoPlaySlider}
+                        autoplay={autoPlaySlider}
+                     >
                         {data.assets.images.map((each, index) => {
                            return (
                               <div key={each}>
