@@ -33,8 +33,8 @@ export const getAnimationConfig = animationConfig => {
          }
          if (_hasIn(animationConfig, 'animation.delay')) {
             delay =
-               animationConfig.animation.delay.value ||
-               animationConfig.animation.delay.default
+               +animationConfig.animation.delay.value ||
+               +animationConfig.animation.delay.default
          }
          if (_hasIn(animationConfig, 'animation.initiallyVisible')) {
             initiallyVisible =
