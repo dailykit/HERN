@@ -79,10 +79,10 @@ export const Testimonials = ({ config }) => {
                            }
                            className="hern-testimonials__wrapper"
                         >
-                           <div className="hern-testimonials__image">
-                              <HernLazyImage dataSrc={img} alt={userName} />
-                           </div>
                            <div className="hern-testimonials__content">
+                              <div className="hern-testimonials__image">
+                                 <HernLazyImage dataSrc={img} alt={userName} />
+                              </div>
                               <span>
                                  <FaQuoteLeft color="#fff" />
                               </span>

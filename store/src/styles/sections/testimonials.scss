@@ -79,6 +79,19 @@
    padding: 32px 48px;
    position: relative;
    width: 100%;
+   border-radius: 6px;
+   .hern-testimonials__image {
+      height: 120px;
+      width: 120px;
+      border-radius: 50%;
+      margin: 0 auto 16px auto;
+      background-color: #fff;
+      padding: 6px;
+      box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+      > img {
+         border-radius: 50%;
+      }
+   }
    p {
       color: #777;
       font-style: italic;
