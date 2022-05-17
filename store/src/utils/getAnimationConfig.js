@@ -28,8 +28,8 @@ export const getAnimationConfig = animationConfig => {
          }
          if (_hasIn(animationConfig, 'animation.duration')) {
             duration =
-               animationConfig.animation.duration.value ||
-               animationConfig.animation.duration.default
+               +animationConfig.animation.duration.value ||
+               +animationConfig.animation.duration.default
          }
          if (_hasIn(animationConfig, 'animation.delay')) {
             delay =
