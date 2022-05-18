@@ -4,7 +4,6 @@ import { useMutation } from '@apollo/react-hooks'
 import { toast } from 'react-toastify'
 import { TunnelBody } from './style'
 import { UPDATE_WEBPAGE } from '../../../../../graphql'
-// import BrandContext from '../../../../../context/Brand'
 import {
    Banner,
    ConfigTemplateUI,
@@ -16,12 +15,10 @@ export default function AnimationSettingTunnel({
    closeTunnel,
    brandPage,
 }) {
-   // const [context, setContext] = React.useContext(BrandContext)
    const [brandContext, setBrandContext] = useContext(BrandContext)
    const [isChangeSaved, setIsSavedChange] = React.useState(true)
    const [mode, setMode] = React.useState('save')
    const [saveAllSettings, setSaveAllSettings] = React.useState({})
-   const [componentIsOnView, setIsComponentIsOnView] = React.useState([])
    const [alertShow, setAlertShow] = React.useState(false)
    const [config, setConfig] = React.useState({})
 

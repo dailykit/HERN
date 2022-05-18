@@ -16,6 +16,7 @@ import {
 import { useSubscription, useMutation, useQuery } from '@apollo/react-hooks'
 import { useParams } from 'react-router-dom'
 import { toast } from 'react-toastify'
+import isEmpty from 'lodash/isEmpty'
 import { useTabs } from '../../../../../shared/providers'
 import { StyledWrapper, InputWrapper, StyledDiv, Highlight } from './styled'
 import { PAGE_INFO, UPDATE_WEBPAGE } from '../../../graphql'
@@ -219,6 +220,76 @@ const PageForm = () => {
       }
    }
 
+   const openAnimationSettingHandler = () => {
+      const initialAnimationConfig = {
+         animation: {
+            duration: {
+               label: 'Animation Duration in ms',
+               value: '700',
+               default: 1,
+               dataType: 'number',
+               isRequired: true,
+               description: 'Animation duration in seconds.',
+               userInsertType: 'numberField',
+            },
+            animateIn: {
+               label: 'Enter Animation Style Name',
+               value: {
+                  id: 'fadeIn-30',
+                  name: 'fadeIn',
+                  value: 'animate__fadeIn',
+               },
+               default: {
+                  id: 'fadeIn-30',
+                  name: 'fadeIn',
+                  value: 'animate__fadeIn',
+               },
+               dataType: 'select',
+               isRequired: 'false',
+               description: 'This sets your animation of the page entering.',
+               userInsertType: 'animationSelector',
+            },
+            animateOut: {
+               label: 'Exit Animation Style Name',
+               value: {
+                  id: 'fadeOut-43',
+                  name: 'fadeOut',
+                  value: 'animate__fadeOut',
+               },
+               default: {
+                  id: 'fadeOut-43',
+                  name: 'fadeOut',
+                  value: 'animate__fadeOut',
+               },
+               dataType: 'select',
+               isRequired: 'false',
+               description: 'This sets your animation of the page exiting.',
+               userInsertType: 'animationSelector',
+            },
+            isAnimationRequired: {
+               label: 'Animation Required',
+               value: true,
+               default: true,
+               dataType: 'boolean',
+               isRequired: true,
+               description: 'Whether the animation effect required or not.',
+               userInsertType: 'toggle',
+            },
+         },
+      }
+      if (state && isEmpty(state.animationConfig)) {
+         updatePage({
+            variables: {
+               pageId: pageId,
+               set: {
+                  animationConfig: initialAnimationConfig,
+               },
+            },
+         })
+      }
+      openAnimationSettingTunnel(1)
+   }
+
    if (pageLoading) {
       return <InlineLoader />
    }
@@ -261,7 +332,7 @@ const PageForm = () => {
                   </Form.Group>
                   <Flex container alignItems="center" height="100%">
                      <TextButton
-                        onClick={() => openAnimationSettingTunnel(1)}
+                        onClick={openAnimationSettingHandler}
                         type="ghost"
                      >
                         Animation Setting
