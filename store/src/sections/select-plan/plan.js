@@ -25,24 +25,43 @@ export const Plan = ({ cameFrom = '', plan, handlePlanClick, itemCount }) => {
    const [showLoginPopup, setShowLoginPopup] = React.useState(false)
    const [selectedPlan, setSelectedPlan] = React.useState(null)
 
-   const [firstIndex, setFirstIndex] = React.useState(0)
-   const [lastIndex, setLastIndex] = React.useState(3)
+   const [servingsFirstIndex, setServingsFirstIndex] = React.useState(0)
+   const [servingsLastIndex, setServingsLastIndex] = React.useState(3)
 
-   const itemCountToShow = defaultServing?.itemCounts.slice(
-      firstIndex,
-      lastIndex
+   const [plansFirstIndex, setPlansFirstIndex] = React.useState(0)
+   const [plansLastIndex, setPlansLastIndex] = React.useState(3)
+
+   const plansToShow = plan.servings.slice(plansFirstIndex, plansLastIndex)
+
+   const servingsToShow = defaultServing?.itemCounts.slice(
+      servingsFirstIndex,
+      servingsLastIndex
    )
 
-   const handleNext = () => {
-      setFirstIndex(firstIndex + 3)
-      if (lastIndex < defaultServing?.itemCounts.length) {
-         setLastIndex(lastIndex + 3)
+   const handlePlanNext = () => {
+      setPlansFirstIndex(plansFirstIndex + 3)
+      if (plansLastIndex < plan.servings.length) {
+         setPlansLastIndex(plansLastIndex + 3)
       }
    }
-   const handlePrevious = () => {
-      if (firstIndex > 0) {
-         setFirstIndex(firstIndex - 3)
-         setLastIndex(lastIndex - 3)
+
+   const handlePlanPrevious = () => {
+      if (plansFirstIndex > 0) {
+         setPlansFirstIndex(plansFirstIndex - 3)
+         setPlansLastIndex(plansLastIndex - 3)
+      }
+   }
+
+   const handleRecipeNext = () => {
+      setServingsFirstIndex(servingsFirstIndex + 3)
+      if (servingsLastIndex < defaultServing?.itemCounts.length) {
+         setServingsLastIndex(servingsLastIndex + 3)
+      }
+   }
+   const handleRecipePrevious = () => {
+      if (servingsFirstIndex > 0) {
+         setServingsFirstIndex(servingsFirstIndex - 3)
+         setServingsLastIndex(servingsLastIndex - 3)
       }
    }
 
@@ -211,7 +230,16 @@ export const Plan = ({ cameFrom = '', plan, handlePlanClick, itemCount }) => {
                            </span>
                         </span>
                         <ul className="hern-our-plans__plan__servings__count-list ">
-                           {plan.servings.map(serving => {
+                           {plansFirstIndex > 0 && plan.servings.length > 3 && (
+                              <button
+                                 onClick={handlePlanPrevious}
+                                 style={{ marginRight: '11px' }}
+                              >
+                                 <BiChevronLeft size={20} />
+                              </button>
+                           )}
+
+                           {plansToShow.map(serving => {
                               const countListClasses = classNames(
                                  'hern-our-plans__plan__servings__count-list-item',
                                  {
@@ -238,13 +266,12 @@ export const Plan = ({ cameFrom = '', plan, handlePlanClick, itemCount }) => {
                                  </li>
                               )
                            })}
-                           <div onClick={() => alert('Clicked')}>
-                              <ChevronIcon
-                                 color="#3F4441"
-                                 width={6.5}
-                                 height={11}
-                              />
-                           </div>
+
+                           {plan.servings.length > servingsLastIndex && (
+                              <button onClick={handlePlanNext}>
+                                 <BiChevronRight size={20} />
+                              </button>
+                           )}
                         </ul>
                      </div>
                   )}
@@ -272,14 +299,17 @@ export const Plan = ({ cameFrom = '', plan, handlePlanClick, itemCount }) => {
                         </span>
 
                         <ul className="hern-our-plans__plan__items-per-week__count-list ">
-                           {firstIndex > 0 &&
+                           {servingsFirstIndex > 0 &&
                               defaultServing?.itemCounts.length > 3 && (
-                                 <button onClick={handlePrevious}>
+                                 <button
+                                    onClick={handleRecipePrevious}
+                                    style={{ marginRight: '11px' }}
+                                 >
                                     <BiChevronLeft size={20} />
                                  </button>
                               )}
 
-                           {itemCountToShow.map(item => {
+                           {servingsToShow.map(item => {
                               const countListClasses = classNames(
                                  'hern-our-plans__plan__items-per-week__count-list-item',
                                  {
@@ -308,8 +338,9 @@ export const Plan = ({ cameFrom = '', plan, handlePlanClick, itemCount }) => {
                               )
                            })}
 
-                           {defaultServing?.itemCounts.length > lastIndex && (
-                              <button onClick={handleNext}>
+                           {defaultServing?.itemCounts.length >
+                              servingsLastIndex && (
+                              <button onClick={handleRecipeNext}>
                                  <BiChevronRight size={20} />
                               </button>
                            )}
