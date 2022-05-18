@@ -546,7 +546,7 @@ export const PaymentProvider = ({ children }) => {
                      brand,
                      theme,
                      paymentInfo: cartPayment.availablePaymentOption,
-                     profileInfo: cartPayment.cart.customerInfo,
+                     profileInfo: cartPayment?.cart?.customerInfo,
                      ondismissHandler: () => onCancelledHandler(),
                      eventHandler,
                   })

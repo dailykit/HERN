@@ -17,7 +17,8 @@ const initiatePayment = async arg => {
          requires3dSecure,
          amount,
          oldAmount,
-         cartId
+         cartId,
+         metaData = {}
       } = arg
       console.log('initiating razorpay instance')
       const razorpayInstance = await razorpay()
@@ -25,13 +26,18 @@ const initiatePayment = async arg => {
       var options = {
          amount: (amount * 100).toFixed(0),
          currency: CURRENCY,
-         receipt: `order_rcptid_${cartId}_${cartPaymentId}`,
+         receipt: cartId
+            ? `order_rcptid_${cartId}_${cartPaymentId}`
+            : `order_rcptid_${cartPaymentId}`,
          payment: {
             capture: 'automatic',
             capture_options: {
                refund_speed: 'optimum'
             }
-         }
+         },
+         ...(metaData && {
+            notes: metaData
+         })
       }
       console.log({ options })
       const response = await razorpayInstance.orders.create(options)
