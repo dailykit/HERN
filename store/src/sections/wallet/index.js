@@ -38,7 +38,15 @@ const Content = () => {
       dynamicTrans(languageTags)
    }, [currentLang])
 
-   return (
+   return !isAvailable ? (
+      <section className="hern-wallet__content">
+         <header className="hern-wallet__header">
+            <h2 className="hern-wallet__not_available_header">
+               {t('This scheme is not available right now')}
+            </h2>
+         </header>
+      </section>
+   ) : (
       <section className="hern-wallet__content">
          <header className="hern-wallet__header">
             <h2
@@ -52,7 +60,7 @@ const Content = () => {
                {t('WALLET BALANCE')}
             </h2>
          </header>
-         {isAvailable && !!user.wallet && (
+         {!!user.wallet && (
             <>
                <div style={{ display: 'flex', alignItems: 'center' }}>
                   <span className="hern-wallet__total_balance_title">
