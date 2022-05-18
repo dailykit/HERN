@@ -8,6 +8,8 @@ import { useTranslation, useUser } from '../../context'
 import { Loader } from '../../components'
 import { isClient, formatCurrency, getRoute, LoginWrapper } from '../../utils'
 import { HernLazyImage } from '../../utils/hernImage'
+import { BiChevronLeft, BiChevronRight } from 'react-icons/bi'
+
 import { ChevronIcon } from '../../assets/icons/Chevron'
 
 const ReactPixel = isClient ? require('react-facebook-pixel').default : null
@@ -22,20 +24,26 @@ export const Plan = ({ cameFrom = '', plan, handlePlanClick, itemCount }) => {
    const [defaultServing, setDefaultServing] = React.useState(null)
    const [showLoginPopup, setShowLoginPopup] = React.useState(false)
    const [selectedPlan, setSelectedPlan] = React.useState(null)
-   const [planChevronDirection, setPlanCheveronDirection] = React.useState(true)
-   const [recipeChevronDirection, setRecipeCheveronDirection] =
-      React.useState(true)
 
-   const [isSelectorDropped, setIsSelectorDropped] = React.useState(false)
+   const [firstIndex, setFirstIndex] = React.useState(0)
+   const [lastIndex, setLastIndex] = React.useState(3)
 
-   // handle chevron direction
-   const handlePlanChevron = () => {
-      setPlanCheveronDirection(prevState => !prevState)
-      setIsSelectorDropped(prevState => !prevState)
+   const itemCountToShow = defaultServing?.itemCounts.slice(
+      firstIndex,
+      lastIndex
+   )
+
+   const handleNext = () => {
+      setFirstIndex(firstIndex + 3)
+      if (lastIndex < defaultServing?.itemCounts.length) {
+         setLastIndex(lastIndex + 3)
+      }
    }
-   const handleRecipeChevron = () => {
-      setRecipeCheveronDirection(prevState => !prevState)
-      setIsSelectorDropped(prevState => !prevState)
+   const handlePrevious = () => {
+      if (firstIndex > 0) {
+         setFirstIndex(firstIndex - 3)
+         setLastIndex(lastIndex - 3)
+      }
    }
 
    React.useEffect(() => {
@@ -194,44 +202,6 @@ export const Plan = ({ cameFrom = '', plan, handlePlanClick, itemCount }) => {
                               : yieldLabel.plural}
                         </span>
                      </span>
-                  ) : plan.servings.length <= 3 ? (
-                     <div className="hern-our-plans__plan__servings__wrapper">
-                        <span className="hern-our-plans__plan__servings__label--multi">
-                           <span>{t('No. of')}</span>{' '}
-                           <span data-translation="true">
-                              {yieldLabel.plural}
-                           </span>
-                        </span>
-                        <ul className="hern-our-plans__plan__servings__count-list">
-                           {plan.servings.map(serving => {
-                              const countListClasses = classNames(
-                                 'hern-our-plans__plan__servings__count-list-item',
-                                 {
-                                    'hern-our-plans__plan__servings__count-list-item--active':
-                                       serving.id === defaultServing?.id,
-                                 }
-                              )
-                              return (
-                                 <li
-                                    className={countListClasses}
-                                    key={serving.id}
-                                    onClick={() => setDefaultServing(serving)}
-                                 >
-                                    <div className="hern-our-plans__plan__servings-size">
-                                       <div data-translation="true">
-                                          {serving.size}
-                                       </div>
-                                       {serving?.metaDetails?.label && (
-                                          <div data-translation="true">
-                                             {serving?.metaDetails?.label}
-                                          </div>
-                                       )}
-                                    </div>
-                                 </li>
-                              )
-                           })}
-                        </ul>
-                     </div>
                   ) : (
                      <div className="hern-our-plans__plan__servings__wrapper">
                         <span className="hern-our-plans__plan__servings__label--multi">
@@ -240,7 +210,7 @@ export const Plan = ({ cameFrom = '', plan, handlePlanClick, itemCount }) => {
                               {yieldLabel.plural}
                            </span>
                         </span>
-                        <ul className="hern-our-plans__plan__servings__count-list hern-our-plans__plan__servings__count-list-limit">
+                        <ul className="hern-our-plans__plan__servings__count-list ">
                            {plan.servings.map(serving => {
                               const countListClasses = classNames(
                                  'hern-our-plans__plan__servings__count-list-item',
@@ -268,51 +238,13 @@ export const Plan = ({ cameFrom = '', plan, handlePlanClick, itemCount }) => {
                                  </li>
                               )
                            })}
-                           <div onClick={handlePlanChevron}>
+                           <div onClick={() => alert('Clicked')}>
                               <ChevronIcon
-                                 color="#222222"
-                                 width={7}
+                                 color="#3F4441"
+                                 width={6.5}
                                  height={11}
-                                 direction={
-                                    planChevronDirection ? 'right' : 'down'
-                                 }
                               />
                            </div>
-                        </ul>
-                        <ul
-                           className="hern-our-plans__plan__servings__count-list hern-our-plans__plan__servings__count-list-vertical"
-                           style={{
-                              display: isSelectorDropped ? '' : 'none',
-                           }}
-                        >
-                           {plan.servings.map(serving => {
-                              const countListClasses = classNames(
-                                 'hern-our-plans__plan__servings__count-list-item',
-                                 {
-                                    'hern-our-plans__plan__servings__count-list-item--active':
-                                       serving.id === defaultServing?.id,
-                                 }
-                              )
-                              return (
-                                 <li
-                                    className={countListClasses}
-                                    key={serving.id}
-                                    onClick={() => setDefaultServing(serving)}
-                                    style={{ margin: 0 }}
-                                 >
-                                    <div className="hern-our-plans__plan__servings-size">
-                                       <div data-translation="true">
-                                          {serving.size}
-                                       </div>
-                                       {serving?.metaDetails?.label && (
-                                          <div data-translation="true">
-                                             {serving?.metaDetails?.label}
-                                          </div>
-                                       )}
-                                    </div>
-                                 </li>
-                              )
-                           })}
                         </ul>
                      </div>
                   )}
@@ -330,44 +262,6 @@ export const Plan = ({ cameFrom = '', plan, handlePlanClick, itemCount }) => {
                         </span>
                         {t('per week')}
                      </span>
-                  ) : defaultServing.itemCounts.length <= 3 ? (
-                     <div className="hern-our-plans__plan__items-per-week__wrapper">
-                        <span className="hern-our-plans__plan__items-per-week__label">
-                           <span data-translation="true">
-                              {itemCountLabel.singular}
-                           </span>{' '}
-                           {t('per week')}
-                        </span>
-                        <ul className="hern-our-plans__plan__items-per-week__count-list ">
-                           {defaultServing?.itemCounts.map(item => {
-                              const countListClasses = classNames(
-                                 'hern-our-plans__plan__items-per-week__count-list-item',
-                                 {
-                                    'hern-our-plans__plan__items-per-week__count-list-item--active':
-                                       item.id === defaultItemCount?.id,
-                                 }
-                              )
-                              return (
-                                 <li
-                                    className={countListClasses}
-                                    key={item.id}
-                                    onClick={() => setDefaultItemCount(item)}
-                                 >
-                                    <div className="hern-our-plans__plan__items-per-week__count">
-                                       <div data-translation="true">
-                                          {item.count}
-                                       </div>
-                                       {item?.metaDetails?.label && (
-                                          <div data-translation="true">
-                                             {item?.metaDetails?.label}
-                                          </div>
-                                       )}
-                                    </div>
-                                 </li>
-                              )
-                           })}
-                        </ul>
-                     </div>
                   ) : (
                      <div className="hern-our-plans__plan__items-per-week__wrapper">
                         <span className="hern-our-plans__plan__items-per-week__label">
@@ -376,8 +270,16 @@ export const Plan = ({ cameFrom = '', plan, handlePlanClick, itemCount }) => {
                            </span>{' '}
                            {t('per week')}
                         </span>
-                        <ul className="hern-our-plans__plan__items-per-week__count-list hern-our-plans__plan__items-per-week__count-list-limit">
-                           {defaultServing?.itemCounts.map(item => {
+
+                        <ul className="hern-our-plans__plan__items-per-week__count-list ">
+                           {firstIndex > 0 &&
+                              defaultServing?.itemCounts.length > 3 && (
+                                 <button onClick={handlePrevious}>
+                                    <BiChevronLeft size={20} />
+                                 </button>
+                              )}
+
+                           {itemCountToShow.map(item => {
                               const countListClasses = classNames(
                                  'hern-our-plans__plan__items-per-week__count-list-item',
                                  {
@@ -395,6 +297,7 @@ export const Plan = ({ cameFrom = '', plan, handlePlanClick, itemCount }) => {
                                        <div data-translation="true">
                                           {item.count}
                                        </div>
+
                                        {item?.metaDetails?.label && (
                                           <div data-translation="true">
                                              {item?.metaDetails?.label}
@@ -404,51 +307,12 @@ export const Plan = ({ cameFrom = '', plan, handlePlanClick, itemCount }) => {
                                  </li>
                               )
                            })}
-                           <div onClick={handleRecipeChevron}>
-                              <ChevronIcon
-                                 color="#222222"
-                                 width={7}
-                                 height={11}
-                                 direction={
-                                    recipeChevronDirection ? 'right' : 'down'
-                                 }
-                              />
-                           </div>
-                        </ul>
-                        <ul
-                           className="hern-our-plans__plan__items-per-week__count-list hern-our-plans__plan__items-per-week__count-list-vertical"
-                           style={{
-                              display: isSelectorDropped ? '' : 'none',
-                           }}
-                        >
-                           {defaultServing?.itemCounts.map(item => {
-                              const countListClasses = classNames(
-                                 'hern-our-plans__plan__items-per-week__count-list-item',
-                                 {
-                                    'hern-our-plans__plan__items-per-week__count-list-item--active':
-                                       item.id === defaultItemCount?.id,
-                                 }
-                              )
-                              return (
-                                 <li
-                                    className={countListClasses}
-                                    key={item.id}
-                                    onClick={() => setDefaultItemCount(item)}
-                                    style={{ margin: 0 }}
-                                 >
-                                    <div className="hern-our-plans__plan__items-per-week__count">
-                                       <div data-translation="true">
-                                          {item.count}
-                                       </div>
-                                       {item?.metaDetails?.label && (
-                                          <div data-translation="true">
-                                             {item?.metaDetails?.label}
-                                          </div>
-                                       )}
-                                    </div>
-                                 </li>
-                              )
-                           })}
+
+                           {defaultServing?.itemCounts.length > lastIndex && (
+                              <button onClick={handleNext}>
+                                 <BiChevronRight size={20} />
+                              </button>
+                           )}
                         </ul>
                      </div>
                   )}
