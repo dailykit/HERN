@@ -499,7 +499,7 @@ export const PaymentProvider = ({ children }) => {
    useEffect(() => {
       if (
          cartPayment?.paymentStatus === 'SUCCEEDED' &&
-         ALLOW_POSIST_PUSH_ORDER === 'true'
+         ALLOW_POSIST_PUSH_ORDER === true
       ) {
          console.log(
             'inside terminal payment useffect',
