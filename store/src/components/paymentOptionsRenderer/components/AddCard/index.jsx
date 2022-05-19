@@ -54,23 +54,6 @@ export const AddCard = ({ cartId, balanceToPay = 0, metaData = {} }) => {
       }
    )
 
-   //    React.useEffect(() => {
-   //       if (user.subscriptionPaymentMethodId) {
-   //          // dispatch({
-   //          //    type: 'SET_PAYMENT_METHOD',
-   //          //    payload: {
-   //          //       selected: { id: user.subscriptionPaymentMethodId },
-   //          //    },
-   //          // })
-   //          setPaymentInfo({
-   //             selectedAvailablePaymentOption: {
-   //                ...paymentInfo.selectedAvailablePaymentOption,
-   //                selectedPaymentMethodId: user.subscriptionPaymentMethodId,
-   //             },
-   //          })
-   //       }
-   //    }, [user])
-
    React.useEffect(() => {
       if (user?.platform_customer?.paymentCustomerId && isClient && !intent) {
          ;(async () => {
@@ -112,20 +95,6 @@ export const AddCard = ({ cartId, balanceToPay = 0, metaData = {} }) => {
                   ? 'Pay using added Cards'
                   : 'Add Card'}
             </SectionTitle>
-            {/* {user?.platform_customer?.paymentMethods.length > 0 && (
-               <OutlineButton onClick={() => toggleTunnel(true)}>
-                  <>
-                     <span tw="mr-2">
-                        <PlusCircle
-                           size="28"
-                           color="#38a169"
-                           style={{ display: 'inline-block' }}
-                        />
-                     </span>
-                     Add New Card
-                  </>
-               </OutlineButton>
-            )} */}
          </header>
 
          {user?.platform_customer?.paymentMethods.length === 0 && (

@@ -133,6 +133,8 @@ function PayButton({
                   paymentRetryAttempt: 1,
                   amount: balanceToPay,
                   isTest: user.isTest,
+                  paymentCustomerId: user.platform_customer.paymentCustomerId,
+                  paymentMethodId: paymentInfo?.selectedAvailablePaymentOption?.selectedPaymentMethodId,
                   usedAvailablePaymentOptionId: paymentInfo.selectedAvailablePaymentOption.id,
                   metaData: metaData
                }
