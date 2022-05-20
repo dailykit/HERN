@@ -10,8 +10,6 @@ import { isClient, formatCurrency, getRoute, LoginWrapper } from '../../utils'
 import { HernLazyImage } from '../../utils/hernImage'
 import { BiChevronLeft, BiChevronRight } from 'react-icons/bi'
 
-import { ChevronIcon } from '../../assets/icons/Chevron'
-
 const ReactPixel = isClient ? require('react-facebook-pixel').default : null
 
 export const Plan = ({ cameFrom = '', plan, handlePlanClick, itemCount }) => {
@@ -448,21 +446,6 @@ export const Plan = ({ cameFrom = '', plan, handlePlanClick, itemCount }) => {
                               >
                                  {formatCurrency(defaultItemCount?.price)}
                               </span>
-                              {/* <span className="hern-our-plans__price-total-servings__tax">
-                                 {defaultItemCount?.isTaxIncluded
-                                    ? t('Tax Inclusive')
-                                    : t('Tax Exclusive')}
-                              </span> */}
-                              {/* <span className="hern-our-plans__price-total-servings__suffix">
-                                 {(
-                                    <span data-translation="true">
-                                       {
-                                          priceDisplay?.pricePerPlan?.suffix
-                                             .value
-                                       }
-                                    </span>
-                                 ) || <span>{t('Weekly total')}</span>}
-                              </span> */}
                            </div>
                         </section>
                      )}
