@@ -27,7 +27,6 @@ const Content = () => {
    const theme = configOf('theme-color', 'Visual')
    const { width, height } = useWindowSize()
 
-
    const loyaltyPointConfig = configOf('Loyalty Points', 'rewards')
    const isLoyaltyPointsAvailable = React.useMemo(() => {
       return loyaltyPointConfig?.['Loyalty Points']?.IsLoyaltyPointsAvailable
@@ -43,7 +42,15 @@ const Content = () => {
       dynamicTrans(languageTags)
    }, [currentLang])
 
-   return (
+   return !isLoyaltyPointsAvailable ? (
+      <section className="hern-account-loyalty-points">
+         <header className="hern-account-loyalty-points__header">
+            <h2 className="hern-account-loyalty-points__not_available_header">
+               {t('This scheme is not available right now')}
+            </h2>
+         </header>
+      </section>
+   ) : (
       <section className="hern-account-loyalty-points">
          <header className="hern-account-loyalty-points__header">
             <h2
@@ -81,7 +88,7 @@ const Content = () => {
             </div>
          )}
 
-         {isLoyaltyPointsAvailable && !!user.loyaltyPoint ? (
+         {!!user.loyaltyPoint ? (
             <>
                <Form.Label
                   style={{
