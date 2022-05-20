@@ -5,10 +5,11 @@ import classNames from 'classnames'
 import { useDelivery } from './state'
 import { useConfig } from '../../lib'
 import { useTranslation, useUser } from '../../context'
-import { CheckIcon } from '../../assets/icons'
+import { LocationIcon } from '../../assets/icons'
 import { AddressTunnel } from './address_tunnel'
-import { Button, HelperBar } from '../../components'
+import { HelperBar } from '../../components'
 import { getRoute } from '../../utils'
+import { SectionTitle } from './section_title'
 
 export const AddressSection = () => {
    const router = useRouter()
@@ -44,28 +45,16 @@ export const AddressSection = () => {
 
    //config properties
    const theme = configOf('theme-color', 'Visual')
-   const addressLabelFromConfig = configOf('address', 'Select-Delivery')?.address?.selectAddress
 
    return (
       <>
-         <header className="hern-delivery__address-section__header">
-            <h3
-               className="hern-delivery__section-title"
-               style={{
-                  color: theme?.accent ? theme.accent : 'rgba(5, 150, 105, 1)',
-               }}
-            >
-               {<span data-translation="true" value={addressLabelFromConfig?.value}>{addressLabelFromConfig?.value}</span> || <span>{t('Select Address')}</span>}
-            </h3>
-            {user?.platform_customer?.addresses.length > 0 && (
-               <Button bg={theme?.accent} onClick={() => toggleTunnel(true)}>
-                  {t('Add Address')}
-               </Button>
-            )}
-         </header>
          {state.address.error && (
             <HelperBar type="error">
-               <HelperBar.SubTitle><span data-translation="true" value={state.address.error}>{state.address.error}</span></HelperBar.SubTitle>
+               <HelperBar.SubTitle>
+                  <span data-translation="true" value={state.address.error}>
+                     {state.address.error}
+                  </span>
+               </HelperBar.SubTitle>
                <HelperBar.Button
                   onClick={() =>
                      router.push(getRoute('/get-started/select-plan'))
@@ -99,7 +88,10 @@ export const AddressSection = () => {
                         className={addressListItem}
                      >
                         <div className="hern-delivery__address-list-item__check-icon__wrapper">
-                           <CheckIcon size={18} className={checkIconClasses} />
+                           <LocationIcon
+                              size={18}
+                              className={checkIconClasses}
+                           />
                         </div>
                         <label onClick={() => addressSelection(address)}>
                            <span>{address.line1}</span>
@@ -114,14 +106,12 @@ export const AddressSection = () => {
                })}
             </ul>
          ) : (
-            <HelperBar type="info">
-               <HelperBar.SubTitle>
-                  {t("Let's start with adding an address")}
-               </HelperBar.SubTitle>
-               <HelperBar.Button onClick={() => toggleTunnel(true)}>
-                  {t('Add Address')}
-               </HelperBar.Button>
-            </HelperBar>
+            <>
+               <div className="hern-address-section--no-address">
+                  <LocationIcon color="#BCBCBC" size={64} />
+                  <p>{t('No Address is added yet!')}</p>
+               </div>
+            </>
          )}
          {state.address.tunnel && <AddressTunnel />}
       </>
