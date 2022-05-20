@@ -15,11 +15,9 @@ export const useKioskMenu = collectionIds => {
 
    const argsForByLocation = React.useMemo(
       () => ({
-         params: {
-            brandId: brand?.id,
-            locationId: kioskDetails?.locationId,
-            brand_locationId: brandLocation?.id,
-         },
+         brandId: brand?.id,
+         locationId: kioskDetails?.locationId,
+         brand_locationId: brandLocation?.id,
       }),
       [brand, kioskDetails?.locationId, brandLocation?.id]
    )
@@ -70,19 +68,7 @@ export const useKioskMenu = collectionIds => {
          skip: menuData.isMenuLoading,
          variables: {
             ids: menuData.allProductIds,
-            priceArgs: argsForByLocation,
-            discountArgs: argsForByLocation,
-            defaultCartItemArgs: argsForByLocation,
-            productAvailabilityArgs: argsForByLocation,
-            productPublishArgs: argsForByLocation,
-            productOptionPriceArgs: argsForByLocation,
-            productOptionDiscountArgs: argsForByLocation,
-            productOptionAvailabilityArgs: argsForByLocation,
-            productOptionPublishArgs: argsForByLocation,
-            productOptionCartItemArgs: argsForByLocation,
-            modifierCategoryOptionPriceArgs: argsForByLocation,
-            modifierCategoryOptionDiscountArgs: argsForByLocation,
-            modifierCategoryOptionCartItemArgs: argsForByLocation,
+            params: argsForByLocation,
          },
          // fetchPolicy: 'network-only',
          onCompleted: data => {

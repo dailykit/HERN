@@ -30,7 +30,7 @@ const CartBar = dynamic(() => import('./CartBar').then(mod => mod.default))
 export const OnDemandOrder = ({ config }) => {
    const { addToast } = useToasts()
    const { dynamicTrans, locale } = useTranslation()
-   const { brand, locationId, storeStatus } = useConfig()
+   const { brand, locationId, storeStatus, brandLocation } = useConfig()
 
    const menuType = config?.display?.dropdown?.value[0]?.value
       ? config?.display?.dropdown?.value[0]?.value
@@ -70,6 +70,7 @@ export const OnDemandOrder = ({ config }) => {
       true
    const navbarCategoryAlignment =
       config?.display?.navbarCategoryAlignment?.value?.value ?? 'CENTER'
+   const autoPlaySlider = config?.display?.autoPlaySlider?.value ?? false
 
    setThemeVariable('--hern-number-of-products', numberOfProducts)
    setThemeVariable(
@@ -85,12 +86,11 @@ export const OnDemandOrder = ({ config }) => {
 
    const argsForByLocation = React.useMemo(
       () => ({
-         params: {
-            brandId: brand?.id,
-            locationId: locationId,
-         },
+         brandId: brand?.id,
+         locationId: locationId,
+         brand_locationId: brandLocation?.id,
       }),
-      [brand, locationId]
+      [brand, locationId, brandLocation?.id]
    )
    const currentLang = React.useMemo(() => locale, [locale])
    React.useEffect(() => {
@@ -106,15 +106,7 @@ export const OnDemandOrder = ({ config }) => {
          skip: isMenuLoading,
          variables: {
             ids: allProductIds,
-            priceArgs: argsForByLocation,
-            discountArgs: argsForByLocation,
-            defaultCartItemArgs: argsForByLocation,
-            productOptionPriceArgs: argsForByLocation,
-            productOptionDiscountArgs: argsForByLocation,
-            productOptionCartItemArgs: argsForByLocation,
-            modifierCategoryOptionPriceArgs: argsForByLocation,
-            modifierCategoryOptionDiscountArgs: argsForByLocation,
-            modifierCategoryOptionCartItemArgs: argsForByLocation,
+            params: argsForByLocation,
          },
          // fetchPolicy: 'network-only',
          onCompleted: data => {
@@ -258,6 +250,7 @@ export const OnDemandOrder = ({ config }) => {
                                     productModifier={productModifier}
                                     closeModifier={closeModifier}
                                     CustomAreaWrapper={CustomAreaWrapper}
+                                    autoPlaySlider={autoPlaySlider}
                                  />
                               ))}
                            </div>
@@ -283,6 +276,7 @@ const ProductWithIntersection = ({
    productModifier,
    closeModifier,
    CustomAreaWrapper,
+   autoPlaySlider,
 }) => {
    const router = useRouter()
    const productRef = React.useRef()
@@ -330,6 +324,7 @@ const ProductWithIntersection = ({
                   counterButtonPosition: 'BOTTOM',
                }}
                stepView={false}
+               autoPlaySlider={autoPlaySlider}
             />
          </ProductWrapper>
       </div>

@@ -23,11 +23,9 @@ export const ProductGalleryKiosk = ({ config }) => {
 
    const argsForByLocation = React.useMemo(
       () => ({
-         params: {
-            brandId: brand?.id,
-            locationId: kioskDetails?.locationId,
-            brand_locationId: brandLocation?.id,
-         },
+         brandId: brand?.id,
+         locationId: kioskDetails?.locationId,
+         brand_locationId: brandLocation?.id,
       }),
       [brand, kioskDetails?.locationId, brandLocation?.id]
    )
@@ -62,19 +60,7 @@ export const ProductGalleryKiosk = ({ config }) => {
             !config.productGallery.showProductGallery.value || isConfigLoading,
          variables: {
             ids: config.productGallery.products.value,
-            priceArgs: argsForByLocation,
-            discountArgs: argsForByLocation,
-            defaultCartItemArgs: argsForByLocation,
-            productAvailabilityArgs: argsForByLocation,
-            productPublishArgs: argsForByLocation,
-            productOptionPriceArgs: argsForByLocation,
-            productOptionDiscountArgs: argsForByLocation,
-            productOptionAvailabilityArgs: argsForByLocation,
-            productOptionPublishArgs: argsForByLocation,
-            productOptionCartItemArgs: argsForByLocation,
-            modifierCategoryOptionPriceArgs: argsForByLocation,
-            modifierCategoryOptionDiscountArgs: argsForByLocation,
-            modifierCategoryOptionCartItemArgs: argsForByLocation,
+            params: argsForByLocation,
          },
          // fetchPolicy: 'network-only',
          onCompleted: data => {
@@ -158,11 +144,18 @@ export const ProductGalleryKiosk = ({ config }) => {
             />
             <Carousel
                ref={carousalRef}
-               slidesToShow={4}
+               slidesToShow={
+                  products.filter(product => product.isPublished).length < 4
+                     ? products.filter(product => product.isPublished).length
+                     : 4
+               }
                slidesToScroll={4}
                infinite={false}
             >
                {products.map(eachProduct => {
+                  if (!eachProduct.isPublished) {
+                     return null
+                  }
                   return (
                      <ProductGalleryCard
                         product={eachProduct}
@@ -248,10 +241,13 @@ const ProductGalleryCard = ({ product, config }) => {
             })}
             buttonConfig={config.kioskSettings.buttonSettings}
             onClick={() => {
-               addToCart(product.defaultCartItem, 1)
+               if (product.isPublished && product.isAvailable) {
+                  addToCart(product.defaultCartItem, 1)
+               }
             }}
+            disabled={!product.isAvailable}
          >
-            {t('Add')}
+            {product.isAvailable ? t('Add') : t('Out of Stock')}
          </KioskButton>
       </div>
    )

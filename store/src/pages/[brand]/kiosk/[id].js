@@ -22,7 +22,7 @@ const KioskScreen = props => {
       value: '',
       isInvalid: false,
    })
-   console.log('kioskDetails', kioskDetails, brandLocationData)
+   // console.log('kioskDetails', kioskDetails, brandLocationData)
    const [isValidationLoading, setIsValidationLoading] = React.useState(true)
 
    useEffect(() => {
@@ -86,6 +86,7 @@ const KioskScreen = props => {
       onCompleted: data => {
          if (data.brands_locationKiosk.length === 0) {
             setPassword(prev => ({ ...prev, isInvalid: true }))
+            sessionStorage.removeItem('kiosk-ref-key')
          } else {
             const passwordInLocal = sessionStorage.getItem('kiosk-ref-key')
             if (passwordInLocal) {
