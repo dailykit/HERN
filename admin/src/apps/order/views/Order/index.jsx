@@ -31,7 +31,7 @@ import { Tree } from 'antd'
 import styled from 'styled-components'
 
 import { Products } from './sections'
-import { formatDate } from '../../utils'
+import { formatDate, combineCartItems } from '../../utils'
 import { findAndSelectSachet } from './methods'
 import { ResponsiveFlex, Styles } from './styled'
 import { QUERIES, MUTATIONS, CREATE_PRINT_JOB } from '../../graphql'
@@ -73,6 +73,7 @@ const Order = () => {
    const [isThirdParty, setIsThirdParty] = React.useState(false)
    const [treeviewProduct, setTreeviewProduct] = React.useState([])
    const [isSwitchedToTreeview, setIsSwitchedToTreeview] = React.useState(false)
+   const [orderedProducts, setOrderedProducts] = React.useState([])
 
    const [updateOrder] = useMutation(MUTATIONS.ORDER.UPDATE, {
       onCompleted: () => {
@@ -123,14 +124,18 @@ const Order = () => {
       skip: !order?.cartId,
       variables: {
          where: {
-            ...(!isSwitchedToTreeview && { levelType: { _eq: 'orderItem' } }),
+            // ...(!isSwitchedToTreeview && { levelType: { _eq: 'orderItem' } }),
             cartId: {
                _eq: order?.cartId,
             },
          },
       },
-      onSubscriptionData: ({ subscriptionData: { data = {} } = {} }) => {
-         setIsThirdParty(Boolean(data?.order?.thirdPartyOrderId))
+      onSubscriptionData: ({
+         subscriptionData: { data: { products = [] } = {} } = {},
+      }) => {
+         // setIsThirdParty(Boolean(data?.order?.thirdPartyOrderId))
+         const { refinedProducts } = combineCartItems(products)
+         setOrderedProducts(refinedProducts)
       },
    })
 
@@ -749,15 +754,18 @@ const Order = () => {
                   // index={tabIndex} onChange={onTabChange}
                   >
                      <HorizontalTabList style={{ padding: '0 16px' }}>
-                        {Object.keys(types).map(key => (
+                        {/* {Object.keys(types).map(key => (
                            <HorizontalTab key={key}>
                               {key === 'null' ? 'Others' : key}
                               <span> ({types[key].length})</span>
                            </HorizontalTab>
-                        ))}
+                        ))} */}
+                        <HorizontalTab>
+                           <span>Products</span>
+                        </HorizontalTab>
                      </HorizontalTabList>
                      <HorizontalTabPanels>
-                        {Object.values(types).map((listing, index) => (
+                        {/* {Object.values(types).map((listing, index) => (
                            <HorizontalTabPanel key={index}>
                               <Products
                                  products={listing}
@@ -765,7 +773,14 @@ const Order = () => {
                                  error={productsError}
                               />
                            </HorizontalTabPanel>
-                        ))}
+                        ))} */}
+                        <HorizontalTabPanel>
+                           <Products
+                              products={orderedProducts}
+                              loading={productsLoading}
+                              error={productsError}
+                           />
+                        </HorizontalTabPanel>
                      </HorizontalTabPanels>
                   </HorizontalTabs>
                )}

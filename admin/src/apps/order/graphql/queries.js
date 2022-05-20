@@ -245,6 +245,7 @@ export const QUERIES = {
                   order_by: { position: desc, created_at: desc }
                ) {
                   id
+                  parentCartItemId
                   cart {
                      id
                      order {
@@ -339,7 +340,7 @@ export const QUERIES = {
                   paymentStatus
                   fulfillmentInfo
                   customer: customerInfo
-                  products: cartItems(where: { level: { _eq: 1 } }) {
+                  products: cartItems {
                      id
                      displayName
                      displayUnit
@@ -385,14 +386,13 @@ export const QUERIES = {
                         value
                      }
                   }
-                  cartItems_aggregate(
-                     where: { levelType: { _eq: "orderItem" } }
-                  ) {
+                  cartItems_aggregate {
                      aggregate {
                         count
                      }
                      nodes {
                         id
+                        parentCartItemId
                         status
                         displayName
                         displayImage

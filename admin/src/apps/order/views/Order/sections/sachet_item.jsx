@@ -24,7 +24,9 @@ export const SachetItem = ({ item }) => {
          switchView('SUMMARY')
       } else {
          selectSachet(id, {
-            name: state.current_product?.displayName.split('->').pop().trim(),
+            name:
+               state.current_product?.displayName?.split('->')?.pop()?.trim() ||
+               'N/A',
          })
       }
       setIsOpen(isOpen === id ? '' : id)
@@ -128,7 +130,7 @@ export const SachetItem = ({ item }) => {
                      ''}
                   {!item?.bulkItemId && !item?.sachetItemId && 'NA'}
                </Text>
-            </section> 
+            </section>
             */}
          </main>
       </List.Item>

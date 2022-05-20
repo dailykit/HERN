@@ -32,7 +32,7 @@ const Sachets = () => {
          variables: {
             where: {
                parentCartItemId: { _eq: state?.current_product?.id },
-               levelType: { _eq: 'orderItemSachet' },
+               // levelType: { _eq: 'orderItemSachet' },
             },
          },
       }
@@ -40,6 +40,7 @@ const Sachets = () => {
 
    React.useEffect(() => {
       if (!loading && !isEmpty(sachets)) {
+         console.log('sachets', sachets)
          initiatePriority({
             data: sachets,
             tablename: 'cartItem',

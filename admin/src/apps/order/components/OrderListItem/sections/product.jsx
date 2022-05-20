@@ -1,5 +1,5 @@
 import React from 'react'
-import { isEmpty, groupBy } from 'lodash'
+import { isEmpty, groupBy, omit, isEqual } from 'lodash'
 import { useTranslation } from 'react-i18next'
 import { Flex, Text } from '@dailykit/ui'
 
@@ -12,11 +12,27 @@ import {
 } from './styled'
 import { UserIcon } from '../../../assets/icons'
 import { Spacer } from '../../OrderSummary/styled'
+import { combineCartItems } from '../../../utils'
 
 const address = 'apps.order.components.orderlistitem.'
 
-export const Products = ({ order }) => {
+export const Products = React.memo(function ProductsComp({ order }) {
    const { t } = useTranslation()
+   const [orderedProducts, setOrderedProducts] = React.useState([])
+   const types = groupBy(
+      order.cart.cartItems_aggregate.nodes,
+      'productOptionType'
+   )
+
+   React.useEffect(() => {
+      if (!isEmpty(order.cart.cartItems_aggregate.nodes)) {
+         const { refinedProducts } = combineCartItems(
+            order.cart.cartItems_aggregate.nodes
+         )
+         setOrderedProducts(refinedProducts)
+         console.log('products', refinedProducts)
+      }
+   }, [])
 
    if (order?.thirdPartyOrderId) {
       const { thirdPartyOrder: { products = [] } = {} } = order
@@ -65,30 +81,24 @@ export const Products = ({ order }) => {
       )
    }
 
-   const types = groupBy(
-      order.cart.cartItems_aggregate.nodes,
-      'productOptionType'
-   )
    return (
       <Styles.Products>
          <Styles.Tabs>
             <Styles.TabList>
                <Styles.Tab>
                   {t(address.concat('all'))}{' '}
-                  <StyledCount>
-                     {order.cart.cartItems_aggregate.aggregate.count}
-                  </StyledCount>
+                  <StyledCount>{orderedProducts.length}</StyledCount>
                </Styles.Tab>
-               {Object.keys(types).map(key => (
+               {/* {Object.keys(types).map(key => (
                   <Styles.Tab key={key}>
                      {key}
                      <StyledCount>{types[key].length}</StyledCount>
                   </Styles.Tab>
-               ))}
+               ))} */}
             </Styles.TabList>
             <Styles.TabPanels>
                <Styles.TabPanel>
-                  {order.cart.cartItems_aggregate.nodes.map(item => (
+                  {orderedProducts.map(item => (
                      <StyledProductItem key={item.id}>
                         <div>
                            <StyledProductTitle>
@@ -109,7 +119,7 @@ export const Products = ({ order }) => {
                      </StyledProductItem>
                   ))}
                </Styles.TabPanel>
-               {Object.values(types).map((listing, index) => (
+               {/* {Object.values(types).map((listing, index) => (
                   <Styles.TabPanel key={index}>
                      {listing.map(item => (
                         <StyledProductItem key={`${item.id}-${index}`}>
@@ -118,12 +128,12 @@ export const Products = ({ order }) => {
                                  {item.displayName.split('->').pop().trim()}
                               </StyledProductTitle>
                            </div>
-                           {/* <StyledServings>
+                           <StyledServings>
                               <span>
                                  <UserIcon size={16} color="#555B6E" />
                               </span>
                               <span>{item.productOption?.label}</span>
-                           </StyledServings> */}
+                           </StyledServings>
                            <span>
                               {item.assembledSachets?.aggregate?.count || 0} /{' '}
                               {item.packedSachets?.aggregate?.count || 0} /{' '}
@@ -132,9 +142,9 @@ export const Products = ({ order }) => {
                         </StyledProductItem>
                      ))}
                   </Styles.TabPanel>
-               ))}
+               ))} */}
             </Styles.TabPanels>
          </Styles.Tabs>
       </Styles.Products>
    )
-}
+})
