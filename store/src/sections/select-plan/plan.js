@@ -123,8 +123,8 @@ export const Plan = ({ cameFrom = '', plan, handlePlanClick, itemCount }) => {
          ),
       })
       if (!isAuthenticated && !isLoading) {
-         // router.push(getRoute('/get-started/register'))
-         setShowLoginPopup(true)
+         isClient && localStorage.setItem('landed_on', location.href)
+         router.push(getRoute('/login'))
       } else {
          router.push(getRoute('/get-started/select-delivery'))
       }
@@ -466,12 +466,6 @@ export const Plan = ({ cameFrom = '', plan, handlePlanClick, itemCount }) => {
                </button>
             </div>
          </li>
-         <LoginWrapper
-            closeLoginPopup={() => {
-               setShowLoginPopup(false)
-            }}
-            showLoginPopup={showLoginPopup}
-         />
       </>
    )
 }
