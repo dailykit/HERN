@@ -2,6 +2,7 @@
    margin: auto;
    padding-bottom: 24px;
    min-height: calc(100vh - 128px);
+   background-color: #fafbfe;
 }
 
 .hern-select-menu__header {
@@ -12,6 +13,7 @@
    flex-direction: column;
    align-items: center;
    justify-content: center;
+   display: none;
    &::after {
       content: '';
       position: absolute;
@@ -174,6 +176,7 @@
    padding: 0.5rem;
    border-radius: 0.25rem;
    overflow: hidden;
+   border-radius: 2px;
 }
 .hern-select-menu__menu__product--active {
    border-width: 2px;
@@ -182,7 +185,6 @@
    display: flex;
    align-items: center;
    justify-content: center;
-   position: relative;
    background-color: rgba(229, 231, 235, 1);
    margin-bottom: 0.5rem;
    border-radius: 0.25rem;
@@ -213,31 +215,29 @@
 }
 .hern-select-menu__menu__product__add-on-label {
    top: 16px;
-   padding: 0 0.5rem;
+   padding: 4px 8px;
    position: absolute;
-   border-top-right-radius: 0.25rem;
-   border-bottom-right-radius: 0.25rem;
-   background-color: rgba(16, 185, 129, 1);
-   font-size: 0.875rem;
+   border-radius: 0px 3px 3px 0px;
+   background-color: lightgray;
+   font-size: 12px;
    line-height: 1.25rem;
-   text-transform: uppercase;
+   text-transform: capitalize;
    font-weight: 500;
-   color: #fff;
+   color: #3f4441;
    letter-spacing: 0.05em;
 }
 .hern-select-menu__menu__product__btn {
-   font-size: 0.875rem;
+   font-size: 14px;
    line-height: 1.25rem;
-   font-weight: 700;
-   text-transform: uppercase;
+   font-weight: 500;
+   text-transform: capitalize;
    letter-spacing: 0.05em;
-   border-width: 2px;
-   border-color: rgba(209, 213, 219, 1);
    border-radius: 0.25rem;
    padding: 0.5rem;
    width: 100%;
-   color: rgba(107, 114, 128, 1);
+   color: #ffffff;
    transition: all 0.2s ease-in-out;
+   background-color: #3f4441;
 }
 .hern-select-menu__menu__product__btn--disabled {
    cursor: not-allowed;
@@ -249,12 +249,17 @@
    align-items: center;
    margin-bottom: 0.25rem;
    > a {
-      color: rgba(55, 65, 81, 1) !important;
+      color: #3f4441 !important;
       cursor: pointer;
+      font-weight: 400;
+      font-size: 15px;
    }
 }
 .hern-select-menu__menu__product__link__additional-text {
-   margin-bottom: 0.25rem;
+   margin-bottom: 16px;
+   color: #999999;
+   font-size: 11px;
+   font-weight: 400;
 }
 .hern-select-menu__menu__product__link__check-icon {
    flex-shrink: 0;

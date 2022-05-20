@@ -276,7 +276,6 @@ const Product = ({ node, theme, isAdded, noProductImage, buildImageUrl }) => {
             </span>
          )}
          <section className="hern-select-menu__menu__product__link">
-            <CheckIcon size={16} className={checkIconClasses} />
             <a theme={theme} onClick={openRecipe}>
                <span data-translation="true">{product.name}</span>
                {'-'}
