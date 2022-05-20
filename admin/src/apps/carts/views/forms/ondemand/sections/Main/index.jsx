@@ -1,6 +1,6 @@
 import React from 'react'
 import moment from 'moment'
-import { forEach, isEqual } from 'lodash'
+import { forEach, isEmpty, isEqual } from 'lodash'
 import styled, { css } from 'styled-components'
 import { toast } from 'react-toastify'
 import { useParams } from 'react-router'
@@ -34,7 +34,7 @@ import {
 import { SearchIcon, CloseIcon } from '../../../../../../../shared/assets/icons'
 
 export const Main = () => {
-   const { brand, locationId } = useManual()
+   const { brand, locationId, brandLocation } = useManual()
    const [menu, setMenu] = React.useState([])
    const [categories, setCategories] = React.useState([])
    const [isMenuEmpty, setIsMenuEmpty] = React.useState(false)
@@ -51,7 +51,7 @@ export const Main = () => {
       { id: 2, title: 'All Products' },
    ]
 
-   const [fetchProducts] = useLazyQuery(QUERIES.PRODUCTS.LIST, {
+   const [fetchProducts, { error }] = useLazyQuery(QUERIES.PRODUCTS.LIST, {
       onCompleted: ({ products = [] }) => {
          const _menu = []
          categories.map(category => {
@@ -62,6 +62,7 @@ export const Main = () => {
                ),
             })
          })
+
          const productIds = products.map(product => product.id)
          setMenuProductsIds(productIds)
          setMenu(_menu)
@@ -78,66 +79,67 @@ export const Main = () => {
    })
    const argsForByLocation = React.useMemo(
       () => ({
-         params: {
-            brandId: brand?.id,
-            locationId: locationId,
-         },
+         brandId: brand?.id,
+         locationId: locationId,
+         brand_locationId: brandLocation?.id,
       }),
-      [brand, locationId]
+      [brand, locationId, brandLocation?.id]
    )
 
    // get on-demand menu
-   useQuery(QUERIES.MENU, {
-      skip: !brand?.id || !locationId,
+   const { error: menuError } = useQuery(QUERIES.MENU, {
+      skip: !brand?.id || !locationId || !brandLocation?.id,
       variables: {
          params: {
             brandId: brand?.id,
             date: moment().format('YYYY-MM-DD'),
             locationId,
+            brand_locationId: brandLocation?.id,
          },
       },
       onCompleted: async (data = {}) => {
-         try {
-            if (
-               isEqual(data, {
-                  menu: [{ data: { menu: [] }, __typename: 'onDemand_menu' }],
-               })
-            ) {
-               setIsMenuEmpty(true)
-               setHasMenuError(false)
-               setIsMenuLoading(false)
-               return
-            }
-            const [_data] = data.onDemand_getMenuV2copy
-            const { data: { menu = [] } = {} } = _data
-            setCategories(menu)
-            const ids = menu.map(({ products }) => products).flat()
+         console.log('datamenu', data, !isEmpty(data.onDemand_getMenuV2copy))
+         if (!isEmpty(data.onDemand_getMenuV2copy)) {
+            try {
+               if (
+                  isEqual(data, {
+                     menu: [
+                        { data: { menu: [] }, __typename: 'onDemand_menu' },
+                     ],
+                  })
+               ) {
+                  setIsMenuEmpty(true)
+                  setHasMenuError(false)
+                  setIsMenuLoading(false)
+                  return
+               }
+               const [_data] = data.onDemand_getMenuV2copy
+               const { data: { menu = [] } = {} } = _data
+               setCategories(menu)
+               const ids = menu.map(({ products }) => products).flat()
 
-            if (ids.length === 0) {
-               setIsMenuEmpty(true)
-               setHasMenuError(false)
+               if (ids.length === 0) {
+                  setIsMenuEmpty(true)
+                  setHasMenuError(false)
+                  setIsMenuLoading(false)
+                  return
+               }
+               await fetchProducts({
+                  variables: {
+                     ids: ids,
+                     params: argsForByLocation,
+                  },
+               })
+            } catch (error) {
+               logger(error)
+               console.log('fixme', error)
                setIsMenuLoading(false)
-               return
+               setHasMenuError(true)
+               setIsMenuEmpty(false)
+               toast.error(
+                  'There was an issue in fetching the menu for today, please try again!'
+               )
             }
-            await fetchProducts({
-               variables: {
-                  ids: ids,
-                  priceArgs: argsForByLocation,
-                  discountArgs: argsForByLocation,
-                  defaultCartItemArgs: argsForByLocation,
-                  productOptionPriceArgs: argsForByLocation,
-                  productOptionDiscountArgs: argsForByLocation,
-                  productOptionCartItemArgs: argsForByLocation,
-               },
-            })
-         } catch (error) {
-            logger(error)
-            setIsMenuLoading(false)
-            setHasMenuError(true)
-            setIsMenuEmpty(false)
-            toast.error(
-               'There was an issue in fetching the menu for today, please try again!'
-            )
          }
       },
       onError: error => {

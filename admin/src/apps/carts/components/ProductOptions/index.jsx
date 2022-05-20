@@ -12,37 +12,47 @@ const ProductOptions = ({
    return (
       <>
          {productOptions.length ? (
-            productOptions.map(option => (
-               <Styles.Option
-                  key={option.id}
-                  selected={selectedOption?.id === option.id}
-                  onClick={() => handleOptionSelect(option)}
-               >
-                  <Text as="text1"> {option.label} </Text>
-                  <Flex container alignItems="center">
-                     {option.discount ? (
-                        <>
-                           <Styles.Price strike>
-                              {currencyFmt(option.price)}
-                           </Styles.Price>
+            productOptions.map(option => {
+               if (!option.isPublished) {
+                  return null
+               }
+               return (
+                  <Styles.Option
+                     key={option.id}
+                     selected={selectedOption?.id === option.id}
+                     onClick={() => {
+                        if (option.isPublished && option.isAvailable) {
+                           handleOptionSelect(option)
+                        }
+                     }}
+                     faded={!(option.isPublished && option.isAvailable)}
+                  >
+                     <Text as="text1"> {option.label} </Text>
+                     <Flex container alignItems="center">
+                        {option.discount ? (
+                           <>
+                              <Styles.Price strike>
+                                 {currencyFmt(option.price)}
+                              </Styles.Price>
+                              <Styles.Price>
+                                 +{' '}
+                                 {currencyFmt(
+                                    calcDiscountedPrice(
+                                       option.price,
+                                       option.discount
+                                    )
+                                 )}
+                              </Styles.Price>
+                           </>
+                        ) : (
                            <Styles.Price>
-                              +{' '}
-                              {currencyFmt(
-                                 calcDiscountedPrice(
-                                    option.price,
-                                    option.discount
-                                 )
-                              )}
+                              + {currencyFmt(option.price)}
                            </Styles.Price>
-                        </>
-                     ) : (
-                        <Styles.Price>
-                           + {currencyFmt(option.price)}
-                        </Styles.Price>
-                     )}
-                  </Flex>
-               </Styles.Option>
-            ))
+                        )}
+                     </Flex>
+                  </Styles.Option>
+               )
+            })
          ) : (
             <Filler message="No options found!" />
          )}

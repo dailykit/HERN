@@ -48,6 +48,7 @@ const Content = ({ panel }) => {
       state: { productId },
       brand,
       locationId,
+      brandLocation,
    } = useManual()
    const [selectedOption, setSelectedOption] = React.useState({})
    const [quantity, setQuantity] = React.useState(1)
@@ -63,9 +64,10 @@ const Content = ({ panel }) => {
          params: {
             brandId: brand?.id,
             locationId: locationId,
+            brand_locationId: brandLocation?.id,
          },
       }),
-      [brand, locationId]
+      [brand, locationId, brandLocation?.id]
    )
 
    const {
@@ -76,15 +78,7 @@ const Content = ({ panel }) => {
       skip: !productId,
       variables: {
          id: productId,
-         priceArgs: argsForByLocation,
-         discountArgs: argsForByLocation,
-         defaultCartItemArgs: argsForByLocation,
-         productOptionPriceArgs: argsForByLocation,
-         productOptionDiscountArgs: argsForByLocation,
-         productOptionCartItemArgs: argsForByLocation,
-         modifierCategoryOptionPriceArgs: argsForByLocation,
-         modifierCategoryOptionDiscountArgs: argsForByLocation,
-         modifierCategoryOptionCartItemArgs: argsForByLocation,
+         params: argsForByLocation,
       },
    })
 
@@ -92,8 +86,12 @@ const Content = ({ panel }) => {
       if (!isEmpty(product)) {
          const defaultProductOption =
             product.productOptions.find(
-               option => option.id === product.defaultProductOptionId
-            ) || product.productOptions[0]
+               option =>
+                  option.id === product.defaultProductOptionId &&
+                  product.isPublished &&
+                  product.isAvailable
+            ) ||
+            product.productOptions.find(x => x.isPublished && x.isAvailable)
 
          setProductOptionType(defaultProductOption?.type)
          setSelectedOption(defaultProductOption)
@@ -106,21 +104,27 @@ const Content = ({ panel }) => {
          if (!isEmpty(product) && product.productOptions?.length) {
             const groupedData = _.chain(product.productOptions)
                .groupBy('type')
-               .map((value, key) => ({
-                  type: key,
-                  data: value,
-               }))
+               .map((value, key) => {
+                  const isTypePublished = value.some(x => x.isPublished)
+                  return {
+                     type: key,
+                     data: value,
+                     isTypePublished,
+                  }
+               })
                .value()
             return [
                groupedData,
-               groupedData.map((eachType, index) => ({
-                  id: index + 1,
-                  title:
-                     eachType.type === 'null'
-                        ? 'Others'
-                        : camelCaseToNormalText(eachType.type),
-                  value: eachType.type,
-               })),
+               groupedData
+                  .filter(type => type.isTypePublished)
+                  .map((eachType, index) => ({
+                     id: index + 1,
+                     title:
+                        eachType.type === 'null'
+                           ? 'Others'
+                           : camelCaseToNormalText(eachType.type),
+                     value: eachType.type,
+                  })),
             ]
          } else {
             return [[], []]
@@ -219,11 +223,16 @@ const Content = ({ panel }) => {
                         onChange={option => {
                            setProductOptionType(option.value)
                            setSelectedOption(
-                              productOptionsGroupedByProductOptionType.find(
-                                 eachGroupType =>
-                                    eachGroupType.type === option.value ||
-                                    eachGroupType.type === 'null'
-                              ).data[0]
+                              productOptionsGroupedByProductOptionType
+                                 .find(
+                                    eachGroupType =>
+                                       eachGroupType.type === option.value ||
+                                       eachGroupType.type === 'null'
+                                 )
+                                 .data.find(
+                                    option =>
+                                       option.isPublished && option.isAvailable
+                                 )
                            )
                         }}
                      />
@@ -234,8 +243,9 @@ const Content = ({ panel }) => {
                      productOptions={
                         productOptionsGroupedByProductOptionType.find(
                            eachGroupType =>
-                              eachGroupType.type === productOptionType ||
-                              eachGroupType.type === 'null'
+                              (eachGroupType.type === productOptionType ||
+                                 eachGroupType.type === 'null') &&
+                              eachGroupType.isTypePublished
                         ).data
                      }
                      selectedOption={selectedOption}

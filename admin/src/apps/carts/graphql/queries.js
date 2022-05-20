@@ -301,15 +301,7 @@ export const QUERIES = {
    `,
    PRODUCTS: {
       LIST: gql`
-         query products(
-            $ids: [Int!]!
-            $priceArgs: priceByLocation_products_product_args!
-            $discountArgs: discountByLocation_products_product_args!
-            $defaultCartItemArgs: defaultCartItemByLocation_products_product_args!
-            $productOptionCartItemArgs: cartItemByLocation_products_productOption_args!
-            $productOptionDiscountArgs: discountByLocation_products_productOption_args!
-            $productOptionPriceArgs: priceByLocation_products_productOption_args!
-         ) {
+         query products($ids: [Int!]!, $params: jsonb!) {
             products(where: { isArchived: { _eq: false }, id: { _in: $ids } }) {
                id
                name
@@ -319,13 +311,14 @@ export const QUERIES = {
                VegNonVegType
                additionalText
                description
-               price: priceByLocation(args: $priceArgs)
-               discount: discountByLocation(args: $discountArgs)
+               price: priceByLocation(args: { params: $params })
+               discount: discountByLocation(args: { params: $params })
+               isPublished: publishedByLocation(args: { params: $params })
                isPopupAllowed
-               isPublished
+               isAvailable: availabilityByLocation(args: { params: $params })
                defaultProductOptionId
                defaultCartItem: defaultCartItemByLocation(
-                  args: $defaultCartItemArgs
+                  args: { params: $params }
                )
                productionOptionSelectionStatement
                subCategory
@@ -337,39 +330,31 @@ export const QUERIES = {
                   position
                   type
                   label
-                  price: priceByLocation(args: $productOptionPriceArgs)
-                  discount: discountByLocation(args: $productOptionDiscountArgs)
-                  cartItem: cartItemByLocation(args: $productOptionCartItemArgs)
+                  price: priceByLocation(args: { params: $params })
+                  discount: discountByLocation(args: { params: $params })
+                  cartItem: cartItemByLocation(args: { params: $params })
+                  isPublished: publishedByLocation(args: { params: $params })
+                  isAvailable: availabilityByLocation(args: { params: $params })
                }
             }
          }
       `,
       ONE: gql`
-         subscription product(
-            $id: Int!
-            $priceArgs: priceByLocation_products_product_args!
-            $discountArgs: discountByLocation_products_product_args!
-            $defaultCartItemArgs: defaultCartItemByLocation_products_product_args!
-            $productOptionCartItemArgs: cartItemByLocation_products_productOption_args!
-            $productOptionDiscountArgs: discountByLocation_products_productOption_args!
-            $productOptionPriceArgs: priceByLocation_products_productOption_args!
-            $modifierCategoryOptionCartItemArgs: cartItemByLocation_onDemand_modifierCategoryOption_args!
-            $modifierCategoryOptionDiscountArgs: discountByLocation_onDemand_modifierCategoryOption_args!
-            $modifierCategoryOptionPriceArgs: priceByLocation_onDemand_modifierCategoryOption_args!
-         ) {
+         subscription product($id: Int!, $params: jsonb!) {
             product(id: $id) {
                id
                name
                type
                additionalText
                description
-               price: priceByLocation(args: $priceArgs)
-               discount: discountByLocation(args: $discountArgs)
+               price: priceByLocation(args: { params: $params })
+               discount: discountByLocation(args: { params: $params })
+               isPublished: publishedByLocation(args: { params: $params })
+               isAvailable: availabilityByLocation(args: { params: $params })
                defaultProductOptionId
                defaultCartItem: defaultCartItemByLocation(
-                  args: $defaultCartItemArgs
+                  args: { params: $params }
                )
-
                productOptions(
                   where: { isArchived: { _eq: false } }
                   order_by: { position: desc_nulls_last }
@@ -377,9 +362,11 @@ export const QUERIES = {
                   id
                   label
                   type
-                  price: priceByLocation(args: $productOptionPriceArgs)
-                  discount: discountByLocation(args: $productOptionDiscountArgs)
-                  cartItem: cartItemByLocation(args: $productOptionCartItemArgs)
+                  price: priceByLocation(args: { params: $params })
+                  discount: discountByLocation(args: { params: $params })
+                  cartItem: cartItemByLocation(args: { params: $params })
+                  isPublished: publishedByLocation(args: { params: $params })
+                  isAvailable: availabilityByLocation(args: { params: $params })
                   modifier {
                      id
                      categories(where: { isVisible: { _eq: true } }) {
@@ -391,16 +378,14 @@ export const QUERIES = {
                         options(where: { isVisible: { _eq: true } }) {
                            id
                            name
-                           price: priceByLocation(
-                              args: $modifierCategoryOptionPriceArgs
-                           )
+                           price: priceByLocation(args: { params: $params })
                            discount: discountByLocation(
-                              args: $modifierCategoryOptionDiscountArgs
+                              args: { params: $params }
                            )
                            image
                            isActive
                            cartItem: cartItemByLocation(
-                              args: $modifierCategoryOptionCartItemArgs
+                              args: { params: $params }
                            )
                         }
                      }
@@ -805,3 +790,13 @@ export const QUERIES = {
       },
    },
 }
+
+export const GET_BRAND_LOCATION = gql`
+   query GET_BRAND_LOCATION($where: brands_brand_location_bool_exp!) {
+      brandLocations: brands_brand_location(where: $where) {
+         id
+         brandMenuId
+         posist_customer_key
+      }
+   }
+`

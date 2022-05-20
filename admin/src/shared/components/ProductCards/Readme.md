@@ -1,4 +1,16 @@
 ## Product Card
+Conditionally display a product card:
+
+card will not be displayed if the following conditions are met:
+
+- `isPublished` is false
+- if `product` has `productOptions` and `isPublished` is false for all product options
+
+card will be displayed but not able to add into cart if the following conditions are met:
+- `isPublished` is true and `isAvailable` is false
+- if `product` has `productOptions` and `isPublished` is true and `isAvailable` is false for all product options
+
+
 Flowing details are shown on card:
  
 |Key| value | type|description
@@ -17,7 +29,10 @@ Flowing details are shown on card:
 |showPlusIconOnCart^|`product.isPopupAllowed==true` and `product.productOptions.length>0`| Boolean | to show plus icon on cart that make product to be customizable|
 
 
+
 **^ : these variables are only use here for name reference (there values are used for calculation)**
+
+
 
 ## Product Card Popup
 

@@ -112,41 +112,85 @@ const ProductCards = ({ data, isLoading, input }) => {
 
    return (
       <Styles.Cards>
-         {data.map(product => (
-            <Styles.Card key={product.id}>
-               <aside>
-                  {product.assets?.images &&
-                  product.assets?.images?.length > 0 &&
-                  product.assets?.images[0] ? (
-                     <img
-                        alt={product.name}
-                        src={buildImageUrl('56x56', product.assets?.images[0])}
-                     />
-                  ) : (
-                     <span>N/A</span>
-                  )}
-               </aside>
-               <Flex as="main" container flexDirection="column">
-                  <Text as="text2">{product.name}</Text>
-                  <Text as="text3">{renderPrice(product)}</Text>
-                  <Spacer size="8px" />
-                  {cart?.paymentStatus === 'PENDING' && (
-                     <TextButton
-                        type="solid"
-                        variant="secondary"
-                        size="sm"
-                        data-product-id={product.id}
-                        onClick={() => openTunnels(product)}
-                     >
-                        ADD{' '}
-                        {product.isPopupAllowed &&
-                           product.productOptions?.length > 0 &&
-                           '+'}
-                     </TextButton>
-                  )}
-               </Flex>
-            </Styles.Card>
-         ))}
+         {data.map(product => {
+            // if product has productOptions and all the options are unpublished, then don't show the product
+            const publishedProductOptions =
+               product.productOptions.length > 0 &&
+               product.productOptions.filter(option => option.isPublished)
+                  .length == 0
+            const isProductOutOfStock = () => {
+               if (product.isAvailable) {
+                  if (
+                     product.productOptions.length > 0 &&
+                     product.isPopupAllowed
+                  ) {
+                     const availableProductOptions =
+                        product.productOptions.filter(
+                           option => option.isPublished && option.isAvailable
+                        ).length
+                     if (availableProductOptions > 0) {
+                        return false
+                     } else {
+                        return true
+                     }
+                  } else {
+                     return false
+                  }
+               }
+               return true
+            }
+            if (!product.isPublished || publishedProductOptions) {
+               return null
+            }
+            return (
+               <Styles.Card key={product.id}>
+                  <aside>
+                     {product.assets?.images &&
+                     product.assets?.images?.length > 0 &&
+                     product.assets?.images[0] ? (
+                        <img
+                           alt={product.name}
+                           src={buildImageUrl(
+                              '56x56',
+                              product.assets?.images[0]
+                           )}
+                        />
+                     ) : (
+                        <span>N/A</span>
+                     )}
+                  </aside>
+                  <Flex as="main" container flexDirection="column">
+                     <Text as="text2">{product.name}</Text>
+                     <Text as="text3">{renderPrice(product)}</Text>
+                     <Spacer size="8px" />
+                     {isProductOutOfStock() ? (
+                        <TextButton
+                           type="solid"
+                           variant="secondary"
+                           size="sm"
+                           data-product-id={product.id}
+                           disabled={true}
+                        >
+                           OUT OF STOCK
+                        </TextButton>
+                     ) : cart?.paymentStatus === 'PENDING' ? (
+                        <TextButton
+                           type="solid"
+                           variant="secondary"
+                           size="sm"
+                           data-product-id={product.id}
+                           onClick={() => openTunnels(product)}
+                        >
+                           ADD{' '}
+                           {product.isPopupAllowed &&
+                              product.productOptions?.length > 0 &&
+                              '+'}
+                        </TextButton>
+                     ) : null}
+                  </Flex>
+               </Styles.Card>
+            )
+         })}
       </Styles.Cards>
    )
 }

@@ -5,7 +5,7 @@ import { useParams } from 'react-router'
 import { Flex, Filler, useTunnel } from '@dailykit/ui'
 import { useQuery, useSubscription } from '@apollo/react-hooks'
 
-import { QUERIES } from '../../../graphql'
+import { GET_BRAND_LOCATION, QUERIES } from '../../../graphql'
 import { logger } from '../../../../../shared/utils'
 import EmptyIllo from '../../../assets/svgs/EmptyIllo'
 import {
@@ -34,6 +34,7 @@ const initial = {
    productId: null,
    cart: {},
    location: { id: null },
+   brandLocation: null,
 }
 
 const reducers = (state, { type, payload }) => {
@@ -82,6 +83,11 @@ const reducers = (state, { type, payload }) => {
             },
          }
       }
+      case 'SET_BRAND_LOCATION':
+         return {
+            ...state,
+            brandLocation: payload,
+         }
       default:
          return state
    }
@@ -139,6 +145,22 @@ export const ManualProvider = ({ children }) => {
          toast.error('Failed to get customer details, please refresh the page.')
       },
    })
+
+   useQuery(GET_BRAND_LOCATION, {
+      skip: !state.brand?.id || !state.location?.id,
+      variables: {
+         where: {
+            brandId: { _eq: state.brand?.id },
+            locationId: { _eq: state.location?.id },
+         },
+      },
+      onCompleted: ({ brandLocations = [] } = {}) => {
+         if (!isEmpty(brandLocations)) {
+            dispatch({ type: 'SET_BRAND_LOCATION', payload: brandLocations[0] })
+         }
+      },
+   })
+
    const { loading, error } = useSubscription(QUERIES.CART.ONE, {
       variables: { id: params.id },
       onSubscriptionData: ({
@@ -220,6 +242,7 @@ export const ManualProvider = ({ children }) => {
             paymentMethod: state.paymentMethod,
             loyaltyPoints: state.loyaltyPoints,
             locationId: state.location?.id,
+            brandLocation: state.brandLocation,
             tunnels: {
                address: addressTunnels,
                fulfillment: fulfillmentTunnels,
