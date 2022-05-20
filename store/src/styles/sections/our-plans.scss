@@ -50,6 +50,7 @@
    border-radius: 50%;
    position: absolute;
    left: -40px;
+   display: none;
 }
 .hern-our-plans__plan__img {
    width: 100%;
@@ -57,7 +58,7 @@
    border-radius: 50%;
 }
 .hern-our-plans__plan__body {
-   padding: 1rem;
+   padding: 18px 24px 18px 80px;
    display: flex;
    align-items: center;
    justify-content: space-between;
@@ -66,21 +67,27 @@
 }
 
 .hern-our-plans__plan__title {
-   margin-bottom: 0.5rem;
-   margin-left: 80px;
    font-weight: 500;
    font-size: 16px;
    letter-spacing: 0.025em;
    color: rgba(5, 150, 105, 1);
-   width: 200px;
+   width: 250px;
    /* ${theme?.accent && `color: ${theme?.accent}`} */
 }
+
+.hern-our-plans__plan__icon__wrapper {
+   width: 80px;
+   height: 80px;
+   border-radius: 50%;
+   position: absolute;
+   top: 8px;
+   left: -40px;
+}
 .hern-our-plans__plan__icon {
-   border-radius: 9999px;
    object-fit: cover;
-   float: right;
-   height: 2rem;
-   width: 2rem;
+   width: 100%;
+   height: 100%;
+   border-radius: 50%;
 }
 
 .hern-our-plans__plan__description {
@@ -92,7 +99,6 @@
 .hern-our-plans__plan__servings,
 .hern-our-plans__plan__items-per-week {
    width: 250px;
-   margin-bottom: 1rem;
    display: flex;
    align-items: center;
    justify-content: space-between;
@@ -135,7 +141,6 @@
 .hern-our-plans__plan__items-per-week__count-list {
    border-radius: 4px;
    padding: 0.25rem;
-   width: 100%;
    display: flex;
    align-items: center;
 }
@@ -158,6 +163,11 @@
    background-color: #efefef;
    box-shadow: 0px 1px 8px rgba(0, 0, 0, 0.05);
 }
+
+.hern-our-plans__plan__servings__count-list-item:last-child,
+.hern-our-plans__plan__items-per-week__count-list-item:last-child {
+   margin-right: 0;
+}
 .hern-our-plans__plan__servings__count-list-item--active,
 .hern-our-plans__plan__items-per-week__count-list-item--active {
    color: #fff;
@@ -171,12 +181,7 @@
 }
 
 .hern-our-plans__price {
-   display: flex;
-   align-items: center;
-   flex-direction: column;
-   width: 100%;
-   padding-top: 0.75rem;
-   padding-bottom: 0.75rem;
+   flex-grow: 1;
 }
 .hern-our-plans__price-per-servings {
    height: 100%;
@@ -188,7 +193,12 @@
 .hern-our-plans__price-total-servings__prefix,
 .hern-our-plans__price-total-servings__suffix,
 .hern-our-plans__price-total-servings__prefix {
-   color: rgba(75, 85, 99, 1);
+   // color: rgba(75, 85, 99, 1);
+   color: #8d8d8d;
+   font-size: 16px;
+   font-weight: 300;
+   display: inline-block;
+   margin-bottom: 5px;
 }
 .hern-our-plans__price-per-servings__price,
 .hern-our-plans__price-total-servings__price {
@@ -211,26 +221,11 @@
    padding-bottom: 0.25rem;
 }
 
-.hern-our-plans__price-per-plan {
-   display: flex;
-   justify-content: space-between;
-   height: 100%;
-   width: 100%;
-   padding-top: 0.25rem;
-   padding-bottom: 0.25rem;
-}
-
-.hern-our-plans__price-total-servings__wrapper {
-   display: flex;
-   flex: 1 1 0%;
-   flex-direction: column;
-   text-align: right;
-}
 .hern-our-plans__price-total-servings__price {
-   font-size: 1.5rem;
-   line-height: 2rem;
+   font-size: 23px;
+   line-height: 22px;
    color: rgba(5, 150, 105, 1);
-   font-weight: 500;
+   font-weight: 400;
    /* ${theme?.accent && `color: ${theme?.accent}`}  */
 }
 .hern-our-plans__price-total-servings__tax {
@@ -254,6 +249,12 @@
    /* ${bg && `background-color: ${bg};`} */
 }
 
+.hern-our-plans__select-plan__btn:hover {
+   background-color: transparent !important;
+   color: #6a6a6a;
+   border: 1px solid #6a6a6a;
+}
+
 @media screen and (max-width: 786px) {
    .hern-our-plans__plan__body {
       padding: 2rem;
@@ -267,10 +268,15 @@
       border-radius: 2px;
       position: relative;
       left: 0;
+      display: block;
 
       .hern-our-plans__plan__img {
          border-radius: 2px;
       }
+   }
+
+   .hern-our-plans__plan__icon__wrapper {
+      display: none;
    }
 
    .hern-our-plans__plan__title {
@@ -278,6 +284,10 @@
       margin: 0.5rem 0rem;
       text-align: center;
       width: 100%;
+   }
+
+   .hern-our-plans__price-total-servings__wrapper {
+      margin-bottom: 5px;
    }
 
    .hern-our-plans__select-plan__btn {

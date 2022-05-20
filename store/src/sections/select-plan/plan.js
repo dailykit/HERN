@@ -143,6 +143,8 @@ export const Plan = ({ cameFrom = '', plan, handlePlanClick, itemCount }) => {
    const colorConfig = configOf('theme-color', 'Visual')?.themeColor
    const priceDisplay = configOf('priceDisplay', 'Visual')?.priceDisplay
 
+   console.log(priceDisplay)
+
    const yieldLabel = {
       singular: config?.yieldLabel?.singular?.value || 'serving',
       plural: config?.yieldLabel?.singular?.value || 'servings',
@@ -182,12 +184,14 @@ export const Plan = ({ cameFrom = '', plan, handlePlanClick, itemCount }) => {
                >
                   <span data-translation="true">{plan.title}</span>
 
-                  {/* {plan.metaDetails?.icon && (
-                     <img
-                        className="hern-our-plans__plan__icon"
-                        src={plan.metaDetails?.icon}
-                     />
-                  )} */}
+                  {plan.metaDetails?.icon && (
+                     <div className="hern-our-plans__plan__icon__wrapper">
+                        <img
+                           className="hern-our-plans__plan__icon"
+                           src={plan.metaDetails?.icon}
+                        />
+                     </div>
+                  )}
                </h2>
                {plan?.metaDetails?.description && (
                   <p
@@ -229,50 +233,51 @@ export const Plan = ({ cameFrom = '', plan, handlePlanClick, itemCount }) => {
                               {yieldLabel.plural}
                            </span>
                         </span>
-                        <ul className="hern-our-plans__plan__servings__count-list ">
+                        <div style={{ display: 'flex', alginItems: 'center' }}>
                            {plansFirstIndex > 0 && plan.servings.length > 3 && (
-                              <button
-                                 onClick={handlePlanPrevious}
-                                 style={{ marginRight: '11px' }}
-                              >
+                              <button onClick={handlePlanPrevious}>
                                  <BiChevronLeft size={20} />
                               </button>
                            )}
 
-                           {plansToShow.map(serving => {
-                              const countListClasses = classNames(
-                                 'hern-our-plans__plan__servings__count-list-item',
-                                 {
-                                    'hern-our-plans__plan__servings__count-list-item--active':
-                                       serving.id === defaultServing?.id,
-                                 }
-                              )
-                              return (
-                                 <li
-                                    className={countListClasses}
-                                    key={serving.id}
-                                    onClick={() => setDefaultServing(serving)}
-                                 >
-                                    <div className="hern-our-plans__plan__servings-size">
-                                       <div data-translation="true">
-                                          {serving.size}
-                                       </div>
-                                       {serving?.metaDetails?.label && (
+                           <ul className="hern-our-plans__plan__servings__count-list ">
+                              {plansToShow.map(serving => {
+                                 const countListClasses = classNames(
+                                    'hern-our-plans__plan__servings__count-list-item',
+                                    {
+                                       'hern-our-plans__plan__servings__count-list-item--active':
+                                          serving.id === defaultServing?.id,
+                                    }
+                                 )
+                                 return (
+                                    <li
+                                       className={countListClasses}
+                                       key={serving.id}
+                                       onClick={() =>
+                                          setDefaultServing(serving)
+                                       }
+                                    >
+                                       <div className="hern-our-plans__plan__servings-size">
                                           <div data-translation="true">
-                                             {serving?.metaDetails?.label}
+                                             {serving.size}
                                           </div>
-                                       )}
-                                    </div>
-                                 </li>
-                              )
-                           })}
+                                          {serving?.metaDetails?.label && (
+                                             <div data-translation="true">
+                                                {serving?.metaDetails?.label}
+                                             </div>
+                                          )}
+                                       </div>
+                                    </li>
+                                 )
+                              })}
+                           </ul>
 
                            {plan.servings.length > servingsLastIndex && (
                               <button onClick={handlePlanNext}>
                                  <BiChevronRight size={20} />
                               </button>
                            )}
-                        </ul>
+                        </div>
                      </div>
                   )}
                </section>{' '}
@@ -297,46 +302,43 @@ export const Plan = ({ cameFrom = '', plan, handlePlanClick, itemCount }) => {
                            </span>{' '}
                            {t('per week')}
                         </span>
-
-                        <ul className="hern-our-plans__plan__items-per-week__count-list ">
+                        <div style={{ display: 'flex', alginItems: 'center' }}>
                            {servingsFirstIndex > 0 &&
                               defaultServing?.itemCounts.length > 3 && (
-                                 <button
-                                    onClick={handleRecipePrevious}
-                                    style={{ marginRight: '11px' }}
-                                 >
+                                 <button onClick={handleRecipePrevious}>
                                     <BiChevronLeft size={20} />
                                  </button>
                               )}
 
-                           {servingsToShow.map(item => {
-                              const countListClasses = classNames(
-                                 'hern-our-plans__plan__items-per-week__count-list-item',
-                                 {
-                                    'hern-our-plans__plan__items-per-week__count-list-item--active':
-                                       item.id === defaultItemCount?.id,
-                                 }
-                              )
-                              return (
-                                 <li
-                                    className={countListClasses}
-                                    key={item.id}
-                                    onClick={() => setDefaultItemCount(item)}
-                                 >
-                                    <div className="hern-our-plans__plan__items-per-week__count">
-                                       <div data-translation="true">
-                                          {item.count}
-                                       </div>
-
-                                       {item?.metaDetails?.label && (
+                           <ul className="hern-our-plans__plan__items-per-week__count-list ">
+                              {servingsToShow.map(item => {
+                                 const countListClasses = classNames(
+                                    'hern-our-plans__plan__items-per-week__count-list-item',
+                                    {
+                                       'hern-our-plans__plan__items-per-week__count-list-item--active':
+                                          item.id === defaultItemCount?.id,
+                                    }
+                                 )
+                                 return (
+                                    <li
+                                       className={countListClasses}
+                                       key={item.id}
+                                       onClick={() => setDefaultItemCount(item)}
+                                    >
+                                       <div className="hern-our-plans__plan__items-per-week__count">
                                           <div data-translation="true">
-                                             {item?.metaDetails?.label}
+                                             {item.count}
                                           </div>
-                                       )}
-                                    </div>
-                                 </li>
-                              )
-                           })}
+                                          {item?.metaDetails?.label && (
+                                             <div data-translation="true">
+                                                {item?.metaDetails?.label}
+                                             </div>
+                                          )}
+                                       </div>
+                                    </li>
+                                 )
+                              })}
+                           </ul>
 
                            {defaultServing?.itemCounts.length >
                               servingsLastIndex && (
@@ -344,23 +346,24 @@ export const Plan = ({ cameFrom = '', plan, handlePlanClick, itemCount }) => {
                                  <BiChevronRight size={20} />
                               </button>
                            )}
-                        </ul>
+                        </div>
                      </div>
                   )}
                </section>
                <hr />
-               {(priceDisplay?.pricePerServing?.isVisible === true ||
-                  priceDisplay?.totalServing?.isVisible === true ||
-                  priceDisplay?.pricePerPlan?.isVisible === true) && (
+               {(priceDisplay?.pricePerServing?.isVisible.value === true ||
+                  priceDisplay?.totalServing?.isVisible.value === true ||
+                  priceDisplay?.pricePerPlan?.isVisible.value === true) && (
                   <div className="hern-our-plans__price">
-                     {priceDisplay?.pricePerServing?.isVisible === true && (
+                     {priceDisplay?.pricePerServing?.isVisible.value ===
+                        true && (
                         <section className="hern-our-plans__price-per-servings">
-                           {priceDisplay?.pricePerServing?.prefix && (
+                           {priceDisplay?.pricePerServing?.prefix.value && (
                               <span
                                  className="hern-our-plans__price-per-servings__prefix"
                                  data-translation="true"
                               >
-                                 {priceDisplay?.pricePerServing?.prefix}
+                                 {priceDisplay?.pricePerServing?.prefix.value}
                               </span>
                            )}
                            <span
@@ -385,21 +388,21 @@ export const Plan = ({ cameFrom = '', plan, handlePlanClick, itemCount }) => {
                                  className="hern-our-plans__price-per-servings__suffix"
                                  data-translation="true"
                               >
-                                 {priceDisplay?.pricePerServing?.suffix ||
+                                 {priceDisplay?.pricePerServing?.suffix.value ||
                                     `per ${yieldLabel.singular}`}
                               </span>
                            </span>
                         </section>
                      )}
                      {/* ///start from here */}
-                     {priceDisplay?.totalServing?.isVisible === true && (
+                     {priceDisplay?.totalServing?.isVisible.value === true && (
                         <section className="hern-our-plans__price-total-servings">
-                           {priceDisplay?.totalServing?.prefix && (
+                           {priceDisplay?.totalServing?.prefix.value && (
                               <span
                                  className="hern-our-plans__price-total-servings__prefix"
                                  data-translation="true"
                               >
-                                 {priceDisplay?.totalServing?.prefix}
+                                 {priceDisplay?.totalServing?.prefix.value}
                               </span>
                            )}
                            <span
@@ -421,14 +424,14 @@ export const Plan = ({ cameFrom = '', plan, handlePlanClick, itemCount }) => {
                         </section>
                      )}
 
-                     {priceDisplay?.pricePerPlan?.isVisible === true && (
+                     {priceDisplay?.pricePerPlan?.isVisible.value === true && (
                         <section className="hern-our-plans__price-per-plan">
-                           {priceDisplay?.pricePerPlan?.prefix && (
+                           {priceDisplay?.pricePerPlan?.prefix.value && (
                               <span
                                  className="hern-our-plans__price-total-servings__prefix"
                                  data-translation="true"
                               >
-                                 {priceDisplay?.pricePerPlan?.prefix}
+                                 {priceDisplay?.pricePerPlan?.prefix.value}
                               </span>
                            )}
                            <div className="hern-our-plans__price-total-servings__wrapper">
@@ -437,7 +440,7 @@ export const Plan = ({ cameFrom = '', plan, handlePlanClick, itemCount }) => {
                                     color: `${
                                        colorConfig?.accent?.value
                                           ? colorConfig?.accent?.value
-                                          : 'rgba(5, 150, 105, 1)'
+                                          : '#222222'
                                     }`,
                                  }}
                                  className="hern-our-plans__price-total-servings__price"
@@ -445,18 +448,21 @@ export const Plan = ({ cameFrom = '', plan, handlePlanClick, itemCount }) => {
                               >
                                  {formatCurrency(defaultItemCount?.price)}
                               </span>
-                              <span className="hern-our-plans__price-total-servings__tax">
+                              {/* <span className="hern-our-plans__price-total-servings__tax">
                                  {defaultItemCount?.isTaxIncluded
                                     ? t('Tax Inclusive')
                                     : t('Tax Exclusive')}
-                              </span>
-                              <span className="hern-our-plans__price-total-servings__suffix">
+                              </span> */}
+                              {/* <span className="hern-our-plans__price-total-servings__suffix">
                                  {(
                                     <span data-translation="true">
-                                       {priceDisplay?.pricePerPlan?.suffix}
+                                       {
+                                          priceDisplay?.pricePerPlan?.suffix
+                                             .value
+                                       }
                                     </span>
                                  ) || <span>{t('Weekly total')}</span>}
-                              </span>
+                              </span> */}
                            </div>
                         </section>
                      )}
