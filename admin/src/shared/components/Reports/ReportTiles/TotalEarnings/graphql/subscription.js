@@ -30,3 +30,10 @@ export const TOTAL_EARNING = gql`
       }
    }
 `
+export const GET_STORE_LOCATION_INSIGHTS = gql`
+   subscription GET_STORE_LOCATION_INSIGHT($params: jsonb!) {
+      insights_analytics {
+         getLocationInsights(args: { params: $params })
+      }
+   }
+`
