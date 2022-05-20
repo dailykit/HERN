@@ -7,18 +7,10 @@ import {
    renderPageContent,
 } from '../../../utils'
 import { SEO, Layout, ExternalJSCSSFiles } from '../../../components'
-import { useUser } from '../../../context'
 
 const SelectPlan = props => {
    const router = useRouter()
    const { settings, linkedFiles, folds, seoSettings } = props
-   const { isAuthenticated, isLoading } = useUser()
-   React.useEffect(() => {
-      if (!isAuthenticated && !isLoading) {
-         isClient && localStorage.setItem('landed_on', location.href)
-         router.push(getRoute('/login'))
-      }
-   }, [isAuthenticated, isLoading])
 
    React.useEffect(() => {
       if (isClient) {
@@ -33,9 +25,8 @@ const SelectPlan = props => {
       <Layout settings={settings}>
          <SEO seoSettings={seoSettings} />
          <ExternalJSCSSFiles externalFiles={linkedFiles} />
-         {isAuthenticated && !isLoading && (
-            <main>{renderPageContent(folds)}</main>
-         )}
+
+         <main>{renderPageContent(folds)}</main>
       </Layout>
    )
 }
