@@ -47,10 +47,8 @@ export const DeliveryDateSection = () => {
             variables: {
                id: state.delivery.selected.id,
                where: {
-                  subscriptionOccurenceView: {
-                     isValid: { _eq: true },
-                     isVisible: { _eq: true },
-                  },
+                  isValid: { _eq: true },
+                  isVisible: { _eq: true },
                },
             },
          })
