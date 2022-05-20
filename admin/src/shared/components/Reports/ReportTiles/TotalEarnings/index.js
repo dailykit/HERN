@@ -20,6 +20,7 @@ import { Tile } from '../../../DashboardTiles'
 import { ErrorState } from '../../../ErrorState'
 import { InlineLoader } from '../../../InlineLoader'
 import { TOTAL_EARNING } from './graphql/subscription'
+import { EarningByBrand } from './Tunnels/earningByBrand'
 import EarningByCustomer from './Tunnels/earningByCustomer'
 import EarningByProduct from './Tunnels/earningByProduct'
 import { EarningByStoreLocation } from './Tunnels/earningByStoreLocation'
@@ -139,10 +140,19 @@ const TotalEarningReport = () => {
             </Tunnel>
             <Tunnel size="full" layer={5}>
                <TunnelHeader
-                  title="Earning by location"
+                  title="Earnings by brand"
                   close={() => closeReportTunnel(5)}
                   description="This is a description"
                />
+               <TunnelBody>
+                  <BrandShopDate
+                     shopTypeProvider
+                     datePickerProvider
+                     compareProvider
+                  >
+                     <EarningByBrand />
+                  </BrandShopDate>
+               </TunnelBody>
             </Tunnel>
             <Tunnel size="full" layer={6}>
                <TunnelHeader
@@ -251,6 +261,20 @@ const TotalEarningReport = () => {
                         onClick={() => openReportTunnel(4)}
                      >
                         Earnings by store location
+                     </Text>
+                     <Text
+                        as="text2"
+                        style={{
+                           marginLeft: '8px',
+                           fontWeight: '400',
+                           cursor: 'pointer',
+                           color: '#367bf5',
+                           lineHeight: '24px',
+                        }}
+                        title="View earning by customer report"
+                        onClick={() => openReportTunnel(5)}
+                     >
+                        Earnings by brand
                      </Text>
                      {/* {showMore && (
                         <>

@@ -37,3 +37,10 @@ export const GET_STORE_LOCATION_INSIGHTS = gql`
       }
    }
 `
+export const GET_BRAND_INSIGHT = gql`
+   subscription GET_BRAND_INSIGHT($params: jsonb!) {
+      insights_analytics {
+         getBrandInsights(args: { params: $params })
+      }
+   }
+`

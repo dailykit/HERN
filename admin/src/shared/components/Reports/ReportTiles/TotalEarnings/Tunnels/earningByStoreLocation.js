@@ -105,7 +105,7 @@ export const EarningByStoreLocation = () => {
    }
    if (
       insights_analytics.length == 0 ||
-      insights_analytics[0].getLocationInsights.length == 1
+      insights_analytics[0].getLocationInsights.length == 0
    ) {
       return <Filler message="Earning By Store Location Not Available" />
    }
