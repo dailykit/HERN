@@ -3,7 +3,15 @@ import { Text } from '@dailykit/ui'
 import { Switch, Route } from 'react-router-dom'
 
 // Views
-import { Home, Brands, Brand, Locations, Location, KioskLocations, PaymentOption } from '../../views'
+import {
+   Home,
+   Brands,
+   Brand,
+   Locations,
+   Location,
+   KioskLocations,
+   PaymentOption,
+} from '../../views'
 import KioskLocation from '../../views/Forms/kioskLocation'
 import { Flex } from '../../../../shared/components'
 import { useAccess } from '../../../../shared/providers'
@@ -11,7 +19,7 @@ import KioskReportTable from '../../views/Listings/kioskLocations/KioskReportTab
 import { PaymentOptions } from '../../views/Listings/paymentOptions'
 export default function Main() {
    return (
-      <main>
+      <main style={{ height: '100%' }}>
          <Switch>
             <Route path="/brands" exact>
                <AccessCheck
