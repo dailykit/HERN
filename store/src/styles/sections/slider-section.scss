@@ -109,7 +109,10 @@
       }
    }
 }
-.hern-slider_section-image{
+.hern-slider_section-image {
    width: 100%;
-   height: calc(100vw / 2 );
+   height: calc(100vw / 2);
+}
+.hern-slider-section__content-wrapper {
+   position: relative;
 }
