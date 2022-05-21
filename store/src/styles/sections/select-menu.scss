@@ -73,7 +73,25 @@
    font-size: 1rem;
    line-height: 1.5rem;
    text-align: center;
-   color: rgba(55, 48, 163, 1);
+   color: #3f4441;
+
+   & > span {
+      font-weight: 500;
+   }
+
+   .hern-select-menu__week-date {
+      line-height: 1.8;
+      text-align: left;
+      font-weight: 500;
+      font-size: 0.75rem;
+      background: rgba(29, 199, 99, 0.05);
+      width: 147px;
+      margin-left: 12px;
+      padding: 7px 12px;
+      border-radius: 4px;
+      border: 0.620455px solid rgba(29, 199, 99, 0.73);
+   }
+
    @media only screen and (min-width: 760px) {
       font-size: 1.125rem;
       line-height: 1.75rem;
@@ -154,12 +172,18 @@
    padding-top: 1rem;
 }
 .hern-select-menu__menu__category-name {
-   font-size: 1.125rem;
+   font-size: 0.938rem;
+   font-weight: 500;
    line-height: 1.75rem;
    color: rgba(55, 65, 81, 1);
    margin: 0.75rem 0;
    padding-bottom: 0.25rem;
    border-bottom-width: 1px;
+   display: inline-block;
+   color: #ffffff;
+   background-color: #3f4441;
+   padding: 4px 16px;
+   border-radius: 4px;
 }
 
 .hern-select-menu__menu__products {
@@ -407,9 +431,15 @@
    justify-content: space-between;
 }
 .hern-cart-plan-products__header__title {
-   font-size: 1.125rem;
+   font-size: 0.938rem;
    line-height: 1.75rem;
-   color: rgba(55, 65, 81, 1);
+   color: #3f4441;
+   font-weight: 500;
+
+   & > span {
+      font-size: 1.167rem;
+      font-weight: 600;
+   }
 }
 .hern-cart-plan-products__saving-status {
    @media (min-width: 640px) {
