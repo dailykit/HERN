@@ -15,6 +15,8 @@ import { useConfig } from '../../../../lib'
 import { PlusIcon, MinusIcon } from '../../../../assets/icons'
 import { useTranslation } from '../../../../context'
 
+import { ChevronIcon } from '../../../../assets/icons/Chevron'
+
 const BillingDetails = ({ isCheckout }) => {
    const router = useRouter()
    const { state } = useMenu()
@@ -72,8 +74,10 @@ const BillingDetails = ({ isCheckout }) => {
          )}
          <header className="hern-cart-billing__header">
             <h4 className="hern-cart-billing__heading">
-               <span> {t('Your Weekly Total:')}</span>
-               {itemCountValid ? formatCurrency(billing?.totalToPay) : 'N/A'}
+               <span> {t('Your Weekly Total:')} </span>
+               <span className="hern-cart-billing__amount">
+                  {itemCountValid ? formatCurrency(billing?.totalToPay) : 'N/A'}
+               </span>
             </h4>
             {itemCountValid && <Toggle open={open} toggle={toggle} />}
          </header>
@@ -99,17 +103,14 @@ const Toggle = ({ open, toggle }) => {
          onClick={() => toggle(!open)}
       >
          {open ? (
-            <MinusIcon
-               color="rgba(4,120,87,1)"
-               stroke="currentColor"
-               size={18}
+            <ChevronIcon
+               direction="down"
+               color="#3F4441"
+               width={12}
+               height={6}
             />
          ) : (
-            <PlusIcon
-               color="rgba(4,120,87,1)"
-               stroke="currentColor"
-               size={18}
-            />
+            <ChevronIcon color="#3F4441" height={15} width={8} />
          )}
       </button>
    )

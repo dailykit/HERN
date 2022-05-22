@@ -116,7 +116,7 @@ export const CartPanel = ({ noSkip, isCheckout }) => {
                               ?.itemCountValid
                         }
                      >
-                        {t('PROCEED TO CHECKOUT')}
+                        {t('Proceed to Checkout')}
                      </Button>
                   )}
                </>
