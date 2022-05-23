@@ -475,6 +475,16 @@ export const PaymentProvider = ({ children }) => {
             setCartId(router.query.id)
          } else if (_has(router.query, 'paymentId') && router.query.paymentId) {
             setCartPaymentId(router.query.paymentId)
+            let updatedURL = new URL(
+               `${window.location.origin}${router.asPath}`
+            )
+            updatedURL.searchParams.delete('payment')
+            updatedURL.searchParams.delete('paymentId')
+            router.replace(
+               `${updatedURL.pathname}${updatedURL.search}`,
+               undefined,
+               { shallow: true }
+            )
          }
       }
    }, [router.query])
