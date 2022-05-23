@@ -36,9 +36,9 @@ const Modifiers = ({
             }
          } else {
             if (category.limits.max) {
-               return 'CHOOSE AS MANY AS YOU LIKE'
-            } else {
                return `CHOOSE AS MANY AS YOU LIKE UPTO ${category.limits.max}`
+            } else {
+               return 'CHOOSE AS MANY AS YOU LIKE'
             }
          }
       }
