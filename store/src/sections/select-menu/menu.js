@@ -275,46 +275,48 @@ const Product = ({ node, theme, isAdded, noProductImage, buildImageUrl }) => {
                {node.addOnLabel}
             </span>
          )}
-         <section className="hern-select-menu__menu__product__link">
-            <a theme={theme} onClick={openRecipe}>
-               <span data-translation="true">{product.name}</span>
-               {'-'}
-               <span data-translation="true">{product.label}</span>
-            </a>
-         </section>
-         <p
-            className="hern-select-menu__menu__product__link__additional-text"
-            data-translation="true"
-         >
-            {product?.additionalText}
-         </p>
-         {canAdd() && (
-            <button
-               className={btnClasses}
-               theme={theme}
-               disabled={
-                  !node.isAvailable &&
-                  state.occurenceCustomer?.validStatus?.itemCountValid
-               }
-               onClick={() => add(node.cartItem, node)}
-               title={
-                  node.isAvailable
-                     ? formatMessage({ id: 'Add product' })
-                     : formatMessage({ id: 'This product is out of stock.' })
-               }
+         <div style={{ padding: '0.5rem' }}>
+            <section className="hern-select-menu__menu__product__link">
+               <a theme={theme} onClick={openRecipe}>
+                  <span data-translation="true">{product.name}</span>
+                  {'-'}
+                  <span data-translation="true">{product.label}</span>
+               </a>
+            </section>
+            <p
+               className="hern-select-menu__menu__product__link__additional-text"
+               data-translation="true"
             >
-               {node.isAvailable ? (
-                  <>
-                     {isActive ? t('REPEAT') : t('ADD')}
-                     {node.addOnPrice > 0 && ' + '}
-                     {node.addOnPrice > 0 &&
-                        formatCurrency(Number(node.addOnPrice) || 0)}
-                  </>
-               ) : (
-                  t('Out of Stock')
-               )}
-            </button>
-         )}
+               {product?.additionalText}
+            </p>
+            {canAdd() && (
+               <button
+                  className={btnClasses}
+                  theme={theme}
+                  disabled={
+                     !node.isAvailable &&
+                     state.occurenceCustomer?.validStatus?.itemCountValid
+                  }
+                  onClick={() => add(node.cartItem, node)}
+                  title={
+                     node.isAvailable
+                        ? formatMessage({ id: 'Add product' })
+                        : formatMessage({ id: 'This product is out of stock.' })
+                  }
+               >
+                  {node.isAvailable ? (
+                     <>
+                        {isActive ? t('REPEAT') : t('ADD')}
+                        {node.addOnPrice > 0 && ' + '}
+                        {node.addOnPrice > 0 &&
+                           formatCurrency(Number(node.addOnPrice) || 0)}
+                     </>
+                  ) : (
+                     t('Out of Stock')
+                  )}
+               </button>
+            )}
+         </div>
       </li>
    )
 }

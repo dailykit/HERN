@@ -13,7 +13,6 @@
    flex-direction: column;
    align-items: center;
    justify-content: center;
-   display: none;
    &::after {
       content: '';
       position: absolute;
@@ -189,7 +188,7 @@
 .hern-select-menu__menu__products {
    display: grid;
    gap: 0.75rem;
-   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+   grid-template-columns: repeat(auto-fill, minmax(236px, 1fr));
 }
 
 .hern-select-menu__menu__product {
@@ -197,11 +196,9 @@
    display: flex;
    flex-direction: column;
    background: #fff;
-   padding: 0.5rem;
-   border-radius: 0.25rem;
+   border-radius: 1.25rem;
    overflow: hidden;
-   border-radius: 2px;
-   box-shadow: 0px 0.896019px 11.6482px rgba(0, 0, 0, 0.06);
+   box-shadow: 0px 1px 5px rgb(0 0 0 / 8%);
 }
 .hern-select-menu__menu__product--active {
    border-width: 2px;
@@ -211,8 +208,8 @@
    align-items: center;
    justify-content: center;
    background-color: rgba(229, 231, 235, 1);
-   margin-bottom: 0.5rem;
-   border-radius: 0.25rem;
+   margin-bottom: 0.969rem;
+   border-radius: 20px 20px 0px 0px;
    overflow: hidden;
    cursor: pointer;
    position: relative;
@@ -240,29 +237,30 @@
 }
 .hern-select-menu__menu__product__add-on-label {
    top: 16px;
-   padding: 4px 8px;
+   padding: 3px 6px;
    position: absolute;
-   border-radius: 0px 3px 3px 0px;
-   background-color: lightgray;
-   font-size: 12px;
-   line-height: 1.25rem;
+   border-radius: 0px 2px 2px 0px;
+   background: rgba(17, 130, 59, 0.2);
+   backdrop-filter: blur(10px);
+   -webkit-backdrop-filter: blur(10px);
+   font-size: 0.875rem;
    text-transform: capitalize;
    font-weight: 500;
-   color: #3f4441;
+   color: rgba(51, 51, 51, 0.8);
    letter-spacing: 0.05em;
 }
 .hern-select-menu__menu__product__btn {
-   font-size: 14px;
+   font-size: 0.875rem;
    line-height: 1.25rem;
    font-weight: 500;
    text-transform: capitalize;
    letter-spacing: 0.05em;
-   border-radius: 0.25rem;
+   border-radius: 20px;
    padding: 0.5rem;
    width: 100%;
    color: #ffffff;
    transition: all 0.2s ease-in-out;
-   background-color: #3f4441;
+   background-color: #11823b;
 }
 .hern-select-menu__menu__product__btn--disabled {
    cursor: not-allowed;
@@ -274,17 +272,19 @@
    align-items: center;
    margin-bottom: 0.25rem;
    > a {
-      color: #3f4441 !important;
+      color: rgba(51, 51, 51, 0.8);
       cursor: pointer;
-      font-weight: 400;
-      font-size: 15px;
+      font-weight: 500;
+      font-size: 1.125rem;
+      line-height: 1.2;
    }
 }
 .hern-select-menu__menu__product__link__additional-text {
-   margin-bottom: 16px;
-   color: #999999;
-   font-size: 11px;
-   font-weight: 400;
+   margin-bottom: 1.089rem;
+   color: rgba(51, 51, 51, 0.4);
+   font-size: 0.875rem;
+   font-weight: 500;
+   line-height: 1.14;
 }
 .hern-select-menu__menu__product__link__check-icon {
    flex-shrink: 0;
