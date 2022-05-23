@@ -4,7 +4,7 @@ import dynamic from 'next/dynamic'
 import { ArrowLeftIcon, ArrowRightIcon } from '../../assets/icons'
 // import { HernLazyImage } from '../../utils/hernImage'
 import { isClient, useWindowOnload } from '../../utils'
-
+import ReactHTMLParser from 'react-html-parser'
 const HernLazyImage = dynamic(() =>
    import('../../utils/hernImage').then(promise => promise.HernLazyImage)
 )
@@ -56,7 +56,13 @@ export const SliderSection = ({ config }) => {
             >
                {sliderConfig.content.length > 0 &&
                   sliderConfig.content.map((content, index) => {
-                     return <SliderDiv content={content} key={index} />
+                     return (
+                        <SliderDiv
+                           content={content}
+                           index={index}
+                           key={index}
+                        />
+                     )
                   })}
             </Carousel>
          )}
@@ -64,7 +70,7 @@ export const SliderSection = ({ config }) => {
    )
 }
 
-const SliderDiv = ({ content }) => {
+const SliderDiv = ({ content, index }) => {
    if (!isClient) {
       return null
    }
@@ -94,33 +100,39 @@ const SliderDiv = ({ content }) => {
    }, [isClient])
    return (
       <div
-         style={{
-            position: 'relative',
-         }}
+         className={`hern-slider-section__content-wrapper hern-slider-section__content-${
+            index + 1
+         }`}
       >
          <HernLazyImage
             dataSrc={content.image}
             width={sliderImageSize.width}
             height={sliderImageSize.height}
             className="hern-slider_section-image"
-            // alt="products"
-            // width="100%"
          />
          {/* <video muted autoplay="autoplay" loop="loop" preload="auto">
                 <source src={content.video.value[index]?content.video.value[index]:content.video.default}></source>
             </video> */}
          <div className="hern-slider-section__content">
             <div>
-               <h1 className="hern-slider_section-heading">{content.title}</h1>
+               <h1 className="hern-slider_section-heading">
+                  {ReactHTMLParser(content.title)}
+               </h1>
                <p className="hern-slider_section-description">
-                  {content.description}
+                  {ReactHTMLParser(content.description)}
                </p>
-               <Link
-                  href={content.callToActionButtonLink}
-                  className="hern-slider_section-get_started_button"
-               >
-                  Get Started
-               </Link>
+
+               {content.callToActionButtonLabel &&
+                  content.callToActionButtonLink && (
+                     <Link
+                        href={content.callToActionButtonLink}
+                        className="hern-slider_section-get_started_button"
+                     >
+                        <a>
+                           {ReactHTMLParser(content.callToActionButtonLabel)}
+                        </a>
+                     </Link>
+                  )}
             </div>
          </div>
       </div>
@@ -142,22 +154,3 @@ const RightArrow = ({ ...props }) => {
       </div>
    )
 }
-
-// const FeedBackFormButton = () => {
-//    return (
-//       <div>
-//          {/* <div className="hern-slider-section__content"> */}
-//          <div>
-//             <a
-//                href="https://docs.google.com/forms/d/e/1FAIpQLSec10yg1m1RlikaVXPWALWmsXqrWJGYMyEUj8Bp2KMn2DyS3Q/viewform"
-//                className="hern-slider_section-feedBack_button"
-//                // style={{}}
-//             >
-//                {' '}
-//                Feedback
-//             </a>
-//             {/* </div> */}
-//          </div>
-//       </div>
-//    )
-// }
