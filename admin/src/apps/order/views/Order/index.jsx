@@ -31,7 +31,7 @@ import { Tree } from 'antd'
 import styled from 'styled-components'
 
 import { Products } from './sections'
-import { formatDate, combineCartItems } from '../../utils'
+import { formatDate, getRecursiveProducts } from '../../utils'
 import { findAndSelectSachet } from './methods'
 import { ResponsiveFlex, Styles } from './styled'
 import { QUERIES, MUTATIONS, CREATE_PRINT_JOB } from '../../graphql'
@@ -134,7 +134,9 @@ const Order = () => {
          subscriptionData: { data: { products = [] } = {} } = {},
       }) => {
          // setIsThirdParty(Boolean(data?.order?.thirdPartyOrderId))
-         const { refinedProducts } = combineCartItems(products)
+         const refinedProducts = getRecursiveProducts(products)
+         console.log('refinedProducts', refinedProducts)
+
          setOrderedProducts(refinedProducts)
       },
    })

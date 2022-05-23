@@ -130,20 +130,57 @@ export const QUERIES = {
             products: cartItems(where: $where, order_by: { created_at: desc }) {
                id
                parentCartItemId
+               simpleRecipeYieldId
+               position
+               stationId
+               isModifier
+               modifierOptionId
                status
                isAddOn
                displayName
                displayImage
+               displayUnit
+               processingName
+               displayBulkDensity
+               displayUnitQuantity
+               supplierItemId
+               supplierItem {
+                  id
+                  supplierItemName
+               }
                operationConfigId
+
                operationConfig {
                   id
                   labelTemplateId
                   stationId
+                  station {
+                     id
+                     name
+                  }
+                  labelTemplate {
+                     id
+                     name
+                  }
+                  packagingId
+                  packaging {
+                     id
+                     name
+                     assets
+                  }
                }
                productOption {
                   label
                }
                productOptionType
+               cart {
+                  id
+                  order {
+                     id
+                     isAccepted
+                     isRejected
+                  }
+               }
                totalSachets: childs_aggregate {
                   aggregate {
                      count

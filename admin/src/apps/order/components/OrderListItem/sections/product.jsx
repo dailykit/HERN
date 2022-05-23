@@ -12,7 +12,7 @@ import {
 } from './styled'
 import { UserIcon } from '../../../assets/icons'
 import { Spacer } from '../../OrderSummary/styled'
-import { combineCartItems } from '../../../utils'
+import { getRecursiveProducts } from '../../../utils'
 
 const address = 'apps.order.components.orderlistitem.'
 
@@ -26,7 +26,7 @@ export const Products = React.memo(function ProductsComp({ order }) {
 
    React.useEffect(() => {
       if (!isEmpty(order.cart.cartItems_aggregate.nodes)) {
-         const { refinedProducts } = combineCartItems(
+         const refinedProducts = getRecursiveProducts(
             order.cart.cartItems_aggregate.nodes
          )
          setOrderedProducts(refinedProducts)
