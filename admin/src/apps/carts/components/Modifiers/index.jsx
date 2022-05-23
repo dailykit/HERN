@@ -12,16 +12,9 @@ const Modifiers = ({
    additionalModifiers,
    productOption,
    setProductOption,
+   errorCategories,
+   nestedErrorCategories
 }) => {
-   const [checkOptionAddValidity, checkModifierStateValidity] = React.useMemo(
-      () => getModifiersValidator(data),
-      [data]
-   )
-
-   const [selectedModifiers, setSelectedModifiers] = React.useState([])
-   const [nestedSelectedModifiers, setNestedSelectedModifiers] = React.useState(
-      []
-   )
 
    const renderConditionText = category => {
       if (category.type === 'single') {
@@ -54,8 +47,6 @@ const Modifiers = ({
    const {
       selectedModifierOptions,
       setSelectedModifierOptions,
-      errorCategories,
-      setErrorCategories,
       status,
    } = useModifier({
       productOption,
@@ -68,8 +59,6 @@ const Modifiers = ({
    const {
       selectedModifierOptions: nestedSelectedModifierOptions,
       setSelectedModifierOptions: setNestedSelectedModifierOptions,
-      errorCategories: nestedErrorCategories,
-      setErrorCategories: setNestedErrorCategories,
       status: nestedStatus,
    } = useModifier({
       productOption,
@@ -110,6 +99,8 @@ const Modifiers = ({
                   setNestedSelectedModifierOptions={
                      setNestedSelectedModifierOptions
                   }
+                  errorCategories={errorCategories}
+                  nestedErrorCategories={nestedErrorCategories}
                />
             ))}
          {data.categories.map(category => (
@@ -119,6 +110,8 @@ const Modifiers = ({
                renderConditionText={renderConditionText}
                selectedModifierOptions={selectedModifierOptions}
                setSelectedModifierOptions={setSelectedModifierOptions}
+               errorCategories={errorCategories}
+               nestedErrorCategories={nestedErrorCategories}
             />
          ))}
       </>
@@ -132,6 +125,8 @@ const AdditionalModifiers = ({
    setSelectedModifierOptions,
    nestedSelectedModifierOptions,
    setNestedSelectedModifierOptions,
+   errorCategories,
+   nestedErrorCategories
 }) => {
    const additionalModifiersType = React.useMemo(
       () => eachAdditionalModifier.type == 'hidden',
@@ -168,6 +163,8 @@ const AdditionalModifiers = ({
                setNestedSelectedModifierOptions={
                   setNestedSelectedModifierOptions
                }
+               errorCategories={errorCategories}
+               nestedErrorCategories={nestedErrorCategories}
             />
          ))}
       </div>

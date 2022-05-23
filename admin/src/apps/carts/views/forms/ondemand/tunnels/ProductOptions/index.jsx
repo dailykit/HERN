@@ -59,6 +59,8 @@ const Content = ({ panel }) => {
    })
    const [productOptionType, setProductOptionType] = React.useState('')
    const [isLoading, setIsLoading] = React.useState(true)
+   const [errorCategories, setErrorCategories] = React.useState([])
+   const [nestedErrorCategories, setNestedErrorCategories] = React.useState([])
 
    const argsForByLocation = React.useMemo(
       () => ({
@@ -262,8 +264,8 @@ const Content = ({ panel }) => {
             }
          }
       }
-      // setErrorCategories(errorState)
-      // nestedSetErrorCategories(nestedFinalErrorCategories)
+      setErrorCategories(errorState)
+      setNestedErrorCategories(nestedFinalErrorCategories)
       if (errorState.length > 0 || nestedFinalErrorCategories.length > 0) {
          // console.log('FAIL')
          return
@@ -436,6 +438,8 @@ const Content = ({ panel }) => {
                         handleChange={result => setModifiersState(result)}
                         productOption={selectedOption}
                         setProductOption={setSelectedOption}
+                        errorCategories={errorCategories}
+                        nestedErrorCategories={nestedErrorCategories}
                      />
                   )}
                   <Styles.Fixed width="120px" margin="0 auto">

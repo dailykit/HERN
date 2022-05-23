@@ -15,6 +15,8 @@ export const ModifierCategory = ({
    setSelectedModifierOptions,
    nestedSelectedModifierOptions,
    setNestedSelectedModifierOptions,
+   errorCategories,
+   nestedErrorCategories,
 }) => {
    const selectModifierOption = (eachOption, eachModifierCategory) => {
       //selected option
@@ -122,6 +124,20 @@ export const ModifierCategory = ({
             <Spacer xAxis size="8px" />
             <Text as="subtitle">{renderConditionText(category)}</Text>
          </Flex>
+         {errorCategories.includes(category.id) && (
+            <>
+               <br />
+               <span
+                  style={{
+                     fontStyle: 'italic',
+                     fontSize: '11px',
+                     color: 'red',
+                  }}
+               >
+                  {('You have to choose this category.')}
+               </span>
+            </>
+         )}
          <Spacer size="4px" />
          {category.options.map(option => (
             <ModifierOptionWrapper
@@ -135,6 +151,7 @@ export const ModifierCategory = ({
                setNestedSelectedModifierOptions={
                   setNestedSelectedModifierOptions
                }
+               nestedErrorCategories={nestedErrorCategories}
             />
          ))}
       </Styles.MCategory>
@@ -149,6 +166,7 @@ const ModifierOptionWrapper = ({
    setNestedSelectedModifierOptions,
    renderConditionText,
    renderIcon,
+   nestedErrorCategories
 }) => {
    const [showAdditionalModifierOptions, setShowAdditionalModifierOptions] =
       React.useState(false)
@@ -180,6 +198,7 @@ const ModifierOptionWrapper = ({
                      renderConditionText={renderConditionText}
                      renderIcon={renderIcon}
                      selectModifierOption={selectModifierOption}
+                     errorCategories={nestedErrorCategories}
                   />
                )
             )}
