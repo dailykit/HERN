@@ -55,6 +55,7 @@ const Content = ({ panel }) => {
    const [modifiersState, setModifiersState] = React.useState({
       isValid: true,
       selectedModifiers: [],
+      selectedNestedModifiers: [],
    })
    const [productOptionType, setProductOptionType] = React.useState('')
    const [isLoading, setIsLoading] = React.useState(true)
@@ -149,18 +150,180 @@ const Content = ({ panel }) => {
       }
    )
 
-   const add = () => {
-      const cartItem = getCartItemWithModifiers(
-         selectedOption.cartItem,
-         modifiersState.selectedModifiers,
-         product.type
-      )
-      const objects = new Array(quantity).fill({ ...cartItem, cartId: +cartId })
-      insertCartItems({
-         variables: {
-            objects,
-         },
+   const add = async () => {
+      const allSelectedOptions = modifiersState.selectedModifiers
+      const allNestedSelectedOptions = modifiersState.selectedNestedModifiers
+      //no modifier available in product options
+      if (!selectedOption.modifier) {
+         // console.log('PASS')
+         // addToCart({ ...selectedOption, quantity })
+         const cartItem = getCartItemWithModifiers(
+            selectedOption.cartItem,
+            allSelectedOptions.map(x => x.cartItem)
+         )
+         const objects = new Array(quantity).fill({
+            ...cartItem,
+            cartId: +cartId,
+         })
+         // console.log('cartItem', objects)
+         insertCartItems({
+            variables: {
+               objects,
+            },
+         })
+
+         // if (edit) {
+         //    methods.cartItems.delete({
+         //       variables: {
+         //          where: {
+         //             id: {
+         //                _in: productCartDetail.ids,
+         //             },
+         //          },
+         //       },
+         //    })
+         // }
+         // closeModifier()
+         return
+      }
+
+      let allCatagories = selectedOption.modifier?.categories || []
+      let allAdditionalCatagories = []
+      if (!_.isEmpty(selectedOption.additionalModifiers)) {
+         selectedOption.additionalModifiers.forEach(eachAdditionalModifier => {
+            eachAdditionalModifier.modifier.categories.forEach(eachCategory => {
+               allAdditionalCatagories.push(eachCategory)
+            })
+         })
+      }
+
+      let finalCategories = [...allCatagories, ...allAdditionalCatagories]
+
+      let errorState = []
+      for (let i = 0; i < finalCategories.length; i++) {
+         const allFoundedOptionsLength = allSelectedOptions.filter(
+            x => x.modifierCategoryID === finalCategories[i].id
+         ).length
+
+         if (
+            finalCategories[i]['isRequired'] &&
+            finalCategories[i]['type'] === 'multiple'
+         ) {
+            const min = finalCategories[i]['limits']['min']
+            const max = finalCategories[i]['limits']['max']
+            if (
+               allFoundedOptionsLength > 0 &&
+               min <= allFoundedOptionsLength &&
+               (max
+                  ? allFoundedOptionsLength <= max
+                  : allFoundedOptionsLength <=
+                    finalCategories[i].options.length)
+            ) {
+            } else {
+               errorState.push(finalCategories[i].id)
+            }
+         }
+      }
+      let nestedFinalCategories = []
+      let nestedFinalErrorCategories = []
+      // console.log('finalCategories', finalCategories)
+      finalCategories.forEach(eachCategory => {
+         eachCategory.options.forEach(eachOption => {
+            if (eachOption.additionalModifierTemplateId) {
+               nestedFinalCategories.push(
+                  ...eachOption.additionalModifierTemplate.categories
+               )
+            }
+         })
       })
+      if (nestedFinalCategories.length > 0) {
+         for (let i = 0; i < nestedFinalCategories.length; i++) {
+            const allFoundedOptionsLength = allNestedSelectedOptions.filter(
+               x => x.modifierCategoryID === nestedFinalCategories[i].id
+            ).length
+
+            if (
+               nestedFinalCategories[i]['isRequired'] &&
+               nestedFinalCategories[i]['type'] === 'multiple'
+            ) {
+               const min = nestedFinalCategories[i]['limits']['min']
+               const max = nestedFinalCategories[i]['limits']['max']
+               if (
+                  allFoundedOptionsLength > 0 &&
+                  min <= allFoundedOptionsLength &&
+                  (max
+                     ? allFoundedOptionsLength <= max
+                     : allFoundedOptionsLength <=
+                       nestedFinalCategories[i].options.length)
+               ) {
+               } else {
+                  nestedFinalErrorCategories.push(nestedFinalCategories[i].id)
+               }
+            }
+         }
+      }
+      // setErrorCategories(errorState)
+      // nestedSetErrorCategories(nestedFinalErrorCategories)
+      if (errorState.length > 0 || nestedFinalErrorCategories.length > 0) {
+         // console.log('FAIL')
+         return
+      } else {
+         // console.log('PASS')
+         const nestedModifierOptionsGroupByParentModifierOptionId =
+            allNestedSelectedOptions.length > 0
+               ? _.chain(allNestedSelectedOptions)
+                    .groupBy('parentModifierOptionId')
+                    .map((value, key) => ({
+                       parentModifierOptionId: +key,
+                       data: value,
+                    }))
+                    .value()
+               : []
+
+         if (!_.isEmpty(nestedModifierOptionsGroupByParentModifierOptionId)) {
+            const cartItem = getCartItemWithModifiers(
+               selectedOption.cartItem,
+               allSelectedOptions.map(x => x.cartItem),
+               nestedModifierOptionsGroupByParentModifierOptionId
+            )
+            const objects = new Array(quantity).fill({
+               ...cartItem,
+               cartId: +cartId,
+            })
+            insertCartItems({
+               variables: {
+                  objects,
+               },
+            })
+            // await addToCart(cartItem, quantity)
+         } else {
+            const cartItem = getCartItemWithModifiers(
+               selectedOption.cartItem,
+               allSelectedOptions.map(x => x.cartItem)
+            )
+            const objects = new Array(quantity).fill({
+               ...cartItem,
+               cartId: +cartId,
+            })
+
+            insertCartItems({
+               variables: {
+                  objects,
+               },
+            })
+         }
+         // if (edit) {
+         //    methods.cartItems.delete({
+         //       variables: {
+         //          where: {
+         //             id: {
+         //                _in: productCartDetail.ids,
+         //             },
+         //          },
+         //       },
+         //    })
+         // }
+      }
    }
 
    const totalPrice = React.useMemo(() => {
@@ -172,12 +335,24 @@ const Content = ({ panel }) => {
             selectedOption.discount
          )
          total += modifiersState.selectedModifiers.reduce(
-            (acc, op) => acc + op.data[0].unitPrice,
+            (acc, op) => acc + op.cartItem.data[0].unitPrice,
             0
          )
+         if (modifiersState.selectedNestedModifiers.length) {
+            total += modifiersState.selectedNestedModifiers.reduce(
+               (acc, op) => acc + op.cartItem.data[0].unitPrice,
+               0
+            )
+         }
       }
       return total * quantity
-   }, [product, selectedOption, modifiersState.selectedModifiers, quantity])
+   }, [
+      product,
+      selectedOption,
+      modifiersState.selectedModifiers,
+      modifiersState.selectedNestedModifiers,
+      quantity,
+   ])
 
    return (
       <>
@@ -255,7 +430,12 @@ const Content = ({ panel }) => {
                   {selectedOption?.modifier && (
                      <Modifiers
                         data={selectedOption.modifier}
+                        additionalModifiers={
+                           selectedOption.additionalModifiers || []
+                        }
                         handleChange={result => setModifiersState(result)}
+                        productOption={selectedOption}
+                        setProductOption={setSelectedOption}
                      />
                   )}
                   <Styles.Fixed width="120px" margin="0 auto">

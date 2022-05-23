@@ -1,30 +1,38 @@
 export const getCartItemWithModifiers = (
    cartItemInput,
-   selectedModifiersInput
+   selectedModifiersInput,
+   nestedModifiersInput
 ) => {
-   const finalCartItem = { ...cartItemInput }
+   // clone cartItemInput (deep clone)
+   const finalCartItem = JSON.parse(JSON.stringify(cartItemInput))
 
    const combinedModifiers = selectedModifiersInput.reduce(
       (acc, obj) => [...acc, ...obj.data],
       []
    )
-
    const dataArr = finalCartItem?.childs?.data[0]?.childs?.data
    const dataArrLength = dataArr.length
 
-   if (dataArrLength === 0) {
-      finalCartItem.childs.data[0].childs.data = combinedModifiers
-      return finalCartItem
-   } else {
-      for (let i = 0; i < dataArrLength; i++) {
-         const objWithModifiers = {
-            ...dataArr[i],
-            childs: {
-               data: combinedModifiers,
-            },
-         }
-         finalCartItem.childs.data[0].childs.data[i] = objWithModifiers
-      }
-      return finalCartItem
+   finalCartItem.childs.data[0].childs.data = [...dataArr, ...combinedModifiers]
+
+   if (nestedModifiersInput) {
+      nestedModifiersInput.forEach(eachNestedModifierInput => {
+         const foundModifierIndex =
+            finalCartItem.childs.data[0].childs.data.findIndex(
+               y =>
+                  eachNestedModifierInput.parentModifierOptionId ==
+                  y.modifierOptionId
+            )
+         const xCombinedModifier = eachNestedModifierInput.data
+            .map(z => z.cartItem)
+            .reduce((acc, obj) => [...acc, ...obj.data], [])
+         finalCartItem.childs.data[0].childs.data[foundModifierIndex].childs =
+            {}
+         finalCartItem.childs.data[0].childs.data[foundModifierIndex].childs[
+            'data'
+         ] = xCombinedModifier
+      })
    }
+
+   return finalCartItem
 }
