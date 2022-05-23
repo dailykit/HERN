@@ -56,7 +56,7 @@ export const Products = ({ loading, error, products }) => {
                      <ProductCard
                         product={product}
                         onClick={() => selectProduct(product)}
-                        isActive={state?.current_product?.id === product.id}
+                        isActive={selectedProduct?.id === product?.id}
                      />
                   </Tab>
                ))}
@@ -103,6 +103,7 @@ export const Products = ({ loading, error, products }) => {
                            !state.current_product?.showSachets && (
                               <TreeComponent
                                  nodes={selectedProduct.childNodes ?? []}
+                                 key={selectedProduct.id}
                               />
                            )}
                         {state.current_product?.id &&
@@ -214,9 +215,9 @@ const Title = ({ node }) => {
          type: 'SELECT_PRODUCT',
          payload: { ...node, showSachets: true },
       })
-      selectSachet(node, {
-         name: node?.displayName?.split('->')?.pop()?.trim() || 'N/A',
-      })
+      // selectSachet(node, {
+      //    name: node?.displayName?.split('->')?.pop()?.trim() || 'N/A',
+      // })
    }
    return (
       <StyledTitle>
@@ -233,7 +234,7 @@ const Title = ({ node }) => {
    )
 }
 
-const TreeComponent = ({ nodes = [] }) => {
+const TreeComponent = ({ nodes = [], key }) => {
    const { state, dispatch, selectSachet, switchView } = useOrder()
    function flattenDeep(data, depth = 0, parentCartItemId = null, main = []) {
       return data.reduce((r, { childNodes, id, ...rest }) => {
@@ -253,15 +254,15 @@ const TreeComponent = ({ nodes = [] }) => {
          node => node.id === +selectedKeys[0]
       )
 
-      // dispatch({
-      //    type: 'SELECT_PRODUCT',
-      //    payload: selectedNode,
-      // })
-      selectSachet(selectedNode, {
-         name:
-            state.current_product?.displayName?.split('->')?.pop()?.trim() ||
-            'N/A',
+      dispatch({
+         type: 'SELECT_PRODUCT',
+         payload: selectedNode,
       })
+      // selectSachet(selectedNode, {
+      //    name:
+      //       state.current_product?.displayName?.split('->')?.pop()?.trim() ||
+      //       'N/A',
+      // })
    }
    const renderTreeNodes = node => {
       return (
@@ -275,8 +276,9 @@ const TreeComponent = ({ nodes = [] }) => {
 
    return (
       <TreeContainer
-         blockNode
-         defaultExpandAll
+         key={key}
+         blockNode={true}
+         defaultExpandAll={true}
          switcherIcon={({ expanded }) =>
             expanded ? <ChevronDown /> : <ChevronRight />
          }
