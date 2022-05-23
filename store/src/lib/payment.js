@@ -118,22 +118,22 @@ export const PaymentProvider = ({ children }) => {
       error: hasCartPaymentError,
       loading: isCartPaymentLoading,
    } = useSubscription(GET_CART_PAYMENT_INFO, {
-      skip: !cartId && !cartPaymentId, // When cartId is not available use cartPaymentId to get the cartPayments
+      skip: !cartPaymentId && !cartId, // When cartId is not available use cartPaymentId to get the cartPayments
       fetchPolicy: 'no-cache',
       variables: {
          where: {
             isResultShown: {
                _eq: false,
             },
-            ...(cartId
+            ...(cartPaymentId
                ? {
-                    cartId: {
-                       _eq: cartId,
+                    id: {
+                       _eq: cartPaymentId,
                     },
                  }
                : {
-                    id: {
-                       _eq: cartPaymentId,
+                    cartId: {
+                       _eq: cartId,
                     },
                  }),
          },
@@ -418,7 +418,6 @@ export const PaymentProvider = ({ children }) => {
 
    // setting cartPayment in state
    useEffect(() => {
-      console.log('useEffect for setting cartPayment')
       if (!cartId && !cartPaymentId) {
          setCartId(cartState?.cart?.id || null)
       }
@@ -469,15 +468,14 @@ export const PaymentProvider = ({ children }) => {
 
    // initiating payment flow (this is required after coming back from paytm payment page)
    useEffect(() => {
-      if (
-         !_isEmpty(router.query) &&
-         _has(router.query, 'payment') &&
-         _has(router.query, 'id') &&
-         router.query.id
-      ) {
+      if (!_isEmpty(router.query) && _has(router.query, 'payment')) {
          setIsPaymentInitiated(true)
          setIsProcessingPayment(true)
-         setCartId(router.query.id)
+         if (_has(router.query, 'id') && router.query.id) {
+            setCartId(router.query.id)
+         } else if (_has(router.query, 'paymentId') && router.query.paymentId) {
+            setCartPaymentId(router.query.paymentId)
+         }
       }
    }, [router.query])
 

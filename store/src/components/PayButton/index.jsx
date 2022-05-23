@@ -7,7 +7,7 @@ import KioskButton from '../kiosk/component/button'
 import { Button } from '../button'
 import * as QUERIES from '../../graphql'
 import { isKiosk, useTerminalPay } from '../../utils'
-import { usePayment } from '../../lib'
+import { usePayment, useConfig } from '../../lib'
 import { useUser } from '../../context'
 
 function PayButton({
@@ -33,6 +33,7 @@ function PayButton({
    } = usePayment()
    const { user } = useUser();
    const { addToast } = useToasts()
+   const { brand } = useConfig()
    const [cartValidity, setCartValidity] = useState(null)
 
    // query for fetching available payment options
@@ -74,7 +75,6 @@ function PayButton({
 
    const onPayClickHandler = async () => {
       setPaymentTunnelOpen && setPaymentTunnelOpen(false)
-      console.log('PayButton: onPayClickHandler')
       if(cartId){
          if (isKioskMode) {
             console.log('inside kiosk condition')
@@ -136,7 +136,7 @@ function PayButton({
                   paymentCustomerId: user.platform_customer.paymentCustomerId,
                   paymentMethodId: paymentInfo?.selectedAvailablePaymentOption?.selectedPaymentMethodId,
                   usedAvailablePaymentOptionId: paymentInfo.selectedAvailablePaymentOption.id,
-                  metaData: metaData
+                  metaData: { ...metaData, brandId: brand.id }
                }
             }
          })

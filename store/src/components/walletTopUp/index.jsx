@@ -2,9 +2,12 @@ import React, { useState, useEffect, useRef } from 'react'
 import { formatCurrency } from '../../utils'
 import { PaymentOptionsRenderer } from "../../components";
 import { useUser } from '../../context';
+import { useRouter } from 'next/router'
 
 function WalletTopUp(props){
    const { user } = useUser()
+   const router = useRouter()
+
    const [topUpAmount, setTopUpAmount] = useState(null)
    const [showPaymentOptions, setShowPaymentOptions] = useState(false)
    const amountField = useRef();
@@ -49,12 +52,13 @@ function WalletTopUp(props){
                   <h2 className="hern-wallet__top-up-header">Select Method to add money</h2>               
                   <PaymentOptionsRenderer
                      amount={topUpAmount}
-                     availablePaymentOptionIds={[1001, 1003]}
+                     availablePaymentOptionIds={[1001, 1003, 1004]}
                      metaData={{
                         paymentFor: "walletTopUp",
                         walletId: user.wallet.id,
                         amount: topUpAmount,
-                        walletAmount: topUpAmount
+                        walletAmount: topUpAmount,
+                        redirectTo: router.asPath
                      }}
                      setPaymentTunnelOpen={() => { console.log("Payment Closed") }}
                      onPaymentSuccess={()=>{ 
