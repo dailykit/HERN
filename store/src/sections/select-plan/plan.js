@@ -123,7 +123,8 @@ export const Plan = ({ cameFrom = '', plan, handlePlanClick, itemCount }) => {
          ),
       })
       if (!isAuthenticated && !isLoading) {
-         isClient && localStorage.setItem('landed_on', location.href)
+         isClient &&
+            localStorage.setItem('redirect_to', '/get-started/select-delivery')
          router.push(getRoute('/login'))
       } else {
          router.push(getRoute('/get-started/select-delivery'))

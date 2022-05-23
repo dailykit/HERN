@@ -862,6 +862,10 @@ const AuthMenu = ({
                   backgroundColor: `var(--hern-accent)`,
                }}
                id="hern-header__global-login-button"
+               onClick={() =>
+                  isClient &&
+                  localStorage.setItem('redirected_from', location.href)
+               }
             >
                <Link href={getRoute('/login')}>{loginButtonLabel}</Link>
             </button>

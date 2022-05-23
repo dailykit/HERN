@@ -25,6 +25,7 @@ export const DeliverySection = ({ planId }) => {
       ITEM_COUNT,
       {
          onError: error => {
+            console.error(error)
             addToast(t('Failed to fetch delivery days'), {
                appearance: 'error',
             })
