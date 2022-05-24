@@ -71,7 +71,7 @@ const Content = () => {
                   </span>
                </div>
                <Spacer />
-               <WalletTopUp />
+               <WalletTopUp availablePaymentOptionIds={[1001, 1003, 1004]} />
                <Spacer />
                <p className="hern-wallet__transaction_title">
                   {t('TRANSACTION HISTORY')}

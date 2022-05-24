@@ -52,7 +52,7 @@ function WalletTopUp(props){
                   <h2 className="hern-wallet__top-up-header">Select Method to add money</h2>               
                   <PaymentOptionsRenderer
                      amount={topUpAmount}
-                     availablePaymentOptionIds={[1001, 1003, 1004]}
+                     availablePaymentOptionIds={props.availablePaymentOptionIds}
                      metaData={{
                         paymentFor: "walletTopUp",
                         walletId: user.wallet.id,

@@ -47,10 +47,15 @@ export const handlePaymentWebhook = async (req, res) => {
                let redirectPath = new URL(
                   `http://localhost:3000/${result.data.metaData.redirectTo}`
                )
-               redirectPath.search = ''
-               url = `${redirectPath.href}?paymentId=${
+               redirectPath.searchParams.append(
+                  'paymentId',
                   result.data.cartPaymentId
-               }&payment=${paymentStatus[result.data.paymentStatus]}`
+               )
+               redirectPath.searchParams.append(
+                  'payment',
+                  paymentStatus[result.data.paymentStatus]
+               )
+               url = redirectPath.href
             }
          } else {
             if (result.data.cartId) {
@@ -61,10 +66,15 @@ export const handlePaymentWebhook = async (req, res) => {
                let redirectPath = new URL(
                   `https://${result.data.domain}/${result.data.metaData.redirectTo}`
                )
-               redirectPath.search = ''
-               url = `${redirectPath.href}?paymentId=${
+               redirectPath.searchParams.append(
+                  'paymentId',
                   result.data.cartPaymentId
-               }&payment=${paymentStatus[result.data.paymentStatus]}`
+               )
+               redirectPath.searchParams.append(
+                  'payment',
+                  paymentStatus[result.data.paymentStatus]
+               )
+               url = redirectPath.href
             }
          }
          return res.redirect(url)
