@@ -194,6 +194,13 @@ const StyledTitle = styled.div`
          text-decoration: underline;
       }
    }
+   .flex-wrap {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 8px;
+   }
 `
 const StyledBadge = styled.span`
    background: #aaa;
@@ -218,10 +225,10 @@ const Title = ({ node }) => {
    }
    return (
       <StyledTitle>
-         <span>
-            {node.displayName}
+         <div className="flex-wrap">
+            <span>{node.displayName}</span>
             {node.isModifier && <StyledBadge>MOD</StyledBadge>}
-         </span>
+         </div>
          {node.simpleRecipeYieldId && (
             <span className="view_sachets" onClick={viewSachetHandler}>
                View Sachets
