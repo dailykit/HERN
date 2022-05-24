@@ -310,8 +310,8 @@ export const QUERIES = {
    `,
    PRODUCTS: {
       LIST: gql`
-         query products($ids: [Int!]!, $params: jsonb!) {
-            products(where: { isArchived: { _eq: false }, id: { _in: $ids } }) {
+         query products($where: products_product_bool_exp!, $params: jsonb!) {
+            products(where: $where) {
                id
                name
                type
@@ -401,7 +401,9 @@ export const QUERIES = {
                               id
                               name
                               price: priceByLocation(args: { params: $params })
-                              discount: discountByLocation(args: { params: $params })
+                              discount: discountByLocation(
+                                 args: { params: $params }
+                              )
                               quantity
                               image
                               isActive
@@ -446,7 +448,9 @@ export const QUERIES = {
                                           name
                                           categories(
                                              where: { isVisible: { _eq: true } }
-                                             order_by: { position: desc_nulls_last }
+                                             order_by: {
+                                                position: desc_nulls_last
+                                             }
                                           ) {
                                              id
                                              name
@@ -454,7 +458,9 @@ export const QUERIES = {
                                              type
                                              limits
                                              options(
-                                                where: { isVisible: { _eq: true } }
+                                                where: {
+                                                   isVisible: { _eq: true }
+                                                }
                                                 order_by: {
                                                    position: desc_nulls_last
                                                 }
@@ -492,7 +498,9 @@ export const QUERIES = {
                               }
                               sachetItemId
                               ingredientSachetId
-                              cartItem: cartItemByLocation(args: { params: $params })
+                              cartItem: cartItemByLocation(
+                                 args: { params: $params }
+                              )
                            }
                         }
                      }

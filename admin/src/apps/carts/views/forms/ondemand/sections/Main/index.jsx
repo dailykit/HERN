@@ -126,7 +126,11 @@ export const Main = () => {
                }
                await fetchProducts({
                   variables: {
-                     ids: ids,
+                     // ids: ids,
+                     where: {
+                        isArchived: { _eq: false },
+                        id: { _in: ids },
+                     },
                      params: argsForByLocation,
                   },
                })
@@ -223,7 +227,11 @@ export const Main = () => {
          </Flex>
          <Spacer size="20px" />
          {showMenu ? (
-            <Menu menu={menu} menuProductIds={menuProductIds} />
+            <Menu
+               menu={menu}
+               menuProductIds={menuProductIds}
+               argsForByLocation={argsForByLocation}
+            />
          ) : (
             <AllProducts />
          )}
@@ -231,7 +239,7 @@ export const Main = () => {
    )
 }
 
-const Menu = ({ menu, menuProductIds }) => {
+const Menu = ({ menu, menuProductIds, argsForByLocation }) => {
    const { id: cartId } = useParams()
    const { cart, tunnels, dispatch } = useManual()
 
@@ -271,6 +279,7 @@ const Menu = ({ menu, menuProductIds }) => {
                               id: { _in: menuProductIds },
                               name: { _ilike: `%${e.target.value}%` },
                            },
+                           params: argsForByLocation,
                         },
                      })
                   }}
