@@ -20,7 +20,10 @@ const initiatePayment = async arg => {
          cartId,
          metaData = {}
       } = arg
-      console.log('initiating razorpay instance')
+
+      // Deleting redirectTo property from metaData as we can't store / character in notes for Razorpay Payment order
+      delete metaData['redirectTo']
+
       const razorpayInstance = await razorpay()
       const CURRENCY = await get_env('RAZORPAY_CURRENCY')
       var options = {
