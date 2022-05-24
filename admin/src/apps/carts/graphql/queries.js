@@ -87,6 +87,15 @@ export const QUERIES = {
                               id
                               name
                            }
+                           childs {
+                              displayName
+                              price: unitPrice
+                              discount
+                              modifierOption {
+                                 id
+                                 name
+                              }
+                           }
                         }
                         customizableProductComponent {
                            id

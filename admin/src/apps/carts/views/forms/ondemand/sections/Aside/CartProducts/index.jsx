@@ -14,14 +14,8 @@ import EmptyIllo from '../../../../../../assets/svgs/EmptyIllo'
 import EditPrice from '../../../../../../components/EditPrice'
 
 const CartProducts = () => {
-   const {
-      cart,
-      billing,
-      products,
-      customer,
-      tunnels,
-      loyaltyPoints,
-   } = useManual()
+   const { cart, billing, products, customer, tunnels, loyaltyPoints } =
+      useManual()
 
    console.log('products', products)
 
@@ -114,6 +108,7 @@ const ProductCard = ({ product, cart }) => {
                <Spacer size="2px" />
                {product.childs.map(item => (
                   <>
+                     {console.log('items', product, item)}
                      <Flex alignItems="center" justifyContent="space-between">
                         <div
                            style={{
@@ -153,15 +148,42 @@ const ProductCard = ({ product, cart }) => {
                            <div style={{ marginLeft: '16px' }}>
                               <Text as="subtitle">Modifiers</Text>
                               {item.childs.map(option => (
-                                 <>
-                                    <Text
-                                       as="text2"
-                                       style={{ color: '#808080' }}
-                                    >
-                                       {option.modifierOption?.name}
-                                    </Text>
-                                    <EditPrice product={option} />
-                                 </>
+                                 <Flex>
+                                    <Flex>
+                                       <Text
+                                          as="text2"
+                                          style={{ color: '#808080' }}
+                                       >
+                                          {option.modifierOption?.name}
+                                       </Text>
+                                       <EditPrice product={option} />
+                                    </Flex>
+                                    {option.childs.length  ? (
+                                       <Flex>
+                                          {option.childs.map(nestedOption => {
+                                             return (
+                                                <Flex margin="0 0 0 20px">
+                                                   <Text
+                                                      as="text2"
+                                                      style={{
+                                                         color: '#808080',
+                                                      }}
+                                                   >
+                                                      {
+                                                         nestedOption
+                                                            .modifierOption
+                                                            ?.name
+                                                      }
+                                                   </Text>
+                                                   <EditPrice
+                                                      product={nestedOption}
+                                                   />
+                                                </Flex>
+                                             )
+                                          })}
+                                       </Flex>
+                                    ):null}
+                                 </Flex>
                               ))}
                            </div>
                         )}
