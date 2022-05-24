@@ -135,14 +135,12 @@ const ProductCard = ({ product, isActive, onClick }) => {
             </aside>
          )}
          <main>
-            <div>
+            <div className="flex-wrap">
                {product?.isAddOn && <span>[Add On] </span>}
                <StyledProductTitle title={product?.displayName}>
                   {product?.displayName.split('->').pop().trim()}
-                  {product?.label && (
-                     <StyledBadge>{product?.label}</StyledBadge>
-                  )}
                </StyledProductTitle>
+               {product?.label && <StyledBadge>{product?.label}</StyledBadge>}
             </div>
             <Spacer size="14px" />
             <Flex container alignItems="center" justifyContent="space-between">
@@ -204,7 +202,6 @@ const StyledBadge = styled.span`
    font-size: 12px;
    line-height: 14px;
    padding: 4px 6px;
-   margin-left: 8px;
    border-radius: 4px;
 `
 const Title = ({ node }) => {

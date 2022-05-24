@@ -84,13 +84,13 @@ export const Products = React.memo(function ProductsComp({ order }) {
                <Styles.TabPanel>
                   {orderedProducts.map(item => (
                      <StyledProductItem key={item.id}>
-                        <div>
+                        <div className="flex-wrap">
                            <StyledProductTitle>
                               {item.displayName.split('->').pop().trim()}
-                              {item?.label && (
-                                 <StyledBadge>{item?.label}</StyledBadge>
-                              )}
                            </StyledProductTitle>
+                           {item?.label && (
+                              <StyledBadge>{item?.label}</StyledBadge>
+                           )}
                         </div>
 
                         <span>

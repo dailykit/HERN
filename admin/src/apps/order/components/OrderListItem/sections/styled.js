@@ -114,6 +114,13 @@ export const StyledProductItem = styled.div`
       display: flex;
       align-items: center;
    }
+   .flex-wrap {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 8px;
+   }
    @media only screen and (max-width: 1439px) {
       grid-template-areas:
          'title title'
@@ -235,6 +242,5 @@ export const StyledBadge = styled.span`
    font-size: 12px;
    line-height: 14px;
    padding: 4px 6px;
-   margin-left: 8px;
    border-radius: 4px;
 `
