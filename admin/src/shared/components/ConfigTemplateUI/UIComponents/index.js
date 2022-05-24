@@ -37,7 +37,11 @@ import { Typography, Slider } from 'antd'
 
 import { BrandContext } from '../../../../App'
 import { useContext } from 'react'
-import { GET_BRAND_COUPONS, GET_BRAND_CAMPAIGNS } from '../../../graphql'
+import {
+   GET_BRAND_COUPONS,
+   GET_BRAND_CAMPAIGNS,
+   GET_PAYMENT_OPTIONS,
+} from '../../../graphql'
 
 const { Paragraph } = Typography
 
@@ -1222,6 +1226,74 @@ export const RecipeSelector = props => {
                   style={{ width: 'fit-content' }}
                >
                   {fieldDetail?.value?.title || 'choose recipe...'}
+               </Text>
+            )}
+         </Flex>
+      </>
+   )
+}
+
+// Payment Option Selector
+export const PaymentOptionSelector = props => {
+   // props
+   const { fieldDetail, marginLeft, path, onConfigChange, editMode } = props
+   const [brandContext, setBrandContext] = useContext(BrandContext)
+
+   const {
+      loading: subsLoading,
+      error: subsError,
+      data: { paymentOptions = [] } = {},
+   } = useSubscription(GET_PAYMENT_OPTIONS)
+
+   const selectedOptionHandler = options => {
+      const e = {
+         target: {
+            name: path,
+         },
+      }
+      onConfigChange(e, options)
+   }
+   if (subsLoading) {
+      return <InlineLoader />
+   }
+   if (subsError) {
+      return <ErrorState message="payment option not found" />
+   }
+
+   return (
+      <>
+         <Flex
+            container
+            justifyContent="space-between"
+            alignItems="center"
+            margin={`0 0 0 ${marginLeft}`}
+         >
+            <Flex container alignItems="flex-end">
+               <Form.Label title={fieldDetail.label} htmlFor="select">
+                  {fieldDetail.label.toUpperCase()}
+               </Form.Label>
+               <Tooltip identifier="select_component_info" />
+            </Flex>
+            {editMode ? (
+               <div>
+                  <Dropdown
+                     type={fieldDetail?.type || 'single'}
+                     options={paymentOptions.map(paymentOption => {
+                        return {
+                           id: paymentOption.id,
+                           title: paymentOption?.label || '',
+                           value: paymentOption.id,
+                        }
+                     })}
+                     defaultOption={fieldDetail?.value}
+                     searchedOption={option => console.log(option)}
+                     selectedOption={option => selectedOptionHandler(option)}
+                     placeholder="choose campaign..."
+                  />
+               </div>
+            ) : (
+               <Text as="h4" className="showPhoneNumber">
+                  {fieldDetail?.value?.title || 'choose payment option...'}
                </Text>
             )}
          </Flex>

@@ -10,16 +10,16 @@ import { AiOutlineArrowRight } from 'react-icons/ai'
 import { WalletPageIllustration } from '../../assets/icons'
 import Link from 'next/link'
 
-export const Wallet = () => {
+export const Wallet = ({ config }) => {
    return (
       <main className="hern-wallet__main">
          <ProfileSidebar />
-         <Content />
+         <Content config={config} />
       </main>
    )
 }
 
-const Content = () => {
+const Content = ({ config }) => {
    const { addToast } = useToasts()
    const { user } = useUser()
    const { configOf } = useConfig()
@@ -29,6 +29,10 @@ const Content = () => {
       'Wallet',
       'rewards'
    )?.Wallet?.isWalletAvailable
+   const availablePaymentOptionIds =
+      config?.paymentOptions?.value.map(option => {
+         return option[0].value.value
+      }) || []
    const { width, height } = useWindowSize()
    const currentLang = React.useMemo(() => locale, [locale])
    React.useEffect(() => {
@@ -71,7 +75,9 @@ const Content = () => {
                   </span>
                </div>
                <Spacer />
-               <WalletTopUp availablePaymentOptionIds={[1001, 1003, 1004]} />
+               <WalletTopUp
+                  availablePaymentOptionIds={availablePaymentOptionIds}
+               />
                <Spacer />
                <p className="hern-wallet__transaction_title">
                   {t('TRANSACTION HISTORY')}

@@ -261,21 +261,12 @@ export default function PaymentOptionsRenderer({
                         metaData={metaData}
                      />
                   ) : (
-                     <Main>
+                     <Main style={{minHeight: "unset"}}>
                         <div tw="pt-4 w-full">
                            <HelperBar type="info">
                               <HelperBar.Title>
                                  No payment options available.
                               </HelperBar.Title>
-                              <HelperBar.Button
-                                 onClick={() =>
-                                    (window.location.href =
-                                       get_env('BASE_BRAND_URL') +
-                                       getRoute('/'))
-                                 }
-                              >
-                                 Go to Home
-                              </HelperBar.Button>
                            </HelperBar>
                         </div>
                      </Main>
