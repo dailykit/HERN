@@ -760,32 +760,37 @@ export const QUERIES = {
    FULFILLMENT: {
       ONDEMAND: {
          PICKUP: gql`
-            subscription OndemandPickup($brandId: Int!) {
-               onDemandPickup: fulfillmentTypes(
-                  where: {
-                     isActive: { _eq: true }
-                     value: { _eq: "ONDEMAND_PICKUP" }
-                  }
-               ) {
-                  recurrences(
-                     where: {
-                        isActive: { _eq: true }
-                        brands: {
-                           _and: {
-                              brandId: { _eq: $brandId }
-                              isActive: { _eq: true }
-                           }
-                        }
-                     }
-                  ) {
+            subscription GET_ALL_RECURRENCES(
+               $where: fulfilment_brand_recurrence_bool_exp!
+            ) {
+               brandRecurrencesOP: brandRecurrences(where: $where) {
+                  brandId
+                  brandLocationId
+                  recurrenceId
+                  recurrence {
                      id
-                     type
                      rrule
-                     timeSlots(where: { isActive: { _eq: true } }) {
-                        id
-                        to
+                     type
+                     timeSlots {
                         from
+                        to
                         pickUpPrepTime
+                        id
+                        pickUpLeadTime
+                        slotInterval
+                        mileRanges {
+                           id
+                           from
+                           city
+                           distanceType
+                           to
+                           zipcodes
+                           state
+                           prepTime
+                           geoBoundary
+                           isExcluded
+                           leadTime
+                        }
                      }
                   }
                }
@@ -926,6 +931,43 @@ export const QUERIES = {
             }
          `,
       },
+      RECURRENCES: gql`
+         subscription GET_ALL_RECURRENCES(
+            $where: fulfilment_brand_recurrence_bool_exp!
+         ) {
+             brandRecurrences(where: $where) {
+               brandId
+               brandLocationId
+               recurrenceId
+               recurrence {
+                  id
+                  rrule
+                  type
+                  timeSlots {
+                     from
+                     to
+                     pickUpPrepTime
+                     id
+                     pickUpLeadTime
+                     slotInterval
+                     mileRanges {
+                        id
+                        from
+                        city
+                        distanceType
+                        to
+                        zipcodes
+                        state
+                        prepTime
+                        geoBoundary
+                        isExcluded
+                        leadTime
+                     }
+                  }
+               }
+            }
+         }
+      `,
    },
 }
 

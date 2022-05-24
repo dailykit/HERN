@@ -1,8 +1,10 @@
 import { rrulestr } from 'rrule'
 import { formatISO, add } from 'date-fns'
 import { getdrivableDistance } from '../../../../../../../shared/api'
+import moment from "moment"
+import { sortBy } from 'lodash'
 
-export const generateTimeStamp = (time, date) => {
+export const generateTimeStamp = (time, date, slotTiming=15) => {
    let formatedTime = time.split(':')
    formatedTime =
       makeDoubleDigit(formatedTime[0]) + ':' + makeDoubleDigit(formatedTime[1])
@@ -13,7 +15,7 @@ export const generateTimeStamp = (time, date) => {
       currTimestamp.split('+')[1]
    }`
 
-   const to = formatISO(add(new Date(from), { minutes: 15 }))
+   const to = formatISO(add(new Date(from), { minutes: slotTiming }))
    return { from, to }
 }
 
@@ -120,15 +122,24 @@ export const generateMiniSlots = (data, size) => {
    return newData
 }
 
-export const isPickUpAvailable = recurrences => {
-   for (let rec of recurrences) {
+export const isPickUpAvailable = finalRecurrences => {
+   for (let rec in finalRecurrences) {
       const now = new Date() // now
-      const start = new Date(now.getTime() - 1000 * 60 * 60 * 24) // yesterday
-      const end = new Date(now.getTime() + 1000 * 60 * 60 * 24) // tomorrow
-      const dates = rrulestr(rec.rrule).between(start, now)
-      if (dates.length) {
-         if (rec.timeSlots.length) {
-            for (let timeslot of rec.timeSlots) {
+      const isValidDay = isDateValidInRRule(
+         finalRecurrences[rec].recurrence.rrule
+      )
+      if (isValidDay) {
+         if (finalRecurrences[rec].recurrence.timeSlots.length) {
+            const sortedTimeSlots = sortBy(
+               finalRecurrences[rec].recurrence.timeSlots,
+               [
+                  function (slot) {
+                     return moment(slot.from, 'HH:mm')
+                  },
+               ]
+            )
+            let validTimeSlots = []
+            for (let timeslot of sortedTimeSlots) {
                const timeslotFromArr = timeslot.from.split(':')
                const timeslotToArr = timeslot.to.split(':')
                const fromTimeStamp = new Date(now.getTime())
@@ -148,16 +159,40 @@ export const isPickUpAvailable = recurrences => {
                   now.getTime() > fromTimeStamp.getTime() &&
                   now.getTime() < toTimeStamp.getTime()
                ) {
-                  return { status: true }
+                  finalRecurrences[rec].recurrence.validTimeSlots =
+                     validTimeSlots
+                  if (rec == finalRecurrences.length - 1) {
+                     return {
+                        status: true,
+                        rec: [finalRecurrences[rec]],
+                        timeSlotInfo: timeslot,
+                        message: 'Store available for pickup.',
+                     }
+                  }
                } else {
-                  return { status: false }
+                  if (rec == finalRecurrences.length - 1) {
+                     return {
+                        status: false,
+                        message: 'Sorry, We do not offer Pickup at this time.',
+                     }
+                  }
                }
             }
          } else {
-            return { status: false }
+            if (rec == finalRecurrences.length - 1) {
+               return {
+                  status: false,
+                  message: 'Sorry, We do not offer Pickup at this time.',
+               }
+            }
          }
       } else {
-         return { status: false }
+         if (rec == finalRecurrences.length - 1) {
+            return {
+               status: false,
+               message: 'Sorry, We do not offer Pickup on this day.',
+            }
+         }
       }
    }
 }
@@ -165,10 +200,11 @@ export const isPickUpAvailable = recurrences => {
 export const generatePickUpSlots = recurrences => {
    let data = []
    recurrences.forEach(rec => {
+      console.log("rec",rec)
       const now = new Date() // now
       const start = new Date(now.getTime() - 1000 * 60 * 60 * 24) // yesterday
       // const start = now;
-      const end = new Date(now.getTime() + 7 * 1000 * 60 * 60 * 24) // 7 days later
+      const end = new Date(now.getTime() + 10 * 1000 * 60 * 60 * 24) // 7 days later
       const dates = rrulestr(rec.rrule).between(start, end)
       dates.forEach(date => {
          if (rec.timeSlots.length) {
@@ -196,26 +232,19 @@ export const generatePickUpSlots = recurrences => {
                   let slotStart
                   let slotEnd =
                      toTimeStamp.getHours() + ':' + toTimeStamp.getMinutes()
-                  if (now.getTime() + leadMiliSecs > fromTimeStamp.getTime()) {
-                     // new start time = lead time + now
-                     const newStartTimeStamp = new Date(
-                        now.getTime() + leadMiliSecs
-                     )
-                     slotStart =
-                        newStartTimeStamp.getHours() +
-                        ':' +
-                        newStartTimeStamp.getMinutes()
-                  } else {
-                     slotStart =
-                        fromTimeStamp.getHours() +
-                        ':' +
-                        fromTimeStamp.getMinutes()
-                  }
+                  slotStart =
+                     fromTimeStamp.getHours() + ':' + fromTimeStamp.getMinutes()
                   // check if date already in slots
                   const dateWithoutTime = date.toDateString()
                   const index = data.findIndex(
                      slot => slot.date === dateWithoutTime
                   )
+                  const [HH, MM, SS] = timeslot.slotInterval
+                     ? timeslot.slotInterval.split(':')
+                     : []
+                  const intervalInMinutes = Boolean(HH && MM && SS)
+                     ? +HH * 60 + +MM
+                     : null
                   if (index === -1) {
                      data.push({
                         date: dateWithoutTime,
@@ -223,6 +252,7 @@ export const generatePickUpSlots = recurrences => {
                            {
                               start: slotStart,
                               end: slotEnd,
+                              intervalInMinutes: intervalInMinutes,
                            },
                         ],
                      })
@@ -230,6 +260,7 @@ export const generatePickUpSlots = recurrences => {
                      data[index].slots.push({
                         start: slotStart,
                         end: slotEnd,
+                        intervalInMinutes: intervalInMinutes,
                      })
                   }
                }
@@ -390,4 +421,51 @@ export const generateDeliverySlots = recurrences => {
       })
    }
    return { status: true, data }
+}
+
+const isDateValidInRRule = (rString, date = null) => {
+   // const rString = "RRULE:FREQ=DAILY;COUNT=10;WKST=MO;BYDAY=MO,TU,WE,TH,SA";
+
+   const rStringWithoutRRULE = rString.replace('RRULE:', '') // remove RRULE from string
+   const rStringParamsArray = rStringWithoutRRULE.split(';') // split by ; remaining string
+
+   // create an object which contain all params from string
+   let rRuleParamObject = {}
+   rStringParamsArray.forEach(eachParam => {
+      const pair = keyValuePairFromString(eachParam)
+      rRuleParamObject = { ...rRuleParamObject, ...pair }
+   })
+   // {FREQ: "DAILY", COUNT: "10", WKST: "MO", BYDAY: "MO,TU,WE,TH,SA"}
+   let availableDays
+   const dateToBeCheck = date
+      ? moment(date).format('dd').toLocaleUpperCase()
+      : moment().format('dd').toLocaleUpperCase()
+
+   if (rRuleParamObject?.BYDAY) {
+      availableDays = rRuleParamObject?.BYDAY.split(',')
+   } else {
+      if (rRuleParamObject.FREQ === 'DAILY') {
+         availableDays = ['MO', 'TU', 'WE', 'TH', 'FR', 'SA', 'SU']
+      } else {
+         availableDays = [dateToBeCheck]
+      }
+   }
+
+   // check current day code exist in available by day
+   const indexOfCurrentDay = availableDays.indexOf(dateToBeCheck)
+   if (indexOfCurrentDay === -1) {
+      return false
+   } else {
+      return true
+   }
+}
+
+// this fn will create an bject from string which conatin '='
+// example
+// companyName="HERN" --> {companyName:"HERN"}
+const keyValuePairFromString = stringWithEqual => {
+   const valueArray = stringWithEqual.split('=')
+   const keyValueObj = {}
+   keyValueObj[valueArray[0]] = valueArray[1]
+   return keyValueObj
 }

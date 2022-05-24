@@ -148,7 +148,7 @@ const ProductCard = ({ product, cart }) => {
                            <div style={{ marginLeft: '16px' }}>
                               <Text as="subtitle">Modifiers</Text>
                               {item.childs.map(option => (
-                                 <Flex>
+                                 <Flex key={option.id}>
                                     <Flex>
                                        <Text
                                           as="text2"
@@ -162,7 +162,7 @@ const ProductCard = ({ product, cart }) => {
                                        <Flex>
                                           {option.childs.map(nestedOption => {
                                              return (
-                                                <Flex margin="0 0 0 20px">
+                                                <Flex margin="0 0 0 20px" key={nestedOption.id}>
                                                    <Text
                                                       as="text2"
                                                       style={{

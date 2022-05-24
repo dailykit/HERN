@@ -30,6 +30,7 @@ import { EditIcon } from '../../../../../../../shared/assets/icons'
 import { InlineLoader } from '../../../../../../../shared/components'
 import { logger, parseAddress } from '../../../../../../../shared/utils'
 import { toast } from 'react-toastify'
+import moment from 'moment'
 
 export const FulfillmentTunnel = ({ panel }) => {
    const [tunnels] = panel
@@ -44,7 +45,7 @@ export const FulfillmentTunnel = ({ panel }) => {
 
 const Content = ({ panel }) => {
    const [, , closeTunnel] = panel
-   const { brand, address, tunnels } = useManual()
+   const { brand, address, tunnels, brandLocation } = useManual()
    const { id: cartId } = useParams()
 
    const [distance, setDistance] = React.useState(null)
@@ -68,7 +69,7 @@ const Content = ({ panel }) => {
          )
          const { value: deliveryAvailability } = deliverySetting
 
-         if (deliveryAvailability?.isAvailable)
+         if (deliveryAvailability?.Delivery?.IsDeliveryAvailable?.value)
             types.push({ id: 'DELIVERY', title: 'Delivery' })
 
          const pickupSetting = brand.brand_brandSettings.find(
@@ -76,7 +77,7 @@ const Content = ({ panel }) => {
          )
          const { value: pickupAvailability } = pickupSetting
 
-         if (pickupAvailability?.isAvailable)
+         if (pickupAvailability?.PickUp?.IsPickupAvailable?.value)
             types.push({ id: 'PICKUP', title: 'Pickup' })
 
          setTypeOptions(types)
@@ -96,19 +97,51 @@ const Content = ({ panel }) => {
    })
 
    // Subscriptions
-   const { data: { preOrderPickup = [] } = {}, loading: PPLoading } =
-      useSubscription(QUERIES.FULFILLMENT.PREORDER.PICKUP, {
-         variables: {
-            brandId: brand?.id,
+   const {
+      data: { brandRecurrences: PPbrandRecurrences = [] } = {},
+      loading: PPLoading,
+   } = useSubscription(QUERIES.FULFILLMENT.RECURRENCES, {
+      variables: {
+         where: {
+            recurrence: {
+               isActive: { _eq: true },
+               type: { _eq: 'PREORDER_PICKUP' },
+            },
+            _or: [
+               {
+                  brandLocationId: {
+                     _eq: brandLocation?.id,
+                  },
+               },
+               { brandId: { _eq: brand.id } },
+            ],
+            isActive: { _eq: true },
          },
-      })
+      },
+   })
 
-   const { data: { onDemandPickup = [] } = {}, loading: OPLoading } =
-      useSubscription(QUERIES.FULFILLMENT.ONDEMAND.PICKUP, {
-         variables: {
-            brandId: brand?.id,
+   const {
+      data: { brandRecurrences: OPbrandRecurrences = [] } = {},
+      loading: OPLoading,
+   } = useSubscription(QUERIES.FULFILLMENT.RECURRENCES, {
+      variables: {
+         where: {
+            recurrence: {
+               isActive: { _eq: true },
+               type: { _eq: 'ONDEMAND_PICKUP' },
+            },
+            _or: [
+               {
+                  brandLocationId: {
+                     _eq: brandLocation?.id,
+                  },
+               },
+               { brandId: { _eq: brand.id } },
+            ],
+            isActive: { _eq: true },
          },
-      })
+      },
+   })
 
    const { data: { preOrderDelivery = [] } = {}, loading: PDLoading } =
       useSubscription(QUERIES.FULFILLMENT.PREORDER.DELIVERY, {
@@ -167,8 +200,18 @@ const Content = ({ panel }) => {
          setPickerSlots([...pickerDates[index].slots])
          setFulfillment({
             ...fulfillment,
-            slot: pickerDates[index].slots[0],
+            slot: {
+               ...fulfillment.slot,
+               ...generateTimeStamp(
+                  pickerDates[index].slots[0].time,
+                  fulfillment.date,
+                  pickerDates[index].slots[0].intervalInMinutes
+               )
+            },
          })
+
+         // change time selector to default if the date is changed
+         document.getElementById('time').value = pickerDates[index].slots[0].time
       }
    }, [fulfillment.date])
 
@@ -179,7 +222,14 @@ const Content = ({ panel }) => {
          )
          setFulfillment({
             ...fulfillment,
-            slot: pickerSlots[index],
+            slot: {
+               ...fulfillment.slot,
+               ...generateTimeStamp(
+                  pickerSlots[index].time,
+                  fulfillment.date,
+                  pickerSlots[index].intervalInMinutes
+               ),
+            },
          })
       }
    }, [fulfillment.time])
@@ -202,26 +252,23 @@ const Content = ({ panel }) => {
                      setting.brandSetting.identifier === 'Pickup Availability'
                )
                const { value: pickupAvailability } = pickupSetting
-               console.log('🚀 pickupAvailability', pickupAvailability)
 
                switch (type) {
                   case 'PICKUP': {
-                     if (pickupAvailability?.isAvailable) {
+                     if (pickupAvailability?.PickUp?.IsPickupAvailable?.value) {
                         switch (time) {
                            case 'ONDEMAND': {
-                              if (onDemandPickup[0]?.recurrences?.length) {
-                                 const result = isPickUpAvailable(
-                                    onDemandPickup[0].recurrences
-                                 )
+                              if (OPbrandRecurrences?.length) {
+                                 const result =
+                                    isPickUpAvailable(OPbrandRecurrences)
                                  if (result.status) {
                                     const date = new Date()
                                     setFulfillment({
                                        date: date.toDateString(),
                                        slot: {
-                                          time:
-                                             date.getHours() +
-                                             ':' +
-                                             date.getMinutes(),
+                                          from: null,
+                                          to: null,
+                                          timeslotId: result.timeSlotInfo.id,
                                        },
                                     })
                                  } else {
@@ -237,9 +284,11 @@ const Content = ({ panel }) => {
                               break
                            }
                            case 'PREORDER': {
-                              if (preOrderPickup[0]?.recurrences?.length) {
+                              if (PPbrandRecurrences?.length) {
                                  const result = generatePickUpSlots(
-                                    preOrderPickup[0].recurrences
+                                    PPbrandRecurrences.map(
+                                       recs => recs.recurrence
+                                    )
                                  )
                                  if (result.status) {
                                     const miniSlots = generateMiniSlots(
@@ -251,7 +300,13 @@ const Content = ({ panel }) => {
                                        setFulfillment({
                                           date: miniSlots[0].date,
                                           slot: {
-                                             time: miniSlots[0].slots[0].time,
+                                             // time: miniSlots[0].slots[0].time,
+                                             ...generateTimeStamp(
+                                                miniSlots[0].slots[0].time,
+                                                miniSlots[0].date,
+                                                miniSlots[0].slots[0]
+                                                   .intervalInMinutes
+                                             ),
                                           },
                                        })
                                     } else {
@@ -374,15 +429,46 @@ const Content = ({ panel }) => {
 
    const save = () => {
       try {
+         const modifiedFulfillment = JSON.parse(JSON.stringify(fulfillment))
+         let timeslotInfo = {}
+         switch (time + '_' + type) {
+            case 'PREORDER_PICKUP':
+               PPbrandRecurrences.forEach(x => {
+                  x.recurrence.timeSlots.forEach(timeSlot => {
+                     const format = 'HH:mm'
+                     const selectedFromTime = moment(
+                        fulfillment.slot?.from
+                     ).format(format)
+                     const selectedToTime = moment(fulfillment.slot?.to).format(
+                        format
+                     )
+                     const fromTime = moment(timeSlot.from, format).format(
+                        format
+                     )
+                     const toTime = moment(timeSlot.to, format).format(format)
+                     const isInBetween =
+                        selectedFromTime >= fromTime &&
+                        selectedFromTime <= toTime &&
+                        selectedToTime <= toTime
+                     if (isInBetween) {
+                        timeslotInfo = timeSlot
+                     }
+                  })
+               })
+               modifiedFulfillment.slot.timeslotId = timeslotInfo.id
+         }
+
          const fulfillmentInfo = {
             type: time + '_' + type,
             distance: storedDistance.current,
-            slot: {
-               mileRangeId: fulfillment.slot?.mileRangeId || null,
-               ...generateTimeStamp(fulfillment.slot.time, fulfillment.date),
-            },
+            // slot: {
+            //    mileRangeId: fulfillment.slot?.mileRangeId || null,
+            //    // ...generateTimeStamp(fulfillment.slot.time, fulfillment.date),
+            //    ...fulfillment
+            // },
+            ...modifiedFulfillment,
          }
-         console.log(fulfillmentInfo)
+
          updateCart({
             variables: {
                id: cartId,
@@ -480,7 +566,9 @@ const Content = ({ panel }) => {
                               name="date"
                               options={pickerDates}
                               onChange={e =>
-                                 setFulfillment({ date: e.target.value })
+                                 setFulfillment({
+                                    date: e.target.value,
+                                 })
                               }
                               placeholder="Choose a date"
                            />
@@ -494,12 +582,25 @@ const Content = ({ panel }) => {
                               id="time"
                               name="time"
                               options={pickerSlots}
-                              onChange={e =>
+                              onChange={e => {
+                                 const selectedMiniSlot = pickerSlots.find(
+                                    miniSlot =>
+                                       miniSlot.value === e.target.value
+                                 )
                                  setFulfillment({
                                     ...fulfillment,
+                                    slot: {
+                                       from: e.target.value,
+                                       to: moment(e.target.value, 'HH:mm')
+                                          .add(
+                                             selectedMiniSlot.intervalInMinutes,
+                                             'minutes'
+                                          )
+                                          .format('HH:mm'),
+                                    },
                                     time: e.target.value,
                                  })
-                              }
+                              }}
                               placeholder="Choose a time slot"
                            />
                         </Form.Group>
