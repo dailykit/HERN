@@ -291,13 +291,20 @@ const Menu = ({ menu, menuProductIds }) => {
                alignItems="center"
                justifyContent="space-between"
             >
-               <AnchorNav>
+               <AnchorNav
+                  style={{
+                     overflow: 'auto',
+                     width: '100%',
+                     justifyContent: 'unset',
+                  }}
+               >
                   {menu.map(item => (
                      <AnchorNavItem
                         key={item.title}
                         label={item.title}
                         targetElement={item.title}
                         containerId="categories"
+                        style={{ whiteSpace: 'nowrap', marginBottom: '13px' }}
                      />
                   ))}
                </AnchorNav>
