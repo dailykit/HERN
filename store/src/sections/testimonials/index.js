@@ -63,37 +63,12 @@ export const Testimonials = ({ config }) => {
                   slidesToScroll={1}
                   dots={false}
                >
-                  {content.map(({ userName, img, review, location }) => (
-                     <div>
-                        <div
-                           style={
-                              numberOfSliderToShow === 1
-                                 ? {
-                                      display: 'flex',
-                                   }
-                                 : {
-                                      display: 'block',
-                                      padding: '64px 0',
-                                      maxWidth: '300px',
-                                   }
-                           }
-                           className="hern-testimonials__wrapper"
-                        >
-                           <div className="hern-testimonials__image">
-                              <HernLazyImage dataSrc={img} alt={userName} />
-                           </div>
-                           <div className="hern-testimonials__content">
-                              <span>
-                                 <FaQuoteLeft color="#fff" />
-                              </span>
-                              <p>{review}</p>
-                              <h4>
-                                 {userName}&nbsp; | &nbsp;{' '}
-                                 <span>{location}</span>
-                              </h4>
-                           </div>
-                        </div>
-                     </div>
+                  {content.map(data => (
+                     <SliderWithImage
+                        key={data.img}
+                        content={data}
+                        numberOfSliderToShow={numberOfSliderToShow}
+                     />
                   ))}
                </Carousel>
                <span
@@ -267,6 +242,53 @@ export const Testimonials = ({ config }) => {
                </div>
             </div>
          )}
+      </div>
+   )
+}
+const SliderWithImage = ({ content, numberOfSliderToShow }) => {
+   const { userName, img, review, location } = content
+
+   const [showFullContent, setShowFullContent] = React.useState(false)
+   return (
+      <div>
+         <div
+            style={
+               numberOfSliderToShow === 1
+                  ? {
+                       display: 'flex',
+                    }
+                  : {
+                       display: 'block',
+                       padding: '64px 0',
+                       maxWidth: '300px',
+                    }
+            }
+            className="hern-testimonials__wrapper"
+         >
+            <div className="hern-testimonials__content">
+               <div className="hern-testimonials__image">
+                  <HernLazyImage dataSrc={img} alt={userName} />
+               </div>
+               <span>
+                  <FaQuoteLeft color="#fff" />
+               </span>
+               <p>
+                  {review.length > 250 ? (
+                     <>
+                        {showFullContent ? review : review.slice(0, 250)}
+                        <span onClick={() => setShowFullContent(prev => !prev)}>
+                           {showFullContent ? 'show less... ' : 'show more..'}
+                        </span>
+                     </>
+                  ) : (
+                     review
+                  )}
+               </p>
+               <h4>
+                  {userName}&nbsp; | &nbsp; <span>{location}</span>
+               </h4>
+            </div>
+         </div>
       </div>
    )
 }

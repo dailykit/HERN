@@ -1,20 +1,11 @@
-import React, { Children, useContext } from 'react'
+import React, { useContext } from 'react'
 import gql from 'graphql-tag'
-import {
-   Flex,
-   IconButton,
-   RoundedCloseIcon,
-   Tunnel,
-   Tunnels,
-   useTunnel,
-} from '@dailykit/ui'
+import { Tunnel, Tunnels, useTunnel } from '@dailykit/ui'
 import { useMutation, useSubscription } from '@apollo/react-hooks'
 import Styles from './styled'
 import { InlineLoader } from '../InlineLoader'
 import { TooltipProvider, useTabs } from '../../providers'
 import { useLocation } from 'react-router-dom'
-import { Tooltip } from '../../components'
-import { has } from 'lodash'
 import { useOnClickOutside } from '../../hooks'
 import {
    BrandAppIcon,
@@ -29,9 +20,9 @@ import {
    StoreAppIcon,
    SubscriptionAppIcon,
    CartsAppIcon,
+   DeveloperAppIcon,
    ArrowUp,
    ArrowDown,
-   DeveloperAppIcon
 } from '../../assets/navBarIcons'
 import { toast } from 'react-toastify'
 import { logger, randomSuffix } from '../../utils'
@@ -65,7 +56,6 @@ import CreateCoupon from '../../CreateUtils/crm/createCoupon'
 import CreateCampaign from '../../CreateUtils/crm/createCampaign'
 import CreateCollection from '../../CreateUtils/Menu/createCollection'
 import CreateSubscription from '../../CreateUtils/subscription/createSubscriptions'
-import { StoreIcon } from '../../assets/icons'
 import BrandSelector from './components/BrandSelector'
 import { BrandContext } from '../../../App'
 import { BrandListing } from '../../../apps/crm/components'
@@ -317,13 +307,13 @@ export const Sidebar = ({ setOpen }) => {
    useOnClickOutside(sideBarRef, () => {
       setIsOpen(null)
    })
-   const pathNameHandle = (pathname) => {
+   const pathNameHandle = pathname => {
       if (pathname === '/') {
          return 'home'
       }
       return pathname.substring(1)
    }
-   const appMenuItems = {
+   const AppList = {
       data: [
          {
             title: 'Home',
@@ -576,7 +566,7 @@ export const Sidebar = ({ setOpen }) => {
                },
                {
                   title: 'On-Demand DineIn',
-                  path: '/menu/recurrences/ONDEMAND_DINEIN'
+                  path: '/menu/recurrences/ONDEMAND_DINEIN',
                },
                {
                   title: 'Pre-Order DineIn',
@@ -763,20 +753,20 @@ export const Sidebar = ({ setOpen }) => {
                   children: [
                      {
                         title: 'View Pages',
-                        payload: 'units',
+                        payload: 'Pages',
                      },
                      {
                         title: 'View Subscription',
-                        payload: 'processing',
+                        payload: 'Subscription Folds',
                      },
                      {
                         title: 'Edit Navigation Bar',
-                        payload: 'Cuisines',
+                        payload: 'Navigation Menu',
                      },
-                     {
-                        title: 'Settings',
-                        payload: 'ProductCategories',
-                     },
+                     // {
+                     //    title: 'Settings',
+                     //    payload: 'ProductCategories',
+                     // },
                   ],
                },
                {
@@ -813,8 +803,11 @@ export const Sidebar = ({ setOpen }) => {
    return (
       <div>
          <div>
-            <Styles.Sidebar ref={sideBarRef} onMouseOver={() => setMouseOver(true)}
-               onMouseLeave={() => setMouseOver(false)}>
+            <Styles.Sidebar
+               ref={sideBarRef}
+               onMouseOver={() => setMouseOver(true)}
+               onMouseLeave={() => setMouseOver(false)}
+            >
                <Styles.Close>
                   {/* <IconButton type="ghost" onClick={() => setOpen(false)}>
                      <RoundedCloseIcon />
@@ -825,7 +818,7 @@ export const Sidebar = ({ setOpen }) => {
                ) : (
                   <>
                      <BrandSelector mouseOver={mouseOver} />
-                     {appMenuItems.data.map(app => (
+                     {AppList.data.map(app => (
                         <Styles.AppItem key={app.path}>
                            <Styles.Choices
                               type="ghost"
@@ -843,8 +836,9 @@ export const Sidebar = ({ setOpen }) => {
                                  setIsActive(app.title)
                               }}
                               active={
-                                 pathNameHandle(location.pathname)
-                                    .includes(pathNameHandle(app.path)) ||
+                                 pathNameHandle(location.pathname).includes(
+                                    pathNameHandle(app.path)
+                                 ) ||
                                  (isChildOpen === null &&
                                     isOpen === app.title &&
                                     app.title)
@@ -853,8 +847,9 @@ export const Sidebar = ({ setOpen }) => {
                               <Styles.IconText>
                                  <Styles.AppIcon>
                                     <app.icon
-                                       active={pathNameHandle(location.pathname)
-                                          .includes(pathNameHandle(app.path))}
+                                       active={pathNameHandle(
+                                          location.pathname
+                                       ).includes(pathNameHandle(app.path))}
                                     />{' '}
                                  </Styles.AppIcon>
                                  <Styles.AppTitle
@@ -905,11 +900,19 @@ export const Sidebar = ({ setOpen }) => {
                                              onClick={() => {
                                                 setIsOpen(null)
                                                 {
-                                                   child.title === "View all Customers"
-                                                      ? (brandContext.brandId ? addTab(child.title, child.path) : openBrandTunnel(1))
-                                                      : addTab(child.title, child.path)
+                                                   child.title ===
+                                                   'View all Customers'
+                                                      ? brandContext.brandId
+                                                         ? addTab(
+                                                              child.title,
+                                                              child.path
+                                                           )
+                                                         : openBrandTunnel(1)
+                                                      : addTab(
+                                                           child.title,
+                                                           child.path
+                                                        )
                                                 }
-
                                              }}
                                              active={
                                                 isChildOpen === child.title &&
@@ -937,8 +940,9 @@ export const Sidebar = ({ setOpen }) => {
                                                          )
                                                          setIsOpen(null)
                                                          switch (
-                                                         children.payload
+                                                            children.payload
                                                          ) {
+                                                            //*cases for product app
                                                             // case 'simple': return handleCreateProduct(children.payload);
                                                             // case 'combo': return handleCreateProduct(children.payload);
                                                             // case 'customizable': return handleCreateProduct(children.payload);
@@ -954,6 +958,7 @@ export const Sidebar = ({ setOpen }) => {
                                                                return openCreateIngredientTunnel(
                                                                   1
                                                                )
+                                                            //*cases for inventory app
                                                             case 'supplier':
                                                                return openCreateSupplierTunnel(
                                                                   1
@@ -979,10 +984,12 @@ export const Sidebar = ({ setOpen }) => {
                                                                   'Packaging Hub',
                                                                   '/inventory/packaging-hub'
                                                                )
+                                                            //*cases for Subscription app
                                                             case 'Subscription':
                                                                return openSubscriptionTunnel(
                                                                   1
                                                                )
+                                                            //*cases for customer app
                                                             case 'coupon':
                                                                return openCouponTunnel(
                                                                   1
@@ -991,16 +998,19 @@ export const Sidebar = ({ setOpen }) => {
                                                                return openCampaignTunnel(
                                                                   1
                                                                )
+                                                            //* cases for menu app
                                                             case 'collection':
                                                                return openCollectionTunnel(
                                                                   1
                                                                )
-                                                            case 'station':
-                                                               return createStationHandler()
+                                                            //* cases for brand app
                                                             case 'brand':
                                                                return openCreateBrandTunnel(
                                                                   1
                                                                )
+                                                            //* cases for settings app
+                                                            case 'station':
+                                                               return createStationHandler()
                                                             case 'user':
                                                                return addUser()
                                                             case 'Admin':
@@ -1052,9 +1062,25 @@ export const Sidebar = ({ setOpen }) => {
                                                                return openPrintTunnel(
                                                                   1
                                                                )
-
+                                                            case 'Pages':
+                                                               return addTab(
+                                                                  children.payload,
+                                                                  `/content/pages`
+                                                               )
+                                                            case 'Subscription Folds':
+                                                               return addTab(
+                                                                  children.payload,
+                                                                  `/content/subscription`
+                                                               )
+                                                            case 'Navigation Menu':
+                                                               return addTab(
+                                                                  children.payload,
+                                                                  `/content/navbarMenu`
+                                                               )
                                                             default:
-                                                               return <h1>null</h1>
+                                                               return (
+                                                                  <h1>null</h1>
+                                                               )
                                                          }
                                                       }}
                                                       active={
@@ -1068,7 +1094,9 @@ export const Sidebar = ({ setOpen }) => {
                                                                isChildrenOpen ===
                                                                children.title
                                                             }
-                                                            title={children.title}
+                                                            title={
+                                                               children.title
+                                                            }
                                                          >
                                                             {children.linking ? (
                                                                <a
@@ -1076,7 +1104,9 @@ export const Sidebar = ({ setOpen }) => {
                                                                      children.linking
                                                                   }
                                                                >
-                                                                  {children.title}
+                                                                  {
+                                                                     children.title
+                                                                  }
                                                                </a>
                                                             ) : (
                                                                children.title
@@ -1091,11 +1121,11 @@ export const Sidebar = ({ setOpen }) => {
                                  ))}
                            </Styles.Pages>
                         </Styles.AppItem>
-                     ))
-                     }
-                  </>)}
-            </Styles.Sidebar >
-         </div >
+                     ))}
+                  </>
+               )}
+            </Styles.Sidebar>
+         </div>
          <div>
             <Tunnels tunnels={createRecipeTunnels}>
                <Tunnel layer={1} size="md">
@@ -1245,6 +1275,6 @@ export const Sidebar = ({ setOpen }) => {
                </Tunnel>
             </Tunnels>
          </div>
-      </div >
+      </div>
    )
 }

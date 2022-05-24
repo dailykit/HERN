@@ -12,9 +12,6 @@
    padding-left: 1.5rem;
    padding-right: 1.5rem;
    width: 100%;
-   @media (min-width: 768px) {
-      width: 50%;
-   }
 }
 
 .hern-wallet__header {
@@ -176,5 +173,40 @@
       border-width: 1px;
       min-width: 60px;
       padding: 10px;
+   }
+}
+.hern-wallet-wallet-illustration {
+   background: #ffffff;
+   box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.25);
+   border-radius: 20px;
+   padding: 96px;
+   position: relative;
+   margin-bottom: 96px;
+   > p {
+      color: #2e186a;
+      text-align: center;
+      margin-top: 16px;
+      font-weight: 700;
+   }
+   > a {
+      background-color: var(--hern-accent);
+      color: #fff;
+      padding: 6px 12px;
+      position: absolute;
+      border-radius: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 280px;
+      bottom: -24px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-weight: 500;
+      > span {
+         display: inline-block;
+         background-color: #fff;
+         padding: 8px 12px;
+         border-radius: 6px;
+      }
    }
 }

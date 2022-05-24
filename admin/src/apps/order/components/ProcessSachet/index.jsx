@@ -39,13 +39,14 @@ export const ProcessSachet = ({ closeOrderSummaryTunnel }) => {
    const {
       state: {
          current_view: currentView,
-         sachet: { id, product },
+         sachet: { sachet, product },
       },
       switchView,
    } = useOrder()
+   console.log('=>>> from processSachet', sachet)
    const { state } = useConfig()
    const [weight, setWeight] = React.useState(0)
-   const [sachet, setSachet] = React.useState({})
+   // const [sachet, setSachet] = React.useState({})
    const [isLoading, setIsLoading] = React.useState(true)
    const [scaleState, setScaleState] = React.useState('low')
    const [labelPreview, setLabelPreview] = React.useState('')
@@ -58,31 +59,31 @@ export const ProcessSachet = ({ closeOrderSummaryTunnel }) => {
       },
    })
 
-   const { error } = useSubscription(QUERIES.ORDER.SACHET.MULTIPLE, {
-      variables: {
-         where: {
-            id: { _eq: id },
-            parentCartItemId: { _eq: state?.current_product?.id },
-            levelType: { _eq: 'orderItemSachet' },
-         },
-      },
-      onSubscriptionData: ({
-         subscriptionData: { data: { sachets = {} } = {} },
-      }) => {
-         if (!isEmpty(sachets)) {
-            const [node] = sachets
-            setWeight(0)
-            setSachet(node)
-         }
-         setIsLoading(false)
-      },
-   })
+   // const { error } = useSubscription(QUERIES.ORDER.SACHET.MULTIPLE, {
+   //    variables: {
+   //       where: {
+   //          id: { _eq: id },
+   //          parentCartItemId: { _eq: state?.current_product?.id },
+   //          levelType: { _eq: 'orderItemSachet' },
+   //       },
+   //    },
+   //    onSubscriptionData: ({
+   //       subscriptionData: { data: { sachets = {} } = {} },
+   //    }) => {
+   //       if (!isEmpty(sachets)) {
+   //          const [node] = sachets
+   //          setWeight(0)
+   //          setSachet(node)
+   //       }
+   //       setIsLoading(false)
+   //    },
+   // })
 
    React.useEffect(() => {
       setWeight(0)
       setScaleState('low')
       setLabelPreview('')
-   }, [id])
+   }, [sachet])
 
    const changeView = view => {
       switchView(view)
@@ -171,7 +172,7 @@ export const ProcessSachet = ({ closeOrderSummaryTunnel }) => {
       return true
    }
 
-   if (isNull(id)) {
+   if (!sachet && isNull(sachet)) {
       return (
          <Wrapper>
             <StyledMode>
@@ -195,32 +196,32 @@ export const ProcessSachet = ({ closeOrderSummaryTunnel }) => {
          </Wrapper>
       )
    }
-   if (isLoading) return <InlineLoader />
-   if (error) {
-      setIsLoading(false)
-      logger(error)
-      toast.error('Failed to fetch sachet details!')
-      return (
-         <Wrapper>
-            <StyledMode>
-               <Flex container alignItems="center">
-                  <label htmlFor="mode">Mode</label>
-                  <Tooltip identifier="left_panel_mode" />
-               </Flex>
-               <select
-                  id="mode"
-                  name="mode"
-                  value={currentView}
-                  onChange={e => changeView(e.target.value)}
-               >
-                  <option value="SUMMARY">Summary</option>
-                  <option value="SACHET_ITEM">Process Sachet</option>
-               </select>
-            </StyledMode>
-            <ErrorState message="Failed to fetch sachet details!" />
-         </Wrapper>
-      )
-   }
+   // if (isLoading) return <InlineLoader />
+   // if (error) {
+   //    setIsLoading(false)
+   //    logger(error)
+   //    toast.error('Failed to fetch sachet details!')
+   //    return (
+   //       <Wrapper>
+   //          <StyledMode>
+   //             <Flex container alignItems="center">
+   //                <label htmlFor="mode">Mode</label>
+   //                <Tooltip identifier="left_panel_mode" />
+   //             </Flex>
+   //             <select
+   //                id="mode"
+   //                name="mode"
+   //                value={currentView}
+   //                onChange={e => changeView(e.target.value)}
+   //             >
+   //                <option value="SUMMARY">Summary</option>
+   //                <option value="SACHET_ITEM">Process Sachet</option>
+   //             </select>
+   //          </StyledMode>
+   //          <ErrorState message="Failed to fetch sachet details!" />
+   //       </Wrapper>
+   //    )
+   // }
    return (
       <Wrapper>
          <StyledIconButton
@@ -251,8 +252,11 @@ export const ProcessSachet = ({ closeOrderSummaryTunnel }) => {
          </StyledHeader>
          <StyledMain>
             <section>
-               <h4>{sachet.displayName.split('->').pop().trim()}</h4>
-               <StyledStat status={sachet.status}>{sachet.status}</StyledStat>
+               <h4>
+                  {sachet?.displayName &&
+                     sachet?.displayName?.split('->').pop().trim()}
+               </h4>
+               <StyledStat status={sachet?.status}>{sachet?.status}</StyledStat>
             </section>
             <section>
                <section>
@@ -261,13 +265,13 @@ export const ProcessSachet = ({ closeOrderSummaryTunnel }) => {
                </section>
                <section>
                   <span>Processing Name</span>
-                  <span>{sachet.processingName}</span>
+                  <span>{sachet?.processingName}</span>
                </section>
                <section>
                   <span>Quantity</span>
                   <span>
-                     {sachet.displayUnitQuantity}
-                     {sachet.displayUnit}
+                     {sachet?.displayUnitQuantity}
+                     {sachet?.displayUnit}
                   </span>
                </section>
             </section>
@@ -279,24 +283,24 @@ export const ProcessSachet = ({ closeOrderSummaryTunnel }) => {
                </header>
                <h2>
                   {weight}
-                  {sachet.unit}
+                  {sachet?.unit}
                </h2>
-               {weight > 0 && weight > sachet.displayUnitQuantity && (
+               {weight > 0 && weight > sachet?.displayUnitQuantity && (
                   <h3>
                      Reduce weight by{' '}
-                     {Math.abs(sachet.displayUnitQuantity - weight)}
-                     {sachet.displayUnit}
+                     {Math.abs(sachet?.displayUnitQuantity - weight)}
+                     {sachet?.displayUnit}
                   </h3>
                )}
-               {weight > 0 && weight < sachet.displayUnitQuantity && (
+               {weight > 0 && weight < sachet?.displayUnitQuantity && (
                   <h3>
-                     Add {Math.abs(sachet.displayUnitQuantity - weight)}
-                     {sachet.displayUnit} more
+                     Add {Math.abs(sachet?.displayUnitQuantity - weight)}
+                     {sachet?.displayUnit} more
                   </h3>
                )}
                <span />
             </StyledWeigh>
-            {sachet.status === 'PENDING' &&
+            {sachet?.status === 'PENDING' &&
                state.scale.weight_simulation.value.isActive && (
                   <Flex container alignItems="center">
                      <Form.Group>
@@ -311,7 +315,7 @@ export const ProcessSachet = ({ closeOrderSummaryTunnel }) => {
                      <Spacer size="8px" xAxis />
                      <TextButton
                         type="outline"
-                        onClick={() => setWeight(sachet.displayUnitQuantity)}
+                        onClick={() => setWeight(sachet?.displayUnitQuantity)}
                      >
                         Match
                      </TextButton>

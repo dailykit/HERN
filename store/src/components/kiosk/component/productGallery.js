@@ -144,11 +144,18 @@ export const ProductGalleryKiosk = ({ config }) => {
             />
             <Carousel
                ref={carousalRef}
-               slidesToShow={4}
+               slidesToShow={
+                  products.filter(product => product.isPublished).length < 4
+                     ? products.filter(product => product.isPublished).length
+                     : 4
+               }
                slidesToScroll={4}
                infinite={false}
             >
                {products.map(eachProduct => {
+                  if (!eachProduct.isPublished) {
+                     return null
+                  }
                   return (
                      <ProductGalleryCard
                         product={eachProduct}
@@ -234,10 +241,13 @@ const ProductGalleryCard = ({ product, config }) => {
             })}
             buttonConfig={config.kioskSettings.buttonSettings}
             onClick={() => {
-               addToCart(product.defaultCartItem, 1)
+               if (product.isPublished && product.isAvailable) {
+                  addToCart(product.defaultCartItem, 1)
+               }
             }}
+            disabled={!product.isAvailable}
          >
-            {t('Add')}
+            {product.isAvailable ? t('Add') : t('Out of Stock')}
          </KioskButton>
       </div>
    )

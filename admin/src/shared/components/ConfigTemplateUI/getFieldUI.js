@@ -23,6 +23,7 @@ import {
    RadioButton,
    CampaignSelector,
    RecipeSelector,
+   AnimationSelector,
 } from './UIComponents'
 import { Address } from './UIComponents/Address'
 import { useEditMode } from './EditModeContext'
@@ -338,8 +339,7 @@ export const getFieldUI = (
             editMode={editMode}
          />
       )
-   }
-   else if (field.userInsertType === 'recipeSelector') {
+   } else if (field.userInsertType === 'recipeSelector') {
       configUI = (
          <RecipeSelector
             fieldDetail={field}
@@ -347,6 +347,15 @@ export const getFieldUI = (
             path={fieldKey}
             onConfigChange={onConfigChange}
             editMode={editMode}
+         />
+      )
+   } else if (field.userInsertType === 'animationSelector') {
+      configUI = (
+         <AnimationSelector
+            fieldDetail={field}
+            marginLeft={indentation}
+            path={fieldKey}
+            onConfigChange={onConfigChange}
          />
       )
    }
