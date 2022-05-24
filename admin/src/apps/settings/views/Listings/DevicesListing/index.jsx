@@ -97,11 +97,11 @@ const DevicesListing = () => {
             </ComboButton>
          </Flex>
          <section>
-            <Text as="p">
+            <Text as="title">
                Email:{' '}
                {printNodeConfigs.length > 0 && printNodeConfigs[0].value.email}
             </Text>
-            <Text as="p">
+            <Text as="title">
                Password:{' '}
                {printNodeConfigs.length > 0 &&
                   printNodeConfigs[0].value.password}
