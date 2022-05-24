@@ -21,8 +21,10 @@ const initiatePayment = async arg => {
          metaData = {}
       } = arg
 
-      // Deleting redirectTo property from metaData as we can't store / character in notes for Razorpay Payment order
-      delete metaData['redirectTo']
+      if (metaData && metaData.has('redirectTo')) {
+         // Deleting redirectTo property from metaData as we can't store / character in notes for Razorpay Payment order
+         delete metaData['redirectTo']
+      }
 
       const razorpayInstance = await razorpay()
       const CURRENCY = await get_env('RAZORPAY_CURRENCY')

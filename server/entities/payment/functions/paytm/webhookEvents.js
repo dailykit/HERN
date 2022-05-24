@@ -31,9 +31,12 @@ const razorpayWebhookEvents = async arg => {
       const { cartPayment } = await client.request(CART_PAYMENT, {
          id: orderId
       })
-      const { brand } = await client.request(BRAND, {
-         id: cartPayment.metaData.brandId
-      })
+
+      if (cartPayment.metaData && cartPayment.metaData.has('brandId')) {
+         var { brand } = await client.request(BRAND, {
+            id: cartPayment.metaData.brandId
+         })
+      }
 
       const requiredData = {
          cartPaymentId: orderId,
