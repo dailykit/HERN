@@ -47,7 +47,9 @@ export const Styles = {
    Tabs: styled(Tabs)(
       () => css`
          display: grid;
-         grid-template-columns: 180px 1fr;
+         grid-template-columns: auto;
+
+         ${'' /* grid-template-columns: 180px 1fr; */}
          @media only screen and (max-width: 1439px) {
             grid-template-columns: auto;
          }
@@ -224,4 +226,15 @@ export const HeaderFlex = styled(Flex)`
       flex-direction: column;
       align-items: flex-start;
    }
+`
+
+export const StyledBadge = styled.span`
+   background: #aaa;
+   color: #fff;
+   font-weight: 400;
+   font-size: 12px;
+   line-height: 14px;
+   padding: 4px 6px;
+   margin-left: 8px;
+   border-radius: 4px;
 `

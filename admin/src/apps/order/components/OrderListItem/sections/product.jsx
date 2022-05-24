@@ -1,5 +1,5 @@
 import React from 'react'
-import { isEmpty, groupBy, omit, isEqual } from 'lodash'
+import isEmpty from 'lodash/isEmpty'
 import { useTranslation } from 'react-i18next'
 import { Flex, Text } from '@dailykit/ui'
 
@@ -9,6 +9,7 @@ import {
    StyledServings,
    StyledProductItem,
    StyledProductTitle,
+   StyledBadge,
 } from './styled'
 import { UserIcon } from '../../../assets/icons'
 import { Spacer } from '../../OrderSummary/styled'
@@ -19,10 +20,6 @@ const address = 'apps.order.components.orderlistitem.'
 export const Products = React.memo(function ProductsComp({ order }) {
    const { t } = useTranslation()
    const [orderedProducts, setOrderedProducts] = React.useState([])
-   const types = groupBy(
-      order.cart.cartItems_aggregate.nodes,
-      'productOptionType'
-   )
 
    React.useEffect(() => {
       if (!isEmpty(order.cart.cartItems_aggregate.nodes)) {
@@ -30,7 +27,6 @@ export const Products = React.memo(function ProductsComp({ order }) {
             order.cart.cartItems_aggregate.nodes
          )
          setOrderedProducts(refinedProducts)
-         console.log('products', refinedProducts)
       }
    }, [])
 
@@ -84,18 +80,6 @@ export const Products = React.memo(function ProductsComp({ order }) {
    return (
       <Styles.Products>
          <Styles.Tabs>
-            <Styles.TabList>
-               <Styles.Tab>
-                  {t(address.concat('all'))}{' '}
-                  <StyledCount>{orderedProducts.length}</StyledCount>
-               </Styles.Tab>
-               {/* {Object.keys(types).map(key => (
-                  <Styles.Tab key={key}>
-                     {key}
-                     <StyledCount>{types[key].length}</StyledCount>
-                  </Styles.Tab>
-               ))} */}
-            </Styles.TabList>
             <Styles.TabPanels>
                <Styles.TabPanel>
                   {orderedProducts.map(item => (
@@ -103,14 +87,12 @@ export const Products = React.memo(function ProductsComp({ order }) {
                         <div>
                            <StyledProductTitle>
                               {item.displayName.split('->').pop().trim()}
+                              {item?.label && (
+                                 <StyledBadge>{item?.label}</StyledBadge>
+                              )}
                            </StyledProductTitle>
                         </div>
-                        {/* <StyledServings>
-                           <span>
-                              <UserIcon size={16} color="#555B6E" />
-                           </span>
-                           <span>{item?.productOption?.label}</span>
-                        </StyledServings> */}
+
                         <span>
                            {item.assembledSachets?.aggregate?.count || 0} /{' '}
                            {item.packedSachets?.aggregate?.count || 0} /{' '}
@@ -119,30 +101,6 @@ export const Products = React.memo(function ProductsComp({ order }) {
                      </StyledProductItem>
                   ))}
                </Styles.TabPanel>
-               {/* {Object.values(types).map((listing, index) => (
-                  <Styles.TabPanel key={index}>
-                     {listing.map(item => (
-                        <StyledProductItem key={`${item.id}-${index}`}>
-                           <div>
-                              <StyledProductTitle>
-                                 {item.displayName.split('->').pop().trim()}
-                              </StyledProductTitle>
-                           </div>
-                           <StyledServings>
-                              <span>
-                                 <UserIcon size={16} color="#555B6E" />
-                              </span>
-                              <span>{item.productOption?.label}</span>
-                           </StyledServings>
-                           <span>
-                              {item.assembledSachets?.aggregate?.count || 0} /{' '}
-                              {item.packedSachets?.aggregate?.count || 0} /{' '}
-                              {item.totalSachets?.aggregate?.count || 0}
-                           </span>
-                        </StyledProductItem>
-                     ))}
-                  </Styles.TabPanel>
-               ))} */}
             </Styles.TabPanels>
          </Styles.Tabs>
       </Styles.Products>

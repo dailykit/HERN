@@ -55,7 +55,6 @@ const getLabel = product => {
          label = getName(product.childNodes[0].productOption.label)
       }
    }
-   console.log('label', label)
    return label
 }
 export const getRecursiveProducts = (nodes = []) => {

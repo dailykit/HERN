@@ -434,6 +434,9 @@ export const QUERIES = {
                         displayName
                         displayImage
                         productOptionType
+                        productOption {
+                           label
+                        }
                         totalSachets: childs_aggregate {
                            aggregate {
                               count
