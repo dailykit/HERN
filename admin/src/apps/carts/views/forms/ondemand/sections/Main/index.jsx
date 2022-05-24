@@ -233,7 +233,7 @@ export const Main = () => {
                argsForByLocation={argsForByLocation}
             />
          ) : (
-            <AllProducts />
+            <AllProducts argsForByLocation={argsForByLocation} />
          )}
       </Styles.Main>
    )
@@ -366,7 +366,7 @@ const Menu = ({ menu, menuProductIds, argsForByLocation }) => {
    )
 }
 
-const AllProducts = () => {
+const AllProducts = ({ argsForByLocation }) => {
    const { id: cartId } = useParams()
    const { cart, tunnels, dispatch } = useManual()
    const [showSearch, setShowSearch] = React.useState(false)
@@ -386,6 +386,7 @@ const AllProducts = () => {
    useQuery(QUERIES.PRODUCTS.LIST, {
       variables: {
          where: { isPublished: { _eq: true }, isArchived: { _eq: false } },
+         params: argsForByLocation,
       },
       onCompleted: data => {
          setAllProducts(data.products)
@@ -407,6 +408,7 @@ const AllProducts = () => {
                   isArchived: { _eq: false },
                   name: { _ilike: `%${value}%` },
                },
+               params: argsForByLocation,
             },
          })
       } else {
