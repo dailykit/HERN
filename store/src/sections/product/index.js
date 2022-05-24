@@ -16,7 +16,7 @@ export const Product = ({ config }) => {
    const router = useRouter()
    const { id } = router.query
    const [status, setStatus] = React.useState('loading')
-   const { brand, locationId } = useConfig()
+   const { brand, locationId, brandLocation } = useConfig()
    const [productDetails, setProductDetails] = React.useState({})
 
    const { t, dynamicTrans, locale } = useTranslation()
@@ -29,28 +29,19 @@ export const Product = ({ config }) => {
 
    const argsForByLocation = React.useMemo(
       () => ({
-         params: {
-            brandId: brand?.id,
-            locationId: locationId,
-         },
+         brandId: brand?.id,
+         locationId: locationId,
+         brand_locationId: brandLocation?.id,
       }),
-      [brand, locationId]
+      [brand, locationId, brandLocation?.id]
    )
    const { loading: productsLoading, error: productsError } = useQuery(
       PRODUCT_DETAILS,
       {
-         skip: !id,
+         skip: !id || !brand?.id || !locationId || !brandLocation?.id,
          variables: {
             id: Number(id),
-            priceArgs: argsForByLocation,
-            discountArgs: argsForByLocation,
-            defaultCartItemArgs: argsForByLocation,
-            productOptionPriceArgs: argsForByLocation,
-            productOptionDiscountArgs: argsForByLocation,
-            productOptionCartItemArgs: argsForByLocation,
-            modifierCategoryOptionPriceArgs: argsForByLocation,
-            modifierCategoryOptionDiscountArgs: argsForByLocation,
-            modifierCategoryOptionCartItemArgs: argsForByLocation,
+            params: argsForByLocation,
          },
          fetchPolicy: 'network-only',
          onCompleted: data => {

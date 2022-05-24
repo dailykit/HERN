@@ -4,7 +4,7 @@ import { Slide } from 'react-slideshow-image'
 import { useTranslation } from '../context'
 import { formatCurrency, isClient } from '../utils'
 import { HernLazyImage } from '../utils/hernImage'
-import { ModifierPopup } from './index'
+import { ModifierPopup, ModifierPopupForUnAvailability } from './index'
 // if (isClient) {
 //    import('lazysizes/plugins/unveilhooks/ls.unveilhooks').then(module => module)
 // }
@@ -341,7 +341,30 @@ export const ProductCard = props => {
             </div>
          )}
          {showModifier && data && (
-            <ModifierPopup
+            <>{
+            (!data.isAvailable ||
+               !data.productOptions.some(
+                  ele => ele.isAvailable === true && ele.isPublished === true
+               )) ?
+            <ModifierPopupForUnAvailability
+               productData={
+                  modifierPopupConfig && modifierPopupConfig?.productData
+                     ? modifierPopupConfig?.productData
+                     : data
+               }
+               closeModifier={closeModifier}
+               showCounterBtn={modifierPopupConfig?.showCounterBtn}
+               edit={modifierPopupConfig?.edit}
+               showModifierImage={modifierPopupConfig?.showModifierImage}
+               modifierWithoutPopup={modifierWithoutPopup}
+               customProductDetails={customProductDetails}
+               config={config}
+               stepView={stepView}
+               counterButtonPosition={
+                  modifierPopupConfig?.counterButtonPosition
+               }
+            />
+            :<ModifierPopup
                productData={
                   modifierPopupConfig && modifierPopupConfig?.productData
                      ? modifierPopupConfig?.productData
@@ -361,6 +384,8 @@ export const ProductCard = props => {
                   modifierPopupConfig?.counterButtonPosition
                }
             />
+            }
+            </>
          )}
       </>
    )

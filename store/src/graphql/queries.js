@@ -1617,18 +1617,7 @@ export const PRODUCTS = gql`
    }
 `
 export const PRODUCT_DETAILS = gql`
-   query Products(
-      $id: Int!
-      $priceArgs: priceByLocation_products_product_args!
-      $discountArgs: discountByLocation_products_product_args!
-      $defaultCartItemArgs: defaultCartItemByLocation_products_product_args!
-      $productOptionCartItemArgs: cartItemByLocation_products_productOption_args!
-      $productOptionDiscountArgs: discountByLocation_products_productOption_args!
-      $productOptionPriceArgs: priceByLocation_products_productOption_args!
-      $modifierCategoryOptionCartItemArgs: cartItemByLocation_onDemand_modifierCategoryOption_args!
-      $modifierCategoryOptionDiscountArgs: discountByLocation_onDemand_modifierCategoryOption_args!
-      $modifierCategoryOptionPriceArgs: priceByLocation_onDemand_modifierCategoryOption_args!
-   ) {
+   query Products($id: Int!, $params: jsonb!) {
       products(where: { isArchived: { _eq: false }, id: { _eq: $id } }) {
          id
          name
@@ -1638,12 +1627,14 @@ export const PRODUCT_DETAILS = gql`
          VegNonVegType
          additionalText
          description
-         price: priceByLocation(args: $priceArgs)
-         discount: discountByLocation(args: $discountArgs)
+         price: priceByLocation(args: { params: $params })
+         discount: discountByLocation(args: { params: $params })
          isPopupAllowed
-         isPublished
+         isPublished: publishedByLocation(args: { params: $params })
+         isAvailable: availabilityByLocation(args: { params: $params })
          defaultProductOptionId
-         defaultCartItem: defaultCartItemByLocation(args: $defaultCartItemArgs)
+         defaultCartItem: defaultCartItemByLocation(args: { params: $params })
+         productionOptionSelectionStatement
          productOptions(
             where: { isArchived: { _eq: false } }
             order_by: { position: desc_nulls_last }
@@ -1652,9 +1643,11 @@ export const PRODUCT_DETAILS = gql`
             position
             type
             label
-            price: priceByLocation(args: $productOptionPriceArgs)
-            discount: discountByLocation(args: $productOptionDiscountArgs)
-            cartItem: cartItemByLocation(args: $productOptionCartItemArgs)
+            isPublished: publishedByLocation(args: { params: $params })
+            isAvailable: availabilityByLocation(args: { params: $params })
+            price: priceByLocation(args: { params: $params })
+            discount: discountByLocation(args: { params: $params })
+            cartItem: cartItemByLocation(args: { params: $params })
             additionalModifiers(where: { isActive: { _eq: true } }) {
                type
                label
@@ -1670,20 +1663,14 @@ export const PRODUCT_DETAILS = gql`
                      options(where: { isVisible: { _eq: true } }) {
                         id
                         name
-                        price: priceByLocation(
-                           args: $modifierCategoryOptionPriceArgs
-                        )
-                        discount: discountByLocation(
-                           args: $modifierCategoryOptionDiscountArgs
-                        )
+                        price: priceByLocation(args: { params: $params })
+                        discount: discountByLocation(args: { params: $params })
                         quantity
                         image
                         isActive
                         sachetItemId
                         ingredientSachetId
-                        cartItem: cartItemByLocation(
-                           args: $modifierCategoryOptionCartItemArgs
-                        )
+                        cartItem: cartItemByLocation(args: { params: $params })
                      }
                   }
                }
@@ -1700,20 +1687,14 @@ export const PRODUCT_DETAILS = gql`
                   options(where: { isVisible: { _eq: true } }) {
                      id
                      name
-                     price: priceByLocation(
-                        args: $modifierCategoryOptionPriceArgs
-                     )
-                     discount: discountByLocation(
-                        args: $modifierCategoryOptionDiscountArgs
-                     )
+                     price: priceByLocation(args: { params: $params })
+                     discount: discountByLocation(args: { params: $params })
                      quantity
                      image
                      isActive
                      sachetItemId
                      ingredientSachetId
-                     cartItem: cartItemByLocation(
-                        args: $modifierCategoryOptionCartItemArgs
-                     )
+                     cartItem: cartItemByLocation(args: { params: $params })
                   }
                }
             }
