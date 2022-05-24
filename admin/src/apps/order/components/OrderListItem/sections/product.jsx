@@ -1,5 +1,5 @@
 import React from 'react'
-import { isEmpty, groupBy } from 'lodash'
+import isEmpty from 'lodash/isEmpty'
 import { useTranslation } from 'react-i18next'
 import { Flex, Text } from '@dailykit/ui'
 
@@ -9,14 +9,26 @@ import {
    StyledServings,
    StyledProductItem,
    StyledProductTitle,
+   StyledBadge,
 } from './styled'
 import { UserIcon } from '../../../assets/icons'
 import { Spacer } from '../../OrderSummary/styled'
+import { getRecursiveProducts } from '../../../utils'
 
 const address = 'apps.order.components.orderlistitem.'
 
-export const Products = ({ order }) => {
+export const Products = React.memo(function ProductsComp({ order }) {
    const { t } = useTranslation()
+   const [orderedProducts, setOrderedProducts] = React.useState([])
+
+   React.useEffect(() => {
+      if (!isEmpty(order.cart.cartItems_aggregate.nodes)) {
+         const refinedProducts = getRecursiveProducts(
+            order.cart.cartItems_aggregate.nodes
+         )
+         setOrderedProducts(refinedProducts)
+      }
+   }, [])
 
    if (order?.thirdPartyOrderId) {
       const { thirdPartyOrder: { products = [] } = {} } = order
@@ -65,42 +77,22 @@ export const Products = ({ order }) => {
       )
    }
 
-   const types = groupBy(
-      order.cart.cartItems_aggregate.nodes,
-      'productOptionType'
-   )
    return (
       <Styles.Products>
          <Styles.Tabs>
-            <Styles.TabList>
-               <Styles.Tab>
-                  {t(address.concat('all'))}{' '}
-                  <StyledCount>
-                     {order.cart.cartItems_aggregate.aggregate.count}
-                  </StyledCount>
-               </Styles.Tab>
-               {Object.keys(types).map(key => (
-                  <Styles.Tab key={key}>
-                     {key}
-                     <StyledCount>{types[key].length}</StyledCount>
-                  </Styles.Tab>
-               ))}
-            </Styles.TabList>
             <Styles.TabPanels>
                <Styles.TabPanel>
-                  {order.cart.cartItems_aggregate.nodes.map(item => (
+                  {orderedProducts.map(item => (
                      <StyledProductItem key={item.id}>
-                        <div>
+                        <div className="flex-wrap">
                            <StyledProductTitle>
                               {item.displayName.split('->').pop().trim()}
                            </StyledProductTitle>
+                           {item?.label && (
+                              <StyledBadge>{item?.label}</StyledBadge>
+                           )}
                         </div>
-                        {/* <StyledServings>
-                           <span>
-                              <UserIcon size={16} color="#555B6E" />
-                           </span>
-                           <span>{item?.productOption?.label}</span>
-                        </StyledServings> */}
+
                         <span>
                            {item.assembledSachets?.aggregate?.count || 0} /{' '}
                            {item.packedSachets?.aggregate?.count || 0} /{' '}
@@ -109,32 +101,8 @@ export const Products = ({ order }) => {
                      </StyledProductItem>
                   ))}
                </Styles.TabPanel>
-               {Object.values(types).map((listing, index) => (
-                  <Styles.TabPanel key={index}>
-                     {listing.map(item => (
-                        <StyledProductItem key={`${item.id}-${index}`}>
-                           <div>
-                              <StyledProductTitle>
-                                 {item.displayName.split('->').pop().trim()}
-                              </StyledProductTitle>
-                           </div>
-                           {/* <StyledServings>
-                              <span>
-                                 <UserIcon size={16} color="#555B6E" />
-                              </span>
-                              <span>{item.productOption?.label}</span>
-                           </StyledServings> */}
-                           <span>
-                              {item.assembledSachets?.aggregate?.count || 0} /{' '}
-                              {item.packedSachets?.aggregate?.count || 0} /{' '}
-                              {item.totalSachets?.aggregate?.count || 0}
-                           </span>
-                        </StyledProductItem>
-                     ))}
-                  </Styles.TabPanel>
-               ))}
             </Styles.TabPanels>
          </Styles.Tabs>
       </Styles.Products>
    )
-}
+})

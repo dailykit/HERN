@@ -386,9 +386,9 @@ export const BasicInfo = () => {
                         isLoading={loading}
                         addOption={printerList}
                         options={printerList}
+                        searchedOption={() => {}}
                         selectedOption={e => updateKioskPrinter(e)}
                         placeholder="Enter printer name"
-                        // addOption={() => console.log('printer ADDED')}
                      />
                   </Form.Group>
                </Flex>
