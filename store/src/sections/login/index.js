@@ -38,12 +38,6 @@ export const Login = ({ config }) => {
       loginIllustration?.['Login Background Image']?.showBackground?.value ??
       false
 
-   React.useEffect(() => {
-      if (isAuthenticated && !isLoading) {
-         router.push(getRoute('/'))
-      }
-   }, [isLoading, isAuthenticated])
-
    return (
       <div
          style={
@@ -67,27 +61,16 @@ export const Login = ({ config }) => {
             </div>
          )}
          {/**Login Component */}
-         {isLoading ? null : isAuthenticated ? (
-            <div
-               style={{
-                  fontWeight: '600',
-                  fontFamily: 'var(--hern-primary-font)',
-                  fontSize: '1.8rem',
-               }}
-            >
-               Seems like you are already logged in redirecting to Home page
-            </div>
-         ) : (
-            <AuthMethods
-               socialLogin={authConfig.socialLoginMethods?.socialLogin?.value}
-               singleLoginMethod={
-                  authConfig.loginSettings?.singleLoginMethod?.value || false
-               }
-               loginBy={loginBy}
-               currentAuth={loginBy}
-               showBackground={showBackground}
-            />
-         )}
+
+         <AuthMethods
+            socialLogin={authConfig.socialLoginMethods?.socialLogin?.value}
+            singleLoginMethod={
+               authConfig.loginSettings?.singleLoginMethod?.value || false
+            }
+            loginBy={loginBy}
+            currentAuth={loginBy}
+            showBackground={showBackground}
+         />
       </div>
    )
 }
