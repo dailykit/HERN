@@ -13,8 +13,8 @@ import {
    Form,
 } from '@dailykit/ui'
 import styled from 'styled-components'
-import { MUTATIONS, QUERIES } from '../../../../../graphql'
-import { useMutation, useSubscription } from '@apollo/react-hooks'
+import {  MUTATIONS, QUERIES } from '../../../../../graphql'
+import { useMutation, useQuery, useSubscription } from '@apollo/react-hooks'
 import { useManual } from '../../state'
 import {
    generateDeliverySlots,
@@ -24,6 +24,7 @@ import {
    getDistance,
    isDeliveryAvailable,
    isPickUpAvailable,
+   isStoreOnDemandDeliveryAvailable,
 } from './utils'
 import { useParams } from 'react-router'
 import { EditIcon } from '../../../../../../../shared/assets/icons'
@@ -45,7 +46,7 @@ export const FulfillmentTunnel = ({ panel }) => {
 
 const Content = ({ panel }) => {
    const [, , closeTunnel] = panel
-   const { brand, address, tunnels, brandLocation } = useManual()
+   const { brand, address, tunnels, brandLocation, locationId } = useManual()
    const { id: cartId } = useParams()
 
    const [distance, setDistance] = React.useState(null)
@@ -143,23 +144,52 @@ const Content = ({ panel }) => {
       },
    })
 
-   const { data: { preOrderDelivery = [] } = {}, loading: PDLoading } =
-      useSubscription(QUERIES.FULFILLMENT.PREORDER.DELIVERY, {
-         skip: distance === null,
-         variables: {
-            distance,
-            brandId: brand?.id,
+   const {
+      data: { brandRecurrences: PDbrandRecurrences = [] } = {},
+      loading: PDLoading,
+   } = useSubscription(QUERIES.FULFILLMENT.RECURRENCES, {
+      skip: distance === null,
+      variables: {
+         where: {
+            recurrence: {
+               isActive: { _eq: true },
+               type: { _eq: 'PREORDER_DELIVERY' },
+            },
+            _or: [
+               {
+                  brandLocationId: {
+                     _eq: brandLocation?.id,
+                  },
+               },
+               { brandId: { _eq: brand.id } },
+            ],
+            isActive: { _eq: true },
          },
-      })
+      },
+   })
 
-   const { data: { onDemandDelivery = [] } = {}, loading: ODLoading } =
-      useSubscription(QUERIES.FULFILLMENT.ONDEMAND.DELIVERY, {
-         skip: distance === null,
-         variables: {
-            distance,
-            brandId: brand?.id,
+   const {
+      data: { brandRecurrences: ODbrandRecurrences = [] } = {},
+      loading: ODLoading,
+   } = useSubscription(QUERIES.FULFILLMENT.RECURRENCES, {
+      variables: {
+         where: {
+            recurrence: {
+               isActive: { _eq: true },
+               type: { _eq: 'ONDEMAND_DELIVERY' },
+            },
+            _or: [
+               {
+                  brandLocationId: {
+                     _eq: brandLocation?.id,
+                  },
+               },
+               { brandId: { _eq: brand.id } },
+            ],
+            isActive: { _eq: true },
          },
-      })
+      },
+   })
 
    React.useEffect(() => {
       setTime('')
@@ -170,21 +200,21 @@ const Content = ({ panel }) => {
             setting => setting.brandSetting.identifier === 'Location'
          )
          const { value: storeAddress } = addressSetting
-
+         
          ;(async () => {
             if (
                address?.lat &&
                address?.lng &&
-               storeAddress?.lat &&
-               storeAddress?.lng
+               brandLocation?.location?.lat &&
+               brandLocation?.location?.lng
             ) {
                const distance = await getDistance(
                   +address.lat,
                   +address.lng,
-                  +storeAddress.lat,
-                  +storeAddress.lng
+                  +brandLocation.location.lat,
+                  +brandLocation.location.lng
                )
-               console.log({ distance })
+               // console.log("distance",{ distance })
                storedDistance.current = distance
                setDistance(distance.drivable || distance.aerial)
             }
@@ -206,12 +236,13 @@ const Content = ({ panel }) => {
                   pickerDates[index].slots[0].time,
                   fulfillment.date,
                   pickerDates[index].slots[0].intervalInMinutes
-               )
+               ),
             },
          })
 
          // change time selector to default if the date is changed
-         document.getElementById('time').value = pickerDates[index].slots[0].time
+         document.getElementById('time').value =
+            pickerDates[index].slots[0].time
       }
    }, [fulfillment.date])
 
@@ -235,7 +266,7 @@ const Content = ({ panel }) => {
    }, [fulfillment.time])
 
    React.useEffect(() => {
-      try {
+      (async()=>{try {
          if (time && type) {
             setError('')
 
@@ -245,7 +276,7 @@ const Content = ({ panel }) => {
                      setting.brandSetting.identifier === 'Delivery Availability'
                )
                const { value: deliveryAvailability } = deliverySetting
-               console.log('🚀 deliveryAvailability', deliveryAvailability)
+               // console.log('🚀 deliveryAvailability', deliveryAvailability)
 
                const pickupSetting = brand.brand_brandSettings.find(
                   setting =>
@@ -335,24 +366,29 @@ const Content = ({ panel }) => {
                      if (!distance) {
                         return setError('Please add an address first!')
                      }
-                     if (deliveryAvailability?.isAvailable) {
+                     if (
+                        deliveryAvailability?.Delivery?.IsDeliveryAvailable
+                           ?.value
+                     ) {
                         switch (time) {
                            case 'ONDEMAND': {
-                              if (onDemandDelivery[0]?.recurrences?.length) {
-                                 const result = isDeliveryAvailable(
-                                    onDemandDelivery[0].recurrences
-                                 )
+                              if (ODbrandRecurrences.length) {
+                                 const brandLocationCopy = JSON.parse(JSON.stringify(brandLocation))
+                                 brandLocationCopy.aerialDistance = distance
+                                 const result =
+                                    await isStoreOnDemandDeliveryAvailable(
+                                       ODbrandRecurrences,
+                                       brandLocationCopy,
+                                       address
+                                    )
                                  if (result.status) {
                                     const date = new Date()
                                     setFulfillment({
                                        distance,
                                        date: date.toDateString(),
                                        slot: {
-                                          time:
-                                             date.getHours() +
-                                             ':' +
-                                             date.getMinutes(),
-                                          mileRangeId: result.mileRangeId,
+                                          ...generateTimeStamp(moment().format("HH:mm"),moment().format('YYYY-MM-DD'),result.mileRangeInfo.prepTimeInMinutes),
+                                          mileRangeId: result.mileRangeInfo.id,
                                        },
                                     })
                                  } else {
@@ -369,16 +405,16 @@ const Content = ({ panel }) => {
                               break
                            }
                            case 'PREORDER': {
-                              if (preOrderDelivery[0]?.recurrences?.length) {
+                              if (PDbrandRecurrences?.length) {
                                  const result = generateDeliverySlots(
-                                    preOrderDelivery[0].recurrences
+                                    PDbrandRecurrences.map()
                                  )
                                  if (result.status) {
                                     const miniSlots = generateMiniSlots(
                                        result.data,
                                        15
                                     )
-                                    console.log(miniSlots)
+                                    // console.log(miniSlots)
                                     if (miniSlots.length) {
                                        setPickerDates([...miniSlots])
                                        setFulfillment({
@@ -424,7 +460,7 @@ const Content = ({ panel }) => {
          }
       } catch (error) {
          console.log(error)
-      }
+      }})()
    }, [type, time, distance])
 
    const save = () => {

@@ -1,10 +1,13 @@
 import { rrulestr } from 'rrule'
 import { formatISO, add } from 'date-fns'
 import { getdrivableDistance } from '../../../../../../../shared/api'
-import moment from "moment"
+import moment from 'moment'
 import { sortBy } from 'lodash'
+import { get_env } from '../../../../../../../shared/utils'
+import axios from 'axios'
+import { isPointInPolygon, convertDistance } from 'geolib'
 
-export const generateTimeStamp = (time, date, slotTiming=15) => {
+export const generateTimeStamp = (time, date, slotTiming = 15) => {
    let formatedTime = time.split(':')
    formatedTime =
       makeDoubleDigit(formatedTime[0]) + ':' + makeDoubleDigit(formatedTime[1])
@@ -43,31 +46,38 @@ export const deg2rad = deg => {
    return deg * (Math.PI / 180)
 }
 
-export const getDistance = async (lat1, lon1, lat2, lon2) => {
+export const getDistance = async (
+   lat1,
+   lon1,
+   lat2,
+   lon2,
+   drivableDistance = false
+) => {
    const res = { aerial: null, drivable: null }
-
-   try {
-      const { rows } = await getdrivableDistance({ lat1, lon1, lat2, lon2 })
-      if (rows.length) {
-         const [best] = rows
-         if (best.elements.length) {
-            const [record] = best.elements
-            console.log({ record })
-            if (record.distance.text.includes('ft')) {
-               const ft = parseInt(record.distance.text)
-               res.drivable = ft * 0.0001893939
+   if (drivableDistance) {
+      try {
+         const { rows } = await getdrivableDistance({ lat1, lon1, lat2, lon2 })
+         if (rows.length) {
+            const [best] = rows
+            if (best.elements.length) {
+               const [record] = best.elements
+               // console.log({ record })
+               if (record.distance.text.includes('ft')) {
+                  const ft = parseInt(record.distance.text)
+                  res.drivable = ft * 0.0001893939
+               } else {
+                  res.drivable = parseInt(record.distance.text)
+               }
             } else {
-               res.drivable = parseInt(record.distance.text)
+               throw Error('No elements found!')
             }
          } else {
-            throw Error('No elements found!')
+            throw Error('No rows found!')
          }
-      } else {
-         throw Error('No rows found!')
+      } catch (err) {
+         console.log('Error calculating distance!')
+         console.log(err.message)
       }
-   } catch (err) {
-      console.log('Error calculating distance!')
-      console.log(err.message)
    }
 
    let R = 6371 // Radius of the earth in km
@@ -200,7 +210,7 @@ export const isPickUpAvailable = finalRecurrences => {
 export const generatePickUpSlots = recurrences => {
    let data = []
    recurrences.forEach(rec => {
-      console.log("rec",rec)
+      // console.log('rec', rec)
       const now = new Date() // now
       const start = new Date(now.getTime() - 1000 * 60 * 60 * 24) // yesterday
       // const start = now;
@@ -468,4 +478,313 @@ const keyValuePairFromString = stringWithEqual => {
    const keyValueObj = {}
    keyValueObj[valueArray[0]] = valueArray[1]
    return keyValueObj
+}
+
+const drivableDistanceBetweenStoreAndCustomerFn = () => ({
+   value: null,
+   isValidated: false,
+})
+
+export const isStoreOnDemandDeliveryAvailable = async (
+   finalRecurrences,
+   eachStore,
+   address
+) => {
+   let fulfilledRecurrences = []
+   for (let rec in finalRecurrences) {
+      const now = new Date() // now
+      const drivableDistanceBetweenStoreAndCustomer =
+         drivableDistanceBetweenStoreAndCustomerFn()
+      const isValidDay = isDateValidInRRule(
+         finalRecurrences[rec].recurrence.rrule
+      )
+      if (isValidDay) {
+         if (finalRecurrences[rec].recurrence.timeSlots.length) {
+            const sortedTimeSlots = sortBy(
+               finalRecurrences[rec].recurrence.timeSlots,
+               [
+                  function (slot) {
+                     return moment(slot.from, 'HH:mm')
+                  },
+               ]
+            )
+            let validTimeSlots = []
+            for (let timeslot of sortedTimeSlots) {
+               if (timeslot.mileRanges.length) {
+                  const timeslotFromArr = timeslot.from.split(':')
+                  const timeslotToArr = timeslot.to.split(':')
+                  const fromTimeStamp = new Date(now.getTime())
+                  fromTimeStamp.setHours(
+                     timeslotFromArr[0],
+                     timeslotFromArr[1],
+                     timeslotFromArr[2]
+                  )
+                  const toTimeStamp = new Date(now.getTime())
+                  toTimeStamp.setHours(
+                     timeslotToArr[0],
+                     timeslotToArr[1],
+                     timeslotToArr[2]
+                  )
+                  // check if current time falls within time slot
+
+                  if (
+                     now.getTime() >= fromTimeStamp.getTime() &&
+                     now.getTime() <= toTimeStamp.getTime()
+                  ) {
+                     const distanceDeliveryStatus =
+                        await isStoreDeliveryAvailableByDistance(
+                           timeslot.mileRanges,
+                           eachStore,
+                           address,
+                           drivableDistanceBetweenStoreAndCustomer
+                        )
+
+                     const { isDistanceValid, zipcode, geoBoundary } =
+                        distanceDeliveryStatus.result
+                     const status = isDistanceValid && zipcode && geoBoundary
+                     if (status) {
+                        timeslot.validMileRange =
+                           distanceDeliveryStatus.mileRangeInfo
+                        validTimeSlots.push(timeslot)
+                        finalRecurrences[rec].recurrence.validTimeSlots =
+                           validTimeSlots
+                        fulfilledRecurrences = [
+                           ...fulfilledRecurrences,
+                           finalRecurrences[rec],
+                        ]
+                     }
+                     // const timeslotIndex = sortedTimeSlots.indexOf(timeslot)
+                     // const timesSlotsLength = sortedTimeSlots.length
+
+                     if (status || rec == finalRecurrences.length - 1) {
+                        return {
+                           status: validTimeSlots.length > 0,
+                           result: distanceDeliveryStatus.result,
+                           rec: fulfilledRecurrences,
+                           mileRangeInfo: distanceDeliveryStatus.mileRangeInfo,
+                           timeSlotInfo: timeslot,
+                           message:
+                              validTimeSlots.length > 0
+                                 ? 'Delivery available in your location'
+                                 : 'Delivery not available in your location.',
+                           drivableDistance:
+                              distanceDeliveryStatus.drivableDistance,
+                        }
+                     }
+                  } else {
+                     const timeslotIndex =
+                        finalRecurrences[rec].recurrence.timeSlots.indexOf(
+                           timeslot
+                        )
+                     const timesSlotsLength =
+                        finalRecurrences[rec].recurrence.timeSlots.length
+                     if (timeslotIndex == timesSlotsLength - 1) {
+                        return {
+                           status: false,
+                           message:
+                              'Sorry, We do not offer Delivery at this time.',
+                        }
+                     }
+                  }
+               } else {
+                  return {
+                     status: false,
+                     message: 'Sorry, delivery range is not available.',
+                  }
+               }
+            }
+         } else {
+            if (rec == finalRecurrences.length - 1) {
+               return {
+                  status: false,
+                  message: 'Sorry, We do not offer Delivery at this time.',
+               }
+            }
+         }
+      } else {
+         if (rec == finalRecurrences.length - 1) {
+            return {
+               status: false,
+               message: 'Sorry, We do not offer Delivery on this day.',
+            }
+         }
+      }
+   }
+}
+
+const isStoreDeliveryAvailableByDistance = async (
+   mileRanges,
+   eachStore,
+   address,
+   drivableDistanceBetweenStoreAndCustomer
+) => {
+   const userLocation = { ...address }
+   // console.log('userLocation', userLocation,eachStore)
+   let isStoreDeliveryAvailableByDistanceStatus = {
+      isDistanceValid: false,
+      zipcode: false,
+      geoBoundary: false,
+   }
+   let drivableByGoogleDistance = null
+   let mileRangeInfo = null
+   for (let mileRange in mileRanges) {
+      // aerial distance
+      if (mileRanges[mileRange].distanceType === 'aerial') {
+         const aerialDistance = mileRanges[mileRange]
+         if (aerialDistance.from !== null && aerialDistance.to !== null) {
+            let result =
+               eachStore.aerialDistance >= aerialDistance.from &&
+               eachStore.aerialDistance <= aerialDistance.to
+            if (result) {
+               isStoreDeliveryAvailableByDistanceStatus['isDistanceValid'] =
+                  result && !mileRanges[mileRange].isExcluded
+            } else {
+               continue
+            }
+         } else {
+            isStoreDeliveryAvailableByDistanceStatus['isDistanceValid'] = true
+         }
+      }
+      // drivable distance
+      if (mileRanges[mileRange].distanceType === 'drivable') {
+         const drivableDistance = mileRanges[mileRange]
+         if (drivableDistance.from !== null && drivableDistance.to !== null) {
+            try {
+               if (
+                  drivableDistanceBetweenStoreAndCustomer.value &&
+                  drivableDistanceBetweenStoreAndCustomer.isValidated
+               ) {
+                  let result =
+                     drivableDistanceBetweenStoreAndCustomer.value >=
+                        drivableDistance.from &&
+                     drivableDistanceBetweenStoreAndCustomer.value <=
+                        drivableDistance.to
+                  if (result) {
+                     isStoreDeliveryAvailableByDistanceStatus[
+                        'isDistanceValid'
+                     ] = result && !mileRanges[mileRange].isExcluded
+                  } else {
+                     continue
+                  }
+               } else {
+                  const origin = get_env('REACT_APP_DAILYOS_SERVER_URI')
+                  const url = `${origin}/api/distance-matrix`
+                  const postLocationData = {
+                     key: get_env('REACT_APP_MAPS_API_KEY'),
+                     lat1: userLocation.lat,
+                     lon1: userLocation.lng,
+                     lat2: eachStore.location.lat,
+                     lon2: eachStore.location.lng,
+                  }
+                  const { data } = await axios.post(url, postLocationData)
+                  const distanceMeter = data.rows[0].elements[0].distance.value
+
+                  const distanceMileFloat = convertDistance(distanceMeter, 'mi')
+
+                  drivableByGoogleDistance = distanceMileFloat
+                  drivableDistanceBetweenStoreAndCustomer.value =
+                     distanceMileFloat
+                  drivableDistanceBetweenStoreAndCustomer.isValidated = true
+                  let result =
+                     distanceMileFloat >= drivableDistance.from &&
+                     distanceMileFloat <= drivableDistance.to
+                  if (result) {
+                     isStoreDeliveryAvailableByDistanceStatus[
+                        'isDistanceValid'
+                     ] = result && !mileRanges[mileRange].isExcluded
+                  } else {
+                     continue
+                  }
+               }
+            } catch (error) {
+               console.log('getDataWithDrivableDistance', error)
+            }
+         } else {
+            isStoreDeliveryAvailableByDistanceStatus['isDistanceValid'] = true
+         }
+      }
+
+      // zip code
+      if (
+         mileRanges[mileRange].zipcodes === null ||
+         mileRanges[mileRange].zipcodes
+      ) {
+         // assuming null as true
+         if (
+            mileRanges[mileRange].zipcodes === null ||
+            mileRanges[mileRange].zipcodes.zipcodes.length == 0
+         ) {
+            isStoreDeliveryAvailableByDistanceStatus['zipcode'] = true
+         } else {
+            const zipcodes = mileRanges[mileRange].zipcodes.zipcodes
+            let result = Boolean(
+               zipcodes.find(x => x == parseInt(userLocation.zipcode))
+            )
+            if (result) {
+               isStoreDeliveryAvailableByDistanceStatus['zipcode'] =
+                  result && !mileRanges[mileRange].isExcluded
+               if (!(result && !mileRanges[mileRange].isExcluded)) {
+                  return {
+                     result: {
+                        isDistanceValid: true,
+                        zipcode: false,
+                        geoBoundary: true,
+                     },
+                     mileRangeInfo: null,
+                     drivableDistance: null,
+                  }
+               }
+            }
+         }
+      }
+      // geoBoundary
+      if (
+         mileRanges[mileRange].geoBoundary === null ||
+         mileRanges[mileRange].geoBoundary
+      ) {
+         // assuming null as true
+         if (mileRanges[mileRange].geoBoundary === null) {
+            isStoreDeliveryAvailableByDistanceStatus['geoBoundary'] = true
+         } else {
+            const geoBoundaries =
+               mileRanges[mileRange].geoBoundary.geoBoundaries
+            const storeValidationForGeoBoundaries = isPointInPolygon(
+               {
+                  latitude: userLocation.latitude,
+                  longitude: userLocation.longitude,
+               },
+               geoBoundaries
+            )
+
+            let result = storeValidationForGeoBoundaries
+            if (result) {
+               isStoreDeliveryAvailableByDistanceStatus['geoBoundary'] =
+                  result && !mileRanges[mileRange].isExcluded
+               if (!(result && !mileRanges[mileRange].isExcluded)) {
+                  return {
+                     result: {
+                        isDistanceValid: true,
+                        zipcode: true,
+                        geoBoundary: false,
+                     },
+                     mileRangeInfo: null,
+                     drivableDistance: null,
+                  }
+               }
+            }
+         }
+      }
+      if (
+         isStoreDeliveryAvailableByDistanceStatus.isDistanceValid &&
+         isStoreDeliveryAvailableByDistanceStatus.zipcode &&
+         isStoreDeliveryAvailableByDistanceStatus.geoBoundary
+      ) {
+         mileRangeInfo = mileRanges[mileRange]
+      }
+   }
+   return {
+      result: isStoreDeliveryAvailableByDistanceStatus,
+      mileRangeInfo: mileRangeInfo,
+      drivableDistance: drivableByGoogleDistance,
+   }
 }

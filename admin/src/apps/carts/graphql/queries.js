@@ -976,7 +976,18 @@ export const GET_BRAND_LOCATION = gql`
       brandLocations: brands_brand_location(where: $where) {
          id
          brandMenuId
-         posist_customer_key
+         brandId
+         location {
+            id
+            locationAddress
+            label
+            zipcode
+            city
+            state
+            lat
+            lng
+            country
+         }
       }
    }
 `
