@@ -149,7 +149,7 @@ export const Plan = ({ plan, handlePlanClick, itemCount }) => {
    }
 
    if (!defaultServing) return <Loader inline />
-   console.log('plan', plan.servings)
+
    return (
       <li className="hern-plan">
          {/* <div className="hern-our-plans__plan__body"> */}
@@ -213,11 +213,11 @@ export const Plan = ({ plan, handlePlanClick, itemCount }) => {
                {/* <span>{t('No. of')}</span>{' '} */}
                <span data-translation="true">{yieldLabel.plural}</span>
             </h4>
-            <div>
+            <div className="hern-plan__servings__list__wrapper">
                {plansFirstIndex > 0 &&
                   plan.servings.length > numberOfItemsToShow && (
                      <button
-                        className="hern-plan__servings__arrow-btn"
+                        className="hern-plan__servings__arrow-btn--left"
                         onClick={handlePlanPrevious}
                      >
                         <BiChevronLeft size={20} />
@@ -249,9 +249,9 @@ export const Plan = ({ plan, handlePlanClick, itemCount }) => {
                   })}
                </ul>
 
-               {plan.servings.length > servingsLastIndex && (
+               {plan.servings.length > plansLastIndex && (
                   <button
-                     className="hern-plan__servings__arrow-btn"
+                     className="hern-plan__servings__arrow-btn--right"
                      onClick={handlePlanNext}
                   >
                      <BiChevronRight size={20} />
