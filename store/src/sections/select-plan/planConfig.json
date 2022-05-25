@@ -1,0 +1,399 @@
+{
+   "data": {
+      "plansToShow": {
+         "label": "Plans to show",
+         "dataType": "planId",
+         "value": "",
+         "userInsertType": "planSelector"
+      },
+      "heading": {
+         "label": "Heading",
+         "dataType": "text",
+         "value": "Personalize your plan",
+         "userInsertType": "textField"
+      },
+      "selectPlanButtonLabel": {
+         "label": "Select plan button label",
+         "dataType": "text",
+         "value": "Select plan",
+         "userInsertType": "textField"
+      },
+      "yieldLabel": {
+         "singular": {
+            "label": "Yield label",
+            "dataType": "text",
+            "value": "serving",
+            "userInsertType": "textField"
+         },
+         "plural": {
+            "label": "Yield label",
+            "dataType": "text",
+            "value": "servings",
+            "userInsertType": "textField"
+         }
+      },
+      "itemCountLabel": {
+         "singular": {
+            "label": "Item count label",
+            "dataType": "text",
+            "value": "recipe",
+            "userInsertType": "textField"
+         },
+         "plural": {
+            "label": "Item count label",
+            "dataType": "text",
+            "value": "recipes",
+            "userInsertType": "textField"
+         }
+      }
+   },
+   "display": {
+      "planView": {
+         "type": "single",
+         "label": "Plan View ",
+         "value": [
+            {
+               "id": 1,
+               "title": "Card View",
+               "value": "card"
+            }
+         ],
+         "options": [
+            {
+               "id": 1,
+               "title": "List View",
+               "value": "list"
+            },
+            {
+               "id": 2,
+               "title": "Aggregated View",
+               "value": "aggregated"
+            }
+         ],
+         "dataType": "select",
+         "userInsertType": "dropdown"
+      },
+      "heading": {
+         "color": {
+            "label": "Heading Color",
+            "dataType": "color",
+            "value": "#000000",
+            "userInsertType": "colorPicker"
+         },
+         "fontSize": {
+            "label": "Heading Font Size",
+            "dataType": "number",
+            "value": "1.5rem",
+            "userInsertType": "numberField"
+         },
+         "fontFamily": {
+            "type": "single",
+            "label": "Font Family",
+            "value": [
+               {
+                  "id": 0,
+                  "title": "Lato",
+                  "value": "Lato"
+               }
+            ],
+            "options": [
+               {
+                  "id": 0,
+                  "title": "Lato",
+                  "value": "'Lato'"
+               }
+            ],
+            "dataType": "select",
+            "userInsertType": "dropdown"
+         },
+         "fontWeight": {
+            "label": "Heading Font Weight",
+            "dataType": "text",
+            "value": "600",
+            "userInsertType": "textField"
+         },
+         "textAlign": {
+            "type": "single",
+            "label": "Text Align",
+            "value": [
+               {
+                  "id": 0,
+                  "title": "Center",
+                  "value": "center"
+               }
+            ],
+            "options": [
+               {
+                  "id": 1,
+                  "title": "Left",
+                  "value": "left"
+               },
+               {
+                  "id": 2,
+                  "title": "Right",
+                  "value": "right"
+               }
+            ],
+            "dataType": "select",
+            "userInsertType": "dropdown"
+         },
+         "spacing": {
+            "label": "Heading Spacing in px(top(space)right(space)bottom(space)left)",
+            "dataType": "text",
+            "value": "32px 0px 32px 0px",
+            "userInsertType": "textField"
+         }
+      },
+      "selectPlanButton": {
+         "color": {
+            "label": "Select Plan Button Color",
+            "dataType": "color",
+            "value": "#000000",
+            "userInsertType": "colorPicker"
+         },
+         "backgroundColor": {
+            "label": "Select Plan Button Background Color",
+            "dataType": "color",
+            "value": "#ffffff",
+            "userInsertType": "colorPicker"
+         },
+         "fontSize": {
+            "label": "Select Plan Button Font Size",
+            "dataType": "number",
+            "value": "16",
+            "userInsertType": "numberField"
+         },
+         "fontFamily": {
+            "label": "Select Plan Button Font Family",
+            "dataType": "text",
+            "value": "Arial",
+            "userInsertType": "textField"
+         },
+         "fontWeight": {
+            "label": "Select Plan Button Font Weight",
+            "dataType": "text",
+            "value": "bold",
+            "userInsertType": "textField"
+         },
+         "textAlign": {
+            "type": "single",
+            "label": "Text Align",
+            "value": [
+               {
+                  "id": 0,
+                  "title": "Center",
+                  "value": "center"
+               }
+            ],
+            "options": [
+               {
+                  "id": 1,
+                  "title": "Left",
+                  "value": "left"
+               },
+               {
+                  "id": 2,
+                  "title": "Right",
+                  "value": "right"
+               }
+            ],
+            "dataType": "select",
+            "userInsertType": "dropdown"
+         },
+         "spacing": {
+            "label": "Select Plan Button Spacing in px(top(space)right(space)bottom(space)left)",
+            "dataType": "text",
+            "value": "16px 16px 16px 16px",
+            "userInsertType": "textField"
+         },
+         "border": {
+            "borderRadius": {
+               "label": "Select Plan Button Border Radius",
+               "dataType": "text",
+               "value": "0",
+               "userInsertType": "textField"
+            },
+            "border": {
+               "label": "Select Plan Button Border",
+               "dataType": "text",
+               "value": "none",
+               "userInsertType": "textField"
+            }
+         },
+         "hover": {
+            "color": {
+               "label": "Select Plan Button Hover Color",
+               "dataType": "color",
+               "value": "#000000",
+               "userInsertType": "colorPicker"
+            },
+            "backgroundColor": {
+               "label": "Select Plan Button Hover Background Color",
+               "dataType": "color",
+               "value": "#000000",
+               "userInsertType": "colorPicker"
+            }
+         }
+      },
+      "countButton": {
+         "borderRadius": {
+            "label": "Count Button Border Radius",
+            "dataType": "text",
+            "value": "0",
+            "userInsertType": "textField"
+         },
+         "fontSize": {
+            "label": "Count Button Font Size",
+            "dataType": "number",
+            "value": "16",
+            "userInsertType": "numberField"
+         },
+         "fontWeight": {
+            "label": "Count Button Font Weight",
+            "dataType": "text",
+            "value": "bold",
+            "userInsertType": "textField"
+         },
+         "active": {
+            "color": {
+               "label": "Count Button Active Color",
+               "dataType": "color",
+               "value": "#000000",
+               "userInsertType": "colorPicker"
+            },
+            "backgroundColor": {
+               "label": "Count Button Active Background Color",
+               "dataType": "color",
+               "value": "#ffffff",
+               "userInsertType": "colorPicker"
+            },
+            "hover": {
+               "color": {
+                  "label": "Count Button Active Hover Color",
+                  "dataType": "color",
+                  "value": "#000000",
+                  "userInsertType": "colorPicker"
+               },
+               "backgroundColor": {
+                  "label": "Count Button Active Hover Background Color",
+                  "dataType": "color",
+                  "value": "#ffffff",
+                  "userInsertType": "colorPicker"
+               }
+            }
+         },
+         "inactive": {
+            "color": {
+               "label": "Count Button Inactive Color",
+               "dataType": "color",
+               "value": "#000000",
+               "userInsertType": "colorPicker"
+            },
+            "backgroundColor": {
+               "label": "Count Button Inactive Background Color",
+               "dataType": "color",
+               "value": "#ffffff",
+               "userInsertType": "colorPicker"
+            },
+            "hover": {
+               "color": {
+                  "label": "Count Button Inactive Hover Color",
+                  "dataType": "color",
+                  "value": "#000000",
+                  "userInsertType": "colorPicker"
+               },
+               "backgroundColor": {
+                  "label": "Count Button Inactive Hover Background Color",
+                  "dataType": "color",
+                  "value": "#ffffff",
+                  "userInsertType": "colorPicker"
+               }
+            }
+         }
+      },
+      "planTitle": {
+         "color": {
+            "label": "Plan Title Color",
+            "dataType": "color",
+            "value": "#000000",
+            "userInsertType": "colorPicker"
+         },
+         "fontSize": {
+            "label": "Plan Title Font Size",
+            "dataType": "number",
+            "value": "16",
+            "userInsertType": "numberField"
+         },
+         "fontFamily": {
+            "label": "Plan Title Font Family",
+            "dataType": "text",
+            "value": "Arial",
+            "userInsertType": "textField"
+         },
+         "fontWeight": {
+            "label": "Plan Title Font Weight",
+            "dataType": "text",
+            "value": "bold",
+            "userInsertType": "textField"
+         }
+      },
+      "yieldAndItemsCountLabel": {
+         "color": {
+            "label": "Yield Label Color",
+            "dataType": "color",
+            "value": "#000000",
+            "userInsertType": "colorPicker"
+         },
+         "fontSize": {
+            "label": "Yield Label Font Size",
+            "dataType": "number",
+            "value": "16",
+            "userInsertType": "numberField"
+         },
+         "fontWeight": {
+            "label": "Yield Label Font Weight",
+            "dataType": "number",
+            "value": "500",
+            "userInsertType": "numberField"
+         }
+      }
+   },
+   "informationVisibility": {
+      "showHeading": {
+         "label": "Show Heading",
+         "dataType": "boolean",
+         "value": true,
+         "userInsertType": "checkbox"
+      },
+      "showPricePerServing": {
+         "label": "Show Price Per Serving",
+         "dataType": "boolean",
+         "value": true,
+         "userInsertType": "checkbox"
+      },
+      "showTotalPrice": {
+         "label": "Show Total Price",
+         "dataType": "boolean",
+         "value": true,
+         "userInsertType": "checkbox"
+      },
+      "showIsTextInClusiveOrExclusive": {
+         "label": "Show Is Text Inclusive or Exclusive",
+         "dataType": "boolean",
+         "value": true,
+         "userInsertType": "checkbox"
+      },
+      "showPlanCoverImage": {
+         "label": "Show Plan Cover Image",
+         "dataType": "boolean",
+         "value": true,
+         "userInsertType": "checkbox"
+      },
+      "showPlanIconImage:": {
+         "label": "Show Plan Icon Image",
+         "dataType": "boolean",
+         "value": true,
+         "userInsertType": "checkbox"
+      }
+   }
+}
