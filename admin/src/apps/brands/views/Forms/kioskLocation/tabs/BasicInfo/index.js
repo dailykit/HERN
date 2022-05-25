@@ -95,11 +95,11 @@ export const BasicInfo = () => {
                }
             })
             setPrinterList(previousData => [...previousData, ...printersData])
-            console.log('printers:', printers, 'printerList:', printerList)
+            // console.log('printers:', printers, 'printerList:', printerList)
          },
       }
    )
-   console.log(printerList)
+   // console.log(printerList)
 
    const { locationError, locationListLoading, locationData } = useSubscription(
       KIOSK.LOCATIONS,
@@ -143,7 +143,7 @@ export const BasicInfo = () => {
 
    const generatePwd = () => {
       let newPwd = title.value + '@' + params.id
-      console.log('pwd::', newPwd)
+      // console.log('pwd::', newPwd)
       return newPwd
    }
 
@@ -282,7 +282,7 @@ export const BasicInfo = () => {
                      ></div>
                      <Spacer size="10px" xAxis />
                      <Text as="text2">
-                        {isKioskStatusActive ? 'Active' : 'In Active'}
+                        {isKioskStatusActive ? 'Online' : 'Offline'}
                      </Text>
                   </Flex>
                   <Spacer size="30px" xAxis />
@@ -377,7 +377,6 @@ export const BasicInfo = () => {
                      options={locationList}
                      selectedOption={e => updateKioskLocation(e)}
                      placeholder="Choose kiosk location"
-                     // addOption={() => console.log('location ADDED')}
                   />
                </Form.Group>
             </>
