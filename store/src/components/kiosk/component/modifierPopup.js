@@ -49,8 +49,11 @@ export const KioskModifier = props => {
    // component state
    const [selectedProductOption, setSelectedProductOption] = useState(
       productData.productOptions.find(
-         x => x.id === productData.defaultProductOptionId
-      ) || productData.productOptions[0]
+         x =>
+            x.id === productData.defaultProductOptionId &&
+            x.isPublished &&
+            x.isAvailable
+      ) || productData.productOptions.find(x => x.isPublished && x.isAvailable)
    )
    const [quantity, setQuantity] = useState(1)
    const [selectedOptions, setSelectedOptions] = useState({
@@ -759,46 +762,60 @@ export const KioskModifier = props => {
                         backgroundColor: `${config.kioskSettings.theme.primaryColor.value}`,
                      }}
                   >
-                     {productData.productOptions.map((eachOption, index) => (
-                        <button
-                           value={eachOption.id}
-                           key={eachOption.id}
-                           className="hern-kiosk__modifier-product-option"
-                           style={{
-                              backgroundColor:
-                                 selectedProductOption.id === eachOption.id
-                                    ? config.kioskSettings.theme
-                                         .primaryColorDark.value
-                                    : 'transparent',
-                              color: '#ffffff',
-                              border:
-                                 selectedProductOption.id === eachOption.id
-                                    ? `2px solid ${config.kioskSettings.theme.successColor.value}`
-                                    : `2px solid ${config.kioskSettings.theme.primaryColorDark.value}`,
-                           }}
-                           onClick={() => {
-                              const productOption =
-                                 productData.productOptions.find(
-                                    x => x.id == eachOption.id
-                                 )
-                              // when changing product option previous selected should be removed
-                              setSelectedOptions({ single: [], multiple: [] })
-                              setSelectedProductOption(productOption)
-                           }}
-                        >
-                           <span
-                              data-name={eachOption.label}
-                              data-translation="true"
+                     {productData.productOptions.map((eachOption, index) => {
+                        if (!eachOption.isPublished) {
+                           return null
+                        }
+                        return (
+                           <button
+                              value={eachOption.id}
+                              key={eachOption.id}
+                              className={`hern-kiosk__modifier-product-option ${
+                                 !eachOption.isAvailable
+                                    ? 'hern-kiosk__modifier-product-option--disabled'
+                                    : ''
+                              }`}
+                              style={{
+                                 backgroundColor:
+                                    selectedProductOption.id === eachOption.id
+                                       ? config.kioskSettings.theme
+                                            .primaryColorDark.value
+                                       : 'transparent',
+                                 color: '#ffffff',
+                                 border:
+                                    selectedProductOption.id === eachOption.id
+                                       ? `2px solid ${config.kioskSettings.theme.successColor.value}`
+                                       : `2px solid ${config.kioskSettings.theme.primaryColorDark.value}`,
+                              }}
+                              onClick={() => {
+                                 if (eachOption.isAvailable) {
+                                    const productOption =
+                                       productData.productOptions.find(
+                                          x => x.id == eachOption.id
+                                       )
+                                    // when changing product option previous selected should be removed
+                                    setSelectedOptions({
+                                       single: [],
+                                       multiple: [],
+                                    })
+                                    setSelectedProductOption(productOption)
+                                 }
+                              }}
                            >
-                              {eachOption.label}
-                           </span>
-                           {' (+ '}
-                           {formatCurrency(
-                              eachOption.price - eachOption.discount
-                           )}
-                           {')'}
-                        </button>
-                     ))}
+                              <span
+                                 data-name={eachOption.label}
+                                 data-translation="true"
+                              >
+                                 {eachOption.label}
+                              </span>
+                              {' (+ '}
+                              {formatCurrency(
+                                 eachOption.price - eachOption.discount
+                              )}
+                              {')'}
+                           </button>
+                        )
+                     })}
                   </div>
                )}
 
@@ -1662,7 +1679,7 @@ const ModifierOptionsList = forwardRef((props, ref) => {
       modifierOptionId,
       setChildChangingToggle,
    } = props
-   const { brand, isConfigLoading, kioskDetails } = useConfig()
+   const { brand, isConfigLoading, kioskDetails, brandLocation } = useConfig()
    const [errorCategories, setErrorCategories] = useState([])
    const [nestedSelectedOptions, setNestedSelectedOptions] = useState({
       single: [],
@@ -1675,9 +1692,10 @@ const ModifierOptionsList = forwardRef((props, ref) => {
          params: {
             brandId: brand?.id,
             locationId: kioskDetails?.locationId,
+            brand_locationId: brandLocation?.id,
          },
       }),
-      [brand]
+      [brand, brandLocation?.id, kioskDetails?.locationId]
    )
    const {
       loading: templateLoading,

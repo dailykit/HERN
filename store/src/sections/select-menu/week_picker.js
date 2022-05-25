@@ -17,7 +17,7 @@ export const WeekPicker = ({ isFixed }) => {
    if (isFixed) {
       return (
          <span className="hern-select-menu__week-picker">
-            <span>{t("Showing menu of:")}</span>&nbsp;
+            <span>{t('Showing menu of:')}</span>&nbsp;
             {moment(state?.week?.fulfillmentDate)
                .weekday(1)
                .format('ddd MMM D')}
@@ -29,6 +29,7 @@ export const WeekPicker = ({ isFixed }) => {
          </span>
       )
    }
+   console.log('state occurence', state.occurences)
    return (
       <ul className="hern-select-menu__week-picker__list">
          {state.occurences.map(occurence => (

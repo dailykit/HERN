@@ -363,6 +363,7 @@ export const CART_BY_WEEK = gql`
             walletAmountUsed
             loyaltyPointsUsed
             billingDetails
+            cartOwnerBilling
             fulfillmentInfo
             transactionId
             paymentMethodId
@@ -407,6 +408,7 @@ export const CART_BY_WEEK_SUBSCRIPTION = gql`
             walletAmountUsed
             loyaltyPointsUsed
             billingDetails
+            cartOwnerBilling
             fulfillmentInfo
             transactionId
             paymentMethodId
@@ -493,12 +495,14 @@ export const CART_SUBSCRIPTION = gql`
          paymentStatus
          deliveryPrice
          billingDetails
+         cartOwnerBilling
          fulfillmentInfo
          transactionId
          transactionRemark
          stripeInvoiceId
          stripeInvoiceDetails
          customerKeycloakId
+         customerInfo
          retryPaymentMethod
          activeCartPaymentId
          activeCartPayment {
@@ -559,6 +563,7 @@ export const CART_STATUS = gql`
          paymentStatus
          fulfillmentInfo
          billingDetails
+         cartOwnerBilling
          customerKeycloakId
          amount
          products: cartItems(where: { level: { _eq: 1 } }) {
@@ -1221,6 +1226,7 @@ export const BRAND_PAGE = gql`
          isArchived
          published
          route
+         animationConfig
          brandPageSettings {
             value
             brandPageSetting {
@@ -1236,6 +1242,7 @@ export const BRAND_PAGE = gql`
             id
             internalModuleIdentifier
             config
+            animationConfig
             moduleType
             isHidden
             fileId
@@ -1301,18 +1308,7 @@ export const PRODUCTS_BY_CATEGORY = gql`
    }
 `
 export const PRODUCTS = gql`
-   query Products(
-      $ids: [Int!]!
-      $priceArgs: priceByLocation_products_product_args!
-      $discountArgs: discountByLocation_products_product_args!
-      $defaultCartItemArgs: defaultCartItemByLocation_products_product_args!
-      $productOptionCartItemArgs: cartItemByLocation_products_productOption_args!
-      $productOptionDiscountArgs: discountByLocation_products_productOption_args!
-      $productOptionPriceArgs: priceByLocation_products_productOption_args!
-      $modifierCategoryOptionCartItemArgs: cartItemByLocation_onDemand_modifierCategoryOption_args!
-      $modifierCategoryOptionDiscountArgs: discountByLocation_onDemand_modifierCategoryOption_args!
-      $modifierCategoryOptionPriceArgs: priceByLocation_onDemand_modifierCategoryOption_args!
-   ) {
+   query Products($ids: [Int!]!, $params: jsonb!) {
       products(where: { isArchived: { _eq: false }, id: { _in: $ids } }) {
          id
          name
@@ -1322,12 +1318,13 @@ export const PRODUCTS = gql`
          VegNonVegType
          additionalText
          description
-         price: priceByLocation(args: $priceArgs)
-         discount: discountByLocation(args: $discountArgs)
+         price: priceByLocation(args: { params: $params })
+         discount: discountByLocation(args: { params: $params })
          isPopupAllowed
-         isPublished
+         isPublished: publishedByLocation(args: { params: $params })
+         isAvailable: availabilityByLocation(args: { params: $params })
          defaultProductOptionId
-         defaultCartItem: defaultCartItemByLocation(args: $defaultCartItemArgs)
+         defaultCartItem: defaultCartItemByLocation(args: { params: $params })
          productionOptionSelectionStatement
          subCategory
          productOptions(
@@ -1338,9 +1335,11 @@ export const PRODUCTS = gql`
             position
             type
             label
-            price: priceByLocation(args: $productOptionPriceArgs)
-            discount: discountByLocation(args: $productOptionDiscountArgs)
-            cartItem: cartItemByLocation(args: $productOptionCartItemArgs)
+            price: priceByLocation(args: { params: $params })
+            discount: discountByLocation(args: { params: $params })
+            cartItem: cartItemByLocation(args: { params: $params })
+            isPublished: publishedByLocation(args: { params: $params })
+            isAvailable: availabilityByLocation(args: { params: $params })
             additionalModifiers(where: { isActive: { _eq: true } }) {
                type
                label
@@ -1365,12 +1364,8 @@ export const PRODUCTS = gql`
                      ) {
                         id
                         name
-                        price: priceByLocation(
-                           args: $modifierCategoryOptionPriceArgs
-                        )
-                        discount: discountByLocation(
-                           args: $modifierCategoryOptionDiscountArgs
-                        )
+                        price: priceByLocation(args: { params: $params })
+                        discount: discountByLocation(args: { params: $params })
                         quantity
                         image
                         isActive
@@ -1395,10 +1390,10 @@ export const PRODUCTS = gql`
                                  id
                                  name
                                  price: priceByLocation(
-                                    args: $modifierCategoryOptionPriceArgs
+                                    args: { params: $params }
                                  )
                                  discount: discountByLocation(
-                                    args: $modifierCategoryOptionDiscountArgs
+                                    args: { params: $params }
                                  )
                                  quantity
                                  image
@@ -1408,7 +1403,7 @@ export const PRODUCTS = gql`
                                  sachetItemId
                                  ingredientSachetId
                                  cartItem: cartItemByLocation(
-                                    args: $modifierCategoryOptionCartItemArgs
+                                    args: { params: $params }
                                  )
                                  additionalModifierTemplate {
                                     id
@@ -1431,10 +1426,10 @@ export const PRODUCTS = gql`
                                           id
                                           name
                                           price: priceByLocation(
-                                             args: $modifierCategoryOptionPriceArgs
+                                             args: { params: $params }
                                           )
                                           discount: discountByLocation(
-                                             args: $modifierCategoryOptionDiscountArgs
+                                             args: { params: $params }
                                           )
                                           quantity
                                           image
@@ -1444,7 +1439,7 @@ export const PRODUCTS = gql`
                                           sachetItemId
                                           ingredientSachetId
                                           cartItem: cartItemByLocation(
-                                             args: $modifierCategoryOptionCartItemArgs
+                                             args: { params: $params }
                                           )
                                           additionalModifierTemplate {
                                              categories {
@@ -1461,9 +1456,7 @@ export const PRODUCTS = gql`
                         }
                         sachetItemId
                         ingredientSachetId
-                        cartItem: cartItemByLocation(
-                           args: $modifierCategoryOptionCartItemArgs
-                        )
+                        cartItem: cartItemByLocation(args: { params: $params })
                      }
                   }
                }
@@ -1486,12 +1479,8 @@ export const PRODUCTS = gql`
                   ) {
                      id
                      name
-                     price: priceByLocation(
-                        args: $modifierCategoryOptionPriceArgs
-                     )
-                     discount: discountByLocation(
-                        args: $modifierCategoryOptionDiscountArgs
-                     )
+                     price: priceByLocation(args: { params: $params })
+                     discount: discountByLocation(args: { params: $params })
                      quantity
                      image
                      isActive
@@ -1499,9 +1488,7 @@ export const PRODUCTS = gql`
                      isAdditionalModifierRequired
                      sachetItemId
                      ingredientSachetId
-                     cartItem: cartItemByLocation(
-                        args: $modifierCategoryOptionCartItemArgs
-                     )
+                     cartItem: cartItemByLocation(args: { params: $params })
                      additionalModifierTemplate {
                         id
                         name
@@ -1520,11 +1507,9 @@ export const PRODUCTS = gql`
                            ) {
                               id
                               name
-                              price: priceByLocation(
-                                 args: $modifierCategoryOptionPriceArgs
-                              )
+                              price: priceByLocation(args: { params: $params })
                               discount: discountByLocation(
-                                 args: $modifierCategoryOptionDiscountArgs
+                                 args: { params: $params }
                               )
                               quantity
                               image
@@ -1534,7 +1519,7 @@ export const PRODUCTS = gql`
                               sachetItemId
                               ingredientSachetId
                               cartItem: cartItemByLocation(
-                                 args: $modifierCategoryOptionCartItemArgs
+                                 args: { params: $params }
                               )
                               additionalModifierTemplate {
                                  id
@@ -1555,10 +1540,10 @@ export const PRODUCTS = gql`
                                        id
                                        name
                                        price: priceByLocation(
-                                          args: $modifierCategoryOptionPriceArgs
+                                          args: { params: $params }
                                        )
                                        discount: discountByLocation(
-                                          args: $modifierCategoryOptionDiscountArgs
+                                          args: { params: $params }
                                        )
                                        quantity
                                        image
@@ -1568,7 +1553,7 @@ export const PRODUCTS = gql`
                                        sachetItemId
                                        ingredientSachetId
                                        cartItem: cartItemByLocation(
-                                          args: $modifierCategoryOptionCartItemArgs
+                                          args: { params: $params }
                                        )
                                        additionalModifierTemplate {
                                           id
@@ -1595,10 +1580,10 @@ export const PRODUCTS = gql`
                                                 id
                                                 name
                                                 price: priceByLocation(
-                                                   args: $modifierCategoryOptionPriceArgs
+                                                   args: { params: $params }
                                                 )
                                                 discount: discountByLocation(
-                                                   args: $modifierCategoryOptionDiscountArgs
+                                                   args: { params: $params }
                                                 )
                                                 quantity
                                                 image
@@ -1608,7 +1593,7 @@ export const PRODUCTS = gql`
                                                 sachetItemId
                                                 ingredientSachetId
                                                 cartItem: cartItemByLocation(
-                                                   args: $modifierCategoryOptionCartItemArgs
+                                                   args: { params: $params }
                                                 )
                                                 additionalModifierTemplate {
                                                    categories {
@@ -1788,6 +1773,7 @@ export const GET_CART = gql`
          id
          status
          tax
+         source
          orderId
          discount
          itemTotal
@@ -2243,6 +2229,7 @@ export const GET_CART_PAYMENT_INFO = gql`
          cartId
          cart {
             customerInfo
+            source
          }
          isTest
          paymentStatus

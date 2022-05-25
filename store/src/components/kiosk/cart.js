@@ -36,7 +36,7 @@ import {
 import { PRODUCTS, GET_MODIFIER_BY_ID } from '../../graphql'
 import { useConfig, usePayment } from '../../lib'
 import { KioskModifier } from './component'
-import { useLazyQuery, useQuery } from '@apollo/react-hooks'
+import { useLazyQuery, useQuery, useSubscription } from '@apollo/react-hooks'
 import KioskButton from './component/button'
 import { ProgressBar } from './component/progressBar'
 import { Coupon } from '../coupon'
@@ -44,6 +44,7 @@ import isEmpty from 'lodash/isEmpty'
 import { HernLazyImage } from '../../utils/hernImage'
 import isNull from 'lodash/isNull'
 import { get_env } from '../../utils'
+import { useIntl } from 'react-intl'
 
 const { Header, Content, Footer } = Layout
 
@@ -251,8 +252,8 @@ export const KioskCart = props => {
                                  <span style={{ fontWeight: 'bold' }}>
                                     {formatCurrency(
                                        (
-                                          cart?.cartOwnerBilling
-                                             ?.balanceToPay || 0
+                                          cart?.cartOwnerBilling?.totalToPay ||
+                                          0
                                        ).toFixed(2)
                                     )}
                                  </span>
@@ -274,7 +275,7 @@ export const KioskCart = props => {
                            <span className="hern-kiosk__cart-place-order-btn-total">
                               {formatCurrency(
                                  (
-                                    cart?.cartOwnerBilling?.balanceToPay || 0
+                                    cart?.cartOwnerBilling?.totalToPay || 0
                                  ).toFixed(2)
                               )}
                            </span>
@@ -318,11 +319,16 @@ export const KioskCart = props => {
 const CartCard = props => {
    // productData --> product data from cart
    const { config, productData, removeCartItems, quantity = 0 } = props
-   const { brand, kioskDetails, isConfigLoading, selectedOrderTab } =
-      useConfig()
+   const {
+      brand,
+      kioskDetails,
+      isConfigLoading,
+      selectedOrderTab,
+      brandLocation,
+   } = useConfig()
    const { addToCart } = React.useContext(CartContext)
    const { t, dynamicTrans, locale } = useTranslation()
-
+   const { formatMessage } = useIntl()
    const [modifyProductId, setModifyProductId] = useState(null)
    const [modifyProduct, setModifyProduct] = useState(null)
    const [modifierType, setModifierType] = useState(null)
@@ -354,12 +360,11 @@ const CartCard = props => {
    const getTotalPrice = React.useMemo(() => price(productData), [productData])
    const argsForByLocation = React.useMemo(
       () => ({
-         params: {
-            brandId: brand?.id,
-            locationId: kioskDetails?.locationId,
-         },
+         brandId: brand?.id,
+         locationId: kioskDetails?.locationId,
+         brand_locationId: brandLocation?.id,
       }),
-      [brand]
+      [brand, kioskDetails?.locationId, brandLocation?.id]
    )
 
    //fetch product detail which to be increase or edit
@@ -367,15 +372,7 @@ const CartCard = props => {
       skip: !modifyProductId,
       variables: {
          ids: modifyProductId,
-         priceArgs: argsForByLocation,
-         discountArgs: argsForByLocation,
-         defaultCartItemArgs: argsForByLocation,
-         productOptionPriceArgs: argsForByLocation,
-         productOptionDiscountArgs: argsForByLocation,
-         productOptionCartItemArgs: argsForByLocation,
-         modifierCategoryOptionPriceArgs: argsForByLocation,
-         modifierCategoryOptionDiscountArgs: argsForByLocation,
-         modifierCategoryOptionCartItemArgs: argsForByLocation,
+         params: argsForByLocation,
       },
       onCompleted: data => {
          // use for repeat last one order
@@ -1127,7 +1124,7 @@ const CartCard = props => {
                </div>
             )}
          <Modal
-            title={t('Repeat last used customization')}
+            title={formatMessage({ id: 'Repeat last used customization' })}
             visible={showChooseIncreaseType}
             centered={true}
             onCancel={() => {

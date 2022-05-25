@@ -171,54 +171,6 @@ export const KioskLocation = () => {
                      ))}
                </Form.Group>
 
-               {/* <Form.Group>
-                  <Flex container alignItems="flex-end">
-                     <Form.Label
-                        htmlFor="accessUrl"
-                        title="Copy Kiosk Access URL"
-                     >
-                     
-                        <ButtonGroup
-                           onClick={() => {
-                              copy(title.accessUrl)
-                           }}
-                        >
-                           {'Domain*    '}
-                           <div>
-                              <CopyIcon size={20} />
-                           </div>
-                        </ButtonGroup>
-                     </Form.Label>
-                  </Flex>
-                  
-                  <Form.Text
-                     id="accessUrl"
-                     name="accessUrl"
-                     placeholder="Enter the kiosk Domain"
-                     style={{ marginTop: '-2px' }}
-                     value={title.accessUrl}
-                     disabled={kiosk?.isDefault}
-                     onChange={e =>
-                        setTitle({ ...title, accessUrl: e.target.value })
-                     }
-                     // onBlur={e => updateTitle(e)}
-                     onBlur={e =>
-                        update({
-                           variables: {
-                              id: params.id,
-                              _set: { accessUrl: e.target.value },
-                           },
-                        })
-                     }
-                  />
-                  {title.meta.isTouched &&
-                     !title.meta.isValid &&
-                     title.meta.errors.map((error, index) => (
-                        <Form.Error key={index}>{error}</Form.Error>
-                     ))}
-                  
-               </Form.Group> */}
-
                <Form.Group>
                   <Flex container alignItems="flex-end">
                      <Form.Label
@@ -331,7 +283,7 @@ export const KioskLocation = () => {
                {/* <HorizontalTab>Kiosk Config</HorizontalTab> */}
             </HorizontalTabList>
             <HorizontalTabPanels>
-               <HorizontalTabPanel style={{ height: 'auto' }}>
+               <HorizontalTabPanel style={{ height: '100%' }}>
                   <BasicInfo />
                </HorizontalTabPanel>
                <HorizontalTabPanel>

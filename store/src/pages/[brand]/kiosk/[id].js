@@ -5,6 +5,7 @@ import Kiosk from '../../../sections/kiosk'
 import { useConfig } from '../../../lib'
 import {
    BRAND_LOCATIONS,
+   GET_BRAND_LOCATION,
    LOCATION_KIOSK,
    LOCATION_KIOSK_VALIDATION,
 } from '../../../graphql'
@@ -15,13 +16,13 @@ import { Input } from 'antd'
 import KioskButton from '../../../components/kiosk/component/button'
 
 const KioskScreen = props => {
-   const { kioskId, kioskDetails, settings } = props
+   const { kioskId, kioskDetails, settings, brandLocationData } = props
    const { dispatch, setIsLoading } = useConfig()
    const [password, setPassword] = React.useState({
       value: '',
       isInvalid: false,
    })
-
+   // console.log('kioskDetails', kioskDetails, brandLocationData)
    const [isValidationLoading, setIsValidationLoading] = React.useState(true)
 
    useEffect(() => {
@@ -71,6 +72,10 @@ const KioskScreen = props => {
          type: 'SET_KIOSK_POPUP_CONFIG',
          payload: finalKioskConfig,
       })
+      dispatch({
+         type: 'SET_BRAND_LOCATION',
+         payload: brandLocationData,
+      })
       setIsLoading(false)
    }, [])
 
@@ -81,6 +86,7 @@ const KioskScreen = props => {
       onCompleted: data => {
          if (data.brands_locationKiosk.length === 0) {
             setPassword(prev => ({ ...prev, isInvalid: true }))
+            sessionStorage.removeItem('kiosk-ref-key')
          } else {
             const passwordInLocal = sessionStorage.getItem('kiosk-ref-key')
             if (passwordInLocal) {
@@ -217,12 +223,23 @@ export async function getStaticProps({ params }) {
    const kioskDetails = await client.request(LOCATION_KIOSK, { id: params.id })
    const { settings } = await getSettings(params.brand)
    // console.log('these are settings', settings)
+   const { brandLocations } = await client.request(GET_BRAND_LOCATION, {
+      where: {
+         brandId: {
+            _eq: settings.brandId,
+         },
+         locationId: {
+            _eq: kioskDetails.brands_locationKiosk_by_pk.locationId,
+         },
+      },
+   })
 
    return {
       props: {
          kioskId: params.id,
          kioskDetails: kioskDetails.brands_locationKiosk_by_pk,
          settings: settings,
+         brandLocationData: brandLocations[0],
       },
       // revalidate: 60,
    }

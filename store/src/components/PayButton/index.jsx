@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, memo } from 'react'
 import { useMutation, useSubscription } from '@apollo/react-hooks'
 import isEmpty from 'lodash/isEmpty'
 import { Skeleton } from 'antd'
@@ -157,4 +157,4 @@ function PayButton({
       </>
    )
 }
-export default PayButton
+export default memo(PayButton)

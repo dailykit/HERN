@@ -55,7 +55,7 @@ const Kiosk = props => {
    const { status: kioskMenuStatus, hydratedMenu } = useKioskMenu(collectionIds)
 
    const { resetPaymentProviderStates } = usePayment()
-
+   console.log('hydratedMenu', hydratedMenu)
    //delete Cart mutation
    const [deleteCart] = useMutation(DELETE_CART)
 

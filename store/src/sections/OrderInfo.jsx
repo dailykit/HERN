@@ -68,7 +68,7 @@ const OrderInfo = ({ cart, showViewOrderButton = false }) => {
          )}
          <section>
             <h4 className="hern-order-info__billings__title">{t('Charges')}</h4>
-            <Billing billing={cart?.billingDetails} />
+            <Billing billing={cart?.cartOwnerBilling} />
          </section>
          <section className="hern-order-info__delivery">
             {cart?.fulfillmentInfo?.type?.includes('DELIVERY') ? (

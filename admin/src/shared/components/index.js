@@ -17,6 +17,7 @@ import LinkUnitConversionTunnels from './LinkUnitConversionTunnels'
 import Banner from './Banner'
 import Modal from './Modal'
 import ProductCards from './ProductCards'
+import ConfigTemplateUI from './ConfigTemplateUI'
 
 export {
    ProductCards,
@@ -38,6 +39,7 @@ export {
    LinkUnitConversionTunnels,
    Banner,
    Modal,
+   ConfigTemplateUI,
 }
 export * from './AssetUploader'
 export * from './InlineLoader'

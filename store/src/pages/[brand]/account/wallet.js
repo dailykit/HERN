@@ -37,15 +37,6 @@ export const getStaticProps = async ({ params }) => {
    const { parsedData, settings, navigationMenus, seoSettings, linkedFiles } =
       await getPageProps(params, '/account/wallet')
 
-   const isWalletAvailable =
-      settings.rewards.Wallet.Wallet?.isWalletAvailable?.value
-
-   if (!isWalletAvailable) {
-      return {
-         notFound: true,
-      }
-   }
-
    return {
       props: {
          folds: parsedData,

@@ -43,7 +43,7 @@ export const KioskLocations = () => {
          toast.success('KIOSK inActive!')
       },
       onError: error => {
-         console.log(error)
+         // console.log(error)
          toast.error('Could not delete!')
       },
    })
@@ -118,6 +118,13 @@ export const KioskLocations = () => {
          resizable: 'true',
          minWidth: 100,
          maxWidth: 500,
+      },
+      {
+         title: 'ID',
+         field: 'id',
+         headerSort: true,
+         headerFilter: true,
+         width: 100,
       },
       {
          title: 'Domain',
@@ -299,7 +306,7 @@ function KioskName({ cell, addTab }) {
 
 const LiveRunningStatusFormatter = ({ cell }) => {
    const data = cell.getData()
-   console.log('dataFo', data)
+   // console.log('dataFo', data)
    return (
       <Flex>
          <Flex container alignItems="center">

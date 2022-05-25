@@ -127,9 +127,12 @@ export const BRAND_TOTAL_PAGES = gql`
 export const PAGE_INFO = gql`
    subscription PAGE_INFO($pageId: Int!) {
       brands_brandPages_by_pk(id: $pageId) {
+         id
          internalPageName
          published
          route
+         config
+         animationConfig
       }
    }
 `
@@ -190,6 +193,7 @@ export const LINKED_COMPONENT = gql`
          fileId
          id
          config
+         animationConfig
          internalModuleIdentifier
          moduleType
          position

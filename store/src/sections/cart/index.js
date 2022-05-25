@@ -278,7 +278,7 @@ const PaymentSection = () => {
                >
                   {t('Make Payment')}
                   {`(${formatCurrency(
-                     cartState?.cart?.cartOwnerBilling?.balanceToPay
+                     cartState?.cart?.cartOwnerBilling?.totalToPay
                   )})`}
                </button>
                <Tunnel.Bottom

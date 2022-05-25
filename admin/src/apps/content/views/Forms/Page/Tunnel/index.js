@@ -1,3 +1,4 @@
 import PagePreviewTunnel from './PagePreviewTunnel'
+import AnimationSettingTunnel from './AnimationSettingTunnel'
 
-export { PagePreviewTunnel }
+export { PagePreviewTunnel, AnimationSettingTunnel }

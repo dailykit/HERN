@@ -15,6 +15,7 @@ import {
 import { useSubscription, useMutation } from '@apollo/react-hooks'
 import { useParams } from 'react-router-dom'
 import { toast } from 'react-toastify'
+import isEmpty from 'lodash/isEmpty'
 import { DeleteIcon, EditIcon } from '../../../../../../shared/assets/icons'
 import { DragNDrop, InlineLoader } from '../../../../../../shared/components'
 import { useDnd } from '../../../../../../shared/components/DragNDrop/useDnd'
@@ -37,8 +38,7 @@ const ContentSelection = () => {
    const { pageId, pageName } = useParams()
    const [linkedFiles, setLinkedFiles] = useState([])
    const [linkedModuleId, setLinkedModuleId] = useState(null)
-   const [config, setConfig] = useState({})
-   const [identifier, setIdentifier] = useState('')
+   const [configs, setConfigs] = useState([])
    const [seletedModules, setSeletedModules] = useState([])
    const [isChangeSaved, setIsSavedChange] = useState(true)
    const [mode, setMode] = useState('editing')
@@ -133,11 +133,14 @@ const ContentSelection = () => {
    }
 
    const updateHandler = updatedConfig => {
+      console.log('updatedHandler', updatedConfig)
+      const keyName =
+         updatedConfig.identifier === 'Animation' ? 'animationConfig' : 'config'
       updateLinkComponent({
          variables: {
             brandPageModuleId: linkedModuleId,
             _set: {
-               config: updatedConfig,
+               [keyName]: updatedConfig.config,
             },
          },
       })
@@ -154,20 +157,184 @@ const ContentSelection = () => {
    }
    const openConfig = data => {
       setLinkedModuleId(prev => (data.id === prev ? null : data.id))
-      if (data.config === null && data?.systemModule?.configTemplate !== null) {
+      const initialAnimationConfig = {
+         animation: {
+            delay: {
+               label: 'Animation Delay',
+               value: '100',
+               default: 0,
+               dataType: 'number',
+               isRequired: true,
+               description:
+                  'How long to delay the animation for (in milliseconds) once it enters or leaves the view.',
+               userInsertType: 'numberField',
+            },
+            duration: {
+               label: 'Animation Duration',
+               value: '600',
+               default: 1,
+               dataType: 'number',
+               isRequired: true,
+               description: 'Animation duration in seconds.',
+               userInsertType: 'numberField',
+            },
+            animateIn: {
+               label: 'Enter Animation Style Name',
+               value: {
+                  id: 'fadeIn-30',
+                  title: 'fadeIn',
+                  value: 'animate__fadeIn',
+               },
+               default: {
+                  id: 'fadeIn-30',
+                  name: 'fadeIn',
+                  value: 'animate__fadeIn',
+               },
+               dataType: 'select',
+               isRequired: 'false',
+               description: 'This sets your animation of the page entering.',
+               userInsertType: 'animationSelector',
+            },
+            animateOut: {
+               label: 'Exit Animation Style Name',
+               value: {
+                  id: 'fadeOut-43',
+                  title: 'fadeOut',
+                  value: 'animate__fadeOut',
+               },
+               default: {
+                  id: 'fadeOut-43',
+                  name: 'fadeOut',
+                  value: 'animate__fadeOut',
+               },
+               dataType: 'select',
+               isRequired: 'false',
+               description: 'This sets your animation of the page exiting.',
+               userInsertType: 'animationSelector',
+            },
+            animateOnce: {
+               label: 'Animate Once',
+               value: true,
+               default: false,
+               dataType: 'boolean',
+               isRequired: true,
+               description:
+                  'Whether the element should only animate once or not.',
+               userInsertType: 'toggle',
+            },
+            animatePreScroll: {
+               label: 'Animate PreScroll',
+               value: true,
+               default: true,
+               dataType: 'boolean',
+               isRequired: true,
+               description:
+                  "By default if a ScrollAnimation is in view as soon as a page loads, then the animation will begin. If you don't want the animation to being until the user scrolls, then set this to false.",
+               userInsertType: 'toggle',
+            },
+            initiallyVisible: {
+               label: 'Animation Initial Visibility',
+               value: true,
+               default: false,
+               dataType: 'boolean',
+               isRequired: true,
+               description:
+                  'Whether the element should be visible to begin with or not.',
+               userInsertType: 'toggle',
+            },
+            isAnimationRequired: {
+               label: 'Animation Required',
+               value: true,
+               default: true,
+               dataType: 'boolean',
+               isRequired: true,
+               description: 'Whether the animation effect required or not.',
+               userInsertType: 'toggle',
+            },
+         },
+      }
+      if (!isEmpty(data.config) && !isEmpty(data.animationConfig)) {
+         setConfigs([
+            {
+               identifier: data?.internalModuleIdentifier,
+               conf: data?.config,
+            },
+            {
+               identifier: 'Animation',
+               conf: data?.animationConfig,
+            },
+         ])
+      } else if (!isEmpty(data.config)) {
+         updateLinkComponent({
+            variables: {
+               brandPageModuleId: data.id,
+               _set: {
+                  animationConfig: initialAnimationConfig,
+               },
+            },
+         })
+         setConfigs([
+            {
+               identifier: data?.internalModuleIdentifier,
+               conf: data?.config,
+            },
+            {
+               identifier: 'Animation',
+               conf: initialAnimationConfig,
+            },
+         ])
+      } else if (
+         isEmpty(data.config) &&
+         !isEmpty(data?.systemModule?.configTemplate)
+      ) {
          updateLinkComponent({
             variables: {
                brandPageModuleId: data.id,
                _set: {
                   config: data?.systemModule?.configTemplate,
+                  ...(!data?.animationConfig && {
+                     animationConfig: initialAnimationConfig,
+                  }),
                },
             },
          })
-         setIdentifier(data?.systemModule?.identifier)
-         setConfig(data?.systemModule?.configTemplate)
+         setConfigs([
+            {
+               identifier: data?.systemModule?.identifier,
+               conf: data?.systemModule?.configTemplate,
+            },
+            ...(data?.animationConfig
+               ? {
+                    identifier: 'Animation',
+                    conf: data?.animationConfig,
+                 }
+               : {
+                    identifier: 'Animation',
+                    conf: initialAnimationConfig,
+                 }),
+         ])
+      } else if (data.animationConfig) {
+         setConfigs([
+            {
+               identifier: 'Animation',
+               conf: data?.animationConfig,
+            },
+         ])
       } else {
-         setIdentifier(data?.internalModuleIdentifier)
-         setConfig(data.config)
+         updateLinkComponent({
+            variables: {
+               brandPageModuleId: data.id,
+               _set: {
+                  animationConfig: initialAnimationConfig,
+               },
+            },
+         })
+         setConfigs([
+            {
+               identifier: 'Animation',
+               conf: initialAnimationConfig,
+            },
+         ])
       }
    }
 
@@ -252,15 +419,19 @@ const ContentSelection = () => {
                            <small>({file.moduleType})</small>
                         </div>
 
-                        {file.moduleType === 'system-defined' && (
-                           <IconButton
-                              type="ghost"
-                              onClick={() => openConfig(file)}
-
-                           >
-                              <EditIcon color={linkedModuleId == file.id ? "#367bf5" : "#555b6e"} size="20" />
-                           </IconButton>
-                        )}
+                        <IconButton
+                           type="ghost"
+                           onClick={() => openConfig(file)}
+                        >
+                           <EditIcon
+                              color={
+                                 linkedModuleId == file.id
+                                    ? '#367bf5'
+                                    : '#555b6e'
+                              }
+                              size="20"
+                           />
+                        </IconButton>
 
                         <IconButton
                            type="ghost"
@@ -282,18 +453,24 @@ const ContentSelection = () => {
          <Styles.ConfigWrapper>
             {linkedModuleId ? (
                <>
-                  <ConfigTemplateUI
-                     config={config}
-                     setConfig={setConfig}
-                     identifier={identifier}
-                     configSaveHandler={updateHandler}
-                     isChangeSaved={isChangeSaved}
-                     setIsSavedChange={setIsSavedChange}
-                     noneditMode={"noneditMode"}
-                     setLinkedModuleId={setLinkedModuleId}
-                     mode={mode}
-                     setMode={setMode}
-                  />
+                  {configs.map(config => (
+                     <ConfigTemplateUI
+                        config={config.conf}
+                        identifier={config.identifier}
+                        configSaveHandler={updatedConfig => {
+                           updateHandler({
+                              identifier: config.identifier,
+                              config: updatedConfig,
+                           })
+                        }}
+                        isChangeSaved={isChangeSaved}
+                        setIsSavedChange={setIsSavedChange}
+                        noneditMode={'noneditMode'}
+                        setLinkedModuleId={setLinkedModuleId}
+                        mode={mode}
+                        setMode={setMode}
+                     />
+                  ))}
                   <Styles.LinkWrapper>
                      <LinkFiles
                         title="Linked CSS file"
@@ -307,12 +484,10 @@ const ContentSelection = () => {
                         entityId={linkedModuleId}
                         scope="page-module"
                      />
-
                   </Styles.LinkWrapper>
                </>
             ) : (
                <Styles.LinkWrapper>
-
                   <LinkFiles
                      title="Linked CSS file"
                      fileType="css"
@@ -325,7 +500,6 @@ const ContentSelection = () => {
                      entityId={pageId}
                      scope="page"
                   />
-
                </Styles.LinkWrapper>
             )}
          </Styles.ConfigWrapper>

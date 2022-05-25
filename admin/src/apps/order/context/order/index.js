@@ -11,7 +11,7 @@ const initialState = {
    filter: { tunnel: false },
    delivery_config: { orderId: null },
    current_view: 'SUMMARY',
-   sachet: { id: null, product: { name: null } },
+   sachet: { sachet: null, product: { name: null } },
    current_product: { id: null },
    orders: {
       limit: 10,
@@ -35,7 +35,7 @@ const reducers = (state, { type, payload }) => {
          return {
             ...state,
             current_view: 'SACHET_ITEM',
-            sachet: { id: payload.id, product: payload.product },
+            sachet: { sachet: payload.sachet, product: payload.product },
          }
       case 'SELECT_PRODUCT':
          return {
@@ -212,10 +212,10 @@ export const useOrder = () => {
    const [update] = useMutation(MUTATIONS.ORDER.UPDATE)
 
    const selectSachet = React.useCallback(
-      (id, product) => {
+      (sachet, product) => {
          dispatch({
             type: 'SELECT_SACHET',
-            payload: { id, product },
+            payload: { sachet, product },
          })
       },
       [dispatch]
