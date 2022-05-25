@@ -46,6 +46,13 @@ export const Styles = {
             font-weight: 500;
             line-height: 14px;
          }
+         .flex-wrap {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 8px;
+         }
       `
    ),
 }

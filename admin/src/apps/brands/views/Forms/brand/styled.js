@@ -2,6 +2,7 @@ import styled from 'styled-components'
 
 export const Wrapper = styled.div`
    padding-top: 16px;
+   height: 100%;
    [data-reach-tab-list] {
       padding: 0 16px;
    }

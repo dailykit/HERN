@@ -24,31 +24,34 @@ const Sachets = () => {
    const { initiatePriority } = useDnd()
    const { isSuperUser } = useAccess()
    const { state } = useOrder()
+   const sachets = React.useMemo(() => {
+      return state.current_product.childNodes
+   }, [state.current_product.childNodes])
 
-   const { loading, data: { sachets = [] } = {} } = useSubscription(
-      QUERIES.ORDER.SACHET.MULTIPLE,
-      {
-         skip: !state?.current_product?.id,
-         variables: {
-            where: {
-               parentCartItemId: { _eq: state?.current_product?.id },
-               levelType: { _eq: 'orderItemSachet' },
-            },
-         },
-      }
-   )
+   // const { loading, data: { sachets = [] } = {} } = useSubscription(
+   //    QUERIES.ORDER.SACHET.MULTIPLE,
+   //    {
+   //       skip: !state?.current_product?.id,
+   //       variables: {
+   //          where: {
+   //             parentCartItemId: { _eq: state?.current_product?.id },
+   //             // levelType: { _eq: 'orderItemSachet' },
+   //          },
+   //       },
+   //    }
+   // )
 
    React.useEffect(() => {
-      if (!loading && !isEmpty(sachets)) {
+      if (!isEmpty(state.current_product.childNodes)) {
          initiatePriority({
             data: sachets,
             tablename: 'cartItem',
             schemaname: 'order',
          })
       }
-   }, [loading, sachets])
+   }, [state.current_product.childNodes])
 
-   if (loading) return <InlineLoader />
+   // if (loading) return <InlineLoader />
    return (
       <>
          <List.Head>

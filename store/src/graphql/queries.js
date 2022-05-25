@@ -1226,6 +1226,7 @@ export const BRAND_PAGE = gql`
          isArchived
          published
          route
+         animationConfig
          brandPageSettings {
             value
             brandPageSetting {
@@ -1241,6 +1242,7 @@ export const BRAND_PAGE = gql`
             id
             internalModuleIdentifier
             config
+            animationConfig
             moduleType
             isHidden
             fileId

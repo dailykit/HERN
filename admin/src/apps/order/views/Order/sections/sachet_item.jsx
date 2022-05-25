@@ -19,15 +19,17 @@ export const SachetItem = ({ item }) => {
       }
    }, [state.sachet])
 
-   const select = id => {
-      if (state.sachet?.id === id) {
+   const select = () => {
+      if (state.sachet?.sachet?.id === item.id) {
          switchView('SUMMARY')
       } else {
-         selectSachet(id, {
-            name: state.current_product?.displayName.split('->').pop().trim(),
+         selectSachet(item, {
+            name:
+               state.current_product?.displayName?.split('->')?.pop()?.trim() ||
+               'N/A',
          })
       }
-      setIsOpen(isOpen === id ? '' : id)
+      setIsOpen(isOpen === item.id ? '' : item.id)
    }
 
    return (
@@ -35,7 +37,7 @@ export const SachetItem = ({ item }) => {
          key={item.id}
          status={item.status}
          isOpen={isOpen === item.id}
-         onClick={() => select(item.id)}
+         onClick={select}
       >
          <header>
             <span title={item.displayName ? item.displayName : 'N/A'}>
@@ -59,7 +61,7 @@ export const SachetItem = ({ item }) => {
                   ? `${item.displayUnitQuantity}${item.displayUnit}`
                   : 'N/A'}
             </span>
-            <button type="button" onClick={() => select(item.id)}>
+            <button type="button" onClick={select}>
                {isOpen === item.id ? <ArrowDownIcon /> : <ArrowUpIcon />}
             </button>
          </header>
@@ -128,7 +130,7 @@ export const SachetItem = ({ item }) => {
                      ''}
                   {!item?.bulkItemId && !item?.sachetItemId && 'NA'}
                </Text>
-            </section> 
+            </section>
             */}
          </main>
       </List.Item>

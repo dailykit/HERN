@@ -5,7 +5,7 @@ import { Skeleton } from 'antd'
 import isEmpty from 'lodash/isEmpty'
 
 import { useUser } from '../../../../context'
-import { Tunnel } from '../../../tunnel'
+import { Tunnel } from '../../../index'
 import { CardForm } from '../CardForm'
 import { CloseIcon } from '../../../../assets/icons'
 import { isClient, get_env } from '../../../../utils'

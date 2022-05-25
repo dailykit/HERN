@@ -71,6 +71,7 @@ export const OnDemandOrder = ({ config }) => {
       true
    const navbarCategoryAlignment =
       config?.display?.navbarCategoryAlignment?.value?.value ?? 'CENTER'
+   const autoPlaySlider = config?.display?.autoPlaySlider?.value ?? false
 
    setThemeVariable('--hern-number-of-products', numberOfProducts)
    setThemeVariable(
@@ -251,6 +252,7 @@ export const OnDemandOrder = ({ config }) => {
                                     productModifier={productModifier}
                                     closeModifier={closeModifier}
                                     CustomAreaWrapper={CustomAreaWrapper}
+                                    autoPlaySlider={autoPlaySlider}
                                  />
                               ))}
                            </div>
@@ -276,6 +278,7 @@ const ProductWithIntersection = ({
    productModifier,
    closeModifier,
    CustomAreaWrapper,
+   autoPlaySlider,
 }) => {
    const router = useRouter()
    const productRef = React.useRef()

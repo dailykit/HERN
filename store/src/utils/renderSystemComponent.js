@@ -1,6 +1,9 @@
 import axios from 'axios'
-import ReactHtmlParser, { convertNodeToElement } from 'react-html-parser'
-import { renderComponentByName } from '../utils'
+import ReactHtmlParser from 'react-html-parser'
+import { getAnimationConfig } from './getAnimationConfig'
+import { renderComponentByName } from './renderComponentByName'
+import ScrollAnimation from 'react-animate-on-scroll'
+
 const renderComponent = (fold, options) => {
    try {
       if (fold.component) {
@@ -17,7 +20,6 @@ const renderComponent = (fold, options) => {
          // }
          // parser = new DOMParser()
          // doc = parser.parseFromString(fold.content, 'text/html')
-
          return ReactHtmlParser(fold.content, {
             transform: function (node, index) {
                if (node.type === 'tag' && node.name === 'img') {
@@ -64,7 +66,45 @@ export const renderPageContent = (folds, options) => {
          data-fold-position={fold.position}
          data-fold-type={fold.moduleType}
       >
-         {renderComponent(fold, options)}
+         <RenderComponentWithTransition
+            animationConfig={fold.animationConfig}
+            options={options}
+         >
+            {renderComponent(fold, options)}
+         </RenderComponentWithTransition>
       </div>
    ))
+}
+
+export const RenderComponentWithTransition = ({
+   animationConfig,
+   children,
+}) => {
+   const {
+      isAnimationRequired,
+      animateIn,
+      animateOut,
+      duration,
+      delay,
+      initiallyVisible,
+      animateOnce,
+      animatePreScroll,
+   } = getAnimationConfig(animationConfig)
+
+   if (!isAnimationRequired) {
+      return children
+   }
+   return (
+      <ScrollAnimation
+         animateIn={animateIn}
+         animateOut={animateOut}
+         animateOnce={animateOnce}
+         initiallyVisible={initiallyVisible}
+         animatePreScroll={animatePreScroll}
+         duration={duration}
+         delay={delay}
+      >
+         {children}
+      </ScrollAnimation>
+   )
 }

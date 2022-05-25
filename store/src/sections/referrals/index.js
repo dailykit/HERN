@@ -55,12 +55,20 @@ const Content = () => {
    }, [currentLang])
 
    if (loading) return <Loader inline />
-   return (
+   return !isReferralAvailable ? (
+      <section className="hern-referrals__content">
+         <header className="hern-referrals__header">
+            <h2 className="hern-referrals__not_available_header">
+               {t('This scheme is not available right now')}
+            </h2>
+         </header>
+      </section>
+   ) : (
       <section className="hern-referrals__content">
          <header className="hern-referrals__header">
             <h2 className="hern-referrals__header__title">{t('Referrals')}</h2>
          </header>
-         {referralsAllowed && !!user.customerReferral && (
+         {!!user.customerReferral && (
             <>
                <div className="hern-referrals__customer-referral-code__title">
                   {t('Your Referral Code')}

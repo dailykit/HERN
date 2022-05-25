@@ -3,7 +3,15 @@ import { isEmpty } from 'lodash'
 import { toast } from 'react-toastify'
 import { useParams } from 'react-router-dom'
 import { useMutation, useSubscription } from '@apollo/react-hooks'
-import { Flex, Text, Spacer, Form, Dropdown, ButtonGroup } from '@dailykit/ui'
+import {
+   Flex,
+   Text,
+   Spacer,
+   Form,
+   Dropdown,
+   ButtonGroup,
+   TextButton,
+} from '@dailykit/ui'
 import { CopyIcon } from '../../../../../../editor/assets/Icons'
 import validator from '../validator'
 import { KIOSK } from '../../../../../graphql'
@@ -17,6 +25,7 @@ import {
    Tooltip,
 } from '../../../../../../../shared/components'
 import moment from 'moment'
+import { CheckIcon } from '../../../../../assets/icons'
 
 export const BasicInfo = () => {
    const params = useParams()
@@ -36,6 +45,7 @@ export const BasicInfo = () => {
          errors: [],
       },
    })
+   const [isPasswordCopied, setIsPasswordCopied] = React.useState(false)
    const [isKioskStatusActive, setIsKioskStatusActive] = React.useState(false)
 
    const { error, loading } = useSubscription(KIOSK.KIOSK, {
@@ -304,38 +314,59 @@ export const BasicInfo = () => {
                         style={{ gap: '5px' }}
                         onClick={() => {
                            copy(title.password)
+                           setIsPasswordCopied(true)
+                           setTimeout(() => {
+                              setIsPasswordCopied(false)
+                           }, 3000)
                         }}
                      >
                         {'Access Password   '}
-                        <div>
-                           <CopyIcon size={20} />
+                        <div title={isPasswordCopied ? 'Copied' : 'Copy'}>
+                           {isPasswordCopied ? (
+                              <CheckIcon size={20} />
+                           ) : (
+                              <CopyIcon size={20} />
+                           )}
                         </div>{' '}
                      </ButtonGroup>
                   </Form.Label>
-                  <Form.Text
-                     value={title.password}
-                     placeholder="Enter access password"
-                     id="password"
-                     name="password"
-                     onChange={e =>
-                        setTitle({ ...title, password: e.target.value })
-                     }
-                     onBlur={updateKioskAccessPassword}
-                     hasError={!title.meta.isValid && title.isTouched}
-                  />
-                  {title.meta.isTouched &&
-                     !title.meta.isValid &&
-                     title.meta.errors.map((error, index) => (
-                        <Form.Error key={index}>{error}</Form.Error>
-                     ))}
+                  <Flex container alignItems="center">
+                     <Flex>
+                        <Form.Text
+                           value={title.password}
+                           placeholder="Enter access password"
+                           id="password"
+                           name="password"
+                           onChange={e =>
+                              setTitle({ ...title, password: e.target.value })
+                           }
+                           // onBlur={updateKioskAccessPassword}
+                           hasError={!title.meta.isValid && title.isTouched}
+                        />
+                        {title.meta.isTouched &&
+                           !title.meta.isValid &&
+                           title.meta.errors.map((error, index) => (
+                              <Form.Error key={index}>{error}</Form.Error>
+                           ))}
+                     </Flex>
+                     <Spacer xAxis size="15px" />
+                     <TextButton
+                        type="outline"
+                        size="sm"
+                        onClick={updateKioskAccessPassword}
+                     >
+                        Save
+                     </TextButton>
+                  </Flex>
                </Form.Group>
 
                <Spacer yAxis size="16px" />
-               <Form.Group>
-                  <Form.Label htmlFor="printerId" title="printerId">
-                     Printer
-                  </Form.Label>
-                  {/* <Form.Text
+               <Flex width="35%">
+                  <Form.Group>
+                     <Form.Label htmlFor="printerId" title="printerId">
+                        Printer
+                     </Form.Label>
+                     {/* <Form.Text
                      value={title.printerId}
                      placeholder="Enter printer ID"
                      id="printerId"
@@ -346,40 +377,43 @@ export const BasicInfo = () => {
                      //  onBlur={updateKioskPrinter}
                      //  hasError={!title.meta.isValid && title.isTouched}
                   /> */}
-                  <Dropdown
-                     type="single"
-                     //  variant="revamp"
-                     defaultOption={{
-                        id: title.printerId,
-                     }}
-                     isLoading={loading}
-                     addOption={printerList}
-                     options={printerList}
-                     selectedOption={e => updateKioskPrinter(e)}
-                     placeholder="Enter printer name"
-                     // addOption={() => console.log('printer ADDED')}
-                  />
-               </Form.Group>
+                     <Dropdown
+                        type="single"
+                        //  variant="revamp"
+                        defaultOption={{
+                           id: title.printerId,
+                        }}
+                        isLoading={loading}
+                        addOption={printerList}
+                        options={printerList}
+                        searchedOption={() => {}}
+                        selectedOption={e => updateKioskPrinter(e)}
+                        placeholder="Enter printer name"
+                     />
+                  </Form.Group>
+               </Flex>
 
                <Spacer yAxis size="16px" />
-               <Form.Group>
-                  <Form.Label>Location</Form.Label>
-                  {/* <Form.Text
+               <Flex width={'35%'}>
+                  <Form.Group>
+                     <Form.Label>Location</Form.Label>
+                     {/* <Form.Text
                      value={title.location}
                      placeholder="Enter location"
                   /> */}
-                  <Dropdown
-                     type="single"
-                     //  variant="revamp"
-                     defaultName={title.location}
-                     isLoading={loading}
-                     addOption={locationList}
-                     options={locationList}
-                     selectedOption={e => updateKioskLocation(e)}
-                     placeholder="Choose kiosk location"
-                     // addOption={() => console.log('location ADDED')}
-                  />
-               </Form.Group>
+                     <Dropdown
+                        type="single"
+                        //  variant="revamp"
+                        defaultName={title.location}
+                        isLoading={loading}
+                        addOption={locationList}
+                        options={locationList}
+                        selectedOption={e => updateKioskLocation(e)}
+                        placeholder="Choose kiosk location"
+                        // addOption={() => console.log('location ADDED')}
+                     />
+                  </Form.Group>
+               </Flex>
             </>
          </Flex>
       </div>
