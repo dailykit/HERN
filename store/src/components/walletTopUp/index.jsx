@@ -18,6 +18,16 @@ function WalletTopUp(props){
       setTopUpAmount(amount);
    }
 
+   const handleSetAmountChange = (e) => {
+      let amount = parseFloat(e.target.value);
+      if( amount!=NaN && amount > 0 ){
+         setTopUpAmount(e.target.value)
+      }else{
+         setTopUpAmount(0)
+         e.target.value = ""
+      }
+   }
+
    useEffect(()=>{
       if(topUpAmount>0){
          setShowPaymentOptions(true)
@@ -38,7 +48,7 @@ function WalletTopUp(props){
                      type="text"
                      ref={amountField}
                      placeholder="Amount"
-                     onChange={e => setTopUpAmount(e.target.value)}
+                     onChange={handleSetAmountChange}
                      className="hern-wallet__top-up-amount"
                   />
                </div>
