@@ -18,6 +18,7 @@ import { useMutation, useQuery, useSubscription } from '@apollo/react-hooks'
 import { useManual } from '../../state'
 import {
    generateDeliverySlots,
+   generateDineInSlots,
    generateMiniSlots,
    generatePickUpSlots,
    generateTimeStamp,
@@ -59,7 +60,7 @@ const Content = ({ panel }) => {
    const [pickerDates, setPickerDates] = React.useState([])
    const [pickerSlots, setPickerSlots] = React.useState([])
    const [fulfillment, setFulfillment] = React.useState({})
-   const [timeTypeOptions,setTimeTypeOptions] = React.useState([])
+   const [timeTypeOptions, setTimeTypeOptions] = React.useState([])
 
    const storedDistance = React.useRef()
 
@@ -79,7 +80,8 @@ const Content = ({ panel }) => {
          const isDineInAvailable = orderTabs.filter(
             orderTab =>
                orderTab.orderFulfillmentTypeLabel === 'PREORDER_DINEIN' ||
-               orderTab.orderFulfillmentTypeLabel === 'ONDEMAND_DINEIN'
+               orderTab.orderFulfillmentTypeLabel === 'ONDEMAND_DINEIN' ||
+               orderTab.orderFulfillmentTypeLabel === 'SCHEDULED_DINEIN'
          )
          if (isDeliveryAvailable.length)
             types.push({ id: 'DELIVERY', title: isDeliveryAvailable[0].label })
@@ -216,7 +218,51 @@ const Content = ({ panel }) => {
          },
       },
    })
-
+   const {
+      data: { brandRecurrences: ODINbrandRecurrences = [] } = {},
+      loading: ODINLoading,
+   } = useSubscription(QUERIES.FULFILLMENT.RECURRENCES, {
+      variables: {
+         where: {
+            recurrence: {
+               isActive: { _eq: true },
+               type: { _eq: 'ONDEMAND_DINEIN' },
+            },
+            _or: [
+               {
+                  brandLocationId: {
+                     _eq: brandLocation?.id,
+                  },
+               },
+               { brandId: { _eq: brand.id } },
+            ],
+            isActive: { _eq: true },
+         },
+      },
+   })
+   const {
+      data: { brandRecurrences: PDINbrandRecurrences = [] } = {},
+      loading: PDINLoading,
+   } = useSubscription(QUERIES.FULFILLMENT.RECURRENCES, {
+      variables: {
+         where: {
+            recurrence: {
+               isActive: { _eq: true },
+               type: { _eq: 'SCHEDULED_DINEIN' },
+            },
+            _or: [
+               {
+                  brandLocationId: {
+                     _eq: brandLocation?.id,
+                  },
+               },
+               { brandId: { _eq: brand.id } },
+            ],
+            isActive: { _eq: true },
+         },
+      },
+   })
+   
    React.useEffect(() => {
       setTime('')
       setError('')
@@ -514,6 +560,55 @@ const Content = ({ panel }) => {
                         }
                         break
                      }
+                     case 'DINEIN': {
+                        switch (time) {
+                           case 'ONDEMAND': {
+                           }
+                           case 'PREORDER': {
+                              if (PDINbrandRecurrences?.length) {
+                                 const result = generateDineInSlots(
+                                    PDINbrandRecurrences.map(
+                                       recs => recs.recurrence
+                                    )
+                                 )
+                                 if (result.status) {
+                                    const miniSlots = generateMiniSlots(
+                                       result.data,
+                                       15
+                                    )
+                                    if (miniSlots.length) {
+                                       setPickerDates([...miniSlots])
+                                       setFulfillment({
+                                          date: miniSlots[0].date,
+                                          slot: {
+                                             // time: miniSlots[0].slots[0].time,
+                                             ...generateTimeStamp(
+                                                miniSlots[0].slots[0].time,
+                                                miniSlots[0].date,
+                                                miniSlots[0].slots[0]
+                                                   .intervalInMinutes
+                                             ),
+                                          },
+                                       })
+                                    } else {
+                                       setError(
+                                          'Sorry! No time slots available.'
+                                       )
+                                    }
+                                 } else {
+                                    setError('Sorry! No time slots available.')
+                                 }
+                              } else {
+                                 setError('Sorry! No time slots available.')
+                              }
+                              break
+                           }
+                           default: {
+                              return setError('Unknown error!')
+                           }
+                        }
+                        break
+                     }
                      default: {
                         return setError('Unknown error!')
                      }
@@ -535,7 +630,7 @@ const Content = ({ panel }) => {
          const isLaterAvailable = orderTabs.some(
             orderTab =>
                orderTab.orderFulfillmentTypeLabel === `PREORDER_${type}` ||
-               orderTab.orderFulfillmentTypeLabel === `SCHEDULE_${type}`
+               orderTab.orderFulfillmentTypeLabel === `SCHEDULED_${type}`
          )
          if (isNowAvailable) {
             whenOptions.push({
@@ -556,42 +651,41 @@ const Content = ({ panel }) => {
       try {
          const modifiedFulfillment = JSON.parse(JSON.stringify(fulfillment))
          let timeslotInfo = {}
-         const selectedOrderTab = orderTabs.find(orderTab=>orderTab.orderFulfillmentTypeLabel===`${time}_${type}`)
-         switch (time + '_' + type) {
-            case 'PREORDER_PICKUP':
-               PPbrandRecurrences.forEach(x => {
-                  x.recurrence.timeSlots.forEach(timeSlot => {
-                     const format = 'HH:mm'
-                     const selectedFromTime = moment(
-                        fulfillment.slot?.from
-                     ).format(format)
-                     const selectedToTime = moment(fulfillment.slot?.to).format(
-                        format
-                     )
-                     const fromTime = moment(timeSlot.from, format).format(
-                        format
-                     )
-                     const toTime = moment(timeSlot.to, format).format(format)
-                     const isInBetween =
-                        selectedFromTime >= fromTime &&
-                        selectedFromTime <= toTime &&
-                        selectedToTime <= toTime
-                     if (isInBetween) {
-                        timeslotInfo = timeSlot
-                     }
-                  })
+         const selectedOrderTab = orderTabs.find(
+            orderTab => orderTab.orderFulfillmentTypeLabel === `${time}_${type}`
+         )
+
+         if (
+            time + '_' + type === 'PREORDER_DINEIN' ||
+            time + '_' + type === 'PREORDER_PICKUP'
+         ) {
+            const finalRec =  time + '_' + type === 'PREORDER_DINEIN' ? PDINbrandRecurrences : PDbrandRecurrences
+            finalRec.forEach(x => {
+               x.recurrence.timeSlots.forEach(timeSlot => {
+                  const format = 'HH:mm'
+                  const selectedFromTime = moment(
+                     fulfillment.slot?.from
+                  ).format(format)
+                  const selectedToTime = moment(fulfillment.slot?.to).format(
+                     format
+                  )
+                  const fromTime = moment(timeSlot.from, format).format(format)
+                  const toTime = moment(timeSlot.to, format).format(format)
+                  const isInBetween =
+                     selectedFromTime >= fromTime &&
+                     selectedFromTime <= toTime &&
+                     selectedToTime <= toTime
+                  if (isInBetween) {
+                     timeslotInfo = timeSlot
+                  }
                })
-               modifiedFulfillment.slot.timeslotId = timeslotInfo.id
+            })
+            modifiedFulfillment.slot.timeslotId = timeslotInfo.id
          }
 
          const fulfillmentInfo = {
             type: time + '_' + type,
             distance: storedDistance.current,
-            // slot: {
-            //    mileRangeId: fulfillment.slot?.mileRangeId || null,
-            //    // ...generateTimeStamp(fulfillment.slot.time, fulfillment.date),
-            //    ...fulfillment
-            // },
             ...modifiedFulfillment,
          }
 
@@ -601,7 +695,7 @@ const Content = ({ panel }) => {
                _set: {
                   fulfillmentInfo,
                   orderTabId: selectedOrderTab.id,
-                  usedOrderInterface:'POS Ordering'
+                  usedOrderInterface: 'POS Ordering',
                },
             },
          })
