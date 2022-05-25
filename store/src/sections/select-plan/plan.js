@@ -419,7 +419,7 @@ export const Plan = ({ plan, handlePlanClick, itemCount }) => {
                         className="hern-plan__pricing__total-price__price"
                         data-translation="true"
                      >
-                        {formatCurrency(defaultItemCount?.price.value)}{' '}
+                        {formatCurrency(defaultItemCount?.price)}{' '}
                      </span>
                      <span className="hern-plan__pricing__total-price__tax">
                         {defaultItemCount?.isTaxIncluded
