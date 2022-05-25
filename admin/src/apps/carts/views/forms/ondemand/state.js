@@ -1,11 +1,11 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { isEmpty } from 'lodash'
 import { toast } from 'react-toastify'
 import { useParams } from 'react-router'
 import { Flex, Filler, useTunnel } from '@dailykit/ui'
 import { useQuery, useSubscription } from '@apollo/react-hooks'
 
-import { GET_BRAND_LOCATION, QUERIES } from '../../../graphql'
+import { GET_BRAND_LOCATION, ORDER_TAB, QUERIES } from '../../../graphql'
 import { logger } from '../../../../../shared/utils'
 import EmptyIllo from '../../../assets/svgs/EmptyIllo'
 import {
@@ -35,6 +35,7 @@ const initial = {
    cart: {},
    location: { id: null },
    brandLocation: null,
+   orderTabs:[]
 }
 
 const reducers = (state, { type, payload }) => {
@@ -88,6 +89,12 @@ const reducers = (state, { type, payload }) => {
             ...state,
             brandLocation: payload,
          }
+      case 'SET_ORDER_TABS':{
+      return {
+         ...state,
+         orderTabs: payload
+      }
+      }
       default:
          return state
    }
@@ -159,6 +166,24 @@ export const ManualProvider = ({ children }) => {
             dispatch({ type: 'SET_BRAND_LOCATION', payload: brandLocations[0] })
          }
       },
+   })
+
+   useSubscription(ORDER_TAB, {
+      variables: {
+         where: {
+            isActive: { _eq: true },
+            availableOrderInterfaceLabel: { _eq: 'POS Ordering' },
+            brandId: { _eq: state.brand.id },
+         },
+      },
+      onSubscriptionData: ({subscriptionData}) => {
+         if (subscriptionData.data) {
+            dispatch({
+               type: 'SET_ORDER_TABS',
+               payload: subscriptionData.data.brands_orderTab,
+            })
+         }
+      }
    })
 
    const { loading, error } = useSubscription(QUERIES.CART.ONE, {
@@ -251,6 +276,7 @@ export const ManualProvider = ({ children }) => {
                comboComponents: comboComponentTunnels,
                coupons: couponsTunnels,
             },
+            orderTabs:state.orderTabs
          }}
       >
          {children}

@@ -47,7 +47,8 @@ export const FulfillmentTunnel = ({ panel }) => {
 
 const Content = ({ panel }) => {
    const [, , closeTunnel] = panel
-   const { brand, address, tunnels, brandLocation, locationId } = useManual()
+   const { brand, address, tunnels, brandLocation, locationId, orderTabs } =
+      useManual()
    const { id: cartId } = useParams()
 
    const [distance, setDistance] = React.useState(null)
@@ -58,10 +59,36 @@ const Content = ({ panel }) => {
    const [pickerDates, setPickerDates] = React.useState([])
    const [pickerSlots, setPickerSlots] = React.useState([])
    const [fulfillment, setFulfillment] = React.useState({})
+   const [timeTypeOptions,setTimeTypeOptions] = React.useState([])
 
    const storedDistance = React.useRef()
 
    React.useEffect(() => {
+      if (orderTabs?.length) {
+         const types = []
+         const isDeliveryAvailable = orderTabs.filter(
+            orderTab =>
+               orderTab.orderFulfillmentTypeLabel === 'PREORDER_DELIVERY' ||
+               orderTab.orderFulfillmentTypeLabel === 'ONDEMAND_DELIVERY'
+         )
+         const isPickupAvailable = orderTabs.filter(
+            orderTab =>
+               orderTab.orderFulfillmentTypeLabel === 'PREORDER_PICKUP' ||
+               orderTab.orderFulfillmentTypeLabel === 'ONDEMAND_PICKUP'
+         )
+         const isDineInAvailable = orderTabs.filter(
+            orderTab =>
+               orderTab.orderFulfillmentTypeLabel === 'PREORDER_DINEIN' ||
+               orderTab.orderFulfillmentTypeLabel === 'ONDEMAND_DINEIN'
+         )
+         if (isDeliveryAvailable.length)
+            types.push({ id: 'DELIVERY', title: isDeliveryAvailable[0].label })
+         if (isPickupAvailable.length)
+            types.push({ id: 'PICKUP', title: isPickupAvailable[0].label })
+         if (isDineInAvailable.length)
+            types.push({ id: 'DINEIN', title: isDineInAvailable[0].label })
+         setTypeOptions(types)
+      }
       if (brand?.brand_brandSettings?.length) {
          const types = []
 
@@ -81,10 +108,8 @@ const Content = ({ panel }) => {
 
          if (pickupAvailability?.PickUp?.IsPickupAvailable?.value)
             types.push({ id: 'PICKUP', title: 'Pickup' })
-
-         setTypeOptions(types)
       }
-   }, [brand?.brand_brandSettings?.length])
+   }, [brand?.brand_brandSettings?.length, orderTabs])
 
    // Mutation
    const [updateCart, { loading }] = useMutation(MUTATIONS.CART.UPDATE, {
@@ -432,7 +457,7 @@ const Content = ({ panel }) => {
                                           brandLocationCopy,
                                           address
                                        )
-                                       if (result.status) {
+                                    if (result.status) {
                                        const deliverySlots =
                                           generateDeliverySlots(
                                              result.rec.map(
@@ -500,11 +525,38 @@ const Content = ({ panel }) => {
          }
       })()
    }, [type, time, distance])
-
+   React.useEffect(() => {
+      if (type) {
+         const whenOptions = []
+         const isNowAvailable = orderTabs.some(
+            orderTab =>
+               orderTab.orderFulfillmentTypeLabel === `ONDEMAND_${type}`
+         )
+         const isLaterAvailable = orderTabs.some(
+            orderTab =>
+               orderTab.orderFulfillmentTypeLabel === `PREORDER_${type}` ||
+               orderTab.orderFulfillmentTypeLabel === `SCHEDULE_${type}`
+         )
+         if (isNowAvailable) {
+            whenOptions.push({
+               title: 'Now',
+               id: 'ONDEMAND',
+            })
+         }
+         if (isLaterAvailable) {
+            whenOptions.push({
+               title: 'Later',
+               id: 'PREORDER',
+            })
+         }
+         setTimeTypeOptions(whenOptions)
+      }
+   }, [type])
    const save = () => {
       try {
          const modifiedFulfillment = JSON.parse(JSON.stringify(fulfillment))
          let timeslotInfo = {}
+         const selectedOrderTab = orderTabs.find(orderTab=>orderTab.orderFulfillmentTypeLabel===`${time}_${type}`)
          switch (time + '_' + type) {
             case 'PREORDER_PICKUP':
                PPbrandRecurrences.forEach(x => {
@@ -548,6 +600,8 @@ const Content = ({ panel }) => {
                id: cartId,
                _set: {
                   fulfillmentInfo,
+                  orderTabId: selectedOrderTab.id,
+                  usedOrderInterface:'POS Ordering'
                },
             },
          })
@@ -617,10 +671,7 @@ const Content = ({ panel }) => {
                      <Text as="text1"> When would you like your order? </Text>
                      <Spacer size="4px" />
                      <RadioGroup
-                        options={[
-                           { id: 'ONDEMAND', title: 'Now' },
-                           { id: 'PREORDER', title: 'Later' },
-                        ]}
+                        options={timeTypeOptions}
                         onChange={option => setTime(option?.id ?? '')}
                      />
                      <Spacer size="16px" />

@@ -991,3 +991,14 @@ export const GET_BRAND_LOCATION = gql`
       }
    }
 `
+export const ORDER_TAB = gql`
+   subscription ORDER_TAB($where: brands_orderTab_bool_exp!) {
+      brands_orderTab(where: $where) {
+         id
+         orderFulfillmentTypeLabel
+         label
+         orderType
+         availableOrderInterfaceLabel
+      }
+   }
+`
