@@ -1120,6 +1120,7 @@ export const WALLETS = gql`
       wallets(
          where: { brandId: { _eq: $brandId }, keycloakId: { _eq: $keycloakId } }
       ) {
+         id
          amount
          walletTransactions(order_by: { created_at: desc_nulls_last }) {
             id
@@ -2294,6 +2295,39 @@ export const GET_PAYMENT_OPTIONS = gql`
       }
    }
 `
+
+export const GET_AVAILABLE_PAYMENT_OPTIONS = gql`
+   subscription availablePaymentOptions($ids: [Int!]) {
+      availablePaymentOptions: brands_availablePaymentOption(
+         where: { isActive: { _eq: true }, id: { _in: $ids } }
+         order_by: { position: desc_nulls_last }
+      ) {
+         id
+         isActive
+         isDown
+         isRecommended
+         isValid
+         label
+         description
+         position
+         publicCreds
+         showCompanyName
+         supportedPaymentOption {
+            id
+            country
+            supportedPaymentCompanyId
+            paymentOptionLabel
+            isLoginRequired
+            canShowWhileLoggedIn
+            supportedPaymentCompany {
+               id
+               label
+            }
+         }
+      }
+   }
+`
+
 export const GET_MODIFIER_BY_ID = gql`
    query GET_MODIFIER_BY_ID(
       $priceArgs: priceByLocation_onDemand_modifierCategoryOption_args!

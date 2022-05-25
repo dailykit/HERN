@@ -24,6 +24,7 @@ import {
    CampaignSelector,
    RecipeSelector,
    AnimationSelector,
+   PaymentOptionSelector,
 } from './UIComponents'
 import { Address } from './UIComponents/Address'
 import { useEditMode } from './EditModeContext'
@@ -356,6 +357,16 @@ export const getFieldUI = (
             marginLeft={indentation}
             path={fieldKey}
             onConfigChange={onConfigChange}
+         />
+      )
+   } else if (field.userInsertType === 'paymentOptionSelector') {
+      configUI = (
+         <PaymentOptionSelector
+            fieldDetail={field}
+            marginLeft={indentation}
+            path={fieldKey}
+            onConfigChange={onConfigChange}
+            editMode={editMode}
          />
       )
    }

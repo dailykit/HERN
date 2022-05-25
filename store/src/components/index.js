@@ -9,6 +9,7 @@ const FloatingBar = dynamic(() => import('./floatingBar'))
 const PaymentOptionsRenderer = dynamic(() => import('./paymentOptionsRenderer'))
 const PayButton = dynamic(() => import('./PayButton'))
 const PrintProcessingModal = dynamic(() => import('./printProcessingModal'))
+const WalletTopUp = dynamic(() => import('./walletTopUp'))
 
 const SEO = dynamic(() => import('./seo').then(promise => promise.SEO))
 
@@ -193,6 +194,7 @@ export {
    Empty,
    Form,
    HernSkeleton,
+   WalletTopUp,
 }
 
 const TunnelHeader = dynamic(() =>
