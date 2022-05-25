@@ -27,6 +27,7 @@ import {
    isPickUpAvailable,
    isStoreOnDemandDeliveryAvailable,
    isStorePreOrderDeliveryAvailable,
+   isStoreOnDemandDineAvailable,
 } from './utils'
 import { useParams } from 'react-router'
 import { EditIcon } from '../../../../../../../shared/assets/icons'
@@ -262,7 +263,7 @@ const Content = ({ panel }) => {
          },
       },
    })
-   
+
    React.useEffect(() => {
       setTime('')
       setError('')
@@ -374,8 +375,8 @@ const Content = ({ panel }) => {
                                        setFulfillment({
                                           date: date.toDateString(),
                                           slot: {
-                                             from: null,
-                                             to: null,
+                                             from: moment().format(),
+                                             to: moment().format(),
                                              timeslotId: result.timeSlotInfo.id,
                                           },
                                        })
@@ -563,6 +564,33 @@ const Content = ({ panel }) => {
                      case 'DINEIN': {
                         switch (time) {
                            case 'ONDEMAND': {
+                              if (ODINbrandRecurrences?.length) {
+                                 const result =
+                                    isStoreOnDemandDineAvailable(
+                                       ODINbrandRecurrences
+                                    )
+                                 
+                                 if (result.status) {
+                                    const date = new Date()
+                                    setFulfillment({
+                                       date: date.toDateString(),
+                                       slot: {
+                                          from: moment().format(),
+                                          to: moment().format(),
+                                          timeslotId: result.timeSlotInfo.id,
+                                       },
+                                    })
+                                 } else {
+                                    setError(
+                                       'Sorry! Dine in not available currently!'
+                                    )
+                                 }
+                              } else {
+                                 setError(
+                                    'Sorry! Dine in not available currently.'
+                                 )
+                              }
+                              break
                            }
                            case 'PREORDER': {
                               if (PDINbrandRecurrences?.length) {
@@ -659,7 +687,10 @@ const Content = ({ panel }) => {
             time + '_' + type === 'PREORDER_DINEIN' ||
             time + '_' + type === 'PREORDER_PICKUP'
          ) {
-            const finalRec =  time + '_' + type === 'PREORDER_DINEIN' ? PDINbrandRecurrences : PDbrandRecurrences
+            const finalRec =
+               time + '_' + type === 'PREORDER_DINEIN'
+                  ? PDINbrandRecurrences
+                  : PDbrandRecurrences
             finalRec.forEach(x => {
                x.recurrence.timeSlots.forEach(timeSlot => {
                   const format = 'HH:mm'
