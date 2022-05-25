@@ -352,14 +352,14 @@ export const generateDeliverySlots = recurrences => {
       const now = new Date() // now
       const start = new Date(now.getTime() - 1000 * 60 * 60 * 24) // yesterday
       // const start = now;
-      const end = new Date(now.getTime() + 7 * 1000 * 60 * 60 * 24) // 7 days later
+      const end = new Date(now.getTime() + 10 * 1000 * 60 * 60 * 24) // 7 days later
       const dates = rrulestr(rec.rrule).between(start, end)
       dates.forEach(date => {
-         if (rec.timeSlots.length) {
-            rec.timeSlots.forEach(timeslot => {
+         if (rec.validTimeSlots.length) {
+            rec.validTimeSlots.forEach(timeslot => {
                // if multiple mile ranges, only first one will be taken
-               if (timeslot.mileRanges.length) {
-                  const leadTime = timeslot.mileRanges[0].leadTime
+               if (timeslot.validMileRange) {
+                  const leadTime = timeslot.validMileRange.leadTime
                   const [fromHr, fromMin, fromSec] = timeslot.from.split(':')
                   const [toHr, toMin, toSec] = timeslot.to.split(':')
                   const fromTimeStamp = new Date(
@@ -375,29 +375,21 @@ export const generateDeliverySlots = recurrences => {
                      let slotStart
                      let slotEnd =
                         toTimeStamp.getHours() + ':' + toTimeStamp.getMinutes()
-                     if (
-                        now.getTime() + leadMiliSecs >
-                        fromTimeStamp.getTime()
-                     ) {
-                        // new start time = lead time + now
-                        const newStartTimeStamp = new Date(
-                           now.getTime() + leadMiliSecs
-                        )
-                        slotStart =
-                           newStartTimeStamp.getHours() +
-                           ':' +
-                           newStartTimeStamp.getMinutes()
-                     } else {
-                        slotStart =
-                           fromTimeStamp.getHours() +
-                           ':' +
-                           fromTimeStamp.getMinutes()
-                     }
+                     slotStart =
+                        fromTimeStamp.getHours() +
+                        ':' +
+                        fromTimeStamp.getMinutes()
                      // check if date already in slots
                      const dateWithoutTime = date.toDateString()
                      const index = data.findIndex(
                         slot => slot.date === dateWithoutTime
                      )
+                     const [HH, MM, SS] = timeslot.slotInterval
+                        ? timeslot.slotInterval.split(':')
+                        : []
+                     const intervalInMinutes = Boolean(HH && MM && SS)
+                        ? +HH * 60 + +MM
+                        : null
                      if (index === -1) {
                         data.push({
                            date: dateWithoutTime,
@@ -405,7 +397,8 @@ export const generateDeliverySlots = recurrences => {
                               {
                                  start: slotStart,
                                  end: slotEnd,
-                                 mileRangeId: timeslot.mileRanges[0].id,
+                                 mileRangeId: timeslot.validMileRange.id,
+                                 intervalInMinutes: intervalInMinutes,
                               },
                            ],
                         })
@@ -413,7 +406,8 @@ export const generateDeliverySlots = recurrences => {
                         data[index].slots.push({
                            start: slotStart,
                            end: slotEnd,
-                           mileRangeId: timeslot.mileRanges[0].id,
+                           mileRangeId: timeslot.validMileRange.id,
+                           intervalInMinutes: intervalInMinutes,
                         })
                      }
                   }
@@ -786,5 +780,100 @@ const isStoreDeliveryAvailableByDistance = async (
       result: isStoreDeliveryAvailableByDistanceStatus,
       mileRangeInfo: mileRangeInfo,
       drivableDistance: drivableByGoogleDistance,
+   }
+}
+export const isStorePreOrderDeliveryAvailable = async (
+   finalRecurrences,
+   eachStore,
+   address
+) => {
+   // console.log('addess', address)
+   const drivableDistanceBetweenStoreAndCustomer =
+      drivableDistanceBetweenStoreAndCustomerFn()
+   let fulfilledRecurrences = []
+   for (let rec in finalRecurrences) {
+      if (finalRecurrences[rec].recurrence.timeSlots.length) {
+         const sortedTimeSlots = sortBy(
+            finalRecurrences[rec].recurrence.timeSlots,
+            [
+               function (slot) {
+                  return moment(slot.from, 'HH:mm')
+               },
+            ]
+         )
+         let validTimeSlots = []
+         for (let timeslot of sortedTimeSlots) {
+            if (timeslot.mileRanges.length) {
+               const distanceDeliveryStatus =
+                  await isStoreDeliveryAvailableByDistance(
+                     timeslot.mileRanges,
+                     eachStore,
+                     address,
+                     drivableDistanceBetweenStoreAndCustomer
+                  )
+               // console.log('distanceDeliveryStatus', distanceDeliveryStatus)
+               const { isDistanceValid, zipcode, geoBoundary } =
+                  distanceDeliveryStatus.result
+               const status = isDistanceValid && zipcode && geoBoundary
+               // console.log('statusMile', status, distanceDeliveryStatus.result)
+               if (status) {
+                  timeslot.validMileRange = distanceDeliveryStatus.mileRangeInfo
+                  validTimeSlots.push(timeslot)
+               }
+               const timeslotIndex = sortedTimeSlots.indexOf(timeslot)
+               const timesSlotsLength = sortedTimeSlots.length
+               // console.log('statusMile', timeslotIndex, timesSlotsLength)
+               if (timeslotIndex == timesSlotsLength - 1) {
+                  finalRecurrences[rec].recurrence.validTimeSlots =
+                     validTimeSlots
+                  fulfilledRecurrences = [
+                     ...fulfilledRecurrences,
+                     finalRecurrences[rec],
+                  ]
+               }
+               if (
+                  rec == finalRecurrences.length - 1 &&
+                  fulfilledRecurrences.length > 0 &&
+                  timeslotIndex == timesSlotsLength - 1
+               ) {
+                  return {
+                     status: validTimeSlots.length > 0,
+                     result: distanceDeliveryStatus.result,
+                     rec: fulfilledRecurrences,
+                     mileRangeInfo: distanceDeliveryStatus.mileRangeInfo,
+                     timeSlotInfo: timeslot,
+                     message:
+                        validTimeSlots.length > 0
+                           ? 'Pre Order Delivery available in your location'
+                           : 'Delivery not available in your location.',
+                     drivableDistance: distanceDeliveryStatus.drivableDistance,
+                  }
+               } else {
+                  if (
+                     rec == finalRecurrences.length - 1 &&
+                     timeslotIndex == timesSlotsLength - 1
+                  ) {
+                     return {
+                        status: false,
+                        message:
+                           'Sorry, you seem to be placed far out of our delivery range.',
+                     }
+                  }
+               }
+            } else {
+               return {
+                  status: false,
+                  message: 'Sorry, delivery range is not available.',
+               }
+            }
+         }
+      } else {
+         if (rec == finalRecurrences.length - 1) {
+            return {
+               status: false,
+               message: 'Sorry, We do not offer Delivery at this time.',
+            }
+         }
+      }
    }
 }

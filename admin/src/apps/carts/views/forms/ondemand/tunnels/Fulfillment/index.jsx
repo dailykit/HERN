@@ -13,7 +13,7 @@ import {
    Form,
 } from '@dailykit/ui'
 import styled from 'styled-components'
-import {  MUTATIONS, QUERIES } from '../../../../../graphql'
+import { MUTATIONS, QUERIES } from '../../../../../graphql'
 import { useMutation, useQuery, useSubscription } from '@apollo/react-hooks'
 import { useManual } from '../../state'
 import {
@@ -25,6 +25,7 @@ import {
    isDeliveryAvailable,
    isPickUpAvailable,
    isStoreOnDemandDeliveryAvailable,
+   isStorePreOrderDeliveryAvailable,
 } from './utils'
 import { useParams } from 'react-router'
 import { EditIcon } from '../../../../../../../shared/assets/icons'
@@ -200,7 +201,7 @@ const Content = ({ panel }) => {
             setting => setting.brandSetting.identifier === 'Location'
          )
          const { value: storeAddress } = addressSetting
-         
+
          ;(async () => {
             if (
                address?.lat &&
@@ -266,80 +267,90 @@ const Content = ({ panel }) => {
    }, [fulfillment.time])
 
    React.useEffect(() => {
-      (async()=>{try {
-         if (time && type) {
-            setError('')
+      ;(async () => {
+         try {
+            if (time && type) {
+               setError('')
 
-            if (brand.brand_brandSettings.length) {
-               const deliverySetting = brand.brand_brandSettings.find(
-                  setting =>
-                     setting.brandSetting.identifier === 'Delivery Availability'
-               )
-               const { value: deliveryAvailability } = deliverySetting
-               // console.log('🚀 deliveryAvailability', deliveryAvailability)
+               if (brand.brand_brandSettings.length) {
+                  const deliverySetting = brand.brand_brandSettings.find(
+                     setting =>
+                        setting.brandSetting.identifier ===
+                        'Delivery Availability'
+                  )
+                  const { value: deliveryAvailability } = deliverySetting
+                  // console.log('🚀 deliveryAvailability', deliveryAvailability)
 
-               const pickupSetting = brand.brand_brandSettings.find(
-                  setting =>
-                     setting.brandSetting.identifier === 'Pickup Availability'
-               )
-               const { value: pickupAvailability } = pickupSetting
+                  const pickupSetting = brand.brand_brandSettings.find(
+                     setting =>
+                        setting.brandSetting.identifier ===
+                        'Pickup Availability'
+                  )
+                  const { value: pickupAvailability } = pickupSetting
 
-               switch (type) {
-                  case 'PICKUP': {
-                     if (pickupAvailability?.PickUp?.IsPickupAvailable?.value) {
-                        switch (time) {
-                           case 'ONDEMAND': {
-                              if (OPbrandRecurrences?.length) {
-                                 const result =
-                                    isPickUpAvailable(OPbrandRecurrences)
-                                 if (result.status) {
-                                    const date = new Date()
-                                    setFulfillment({
-                                       date: date.toDateString(),
-                                       slot: {
-                                          from: null,
-                                          to: null,
-                                          timeslotId: result.timeSlotInfo.id,
-                                       },
-                                    })
-                                 } else {
-                                    setError(
-                                       'Sorry! Option not available currently!'
-                                    )
-                                 }
-                              } else {
-                                 setError(
-                                    'Sorry! Option not available currently.'
-                                 )
-                              }
-                              break
-                           }
-                           case 'PREORDER': {
-                              if (PPbrandRecurrences?.length) {
-                                 const result = generatePickUpSlots(
-                                    PPbrandRecurrences.map(
-                                       recs => recs.recurrence
-                                    )
-                                 )
-                                 if (result.status) {
-                                    const miniSlots = generateMiniSlots(
-                                       result.data,
-                                       15
-                                    )
-                                    if (miniSlots.length) {
-                                       setPickerDates([...miniSlots])
+                  switch (type) {
+                     case 'PICKUP': {
+                        if (
+                           pickupAvailability?.PickUp?.IsPickupAvailable?.value
+                        ) {
+                           switch (time) {
+                              case 'ONDEMAND': {
+                                 if (OPbrandRecurrences?.length) {
+                                    const result =
+                                       isPickUpAvailable(OPbrandRecurrences)
+                                    if (result.status) {
+                                       const date = new Date()
                                        setFulfillment({
-                                          date: miniSlots[0].date,
+                                          date: date.toDateString(),
                                           slot: {
-                                             // time: miniSlots[0].slots[0].time,
-                                             ...generateTimeStamp(
-                                                miniSlots[0].slots[0].time,
-                                                miniSlots[0].date,
-                                                miniSlots[0].slots[0]
-                                                   .intervalInMinutes
-                                             ),
+                                             from: null,
+                                             to: null,
+                                             timeslotId: result.timeSlotInfo.id,
                                           },
                                        })
+                                    } else {
+                                       setError(
+                                          'Sorry! Option not available currently!'
+                                       )
+                                    }
+                                 } else {
+                                    setError(
+                                       'Sorry! Option not available currently.'
+                                    )
+                                 }
+                                 break
+                              }
+                              case 'PREORDER': {
+                                 if (PPbrandRecurrences?.length) {
+                                    const result = generatePickUpSlots(
+                                       PPbrandRecurrences.map(
+                                          recs => recs.recurrence
+                                       )
+                                    )
+                                    if (result.status) {
+                                       const miniSlots = generateMiniSlots(
+                                          result.data,
+                                          15
+                                       )
+                                       if (miniSlots.length) {
+                                          setPickerDates([...miniSlots])
+                                          setFulfillment({
+                                             date: miniSlots[0].date,
+                                             slot: {
+                                                // time: miniSlots[0].slots[0].time,
+                                                ...generateTimeStamp(
+                                                   miniSlots[0].slots[0].time,
+                                                   miniSlots[0].date,
+                                                   miniSlots[0].slots[0]
+                                                      .intervalInMinutes
+                                                ),
+                                             },
+                                          })
+                                       } else {
+                                          setError(
+                                             'Sorry! No time slots available.'
+                                          )
+                                       }
                                     } else {
                                        setError(
                                           'Sorry! No time slots available.'
@@ -348,119 +359,146 @@ const Content = ({ panel }) => {
                                  } else {
                                     setError('Sorry! No time slots available.')
                                  }
-                              } else {
-                                 setError('Sorry! No time slots available.')
+                                 break
                               }
-                              break
+                              default: {
+                                 return setError('Unknown error!')
+                              }
                            }
-                           default: {
-                              return setError('Unknown error!')
-                           }
+                        } else {
+                           setError('Sorry! Pickup not available currently.')
                         }
-                     } else {
-                        setError('Sorry! Pickup not available currently.')
+                        break
                      }
-                     break
-                  }
-                  case 'DELIVERY': {
-                     if (!distance) {
-                        return setError('Please add an address first!')
-                     }
-                     if (
-                        deliveryAvailability?.Delivery?.IsDeliveryAvailable
-                           ?.value
-                     ) {
-                        switch (time) {
-                           case 'ONDEMAND': {
-                              if (ODbrandRecurrences.length) {
-                                 const brandLocationCopy = JSON.parse(JSON.stringify(brandLocation))
-                                 brandLocationCopy.aerialDistance = distance
-                                 const result =
-                                    await isStoreOnDemandDeliveryAvailable(
-                                       ODbrandRecurrences,
-                                       brandLocationCopy,
-                                       address
+                     case 'DELIVERY': {
+                        if (!distance) {
+                           return setError('Please add an address first!')
+                        }
+                        if (
+                           deliveryAvailability?.Delivery?.IsDeliveryAvailable
+                              ?.value
+                        ) {
+                           switch (time) {
+                              case 'ONDEMAND': {
+                                 if (ODbrandRecurrences.length) {
+                                    const brandLocationCopy = JSON.parse(
+                                       JSON.stringify(brandLocation)
                                     )
-                                 if (result.status) {
-                                    const date = new Date()
-                                    setFulfillment({
-                                       distance,
-                                       date: date.toDateString(),
-                                       slot: {
-                                          ...generateTimeStamp(moment().format("HH:mm"),moment().format('YYYY-MM-DD'),result.mileRangeInfo.prepTimeInMinutes),
-                                          mileRangeId: result.mileRangeInfo.id,
-                                       },
-                                    })
-                                 } else {
-                                    setError(
-                                       result.message ||
-                                          'Sorry! Delivery not available at the moment.'
-                                    )
-                                 }
-                              } else {
-                                 setError(
-                                    'Sorry! Option not available currently.'
-                                 )
-                              }
-                              break
-                           }
-                           case 'PREORDER': {
-                              if (PDbrandRecurrences?.length) {
-                                 const result = generateDeliverySlots(
-                                    PDbrandRecurrences.map()
-                                 )
-                                 if (result.status) {
-                                    const miniSlots = generateMiniSlots(
-                                       result.data,
-                                       15
-                                    )
-                                    // console.log(miniSlots)
-                                    if (miniSlots.length) {
-                                       setPickerDates([...miniSlots])
+                                    brandLocationCopy.aerialDistance = distance
+                                    const result =
+                                       await isStoreOnDemandDeliveryAvailable(
+                                          ODbrandRecurrences,
+                                          brandLocationCopy,
+                                          address
+                                       )
+                                    if (result.status) {
+                                       const date = new Date()
                                        setFulfillment({
                                           distance,
-                                          date: miniSlots[0].date,
+                                          date: date.toDateString(),
                                           slot: {
-                                             time: miniSlots[0].slots[0].time,
+                                             ...generateTimeStamp(
+                                                moment().format('HH:mm'),
+                                                moment().format('YYYY-MM-DD'),
+                                                result.mileRangeInfo
+                                                   .prepTimeInMinutes
+                                             ),
                                              mileRangeId:
-                                                miniSlots[0].slots[0]
-                                                   ?.mileRangeId,
+                                                result.mileRangeInfo.id,
                                           },
                                        })
                                     } else {
                                        setError(
-                                          'Sorry! No time slots available.'
+                                          result.message ||
+                                             'Sorry! Delivery not available at the moment.'
                                        )
                                     }
                                  } else {
                                     setError(
-                                       result.message ||
-                                          'Sorry! No time slots available for selected options.'
+                                       'Sorry! Option not available currently.'
                                     )
                                  }
-                              } else {
-                                 setError('Sorry! No time slots available.')
+                                 break
                               }
-                              break
+                              case 'PREORDER': {
+                                 if (PDbrandRecurrences?.length) {
+                                    const brandLocationCopy = JSON.parse(
+                                       JSON.stringify(brandLocation)
+                                    )
+                                    brandLocationCopy.aerialDistance = distance
+                                    const result =
+                                       await isStorePreOrderDeliveryAvailable(
+                                          PDbrandRecurrences,
+                                          brandLocationCopy,
+                                          address
+                                       )
+                                       if (result.status) {
+                                       const deliverySlots =
+                                          generateDeliverySlots(
+                                             result.rec.map(
+                                                eachFulfillRecurrence =>
+                                                   eachFulfillRecurrence.recurrence
+                                             )
+                                          )
+                                       const miniSlots = generateMiniSlots(
+                                          deliverySlots.data,
+                                          15
+                                       )
+                                       // console.log(miniSlots)
+                                       if (miniSlots.length) {
+                                          setPickerDates([...miniSlots])
+                                          setFulfillment({
+                                             distance,
+                                             date: miniSlots[0].date,
+                                             slot: {
+                                                time: miniSlots[0].slots[0]
+                                                   .time,
+                                                ...generateTimeStamp(
+                                                   miniSlots[0].slots[0].time,
+                                                   miniSlots[0].date,
+                                                   miniSlots[0].slots[0]
+                                                      .intervalInMinutes
+                                                ),
+                                                mileRangeId:
+                                                   miniSlots[0].slots[0]
+                                                      ?.mileRangeId,
+                                             },
+                                          })
+                                       } else {
+                                          setError(
+                                             'Sorry! No time slots available.'
+                                          )
+                                       }
+                                    } else {
+                                       setError(
+                                          result.message ||
+                                             'Sorry! No time slots available for selected options.'
+                                       )
+                                    }
+                                 } else {
+                                    setError('Sorry! No time slots available.')
+                                 }
+                                 break
+                              }
+                              default: {
+                                 return setError('Unknown error!')
+                              }
                            }
-                           default: {
-                              return setError('Unknown error!')
-                           }
+                        } else {
+                           setError('Sorry! Delivery not available currently.')
                         }
-                     } else {
-                        setError('Sorry! Delivery not available currently.')
+                        break
                      }
-                     break
-                  }
-                  default: {
-                     return setError('Unknown error!')
+                     default: {
+                        return setError('Unknown error!')
+                     }
                   }
                }
             }
+         } catch (error) {
+            console.log(error)
          }
-      } catch (error) {
-         console.log(error)
-      }})()
+      })()
    }, [type, time, distance])
 
    const save = () => {
