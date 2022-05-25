@@ -15,86 +15,21 @@ import {
    Collapsible,
    Dropdown,
    IconButton,
-   TextButton,
 } from '@dailykit/ui'
 import validator from '../validator'
 import CreateLinkOrderTab from '../../../../../../../shared/CreateUtils/Brand/Kiosk/CreateLinkOrderTab'
 import { KIOSK } from '../../../../../graphql'
-import { Wrapper, Label } from '../../../brand/styled'
 import { logger } from '../../../../../../../shared/utils'
 import { useTabs } from '../../../../../../../shared/providers'
 import { DeleteIcon } from '../../../../../../../shared/assets/icons'
-import {
-   Banner,
-   InlineLoader,
-   Tooltip,
-} from '../../../../../../../shared/components'
+import { Banner, InlineLoader } from '../../../../../../../shared/components'
 
 export const LinkOrderTab = () => {
    const params = useParams()
    const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
    const [orderTabList, setOrderTabList] = React.useState([])
    const { tab, addTab, setTabTitle } = useTabs()
-   const [title, setTitle] = React.useState([
-      //  {
-      //      orderPrefix:{
-      //       id: null,
-      //       value: null,
-      //       meta: {
-      //          isValid: false,
-      //          isTouched: false,
-      //          errors: [],
-      //       },
-      //      },
-      //      orderTab:{
-      //       value: null,
-      //       meta: {
-      //          isValid: false,
-      //          isTouched: false,
-      //          errors: [],
-      //       },
-      //      },
-      //      posistTab:{
-      //       id: null,
-      //       value: null,
-      //       meta: {
-      //          isValid: false,
-      //          isTouched: false,
-      //          errors: [],
-      //       },
-      //      }
-      //  }
-   ])
-
-   // const { error, loading } = useQuery(KIOSK.GET_KIOSKS, {
-   //    variables: {
-   //       id: params.id,
-   //    },
-   //    onError: () => {
-   //       toast.error('Failed to load addresses, please try again.')
-   //    },
-   //    onCompleted: ({ kiosk }) => {
-   //       console.log('kiosks data:', kiosk)
-   //       let dataExtracted = kiosk.orderTabs
-   //       dataExtracted = dataExtracted.map(order => {
-   //          return {
-   //             value: '',
-   //             orderPrefix: order?.orderPrefix || '',
-   //             orderTab: order?.OrderTab.label || '',
-   //             posistTab: order?.posist_tabType || '',
-   //             posistTabId: order?.posist_tabId || '',
-   //             orderTabId: order?.orderTabId || '',
-   //             meta: {
-   //                isValid: order ? true : false,
-   //                isTouched: false,
-   //                errors: [],
-   //             },
-   //          }
-   //       })
-   //       console.log('formatted data-->', dataExtracted)
-   //       setTitle(previousData => [...previousData, ...dataExtracted])
-   //    },
-   // })
+   const [title, setTitle] = React.useState([])
 
    const { error, loading } = useSubscription(KIOSK.GET_KIOSKS, {
       variables: {
@@ -108,7 +43,7 @@ export const LinkOrderTab = () => {
             data: { kiosk = [] },
          },
       }) => {
-         console.log('kiosks data:', kiosk)
+         // console.log('kiosks data:', kiosk)
          let dataExtracted = kiosk.orderTabs
          dataExtracted = dataExtracted.map(order => {
             return {
@@ -125,21 +60,12 @@ export const LinkOrderTab = () => {
                },
             }
          })
-         console.log('formatted data-->', dataExtracted)
+         // console.log('formatted data-->', dataExtracted)
          // setTitle(previousData => [...previousData, ...dataExtracted])
          setTitle(dataExtracted)
       },
    })
-   console.log('new tittle', title, title[0]?.orderTabId)
-   // if (title[0]?.orderTabId) {
-   //    let firstObject = {
-   //       id: title[0]?.orderTabId || 'nope',
-   //       title: title[0]?.orderTab || 'nope',
-   //       value: title[0]?.orderTab || 'nope',
-   //    }
-   //    console.log('first object:::>', firstObject)
-   //    setOrderTabList(firstObject)
-   // }
+   // console.log('new tittle', title, title[0]?.orderTabId)
 
    const { error1, loading1, data1 } = useQuery(KIOSK.ORDER_TAB_LIST, {
       onCompleted: data => {
@@ -153,32 +79,14 @@ export const LinkOrderTab = () => {
          setOrderTabList(previousData => [...previousData, ...name1])
       },
    })
-   console.log('labels are:', orderTabList)
-
-   //    const createKioskHandler = () => {
-   //       try {
-   //          const objects = kiosk.filter(Boolean).map(kiosk => ({
-   //             internalLocationKioskLabel: `${kiosk.internalLocationKioskLabel.value}`,
-   //          }))
-   //          if (!objects.length) {
-   //             throw Error('Nothing to add!')
-   //          }
-   //          createKiosk({
-   //             variables: {
-   //                objects,
-   //             },
-   //          })
-   //       } catch (error) {
-   //          toast.error(error.message)
-   //       }
-   //    }
+   // console.log('labels are:', orderTabList)
 
    const [createKiosk_OrderTab, { loading2 }] = useMutation(
       KIOSK.CREATE_KIOSK_ORDER_TAB,
       {
          onCompleted: input => {
             {
-               console.log('input coming for new kioskOrderTab===>', input)
+               // console.log('input coming for new kioskOrderTab===>', input)
             }
             // setTitle([
             //    {
@@ -214,7 +122,7 @@ export const LinkOrderTab = () => {
    const [updateKiosk_OrderTab] = useMutation(KIOSK.UPDATE_KIOSK_ORDER_TAB, {
       onCompleted: data => {
          toast.success('Updated!')
-         console.log('update kiosk_orderTab data=>>', data)
+         // console.log('update kiosk_orderTab data=>>', data)
       },
       onError: error => {
          toast.error('Something went wrong!')
@@ -225,7 +133,7 @@ export const LinkOrderTab = () => {
    const updateOrderPrefix = async (e, kioskOrderTab) => {
       const { isValid, errors } = validator.name(kioskOrderTab.orderPrefix)
       if (isValid) {
-         console.log('====>>>>', params.id, kioskOrderTab.orderTabId)
+         // console.log('====>>>>', params.id, kioskOrderTab.orderTabId)
          const { data } = await updateKiosk_OrderTab({
             variables: {
                locationKioskId: params.id,
@@ -236,32 +144,37 @@ export const LinkOrderTab = () => {
             },
          })
       }
-      //   setTitle({
-      //      ...title,
-      //      meta: {
-      //         isTouched: true,
-      //         errors,
-      //         isValid,
-      //      },
-      //   })
+   }
+   const updatePosistTabType = async (e, kioskOrderTab) => {
+      const { isValid, errors } = validator.name(kioskOrderTab.posistTab)
+      if (isValid) {
+         const { data } = await updateKiosk_OrderTab({
+            variables: {
+               locationKioskId: params.id,
+               orderTabId: kioskOrderTab.orderTabId,
+               _set: {
+                  posist_tabType: kioskOrderTab.posistTab,
+               },
+            },
+         })
+      }
+   }
+   const updatePosistTabId = async (e, kioskOrderTab) => {
+      const { isValid, errors } = validator.name(kioskOrderTab.posistTabId)
+      if (isValid) {
+         const { data } = await updateKiosk_OrderTab({
+            variables: {
+               locationKioskId: params.id,
+               orderTabId: kioskOrderTab.orderTabId,
+               _set: {
+                  posist_tabId: kioskOrderTab.posistTabId,
+               },
+            },
+         })
+      }
    }
 
-   //   const updateOrderTab = async (e, kioskOrderTab) => {
-   //      const { isValid, errors } = validator.name(kioskOrderTab.orderTab)
-   //      if (isValid) {
-   //         const { data } = await updateKiosk_OrderTab({
-   //            variables: {
-   //               locationKioskId: params.id,
-   //               orderTabId: kioskOrderTab.orderTabId,
-   //               _set: {
-   //                  //    orderTabId: where:{}
-   //               },
-   //            },
-   //         })
-   //      }
-   //   }
    const updateOrderTab = async (e, kioskOrderTab) => {
-      console.log('eeeeee++++', e)
       const { isValid, errors } = validator.name(e.title)
       if (isValid) {
          const { data } = await updateKiosk_OrderTab({
@@ -287,7 +200,7 @@ export const LinkOrderTab = () => {
       },
    })
    const handleDeleteOption = async (e, kioskOrderTab) => {
-      console.log('delete::>', kioskOrderTab.orderTabId, params.id)
+      // console.log('delete::>', kioskOrderTab.orderTabId, params.id)
       const isConfirmed = window.confirm(
          `Are you sure you want to delete - ${kioskOrderTab.orderTab}?`
       )
@@ -328,18 +241,6 @@ export const LinkOrderTab = () => {
                                     Order Tab
                                  </Form.Label>
 
-                                 {/* <Form.Text
-                           id={`kioskOrderTab.orderTabs-${i}`}
-                           name={`kioskOrderTab.orderTabs-${i}`}
-                           value={kioskOrderTab.orderTab}
-                           placeholder="Enter Order Tab"
-                           //    onChange={e => {
-                           //       const prevTitle = [...title]
-                           //       prevTitle[i].orderTab = e.target.value
-                           //       setTitle(prevTitle)
-                           //    }}
-                           //    onBlur={e => updateOrderTab(e, title[i])}
-                        /> */}
                                  <div
                                     style={{
                                        border: '1px solid #e3e3e3',
@@ -361,7 +262,6 @@ export const LinkOrderTab = () => {
                                        selectedOption={e =>
                                           updateOrderTab(e, kioskOrderTab)
                                        }
-                                       //    addOption={() => console.log('Item added')}
                                     />
                                  </div>
                               </Form.Group>
@@ -396,7 +296,7 @@ export const LinkOrderTab = () => {
                                     htmlFor={`kioskOrderTab.posistTab-${i}`}
                                     title={`kioskOrderTab.posistTab-${i}`}
                                  >
-                                    Posist Tab
+                                    Posist Tab Type
                                  </Form.Label>
                                  <Form.Text
                                     id={`kioskOrderTab.posistTab-${i}`}
@@ -408,6 +308,30 @@ export const LinkOrderTab = () => {
                                        prevTitle[i].posistTab = e.target.value
                                        setTitle(prevTitle)
                                     }}
+                                    onBlur={e =>
+                                       updatePosistTabType(e, title[i])
+                                    }
+                                 />
+                              </Form.Group>
+                              <Spacer yAxis size="16px" />
+                              <Form.Group>
+                                 <Form.Label
+                                    htmlFor={`kioskOrderTab.posistTabId-${i}`}
+                                    title={`kioskOrderTab.posistTabId-${i}`}
+                                 >
+                                    Posist Tab ID
+                                 </Form.Label>
+                                 <Form.Text
+                                    id={`kioskOrderTab.posistTabId-${i}`}
+                                    name={`kioskOrderTab.posistTabId-${i}`}
+                                    value={kioskOrderTab.posistTabId}
+                                    placeholder="Enter Posist Tab"
+                                    onChange={e => {
+                                       const prevTitle = [...title]
+                                       prevTitle[i].posistTabId = e.target.value
+                                       setTitle(prevTitle)
+                                    }}
+                                    onBlur={e => updatePosistTabId(e, title[i])}
                                  />
                               </Form.Group>
                               {/* </Flex> */}

@@ -292,7 +292,7 @@ export const BasicInfo = () => {
                      ></div>
                      <Spacer size="10px" xAxis />
                      <Text as="text2">
-                        {isKioskStatusActive ? 'Active' : 'In Active'}
+                        {isKioskStatusActive ? 'Online' : 'Offline'}
                      </Text>
                   </Flex>
                   <Spacer size="30px" xAxis />

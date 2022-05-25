@@ -111,22 +111,22 @@ const DevicesListing = () => {
             <Spacer size="12px" />
             <StyledLinks>
                <li>
-                  <a href="https://www.printnode.com/en/download">
+                  <a href="https://www.printnode.com/en/download" target="_blank">
                      Download Printnode
                   </a>
                </li>
                <li>
-                  <a href="https://www.printnode.com/en/docs/installation">
+                  <a href="https://www.printnode.com/en/docs/installation" target="_blank">
                      Installation
                   </a>
                </li>
                <li>
-                  <a href="https://www.printnode.com/en/docs/supported-printers">
+                  <a href="https://www.printnode.com/en/docs/supported-printers" target="_blank">
                      Supported Printers
                   </a>
                </li>
                <li>
-                  <a href="https://www.printnode.com/en/docs/supported-scales">
+                  <a href="https://www.printnode.com/en/docs/supported-scales" target="_blank">
                      Supported Scales
                   </a>
                </li>
