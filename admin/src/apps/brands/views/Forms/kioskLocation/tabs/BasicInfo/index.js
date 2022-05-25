@@ -57,7 +57,6 @@ export const BasicInfo = () => {
             data: { kiosk = {} },
          },
       }) => {
-         // console.log('data is:', kiosk)
          setIsKioskStatusActive(prev => {
             const timeDiff = moment
                .duration(moment().diff(moment(kiosk[0].lastActiveTime)))
@@ -401,17 +400,18 @@ export const BasicInfo = () => {
                      value={title.location}
                      placeholder="Enter location"
                   /> */}
-                  <Dropdown
-                     type="single"
-                     //  variant="revamp"
-                     defaultName={title.location}
-                     isLoading={loading}
-                     addOption={locationList}
-                     options={locationList}
-                     selectedOption={e => updateKioskLocation(e)}
-                     placeholder="Choose kiosk location"
-                  />
-               </Form.Group>
+                     <Dropdown
+                        type="single"
+                        //  variant="revamp"
+                        defaultName={title.location}
+                        isLoading={loading}
+                        addOption={locationList}
+                        options={locationList}
+                        selectedOption={e => updateKioskLocation(e)}
+                        placeholder="Choose kiosk location"
+                     />
+                  </Form.Group>
+               </Flex>
             </>
          </Flex>
       </div>
