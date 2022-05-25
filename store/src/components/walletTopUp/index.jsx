@@ -20,7 +20,7 @@ function WalletTopUp(props){
 
    const handleSetAmountChange = (e) => {
       let amount = parseFloat(e.target.value);
-      if( amount!=NaN && amount > 0 ){
+      if( !isNaN(e.target.value) && amount!=NaN && amount > 0 ){
          setTopUpAmount(e.target.value)
       }else{
          setTopUpAmount(0)
