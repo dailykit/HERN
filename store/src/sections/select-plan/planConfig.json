@@ -236,6 +236,12 @@
          }
       },
       "countButton": {
+         "color": {
+            "label": "Count Button Color",
+            "dataType": "color",
+            "value": "rgba(51, 51, 51, 0.6)",
+            "userInsertType": "colorPicker"
+         },
          "borderRadius": {
             "label": "Count Button Border Radius",
             "dataType": "text",
@@ -243,7 +249,7 @@
             "userInsertType": "textField"
          },
          "backgroundColor": {
-            "label": "Select Plan Button Background Color",
+            "label": "Count Button Background Color",
             "dataType": "color",
             "value": "rgba(17, 130, 59, 0.2)",
             "userInsertType": "colorPicker"
@@ -257,7 +263,7 @@
          "fontWeight": {
             "label": "Count Button Font Weight",
             "dataType": "text",
-            "value": "bold",
+            "value": "600",
             "userInsertType": "textField"
          },
          "active": {

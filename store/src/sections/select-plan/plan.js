@@ -13,7 +13,7 @@ import planConfig from './planConfig.json'
 const ReactPixel = isClient ? require('react-facebook-pixel').default : null
 
 export const Plan = ({ plan, handlePlanClick, itemCount }) => {
-   // subscription plan configurations
+   // subscription plan configurations (Display)
    // select button
 
    const selectPlanButtonConfig = {
@@ -76,7 +76,14 @@ export const Plan = ({ plan, handlePlanClick, itemCount }) => {
       backgroundColor:
          planConfig?.display?.countButton?.backgroundColor?.value ??
          ' rgba(17, 130, 59, 0.2)',
+      fontSize: planConfig?.display?.countButton?.fontSize?.value ?? '1rem',
+      fontWeight: planConfig?.display?.countButton?.fontWeight?.value ?? '600',
+      color:
+         planConfig?.display?.countButton?.color?.value ??
+         'rgba(51, 51, 51, 0.6)',
    }
+
+   //subscription plan configurations (Visibility)
 
    const router = useRouter()
    const { user, isAuthenticated, isLoading } = useUser()
@@ -220,12 +227,16 @@ export const Plan = ({ plan, handlePlanClick, itemCount }) => {
          {/* <div className="hern-our-plans__plan__body"> */}
 
          {/* Cover image should maintain 2:1 aspect ratio always  */}
-         {plan.metaDetails?.coverImage && (
+         {plan.metaDetails?.coverImage ? (
             <div className="hern-plan__cover-image">
                <HernLazyImage
                   dataSrc={plan.metaDetails?.coverImage}
                   className="hern-plan__plan__img"
                />
+            </div>
+         ) : (
+            <div className="hern-plan__cover-image">
+               <CardCoverIllustration />
             </div>
          )}
 
@@ -325,6 +336,9 @@ export const Plan = ({ plan, handlePlanClick, itemCount }) => {
                               borderRadius: countButtonConfig.borderRadius,
                               backgroundColor:
                                  countButtonConfig.backgroundColor,
+                              fontSize: countButtonConfig.fontSize,
+                              fontWeight: countButtonConfig.fontWeight,
+                              color: countButtonConfig.color,
                            }}
                         >
                            <div data-translation="true">{serving.size}</div>
@@ -602,6 +616,48 @@ const PlateIllustration = () => (
       </defs>
    </svg>
 )
+
+const CardCoverIllustration = () => (
+   <svg
+      width="420"
+      height="230"
+      viewBox="0 0 420 230"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+   >
+      <path
+         d="M0 12.894C0 6.26662 5.37258 0.894043 12 0.894043H408C414.627 0.894043 420 6.26663 420 12.894V229.894H0V12.894Z"
+         fill="#F9F9F9"
+         width={420}
+      />
+      <path
+         d="M146.05 184.53C146.467 184.947 146.882 185.154 147.508 185.154H225H225.207L261.454 195.57H262.079C262.496 195.57 262.911 195.362 263.328 195.153C263.953 194.736 264.161 194.111 264.161 193.486V185.155H272.492C273.117 185.155 273.534 184.947 273.951 184.53L284.367 174.114C284.992 173.489 285.199 172.655 284.784 171.823C284.576 170.989 283.742 170.572 282.909 170.572H274.578C273.536 138.076 248.331 111.62 216.459 108.495C217.084 107.454 217.292 106.204 217.292 104.954C217.292 100.996 213.959 97.6627 210 97.6627C206.042 97.6627 202.709 100.996 202.709 104.954C202.709 106.204 203.126 107.454 203.541 108.495C171.671 111.621 146.464 138.075 145.423 170.572H137.091C136.259 170.572 135.425 170.989 135.217 171.821C134.8 172.654 135.009 173.488 135.634 174.113L146.05 184.53ZM259.995 190.778L203.96 174.739H259.995V190.778ZM277.91 174.739L271.66 180.989L264.162 180.987V174.738H272.494L277.91 174.739ZM210.001 101.831C211.667 101.831 213.125 103.29 213.125 104.955C213.125 106.621 211.667 108.079 210.001 108.079C208.334 108.079 206.877 106.62 206.877 104.955C206.877 103.288 208.334 101.831 210.001 101.831ZM210.001 112.246C242.706 112.246 269.369 138.285 270.411 170.573H262.079L189.17 170.571H149.592C150.632 138.285 177.296 112.245 210.001 112.245L210.001 112.246ZM147.508 174.739H188.961L210.834 180.989L148.341 180.987L142.092 174.738L147.508 174.739Z"
+         fill="#333333"
+         fill-opacity="0.4"
+      />
+      <path
+         d="M212.084 120.579C212.084 119.329 211.251 118.495 210 118.495C188.544 118.495 168.963 131.202 160.423 150.991C160.005 152.033 160.423 153.282 161.464 153.699C161.672 153.907 162.089 153.907 162.297 153.907C163.13 153.907 163.964 153.49 164.171 152.657C172.088 134.535 190.212 122.662 210 122.662C211.249 122.662 212.083 121.828 212.083 120.578L212.084 120.579Z"
+         fill="#333333"
+         fill-opacity="0.4"
+      />
+      <path
+         d="M227.915 98.7059C227.29 99.7477 227.707 100.997 228.748 101.414C228.956 101.622 229.373 101.622 229.79 101.622C230.622 101.622 231.248 101.205 231.664 100.58C237.497 89.3323 234.373 83.0827 231.872 77.8749C229.373 72.6672 227.081 68.2919 231.872 58.9183C232.289 57.8765 231.872 56.6269 230.83 56.2099C229.788 55.7928 228.539 56.2099 228.122 57.2517C222.497 68.4997 225.622 74.5414 228.122 79.9571C230.624 84.9569 232.706 89.3322 227.915 98.7057L227.915 98.7059Z"
+         fill="#333333"
+         fill-opacity="0.4"
+      />
+      <path
+         d="M207.085 77.8747C206.46 78.9166 206.877 80.1662 207.917 80.5832C208.125 80.791 208.542 80.791 208.959 80.791C209.792 80.791 210.418 80.3739 210.833 79.7491C216.666 68.5011 213.542 62.2515 211.041 57.0437C208.542 51.836 206.251 47.4607 211.041 38.0872C211.458 37.0453 211.041 35.7957 209.999 35.3787C208.958 34.9617 207.708 35.3787 207.291 36.4205C201.666 47.6685 204.792 53.7103 207.291 59.1259C209.793 64.1257 211.875 68.501 207.085 77.8746L207.085 77.8747Z"
+         fill="#333333"
+         fill-opacity="0.4"
+      />
+      <path
+         d="M188.128 98.7059C187.503 99.7477 187.92 100.997 188.961 101.414C189.169 101.622 189.586 101.622 190.003 101.622C190.835 101.622 191.462 101.205 191.877 100.58C197.71 89.3323 194.586 83.0827 192.085 77.8749C189.586 72.6672 187.294 68.2919 192.085 58.9183C192.502 57.8765 192.085 56.6269 191.043 56.2099C190.001 55.7928 188.752 56.2099 188.335 57.2517C182.71 68.4997 185.835 74.5414 188.335 79.9571C190.837 84.9569 192.919 89.3322 188.128 98.7057L188.128 98.7059Z"
+         fill="#333333"
+         fill-opacity="0.4"
+      />
+   </svg>
+)
+
 // TODO
 // You need to use all the config field on this plan and plans component
 // The plans which doesn't have any meta details cover image we have to use the default
