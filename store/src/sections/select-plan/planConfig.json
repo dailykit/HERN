@@ -148,31 +148,31 @@
          "color": {
             "label": "Select Plan Button Color",
             "dataType": "color",
-            "value": "#000000",
+            "value": "#FFFFFF",
             "userInsertType": "colorPicker"
          },
          "backgroundColor": {
             "label": "Select Plan Button Background Color",
             "dataType": "color",
-            "value": "#ffffff",
+            "value": "#11823B",
             "userInsertType": "colorPicker"
          },
          "fontSize": {
             "label": "Select Plan Button Font Size",
             "dataType": "number",
-            "value": "16",
+            "value": "1.125rem",
             "userInsertType": "numberField"
          },
          "fontFamily": {
             "label": "Select Plan Button Font Family",
             "dataType": "text",
-            "value": "Arial",
+            "value": "Poppins",
             "userInsertType": "textField"
          },
          "fontWeight": {
             "label": "Select Plan Button Font Weight",
             "dataType": "text",
-            "value": "bold",
+            "value": "500",
             "userInsertType": "textField"
          },
          "textAlign": {
@@ -210,7 +210,7 @@
             "borderRadius": {
                "label": "Select Plan Button Border Radius",
                "dataType": "text",
-               "value": "0",
+               "value": "25px",
                "userInsertType": "textField"
             },
             "border": {
@@ -239,13 +239,19 @@
          "borderRadius": {
             "label": "Count Button Border Radius",
             "dataType": "text",
-            "value": "0",
+            "value": "2px",
             "userInsertType": "textField"
+         },
+         "backgroundColor": {
+            "label": "Select Plan Button Background Color",
+            "dataType": "color",
+            "value": "rgba(17, 130, 59, 0.2)",
+            "userInsertType": "colorPicker"
          },
          "fontSize": {
             "label": "Count Button Font Size",
             "dataType": "number",
-            "value": "16",
+            "value": "16px",
             "userInsertType": "numberField"
          },
          "fontWeight": {
@@ -315,25 +321,25 @@
          "color": {
             "label": "Plan Title Color",
             "dataType": "color",
-            "value": "#000000",
+            "value": "#333333",
             "userInsertType": "colorPicker"
          },
          "fontSize": {
             "label": "Plan Title Font Size",
             "dataType": "number",
-            "value": "16",
+            "value": "1.25rem",
             "userInsertType": "numberField"
          },
          "fontFamily": {
             "label": "Plan Title Font Family",
             "dataType": "text",
-            "value": "Arial",
+            "value": "Poppins",
             "userInsertType": "textField"
          },
          "fontWeight": {
             "label": "Plan Title Font Weight",
             "dataType": "text",
-            "value": "bold",
+            "value": "600",
             "userInsertType": "textField"
          }
       },
@@ -341,13 +347,13 @@
          "color": {
             "label": "Yield Label Color",
             "dataType": "color",
-            "value": "#000000",
+            "value": "rgba(51, 51, 51, 0.6)",
             "userInsertType": "colorPicker"
          },
          "fontSize": {
             "label": "Yield Label Font Size",
             "dataType": "number",
-            "value": "16",
+            "value": "1rem",
             "userInsertType": "numberField"
          },
          "fontWeight": {

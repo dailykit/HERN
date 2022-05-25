@@ -9,10 +9,75 @@ import { Loader } from '../../components'
 import { isClient, formatCurrency, getRoute, LoginWrapper } from '../../utils'
 import { HernLazyImage } from '../../utils/hernImage'
 import { BiChevronLeft, BiChevronRight } from 'react-icons/bi'
-import config from './planConfig.json'
+import planConfig from './planConfig.json'
 const ReactPixel = isClient ? require('react-facebook-pixel').default : null
 
 export const Plan = ({ plan, handlePlanClick, itemCount }) => {
+   // subscription plan configurations
+   // select button
+
+   const selectPlanButtonConfig = {
+      color: planConfig?.display?.selectPlanButton?.color?.value ?? '#ffffff',
+      backgroundColor:
+         planConfig?.display?.selectPlanButton?.backgroundColor?.value ??
+         '#11823B',
+      fontSize:
+         planConfig?.display?.selectPlanButton?.fontSize?.value ?? '1.125rem',
+      fontFamily:
+         planConfig?.display?.selectPlanButton?.fontFamily?.value ?? 'Poppins',
+
+      fontWeight:
+         planConfig?.display?.selectPlanButton?.fontWeight?.value ?? '500',
+
+      border:
+         planConfig?.display?.selectPlanButton?.border?.border?.value ?? 'none',
+
+      borderRadius:
+         planConfig?.display?.selectPlanButton?.border?.borderRadius?.value ??
+         '25px',
+      hoverColor:
+         planConfig?.display?.selectPlanButton?.hover?.color?.value ??
+         '#FFFFFF',
+   }
+
+   // Button label
+   const selectPlanButtonLabelConfig = {
+      buttonLabel:
+         planConfig?.data?.selectPlanButtonLabel?.value ?? 'Choose Plan',
+   }
+
+   // Plan title
+   const selectPlanTitleConfig = {
+      color: planConfig?.display?.planTitle?.color?.value ?? 'blue',
+      fontSize: planConfig?.display?.planTitle?.fontSize?.value ?? '1.25rem',
+      fontFamily:
+         planConfig?.display?.planTitle?.fontFamily?.value ?? 'Poppins',
+      fontWeight: planConfig?.display?.planTitle?.fontWeight?.value ?? '600',
+   }
+
+   //Yield and ItemCount labels
+   const yieldAndItemsCountLabelConfig = {
+      color:
+         planConfig?.display?.yieldAndItemsCountLabel?.color?.value ??
+         'rgba(51, 51, 51, 0.6)',
+      fontSize:
+         planConfig?.display?.yieldAndItemsCountLabel?.fontSize?.value ??
+         '1rem',
+
+      fontWeight:
+         planConfig?.display?.yieldAndItemsCountLabel?.fontWeight?.value ??
+         '500',
+   }
+
+   // Count Buttons
+   const countButtonConfig = {
+      borderRadius:
+         planConfig?.display?.countButton?.borderRadius?.value ?? '2px',
+      backgroundColor:
+         planConfig?.display?.countButton?.backgroundColor?.value ??
+         ' rgba(17, 130, 59, 0.2)',
+   }
+
    const router = useRouter()
    const { user, isAuthenticated, isLoading } = useUser()
    const { addToast } = useToasts()
@@ -175,7 +240,17 @@ export const Plan = ({ plan, handlePlanClick, itemCount }) => {
             )}
 
             <h2 title={plan.title} className="hern-plan__title">
-               <span data-translation="true">{plan.title}</span>
+               <span
+                  style={{
+                     color: selectPlanTitleConfig.color,
+                     fontSize: selectPlanTitleConfig.fontSize,
+                     fontFamily: selectPlanTitleConfig.fontFamily,
+                     fontWeight: selectPlanTitleConfig.fontWeight,
+                  }}
+                  data-translation="true"
+               >
+                  {plan.title}
+               </span>
             </h2>
          </div>
 
@@ -211,7 +286,16 @@ export const Plan = ({ plan, handlePlanClick, itemCount }) => {
          <div className="hern-plan__servings">
             <h4 className="hern-plan__servings__label">
                {/* <span>{t('No. of')}</span>{' '} */}
-               <span data-translation="true">{yieldLabel.plural}</span>
+               <span
+                  style={{
+                     color: yieldAndItemsCountLabelConfig.color,
+                     fontSize: yieldAndItemsCountLabelConfig.fontSize,
+                     fontWeight: yieldAndItemsCountLabelConfig.fontWeight,
+                  }}
+                  data-translation="true"
+               >
+                  {yieldLabel.plural}
+               </span>
             </h4>
             <div className="hern-plan__servings__list__wrapper">
                {plansFirstIndex > 0 &&
@@ -237,6 +321,11 @@ export const Plan = ({ plan, handlePlanClick, itemCount }) => {
                            )}
                            key={serving.id}
                            onClick={() => setDefaultServing(serving)}
+                           style={{
+                              borderRadius: countButtonConfig.borderRadius,
+                              backgroundColor:
+                                 countButtonConfig.backgroundColor,
+                           }}
                         >
                            <div data-translation="true">{serving.size}</div>
                            {serving?.metaDetails?.label && (
@@ -276,7 +365,14 @@ export const Plan = ({ plan, handlePlanClick, itemCount }) => {
                </span>
             ) : ( */}
          <div className="hern-plan__item-counts">
-            <h4 className="hern-plan__item-counts__label">
+            <h4
+               style={{
+                  color: yieldAndItemsCountLabelConfig.color,
+                  fontSize: yieldAndItemsCountLabelConfig.fontSize,
+                  fontWeight: yieldAndItemsCountLabelConfig.fontWeight,
+               }}
+               className="hern-plan__item-counts__label"
+            >
                <span data-translation="true">{itemCountLabel.singular}</span>{' '}
                {t('per week')}
             </h4>
@@ -447,8 +543,18 @@ export const Plan = ({ plan, handlePlanClick, itemCount }) => {
             //          : '#6A6A6A'
             //    }`,
             // }}
+
+            style={{
+               color: selectPlanButtonConfig.color,
+               backgroundColor: selectPlanButtonConfig.backgroundColor,
+               fontSize: selectPlanButtonConfig.fontSize,
+               fontFamily: selectPlanButtonConfig.fontFamily,
+               fontWeight: selectPlanButtonConfig.fontWeight,
+               borderRadius: selectPlanButtonConfig.borderRadius,
+               border: selectPlanButtonConfig.border,
+            }}
          >
-            {t('select plan')}
+            {t(selectPlanButtonLabelConfig?.buttonLabel)}
          </button>
          {/* </div> */}
       </li>
