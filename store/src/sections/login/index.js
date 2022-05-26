@@ -12,8 +12,13 @@ export const Login = ({ config }) => {
    const { isAuthenticated, isLoading } = useUser()
    const router = useRouter()
 
-   const defaultLogInMethod =
-      authConfig?.loginSettings?.defaultLogInMethod?.value?.value || 'email'
+   const brandDefaultLogInMethod = React.useMemo(() => {
+      if (authConfig?.loginSettings?.defaultLogInMethod?.value?.value) {
+         return authConfig?.loginSettings?.defaultLogInMethod?.value?.value
+      } else {
+         return 'email'
+      }
+   }, [authConfig])
    const loginBy = React.useMemo(() => {
       if (config?.loginSettings?.componentToRender?.value?.value) {
          return config?.loginSettings?.componentToRender?.value?.value
@@ -22,7 +27,7 @@ export const Login = ({ config }) => {
       } else {
          return 'email'
       }
-   }, [])
+   }, [config, authConfig])
    /** Brand level config for login illustration **/
    const loginIllustration = configOf('Login Illustrations', 'brand')
    const illustration =
@@ -86,7 +91,7 @@ export const Login = ({ config }) => {
                   authConfig.loginSettings?.singleLoginMethod?.value || false
                }
                loginBy={loginBy}
-               brandDefaultLogInMethod={defaultLogInMethod}
+               brandDefaultLogInMethod={brandDefaultLogInMethod}
                currentAuth={loginBy}
                showBackground={showBackground}
             />

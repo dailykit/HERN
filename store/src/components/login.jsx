@@ -64,7 +64,7 @@ export const Login = props => {
    const { t } = useTranslation()
    const showCreateOne = React.useMemo(() => {
       if (singleLoginMethod) {
-         if (loginBy === 'email') {
+         if (loginBy === 'email' || (loginBy === 'signup' && brandDefaultLogInMethod==='email')) {
             return true
          } else {
             return false
@@ -117,14 +117,14 @@ export const Login = props => {
             )}
             {defaultLogin === 'otp' && <OTPLogin callbackURL={callbackURL} />}
             {defaultLogin === 'forgotPassword' && <ForgotPassword />}
-            {defaultLogin === 'signup' && brandDefaultLogInMethod === 'otp' ? (
+            {defaultLogin === 'signup' && ( brandDefaultLogInMethod === 'otp' ? (
                <OTPLogin callbackURL={callbackURL} />
             ): (
                <Signup
                   setDefaultLogin={setDefaultLogin}
                   callbackURL={callbackURL}
                />
-            )}
+            ))}
 
             {!singleLoginMethod && (
                <>
@@ -165,7 +165,7 @@ export const Login = props => {
                </button>
             </footer>
          )}
-         {defaultLogin === 'signup' && (
+         {defaultLogin === 'signup' && showCreateOne && (
             <footer className="hern-login-v1__footer">
                <span>{t('Already have an account ?')} </span>
                <button
