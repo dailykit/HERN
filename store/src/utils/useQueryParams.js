@@ -24,6 +24,7 @@ export const useQueryParams = () => {
          setParams(qs.parse(location.search))
       }
 
+      handler()
       // Assign listeners
       history.pushState = track(history.pushState, handler)
       history.replaceState = track(history.replaceState, handler)
