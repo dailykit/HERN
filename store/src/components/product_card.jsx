@@ -346,30 +346,7 @@ export const ProductCard = props => {
             </div>
          )}
          {showModifier && data && (
-            <>{
-            (!data.isAvailable ||
-               !data.productOptions.some(
-                  ele => ele.isAvailable === true && ele.isPublished === true
-               )) ?
-            <ModifierPopupForUnAvailability
-               productData={
-                  modifierPopupConfig && modifierPopupConfig?.productData
-                     ? modifierPopupConfig?.productData
-                     : data
-               }
-               closeModifier={closeModifier}
-               showCounterBtn={modifierPopupConfig?.showCounterBtn}
-               edit={modifierPopupConfig?.edit}
-               showModifierImage={modifierPopupConfig?.showModifierImage}
-               modifierWithoutPopup={modifierWithoutPopup}
-               customProductDetails={customProductDetails}
-               config={config}
-               stepView={stepView}
-               counterButtonPosition={
-                  modifierPopupConfig?.counterButtonPosition
-               }
-            />
-            :<ModifierPopup
+            <ModifierPopup
                productData={
                   modifierPopupConfig && modifierPopupConfig?.productData
                      ? modifierPopupConfig?.productData
@@ -389,8 +366,6 @@ export const ProductCard = props => {
                   modifierPopupConfig?.counterButtonPosition
                }
             />
-            }
-            </>
          )}
       </>
    )

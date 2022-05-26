@@ -5,13 +5,13 @@ import React, {
     useImperativeHandle,
  } from 'react'
  import { Button, ModifierOptionCard, ProductCard, ModifierCategory } from '.'
- import {
-    ArrowLeftIconBG,
-    DownVector,
-    RadioIcon,
-    ShowImageIcon,
-    UpVector,
- } from '../assets/icons'
+//  import {
+//     ArrowLeftIconBG,
+//     DownVector,
+//     RadioIcon,
+//     ShowImageIcon,
+//     UpVector,
+//  } from '../assets/icons'
  import {
     camelCaseToNormalText,
     formatCurrency,
@@ -101,7 +101,10 @@ import React, {
  
     const { locationId, storeStatus, configOf } = useConfig()
     const recipeLink = useConfig('Product card').configOf('recipe-link')
- 
+    
+    const getPriceWithDiscount = (price, discount) => {
+      return price - (price * discount) / 100
+   }
    
     const recipeButton = {
        show:
@@ -146,7 +149,25 @@ import React, {
     //    return <p>Loading</p>
     // }
  
-    
+    const finalProductPrice = () => {
+      // use for product card
+      if (
+         productData?.isPopupAllowed &&
+         productData.productOptions.length > 0
+      ) {
+         return formatCurrency(
+            getPriceWithDiscount(productData.price, productData.discount) +
+               getPriceWithDiscount(
+                  productData.productOptions[0]?.price || 0,
+                  productData.productOptions[0]?.discount
+               )
+         )
+      } else {
+         return formatCurrency(
+            getPriceWithDiscount(productData.price, productData.discount)
+         )
+      }
+   }
  
     const CustomProductDetails = React.memo(() => {
        useEffect(() => {
@@ -178,7 +199,14 @@ import React, {
                    {productData?.tags?.join(',')}
                 </div>
              </div>
-    
+             <div className="hern-product-options__custom-details__left">
+               <div
+                  className="hern-product-options__custom-details__product-price"
+                  data-translation="true"
+               >
+                  {finalProductPrice()}
+               </div>
+            </div>
           </div>
        )
     })
@@ -261,7 +289,6 @@ import React, {
     
                    </div>
  
-                  
                 <div
                    style={{ padding: '0 32px' }}
                    className="hern-modifier-popup-add-to-cart-btn-parent-div"
@@ -270,14 +297,13 @@ import React, {
                    
                    <Button
                       className="hern-product-modifier-pop-up-add-to-cart-btn"
-                      style={{ padding: '16px 0px 34px 0px' }}
-                      disabled={
-                         locationId ? (storeStatus.status ? false : true) : true
-                      }
+                      style={{ padding: '16px 0px 34px 0px',
+                               cursor: 'not-allowed', 
+                              opacity: 0.7}}
                    >
                        <span>
-                                  {t('OUT OF STOCK')}&nbsp;
-                               </span>
+                        {t('OUT OF STOCK')}&nbsp;
+                         </span>
 
                    </Button>
                    )}

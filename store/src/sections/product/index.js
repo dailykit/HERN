@@ -2,7 +2,13 @@ import React from 'react'
 import { useQuery } from '@apollo/react-hooks'
 import { PRODUCT_DETAILS } from '../../graphql'
 import { useConfig } from '../../lib'
-import { Recipe, ProductCard, Loader, ModifierPopup } from '../../components'
+import {
+   Recipe,
+   ProductCard,
+   Loader,
+   ModifierPopup,
+   ModifierPopupForUnAvailability,
+} from '../../components'
 import { useRouter } from 'next/router'
 import ProductMedia from './ProductMedia'
 import { VegNonVegType } from '../../assets/icons'
@@ -71,6 +77,28 @@ export const Product = ({ config }) => {
       }
    }, [status, currentLang, productsLoading])
 
+   const isProductOutOfStock = React.useMemo(() => {
+      if (productDetails.isAvailable) {
+         if (
+            productDetails.productOptions.length > 0 &&
+            productDetails.isPopupAllowed
+         ) {
+            const availableProductOptions =
+               productDetails.productOptions.filter(
+                  option => option.isPublished && option.isAvailable
+               ).length
+            if (availableProductOptions > 0) {
+               return false
+            } else {
+               return true
+            }
+         } else {
+            return false
+         }
+      }
+      return true
+   }, [productDetails])
+
    const showProductDetailOnImage =
       config?.display?.showProductDetailOnImage?.value ??
       config?.display?.showProductDetailOnImage?.default ??
@@ -123,8 +151,21 @@ export const Product = ({ config }) => {
                   }
                )}
             >
+               {isProductOutOfStock && (
+                  <ModifierPopupForUnAvailability
+                     productData={productDetails}
+                     closeModifier={() => {}}
+                     showCounterBtn={true}
+                     modifierWithoutPopup={true}
+                     customProductDetails={true}
+                     config={config}
+                     stepView={true}
+                     counterButtonPosition={'BOTTOM'}
+                  />
+               )}
                {!showProductDetailOnImage &&
-                  !isEmpty(productDetails?.productOptions) && (
+                  !isEmpty(productDetails?.productOptions) &&
+                  !isProductOutOfStock && (
                      <ProductCard
                         data={productDetails}
                         showProductPrice={false}
@@ -144,7 +185,8 @@ export const Product = ({ config }) => {
                      />
                   )}
                {showProductDetailOnImage &&
-                  !isEmpty(productDetails?.productOptions) && (
+                  !isEmpty(productDetails?.productOptions) &&
+                  !isProductOutOfStock && (
                      <ModifierPopup
                         productData={productDetails}
                         closeModifier={() => {}}

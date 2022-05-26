@@ -658,7 +658,7 @@ export const ModifierPopup = props => {
                            .find(eachType => eachType.type == productOptionType)
                            .data.map(eachOption => {
                               if(!eachOption.isPublished){return null}
-                              else{
+                     
                               const hasRecipe =
                                  eachOption?.simpleRecipeYield?.simpleRecipe
 
@@ -675,7 +675,7 @@ export const ModifierPopup = props => {
                                        display: 'flex',
                                        justifyContent: 'space-between',
                                        marginBottom: '8px',
-                                       cursor: `${!eachOption.isAvailable ? '' : 'pointer'}`,
+                                       cursor: `${!eachOption.isAvailable ? 'not-allowed' : 'pointer'}`,
                                        opacity: `${
                                           !eachOption.isAvailable ? 0.6 : 1}`
                                     }}
@@ -726,7 +726,7 @@ export const ModifierPopup = props => {
                                     )}
                                  </div>
                               )
-                              }
+                              
                            })}
                      </ul>
                   </div>
