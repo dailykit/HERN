@@ -134,7 +134,7 @@ export const ModifierCategory = ({
                      color: 'red',
                   }}
                >
-                  {('You have to choose this category.')}
+                  {'You have to choose this category.'}
                </span>
             </>
          )}
@@ -166,7 +166,7 @@ const ModifierOptionWrapper = ({
    setNestedSelectedModifierOptions,
    renderConditionText,
    renderIcon,
-   nestedErrorCategories
+   nestedErrorCategories,
 }) => {
    const [showAdditionalModifierOptions, setShowAdditionalModifierOptions] =
       React.useState(false)
@@ -187,19 +187,20 @@ const ModifierOptionWrapper = ({
          {showAdditionalModifierOptions &&
             option.additionalModifierTemplate.categories.map(
                eachAdditionalCategory => (
-                  <ModifierCategory
-                     key={`${eachAdditionalCategory.id} - ${option.id}`}
-                     category={eachAdditionalCategory}
-                     selectedModifierOptions={nestedSelectedModifierOptions}
-                     setSelectedModifierOptions={
-                        setNestedSelectedModifierOptions
-                     }
-                     parentModifierOptionId={option.id}
-                     renderConditionText={renderConditionText}
-                     renderIcon={renderIcon}
-                     selectModifierOption={selectModifierOption}
-                     errorCategories={nestedErrorCategories}
-                  />
+                  <Flex key={`${eachAdditionalCategory.id} - ${option.id}`} margin="0 0 0 20px">
+                     <ModifierCategory
+                        category={eachAdditionalCategory}
+                        selectedModifierOptions={nestedSelectedModifierOptions}
+                        setSelectedModifierOptions={
+                           setNestedSelectedModifierOptions
+                        }
+                        parentModifierOptionId={option.id}
+                        renderConditionText={renderConditionText}
+                        renderIcon={renderIcon}
+                        selectModifierOption={selectModifierOption}
+                        errorCategories={nestedErrorCategories}
+                     />
+                  </Flex>
                )
             )}
       </div>
