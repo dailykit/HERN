@@ -1,26 +1,20 @@
 import React from 'react'
 import { Flex, Spacer, Text } from '@dailykit/ui'
 import styled, { css } from 'styled-components'
-
-import CircleIcon from '../../../../shared/assets/icons/Circle'
-import CircleCheckedIcon from '../../../../shared/assets/icons/CircleChecked'
-import SquareIcon from '../../../../shared/assets/icons/Square'
-import SquareCheckedIcon from '../../../../shared/assets/icons/SquareChecked'
-import { calcDiscountedPrice, currencyFmt } from '../../../../shared/utils'
 import { getModifiersValidator } from './utils'
+import { DownVector, UpVector } from '../../assets/svgs/Vector'
+import { useModifier } from '../../utils/useModifier'
+import { ModifierCategory } from './modifierCategory'
 
-const Modifiers = ({ data, handleChange }) => {
-   const [
-      checkOptionAddValidity,
-      checkModifierStateValidity,
-   ] = React.useMemo(() => getModifiersValidator(data), [data])
-
-   const [selectedModifiers, setSelectedModifiers] = React.useState([])
-
-   React.useEffect(() => {
-      const isValid = checkModifierStateValidity(selectedModifiers)
-      handleChange({ isValid, selectedModifiers })
-   }, [selectedModifiers.length])
+const Modifiers = ({
+   data,
+   handleChange,
+   additionalModifiers,
+   productOption,
+   setProductOption,
+   errorCategories,
+   nestedErrorCategories
+}) => {
 
    const renderConditionText = category => {
       if (category.type === 'single') {
@@ -42,115 +36,138 @@ const Modifiers = ({ data, handleChange }) => {
             }
          } else {
             if (category.limits.max) {
-               return 'CHOOSE AS MANY AS YOU LIKE'
-            } else {
                return `CHOOSE AS MANY AS YOU LIKE UPTO ${category.limits.max}`
+            } else {
+               return 'CHOOSE AS MANY AS YOU LIKE'
             }
          }
       }
    }
 
-   const selectModifierOption = option => {
-      const alreadyExists = selectedModifiers.find(
-         item => item.data[0].modifierOptionId === option.id
-      )
-      if (alreadyExists) {
-         // remove item
-         const updatedItems = selectedModifiers.filter(
-            item => item.data[0].modifierOptionId !== option.id
-         )
-         setSelectedModifiers(updatedItems)
-         console.log('Removing...')
-      } else {
-         // add item
-         const isValid = checkOptionAddValidity(selectedModifiers, option)
-         if (isValid) {
-            setSelectedModifiers([...selectedModifiers, option.cartItem])
-            console.log('Adding...')
-         } else {
-            console.log('Cannot add!')
-         }
-      }
-   }
+   const {
+      selectedModifierOptions,
+      setSelectedModifierOptions,
+      status,
+   } = useModifier({
+      productOption,
+      forNewItem: false,
+      edit: false,
+      setProductOption,
+      simpleModifier: true,
+   })
 
-   const renderIcon = (type, option) => {
-      const exists = selectedModifiers.find(
-         op => op.data[0].modifierOptionId === option.id
-      )
-      if (type === 'single') {
-         return exists ? (
-            <CircleCheckedIcon color="#367BF5" />
-         ) : (
-            <CircleIcon color="#aaa" />
-         )
-      } else {
-         return exists ? (
-            <SquareCheckedIcon color="#367BF5" />
-         ) : (
-            <SquareIcon color="#aaa" />
-         )
-      }
-   }
+   const {
+      selectedModifierOptions: nestedSelectedModifierOptions,
+      setSelectedModifierOptions: setNestedSelectedModifierOptions,
+      status: nestedStatus,
+   } = useModifier({
+      productOption,
+      forNewItem: false,
+      edit: false,
+      setProductOption,
+      nestedModifier: true,
+   })
+
+   React.useEffect(() => {
+      // const isValid = checkModifierStateValidity(selectedModifiers)
+      handleChange({
+         isValid: true,
+         selectedModifiers: [
+            ...selectedModifierOptions.single,
+            ...selectedModifierOptions.multiple,
+         ],
+         selectedNestedModifiers: [
+            ...nestedSelectedModifierOptions.single,
+            ...nestedSelectedModifierOptions.multiple,
+         ],
+      })
+   }, [selectedModifierOptions, nestedSelectedModifierOptions])
 
    if (!data) return null
    return (
       <>
          <Text as="text1">Modifiers</Text>
          <Spacer size="12px" />
+         {additionalModifiers.length > 0 &&
+            additionalModifiers.map(eachAdditionalModifier => (
+               <AdditionalModifiers
+                  eachAdditionalModifier={eachAdditionalModifier}
+                  renderConditionText={renderConditionText}
+                  selectedModifierOptions={selectedModifierOptions}
+                  setSelectedModifierOptions={setSelectedModifierOptions}
+                  nestedSelectedModifierOptions={nestedSelectedModifierOptions}
+                  setNestedSelectedModifierOptions={
+                     setNestedSelectedModifierOptions
+                  }
+                  errorCategories={errorCategories}
+                  nestedErrorCategories={nestedErrorCategories}
+               />
+            ))}
          {data.categories.map(category => (
-            <Styles.MCategory key={category.id}>
-               <Flex container align="center">
-                  <Text as="text2">{category.name}</Text>
-                  <Spacer xAxis size="8px" />
-                  <Text as="subtitle">{renderConditionText(category)}</Text>
-               </Flex>
-               <Spacer size="4px" />
-               {category.options.map(option => (
-                  <Styles.Option
-                     key={option.id}
-                     onClick={() =>
-                        option.isActive && selectModifierOption(option)
-                     }
-                     faded={!option.isActive}
-                  >
-                     <Flex container alignItems="center">
-                        {renderIcon(category.type, option)}
-                        <Spacer xAxis size="8px" />
-                        {Boolean(option.image) && (
-                           <>
-                              <Styles.OptionImage src={option.image} />
-                              <Spacer xAxis size="8px" />
-                           </>
-                        )}
-                        <Text as="text2"> {option.name} </Text>
-                     </Flex>
-                     <Flex container alignItems="center">
-                        {option.discount ? (
-                           <>
-                              <Styles.Price strike>
-                                 {currencyFmt(option.price)}
-                              </Styles.Price>
-                              <Styles.Price>
-                                 +{' '}
-                                 {currencyFmt(
-                                    calcDiscountedPrice(
-                                       option.price,
-                                       option.discount
-                                    )
-                                 )}
-                              </Styles.Price>
-                           </>
-                        ) : (
-                           <Styles.Price>
-                              + {currencyFmt(option.price)}
-                           </Styles.Price>
-                        )}
-                     </Flex>
-                  </Styles.Option>
-               ))}
-            </Styles.MCategory>
+            <ModifierCategory
+               category={category}
+               key={category.id}
+               renderConditionText={renderConditionText}
+               selectedModifierOptions={selectedModifierOptions}
+               setSelectedModifierOptions={setSelectedModifierOptions}
+               errorCategories={errorCategories}
+               nestedErrorCategories={nestedErrorCategories}
+            />
          ))}
       </>
+   )
+}
+
+const AdditionalModifiers = ({
+   eachAdditionalModifier,
+   renderConditionText,
+   selectedModifierOptions,
+   setSelectedModifierOptions,
+   nestedSelectedModifierOptions,
+   setNestedSelectedModifierOptions,
+   errorCategories,
+   nestedErrorCategories
+}) => {
+   const additionalModifiersType = React.useMemo(
+      () => eachAdditionalModifier.type == 'hidden',
+      [eachAdditionalModifier]
+   )
+   const [showCustomize, setShowCustomize] = React.useState(
+      !Boolean(additionalModifiersType)
+   )
+   return (
+      <div className="">
+         <div
+            className=""
+            onClick={() => setShowCustomize(prev => !prev)}
+            style={{
+               display: 'flex',
+               justifyContent: 'space-between',
+               alignItems: 'center',
+               cursor: 'pointer',
+            }}
+         >
+            <span className="" data-translation="true">
+               {eachAdditionalModifier.label}
+            </span>
+            {showCustomize ? <UpVector size={18} /> : <DownVector size={18} />}
+         </div>
+         {eachAdditionalModifier.modifier.categories.map(category => (
+            <ModifierCategory
+               category={category}
+               key={category.id}
+               renderConditionText={renderConditionText}
+               selectedModifierOptions={selectedModifierOptions}
+               setSelectedModifierOptions={setSelectedModifierOptions}
+               nestedSelectedModifierOptions={nestedSelectedModifierOptions}
+               setNestedSelectedModifierOptions={
+                  setNestedSelectedModifierOptions
+               }
+               errorCategories={errorCategories}
+               nestedErrorCategories={nestedErrorCategories}
+            />
+         ))}
+      </div>
    )
 }
 
