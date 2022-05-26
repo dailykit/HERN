@@ -388,13 +388,14 @@ export const ModifierPopup = props => {
          allNestedSelectedOptionsPriceWithDiscount
 
       return {
+         totalProductPrice: totalPrice,
          total: totalPrice * quantity,
          totalWithoutDiscount: totalWithoutDiscount * quantity,
          totalDiscount: (totalWithoutDiscount - totalPrice) * quantity,
       }
    }
-   const { total, totalWithoutDiscount, totalDiscount } = totalAmount()
-   setProductTotalAmount && setProductTotalAmount(total);
+   const { totalProductPrice, total, totalWithoutDiscount, totalDiscount } = totalAmount()
+   setProductTotalAmount && setProductTotalAmount(totalProductPrice);
 
    //increment click
    const incrementClick = () => {
