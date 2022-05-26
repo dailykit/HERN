@@ -10,7 +10,7 @@ const RecurrencesForm = () => {
 
    React.useEffect(() => {
       if (!tab) {
-         addTab('Recurrences', `/menu/settings/recurrences/${params.type}`)
+         addTab('Recurrences', `/menu/recurrences/${params.type}`)
       }
    }, [tab, addTab])
    return (
