@@ -47,7 +47,9 @@ export const FeaturedCollection = ({ config }) => {
    const date = React.useMemo(() => new Date(Date.now()).toISOString(), [])
    const collectionIdArray = React.useMemo(
       () =>
-         config?.data?.collectionData?.value?.map(collection => collection.id),
+         config?.data?.collectionData?.value?.map(
+            collection => collection.id
+         ) || [],
       [config]
    )
    const menuType = config?.display?.dropdown?.value[0]?.value

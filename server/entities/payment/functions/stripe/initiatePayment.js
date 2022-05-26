@@ -15,7 +15,8 @@ const initiatePayment = async arg => {
          paymentCustomerId,
          requires3dSecure,
          amount,
-         oldAmount
+         oldAmount,
+         metaData
       } = arg
       const organizationId = await get_env('ORGANIZATION_ID')
       const stripeAccountType = await get_env('STRIPE_ACCOUNT_TYPE')
@@ -27,9 +28,9 @@ const initiatePayment = async arg => {
       let requiredData = null
       const getPaymentLoggerData = async (cartPaymentId, invoice) => {
          let payment_intent = null
-         if (invoice.paymentIntent) {
+         if (invoice.payment_intent) {
             payment_intent = await _stripe.paymentIntents.retrieve(
-               invoice.paymentIntent
+               invoice.payment_intent
             )
          }
          return {
@@ -131,7 +132,8 @@ const initiatePayment = async arg => {
             }),
             metadata: {
                organizationId,
-               cartPaymentId: transferGroup
+               cartPaymentId: transferGroup,
+               ...(metaData ? metaData : {})
             }
          })
          console.log('invoice created', invoice.id)
@@ -165,11 +167,9 @@ const initiatePayment = async arg => {
 
          // again here handleInvoice just updates the cartPayment and stripePaymentHistory table
          console.log('executing paymentLogger for  invoice pay')
-         requiredData = await getPaymentLoggerData(
-            transferGroup,
-            finalizedInvoice
-         )
-         await paymentLogger(result)
+         requiredData = await getPaymentLoggerData(transferGroup, result)
+
+         await paymentLogger(requiredData)
          console.log('executing paymentLogger for after invoice pay')
 
          return {

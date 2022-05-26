@@ -63,7 +63,7 @@ export const KioskLocation = () => {
             data: { kiosk = {} },
          },
       }) => {
-         console.log('data is:', kiosk)
+         // console.log('data is:', kiosk)
          setTitle({
             value: kiosk[0].kioskLabel || '',
             accessUrl: kiosk[0]?.accessUrl || '',
@@ -85,7 +85,7 @@ export const KioskLocation = () => {
                data: { brands = {} },
             },
          }) => {
-            console.log('brands data', brands)
+            // console.log('brands data', brands)
             const brandsData = brands?.nodes.map(brand => {
                return {
                   id: brand?.id || '',
@@ -97,7 +97,7 @@ export const KioskLocation = () => {
          },
       }
    )
-   console.log('brandlist made now::>', brandList)
+   // console.log('brandlist made now::>', brandList)
 
    React.useEffect(() => {
       if (!tab && !loading && !isEmpty(kiosk)) {
@@ -219,7 +219,6 @@ export const KioskLocation = () => {
                                  })
                               }
                               placeholder="Enter brand domain"
-                              // addOption={() => console.log('Brand Added')}
                            />
                         </div>
                      </div>
@@ -281,7 +280,7 @@ export const KioskLocation = () => {
             <HorizontalTabList>
                <HorizontalTab>Basic Info</HorizontalTab>
                <HorizontalTab>Link Order Tab</HorizontalTab>
-               <HorizontalTab>Kiosk Config</HorizontalTab>
+               {/* <HorizontalTab>Kiosk Config</HorizontalTab> */}
             </HorizontalTabList>
             <HorizontalTabPanels>
                <HorizontalTabPanel style={{ height: '100%' }}>
@@ -290,22 +289,14 @@ export const KioskLocation = () => {
                <HorizontalTabPanel>
                   <LinkOrderTab />
                </HorizontalTabPanel>
-               <HorizontalTabPanel>
+               {/* <HorizontalTabPanel>
                   <KioskConfig />
-               </HorizontalTabPanel>
+               </HorizontalTabPanel> */}
             </HorizontalTabPanels>
          </HorizontalTabs>
          <Banner id="brands-app-brands-brand-details-bottom" />
       </Wrapper>
    )
 }
-// const KioskLocation = ()=>{
-//    const params = useParams()
-//    console.log("id:",params.id)
-//    return (
-//       <div>
-//          <h1>hello</h1>
-//       </div>
-//    )
-// }
+
 export default KioskLocation

@@ -258,7 +258,7 @@ export const renderComponentByName = (fold, options) => {
       [brand]/account/wallet
       */
       case 'Wallet':
-         return <Wallet />
+         return <Wallet config={fold.config} />
       /*ROUTES :
       [brand]/account/referrals
       */

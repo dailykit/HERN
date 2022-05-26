@@ -4,7 +4,7 @@ import { Slide } from 'react-slideshow-image'
 import { useTranslation } from '../context'
 import { formatCurrency, isClient } from '../utils'
 import { HernLazyImage } from '../utils/hernImage'
-import { ModifierPopup } from './index'
+import { ModifierPopup, ModifierPopupForUnAvailability } from './index'
 // if (isClient) {
 //    import('lazysizes/plugins/unveilhooks/ls.unveilhooks').then(module => module)
 // }

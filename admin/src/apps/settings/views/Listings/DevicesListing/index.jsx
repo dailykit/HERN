@@ -42,7 +42,18 @@ const DevicesListing = () => {
    const [computers, setComputers] = React.useState([])
    const [isLoading, setIsLoading] = React.useState(true)
    const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
-   const { data: { admins = [] } = {} } = useQuery(DEVICES.PRINTNODE_DETAILS)
+   const { data: { printNodeConfigs = [] } = {} } = useQuery(
+      DEVICES.PRINTNODE_DETAILS,
+      {
+         variables: {
+            where: {
+               name: {
+                  _eq: 'printnode',
+               },
+            },
+         },
+      }
+   )
    const { loading, error } = useSubscription(DEVICES.LIST, {
       onSubscriptionData: ({ subscriptionData: { data = {} } }) => {
          setComputers(data.computers)
@@ -86,31 +97,36 @@ const DevicesListing = () => {
             </ComboButton>
          </Flex>
          <section>
-            <Text as="p">Email: {admins.length > 0 && admins[0].email}</Text>
-            <Text as="p">
-               Password: {admins.length > 0 && admins[0].password.slice(0, 8)}
+            <Text as="title">
+               Email:{' '}
+               {printNodeConfigs.length > 0 && printNodeConfigs[0].value.email}
+            </Text>
+            <Text as="title">
+               Password:{' '}
+               {printNodeConfigs.length > 0 &&
+                  printNodeConfigs[0].value.password}
             </Text>
             <Spacer size="16px" />
             <Text as="h2">Support Links</Text>
             <Spacer size="12px" />
             <StyledLinks>
                <li>
-                  <a href="https://www.printnode.com/en/download">
+                  <a href="https://www.printnode.com/en/download" target="_blank">
                      Download Printnode
                   </a>
                </li>
                <li>
-                  <a href="https://www.printnode.com/en/docs/installation">
+                  <a href="https://www.printnode.com/en/docs/installation" target="_blank">
                      Installation
                   </a>
                </li>
                <li>
-                  <a href="https://www.printnode.com/en/docs/supported-printers">
+                  <a href="https://www.printnode.com/en/docs/supported-printers" target="_blank">
                      Supported Printers
                   </a>
                </li>
                <li>
-                  <a href="https://www.printnode.com/en/docs/supported-scales">
+                  <a href="https://www.printnode.com/en/docs/supported-scales" target="_blank">
                      Supported Scales
                   </a>
                </li>

@@ -268,4 +268,21 @@ export const QUERIES = {
          }
       `,
    },
+   BRAND_LOCATION: {
+      LIST: gql`
+         query BRAND_LOCATIONS($where: brands_brand_location_bool_exp!) {
+            brands_brand_location(where: $where) {
+               id
+               location {
+                  label
+                  locationAddress
+                  city
+                  state
+                  zipcode
+                  id
+               }
+            }
+         }
+      `,
+   },
 }
