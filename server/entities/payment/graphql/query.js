@@ -18,6 +18,7 @@ query CART_PAYMENT($id: Int!) {
    stripeInvoiceId
    paymentRetryAttempt
    usedAvailablePaymentOptionId
+   metaData
    cart{
       brand{
         domain
@@ -26,6 +27,16 @@ query CART_PAYMENT($id: Int!) {
  }
 }
 `
+
+export const BRAND = `
+query BRAND($id: Int!) {
+   brand(id: $id) {
+     domain
+     id
+   }
+ } 
+`
+
 export const CART_PAYMENTS = `
 query CART_PAYMENTS($where: order_cartPayment_bool_exp!) {
   cartPayments(where: $where) {

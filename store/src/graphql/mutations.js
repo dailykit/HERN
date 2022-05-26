@@ -476,6 +476,16 @@ export const UPDATE_CART_ITEMS = gql`
    }
 `
 
+export const CREATE_CART_PAYMENT = gql`
+   mutation CREATE_CART_PAYMENT($object: order_cartPayment_insert_input!) {
+      createCartPayment(object: $object) {
+         id
+         cartId
+         paymentStatus
+      }
+   }
+`
+
 export const UPDATE_CART_PAYMENT = gql`
    mutation UPDATE_CART_PAYMENT(
       $id: Int!

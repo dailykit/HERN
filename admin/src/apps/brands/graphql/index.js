@@ -581,6 +581,7 @@ export const KIOSK = {
          ) {
             label
             id
+            posist_tabType
          }
       }
    `,

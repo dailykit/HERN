@@ -39,13 +39,43 @@ export const handlePaymentWebhook = async (req, res) => {
          }
          let url
          if (process.env.NODE_ENV === 'development') {
-            url = `/checkout?id=${result.data.cartId}&payment=${
-               paymentStatus[result.data.paymentStatus]
-            }`
+            if (result.data.cartId) {
+               url = `http://localhost:3000/checkout?id=${
+                  result.data.cartId
+               }&payment=${paymentStatus[result.data.paymentStatus]}`
+            } else {
+               let redirectPath = new URL(
+                  `http://localhost:3000/${result.data.metaData.redirectTo}`
+               )
+               redirectPath.searchParams.append(
+                  'paymentId',
+                  result.data.cartPaymentId
+               )
+               redirectPath.searchParams.append(
+                  'payment',
+                  paymentStatus[result.data.paymentStatus]
+               )
+               url = redirectPath.href
+            }
          } else {
-            url = `https://${result.data.domain}/checkout?id=${
-               result.data.cartId
-            }&payment=${paymentStatus[result.data.paymentStatus]}`
+            if (result.data.cartId) {
+               url = `https://${result.data.domain}/checkout?id=${
+                  result.data.cartId
+               }&payment=${paymentStatus[result.data.paymentStatus]}`
+            } else {
+               let redirectPath = new URL(
+                  `https://${result.data.domain}/${result.data.metaData.redirectTo}`
+               )
+               redirectPath.searchParams.append(
+                  'paymentId',
+                  result.data.cartPaymentId
+               )
+               redirectPath.searchParams.append(
+                  'payment',
+                  paymentStatus[result.data.paymentStatus]
+               )
+               url = redirectPath.href
+            }
          }
          return res.redirect(url)
       }
