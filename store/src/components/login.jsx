@@ -45,6 +45,7 @@ export const Login = props => {
    //props
    const {
       loginBy = 'email',
+      brandDefaultLogInMethod,
       forceLogin = false,
       singleLoginMethod = false,
       callbackURL,
@@ -116,7 +117,9 @@ export const Login = props => {
             )}
             {defaultLogin === 'otp' && <OTPLogin callbackURL={callbackURL} />}
             {defaultLogin === 'forgotPassword' && <ForgotPassword />}
-            {defaultLogin === 'signup' && (
+            {defaultLogin === 'signup' && brandDefaultLogInMethod === 'otp' ? (
+               <OTPLogin callbackURL={callbackURL} />
+            ): (
                <Signup
                   setDefaultLogin={setDefaultLogin}
                   callbackURL={callbackURL}

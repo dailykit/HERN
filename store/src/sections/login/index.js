@@ -12,6 +12,8 @@ export const Login = ({ config }) => {
    const { isAuthenticated, isLoading } = useUser()
    const router = useRouter()
 
+   const defaultLogInMethod =
+      authConfig?.loginSettings?.defaultLogInMethod?.value?.value || 'email'
    const loginBy = React.useMemo(() => {
       if (config?.loginSettings?.componentToRender?.value?.value) {
          return config?.loginSettings?.componentToRender?.value?.value
@@ -84,6 +86,7 @@ export const Login = ({ config }) => {
                   authConfig.loginSettings?.singleLoginMethod?.value || false
                }
                loginBy={loginBy}
+               brandDefaultLogInMethod={defaultLogInMethod}
                currentAuth={loginBy}
                showBackground={showBackground}
             />
