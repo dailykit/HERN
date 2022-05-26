@@ -896,9 +896,10 @@ const Option = ({
                      id={`discount-${option.id}`}
                      name={`discount-${option.id}`}
                      onBlur={() => handleBlur('discount')}
-                     onChange={e =>
-                        setDiscount({ ...discount, value: e.target.value })
-                     }
+                     onChange={e =>{
+                        if(e.target.value>100){ e.target.value=discount.value; return };
+                        return setDiscount({ ...discount, value: e.target.value })
+                     }}
                      value={discount.value}
                      placeholder="Enter discount"
                      hasError={
