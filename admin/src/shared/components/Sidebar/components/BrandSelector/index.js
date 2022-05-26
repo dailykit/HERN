@@ -122,6 +122,13 @@ const BrandSelector = ({ mouseOver }) => {
          }
       },
    })
+
+   // set brand list in brand context
+   useEffect(() => {
+      if (brandList.length)
+         setBrandContext(prevState => ({ ...prevState, brandList }))
+   }, [brandList])
+   
    console.log('brandContext', brandContext)
    // console.log('brandList', brandList)
 
