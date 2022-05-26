@@ -318,10 +318,12 @@ const Pricing = ({ state }) => {
                            type: 'SET_VALUE',
                            payload: {
                               field: 'discount',
-                              value: parseFloat(value),
+                              value: value>100 ? parseFloat(_state.discount.value) : parseFloat(value),
                            },
                         })
-                        changeDiscount(value + '')
+                        if(value<=100){
+                           changeDiscount(value + '')
+                        }
                      }}
                   />
                </Form.Group>
