@@ -408,6 +408,7 @@ export const Plan = ({ plan, handlePlanClick, itemCount }) => {
                         </span>
                      )}
 
+                     <br />
                      <span
                         style={{
                            color: `${
