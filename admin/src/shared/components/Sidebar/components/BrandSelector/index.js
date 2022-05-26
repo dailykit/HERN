@@ -156,18 +156,18 @@ const BrandSelector = ({ mouseOver }) => {
                               </Avatar>
                            )}
                         </div>
-                        <div>
+                        <div
+                           onClick={() => {
+                              setBrandArrowClicked(!brandArrowClicked)
+                              setLocationArrowClicked(false)
+                           }}
+                        >
                            <StyledBrandName>
                               <p>Brand</p>
                               <Spacer size="2px" />
                               <p>{brandContext.brandName}</p>
                            </StyledBrandName>
-                           <span
-                              onClick={() => {
-                                 setBrandArrowClicked(!brandArrowClicked)
-                                 setLocationArrowClicked(false)
-                              }}
-                           >
+                           <span>
                               {brandArrowClicked ? <ArrowUp /> : <ArrowDown />}
                            </span>
                         </div>
@@ -237,18 +237,18 @@ const BrandSelector = ({ mouseOver }) => {
                   {brandList[
                      brandList.findIndex(obj => obj.id === brandContext.brandId)
                   ]?.location.length > 0 ? (
-                     <div>
-                        <StyledBrandLocations>
+                     <div style={{cursor:'pointer'}}>
+                        <StyledBrandLocations
+                           onClick={() => {
+                              setLocationArrowClicked(!locationArrowClicked)
+                              setBrandArrowClicked(false)
+                           }}
+                        >
                            <div>
                               <span>Location</span>
                               <span>{brandContext.locationLabel}</span>
                            </div>
-                           <div
-                              onClick={() => {
-                                 setLocationArrowClicked(!locationArrowClicked)
-                                 setBrandArrowClicked(false)
-                              }}
-                           >
+                           <div>
                               {locationArrowClicked ? (
                                  <ArrowUp />
                               ) : (

@@ -24,7 +24,23 @@ export const CustomArea = props => {
    const [productCartItemIds, setProductCartItemIds] = React.useState([])
    const [showChooseIncreaseType, setShowChooseIncreaseType] = useState(false)
    const [showModifierPopup, setShowModifierPopup] = React.useState(false)
-
+   const isProductOutOfStock = React.useMemo(() => {
+      if (data.isAvailable) {
+         if (data.productOptions.length > 0 && data.isPopupAllowed) {
+            const availableProductOptions = data.productOptions.filter(
+               option => option.isPublished && option.isAvailable
+            ).length
+            if (availableProductOptions > 0) {
+               return false
+            } else {
+               return true
+            }
+         } else {
+            return false
+         }
+      }
+      return true
+   }, [data])
    const { t } = useTranslation()
 
    React.useLayoutEffect(() => {
@@ -285,46 +301,64 @@ export const CustomArea = props => {
                modifierWithoutPopup={false}
             />
          )}
-         {availableQuantityInCart === 0 ? (
+         {isProductOutOfStock ? (
             <Button
                className={classNames('hern-custom-area-add-btn', {
                   'hern-custom-area-add-btn--rounded':
                      addToCartButtonConfig?.variant?.value?.value === 'rounded',
                })}
-               type="outline"
-               onClick={async () => {
-                  if (!locationId) {
-                     setShowLocationSelectionPopup(true)
-                  } else {
-                     if (data.productOptions.length > 0) {
-                        setProductModifier(data)
-                        setShowModifierPopup(true)
-                     } else {
-                        await addToCart(data.defaultCartItem, 1)
-                     }
-                  }
-               }}
             >
-               {t(`${addToCartButtonConfig?.label?.value ?? 'ADD'}`)}
+               {t(`${addToCartButtonConfig?.label?.value ?? 'Out Of Stock'}`)}
             </Button>
          ) : (
-            <CounterButton
-               count={availableQuantityInCart}
-               incrementClick={async () => {
-                  if (data.productOptions.length > 0 && data.isPopupAllowed) {
-                     setShowChooseIncreaseType(true)
-                  } else {
-                     await addToCart(data.defaultCartItem, 1)
-                  }
-               }}
-               decrementClick={() => {
-                  removeCartItems([
-                     productCartItemIds[availableQuantityInCart - 1],
-                  ])
-               }}
-               showDeleteButton
-            />
+            <>
+               {availableQuantityInCart === 0 ? (
+                  <Button
+                     className={classNames('hern-custom-area-add-btn', {
+                        'hern-custom-area-add-btn--rounded':
+                           addToCartButtonConfig?.variant?.value?.value ===
+                           'rounded',
+                     })}
+                     type="outline"
+                     onClick={async () => {
+                        if (!locationId) {
+                           setShowLocationSelectionPopup(true)
+                        } else {
+                           if (data.productOptions.length > 0) {
+                              setProductModifier(data)
+                              setShowModifierPopup(true)
+                           } else {
+                              await addToCart(data.defaultCartItem, 1)
+                           }
+                        }
+                     }}
+                  >
+                     {t(`${addToCartButtonConfig?.label?.value ?? 'ADD'}`)}
+                  </Button>
+               ) : (
+                  <CounterButton
+                     count={availableQuantityInCart}
+                     incrementClick={async () => {
+                        if (
+                           data.productOptions.length > 0 &&
+                           data.isPopupAllowed
+                        ) {
+                           setShowChooseIncreaseType(true)
+                        } else {
+                           await addToCart(data.defaultCartItem, 1)
+                        }
+                     }}
+                     decrementClick={() => {
+                        removeCartItems([
+                           productCartItemIds[availableQuantityInCart - 1],
+                        ])
+                     }}
+                     showDeleteButton
+                  />
+               )}
+            </>
          )}
+
          {data.productOptions.length > 0 && <span>{t('Customizable')}</span>}
       </div>
    )

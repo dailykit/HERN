@@ -10,10 +10,12 @@ import {
    InlineLoader,
    CreateManualOrder,
 } from '../../../../../shared/components'
+import { BrandContext } from '../../../../../App'
 
 export const Carts = () => {
    const { tab, addTab } = useTabs()
    const [isModeTunnelOpen, setIsModeTunnelOpen] = React.useState(false)
+   const [brandContext] = React.useContext(BrandContext)
 
    React.useEffect(() => {
       if (!tab) {
@@ -39,6 +41,7 @@ export const Carts = () => {
          <CreateManualOrder
             isModeTunnelOpen={isModeTunnelOpen}
             setIsModeTunnelOpen={setIsModeTunnelOpen}
+            brandId={brandContext.brandId}
          />
       </Flex>
    )

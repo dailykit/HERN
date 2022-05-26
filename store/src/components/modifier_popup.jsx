@@ -58,8 +58,10 @@ export const ModifierPopup = props => {
    const [productOption, setProductOption] = useState(
       productData.productOptions.find(
          x => x.id === productData.defaultProductOptionId
-      ) || productData.productOptions[0]
+      ) || productData.productOptions.find(x => x.isPublished && x.isAvailable)
    ) // for by default choose one product option
+   // console.log("product option needed",productData,productOption)
+
    const [quantity, setQuantity] = useState(1)
    const [isModifierOptionsViewOpen, setIsModifierOptionsViewOpen] =
       useState(false) // used only when --> product option has modifier options and mobile view open
@@ -336,7 +338,7 @@ export const ModifierPopup = props => {
 
    //total amount for this item
    const totalAmount = () => {
-      const productOptionPrice = productOption.price
+      const productOptionPrice = productOption.price 
       const allSelectedOptions = [
          ...selectedModifierOptions.single,
          ...selectedModifierOptions.multiple,
@@ -371,7 +373,7 @@ export const ModifierPopup = props => {
       )
       const totalProductionOptionsPriceWithDiscount = getPriceWithDiscount(
          productOptionPrice,
-         productOption.discount
+         productOption.discount 
       )
       const totalWithoutDiscount =
          productData.price +
@@ -655,6 +657,8 @@ export const ModifierPopup = props => {
                         {productOptionsGroupedByProductOptionType
                            .find(eachType => eachType.type == productOptionType)
                            .data.map(eachOption => {
+                              if(!eachOption.isPublished){return null}
+                     
                               const hasRecipe =
                                  eachOption?.simpleRecipeYield?.simpleRecipe
 
@@ -671,9 +675,12 @@ export const ModifierPopup = props => {
                                        display: 'flex',
                                        justifyContent: 'space-between',
                                        marginBottom: '8px',
-                                       cursor: 'pointer',
+                                       cursor: `${!eachOption.isAvailable ? 'not-allowed' : 'pointer'}`,
+                                       opacity: `${
+                                          !eachOption.isAvailable ? 0.6 : 1}`
                                     }}
                                     onClick={e => {
+                                       if (eachOption.isAvailable){
                                        setProductOption(eachOption)
                                        if (
                                           showModifiers &&
@@ -681,6 +688,7 @@ export const ModifierPopup = props => {
                                        ) {
                                           setIsModifierOptionsViewOpen(true)
                                        }
+                                    }
                                     }}
                                  >
                                     <li data-translation="true">
@@ -718,6 +726,7 @@ export const ModifierPopup = props => {
                                     )}
                                  </div>
                               )
+                              
                            })}
                      </ul>
                   </div>
