@@ -62,7 +62,7 @@ export const useKioskMenu = collectionIds => {
    })
 
    // get all products from productIds getting from PRODUCT_BY_CATEGORY
-   const { loading: productsLoading, error: productsError } = useQuery(
+   const { loading: productsLoading, error: productsError } = useSubscription(
       PRODUCTS,
       {
          skip: menuData.isMenuLoading,
@@ -71,12 +71,15 @@ export const useKioskMenu = collectionIds => {
             params: argsForByLocation,
          },
          // fetchPolicy: 'network-only',
-         onCompleted: data => {
-            if (data && data.products.length && hydratedMenu.length === 0) {
+         onSubscriptionData: ({ subscriptionData }) => {
+            if (
+               subscriptionData.data &&
+               subscriptionData.data.products.length 
+            ) {
                const updatedMenu = menuData.categories.map(category => {
                   const updatedProducts = category.products
                      .map(productId => {
-                        const found = data.products.find(
+                        const found = subscriptionData.data.products.find(
                            ({ id }) => id === productId
                         )
                         if (found) {

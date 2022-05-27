@@ -68,7 +68,7 @@ export const PromotionCarousal = props => {
       }
    }, [componentConfig])
 
-   const { data: productsData } = useQuery(PRODUCTS, {
+   const { data: productsData } = useSubscription(PRODUCTS, {
       skip: productIds?.length === 0,
       variables: {
          ids: productIds,

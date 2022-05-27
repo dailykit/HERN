@@ -1309,7 +1309,7 @@ export const PRODUCTS_BY_CATEGORY = gql`
    }
 `
 export const PRODUCTS = gql`
-   query Products($ids: [Int!]!, $params: jsonb!) {
+   subscription Products($ids: [Int!]!, $params: jsonb!) {
       products(where: { isArchived: { _eq: false }, id: { _in: $ids } }) {
          id
          name
