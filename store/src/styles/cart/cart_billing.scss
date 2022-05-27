@@ -1,32 +1,36 @@
+.hern-cart-billing {
+   border: 1px solid rgba(51, 51, 51, 0.1);
+   box-shadow: 0px 1px 10px rgba(0, 0, 0, 0.06);
+   border-radius: 4px;
+   margin: 12px 0;
+   // padding: 12px;
+   background-color: #fff;
+}
 .hern-cart-billing__header {
-   margin-top: 0.75rem;
-   margin-bottom: 0.563rem;
    height: 2.5rem;
-   display: -webkit-box;
-   display: -webkit-flex;
-   display: -ms-flexbox;
    display: flex;
-   -webkit-align-items: center;
-   -webkit-box-align: center;
-   -ms-flex-align: center;
    align-items: center;
-   -webkit-box-pack: justify;
-   -ms-flex-pack: justify;
+   padding: 12px;
+   border-bottom: 1px solid rgba(51, 51, 51, 0.1);
 }
 .hern-cart-billing__heading {
-   font-size: 0.98rem;
-   font-family: inherit;
-   line-height: 1.75rem;
-   color: #3f4441;
-   font-weight: 400;
-   margin-right: 7px;
-
-   .hern-cart-billing__amount {
-      font-weight: 600;
-      font-size: 1.167rem;
-   }
+   font-family: 'Inter';
+   font-style: normal;
+   font-weight: 500;
+   font-size: 14px;
+   line-height: 17px;
+   color: var(--hern-accent);
 }
 .hern-cart-billing__toggle-btn {
+   width: 28px;
+   height: 28px;
+   border-radius: 50%;
+   background: #ffffff;
+   box-shadow: 0px 1px 5px rgba(0, 0, 0, 0.08);
+   display: flex;
+   justify-content: center;
+   align-items: center;
+   margin-left: auto;
    &:focus {
       outline: none;
    }
