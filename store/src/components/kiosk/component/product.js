@@ -9,9 +9,9 @@ import {
    nestedModifierTemplateIds,
 } from '../../../utils'
 import { KioskModifier, KioskCounterButton } from '.'
-import { GET_MODIFIER_BY_ID } from '../../../graphql'
+import { GET_MODIFIER_BY_ID, PRODUCT_ONE } from '../../../graphql'
 import { useQuery } from '@apollo/react-hooks'
-import { useConfig } from '../../../lib'
+import { useConfig, graphQLClientSide } from '../../../lib'
 import { HernLazyImage } from '../../../utils/hernImage'
 import { getPriceWithDiscount } from '../../../utils'
 import moment from 'moment'
@@ -42,9 +42,7 @@ export const KioskProduct = props => {
 
    // const [combinedCartItems, setCombinedCartData] = useState(null)
    const [showChooseIncreaseType, setShowChooseIncreaseType] = useState(false) // show I'll choose or repeat last one popup
-   const additionalModifierTemplateIds = React.useMemo(() => {
-      return nestedModifierTemplateIds(productData)
-   }, [productData])
+
 
    useEffect(() => {
       const languageTags = document.querySelectorAll(
@@ -64,27 +62,25 @@ export const KioskProduct = props => {
    }, [combinedCartItems])
    const argsForByLocation = React.useMemo(
       () => ({
-         params: {
             brandId: brand?.id,
             locationId: kioskDetails?.locationId,
             brand_locationId: brandLocation?.id,
-         },
       }),
       [brand, kioskDetails?.locationId, brandLocation?.id]
    )
 
-   const { data: additionalModifierTemplates } = useQuery(GET_MODIFIER_BY_ID, {
-      variables: {
-         priceArgs: argsForByLocation,
-         discountArgs: argsForByLocation,
-         modifierCategoryOptionCartItemArgs: argsForByLocation,
-         id: additionalModifierTemplateIds,
-      },
-      skip:
-         isConfigLoading ||
-         !brand?.id ||
-         !(additionalModifierTemplateIds.length > 0),
-   })
+   // const { data: additionalModifierTemplates } = useQuery(GET_MODIFIER_BY_ID, {
+   //    variables: {
+   //       priceArgs: argsForByLocation,
+   //       discountArgs: argsForByLocation,
+   //       modifierCategoryOptionCartItemArgs: argsForByLocation,
+   //       id: additionalModifierTemplateIds,
+   //    },
+   //    skip:
+   //       isConfigLoading ||
+   //       !brand?.id ||
+   //       !(additionalModifierTemplateIds.length > 0),
+   // })
 
    // counter button (-) delete last cartItem
    const onMinusClick = cartItemIds => {
@@ -100,7 +96,14 @@ export const KioskProduct = props => {
    }
 
    // repeat last order
-   const repeatLastOne = productData => {
+   const repeatLastOne = async productData => {
+      const { product: productCompleteData } = await graphQLClientSide.request(
+         PRODUCT_ONE,
+         {
+               id: productData.id,
+               params: argsForByLocation,
+         }
+      )
       const cartDetailSelectedProduct = cartState.cartItems
          .filter(x => x.productId === productData.id)
          .sort((a, b) => new Date(a.created_at) - new Date(b.created_at))
@@ -118,7 +121,7 @@ export const KioskProduct = props => {
          )
 
       //selected product option
-      const selectedProductOption = productData.productOptions.find(
+      const selectedProductOption = productCompleteData.productOptions.find(
          x => x.id == productOptionId
       )
 
@@ -168,7 +171,7 @@ export const KioskProduct = props => {
          })
       }
       const allSelectedOptions = [...singleModifier, ...multipleModifier]
-      if (additionalModifierTemplateIds) {
+      if (selectedProductOption.additionalModifiers.length) {
          selectedProductOption.additionalModifiers.forEach(option => {
             option.modifier.categories.forEach(category => {
                category.options.forEach(option => {
@@ -197,18 +200,61 @@ export const KioskProduct = props => {
             modifierOptionsConsistAdditionalModifiers.map(
                eachModifierOptionsConsistAdditionalModifiers => {
                   let additionalModifierOptions = []
-                  additionalModifierTemplates.modifiers.forEach(
-                     eachModifier => {
-                        eachModifier.categories.forEach(eachCategory => {
-                           additionalModifierOptions.push(
-                              ...eachCategory.options.map(eachOption => ({
-                                 ...eachOption,
-                                 categoryId: eachCategory.id,
-                              }))
+                  selectedProductOption.additionalModifiers.forEach(
+                     additionalModifier => {
+                        if (additionalModifier.modifier) {
+                           additionalModifier.modifier.categories.forEach(
+                              eachCategory => {
+                                 eachCategory.options.forEach(eachOption => {
+                                    if (eachOption.additionalModifierTemplate) {
+                                       console.log("getting Error Here",eachOption.additionalModifierTemplate)
+                                       eachOption.additionalModifierTemplate.categories.forEach(
+                                          eachCategory => {
+                                             additionalModifierOptions.push(
+                                                ...eachCategory.options.map(
+                                                   eachOptionTemp => ({
+                                                      ...eachOptionTemp,
+                                                      categoryId:
+                                                         eachCategory.id,
+                                                   })
+                                                )
+                                             )
+                                          }
+                                       )
+                                    }
+                                 })
+                              }
                            )
-                        })
+                        }
                      }
                   )
+                  // for single modifiers
+                  if (selectedProductOption.modifier) {
+                     selectedProductOption.modifier.categories.forEach(
+                        eachCategory => {
+                           eachCategory.options.forEach(eachOption => {
+                              if (eachOption.additionalModifierTemplateId) {
+                                 if (eachOption.additionalModifierTemplate) {
+                                    eachOption.additionalModifierTemplate.categories.forEach(
+                                       eachCategory => {
+                                          additionalModifierOptions.push(
+                                             ...eachCategory.options.map(
+                                                eachOptionTemp => ({
+                                                   ...eachOptionTemp,
+                                                   categoryId:
+                                                      eachCategory.id,
+                                                })
+                                             )
+                                          )
+                                       }
+                                    )
+                                 }
+                              }
+                           })
+                        }
+                     )
+                  }
+
                   const mapedModifierOptions =
                      eachModifierOptionsConsistAdditionalModifiers.selectedModifierOptionIds.map(
                         eachId => {
