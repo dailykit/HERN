@@ -53,7 +53,7 @@ const AddOnProducts = () => {
    //       .length > 0
 
    return (
-      <div>
+      <div className="hern-cart-add-on-products">
          {hasAddOns && (
             <>
                <header className="hern-cart-add-on-products__header">
@@ -65,13 +65,13 @@ const AddOnProducts = () => {
                      className="hern-cart-add-on-products__header__explore-btn"
                   >
                      Explore
-                     <span>
+                     {/* <span>
                         <PlusIcon
                            size={16}
                            stroke="currentColor"
                            color="rgba(52,211,153,1)"
                         />
-                     </span>
+                     </span> */}
                   </button>
                </header>
                <ul className="hern-cart-add-on-products__list">
@@ -91,8 +91,9 @@ const AddOnProducts = () => {
          )}
          {tunnel && (
             <Tunnel.Wrapper
-               size="md"
+               size="full"
                isOpen={tunnel}
+               additionalClassName="hern-cart-add-on-products__tunnel"
                style={{ zIndex: 1030 }}
                toggleTunnel={() => toggleTunnel(false)}
             >
@@ -225,6 +226,7 @@ const AddOnProduct = ({ node, isAdded, theme }) => {
                <span>No Photos</span>
             )}
          </div>
+
          <div className="hern-add-on__products__list-item__info">
             <section className="hern-add-on__products__list-item__title">
                <CheckIcon size={16} className={checkIconClasses} />
@@ -234,22 +236,23 @@ const AddOnProduct = ({ node, isAdded, theme }) => {
                   </>
                </Link>
             </section>
-            {canAdd() && (
-               <button
-                  onClick={() =>
-                     methods.products.add(
-                        node.cartItem,
-                        node?.productOption?.product
-                     )
-                  }
-                  className="hern-add-on__products__list-item__add-btn"
-               >
-                  {isActive ? 'REPEAT +' : 'ADD +'}
-                  {formatCurrency(Number(node.cartItem.unitPrice) || 0)}
-               </button>
-            )}
+
+            <p>{product.additionalText}</p>
          </div>
-         <p>{product.additionalText}</p>
+         {canAdd() && (
+            <button
+               onClick={() =>
+                  methods.products.add(
+                     node.cartItem,
+                     node?.productOption?.product
+                  )
+               }
+               className="hern-add-on__products__list-item__add-btn"
+            >
+               {isActive ? 'Repeat +' : 'Add +'}
+               {formatCurrency(Number(node.cartItem.unitPrice) || 0)}
+            </button>
+         )}
       </li>
    )
 }

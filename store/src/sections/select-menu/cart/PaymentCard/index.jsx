@@ -48,6 +48,7 @@ const PaymentCard = () => {
       },
    })
 
+
    React.useEffect(() => {
       if (state.occurenceCustomer?.cart?.paymentMethodId) {
          const index = user?.platform_customer?.paymentMethods.findIndex(

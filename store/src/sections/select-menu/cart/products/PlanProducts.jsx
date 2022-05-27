@@ -79,20 +79,22 @@ const PlanProducts = ({ noSkip, isCheckout }) => {
       <div>
          <header className="hern-cart-plan-products__header">
             <h4 className="hern-cart-plan-products__header__title">
-               {t('Your Box')}{' '}
-               {state?.occurenceCustomer?.validStatus?.addedProductsCount}/
-               {user?.subscription?.recipes?.count}
+               {t('No. of items you have added:')}{' '}
+               <span>
+                  {state?.occurenceCustomer?.validStatus?.addedProductsCount}/
+                  {user?.subscription?.recipes?.count}
+               </span>
             </h4>
 
             <section className="hern-cart-plan-products__saving-status">
                {state.cartState === 'SAVING' && (
                   <span className="hern-cart-plan-products__saving-status__saving">
-                     {t('SAVING')}
+                     {t('Saving...')}
                   </span>
                )}
                {state.cartState === 'SAVED' && (
                   <span className="hern-cart-plan-products__saving-status__saved">
-                     {t('SAVED')}
+                     {t('Saved')}
                   </span>
                )}
             </section>
