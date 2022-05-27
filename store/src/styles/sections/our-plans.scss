@@ -10,7 +10,7 @@
    display: flex;
    flex-wrap: wrap;
    align-items: center;
-   max-width: 1140px;
+   max-width: 1200px;
 
    &__wrapper {
       // max-width: 980px;
@@ -62,7 +62,7 @@
       display: flex;
       align-items: center;
       width: 250px;
-      margin-right: 10px;
+      margin-right: 12px;
    }
    &__title {
       overflow: hidden;
@@ -114,7 +114,7 @@
       // padding: 0 16px;
       // margin-top: 32px;
       // align-items: center;
-      // width: 240px;
+      width: 240px;
    }
    &__servings__label {
       // font-family: 'Inter';
@@ -140,8 +140,6 @@
       left: -20px;
    }
    &__servings__arrow-btn--right {
-      position: absolute;
-      right: -20px;
    }
    &__servings__list__wrapper {
       display: flex;
@@ -188,7 +186,8 @@
       // margin-top: 16px;
       // align-items: center;
 
-      padding: 0 16px;
+      // padding: 0 16px;
+      width: 240px;
    }
    &__item-counts__label {
       // font-family: 'Inter';
@@ -264,7 +263,6 @@
       // color: rgba(51, 51, 51, 0.6);
       // text-transform: capitalize;
 
-      padding: 0 16px;
       font-weight: 600;
       font-size: 14px;
       line-height: 1.2;
@@ -329,11 +327,52 @@
          color: rgba(51, 51, 51, 0.6);
       }
    }
+
+   @media (max-width: 1024px) {
+      display: block;
+      padding: 10px;
+
+      &__cover-image {
+         display: block;
+         margin-bottom: 14px;
+      }
+
+      &__select-plan__btn {
+         width: 100%;
+      }
+
+      &__icon-title-wrapper {
+         margin-bottom: 30px;
+      }
+
+      &__servings {
+         display: flex;
+         align-items: center;
+         justify-content: space-between;
+         margin-bottom: 24px;
+         width: 100%;
+      }
+
+      &__item-counts {
+         display: flex;
+         justify-content: space-between;
+         align-items: center;
+         width: 100%;
+         margin-bottom: 45px;
+      }
+
+      &__pricing {
+         display: flex;
+         justify-content: space-between;
+         align-items: center;
+         margin-bottom: 12px;
+      }
+   }
 }
 
 .hern-plans__skeletons {
    margin: auto;
-   max-width: 980px;
+   max-width: 1200px;
    width: calc(100vw - 40px);
    display: flex;
    justify-content: center;
@@ -377,7 +416,7 @@
          }
       }
    }
-   @media (max-width: 768px) {
+   @media (max-width: 1024px) {
       grid-template-columns: 1fr;
       > li {
          width: 100%;
