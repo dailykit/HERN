@@ -70,6 +70,11 @@ const Divider = dynamic(() =>
 const ModifierPopup = dynamic(() =>
    import('./modifier_popup').then(promise => promise.ModifierPopup)
 )
+const ModifierPopupForUnAvailability = dynamic(() =>
+   import('./modifierPopUpForUnAvailability').then(
+      promise => promise.ModifierPopupForUnAvailability
+   )
+)
 const CounterButton = dynamic(() =>
    import('./counterBtn').then(promise => promise.CounterButton)
 )
@@ -169,6 +174,7 @@ export {
    BottomCartBar,
    Divider,
    ModifierPopup,
+   ModifierPopupForUnAvailability,
    CounterButton,
    Login,
    LoginWarning,
