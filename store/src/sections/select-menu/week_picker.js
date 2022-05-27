@@ -17,13 +17,11 @@ export const WeekPicker = ({ isFixed }) => {
    if (isFixed) {
       return (
          <span className="hern-select-menu__week-picker">
-            <span>{t('Showing menu of:')}</span>&nbsp;
             <span className="hern-select-menu__week-date">
                {moment(state?.week?.fulfillmentDate)
                   .weekday(1)
                   .format('ddd MMM D')}
                &nbsp;-&nbsp;
-               <br />
                {moment(state?.week?.fulfillmentDate)
                   .add(7, 'day')
                   .weekday(0)
