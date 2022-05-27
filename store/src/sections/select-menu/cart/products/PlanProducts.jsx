@@ -89,12 +89,12 @@ const PlanProducts = ({ noSkip, isCheckout }) => {
             <section className="hern-cart-plan-products__saving-status">
                {state.cartState === 'SAVING' && (
                   <span className="hern-cart-plan-products__saving-status__saving">
-                     {t('SAVING')}
+                     {t('Saving...')}
                   </span>
                )}
                {state.cartState === 'SAVED' && (
                   <span className="hern-cart-plan-products__saving-status__saved">
-                     {t('SAVED')}
+                     {t('Saved')}
                   </span>
                )}
             </section>
