@@ -48,6 +48,7 @@ export const ModifierPopup = props => {
       config,
       stepView = false,
       counterButtonPosition = 'TOP',
+      setProductTotalAmount
    } = props
    //context
    const { addToCart, methods } = React.useContext(CartContext)
@@ -387,12 +388,15 @@ export const ModifierPopup = props => {
          allNestedSelectedOptionsPriceWithDiscount
 
       return {
+         totalProductPrice: totalPrice,
          total: totalPrice * quantity,
          totalWithoutDiscount: totalWithoutDiscount * quantity,
          totalDiscount: (totalWithoutDiscount - totalPrice) * quantity,
       }
    }
-   const { total, totalWithoutDiscount, totalDiscount } = totalAmount()
+   const { totalProductPrice, total, totalWithoutDiscount, totalDiscount } = totalAmount()
+   setProductTotalAmount && setProductTotalAmount(totalProductPrice);
+
    //increment click
    const incrementClick = () => {
       setQuantity(quantity + 1)
@@ -438,7 +442,11 @@ export const ModifierPopup = props => {
       ) {
          return formatCurrency(
             getPriceWithDiscount(productData.price, productData.discount) +
+               productOption ?
                getPriceWithDiscount(
+                  productOption?.price || 0,
+                  productOption?.discount
+               ): getPriceWithDiscount(
                   productData.productOptions[0]?.price || 0,
                   productData.productOptions[0]?.discount
                )
