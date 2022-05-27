@@ -2,8 +2,7 @@
    height: auto;
    padding-top: 0.5rem;
    padding-bottom: 0.5rem;
-   background-color: rgba(255, 255, 255, 1);
-   border-width: 1px;
+   background-color: #ffffff;
    display: grid;
    align-items: flex-start;
    padding-left: 0.5rem;
@@ -14,13 +13,19 @@
    -moz-border-radius: 0.25rem;
    -ms-border-radius: 0.25rem;
    -o-border-radius: 0.25rem;
+   margin-bottom: 0.75rem;
+   box-shadow: 0px 2px 16px rgb(0 0 0 / 8%);
+   border-radius: 8px;
 }
 .hern-cart-product__info {
    padding-left: 0.75rem;
 }
 
 .hern-cart-product__name {
-   color: rgba(31, 41, 55, 1);
+   color: #3f4441;
+   font-weight: 500;
+   line-height: 1.2;
+   margin-bottom: 2px;
 }
 .hern-cart-product__quantity {
    color: rgba(5, 150, 105, 1);
