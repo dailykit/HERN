@@ -81,8 +81,7 @@ const Content = ({ panel }) => {
          const isDineInAvailable = orderTabs.filter(
             orderTab =>
                orderTab.orderFulfillmentTypeLabel === 'PREORDER_DINEIN' ||
-               orderTab.orderFulfillmentTypeLabel === 'ONDEMAND_DINEIN' ||
-               orderTab.orderFulfillmentTypeLabel === 'PREORDER_DINEIN'
+               orderTab.orderFulfillmentTypeLabel === 'ONDEMAND_DINEIN' 
          )
          if (isDeliveryAvailable.length)
             types.push({ id: 'DELIVERY', title: isDeliveryAvailable[0].label })
