@@ -5,6 +5,7 @@ import { useQuery } from '@apollo/react-hooks'
 import ReactImageFallback from 'react-image-fallback'
 import { useToasts } from 'react-toast-notifications'
 import { useIntl } from 'react-intl'
+import * as Scroll from 'react-scroll'
 
 import { useMenu } from './state'
 import { useConfig } from '../../lib'
@@ -91,8 +92,28 @@ export const Menu = () => {
       )
    return (
       <main>
+         {categories.length > 1 && (
+            <div className="hern-select-menu__category">
+               {categories.map(category => (
+                  <Scroll.Link
+                     to={category.name}
+                     activeClass="hern-select-menu__category__btn--active"
+                     className="hern-select-menu__category__btn"
+                     spy={true}
+                     smooth={true}
+                     offset={-70}
+                  >
+                     {category.name}
+                  </Scroll.Link>
+               ))}
+            </div>
+         )}
          {categories.map(category => (
-            <section key={category.name} className="hern-select-menu__menu">
+            <Scroll.Element
+               id={category.name}
+               key={category.name}
+               className="hern-select-menu__menu"
+            >
                <h4 className="hern-select-menu__menu__category-name">
                   <span data-translation="true">{category.name}</span> (
                   {
@@ -104,7 +125,9 @@ export const Menu = () => {
                      ).length
                   }
                   )
+                  <Line />
                </h4>
+
                <ul className="hern-select-menu__menu__products">
                   {uniqBy(category.productsAggregate.nodes, v =>
                      [
@@ -122,7 +145,7 @@ export const Menu = () => {
                      />
                   ))}
                </ul>
-            </section>
+            </Scroll.Element>
          ))}
       </main>
    )
@@ -277,6 +300,7 @@ const Product = ({ node, theme, isAdded, noProductImage, buildImageUrl }) => {
          )}
          <div style={{ padding: '0.5rem' }}>
             <section className="hern-select-menu__menu__product__link">
+               <CheckIcon size={16} className={checkIconClasses} />
                <a theme={theme} onClick={openRecipe}>
                   <span data-translation="true">{product.name}</span>
                   {'-'}
@@ -318,5 +342,39 @@ const Product = ({ node, theme, isAdded, noProductImage, buildImageUrl }) => {
             )}
          </div>
       </li>
+   )
+}
+
+const Line = () => {
+   return (
+      <svg
+         width="100%"
+         height="5"
+         viewBox="0 0 750 5"
+         fill="none"
+         xmlns="http://www.w3.org/2000/svg"
+         style={{ maxWidth: '750px' }}
+      >
+         <line
+            y1="2.86816"
+            x2="750"
+            y2="2.86816"
+            stroke="url(#paint0_linear_1510_6578)"
+            stroke-width="4"
+         />
+         <defs>
+            <linearGradient
+               id="paint0_linear_1510_6578"
+               x1="0"
+               y1="4.86816"
+               x2="750"
+               y2="4.86816"
+               gradientUnits="userSpaceOnUse"
+            >
+               <stop stop-color="#333333" />
+               <stop offset="1" stop-color="#333333" stop-opacity="0" />
+            </linearGradient>
+         </defs>
+      </svg>
    )
 }
