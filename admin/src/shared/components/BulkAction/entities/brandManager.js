@@ -13,9 +13,12 @@ import {
    HorizontalTab,
    HorizontalTabPanel,
    Collapsible,
+   Dropdown,
 } from '@dailykit/ui'
-import React from 'react'
+import React, { useCallback, useEffect } from 'react'
+import { useParams } from 'react-router-dom'
 import { Tooltip } from '../..'
+import { BrandContext } from '../../../../App'
 
 const BrandManagerBulkAction = props => {
    const {
@@ -25,6 +28,7 @@ const BrandManagerBulkAction = props => {
       setBulkActions,
       additionalBulkAction,
       setAdditionalBulkAction,
+      setSelectedBrandLocation,
    } = props
    const radioPublishOption = [
       { id: 1, title: 'Publish', payload: { isPublished: true } },
@@ -35,8 +39,46 @@ const BrandManagerBulkAction = props => {
       { id: 2, title: 'Unavailable', payload: { isAvailable: false } },
    ]
 
+   const brandDetail = useParams()
+   const [brandContext] = React.useContext(BrandContext)
+
+   const brandLocationList = React.useMemo(
+      () =>
+         brandContext.brandList
+            .find(brand => brand.id === +brandDetail.brandId)
+            .location.map(eachLocation => ({
+               ...eachLocation,
+               title: eachLocation.location.label,
+            })),
+      [brandContext.brandList, brandDetail.id]
+   )
+   const defaultIds = React.useMemo(() => [+brandDetail.brandLocationId], [])
+
+   const selectedOption = options => {
+      const optionsIds = options.map(option => option.id)
+      setSelectedBrandLocation(optionsIds)
+   }
+
+   const searchedOption = option => console.log(option)
+
    return (
       <>
+         {brandLocationList.length > 1 && (
+            <>
+               <Flex>
+                  <Text as="text1">Select Location</Text>
+                  <Dropdown
+                     type="multi"
+                     options={brandLocationList}
+                     defaultIds={defaultIds}
+                     searchedOption={searchedOption}
+                     selectedOption={selectedOption}
+                     placeholder="Select Location..."
+                  />
+               </Flex>
+               <Spacer size="40px" />
+            </>
+         )}
          <Flex container alignItems="center">
             <Text as="text1">Change Publish Status</Text>
             <TextButton
@@ -386,7 +428,7 @@ const BrandManagerBulkAction = props => {
       </>
    )
 }
-export default BrandManagerBulkAction
+export default React.memo(BrandManagerBulkAction)
 
 const CollapsibleComponent = ({ children, heading }) => (
    <Collapsible
