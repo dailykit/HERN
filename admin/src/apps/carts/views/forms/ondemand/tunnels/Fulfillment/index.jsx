@@ -82,7 +82,7 @@ const Content = ({ panel }) => {
             orderTab =>
                orderTab.orderFulfillmentTypeLabel === 'PREORDER_DINEIN' ||
                orderTab.orderFulfillmentTypeLabel === 'ONDEMAND_DINEIN' ||
-               orderTab.orderFulfillmentTypeLabel === 'SCHEDULED_DINEIN'
+               orderTab.orderFulfillmentTypeLabel === 'PREORDER_DINEIN'
          )
          if (isDeliveryAvailable.length)
             types.push({ id: 'DELIVERY', title: isDeliveryAvailable[0].label })
@@ -249,7 +249,7 @@ const Content = ({ panel }) => {
          where: {
             recurrence: {
                isActive: { _eq: true },
-               type: { _eq: 'SCHEDULED_DINEIN' },
+               type: { _eq: 'PREORDER_DINEIN' },
             },
             _or: [
                {

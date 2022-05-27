@@ -15,6 +15,7 @@ import moment from 'moment'
 const TimeSlotTunnel = ({ closeTunnel }) => {
    const { recurrenceState } = React.useContext(RecurrenceContext)
    const { type } = useParams()
+   const fulfillmentType = ['PICKUP','DINEIN']
 
    const [timeSlotTunnel, setTimeSlotTunnel] = React.useState([{
       from: {
@@ -194,8 +195,13 @@ const TimeSlotTunnel = ({ closeTunnel }) => {
                type === 'PREORDER_PICKUP' ? +advance.value : null,
             pickUpPrepTime:
                type === 'ONDEMAND_PICKUP' ? +advance.value : null,
+            dineInLeadTime:
+               type === 'PREORDER_DINEIN' ? +advance.value : null,
+            dineInPrepTime:
+               type === 'ONDEMAND_DINEIN' ? +advance.value : null,
          })
          )
+         console.log('adavance', advance.value)
          createTimeSlots({
             variables: {
                objects,
@@ -312,7 +318,8 @@ const TimeSlotTunnel = ({ closeTunnel }) => {
                                  </Form.Group>
                               </Flex>
                               <Spacer size="16px" />
-                              {type.includes('PICKUP') && (
+                              {/* {type.includes('DINEIN') && ( */}
+                              {fulfillmentType.some(el => type.includes(el)) && (
                                  <Form.Group>
                                     <Form.Label htmlFor={`advance-${i}`} title={`Advance ${i}`}>
                                        {`${type.includes('ONDEMAND') ? 'Prep' : 'Lead'
