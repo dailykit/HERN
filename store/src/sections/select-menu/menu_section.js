@@ -3,7 +3,7 @@ import { isEmpty } from 'lodash'
 
 import { MenuProvider, useMenu } from './state'
 import { WeekPicker } from './week_picker'
-import { HelperBar, Loader } from '../../components'
+import { HelperBar, Loader, PageBanner } from '../../components'
 import { CartPanel } from './cart'
 import { Menu } from './menu'
 import { useConfig } from '../../lib'
@@ -12,35 +12,17 @@ import { get_env, isClient } from '../../utils'
 export const MenuSection = () => {
    const { configOf } = useConfig('Select-Menu')
    const config = configOf('select-menu-header')
+   console.log('config', config?.header?.images?.value)
    return (
       <MenuProvider test="deepak" isCheckout={true}>
          <main className="hern-select-menu__main">
             <div>
                <WeekPicker isFixed />
-               <header className="hern-select-menu__header">
-                  <div
-                     className="hern-select-menu__header__before"
-                     style={{
-                        backgroundImage: `url(
-                           ${
-                              !isEmpty(config?.header?.images?.value?.url)
-                                 ? config?.header?.images?.value?.url
-                                 : ''
-                           }
-                        )`,
-                     }}
-                  />
-                  {config?.header?.heading?.value && (
-                     <h1 className="hern-select-menu__header__heading">
-                        {config?.header?.heading?.value}
-                     </h1>
-                  )}
-                  {config?.header?.subHeading?.value && (
-                     <h3 className="hern-select-menu__header__sub-heading">
-                        {config?.header?.subHeading?.value}
-                     </h3>
-                  )}
-               </header>
+               <PageBanner
+                  image={config?.header?.images?.value}
+                  heading={config?.header?.heading?.value}
+                  subHeading={config?.header?.subHeading?.value}
+               />
             </div>
             <MenuContent />
          </main>
