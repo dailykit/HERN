@@ -274,33 +274,42 @@ const FulfillmentOption = ({
                      </h3>
                   )}
                   <div className="hern-cart-fulfillment__delivery-details-wrapper">
-                     <span className="hern-cart-fulfillment__check-icon">
+                     {/* <span className="hern-cart-fulfillment__check-icon">
                         <CheckIcon
                            size={13}
                            stroke="currentColor"
                            active={isActive}
                         />
-                     </span>
+                     </span> */}
                      <p className="hern-cart-fulfillment__delivery-details">
-                        <span>
-                           {normalizeAddress(
-                              state?.occurenceCustomer?.cart?.address ||
-                                 user?.defaultAddress
+                        {normalizeAddress(
+                           state?.occurenceCustomer?.cart?.address ||
+                              user?.defaultAddress
+                        )}
+                        &nbsp; on &nbsp;
+                        <strong>
+                           {moment(state?.week?.fulfillmentDate).format(
+                              'MMM D'
                            )}
-                        </span>
+                           &nbsp;
+                        </strong>
+                        <span>{t('Between')} </span>
+                        {zipcode?.deliveryTime?.from}
+                        &nbsp;-&nbsp;
+                        {zipcode?.deliveryTime?.to}
                      </p>
                   </div>
 
                   <div className="hern-cart-fulfillment__delivery-details-wrapper">
-                     <span className="hern-cart-fulfillment__check-icon">
+                     {/* <span className="hern-cart-fulfillment__check-icon">
                         <CheckIcon
                            size={13}
                            stroke="currentColor"
                            active={isActive}
                         />
-                     </span>
-                     <p className="hern-cart-fulfillment__delivery-details">
-                        {/* <span>{t('Your box will be delivered on')} </span> */}
+                     </span> */}
+                     {/* <p className="hern-cart-fulfillment__delivery-details">
+                      
 
                         <span>
                            {moment(state?.week?.fulfillmentDate).format(
@@ -308,12 +317,12 @@ const FulfillmentOption = ({
                            )}
                            &nbsp;
                         </span>
-                        {/* <span>{t('at')}</span> */}
-                     </p>
+                      
+                     </p> */}
                   </div>
 
-                  <div className="hern-cart-fulfillment__delivery-details-wrapper">
-                     <span className="hern-cart-fulfillment__check-icon">
+                  {/* <div className="hern-cart-fulfillment__delivery-details-wrapper">
+                      <span className="hern-cart-fulfillment__check-icon">
                         <CheckIcon
                            size={13}
                            stroke="currentColor"
@@ -326,15 +335,12 @@ const FulfillmentOption = ({
                         &nbsp;-&nbsp;
                         {zipcode?.deliveryTime?.to}
                      </p>
-                  </div>
+                  </div> */}
                </>
             )}
             {type === 'PICKUP' && (
                <>
-                  <h3
-                     className="hern-cart-fulfillment__pickup-heading"
-                     style={{ fontFamily: 'Poppins' }}
-                  >
+                  <h3 className="hern-cart-fulfillment__pickup-heading">
                      {t('Pick up from:')}
                   </h3>
                   <p className="hern-cart-fulfillment__pickup-details">
