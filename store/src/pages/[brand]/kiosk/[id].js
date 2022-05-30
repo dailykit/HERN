@@ -122,26 +122,26 @@ const KioskScreen = props => {
    useQuery(GET_ALL_RECURRENCES, {
       variables: {
          where: {
-            brandId: { _eq: settings.brandId },
             _or: [
                {
                   brand_location: {
                      locationId: { _eq: kioskDetails.locationId },
+                     brandId: { _eq: settings.brandId },
                   },
                },
-               { brandLocationId: { _is_null: true } },
+               {
+                  brandId: { _eq: settings.brandId },
+               },
             ],
             isActive: { _eq: true },
             recurrence: { isActive: { _eq: true } },
          },
       },
-      onCompleted: data => {
-         if (data) {
-            dispatch({
-               type: 'SET_KIOSK_RECURRENCES',
-               payload: data.brandRecurrences,
-            })
-         }
+      onCompleted: async data => {
+         dispatch({
+            type: 'SET_KIOSK_RECURRENCES',
+            payload: data.brandRecurrences || [],
+         })
       },
    })
    const handleLoginClick = () => {
