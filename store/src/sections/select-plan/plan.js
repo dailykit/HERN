@@ -12,7 +12,8 @@ import { BiChevronLeft, BiChevronRight } from 'react-icons/bi'
 import planConfig from './planConfig.json'
 const ReactPixel = isClient ? require('react-facebook-pixel').default : null
 
-export const Plan = ({ plan, handlePlanClick, itemCount }) => {
+export const Plan = ({ plan, handlePlanClick, itemCount, planConfig }) => {
+   console.log('PlanConfig: ', planConfig)
    // subscription plan configurations (Display)
    // select button
 
@@ -568,7 +569,7 @@ export const Plan = ({ plan, handlePlanClick, itemCount }) => {
                border: selectPlanButtonConfig.border,
             }}
          >
-            {t(selectPlanButtonLabelConfig?.buttonLabel)}
+            {t(`${selectPlanButtonLabelConfig?.buttonLabel}`)}
          </button>
          {/* </div> */}
       </li>

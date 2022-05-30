@@ -9,9 +9,8 @@ import { useConfig } from '../../lib'
 import { useUser } from '../../context'
 import { SkeletonPlan } from './skeletons'
 import { HelperBar } from '../../components'
-import config from './planConfig.json'
 
-export const Plans = () => {
+export const Plans = ({ config }) => {
    const { user } = useUser()
    const { brand } = useConfig()
    const { addToast } = useToasts()
@@ -112,7 +111,12 @@ export const Plans = () => {
             })}
          >
             {list.map(plan => (
-               <Plan plan={plan} key={plan.id} itemCount={list.length} />
+               <Plan
+                  plan={plan}
+                  key={plan.id}
+                  itemCount={list.length}
+                  planConfig={config}
+               />
             ))}
          </ul>
       </div>
