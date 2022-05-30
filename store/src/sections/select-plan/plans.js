@@ -18,6 +18,11 @@ export const Plans = ({ config }) => {
    const [list, setList] = React.useState([])
    const [isLoading, setIsLoading] = React.useState(true)
 
+   // Plan view Config
+   const planViewConfig = config?.display?.planView?.value[0]?.value ?? 'card'
+
+   console.log('View', planViewConfig)
+
    //Config
    const headingConfig = {
       heading: config?.data?.heading?.value ?? 'Select a plan',
@@ -91,35 +96,53 @@ export const Plans = ({ config }) => {
       )
    }
 
-   return (
-      <div className="hern-plans__wrapper">
-         <h1
-            style={{
-               color: headingConfig.color,
-               fontFamily: headingConfig.fontFamily,
-               fontSize: headingConfig.fontSize,
-               fontWeight: headingConfig.fontWeight,
-               textAlign: headingConfig.textAlign,
-               padding: headingConfig.spacing,
-            }}
-            className="hern-plans__heading"
-         >
-            {headingConfig.heading}
-         </h1>
-         <ul
-            className={classNames('hern-plans', {
-               'hern-plans--single': list.length === 1,
-            })}
-         >
-            {list.map(plan => (
-               <Plan
-                  plan={plan}
-                  key={plan.id}
-                  itemCount={list.length}
-                  planConfig={config}
-               />
-            ))}
-         </ul>
-      </div>
-   )
+   if (planViewConfig === 'card') {
+      return (
+         <div className="hern-plans__wrapper  hern-plans__wrapper--card">
+            <h1
+               style={{
+                  color: headingConfig.color,
+                  fontFamily: headingConfig.fontFamily,
+                  fontSize: headingConfig.fontSize,
+                  fontWeight: headingConfig.fontWeight,
+                  textAlign: headingConfig.textAlign,
+                  padding: headingConfig.spacing,
+               }}
+               className="hern-plans__heading"
+            >
+               {headingConfig.heading}
+            </h1>
+            <ul
+               className={classNames('hern-plans', {
+                  'hern-plans--single': list.length === 1,
+               })}
+            >
+               {list.map(plan => (
+                  <Plan
+                     plan={plan}
+                     key={plan.id}
+                     itemCount={list.length}
+                     planConfig={config}
+                  />
+               ))}
+            </ul>
+         </div>
+      )
+   }
+
+   if (planViewConfig === 'list') {
+      return (
+         <div>
+            <h1>List View</h1>
+         </div>
+      )
+   }
+
+   if (planViewConfig === 'aggregated') {
+      return (
+         <div>
+            <h1>Aggregated View</h1>
+         </div>
+      )
+   }
 }

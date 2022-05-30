@@ -68,6 +68,11 @@
                "id": 2,
                "title": "Aggregated View",
                "value": "aggregated"
+            },
+            {
+               "id": 3,
+               "title": "Card View",
+               "value": "card"
             }
          ],
          "dataType": "select",
