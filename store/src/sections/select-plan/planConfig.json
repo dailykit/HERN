@@ -140,7 +140,7 @@
          "spacing": {
             "label": "Heading Spacing in px(top(space)right(space)bottom(space)left)",
             "dataType": "text",
-            "value": "32px 0px 32px 0px",
+            "value": "0px 0px 0px 0px",
             "userInsertType": "textField"
          }
       },

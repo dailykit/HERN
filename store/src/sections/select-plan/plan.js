@@ -619,7 +619,7 @@ const PlateIllustration = () => (
 
 const CardCoverIllustration = () => (
    <svg
-      width="420"
+      width="100%"
       height="230"
       viewBox="0 0 420 230"
       fill="none"
