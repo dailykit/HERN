@@ -27,19 +27,23 @@ const CreateLinkOrderTab = ({ closeTunnel }) => {
    const { error1, loading1, data1 } = useQuery(KIOSK.ORDER_TAB_LIST, {
       onCompleted: data => {
          const name1 = data.brands_orderTab.map(orderTabList => {
-            return { id: orderTabList.id, title: orderTabList.label }
+            return {
+               id: orderTabList.id,
+               title: orderTabList.label,
+               posistTabType: orderTabList.posist_tabType,
+            }
          })
          setOrderTabList(name1)
       },
    })
-   console.log('labels are:', orderTabList)
+   // console.log('labels are:', orderTabList)
 
    const [createKiosk_OrderTab, { loading }] = useMutation(
       KIOSK.CREATE_KIOSK_ORDER_TAB,
       {
          onCompleted: input => {
             {
-               console.log('input coming for new kioskOrderTab===>', input)
+               // console.log('input coming for new kioskOrderTab===>', input)
             }
             setTitle([
                {
@@ -66,10 +70,11 @@ const CreateLinkOrderTab = ({ closeTunnel }) => {
 
    const createKioskOrderTab = (e, kioskOrderTab) => {
       try {
-         console.log('links are:::>>', e, kioskOrderTab)
+         // console.log('links are:::>>', e, kioskOrderTab)
          const objects = title.filter(Boolean).map(title => ({
             locationKioskId: params.id,
             orderTabId: e.id,
+            posist_tabType: e.posistTabType,
          }))
          if (!objects.length) {
             throw Error('Nothing to add!')

@@ -66,13 +66,13 @@ const OrderInfo = ({ cart, showViewOrderButton = false }) => {
                </section>
             </>
          )}
-         <section>
+         <section className="hern-cart-billing">
             <h4 className="hern-order-info__billings__title">{t('Charges')}</h4>
             <Billing billing={cart?.cartOwnerBilling} />
          </section>
-         <section className="hern-order-info__delivery">
+         <section className="hern-order-info__address">
             {cart?.fulfillmentInfo?.type?.includes('DELIVERY') ? (
-               <p className="hern-order-info__delivery__details">
+               <p className="hern-order-info__address__delivery">
                   <span>{t('Your box will be delivered on')}</span>{' '}
                   <span>
                      {moment(cart?.fulfillmentInfo?.slot?.from).format('MMM D')}
@@ -87,7 +87,7 @@ const OrderInfo = ({ cart, showViewOrderButton = false }) => {
                   <span>{normalizeAddress(cart?.address)}</span>
                </p>
             ) : (
-               <p tw="text-gray-500">
+               <p className="hern-order-info__address__pickup">
                   <span>{t('Pickup your box in between')}</span>
                   {moment(cart?.fulfillmentInfo?.slot?.from).format(
                      'MMM D'
@@ -116,14 +116,14 @@ const OrderInfo = ({ cart, showViewOrderButton = false }) => {
                      {t('Go to Order')}
                   </Button>
                ) : (
-                  <button
+                  <Button
                      className="hern-order-info__early-pay__btn"
                      onClick={() =>
                         router.push(getRoute(`/checkout/?id=${cart?.id}`))
                      }
                   >
-                     {t('EARLY PAY')}
-                  </button>
+                     {t('Early Pay')}
+                  </Button>
                )}
             </>
          )}

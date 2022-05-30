@@ -1,10 +1,9 @@
 import React from 'react'
-import { isEmpty } from 'lodash'
 import { useRouter } from 'next/router'
 import Link from 'next/link'
 import tw, { styled } from 'twin.macro'
 
-import { HelperBar, Loader } from '../../components'
+import { HelperBar, Loader, PageBanner } from '../../components'
 import {
    Menu,
    CartPanel,
@@ -42,24 +41,11 @@ const MenuContent = () => {
          <Main>
             <div>
                <WeekPicker />
-               <Header
-                  url={
-                     !isEmpty(config?.header?.images?.value?.url)
-                        ? config?.header?.images?.value?.url
-                        : ''
-                  }
-               >
-                  {config?.header?.heading?.value && (
-                     <h1 css={tw`text-4xl text-white z-10`}>
-                        {config?.header?.heading?.value}
-                     </h1>
-                  )}
-                  {config?.header?.subHeading?.value && (
-                     <h3 css={tw`text-xl text-gray-100 z-10`}>
-                        {config?.header?.subHeading?.value}
-                     </h3>
-                  )}
-               </Header>
+               <PageBanner
+                  image={config?.header?.images?.value}
+                  heading={config?.header?.heading?.value}
+                  subHeading={config?.header?.subHeading?.value}
+               />
                {!user.isSubscriptionCancelled &&
                   state.occurenceCustomer?.betweenPause && (
                      <MessageBar>
@@ -111,29 +97,6 @@ const Main = styled.main`
    margin: auto;
    padding-bottom: 24px;
    min-height: calc(100vh - 128px);
-`
-
-const Header = styled.header`
-   height: 480px;
-   position: relative;
-   ${tw`bg-gray-100 flex flex-col items-center justify-center`}
-   ::before {
-      content: '';
-      position: absolute;
-      height: 100%;
-      width: 100%;
-      z-index: 0;
-      background-image: url(${props => props.url});
-      ${tw`bg-no-repeat bg-center bg-cover`}
-   }
-   ::after {
-      content: '';
-      position: absolute;
-      height: 100%;
-      width: 100%;
-      z-index: 1;
-      ${tw`bg-black opacity-25`}
-   }
 `
 
 const MessageBar = styled.div`

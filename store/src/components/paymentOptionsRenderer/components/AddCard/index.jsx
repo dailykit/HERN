@@ -24,7 +24,7 @@ import { AddCardTunnel } from '../AddCardTunnel'
 // import { PaymentForm } from '../payment_form'
 import { isClient, get_env, formatCurrency } from '../../../../utils'
 
-export const AddCard = ({ cartId, balanceToPay = 0 }) => {
+export const AddCard = ({ cartId, balanceToPay = 0, metaData = {} }) => {
    const { addToast } = useToasts()
    const { t } = useTranslation()
    const { user } = useUser()
@@ -53,23 +53,6 @@ export const AddCard = ({ cartId, balanceToPay = 0 }) => {
          },
       }
    )
-
-   //    React.useEffect(() => {
-   //       if (user.subscriptionPaymentMethodId) {
-   //          // dispatch({
-   //          //    type: 'SET_PAYMENT_METHOD',
-   //          //    payload: {
-   //          //       selected: { id: user.subscriptionPaymentMethodId },
-   //          //    },
-   //          // })
-   //          setPaymentInfo({
-   //             selectedAvailablePaymentOption: {
-   //                ...paymentInfo.selectedAvailablePaymentOption,
-   //                selectedPaymentMethodId: user.subscriptionPaymentMethodId,
-   //             },
-   //          })
-   //       }
-   //    }, [user])
 
    React.useEffect(() => {
       if (user?.platform_customer?.paymentCustomerId && isClient && !intent) {
@@ -112,20 +95,6 @@ export const AddCard = ({ cartId, balanceToPay = 0 }) => {
                   ? 'Pay using added Cards'
                   : 'Add Card'}
             </SectionTitle>
-            {/* {user?.platform_customer?.paymentMethods.length > 0 && (
-               <OutlineButton onClick={() => toggleTunnel(true)}>
-                  <>
-                     <span tw="mr-2">
-                        <PlusCircle
-                           size="28"
-                           color="#38a169"
-                           style={{ display: 'inline-block' }}
-                        />
-                     </span>
-                     Add New Card
-                  </>
-               </OutlineButton>
-            )} */}
          </header>
 
          {user?.platform_customer?.paymentMethods.length === 0 && (
@@ -199,6 +168,8 @@ export const AddCard = ({ cartId, balanceToPay = 0 }) => {
                            className="payButton"
                            cartId={cartId}
                            fullWidthSkeleton={false}
+                           balanceToPay={balanceToPay}
+                           metaData={metaData}
                         >
                            Pay Now {formatCurrency(balanceToPay)}
                         </PayButton>

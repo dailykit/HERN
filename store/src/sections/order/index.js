@@ -20,6 +20,7 @@ import {
    getRoute,
    useIntersectionObserver,
 } from '../../utils'
+import { ModifierPopupForUnAvailability } from '../../components'
 import { useRouter } from 'next/router'
 import { useToasts } from 'react-toast-notifications'
 import { VegNonVegType } from '../../assets/icons'
@@ -138,6 +139,7 @@ export const OnDemandOrder = ({ config }) => {
          },
       }
    )
+
    const [productModifier, setProductModifier] = useState(null)
    const CustomAreaWrapper = ({ data }) => {
       return (
@@ -290,45 +292,62 @@ const ProductWithIntersection = ({
    const VegNonVegIcon = () => (
       <VegNonVegType vegNonVegType={eachProduct?.VegNonVegType} />
    )
-   return (
-      <div
-         className={classNames('hern-on-demand-order--product-card', {
-            'hern-on-demand-order--product-card-with-bg': !isVisible,
-         })}
-         style={{
-            margin: '0 auto',
-            maxWidth: numberOfProducts === 4 ? '280px' : 'auto',
-         }}
-         ref={productRef}
-      >
-         <ProductWrapper isVisible={isVisible}>
-            <ProductCard
-               iconOnImage={VegNonVegIcon}
-               onProductNameClick={() =>
-                  router.push(getRoute('/products/' + eachProduct.id))
-               }
-               onImageClick={() =>
-                  router.push(getRoute('/products/' + eachProduct.id))
-               }
-               data={eachProduct}
-               showProductDescription={true}
-               showImage={eachProduct.assets.images.length > 0 ? true : false}
-               customAreaComponent={CustomAreaWrapper}
-               showModifier={
-                  productModifier && productModifier.id === eachProduct.id
-               }
-               closeModifier={closeModifier}
-               customAreaFlex={false}
-               modifierWithoutPopup={false}
-               modifierPopupConfig={{
-                  counterButtonPosition: 'BOTTOM',
-               }}
-               stepView={false}
-               autoPlaySlider={autoPlaySlider}
-            />
-         </ProductWrapper>
-      </div>
-   )
+
+   if (
+      eachProduct.isPublished &&
+      eachProduct.productOptions.some(ele => ele.isPublished === true)
+   ) {
+      return (
+         <div
+            className={classNames('hern-on-demand-order--product-card', {
+               'hern-on-demand-order--product-card-with-bg': !isVisible,
+            })}
+            style={{
+               margin: '0 auto',
+               maxWidth: numberOfProducts === 4 ? '280px' : 'auto',
+               opacity:
+                  // isProductOutOfStock &&
+                  eachProduct.isAvailable &&
+                  eachProduct.productOptions.some(
+                     ele => ele.isAvailable === true && ele.isPublished === true
+                  )
+                     ? 1
+                     : 0.6,
+            }}
+            ref={productRef}
+         >
+            <ProductWrapper isVisible={isVisible}>
+               <ProductCard
+                  iconOnImage={VegNonVegIcon}
+                  onProductNameClick={() => {
+                     router.push(getRoute('/products/' + eachProduct.id))
+                  }}
+                  onImageClick={() => {
+                     router.push(getRoute('/products/' + eachProduct.id))
+                  }}
+                  data={eachProduct}
+                  showProductDescription={true}
+                  showImage={
+                     eachProduct.assets.images.length > 0 ? true : false
+                  }
+                  customAreaComponent={CustomAreaWrapper}
+                  showModifier={
+                     productModifier && productModifier.id === eachProduct.id
+                  }
+                  closeModifier={closeModifier}
+                  customAreaFlex={false}
+                  modifierWithoutPopup={false}
+                  modifierPopupConfig={{
+                     counterButtonPosition: 'BOTTOM',
+                  }}
+                  stepView={false}
+               />
+            </ProductWrapper>
+         </div>
+      )
+   } else {
+      return <div></div>
+   }
 }
 function productPropsAreEqual(prevProps, nextProps) {
    return (
