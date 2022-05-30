@@ -11,7 +11,13 @@ import { HernLazyImage } from '../../utils/hernImage'
 import { BiChevronLeft, BiChevronRight } from 'react-icons/bi'
 const ReactPixel = isClient ? require('react-facebook-pixel').default : null
 
-export const Plan = ({ plan, handlePlanClick, itemCount, planConfig }) => {
+export const Plan = ({
+   plan,
+   handlePlanClick,
+   itemCount,
+   planConfig,
+   planViewConfig,
+}) => {
    // subscription plan configurations (Display)
    // select button
 

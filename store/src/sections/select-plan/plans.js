@@ -19,9 +19,7 @@ export const Plans = ({ config }) => {
    const [isLoading, setIsLoading] = React.useState(true)
 
    // Plan view Config
-   const planViewConfig = config?.display?.planView?.value[0]?.value ?? 'card'
-
-   console.log('View', planViewConfig)
+   const planViewConfig = config?.display?.planView?.value?.value ?? 'card'
 
    //Config
    const headingConfig = {
@@ -96,9 +94,9 @@ export const Plans = ({ config }) => {
       )
    }
 
-   if (planViewConfig === 'card') {
+   if (planViewConfig === 'list') {
       return (
-         <div className="hern-plans__wrapper  hern-plans__wrapper--card">
+         <div className="hern-plans__wrapper">
             <h1
                style={{
                   color: headingConfig.color,
@@ -130,10 +128,10 @@ export const Plans = ({ config }) => {
       )
    }
 
-   if (planViewConfig === 'list') {
+   if (planViewConfig === 'card') {
       return (
          <div>
-            <h1>List View</h1>
+            <h1>Card View</h1>
          </div>
       )
    }
