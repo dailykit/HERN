@@ -70,6 +70,16 @@ export const Plan = ({ plan, handlePlanClick, itemCount, planConfig }) => {
          '500',
    }
 
+   const yieldLabelConfig = {
+      singular: planConfig?.data?.yieldLabel?.singular?.value || 'serving',
+      plural: planConfig?.data?.yieldLabel?.plural?.value || 'servings',
+   }
+
+   const itemCountLabelConfig = {
+      singular: planConfig?.data?.itemCountLabel?.singular?.value || 'recipe',
+      plural: planConfig?.data?.itemCountLabel?.plural?.value || 'recipes',
+   }
+
    // Count Buttons
    const countButtonConfig = {
       borderRadius:
@@ -208,18 +218,18 @@ export const Plan = ({ plan, handlePlanClick, itemCount, planConfig }) => {
       }
    }
 
-   const config = configOf('primary-labels')?.primaryLabels
+   // const config = configOf('primary-labels')?.primaryLabels
    const colorConfig = configOf('theme-color', 'Visual')?.themeColor
    const priceDisplay = configOf('priceDisplay', 'Visual')?.priceDisplay
 
-   const yieldLabel = {
-      singular: config?.yieldLabel?.singular?.value || 'serving',
-      plural: config?.yieldLabel?.singular?.value || 'servings',
-   }
-   const itemCountLabel = {
-      singular: config?.itemLabel?.singular?.value || 'recipe',
-      plural: config?.itemLabel?.singular?.value || 'recipes',
-   }
+   // const yieldLabel = {
+   //    singular: config?.yieldLabel?.singular?.value || 'serving',
+   //    plural: config?.yieldLabel?.singular?.value || 'servings',
+   // }
+   // const itemCountLabel = {
+   //    singular: config?.itemLabel?.singular?.value || 'recipe',
+   //    plural: config?.itemLabel?.singular?.value || 'recipes',
+   // }
 
    if (!defaultServing) return <Loader inline />
 
@@ -306,7 +316,7 @@ export const Plan = ({ plan, handlePlanClick, itemCount, planConfig }) => {
                   }}
                   data-translation="true"
                >
-                  {yieldLabel.plural}
+                  {yieldLabelConfig.plural}
                </span>
             </h4>
             <div className="hern-plan__servings__list__wrapper">
@@ -388,7 +398,9 @@ export const Plan = ({ plan, handlePlanClick, itemCount, planConfig }) => {
                }}
                className="hern-plan__item-counts__label"
             >
-               <span data-translation="true">{itemCountLabel.singular}</span>{' '}
+               <span data-translation="true">
+                  {itemCountLabelConfig.singular}
+               </span>{' '}
                {t('per week')}
             </h4>
             <div className="hern-plan__item-counts__list__wrapper">
@@ -501,7 +513,7 @@ export const Plan = ({ plan, handlePlanClick, itemCount, planConfig }) => {
                               data-translation="true"
                            >
                               {priceDisplay?.pricePerServing?.suffix.value ||
-                                 `per ${yieldLabel.singular}`}
+                                 `per ${yieldLabelConfig.singular}`}
                            </span>
                         </span>
                      </section>
