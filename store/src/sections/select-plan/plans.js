@@ -112,7 +112,12 @@ export const Plans = ({ config }) => {
             })}
          >
             {list.map(plan => (
-               <Plan plan={plan} key={plan.id} itemCount={list.length} />
+               <Plan
+                  plan={plan}
+                  key={plan.id}
+                  itemCount={list.length}
+                  planConfig={config}
+               />
             ))}
          </ul>
       </div>
