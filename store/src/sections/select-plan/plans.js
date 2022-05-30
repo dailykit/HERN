@@ -11,7 +11,7 @@ import { SkeletonPlan } from './skeletons'
 import { HelperBar } from '../../components'
 import config from './planConfig.json'
 
-export const Plans = () => {
+export const Plans = ({ config }) => {
    const { user } = useUser()
    const { brand } = useConfig()
    const { addToast } = useToasts()
