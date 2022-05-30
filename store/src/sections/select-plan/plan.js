@@ -9,10 +9,82 @@ import { Loader } from '../../components'
 import { isClient, formatCurrency, getRoute, LoginWrapper } from '../../utils'
 import { HernLazyImage } from '../../utils/hernImage'
 import { BiChevronLeft, BiChevronRight } from 'react-icons/bi'
-import config from './planConfig.json'
+import planConfig from './planConfig.json'
 const ReactPixel = isClient ? require('react-facebook-pixel').default : null
 
 export const Plan = ({ plan, handlePlanClick, itemCount }) => {
+   // subscription plan configurations (Display)
+   // select button
+
+   const selectPlanButtonConfig = {
+      color: planConfig?.display?.selectPlanButton?.color?.value ?? '#ffffff',
+      backgroundColor:
+         planConfig?.display?.selectPlanButton?.backgroundColor?.value ??
+         '#11823B',
+      fontSize:
+         planConfig?.display?.selectPlanButton?.fontSize?.value ?? '1.125rem',
+      fontFamily:
+         planConfig?.display?.selectPlanButton?.fontFamily?.value ?? 'Poppins',
+
+      fontWeight:
+         planConfig?.display?.selectPlanButton?.fontWeight?.value ?? '500',
+
+      border:
+         planConfig?.display?.selectPlanButton?.border?.border?.value ?? 'none',
+
+      borderRadius:
+         planConfig?.display?.selectPlanButton?.border?.borderRadius?.value ??
+         '25px',
+      hoverColor:
+         planConfig?.display?.selectPlanButton?.hover?.color?.value ??
+         '#FFFFFF',
+   }
+
+   // Button label
+   const selectPlanButtonLabelConfig = {
+      buttonLabel:
+         planConfig?.data?.selectPlanButtonLabel?.value ?? 'Choose Plan',
+   }
+
+   // Plan title
+   const selectPlanTitleConfig = {
+      color: planConfig?.display?.planTitle?.color?.value ?? 'blue',
+      fontSize: planConfig?.display?.planTitle?.fontSize?.value ?? '1.25rem',
+      fontFamily:
+         planConfig?.display?.planTitle?.fontFamily?.value ?? 'Poppins',
+      fontWeight: planConfig?.display?.planTitle?.fontWeight?.value ?? '600',
+   }
+
+   //Yield and ItemCount labels
+   const yieldAndItemsCountLabelConfig = {
+      color:
+         planConfig?.display?.yieldAndItemsCountLabel?.color?.value ??
+         'rgba(51, 51, 51, 0.6)',
+      fontSize:
+         planConfig?.display?.yieldAndItemsCountLabel?.fontSize?.value ??
+         '1rem',
+
+      fontWeight:
+         planConfig?.display?.yieldAndItemsCountLabel?.fontWeight?.value ??
+         '500',
+   }
+
+   // Count Buttons
+   const countButtonConfig = {
+      borderRadius:
+         planConfig?.display?.countButton?.borderRadius?.value ?? '2px',
+      backgroundColor:
+         planConfig?.display?.countButton?.backgroundColor?.value ??
+         ' rgba(17, 130, 59, 0.2)',
+      fontSize: planConfig?.display?.countButton?.fontSize?.value ?? '1rem',
+      fontWeight: planConfig?.display?.countButton?.fontWeight?.value ?? '600',
+      color:
+         planConfig?.display?.countButton?.color?.value ??
+         'rgba(51, 51, 51, 0.6)',
+   }
+
+   //subscription plan configurations (Visibility)
+
    const router = useRouter()
    const { user, isAuthenticated, isLoading } = useUser()
    const { addToast } = useToasts()
@@ -164,7 +236,7 @@ export const Plan = ({ plan, handlePlanClick, itemCount }) => {
             </div>
          ) : (
             <div className="hern-plan__cover-image">
-               <CoverImageIllustration />
+               <CardCoverIllustration />
             </div>
          )}
 
@@ -182,7 +254,17 @@ export const Plan = ({ plan, handlePlanClick, itemCount }) => {
             )}
 
             <h2 title={plan.title} className="hern-plan__title">
-               <span data-translation="true">{plan.title}</span>
+               <span
+                  style={{
+                     color: selectPlanTitleConfig.color,
+                     fontSize: selectPlanTitleConfig.fontSize,
+                     fontFamily: selectPlanTitleConfig.fontFamily,
+                     fontWeight: selectPlanTitleConfig.fontWeight,
+                  }}
+                  data-translation="true"
+               >
+                  {plan.title}
+               </span>
             </h2>
          </div>
 
@@ -219,7 +301,16 @@ export const Plan = ({ plan, handlePlanClick, itemCount }) => {
          <div className="hern-plan__servings">
             <h4 className="hern-plan__servings__label">
                {/* <span>{t('No. of')}</span>{' '} */}
-               <span data-translation="true">{yieldLabel.plural}</span>
+               <span
+                  style={{
+                     color: yieldAndItemsCountLabelConfig.color,
+                     fontSize: yieldAndItemsCountLabelConfig.fontSize,
+                     fontWeight: yieldAndItemsCountLabelConfig.fontWeight,
+                  }}
+                  data-translation="true"
+               >
+                  {yieldLabel.plural}
+               </span>
             </h4>
             <div className="hern-plan__servings__list__wrapper">
                {plansFirstIndex > 0 &&
@@ -244,6 +335,14 @@ export const Plan = ({ plan, handlePlanClick, itemCount }) => {
                            )}
                            key={serving.id}
                            onClick={() => setDefaultServing(serving)}
+                           style={{
+                              borderRadius: countButtonConfig.borderRadius,
+                              backgroundColor:
+                                 countButtonConfig.backgroundColor,
+                              fontSize: countButtonConfig.fontSize,
+                              fontWeight: countButtonConfig.fontWeight,
+                              color: countButtonConfig.color,
+                           }}
                         >
                            <div data-translation="true">{serving.size}</div>
                            {serving?.metaDetails?.label && (
@@ -282,7 +381,14 @@ export const Plan = ({ plan, handlePlanClick, itemCount }) => {
                   </span>
                ) : ( */}
          <div className="hern-plan__item-counts">
-            <h4 className="hern-plan__item-counts__label">
+            <h4
+               style={{
+                  color: yieldAndItemsCountLabelConfig.color,
+                  fontSize: yieldAndItemsCountLabelConfig.fontSize,
+                  fontWeight: yieldAndItemsCountLabelConfig.fontWeight,
+               }}
+               className="hern-plan__item-counts__label"
+            >
                <span data-translation="true">{itemCountLabel.singular}</span>{' '}
                {t('per week')}
             </h4>
@@ -449,8 +555,18 @@ export const Plan = ({ plan, handlePlanClick, itemCount }) => {
             //          : '#6A6A6A'
             //    }`,
             // }}
+
+            style={{
+               color: selectPlanButtonConfig.color,
+               backgroundColor: selectPlanButtonConfig.backgroundColor,
+               fontSize: selectPlanButtonConfig.fontSize,
+               fontFamily: selectPlanButtonConfig.fontFamily,
+               fontWeight: selectPlanButtonConfig.fontWeight,
+               borderRadius: selectPlanButtonConfig.borderRadius,
+               border: selectPlanButtonConfig.border,
+            }}
          >
-            {t('select plan')}
+            {t(selectPlanButtonLabelConfig?.buttonLabel)}
          </button>
 
          {/* </div> */}
@@ -500,17 +616,18 @@ const PlateIllustration = () => (
    </svg>
 )
 
-const CoverImageIllustration = () => (
+const CardCoverIllustration = () => (
    <svg
       width="100%"
       height="230"
-      viewBox="0 0 100% 230"
+      viewBox="0 0 420 230"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
    >
       <path
          d="M0 12.894C0 6.26662 5.37258 0.894043 12 0.894043H408C414.627 0.894043 420 6.26663 420 12.894V229.894H0V12.894Z"
          fill="#F9F9F9"
+         width={420}
       />
       <path
          d="M146.05 184.53C146.467 184.947 146.882 185.154 147.508 185.154H225H225.207L261.454 195.57H262.079C262.496 195.57 262.911 195.362 263.328 195.153C263.953 194.736 264.161 194.111 264.161 193.486V185.155H272.492C273.117 185.155 273.534 184.947 273.951 184.53L284.367 174.114C284.992 173.489 285.199 172.655 284.784 171.823C284.576 170.989 283.742 170.572 282.909 170.572H274.578C273.536 138.076 248.331 111.62 216.459 108.495C217.084 107.454 217.292 106.204 217.292 104.954C217.292 100.996 213.959 97.6627 210 97.6627C206.042 97.6627 202.709 100.996 202.709 104.954C202.709 106.204 203.126 107.454 203.541 108.495C171.671 111.621 146.464 138.075 145.423 170.572H137.091C136.259 170.572 135.425 170.989 135.217 171.821C134.8 172.654 135.009 173.488 135.634 174.113L146.05 184.53ZM259.995 190.778L203.96 174.739H259.995V190.778ZM277.91 174.739L271.66 180.989L264.162 180.987V174.738H272.494L277.91 174.739ZM210.001 101.831C211.667 101.831 213.125 103.29 213.125 104.955C213.125 106.621 211.667 108.079 210.001 108.079C208.334 108.079 206.877 106.62 206.877 104.955C206.877 103.288 208.334 101.831 210.001 101.831ZM210.001 112.246C242.706 112.246 269.369 138.285 270.411 170.573H262.079L189.17 170.571H149.592C150.632 138.285 177.296 112.245 210.001 112.245L210.001 112.246ZM147.508 174.739H188.961L210.834 180.989L148.341 180.987L142.092 174.738L147.508 174.739Z"

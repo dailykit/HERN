@@ -172,8 +172,8 @@
       }
    }
    &__servings__list-item--active {
-      color: #fff;
-      background-color: var(--hern-accent);
+      color: #fff !important;
+      background-color: var(--hern-accent) !important;
       &:hover {
          opacity: 0.7;
       }
@@ -248,8 +248,8 @@
       }
    }
    &__item-counts__list-item--active {
-      color: #fff;
-      background-color: var(--hern-accent);
+      color: #fff !important;
+      background-color: var(--hern-accent) !important;
       &:hover {
          opacity: 0.7;
       }
