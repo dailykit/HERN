@@ -164,8 +164,20 @@ export const Plans = ({ config }) => {
 
    if (planViewConfig === 'aggregated') {
       return (
-         <div>
-            <h1>Aggregated View</h1>
+         <div className="hern-plans__aggregate__wrapper">
+            <h1
+               style={{
+                  color: headingConfig.color,
+                  fontFamily: headingConfig.fontFamily,
+                  fontSize: headingConfig.fontSize,
+                  fontWeight: headingConfig.fontWeight,
+                  textAlign: headingConfig.textAlign,
+                  padding: headingConfig.spacing,
+               }}
+               className="hern-plans__aggregate__heading"
+            >
+               {headingConfig.heading}
+            </h1>
          </div>
       )
    }

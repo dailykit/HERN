@@ -223,7 +223,7 @@
       font-family: 'Lato';
    }
    &__pricing__total-price__price {
-      font-size: 20px;
+      font-size: 14px;
       font-weight: 600;
    }
    &__pricing__total-price__tax {
@@ -286,6 +286,8 @@
          padding: 0 16px;
          margin-top: 32px;
          align-items: center;
+         justify-content: space-between;
+         width: 100%;
       }
 
       &__item-counts {
@@ -293,6 +295,8 @@
          padding: 0 16px;
          margin-top: 16px;
          align-items: center;
+         justify-content: space-between;
+         width: 100%;
       }
 
       &__pricing {
