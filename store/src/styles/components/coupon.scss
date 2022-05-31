@@ -1,15 +1,16 @@
 .hern-coupon {
-   margin-top: 0.5rem;
    border: 1px dashed var(--hern-accent);
    padding: 8px;
    border-radius: 2px;
+   background-color: #ffffff;
+   margin-bottom: 18px;
 }
 .hern-coupon__apply-btn {
    color: var(--hern-accent);
-   padding: 4px;
-   text-transform: uppercase;
+   text-transform: capitalize;
    text-align: center;
    width: 100%;
+   font-weight: 500;
 }
 .hern-coupon__wrapper {
    display: flex;

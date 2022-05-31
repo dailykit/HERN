@@ -1,0 +1,487 @@
+[
+   {
+      "id": "bounce-0",
+      "title": "bounce",
+      "value": "animate__bounce"
+   },
+   {
+      "id": "flash-1",
+      "title": "flash",
+      "value": "animate__flash"
+   },
+   {
+      "id": "pulse-2",
+      "title": "pulse",
+      "value": "animate__pulse"
+   },
+   {
+      "id": "rubberBand-3",
+      "title": "rubberBand",
+      "value": "animate__rubberBand"
+   },
+   {
+      "id": "shakeX-4",
+      "title": "shakeX",
+      "value": "animate__shakeX"
+   },
+   {
+      "id": "shakeY-5",
+      "title": "shakeY",
+      "value": "animate__shakeY"
+   },
+   {
+      "id": "headShake-6",
+      "title": "headShake",
+      "value": "animate__headShake"
+   },
+   {
+      "id": "swing-7",
+      "title": "swing",
+      "value": "animate__swing"
+   },
+   {
+      "id": "tada-8",
+      "title": "tada",
+      "value": "animate__tada"
+   },
+   {
+      "id": "wobble-9",
+      "title": "wobble",
+      "value": "animate__wobble"
+   },
+   {
+      "id": "jello-10",
+      "title": "jello",
+      "value": "animate__jello"
+   },
+   {
+      "id": "heartBeat-11",
+      "title": "heartBeat",
+      "value": "animate__heartBeat"
+   },
+   {
+      "id": "backInDown-12",
+      "title": "backInDown",
+      "value": "animate__backInDown"
+   },
+   {
+      "id": "backInLeft-13",
+      "title": "backInLeft",
+      "value": "animate__backInLeft"
+   },
+   {
+      "id": "backInRight-14",
+      "title": "backInRight",
+      "value": "animate__backInRight"
+   },
+   {
+      "id": "backInUp-15",
+      "title": "backInUp",
+      "value": "animate__backInUp"
+   },
+   {
+      "id": "backOutDown-16",
+      "title": "backOutDown",
+      "value": "animate__backOutDown"
+   },
+   {
+      "id": "backOutLeft-17",
+      "title": "backOutLeft",
+      "value": "animate__backOutLeft"
+   },
+   {
+      "id": "backOutRight-18",
+      "title": "backOutRight",
+      "value": "animate__backOutRight"
+   },
+   {
+      "id": "backOutUp-19",
+      "title": "backOutUp",
+      "value": "animate__backOutUp"
+   },
+   {
+      "id": "bounceIn-20",
+      "title": "bounceIn",
+      "value": "animate__bounceIn"
+   },
+   {
+      "id": "bounceInDown-21",
+      "title": "bounceInDown",
+      "value": "animate__bounceInDown"
+   },
+   {
+      "id": "bounceInLeft-22",
+      "title": "bounceInLeft",
+      "value": "animate__bounceInLeft"
+   },
+   {
+      "id": "bounceInRight-23",
+      "title": "bounceInRight",
+      "value": "animate__bounceInRight"
+   },
+   {
+      "id": "bounceInUp-24",
+      "title": "bounceInUp",
+      "value": "animate__bounceInUp"
+   },
+   {
+      "id": "bounceOut-25",
+      "title": "bounceOut",
+      "value": "animate__bounceOut"
+   },
+   {
+      "id": "bounceOutDown-26",
+      "title": "bounceOutDown",
+      "value": "animate__bounceOutDown"
+   },
+   {
+      "id": "bounceOutLeft-27",
+      "title": "bounceOutLeft",
+      "value": "animate__bounceOutLeft"
+   },
+   {
+      "id": "bounceOutRight-28",
+      "title": "bounceOutRight",
+      "value": "animate__bounceOutRight"
+   },
+   {
+      "id": "bounceOutUp-29",
+      "title": "bounceOutUp",
+      "value": "animate__bounceOutUp"
+   },
+   {
+      "id": "fadeIn-30",
+      "title": "fadeIn",
+      "value": "animate__fadeIn"
+   },
+   {
+      "id": "fadeInDown-31",
+      "title": "fadeInDown",
+      "value": "animate__fadeInDown"
+   },
+   {
+      "id": "fadeInDownBig-32",
+      "title": "fadeInDownBig",
+      "value": "animate__fadeInDownBig"
+   },
+   {
+      "id": "fadeInLeft-33",
+      "title": "fadeInLeft",
+      "value": "animate__fadeInLeft"
+   },
+   {
+      "id": "fadeInLeftBig-34",
+      "title": "fadeInLeftBig",
+      "value": "animate__fadeInLeftBig"
+   },
+   {
+      "id": "fadeInRight-35",
+      "title": "fadeInRight",
+      "value": "animate__fadeInRight"
+   },
+   {
+      "id": "fadeInRightBig-36",
+      "title": "fadeInRightBig",
+      "value": "animate__fadeInRightBig"
+   },
+   {
+      "id": "fadeInUp-37",
+      "title": "fadeInUp",
+      "value": "animate__fadeInUp"
+   },
+   {
+      "id": "fadeInUpBig-38",
+      "title": "fadeInUpBig",
+      "value": "animate__fadeInUpBig"
+   },
+   {
+      "id": "fadeInTopLeft-39",
+      "title": "fadeInTopLeft",
+      "value": "animate__fadeInTopLeft"
+   },
+   {
+      "id": "fadeInTopRight-40",
+      "title": "fadeInTopRight",
+      "value": "animate__fadeInTopRight"
+   },
+   {
+      "id": "fadeInBottomLeft-41",
+      "title": "fadeInBottomLeft",
+      "value": "animate__fadeInBottomLeft"
+   },
+   {
+      "id": "fadeInBottomRight-42",
+      "title": "fadeInBottomRight",
+      "value": "animate__fadeInBottomRight"
+   },
+   {
+      "id": "fadeOut-43",
+      "title": "fadeOut",
+      "value": "animate__fadeOut"
+   },
+   {
+      "id": "fadeOutDown-44",
+      "title": "fadeOutDown",
+      "value": "animate__fadeOutDown"
+   },
+   {
+      "id": "fadeOutDownBig-45",
+      "title": "fadeOutDownBig",
+      "value": "animate__fadeOutDownBig"
+   },
+   {
+      "id": "fadeOutLeft-46",
+      "title": "fadeOutLeft",
+      "value": "animate__fadeOutLeft"
+   },
+   {
+      "id": "fadeOutLeftBig-47",
+      "title": "fadeOutLeftBig",
+      "value": "animate__fadeOutLeftBig"
+   },
+   {
+      "id": "fadeOutRight-48",
+      "title": "fadeOutRight",
+      "value": "animate__fadeOutRight"
+   },
+   {
+      "id": "fadeOutRightBig-49",
+      "title": "fadeOutRightBig",
+      "value": "animate__fadeOutRightBig"
+   },
+   {
+      "id": "fadeOutUp-50",
+      "title": "fadeOutUp",
+      "value": "animate__fadeOutUp"
+   },
+   {
+      "id": "fadeOutUpBig-51",
+      "title": "fadeOutUpBig",
+      "value": "animate__fadeOutUpBig"
+   },
+   {
+      "id": "fadeOutTopLeft-52",
+      "title": "fadeOutTopLeft",
+      "value": "animate__fadeOutTopLeft"
+   },
+   {
+      "id": "fadeOutTopRight-53",
+      "title": "fadeOutTopRight",
+      "value": "animate__fadeOutTopRight"
+   },
+   {
+      "id": "fadeOutBottomRight-54",
+      "title": "fadeOutBottomRight",
+      "value": "animate__fadeOutBottomRight"
+   },
+   {
+      "id": "fadeOutBottomLeft-55",
+      "title": "fadeOutBottomLeft",
+      "value": "animate__fadeOutBottomLeft"
+   },
+   {
+      "id": "flip-56",
+      "title": "flip",
+      "value": "animate__flip"
+   },
+   {
+      "id": "flipInX-57",
+      "title": "flipInX",
+      "value": "animate__flipInX"
+   },
+   {
+      "id": "flipInY-58",
+      "title": "flipInY",
+      "value": "animate__flipInY"
+   },
+   {
+      "id": "flipOutX-59",
+      "title": "flipOutX",
+      "value": "animate__flipOutX"
+   },
+   {
+      "id": "flipOutY-60",
+      "title": "flipOutY",
+      "value": "animate__flipOutY"
+   },
+   {
+      "id": "lightSpeedInRight-61",
+      "title": "lightSpeedInRight",
+      "value": "animate__lightSpeedInRight"
+   },
+   {
+      "id": "lightSpeedInLeft-62",
+      "title": "lightSpeedInLeft",
+      "value": "animate__lightSpeedInLeft"
+   },
+   {
+      "id": "lightSpeedOutRight-63",
+      "title": "lightSpeedOutRight",
+      "value": "animate__lightSpeedOutRight"
+   },
+   {
+      "id": "lightSpeedOutLeft-64",
+      "title": "lightSpeedOutLeft",
+      "value": "animate__lightSpeedOutLeft"
+   },
+   {
+      "id": "rotateIn-65",
+      "title": "rotateIn",
+      "value": "animate__rotateIn"
+   },
+   {
+      "id": "rotateInDownLeft-66",
+      "title": "rotateInDownLeft",
+      "value": "animate__rotateInDownLeft"
+   },
+   {
+      "id": "rotateInDownRight-67",
+      "title": "rotateInDownRight",
+      "value": "animate__rotateInDownRight"
+   },
+   {
+      "id": "rotateInUpLeft-68",
+      "title": "rotateInUpLeft",
+      "value": "animate__rotateInUpLeft"
+   },
+   {
+      "id": "rotateInUpRight-69",
+      "title": "rotateInUpRight",
+      "value": "animate__rotateInUpRight"
+   },
+   {
+      "id": "rotateOut-70",
+      "title": "rotateOut",
+      "value": "animate__rotateOut"
+   },
+   {
+      "id": "rotateOutDownLeft-71",
+      "title": "rotateOutDownLeft",
+      "value": "animate__rotateOutDownLeft"
+   },
+   {
+      "id": "rotateOutDownRight-72",
+      "title": "rotateOutDownRight",
+      "value": "animate__rotateOutDownRight"
+   },
+   {
+      "id": "rotateOutUpLeft-73",
+      "title": "rotateOutUpLeft",
+      "value": "animate__rotateOutUpLeft"
+   },
+   {
+      "id": "rotateOutUpRight-74",
+      "title": "rotateOutUpRight",
+      "value": "animate__rotateOutUpRight"
+   },
+   {
+      "id": "hinge-75",
+      "title": "hinge",
+      "value": "animate__hinge"
+   },
+   {
+      "id": "jackInTheBox-76",
+      "title": "jackInTheBox",
+      "value": "animate__jackInTheBox"
+   },
+   {
+      "id": "rollIn-77",
+      "title": "rollIn",
+      "value": "animate__rollIn"
+   },
+   {
+      "id": "rollOut-78",
+      "title": "rollOut",
+      "value": "animate__rollOut"
+   },
+   {
+      "id": "zoomIn-79",
+      "title": "zoomIn",
+      "value": "animate__zoomIn"
+   },
+   {
+      "id": "zoomInDown-80",
+      "title": "zoomInDown",
+      "value": "animate__zoomInDown"
+   },
+   {
+      "id": "zoomInLeft-81",
+      "title": "zoomInLeft",
+      "value": "animate__zoomInLeft"
+   },
+   {
+      "id": "zoomInRight-82",
+      "title": "zoomInRight",
+      "value": "animate__zoomInRight"
+   },
+   {
+      "id": "zoomInUp-83",
+      "title": "zoomInUp",
+      "value": "animate__zoomInUp"
+   },
+   {
+      "id": "zoomOut-84",
+      "title": "zoomOut",
+      "value": "animate__zoomOut"
+   },
+   {
+      "id": "zoomOutDown-85",
+      "title": "zoomOutDown",
+      "value": "animate__zoomOutDown"
+   },
+   {
+      "id": "zoomOutLeft-86",
+      "title": "zoomOutLeft",
+      "value": "animate__zoomOutLeft"
+   },
+   {
+      "id": "zoomOutRight-87",
+      "title": "zoomOutRight",
+      "value": "animate__zoomOutRight"
+   },
+   {
+      "id": "zoomOutUp-88",
+      "title": "zoomOutUp",
+      "value": "animate__zoomOutUp"
+   },
+   {
+      "id": "slideInDown-89",
+      "title": "slideInDown",
+      "value": "animate__slideInDown"
+   },
+   {
+      "id": "slideInLeft-90",
+      "title": "slideInLeft",
+      "value": "animate__slideInLeft"
+   },
+   {
+      "id": "slideInRight-91",
+      "title": "slideInRight",
+      "value": "animate__slideInRight"
+   },
+   {
+      "id": "slideInUp-92",
+      "title": "slideInUp",
+      "value": "animate__slideInUp"
+   },
+   {
+      "id": "slideOutDown-93",
+      "title": "slideOutDown",
+      "value": "animate__slideOutDown"
+   },
+   {
+      "id": "slideOutLeft-94",
+      "title": "slideOutLeft",
+      "value": "animate__slideOutLeft"
+   },
+   {
+      "id": "slideOutRight-95",
+      "title": "slideOutRight",
+      "value": "animate__slideOutRight"
+   },
+   {
+      "id": "slideOutUp-96",
+      "title": "slideOutUp",
+      "value": "animate__slideOutUp"
+   }
+]

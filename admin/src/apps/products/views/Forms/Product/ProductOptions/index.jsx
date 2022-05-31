@@ -896,9 +896,10 @@ const Option = ({
                      id={`discount-${option.id}`}
                      name={`discount-${option.id}`}
                      onBlur={() => handleBlur('discount')}
-                     onChange={e =>
-                        setDiscount({ ...discount, value: e.target.value })
-                     }
+                     onChange={e =>{
+                        if(e.target.value>100){ e.target.value=discount.value; return };
+                        return setDiscount({ ...discount, value: e.target.value })
+                     }}
                      value={discount.value}
                      placeholder="Enter discount"
                      hasError={
@@ -1011,8 +1012,17 @@ const Option = ({
                   <Checkbox
                      id='label'
                      checked={productData.defaultProductOptionId === option.id ? true : false}
-                     onChange={productData.defaultProductOptionId === option.id ?
-                        handleRemoveDefaultProductOption : handleDefaultProductOption}
+                     onChange={
+                        productData.defaultProductOptionId === option.id ?
+                        handleRemoveDefaultProductOption : 
+                        (
+                           (option.isAvailable && option.isPublished)?
+                           handleDefaultProductOption : 
+                           ()=>{
+                              window.alert("the product option must be published and available to be default option")
+                           }
+                        )
+                     }
                      isAllSelected={false}
                   >
                      Default Product Option

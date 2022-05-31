@@ -9,6 +9,7 @@ const FloatingBar = dynamic(() => import('./floatingBar'))
 const PaymentOptionsRenderer = dynamic(() => import('./paymentOptionsRenderer'))
 const PayButton = dynamic(() => import('./PayButton'))
 const PrintProcessingModal = dynamic(() => import('./printProcessingModal'))
+const WalletTopUp = dynamic(() => import('./walletTopUp'))
 
 const SEO = dynamic(() => import('./seo').then(promise => promise.SEO))
 
@@ -68,6 +69,11 @@ const Divider = dynamic(() =>
 )
 const ModifierPopup = dynamic(() =>
    import('./modifier_popup').then(promise => promise.ModifierPopup)
+)
+const ModifierPopupForUnAvailability = dynamic(() =>
+   import('./modifierPopUpForUnAvailability').then(
+      promise => promise.ModifierPopupForUnAvailability
+   )
 )
 const CounterButton = dynamic(() =>
    import('./counterBtn').then(promise => promise.CounterButton)
@@ -136,6 +142,9 @@ const ModifierCategory = dynamic(() =>
    import('./modifierCategory').then(promise => promise.ModifierCategory)
 )
 const Empty = dynamic(() => import('./empty').then(promise => promise.Empty))
+const PageBanner = dynamic(() =>
+   import('./page_banner').then(promise => promise.PageBanner)
+)
 
 export {
    PaymentProcessingModal,
@@ -168,6 +177,7 @@ export {
    BottomCartBar,
    Divider,
    ModifierPopup,
+   ModifierPopupForUnAvailability,
    CounterButton,
    Login,
    LoginWarning,
@@ -193,6 +203,8 @@ export {
    Empty,
    Form,
    HernSkeleton,
+   WalletTopUp,
+   PageBanner,
 }
 
 const TunnelHeader = dynamic(() =>

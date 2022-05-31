@@ -12,6 +12,13 @@ export const Login = ({ config }) => {
    const { isAuthenticated, isLoading } = useUser()
    const router = useRouter()
 
+   const brandDefaultLogInMethod = React.useMemo(() => {
+      if (authConfig?.loginSettings?.defaultLogInMethod?.value?.value) {
+         return authConfig?.loginSettings?.defaultLogInMethod?.value?.value
+      } else {
+         return 'email'
+      }
+   }, [authConfig])
    const loginBy = React.useMemo(() => {
       if (config?.loginSettings?.componentToRender?.value?.value) {
          return config?.loginSettings?.componentToRender?.value?.value
@@ -20,7 +27,7 @@ export const Login = ({ config }) => {
       } else {
          return 'email'
       }
-   }, [])
+   }, [config, authConfig])
    /** Brand level config for login illustration **/
    const loginIllustration = configOf('Login Illustrations', 'brand')
    const illustration =

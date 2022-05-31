@@ -40,7 +40,7 @@ const CartInfo = () => {
          <Flex>
             <Text as="text1"> {renderMode()} </Text>
             <Spacer size="4px" />
-            <Text as="text2">{format(new Date(f.slot.from), 'PPp')}</Text>
+            <Text as="text2">{format(new Date(f.slot.from), 'PPp')} - {format(new Date(f.slot.to), 'PPp')}</Text>
             <Spacer size="4px" />
             {f.type.includes('DELIVERY') && (
                <>

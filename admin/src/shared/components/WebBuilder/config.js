@@ -6,6 +6,7 @@ export const config = {
    fromElement: true,
    height: '100%',
    width: '100%',
+   // dragMode: 'absolute', // for absolute/designer mode
    storageManager: {
       id: 'gjs-', // Prefix identifier that will be used inside storing and loading
       type: 'local', // Type of the storage

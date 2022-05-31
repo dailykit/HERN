@@ -120,7 +120,7 @@ export const AddressTunnel = ({
       const response = await fetch(
          `https://maps.googleapis.com/maps/api/geocode/json?key=${
             window._env_.REACT_APP_MAPS_API_KEY
-         }&address=${encodeURIComponent(input.description)}`
+         }&address=${encodeURIComponent(input.value.description)}`
       )
       const data = await response.json()
       if (data.status === 'OK' && data.results.length > 0) {
@@ -198,8 +198,10 @@ export const AddressTunnel = ({
                <GPlaces>
                   {loaded && !error && (
                      <GooglePlacesAutocomplete
-                        onSelect={formatAddress}
-                        placeholder="Search your address"
+                        selectProps={{
+                           placeholder: 'Search your address...',
+                           onChange: input => formatAddress(input),
+                        }}
                         renderInput={props => (
                            <Flex>
                               <Form.Group>

@@ -15,6 +15,7 @@ const initial = {
    brand: { id: null },
    customer: { id: null },
    organization: { id: null },
+   location: { id: null },
 }
 
 const reducers = (state, { type, payload }) => {
@@ -43,6 +44,12 @@ const reducers = (state, { type, payload }) => {
             ...state,
             organization: payload,
          }
+      case 'SET_LOCATION': {
+         return {
+            ...state,
+            location: payload,
+         }
+      }
       default:
          return state
    }
@@ -58,7 +65,7 @@ export const Provider = ({
    const [tunnels, openTunnel, closeTunnel] = useTunnel(4)
    const [state, dispatch] = React.useReducer(reducers, initial)
    const [customerLoading, setIsCustomerLoading] = React.useState(true)
-   const [organizationLoading, setOrganizationLoading] = React.useState(true)
+   // const [organizationLoading, setOrganizationLoading] = React.useState(true)
    const [insertSubscriptionOccurenceCustomer] = useMutation(
       MUTATIONS.SUBSCRIPTION.OCCURENCE.CREATE,
       {
@@ -68,7 +75,7 @@ export const Provider = ({
       }
    )
    useQuery(QUERIES.CUSTOMER.LIST, {
-      skip: organizationLoading || !brandId || !keycloakId,
+      skip: !brandId || !keycloakId,
       variables: {
          where: {
             brandId: { _eq: brandId },
@@ -131,21 +138,6 @@ export const Provider = ({
       }
    }, [isModeTunnelOpen])
 
-   useQuery(QUERIES.ORGANIZATION, {
-      onCompleted: ({ organizations = [] }) => {
-         if (organizations.length > 0) {
-            const [organization] = organizations
-            dispatch({ type: 'SET_ORGANIZATION', payload: organization })
-         }
-         setOrganizationLoading(false)
-      },
-      onError: error => {
-         logger(error)
-         setOrganizationLoading(false)
-         toast.error('Failed to fetch organization details!')
-      },
-   })
-
    const createCart = async (user = null, occurenceId = null) => {
       const cart = {}
       if (user) {
@@ -175,13 +167,14 @@ export const Provider = ({
       cart.brandId = state.brand.id
       cart.source =
          state.mode === 'SUBSCRIPTION' ? 'subscription' : 'a-la-carte'
+      cart.locationId = state.location.id
       if (state.mode === 'SUBSCRIPTION' && occurenceId) {
          cart.subscriptionOccurenceId = occurenceId
       }
       await insert({ variables: { object: cart } })
    }
 
-   if (organizationLoading || customerLoading) return <InlineLoader />
+   if (customerLoading) return <InlineLoader />
    return (
       <Context.Provider
          value={{
