@@ -54,7 +54,7 @@ export const Plan = ({
    // Plan title
    const selectPlanTitleConfig = {
       color: planConfig?.display?.planTitle?.color?.value ?? 'blue',
-      fontSize: planConfig?.display?.planTitle?.fontSize?.value ?? '1.25rem',
+      fontSize: planConfig?.display?.planTitle?.fontSize?.value ?? '1.125rem',
       fontFamily:
          planConfig?.display?.planTitle?.fontFamily?.value ?? 'Poppins',
       fontWeight: planConfig?.display?.planTitle?.fontWeight?.value ?? '600',
@@ -82,6 +82,7 @@ export const Plan = ({
    const itemCountLabelConfig = {
       singular: planConfig?.data?.itemCountLabel?.singular?.value || 'recipe',
       plural: planConfig?.data?.itemCountLabel?.plural?.value || 'recipes',
+      itemCountLabel: planConfig?.data?.itemCountLabel?.value || 'recipe',
    }
 
    // Count Buttons
@@ -99,7 +100,6 @@ export const Plan = ({
    }
 
    //subscription plan configurations (Visibility)
-
    const router = useRouter()
    const { user, isAuthenticated, isLoading } = useUser()
    const { addToast } = useToasts()
@@ -222,18 +222,8 @@ export const Plan = ({
       }
    }
 
-   // const config = configOf('primary-labels')?.primaryLabels
    const colorConfig = configOf('theme-color', 'Visual')?.themeColor
    const priceDisplay = configOf('priceDisplay', 'Visual')?.priceDisplay
-
-   // const yieldLabel = {
-   //    singular: config?.yieldLabel?.singular?.value || 'serving',
-   //    plural: config?.yieldLabel?.singular?.value || 'servings',
-   // }
-   // const itemCountLabel = {
-   //    singular: config?.itemLabel?.singular?.value || 'recipe',
-   //    plural: config?.itemLabel?.singular?.value || 'recipes',
-   // }
 
    if (!defaultServing) return <Loader inline />
 
@@ -268,6 +258,7 @@ export const Plan = ({
                      ? 'hern-plan__card__cover-image'
                      : 'hern-plan__cover-image'
                }
+               style={{ marginTop: '10px' }}
             >
                <CardCoverIllustration />
             </div>
@@ -495,7 +486,7 @@ export const Plan = ({
                }
             >
                <span data-translation="true">
-                  {itemCountLabelConfig.singular}
+                  {itemCountLabelConfig.itemCountLabel}
                </span>{' '}
                {t('per week')}
             </h4>
@@ -751,14 +742,6 @@ export const Plan = ({
                   : 'hern-plan__select-plan__btn'
             }
             onClick={() => selectPlan()}
-            // style={{
-            //    backgroundColor: `${
-            //       colorConfig?.accent?.value
-            //          ? colorConfig?.accent?.value
-            //          : '#6A6A6A'
-            //    }`,
-            // }}
-
             style={{
                color: selectPlanButtonConfig.color,
                backgroundColor: selectPlanButtonConfig.backgroundColor,
@@ -769,7 +752,7 @@ export const Plan = ({
                border: selectPlanButtonConfig.border,
             }}
          >
-            {t(selectPlanButtonLabelConfig?.buttonLabel)}
+            {t(`${selectPlanButtonLabelConfig?.buttonLabel}`)}
          </button>
 
          {/* </div> */}
@@ -859,10 +842,3 @@ const CardCoverIllustration = () => (
       />
    </svg>
 )
-// TODO
-// You need to use all the config field on this plan and plans component
-// The plans which doesn't have any meta details cover image we have to use the default
-
-// You need create the list view
-// You need create the aggregate view
-//You have to show the view based on the config

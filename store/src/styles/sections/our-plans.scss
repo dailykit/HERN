@@ -1,12 +1,5 @@
 // List View Styles
 .hern-plans {
-   // display: grid;
-   // grid-template-columns: repeat(auto-fill, minmax(420px, 1fr));
-   // grid-gap: 80px;
-   // justify-content: center;
-   // align-items: center;
-   // margin-bottom: 64px;
-
    justify-content: space-between;
    display: flex;
    flex-wrap: wrap;
@@ -14,10 +7,6 @@
    max-width: 1200px;
 
    &__wrapper {
-      // max-width: 980px;
-      // width: calc(100vw - 2rem);
-      // margin: 16px auto;
-
       max-width: 1200px;
       width: calc(100vw - 2rem);
       margin: 16px auto;
@@ -32,11 +21,6 @@
 }
 
 .hern-plan {
-   // background: #ffffff;
-   // box-shadow: 0px 2px 12px rgba(0, 0, 0, 0.08);
-   // border-radius: 12px;
-   // height: 100%;
-
    display: flex;
    align-items: center;
    background: #ffffff;
@@ -68,12 +52,6 @@
    &__title {
       margin-left: 8px;
       > span {
-         // font-family: 'Lato';
-         // font-style: normal;
-         // font-weight: 600;
-         // font-size: 20px;
-         // color: #333333;
-
          font-family: 'Lato';
          font-style: normal;
          font-weight: 700;
@@ -92,10 +70,6 @@
       padding: 0 16px;
    }
    &__icon {
-      // height: 24px;
-      // width: 24px;
-      // border-radius: 50%;
-
       height: 40px;
       width: 40px;
       border-radius: 50%;
@@ -109,22 +83,9 @@
    }
 
    &__servings {
-      // display: flex;
-      // padding: 0 16px;
-      // margin-top: 32px;
-      // align-items: center;
       width: 240px;
    }
    &__servings__label {
-      // font-family: 'Inter';
-      // font-style: normal;
-      // font-weight: 500;
-      // font-size: 16px;
-      // line-height: 19px;
-      // color: rgba(51, 51, 51, 0.6);
-      // width: 180px;
-      // text-transform: capitalize;
-
       font-family: 'Inter';
       font-style: normal;
       font-weight: 500;
@@ -138,8 +99,7 @@
       position: absolute;
       left: -20px;
    }
-   &__servings__arrow-btn--right {
-   }
+
    &__servings__list__wrapper {
       display: flex;
       align-items: center;
@@ -180,24 +140,9 @@
 
    //Item counts
    &__item-counts {
-      // display: flex;
-      // padding: 0 16px;
-      // margin-top: 16px;
-      // align-items: center;
-
-      // padding: 0 16px;
       width: 240px;
    }
    &__item-counts__label {
-      // font-family: 'Inter';
-      // font-style: normal;
-      // font-weight: 500;
-      // font-size: 16px;
-      // line-height: 19px;
-      // color: rgba(51, 51, 51, 0.6);
-      // width: 180px;
-      // text-transform: capitalize;
-
       font-family: 'Inter';
       font-style: normal;
       font-weight: 500;
@@ -254,14 +199,6 @@
       }
    }
    &__pricing {
-      // margin: 40px 0 16px 0;
-      // padding: 0 16px;
-      // font-weight: 600;
-      // font-size: 14px;
-      // line-height: 17px;
-      // color: rgba(51, 51, 51, 0.6);
-      // text-transform: capitalize;
-
       font-weight: 500;
       font-size: 14px;
       line-height: 1.2;
@@ -274,10 +211,6 @@
       }
    }
    &__pricing-total-price-serving-wrapper {
-      // display: flex;
-      // justify-content: space-between;
-      // margin-bottom: 12px;
-
       margin-bottom: 4px;
    }
    &__pricing__total-serving {
@@ -300,19 +233,6 @@
       margin-right: 4px;
    }
    &__select-plan__btn {
-      // width: calc(100% - 32px);
-      // display: flex;
-      // margin: 0 16px 16px 16px;
-      // border-radius: 999999999px;
-      // padding: 12px;
-      // background-color: var(--hern-accent);
-      // justify-content: center;
-      // align-items: center;
-      // font-weight: 500;
-      // font-family: 'Inter';
-      // font-size: 18px;
-      // color: #fff;
-
       border-radius: 999999999px;
       padding: 16px 30px;
       background-color: var(--hern-accent);
@@ -326,11 +246,10 @@
          color: rgba(51, 51, 51, 0.6);
       }
    }
+}
 
-   @media (max-width: 1024px) {
-      // display: block;
-      // padding: 10px;
-
+@media (max-width: 1024px) {
+   .hern-plan {
       display: block;
       padding: unset;
 
@@ -357,19 +276,12 @@
       }
 
       &__icon-title-wrapper {
-         // margin-bottom: 30px;
          display: flex;
          align-items: center;
          margin: 16px;
       }
 
       &__servings {
-         // display: flex;
-         // align-items: center;
-         // justify-content: space-between;
-         // margin-bottom: 24px;
-         // width: 100%;
-
          display: flex;
          padding: 0 16px;
          margin-top: 32px;
@@ -377,12 +289,6 @@
       }
 
       &__item-counts {
-         // display: flex;
-         // justify-content: space-between;
-         // align-items: center;
-         // width: 100%;
-         // margin-bottom: 45px;
-
          display: flex;
          padding: 0 16px;
          margin-top: 16px;
@@ -390,11 +296,6 @@
       }
 
       &__pricing {
-         // display: flex;
-         // justify-content: space-between;
-         // align-items: center;
-         // margin-bottom: 12px;
-
          margin: 40px 0 16px 0;
          padding: 0 16px;
          font-weight: 600;
@@ -720,7 +621,7 @@
       display: flex;
       margin: 0 16px 16px 16px;
       border-radius: 999999999px;
-      padding: 12px;
+      padding: 16px 30px;
       background-color: var(--hern-accent);
       justify-content: center;
       align-items: center;
