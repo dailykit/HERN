@@ -570,7 +570,7 @@ export const Sidebar = ({ setOpen }) => {
                },
                {
                   title: 'Pre-Order DineIn',
-                  path: '/menu/recurrences/SCHEDULED_DINEIN',
+                  path: '/menu/recurrences/PREORDER_DINEIN',
                },
             ],
          },

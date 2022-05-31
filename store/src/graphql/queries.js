@@ -2082,8 +2082,8 @@ export const ONDEMAND_DINE_BRAND_RECURRENCES = gql`
       }
    }
 `
-export const SCHEDULED_DINEIN_BRAND_RECURRENCES = gql`
-   query SCHEDULED_DINEIN_BRAND_RECURRENCES(
+export const PREORDER_DINEIN_BRAND_RECURRENCES = gql`
+   query PREORDER_DINEIN_BRAND_RECURRENCES(
       $where: fulfilment_brand_recurrence_bool_exp!
    ) {
       brandRecurrences(where: $where) {
@@ -2097,6 +2097,8 @@ export const SCHEDULED_DINEIN_BRAND_RECURRENCES = gql`
                from
                to
                id
+               dineInLeadTime
+               dineInPrepTime
                mileRanges {
                   id
                   from

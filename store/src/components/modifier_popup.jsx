@@ -408,17 +408,15 @@ export const ModifierPopup = props => {
    }
    //custom area for product
    const CustomArea = () => {
-      return (
-         <div className="hern-menu-popup-product-custom-area">
-            {showCounterBtn && counterButtonPosition == 'TOP' && (
+      return (showCounterBtn && counterButtonPosition == 'TOP' && (
+            <div className="hern-menu-popup-product-custom-area">
                <CounterButton
                   count={quantity}
                   incrementClick={incrementClick}
                   decrementClick={decrementClick}
                />
-            )}
-         </div>
-      )
+            </div>
+         ))
    }
 
    useEffect(() => {
@@ -475,23 +473,25 @@ export const ModifierPopup = props => {
                >
                   {productData.name}
                </div>
-               <div
+               {productData.description&& <div
                   className="hern-product-options__custom-details__product-desc"
                   data-translation="true"
                >
                   {productData.description}
-               </div>
-               <div
+               </div>}
+               {productData?.tags?.join(',') && <div
                   className="hern-product-options__custom-details__product-tags"
                   data-translation="true"
                >
                   {productData?.tags?.join(',')}
-               </div>
+               </div>}
             </div>
             <div className="hern-product-options__custom-details__left">
-               <div className="hern-product-options__custom-details__product-counter">
-                  <CustomArea />
-               </div>
+               { CustomArea() && 
+                  <div className="hern-product-options__custom-details__product-counter">
+                     <CustomArea />
+                  </div>
+               }
                <div
                   className="hern-product-options__custom-details__product-price"
                   data-translation="true"
