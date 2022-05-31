@@ -287,6 +287,7 @@ const ProfileSidebarIcon = {
 }
 
 export * from './DeliveryInfoIcons'
+export * from './AddressLabelIcon'
 const EmptyCloche = dynamic(() =>
    import('./EmptyCloche').then(promise => promise.EmptyCloche)
 )
