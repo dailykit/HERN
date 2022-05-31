@@ -23,13 +23,26 @@ export const Menu = () => {
    const { addToast } = useToasts()
    const { t, dynamicTrans, locale } = useTranslation()
    const { state } = useMenu()
+   const { brand, locationId, brandLocation } = useConfig()
    const { configOf, buildImageUrl, noProductImage } = useConfig()
+
+   const argsForByLocation = React.useMemo(
+      () => ({
+         brandId: brand?.id,
+         locationId: locationId,
+         brand_locationId: brandLocation?.id,
+      }),
+      [brand, locationId, brandLocation?.id]
+   )
+
    const { loading, data: { categories = [] } = {} } = useQuery(
       OCCURENCE_PRODUCTS_BY_CATEGORIES,
       {
+         skip: !brand?.id || !locationId || !brandLocation?.id,
          variables: {
             occurenceId: { _eq: state?.week?.id },
             subscriptionId: { _eq: user?.subscriptionId },
+            params: argsForByLocation,
          },
          onError: error => {
             addToast(error.message, {
@@ -161,6 +174,29 @@ const Product = ({ node, theme, isAdded, noProductImage, buildImageUrl }) => {
       methods.products.add(item, node?.productOption?.product)
    }
    const isActive = isAdded(node?.cartItem?.subscriptionOccurenceProductId)
+   const ProductIsPublished = node?.productOption?.product?.isPublished
+   const ProductIsAvailable = node?.productOption?.product?.isAvailable
+   const isProductOutOfStock = React.useMemo(() => {
+      if (ProductIsAvailable) {
+         if (
+            node?.productOption.length > 0 &&
+            node?.productOption?.product?.isPopupAllowed
+         ) {
+            const availableProductOptions = node?.productOption.filter(
+               option => option.isPublished && option.isAvailable
+            ).length
+            if (availableProductOptions > 0) {
+               return false
+            } else {
+               return true
+            }
+         } else {
+            return false
+         }
+      }
+      return true
+   }, [node])
+
    const canAdd = () => {
       if (!state?.week?.isValid) {
          return false
@@ -231,91 +267,108 @@ const Product = ({ node, theme, isAdded, noProductImage, buildImageUrl }) => {
    }, [currentLang])
 
    return (
-      <li
-         className={productClasses}
-         style={{
-            borderColor: `${theme?.highlight ? theme.highlight : '#38a169'}`,
-         }}
-      >
-         {!!product.type && (
-            <span className="hern-select-menu__menu__product__type">
-               <img
-                  alt="Non-Veg Icon"
-                  src={
-                     product.type === 'Non-vegetarian'
-                        ? '/assets/imgs/non-veg.png'
-                        : '/assets/imgs/veg.png'
-                  }
-                  title={product.type}
-                  className="hern-select-menu__menu__product__type__img"
-               />
-            </span>
-         )}
-         <div
-            className="hern-select-menu__menu__product__img"
-            onClick={openRecipe}
-         >
-            {product.image ? (
-               <ReactImageFallback
-                  src={buildImageUrl('400x300', product.image)}
-                  fallbackImage={product.image}
-                  initialImage={<Loader />}
-                  alt={product.name}
-                  className="image__thumbnail"
-               />
-            ) : (
-               <img src={noProductImage} alt={product.name} />
-            )}
-         </div>
-         {node.addOnLabel && (
-            <span
-               className="hern-select-menu__menu__product__add-on-label"
-               data-translation="true"
+      <>
+         {ProductIsPublished && (
+            <li
+               className={productClasses}
+               style={{
+                  borderColor: `${
+                     theme?.highlight ? theme.highlight : '#38a169'
+                  }`,
+                  opacity: `${isProductOutOfStock ? 0.6 : 1}`,
+               }}
             >
-               {node.addOnLabel}
-            </span>
-         )}
-         <section className="hern-select-menu__menu__product__link">
-            <CheckIcon size={16} className={checkIconClasses} />
-            <a theme={theme} onClick={openRecipe}>
-               <span data-translation="true">{product.name}</span>
-               {'-'}
-               <span data-translation="true">{product.label}</span>
-            </a>
-         </section>
-         <p
-            className="hern-select-menu__menu__product__link__additional-text"
-            data-translation="true"
-         >
-            {product?.additionalText}
-         </p>
-         {canAdd() && (
-            <button
-               className={btnClasses}
-               theme={theme}
-               disabled={
-                  !node.isAvailable &&
-                  state.occurenceCustomer?.validStatus?.itemCountValid
-               }
-               onClick={() => add(node.cartItem, node)}
-               title={
-                  node.isAvailable
-                     ? formatMessage({ id: 'Add product' })
-                     : formatMessage({ id: 'This product is out of stock.' })
-               }
-            >
-               {node.isAvailable ? (
-                  <>
-                     {isActive ? t('REPEAT') : t('ADD')}
-                     {node.addOnPrice > 0 && ' + '}
-                     {node.addOnPrice > 0 &&
-                        formatCurrency(Number(node.addOnPrice) || 0)}
-                  </>
-               ) : (
-                  t('Out of Stock')
+               {!!product.type && (
+                  <span className="hern-select-menu__menu__product__type">
+                     <img
+                        alt="Non-Veg Icon"
+                        src={
+                           product.type === 'Non-vegetarian'
+                              ? '/assets/imgs/non-veg.png'
+                              : '/assets/imgs/veg.png'
+                        }
+                        title={product.type}
+                        className="hern-select-menu__menu__product__type__img"
+                     />
+                  </span>
                )}
-            </button>
+               <div
+                  className="hern-select-menu__menu__product__img"
+                  onClick={isProductOutOfStock ? '' : openRecipe}
+               >
+                  {product.image ? (
+                     <ReactImageFallback
+                        src={buildImageUrl('400x300', product.image)}
+                        fallbackImage={product.image}
+                        initialImage={<Loader />}
+                        alt={product.name}
+                        className="image__thumbnail"
+                     />
+                  ) : (
+                     <img src={noProductImage} alt={product.name} />
+                  )}
+               </div>
+               {node.addOnLabel && (
+                  <span
+                     className="hern-select-menu__menu__product__add-on-label"
+                     data-translation="true"
+                  >
+                     {node.addOnLabel}
+                  </span>
+               )}
+               <section className="hern-select-menu__menu__product__link">
+                  <CheckIcon size={16} className={checkIconClasses} />
+                  <a
+                     theme={theme}
+                     onClick={isProductOutOfStock ? '' : openRecipe}
+                  >
+                     <span data-translation="true">{product.name}</span>
+                     {'-'}
+                     <span data-translation="true">{product.label}</span>
+                  </a>
+               </section>
+               <p
+                  className="hern-select-menu__menu__product__link__additional-text"
+                  data-translation="true"
+               >
+                  {product?.additionalText}
+               </p>
+               {canAdd() && (
+                  <button
+                     className={btnClasses}
+                     theme={theme}
+                     disabled={
+                        !node.isAvailable &&
+                        isProductOutOfStock &&
+                        state.occurenceCustomer?.validStatus?.itemCountValid
+                     }
+                     onClick={() => {
+                        if (!isProductOutOfStock) {
+                           add(node.cartItem, node)
+                        }
+                     }}
+                     title={
+                        node.isAvailable && !isProductOutOfStock
+                           ? formatMessage({ id: 'Add product' })
+                           : formatMessage({
+                                id: 'This product is out of stock.',
+                             })
+                     }
+                  >
+                     {node.isAvailable && !isProductOutOfStock ? (
+                        <>
+                           {isActive ? t('REPEAT') : t('ADD')}
+                           {node.addOnPrice > 0 && ' + '}
+                           {node.addOnPrice > 0 &&
+                              formatCurrency(Number(node.addOnPrice) || 0)}
+                        </>
+                     ) : (
+                        t('Out of Stock')
+                     )}
+                  </button>
+               )}
+            </li>
          )}
-      </li>
+      </>
    )
 }

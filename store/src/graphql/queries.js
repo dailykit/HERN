@@ -202,6 +202,7 @@ export const OCCURENCE_PRODUCTS_BY_CATEGORIES = gql`
    query categories(
       $subscriptionId: Int_comparison_exp
       $occurenceId: Int_comparison_exp
+      $params: jsonb!
    ) {
       categories: productCategories(
          where: {
@@ -235,6 +236,8 @@ export const OCCURENCE_PRODUCTS_BY_CATEGORIES = gql`
                isSingleSelect
                productOption {
                   id
+                  isPublished: publishedByLocation(args: { params: $params })
+                  isAvailable: availabilityByLocation(args: { params: $params })
                   label
                   simpleRecipeYield {
                      yield
@@ -245,9 +248,14 @@ export const OCCURENCE_PRODUCTS_BY_CATEGORIES = gql`
                   }
                   product {
                      name
+                     isPublished: publishedByLocation(args: { params: $params })
+                     isAvailable: availabilityByLocation(
+                        args: { params: $params }
+                     )
                      assets
                      additionalText
                      tags
+                     isPopupAllowed
                   }
                }
             }
