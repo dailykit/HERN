@@ -1,23 +1,22 @@
 import React from 'react'
 import { isEmpty } from 'lodash'
 import { useRouter } from 'next/router'
-import classNames from 'classnames'
 import { useDelivery } from './state'
-import { useConfig } from '../../lib'
 import { useTranslation, useUser } from '../../context'
-import { LocationIcon } from '../../assets/icons'
+import { AddressLabelIcon } from '../../assets/icons'
 import { AddressTunnel } from './address_tunnel'
 import { HelperBar } from '../../components'
-import { getRoute } from '../../utils'
-import { SectionTitle } from './section_title'
+import { getRoute, normalizeAddress } from '../../utils'
+import { FaPlus } from 'react-icons/fa'
 
 export const AddressSection = () => {
    const router = useRouter()
    const { user } = useUser()
-   const { configOf } = useConfig()
    const { state, dispatch } = useDelivery()
    const { t, dynamicTrans, locale } = useTranslation()
+   const [currentView, setCurrentView] = React.useState('address-list')
 
+   //Customers previously selected address
    React.useEffect(() => {
       if (
          Array.isArray(user?.platform_customer?.addresses) &&
@@ -27,6 +26,19 @@ export const AddressSection = () => {
          addressSelection(address)
       }
    }, [dispatch, user])
+
+   //Effect for setting current view to address form if there is no address
+   React.useEffect(() => {
+      if (state?.address?.selected) {
+         setCurrentView('selected-address')
+      } else if (isEmpty(user?.platform_customer?.addresses)) {
+         setCurrentView('address-form')
+      } else if (!isEmpty(user?.platform_customer?.addresses)) {
+         setCurrentView('address-list')
+      }
+   }, [])
+
+   //Language change
    const currentLang = React.useMemo(() => locale, [locale])
    React.useEffect(() => {
       const languageTags = document.querySelectorAll(
@@ -35,19 +47,40 @@ export const AddressSection = () => {
       dynamicTrans(languageTags)
    }, [currentLang])
 
+   //select address handler
    const addressSelection = address => {
       dispatch({ type: 'SET_ADDRESS', payload: address })
    }
 
-   const toggleTunnel = value => {
-      dispatch({ type: 'TOGGLE_TUNNEL', payload: value })
-   }
-
-   //config properties
-   const theme = configOf('theme-color', 'Visual')
-
    return (
-      <>
+      <div className="hern-delivery__address">
+         <div className="hern-delivery__address__add-change-btn">
+            {currentView === 'selected-address' && (
+               <button
+                  onClick={() => setCurrentView('address-list')}
+                  className="hern-delivery__address__add-change-btn--change"
+               >
+                  Change
+               </button>
+            )}
+            {currentView === 'address-list' && (
+               <button
+                  onClick={() => setCurrentView('address-form')}
+                  className="hern-delivery__address__add-change-btn--add"
+               >
+                  <FaPlus color="var(--hern-accent)" /> Add address
+               </button>
+            )}
+            {currentView === 'address-form' && (
+               <button
+                  onClick={() => setCurrentView('address-list')}
+                  className="hern-delivery__address__add-change-btn--change"
+               >
+                  Saved Addresses
+               </button>
+            )}
+         </div>
+
          {state.address.error && (
             <HelperBar type="error">
                <HelperBar.SubTitle>
@@ -64,56 +97,86 @@ export const AddressSection = () => {
                </HelperBar.Button>
             </HelperBar>
          )}
-         {user?.platform_customer?.addresses.length > 0 ? (
-            <ul className="hern-delivery__address-list">
-               {user?.platform_customer?.addresses.map(address => {
-                  const checkIconClasses = classNames(
-                     'hern-delivery__address-list-item__check-icon',
-                     {
-                        'hern-delivery__address-list-item__check-icon--active':
-                           state.address.selected?.id === address.id,
-                     }
-                  )
-                  const addressListItem = classNames(
-                     'hern-delivery__address-list-item',
-                     {
-                        'hern-delivery__address-list-item--active':
-                           state.address.selected?.id === address.id,
-                     }
-                  )
-                  return (
-                     <li
-                        key={address.id}
-                        onClick={() => addressSelection(address)}
-                        className={addressListItem}
-                     >
-                        <div className="hern-delivery__address-list-item__check-icon__wrapper">
-                           <LocationIcon
-                              size={18}
-                              className={checkIconClasses}
-                           />
-                        </div>
-                        <label onClick={() => addressSelection(address)}>
-                           <span>{address.line1}</span>
-                           <span>{address.line2}</span>
-                           <span>{address.city}</span>
-                           <span>{address.state}</span>
-                           <span>{address.country}</span>
-                           <span>{address.zipcode}</span>
-                        </label>
-                     </li>
-                  )
-               })}
-            </ul>
-         ) : (
-            <>
-               <div className="hern-address-section--no-address">
-                  <LocationIcon color="#BCBCBC" size={64} />
-                  <p>{t('No Address is added yet!')}</p>
-               </div>
-            </>
+         {currentView === 'address-form' && (
+            <div className="hern-delivery__address__tunnel">
+               <AddressTunnel
+                  onSubmitAddress={() => {}}
+                  onSavingSuccess={() => setCurrentView('selected-address')}
+                  outside={true}
+               />
+            </div>
          )}
-         {state.address.tunnel && <AddressTunnel />}
-      </>
+         {currentView === 'address-list' && (
+            <ul className="hern-delivery__address__list">
+               {user?.platform_customer?.addresses.map(address => (
+                  <AddressCard
+                     key={address.id}
+                     address={address}
+                     addressSelection={addressSelection}
+                     setCurrentView={setCurrentView}
+                     selectedAddress={state?.address?.selected}
+                  />
+               ))}
+            </ul>
+         )}
+         {currentView === 'selected-address' && (
+            <AddressCard
+               address={state.address.selected}
+               addressSelection={addressSelection}
+               isSelectedCard={true}
+               setCurrentView={setCurrentView}
+            />
+         )}
+      </div>
+   )
+}
+
+const AddressCard = ({
+   address,
+   addressSelection,
+   isSelectedCard = false,
+   setCurrentView,
+   selectedAddress,
+}) => {
+   const { t } = useTranslation()
+
+   return (
+      <li
+         onClick={() => addressSelection(address)}
+         className="hern-delivery__address__list-item"
+         style={{
+            border:
+               address?.id === selectedAddress?.id &&
+               '2px solid var(--hern-accent)',
+            boxShadow: isSelectedCard
+               ? 'none'
+               : '0px 0px 29px rgba(0, 0, 0, 0.08)',
+         }}
+      >
+         <div className="hern-delivery__address__list-item__header">
+            <AddressLabelIcon label={address.label} />
+            &nbsp;&nbsp;
+            <span className="hern-delivery__address__list-item__header__title">
+               {address.label ? address.label : address.line1}
+            </span>
+         </div>
+         <div
+            style={{ minHeight: isSelectedCard ? 'auto' : '96px' }}
+            className="hern-delivery__address__list-item__address"
+         >
+            {normalizeAddress(address)}
+         </div>
+         {!isSelectedCard && (
+            <button
+               onClick={() => {
+                  setCurrentView('selected-address')
+                  addressSelection(address)
+               }}
+               className="hern-delivery__address__list-item__select-address-btn"
+            >
+               <span>{t('Select Address')}</span>
+            </button>
+         )}
+      </li>
    )
 }

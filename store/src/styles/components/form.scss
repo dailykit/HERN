@@ -1,12 +1,27 @@
 .hern-form__text {
-   padding: 12px;
-   border-width: 1px;
+   padding: 10px 0.75rem;
+   background: #ffffff;
+   border: 0.3px solid rgba(51, 51, 51, 0.4);
+   border-radius: 0.5rem;
+   font-family: 'Inter';
+   font-style: normal;
+   font-weight: 400;
+   font-size: 16.68px;
+   line-height: 20px;
+   color: #333333;
 }
 .hern-form__text--disabled {
    background-color: rgba(243, 244, 246, 1);
    display: flex;
    align-items: center;
-   padding: 12px;
+   padding: 10px 0.75rem;
+   font-family: 'Inter';
+   font-style: normal;
+   font-weight: 400;
+   font-size: 16.68px;
+   line-height: 20px;
+   color: #333333;
+   border: none;
    &:focus {
       outline: none;
    }
@@ -19,4 +34,14 @@
 .hern-form__field {
    display: flex;
    flex-direction: column;
+}
+.hern-form__label {
+   font-family: 'Inter';
+   font-style: normal;
+   font-weight: 500;
+   font-size: 13.8px;
+   line-height: 17px;
+   color: rgba(51, 51, 51, 0.6);
+   margin-bottom: 0.5rem;
+   display: inline-block;
 }
