@@ -95,7 +95,7 @@ export const Plans = ({ config }) => {
 
    if (planViewConfig === 'list') {
       return (
-         <div className="hern-plans__card__wrapper">
+         <div className="hern-plans__wrapper">
             <h1
                style={{
                   color: headingConfig.color,
@@ -105,12 +105,12 @@ export const Plans = ({ config }) => {
                   textAlign: headingConfig.textAlign,
                   padding: headingConfig.spacing,
                }}
-               className="hern-plans__card__heading"
+               className="hern-plans__heading"
             >
                {headingConfig.heading}
             </h1>
             <ul
-               className={classNames('hern-plans__card', {
+               className={classNames('hern-plans', {
                   'hern-plans--single': list.length === 1,
                })}
             >
