@@ -238,19 +238,37 @@ export const Plan = ({
    if (!defaultServing) return <Loader inline />
 
    return (
-      <li className="hern-plan">
+      <li
+         className={planViewConfig === 'card' ? 'hern-plan__card' : 'hern-plan'}
+      >
          {/* <div className="hern-our-plans__plan__body"> */}
 
          {/* Cover image should maintain 2:1 aspect ratio always  */}
          {plan.metaDetails?.coverImage ? (
-            <div className="hern-plan__cover-image">
+            <div
+               className={
+                  planViewConfig === 'card'
+                     ? 'hern-plan__card__cover-image'
+                     : 'hern-plan__cover-image'
+               }
+            >
                <HernLazyImage
                   dataSrc={plan.metaDetails?.coverImage}
-                  className="hern-plan__plan__img"
+                  className={
+                     planViewConfig === 'card'
+                        ? 'hern-plan__card__plan__img'
+                        : 'hern-plan__plan__img'
+                  }
                />
             </div>
          ) : (
-            <div className="hern-plan__cover-image">
+            <div
+               className={
+                  planViewConfig === 'card'
+                     ? 'hern-plan__card__cover-image'
+                     : 'hern-plan__cover-image'
+               }
+            >
                <CardCoverIllustration />
             </div>
          )}
@@ -259,16 +277,35 @@ export const Plan = ({
 
          {/* Plan title and  icon  */}
 
-         <div className="hern-plan__icon-title-wrapper">
+         <div
+            className={
+               planViewConfig === 'card'
+                  ? 'hern-plan__card__icon-title-wrapper'
+                  : 'hern-plan__icon-title-wrapper'
+            }
+         >
             {plan.metaDetails?.icon ? (
-               <div className="hern-plan__icon">
+               <div
+                  className={
+                     planViewConfig === 'card'
+                        ? 'hern-plan__card__icon'
+                        : 'hern-plan__icon'
+                  }
+               >
                   <img src={plan.metaDetails?.icon} />
                </div>
             ) : (
                <PlateIllustration />
             )}
 
-            <h2 title={plan.title} className="hern-plan__title">
+            <h2
+               title={plan.title}
+               className={
+                  planViewConfig === 'card'
+                     ? 'hern-plan__card__title'
+                     : 'hern-plan__title'
+               }
+            >
                <span
                   style={{
                      color: selectPlanTitleConfig.color,
@@ -284,7 +321,14 @@ export const Plan = ({
          </div>
 
          {plan?.metaDetails?.description && (
-            <p className="hern-plan__description" data-translation="true">
+            <p
+               className={
+                  planViewConfig === 'card'
+                     ? 'hern-plan__card__description'
+                     : 'hern-plan__description'
+               }
+               data-translation="true"
+            >
                {'plan?.metaDetails?.description'}
             </p>
          )}
@@ -313,8 +357,20 @@ export const Plan = ({
                </span>
             ) : ( */}
 
-         <div className="hern-plan__servings">
-            <h4 className="hern-plan__servings__label">
+         <div
+            className={
+               planViewConfig === 'card'
+                  ? 'hern-plan__card__servings'
+                  : 'hern-plan__servings'
+            }
+         >
+            <h4
+               className={
+                  planViewConfig === 'card'
+                     ? 'hern-plan__card__servings__label'
+                     : 'hern-plan__servings__label'
+               }
+            >
                {/* <span>{t('No. of')}</span>{' '} */}
                <span
                   style={{
@@ -327,22 +383,42 @@ export const Plan = ({
                   {yieldLabelConfig.plural}
                </span>
             </h4>
-            <div className="hern-plan__servings__list__wrapper">
+            <div
+               className={
+                  planViewConfig === 'card'
+                     ? 'hern-plan__card__servings__list__wrapper'
+                     : 'hern-plan__servings__list__wrapper'
+               }
+            >
                {plansFirstIndex > 0 &&
                   plan.servings.length > numberOfItemsToShow && (
                      <button
-                        className="hern-plan__servings__arrow-btn--left"
+                        className={
+                           planViewConfig === 'card'
+                              ? 'hern-plan__card__servings__arrow-btn--left'
+                              : 'hern-plan__servings__arrow-btn--left'
+                        }
                         onClick={handlePlanPrevious}
                      >
                         <BiChevronLeft size={20} />
                      </button>
                   )}
-               <ul className="hern-plan__servings__list">
+               <ul
+                  className={
+                     planViewConfig === 'card'
+                        ? 'hern-plan__card__servings__list'
+                        : 'hern-plan__servings__list'
+                  }
+               >
                   {plansToShow.map(serving => {
                      return (
                         <li
                            className={classNames(
-                              'hern-plan__servings__list-item',
+                              `${
+                                 planViewConfig === 'card'
+                                    ? 'hern-plan__card__servings__list-item'
+                                    : 'hern-plan__servings__list-item'
+                              }`,
                               {
                                  'hern-plan__servings__list-item--active':
                                     serving.id === defaultServing?.id,
@@ -371,7 +447,11 @@ export const Plan = ({
                </ul>
                {plan.servings.length > plansLastIndex && (
                   <button
-                     className="hern-plan__servings__arrow-btn--right"
+                     className={
+                        planViewConfig === 'card'
+                           ? 'hern-plan__card__servings__arrow-btn--right'
+                           : 'hern-plan__servings__arrow-btn--right'
+                     }
                      onClick={handlePlanNext}
                   >
                      <BiChevronRight size={20} />
@@ -395,36 +475,66 @@ export const Plan = ({
                      {t('per week')}
                   </span>
                ) : ( */}
-         <div className="hern-plan__item-counts">
+         <div
+            className={
+               planViewConfig === 'card'
+                  ? 'hern-plan__card__item-counts'
+                  : 'hern-plan__item-counts'
+            }
+         >
             <h4
                style={{
                   color: yieldAndItemsCountLabelConfig.color,
                   fontSize: yieldAndItemsCountLabelConfig.fontSize,
                   fontWeight: yieldAndItemsCountLabelConfig.fontWeight,
                }}
-               className="hern-plan__item-counts__label"
+               className={
+                  planViewConfig === 'card'
+                     ? 'hern-plan__card__item-counts__label'
+                     : 'hern-plan__item-counts__label'
+               }
             >
                <span data-translation="true">
                   {itemCountLabelConfig.singular}
                </span>{' '}
                {t('per week')}
             </h4>
-            <div className="hern-plan__item-counts__list__wrapper">
+            <div
+               className={
+                  planViewConfig === 'card'
+                     ? 'hern-plan__card__item-counts__list__wrapper'
+                     : 'hern-plan__item-counts__list__wrapper'
+               }
+            >
                {servingsFirstIndex > 0 &&
                   defaultServing?.itemCounts.length > numberOfItemsToShow && (
                      <button
-                        className="hern-plan__item-counts__arrow-btn--left"
+                        className={
+                           planViewConfig === 'card'
+                              ? 'hern-plan__card__item-counts__arrow-btn--left'
+                              : 'hern-plan__item-counts__arrow-btn--left'
+                        }
                         onClick={handleRecipePrevious}
                      >
                         <BiChevronLeft size={20} />
                      </button>
                   )}
-               <ul className="hern-plan__item-counts__list">
+               <ul
+                  className={
+                     planViewConfig === 'card'
+                        ? 'hern-plan__card__item-counts__list'
+                        : 'hern-plan__item-counts__list'
+                  }
+               >
                   {servingsToShow.map(item => {
                      return (
                         <li
                            className={classNames(
-                              'hern-plan__item-counts__list-item',
+                              `${
+                                 planViewConfig === 'card'
+                                    ? 'hern-plan__card__item-counts__list-item'
+                                    : 'hern-plan__item-counts__list-item'
+                              }`,
                               {
                                  'hern-plan__item-counts__list-item--active':
                                     item.id === defaultItemCount?.id,
@@ -445,7 +555,11 @@ export const Plan = ({
                </ul>
                {defaultServing?.itemCounts.length > servingsLastIndex && (
                   <button
-                     className="hern-plan__servings__arrow-btn--right"
+                     className={
+                        planViewConfig === 'card'
+                           ? 'hern-plan__card__servings__arrow-btn--right'
+                           : 'hern-plan__servings__arrow-btn--right'
+                     }
                      onClick={handleRecipeNext}
                   >
                      <BiChevronRight size={20} />
@@ -459,20 +573,40 @@ export const Plan = ({
          {(priceDisplay?.pricePerServing?.isVisible.value === true ||
             priceDisplay?.totalServing?.isVisible.value === true ||
             priceDisplay?.pricePerPlan?.isVisible.value === true) && (
-            <div className="hern-plan__pricing">
-               <div className="hern-plan__pricing-total-price-serving-wrapper">
+            <div
+               className={
+                  planViewConfig === 'card'
+                     ? 'hern-plan__card__pricing'
+                     : 'hern-plan__pricing'
+               }
+            >
+               <div
+                  className={
+                     planViewConfig === 'card'
+                        ? 'hern-plan__card__pricing-total-price-serving-wrapper'
+                        : 'hern-plan__pricing-total-price-serving-wrapper'
+                  }
+               >
                   {priceDisplay?.totalServing?.isVisible.value === true && (
                      <section className="hern-plan__pricing__total-serving">
                         {priceDisplay?.totalServing?.prefix.value && (
                            <span
-                              className="hern-plan__pricing__total-serving__prefix"
+                              className={
+                                 planViewConfig === 'card'
+                                    ? 'hern-plan__card__pricing__total-serving__prefix'
+                                    : 'hern-plan__pricing__total-serving__prefix'
+                              }
                               data-translation="true"
                            >
                               {priceDisplay?.totalServing?.prefix.value}{' '}
                            </span>
                         )}
                         <span
-                           className="hern-plan__pricing__total-serving__price"
+                           className={
+                              planViewConfig === 'card'
+                                 ? 'hern-plan__card__pricing__total-serving__price'
+                                 : 'hern-plan__pricing__total-serving__price'
+                           }
                            data-translation="true"
                         >
                            {Number.parseFloat(
@@ -482,7 +616,11 @@ export const Plan = ({
                         </span>
                         {priceDisplay?.totalServing?.suffix.value && (
                            <span
-                              className="hern-plan__pricing__total-serving__prefix"
+                              className={
+                                 planViewConfig === 'card'
+                                    ? 'hern-plan__card__pricing__total-serving__prefix'
+                                    : 'hern-plan__pricing__total-serving__prefix'
+                              }
                               data-translation="true"
                            >
                               {priceDisplay?.totalServing?.suffix.value}
@@ -491,17 +629,31 @@ export const Plan = ({
                      </section>
                   )}
                   {priceDisplay?.pricePerServing?.isVisible.value === true && (
-                     <section className="hern-plan__pricing__price-per-serving">
+                     <section
+                        className={
+                           planViewConfig === 'card'
+                              ? 'hern-plan__card__pricing__price-per-serving'
+                              : 'hern-plan__pricing__price-per-serving'
+                        }
+                     >
                         {priceDisplay?.pricePerServing?.prefix.value && (
                            <span
-                              className="hern-plan__pricing__price-per-serving__prefix"
+                              className={
+                                 planViewConfig === 'card'
+                                    ? 'hern-plan__card__pricing__price-per-serving__prefix'
+                                    : 'hern-plan__pricing__price-per-serving__prefix'
+                              }
                               data-translation="true"
                            >
                               {priceDisplay?.pricePerServing?.prefix.value}{' '}
                            </span>
                         )}
                         <span
-                           className="hern-plan__pricing__price-per-serving__price"
+                           className={
+                              planViewConfig === 'card'
+                                 ? 'hern-plan__card__pricing__price-per-serving__price'
+                                 : 'hern-plan__pricing__price-per-serving__price'
+                           }
                            data-translation="true"
                         >
                            {formatCurrency(
@@ -512,7 +664,11 @@ export const Plan = ({
                               ).toFixed(2)
                            )}{' '}
                            <span
-                              className="hern-plan__pricing__price-per-serving__suffix"
+                              className={
+                                 planViewConfig === 'card'
+                                    ? 'hern-plan__card__pricing__price-per-serving__suffix'
+                                    : 'hern-plan__pricing__price-per-serving__suffix'
+                              }
                               data-translation="true"
                            >
                               {priceDisplay?.pricePerServing?.suffix.value ||
@@ -523,10 +679,20 @@ export const Plan = ({
                   )}
                </div>
                {priceDisplay?.pricePerPlan?.isVisible.value === true && (
-                  <section className="hern-plan__pricing__total-price">
+                  <section
+                     className={
+                        planViewConfig === 'card'
+                           ? 'hern-plan__card__pricing__total-price'
+                           : 'hern-plan__pricing__total-price'
+                     }
+                  >
                      {priceDisplay?.pricePerPlan?.prefix && (
                         <span
-                           className="hern-plan__pricing__total-price__prefix"
+                           className={
+                              planViewConfig === 'card'
+                                 ? 'hern-plan__card__pricing__total-price__prefix'
+                                 : 'hern-plan__pricing__total-price__prefix'
+                           }
                            data-translation="true"
                         >
                            {priceDisplay?.pricePerPlan?.prefix.value}{' '}
@@ -541,17 +707,33 @@ export const Plan = ({
                                  : 'rgba(5, 150, 105, 1)'
                            }`,
                         }}
-                        className="hern-plan__pricing__total-price__price"
+                        className={
+                           planViewConfig === 'card'
+                              ? 'hern-plan__card__pricing__total-price__price'
+                              : 'hern-plan__pricing__total-price__price'
+                        }
                         data-translation="true"
                      >
                         {formatCurrency(defaultItemCount?.price)}{' '}
                      </span>
-                     <span className="hern-plan__pricing__total-price__tax">
+                     <span
+                        className={
+                           planViewConfig === 'card'
+                              ? 'hern-plan__card__pricing__total-price__tax'
+                              : 'hern-plan__pricing__total-price__tax'
+                        }
+                     >
                         {defaultItemCount?.isTaxIncluded
                            ? t('Tax Inclusive')
                            : t('Tax Exclusive')}{' '}
                      </span>
-                     <span className="hern-plan__pricing__total-price__suffix">
+                     <span
+                        className={
+                           planViewConfig === 'card'
+                              ? 'hern-plan__card__pricing__total-price__suffix'
+                              : 'hern-plan__pricing__total-price__suffix'
+                        }
+                     >
                         {(
                            <span data-translation="true">
                               {priceDisplay?.pricePerPlan?.suffix.value}
@@ -563,7 +745,11 @@ export const Plan = ({
             </div>
          )}
          <button
-            className="hern-plan__select-plan__btn"
+            className={
+               planViewConfig === 'card'
+                  ? 'hern-plan__card__select-plan__btn'
+                  : 'hern-plan__select-plan__btn'
+            }
             onClick={() => selectPlan()}
             // style={{
             //    backgroundColor: `${

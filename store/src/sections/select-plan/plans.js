@@ -9,7 +9,6 @@ import { useConfig } from '../../lib'
 import { useUser } from '../../context'
 import { SkeletonPlan } from './skeletons'
 import { HelperBar } from '../../components'
-import config from './planConfig.json'
 
 export const Plans = ({ config }) => {
    const { user } = useUser()
@@ -96,7 +95,7 @@ export const Plans = ({ config }) => {
 
    if (planViewConfig === 'list') {
       return (
-         <div className="hern-plans__wrapper">
+         <div className="hern-plans__card__wrapper">
             <h1
                style={{
                   color: headingConfig.color,
@@ -106,12 +105,12 @@ export const Plans = ({ config }) => {
                   textAlign: headingConfig.textAlign,
                   padding: headingConfig.spacing,
                }}
-               className="hern-plans__heading"
+               className="hern-plans__card__heading"
             >
                {headingConfig.heading}
             </h1>
             <ul
-               className={classNames('hern-plans', {
+               className={classNames('hern-plans__card', {
                   'hern-plans--single': list.length === 1,
                })}
             >
@@ -130,8 +129,35 @@ export const Plans = ({ config }) => {
 
    if (planViewConfig === 'card') {
       return (
-         <div>
-            <h1>Card View</h1>
+         <div className="hern-plans__card__wrapper">
+            <h1
+               style={{
+                  color: headingConfig.color,
+                  fontFamily: headingConfig.fontFamily,
+                  fontSize: headingConfig.fontSize,
+                  fontWeight: headingConfig.fontWeight,
+                  textAlign: headingConfig.textAlign,
+                  padding: headingConfig.spacing,
+               }}
+               className="hern-plans__card__heading"
+            >
+               {headingConfig.heading}
+            </h1>
+            <ul
+               className={classNames('hern-plans__card', {
+                  'hern-plans--single': list.length === 1,
+               })}
+            >
+               {list.map(plan => (
+                  <Plan
+                     plan={plan}
+                     key={plan.id}
+                     itemCount={list.length}
+                     planConfig={config}
+                     planViewConfig={planViewConfig}
+                  />
+               ))}
+            </ul>
          </div>
       )
    }
