@@ -1,11 +1,11 @@
 import React from 'react'
-import { isEmpty } from 'lodash'
+import { indexOf, isEmpty } from 'lodash'
 import { toast } from 'react-toastify'
 import { useParams } from 'react-router'
 import { Flex, Filler, useTunnel } from '@dailykit/ui'
 import { useQuery, useSubscription, useMutation } from '@apollo/react-hooks'
 
-import { QUERIES, MUTATIONS } from '../../../graphql'
+import { QUERIES, MUTATIONS, GET_BRAND_LOCATION } from '../../../graphql'
 import { logger } from '../../../../../shared/utils'
 import EmptyIllo from '../../../assets/svgs/EmptyIllo'
 import { FulfillmentTunnel, CouponsTunnel } from './tunnels'
@@ -24,6 +24,10 @@ const initial = {
    loyaltyPoints: {},
    occurenceCustomer: {},
    cart: {},
+   location: {
+      id: null,
+   },
+   brandLocation: null,
 }
 
 const reducers = (state, { type, payload }) => {
@@ -41,6 +45,7 @@ const reducers = (state, { type, payload }) => {
             occurenceCustomer: payload.occurenceCustomer,
             subscriptionOccurence: payload.subscriptionOccurence,
             subscriptionOccurenceId: payload.subscriptionOccurenceId,
+            location: payload.location,
             ...(payload.billing && {
                billing: {
                   discount: payload.billing?.discount,
@@ -84,6 +89,12 @@ const reducers = (state, { type, payload }) => {
             },
          }
       }
+      case 'SET_BRAND_LOCATION': {
+         return {
+            ...state,
+            brandLocation: payload,
+         }
+      }
       default:
          return state
    }
@@ -98,6 +109,10 @@ export const ManualProvider = ({ children }) => {
    const [isCartLoading, setIsCartLoading] = React.useState(true)
    const [state, dispatch] = React.useReducer(reducers, initial)
    const [organizationLoading, setOrganizationLoading] = React.useState(true)
+   const [
+      isCartValidByProductAvailability,
+      setIsCartValidByProductAvailability,
+   ] = React.useState(false)
    const { refetch: refetchAddress } = useQuery(QUERIES.CUSTOMER.ADDRESS.LIST, {
       skip: !state.customer?.subscriptionAddressId,
       notifyOnNetworkStatusChange: true,
@@ -157,8 +172,30 @@ export const ManualProvider = ({ children }) => {
       refetchQueries: ['customers'],
       onError: error => logger(error),
    })
+   useQuery(GET_BRAND_LOCATION, {
+      skip: !state.brand?.id || !state.location?.id,
+      variables: {
+         where: {
+            brandId: { _eq: state.brand?.id },
+            locationId: { _eq: state.location?.id },
+         },
+      },
+      onCompleted: ({ brandLocations = [] } = {}) => {
+         if (!isEmpty(brandLocations)) {
+            dispatch({ type: 'SET_BRAND_LOCATION', payload: brandLocations[0] })
+         }
+      },
+   })
+   const argsForByLocation = React.useMemo(
+      () => ({
+         brandId: state.brand?.id,
+         locationId: state.location?.id,
+         brand_locationId: state.brandLocation?.id,
+      }),
+      [state.brand, state.location?.id, state.brandLocation?.id]
+   )
    const { loading, error } = useSubscription(QUERIES.CART.ONE, {
-      variables: { id: params.id },
+      variables: { id: params.id, params: argsForByLocation },
       onSubscriptionData: async ({
          subscriptionData: { data: { cart = {} } = {} } = {},
       }) => {
@@ -180,6 +217,9 @@ export const ManualProvider = ({ children }) => {
                   occurenceCustomer: cart.occurenceCustomer || {},
                   subscriptionOccurence: cart.subscriptionOccurence,
                   subscriptionOccurenceId: cart.subscriptionOccurenceId,
+                  location: {
+                     id: cart.locationId,
+                  },
                },
             })
             dispatch({ type: 'SET_CART', payload: cart })
@@ -206,19 +246,41 @@ export const ManualProvider = ({ children }) => {
          setIsCartLoading(false)
       },
    })
-   useQuery(QUERIES.ORGANIZATION, {
-      onCompleted: ({ organizations = [] }) => {
-         if (organizations.length > 0) {
-            const [organization] = organizations
-            dispatch({ type: 'SET_ORGANIZATION', payload: organization })
+
+   // check availability of product in cart
+   React.useEffect(() => {
+      if (state.products.aggregate.count) {
+         for (let node of state.products.nodes) {
+            let isCartValid = true
+            const selectedProductOption = node.product.productOptions.find(
+               option => option.id === node.childs[0]?.productOption?.id
+            )
+            if (!isEmpty(selectedProductOption)) {
+               isCartValid =
+                  node.product.isAvailable &&
+                  node.product.isPublished &&
+                  selectedProductOption.isAvailable &&
+                  selectedProductOption.isPublished
+            } else {
+               isCartValid =
+                  node.product.isAvailable && node.product.isPublished
+            }
+
+            if (!isCartValid) {
+               setIsCartValidByProductAvailability(false)
+               return
+            }
+            if (
+               indexOf(state.products.nodes, node) ===
+               state.products.nodes.length - 1
+            ) {
+               if (isCartValid) {
+                  setIsCartValidByProductAvailability(true)
+               }
+            }
          }
-         setOrganizationLoading(false)
-      },
-      onError: () => {
-         setOrganizationLoading(false)
-         toast.error('Failed to fetch organization details!')
-      },
-   })
+      }
+   }, [state.products])
 
    if (!loading && error) {
       setIsCartLoading(false)
@@ -226,7 +288,7 @@ export const ManualProvider = ({ children }) => {
       toast.error('Something went wrong, please refresh the page.')
       return
    }
-   if (organizationLoading || isCartLoading) return <InlineLoader />
+   if (isCartLoading) return <InlineLoader />
    if (cartError.trim())
       return (
          <Flex container alignItems="center" justifyContent="center">
@@ -248,6 +310,7 @@ export const ManualProvider = ({ children }) => {
                address: addressTunnels,
                coupons: couponsTunnels,
             },
+            isCartValidByProductAvailability,
          }}
       >
          {children}

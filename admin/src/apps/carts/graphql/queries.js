@@ -3,7 +3,7 @@ import gql from 'graphql-tag'
 export const QUERIES = {
    CART: {
       ONE: gql`
-         subscription cart($id: Int!) {
+         subscription cart($id: Int!, $params: jsonb!) {
             cart(id: $id) {
                id
                tax
@@ -71,6 +71,23 @@ export const QUERIES = {
                      price: unitPrice
                      name: displayName
                      image: displayImage
+                     product {
+                        isPublished: publishedByLocation(
+                           args: { params: $params }
+                        )
+                        isAvailable: availabilityByLocation(
+                           args: { params: $params }
+                        )
+                        productOptions {
+                           id
+                           isPublished: publishedByLocation(
+                              args: { params: $params }
+                           )
+                           isAvailable: availabilityByLocation(
+                              args: { params: $params }
+                           )
+                        }
+                     }
                      childs {
                         id
                         price: unitPrice
@@ -235,6 +252,18 @@ export const QUERIES = {
                subscriptionAddressId
                subscriptionOnboardStatus
                subscriptionPaymentMethodId
+               subscription {
+                  recipes: subscriptionItemCount {
+                     count
+                     price
+                     tax
+                     isTaxIncluded
+                     servingId: subscriptionServingId
+                     serving: subscriptionServing {
+                        size: servingSize
+                     }
+                  }
+               }
                customer {
                   id
                   email
@@ -677,9 +706,10 @@ export const QUERIES = {
    },
    CATEGORIES: {
       LIST: gql`
-         query categories(
+         subscription categories(
             $subscriptionId: Int_comparison_exp
             $subscriptionOccurenceId: Int_comparison_exp
+            $params: jsonb!
          ) {
             categories: productCategories(
                where: {
@@ -714,6 +744,12 @@ export const QUERIES = {
                      productOption {
                         id
                         label
+                        isPublished: publishedByLocation(
+                           args: { params: $params }
+                        )
+                        isAvailable: availabilityByLocation(
+                           args: { params: $params }
+                        )
                         simpleRecipeYield {
                            yield
                            simpleRecipe {
@@ -725,6 +761,12 @@ export const QUERIES = {
                            name
                            assets
                            additionalText
+                           isPublished: publishedByLocation(
+                              args: { params: $params }
+                           )
+                           isAvailable: availabilityByLocation(
+                              args: { params: $params }
+                           )
                         }
                      }
                   }
@@ -935,7 +977,7 @@ export const QUERIES = {
          subscription GET_ALL_RECURRENCES(
             $where: fulfilment_brand_recurrence_bool_exp!
          ) {
-             brandRecurrences(where: $where) {
+            brandRecurrences(where: $where) {
                brandId
                brandLocationId
                recurrenceId
