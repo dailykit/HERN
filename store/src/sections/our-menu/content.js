@@ -493,8 +493,39 @@ const Product = ({
    const openRecipe = () =>
       router.push(getRoute(`/recipes/${node?.productOption?.id}`))
 
+   const ProductIsPublished =
+      node?.productOption?.product?.isPublished &&
+      node?.productOption?.isPublished
+   const ProductIsAvailable = node?.productOption?.product?.isAvailable
+   const isProductOutOfStock = React.useMemo(() => {
+      if (ProductIsAvailable) {
+         if (
+            node?.productOption.length > 0 &&
+            node?.productOption?.product?.isPopupAllowed
+         ) {
+            const availableProductOptions = node?.productOption.filter(
+               option => option.isPublished && option.isAvailable
+            ).length
+            if (availableProductOptions > 0) {
+               return false
+            } else {
+               return true
+            }
+         } else {
+            return false
+         }
+      }
+      return true
+   }, [node])
+
+   if (!ProductIsPublished) {
+      return null
+   }
    return (
-      <li className="hern-our-menu__product-list__item">
+      <li
+         className="hern-our-menu__product-list__item"
+         style={{ opacity: `${isProductOutOfStock ? 0.6 : 1}` }}
+      >
          {!!product.type && (
             <span className="hern-our-menu__product-type-indicator">
                <img

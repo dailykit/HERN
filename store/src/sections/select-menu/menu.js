@@ -174,7 +174,9 @@ const Product = ({ node, theme, isAdded, noProductImage, buildImageUrl }) => {
       methods.products.add(item, node?.productOption?.product)
    }
    const isActive = isAdded(node?.cartItem?.subscriptionOccurenceProductId)
-   const ProductIsPublished = node?.productOption?.product?.isPublished
+   const ProductIsPublished =
+      node?.productOption?.product?.isPublished &&
+      node?.productOption?.isPublished
    const ProductIsAvailable = node?.productOption?.product?.isAvailable
    const isProductOutOfStock = React.useMemo(() => {
       if (ProductIsAvailable) {
@@ -266,109 +268,103 @@ const Product = ({ node, theme, isAdded, noProductImage, buildImageUrl }) => {
       dynamicTrans(languageTags)
    }, [currentLang])
 
+   if (!ProductIsPublished) {
+      return null
+   }
    return (
-      <>
-         {ProductIsPublished && (
-            <li
-               className={productClasses}
-               style={{
-                  borderColor: `${
-                     theme?.highlight ? theme.highlight : '#38a169'
-                  }`,
-                  opacity: `${isProductOutOfStock ? 0.6 : 1}`,
-               }}
-            >
-               {!!product.type && (
-                  <span className="hern-select-menu__menu__product__type">
-                     <img
-                        alt="Non-Veg Icon"
-                        src={
-                           product.type === 'Non-vegetarian'
-                              ? '/assets/imgs/non-veg.png'
-                              : '/assets/imgs/veg.png'
-                        }
-                        title={product.type}
-                        className="hern-select-menu__menu__product__type__img"
-                     />
-                  </span>
-               )}
-               <div
-                  className="hern-select-menu__menu__product__img"
-                  onClick={isProductOutOfStock ? '' : openRecipe}
-               >
-                  {product.image ? (
-                     <ReactImageFallback
-                        src={buildImageUrl('400x300', product.image)}
-                        fallbackImage={product.image}
-                        initialImage={<Loader />}
-                        alt={product.name}
-                        className="image__thumbnail"
-                     />
-                  ) : (
-                     <img src={noProductImage} alt={product.name} />
-                  )}
-               </div>
-               {node.addOnLabel && (
-                  <span
-                     className="hern-select-menu__menu__product__add-on-label"
-                     data-translation="true"
-                  >
-                     {node.addOnLabel}
-                  </span>
-               )}
-               <section className="hern-select-menu__menu__product__link">
-                  <CheckIcon size={16} className={checkIconClasses} />
-                  <a
-                     theme={theme}
-                     onClick={isProductOutOfStock ? '' : openRecipe}
-                  >
-                     <span data-translation="true">{product.name}</span>
-                     {'-'}
-                     <span data-translation="true">{product.label}</span>
-                  </a>
-               </section>
-               <p
-                  className="hern-select-menu__menu__product__link__additional-text"
-                  data-translation="true"
-               >
-                  {product?.additionalText}
-               </p>
-               {canAdd() && (
-                  <button
-                     className={btnClasses}
-                     theme={theme}
-                     disabled={
-                        !node.isAvailable &&
-                        isProductOutOfStock &&
-                        state.occurenceCustomer?.validStatus?.itemCountValid
-                     }
-                     onClick={() => {
-                        if (!isProductOutOfStock) {
-                           add(node.cartItem, node)
-                        }
-                     }}
-                     title={
-                        node.isAvailable && !isProductOutOfStock
-                           ? formatMessage({ id: 'Add product' })
-                           : formatMessage({
-                                id: 'This product is out of stock.',
-                             })
-                     }
-                  >
-                     {node.isAvailable && !isProductOutOfStock ? (
-                        <>
-                           {isActive ? t('REPEAT') : t('ADD')}
-                           {node.addOnPrice > 0 && ' + '}
-                           {node.addOnPrice > 0 &&
-                              formatCurrency(Number(node.addOnPrice) || 0)}
-                        </>
-                     ) : (
-                        t('Out of Stock')
-                     )}
-                  </button>
-               )}
-            </li>
+      <li
+         className={productClasses}
+         style={{
+            borderColor: `${theme?.highlight ? theme.highlight : '#38a169'}`,
+            opacity: `${isProductOutOfStock ? 0.6 : 1}`,
+         }}
+      >
+         {!!product.type && (
+            <span className="hern-select-menu__menu__product__type">
+               <img
+                  alt="Non-Veg Icon"
+                  src={
+                     product.type === 'Non-vegetarian'
+                        ? '/assets/imgs/non-veg.png'
+                        : '/assets/imgs/veg.png'
+                  }
+                  title={product.type}
+                  className="hern-select-menu__menu__product__type__img"
+               />
+            </span>
          )}
-      </>
+         <div
+            className="hern-select-menu__menu__product__img"
+            onClick={isProductOutOfStock ? '' : openRecipe}
+         >
+            {product.image ? (
+               <ReactImageFallback
+                  src={buildImageUrl('400x300', product.image)}
+                  fallbackImage={product.image}
+                  initialImage={<Loader />}
+                  alt={product.name}
+                  className="image__thumbnail"
+               />
+            ) : (
+               <img src={noProductImage} alt={product.name} />
+            )}
+         </div>
+         {node.addOnLabel && (
+            <span
+               className="hern-select-menu__menu__product__add-on-label"
+               data-translation="true"
+            >
+               {node.addOnLabel}
+            </span>
+         )}
+         <section className="hern-select-menu__menu__product__link">
+            <CheckIcon size={16} className={checkIconClasses} />
+            <a theme={theme} onClick={isProductOutOfStock ? '' : openRecipe}>
+               <span data-translation="true">{product.name}</span>
+               {'-'}
+               <span data-translation="true">{product.label}</span>
+            </a>
+         </section>
+         <p
+            className="hern-select-menu__menu__product__link__additional-text"
+            data-translation="true"
+         >
+            {product?.additionalText}
+         </p>
+         {canAdd() && (
+            <button
+               className={btnClasses}
+               theme={theme}
+               disabled={
+                  !node.isAvailable &&
+                  isProductOutOfStock &&
+                  state.occurenceCustomer?.validStatus?.itemCountValid
+               }
+               onClick={() => {
+                  if (!isProductOutOfStock) {
+                     add(node.cartItem, node)
+                  }
+               }}
+               title={
+                  node.isAvailable && !isProductOutOfStock
+                     ? formatMessage({ id: 'Add product' })
+                     : formatMessage({
+                          id: 'This product is out of stock.',
+                       })
+               }
+            >
+               {node.isAvailable && !isProductOutOfStock ? (
+                  <>
+                     {isActive ? t('REPEAT') : t('ADD')}
+                     {node.addOnPrice > 0 && ' + '}
+                     {node.addOnPrice > 0 &&
+                        formatCurrency(Number(node.addOnPrice) || 0)}
+                  </>
+               ) : (
+                  t('Out of Stock')
+               )}
+            </button>
+         )}
+      </li>
    )
 }
