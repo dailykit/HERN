@@ -688,11 +688,17 @@ const CartCard = props => {
          return (
             product.product.isAvailable &&
             product.product.isPublished &&
+            !product.product.isArchived &&
             selectedProductOption.isAvailable &&
+            !selectedProductOption.isArchived &&
             selectedProductOption.isPublished
          )
       } else {
-         return product.product.isAvailable && product.product.isPublished
+         return (
+            product.product.isAvailable &&
+            product.product.isPublished &&
+            !product.product.isArchived
+         )
       }
    }
    return (

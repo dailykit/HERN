@@ -1918,9 +1918,11 @@ export const GET_CART_ITEMS_BY_CART = gql`
          product {
             isPublished: publishedByLocation(args: { params: $params })
             isAvailable: availabilityByLocation(args: { params: $params })
+            isArchived
             productOptions {
                isPublished: publishedByLocation(args: { params: $params })
                isAvailable: availabilityByLocation(args: { params: $params })
+               isArchived
                id
             }
          }
