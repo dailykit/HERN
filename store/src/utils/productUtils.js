@@ -61,6 +61,7 @@ export const getCartItemWithModifiers = (
                   eachNestedModifierInput.parentModifierOptionId ==
                   y.modifierOptionId
             )
+         console.log("foundModifierIndex",foundModifierIndex,finalCartItem,eachNestedModifierInput)
          const xCombinedModifier = eachNestedModifierInput.data
             .map(z => z.cartItem)
             .reduce((acc, obj) => [...acc, ...obj.data], [])

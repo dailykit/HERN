@@ -18,7 +18,7 @@ import {
    RightArrowIcon,
 } from '../../assets/icons'
 import { useLazyQuery, useQuery } from '@apollo/react-hooks'
-import { PRODUCTS } from '../../graphql'
+import { PRODUCTS, PRODUCT_ONE } from '../../graphql'
 import Link from 'next/link'
 import { useConfig } from '../../lib'
 
@@ -48,15 +48,15 @@ const CartBar = () => {
    )
 
    //fetch product detail which to be increase or edit
-   useQuery(PRODUCTS, {
+   useQuery(PRODUCT_ONE, {
       skip: !increaseProductId,
       variables: {
-         ids: increaseProductId,
+         id: increaseProductId,
          params: argsForByLocation,
       },
       onCompleted: data => {
          if (data) {
-            setIncreaseProduct(data.products[0])
+            setIncreaseProduct(data.product)
          }
       },
    })

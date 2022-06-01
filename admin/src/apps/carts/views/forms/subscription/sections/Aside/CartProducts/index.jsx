@@ -11,6 +11,7 @@ import EmptyIllo from '../../../../../../assets/svgs/EmptyIllo'
 import { currencyFmt } from '../../../../../../../../shared/utils'
 import { DeleteIcon } from '../../../../../../../../shared/assets/icons'
 import { LoyaltyPoints, Coupon } from '../../../../../../components'
+import { isEmpty } from 'lodash'
 
 const CartProducts = () => {
    const {
@@ -21,17 +22,48 @@ const CartProducts = () => {
       customer,
       tunnels,
       loyaltyPoints,
+      isCartValidByProductAvailability,
    } = useManual()
 
    const [remove] = useMutation(MUTATIONS.CART.ITEM.DELETE, {
       onCompleted: () => toast.success('Successfully deleted the product.'),
       onError: () => toast.error('Failed to delete the product.'),
    })
+
+   // check availability of product in cart
+   const isProductAvailable = product => {
+      const selectedProductOption = product.product.productOptions.find(
+         option => option.id === product.childs[0]?.productOption?.id
+      )
+      if (!isEmpty(selectedProductOption)) {
+         return (
+            product.product.isAvailable &&
+            product.product.isPublished &&
+            selectedProductOption.isAvailable &&
+            selectedProductOption.isPublished
+         )
+      } else {
+         return product.product.isAvailable && product.product.isPublished
+      }
+   }
+
    return (
       <section>
          <Text as="text2">
-            Products({occurenceCustomer?.addedProductsCount || 0})
+            Products({occurenceCustomer?.addedProductsCount || 0}
+            {'/'}
+            {occurenceCustomer?.addedProductsCount +
+               occurenceCustomer.pendingProductsCount}
+            )
          </Text>
+         {occurenceCustomer?.itemCountValid && (
+            <Text as="subtitle">Cart is full</Text>
+         )}
+         {!isCartValidByProductAvailability && (
+            <span style={{ fontSize: '12px', color: '#f33737' }}>
+               Some products in cart are not available
+            </span>
+         )}
          <Spacer size="8px" />
          {products.aggregate.count > 0 ? (
             <Styles.Cards>
@@ -47,35 +79,43 @@ const CartProducts = () => {
                            <span>N/A</span>
                         )}
                      </aside>
-                     <Flex
-                        container
-                        alignItems="center"
-                        justifyContent="space-between"
-                     >
-                        <Flex as="main" container flexDirection="column">
-                           {product.addOnLabel && (
-                              <div>
-                                 <Tag>{product.addOnLabel}</Tag>
-                                 <Spacer size="4px" />
-                              </div>
-                           )}
-                           <Text as="text2">{product.name}</Text>
-                           {Boolean(product.addOnPrice) && (
-                              <Text as="text3">
-                                 Add On Price: {currencyFmt(product.addOnPrice)}
-                              </Text>
+                     <Flex container flexDirection="column">
+                        <Flex
+                           container
+                           alignItems="center"
+                           justifyContent="space-between"
+                        >
+                           <Flex as="main" container flexDirection="column">
+                              {product.addOnLabel && (
+                                 <div>
+                                    <Tag>{product.addOnLabel}</Tag>
+                                    <Spacer size="4px" />
+                                 </div>
+                              )}
+                              <Text as="text2">{product.name}</Text>
+                              {Boolean(product.addOnPrice) && (
+                                 <Text as="text3">
+                                    Add On Price:{' '}
+                                    {currencyFmt(product.addOnPrice)}
+                                 </Text>
+                              )}
+                           </Flex>
+                           {cart?.paymentStatus === 'PENDING' && (
+                              <IconButton
+                                 size="sm"
+                                 type="ghost"
+                                 onClick={() =>
+                                    remove({ variables: { id: product.id } })
+                                 }
+                              >
+                                 <DeleteIcon color="#ec3333" />
+                              </IconButton>
                            )}
                         </Flex>
-                        {cart?.paymentStatus === 'PENDING' && (
-                           <IconButton
-                              size="sm"
-                              type="ghost"
-                              onClick={() =>
-                                 remove({ variables: { id: product.id } })
-                              }
-                           >
-                              <DeleteIcon color="#ec3333" />
-                           </IconButton>
+                        {!isProductAvailable(product) && (
+                           <span style={{ color: '#f33737', fontSize: '12px' }}>
+                              This product is not available
+                           </span>
                         )}
                      </Flex>
                   </Styles.Card>
