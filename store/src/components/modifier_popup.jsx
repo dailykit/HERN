@@ -28,9 +28,11 @@ import Link from 'next/link'
 import { useToasts } from 'react-toast-notifications'
 import { useConfig } from '../lib'
 import { useModifier } from '../utils'
-import _ from 'lodash'
+import _, { isEmpty } from 'lodash'
 import { LeftArrowIcon } from '../assets/icons/LeftArrow'
 import { HernLazyImage } from '../utils/hernImage'
+import { PRODUCT_ONE } from '../graphql'
+import { useQuery } from '@apollo/react-hooks'
 
 const isSmallerDevice = isClient && window.innerWidth < 768
 export const ModifierPopup = props => {
@@ -55,12 +57,11 @@ export const ModifierPopup = props => {
    const { t, dynamicTrans, locale } = useTranslation()
    const { addToast } = useToasts()
    const currentLang = React.useMemo(() => locale, [locale])
+   const { locationId, storeStatus, configOf, brand, brandLocation } =
+      useConfig()
 
-   const [productOption, setProductOption] = useState(
-      productData.productOptions.find(
-         x => x.id === productData.defaultProductOptionId
-      ) || productData.productOptions.find(x => x.isPublished && x.isAvailable)
-   ) // for by default choose one product option
+   const [isModifiersLoading, setIsModifiersLoading] = useState(true)
+   const [productOption, setProductOption] = useState(null) // for by default choose one product option
    // console.log("product option needed",productData,productOption)
 
    const [quantity, setQuantity] = useState(1)
@@ -76,24 +77,67 @@ export const ModifierPopup = props => {
          .value()
       return groupedData
    }, [productData])
-   
+
    const defaultOptionType = productData.productOptions.find(
       x => x.id === productData.defaultProductOptionId
    )?.type
-   
+
    const [productOptionType, setProductOptionType] = useState(
-      defaultOptionType ? 
-         defaultOptionType : 
-         defaultOptionType===null ? 
-            'null' : 
-            productOptionsGroupedByProductOptionType[0]['type']
+      defaultOptionType
+         ? defaultOptionType
+         : defaultOptionType === null
+         ? 'null'
+         : productOptionsGroupedByProductOptionType[0]['type']
    )
 
    const showStepViewProductOptionAndModifiers = React.useMemo(
       () => stepView || isSmallerDevice,
       [stepView]
    )
+
+   const argsForByLocation = React.useMemo(
+      () => ({
+         brandId: brand?.id,
+         locationId: locationId,
+         brand_locationId: brandLocation?.id,
+      }),
+      [brand, locationId, brandLocation?.id]
+   )
+
+   //! productData doesn't have modifiers
+   // get complete product data
+   const {
+      loading,
+      error,
+      data: { product: completeProductData = {} } = {},
+   } = useQuery(PRODUCT_ONE, {
+      variables: {
+         id: productData.id,
+         params: argsForByLocation,
+      },
+      onError: error => {
+         console.error('kiosk modifier popup', error)
+      },
+   })
+   console.log('completeProductData', completeProductData)
    // useModifier
+
+   useEffect(() => {
+      if (!isEmpty(completeProductData)) {
+         setProductOption(
+            completeProductData.productOptions.find(
+               x =>
+                  x.id === completeProductData.defaultProductOptionId &&
+                  x.isPublished &&
+                  x.isAvailable
+            ) ||
+               completeProductData.productOptions.find(
+                  x => x.isPublished && x.isAvailable
+               )
+         )
+         setIsModifiersLoading(false)
+      }
+   }, [completeProductData])
    const {
       selectedModifierOptions,
       setSelectedModifierOptions,
@@ -131,7 +175,6 @@ export const ModifierPopup = props => {
       src: null,
    })
 
-   const { locationId, storeStatus, configOf } = useConfig()
    const recipeLink = useConfig('Product card').configOf('recipe-link')
 
    const getPriceWithDiscount = (price, discount) => {
@@ -153,9 +196,9 @@ export const ModifierPopup = props => {
    )
 
    useEffect(() => {
-      if (forNewItem || edit) {
+      if (!isEmpty(completeProductData)&&(forNewItem || edit)) {
          const productOptionId = productCartDetail.childs[0].productOption.id
-         const selectedProductOption = productData.productOptions.find(
+         const selectedProductOption = completeProductData.productOptions.find(
             x => x.id == productOptionId
          )
          setProductOption(selectedProductOption)
@@ -163,7 +206,7 @@ export const ModifierPopup = props => {
             setQuantity(productCartDetail.ids.length)
          }
       }
-   }, [])
+   }, [completeProductData])
 
    useEffect(() => {
       if (status == 'success') {
@@ -339,7 +382,10 @@ export const ModifierPopup = props => {
 
    //total amount for this item
    const totalAmount = () => {
-      const productOptionPrice = productOption.price 
+      if(!productOption){
+         return {total:0,totalWithoutDiscount:0,totalDiscount:0}
+      }
+      const productOptionPrice = productOption.price
       const allSelectedOptions = [
          ...selectedModifierOptions.single,
          ...selectedModifierOptions.multiple,
@@ -374,7 +420,7 @@ export const ModifierPopup = props => {
       )
       const totalProductionOptionsPriceWithDiscount = getPriceWithDiscount(
          productOptionPrice,
-         productOption.discount 
+         productOption.discount
       )
       const totalWithoutDiscount =
          productData.price +
@@ -600,8 +646,11 @@ export const ModifierPopup = props => {
                                           eachProductOptionType.type
                                        )
                                        setProductOption(
-                                          eachProductOptionType.data.find(x => x.id===productData.defaultProductOptionId) ||
-                                          eachProductOptionType.data[0]
+                                          eachProductOptionType.data.find(
+                                             x =>
+                                                x.id ===
+                                                productData.defaultProductOptionId
+                                          ) || eachProductOptionType.data[0]
                                        )
                                        if (isModifierOptionsViewOpen) {
                                           setIsModifierOptionsViewOpen(false)
@@ -621,7 +670,7 @@ export const ModifierPopup = props => {
                      </ul>
                   </div>
                )}
-               <div className="hern-product-modifier-pop-up-content-container">
+              {!isModifiersLoading && <div className="hern-product-modifier-pop-up-content-container">
                   <div
                      className={classNames(
                         'hern-product-modifier-pop-up-product-option-list',
@@ -665,8 +714,10 @@ export const ModifierPopup = props => {
                         {productOptionsGroupedByProductOptionType
                            .find(eachType => eachType.type == productOptionType)
                            .data.map(eachOption => {
-                              if(!eachOption.isPublished){return null}
-                     
+                              if (!eachOption.isPublished) {
+                                 return null
+                              }
+
                               const hasRecipe =
                                  eachOption?.simpleRecipeYield?.simpleRecipe
 
@@ -683,20 +734,25 @@ export const ModifierPopup = props => {
                                        display: 'flex',
                                        justifyContent: 'space-between',
                                        marginBottom: '8px',
-                                       cursor: `${!eachOption.isAvailable ? 'not-allowed' : 'pointer'}`,
+                                       cursor: `${
+                                          !eachOption.isAvailable
+                                             ? 'not-allowed'
+                                             : 'pointer'
+                                       }`,
                                        opacity: `${
-                                          !eachOption.isAvailable ? 0.6 : 1}`
+                                          !eachOption.isAvailable ? 0.6 : 1
+                                       }`,
                                     }}
                                     onClick={e => {
-                                       if (eachOption.isAvailable){
-                                       setProductOption(eachOption)
-                                       if (
-                                          showModifiers &&
-                                          productOption.modifier
-                                       ) {
-                                          setIsModifierOptionsViewOpen(true)
+                                       if (eachOption.isAvailable) {
+                                          setProductOption(eachOption)
+                                          if (
+                                             showModifiers &&
+                                             productOption.modifier
+                                          ) {
+                                             setIsModifierOptionsViewOpen(true)
+                                          }
                                        }
-                                    }
                                     }}
                                  >
                                     <li data-translation="true">
@@ -734,7 +790,6 @@ export const ModifierPopup = props => {
                                     )}
                                  </div>
                               )
-                              
                            })}
                      </ul>
                   </div>
@@ -786,7 +841,7 @@ export const ModifierPopup = props => {
                         >
                            {t('Add on')}:
                         </label>
-                        {productOption.additionalModifiers.length > 0 &&
+                        {!isModifiersLoading && productOption.additionalModifiers.length > 0 &&
                            productOption.additionalModifiers.map(
                               eachAdditionalModifier => {
                                  return (
@@ -814,7 +869,7 @@ export const ModifierPopup = props => {
                                  )
                               }
                            )}
-                        {productOption.modifier.categories.map(eachCategory => {
+                        {!isModifiersLoading && productOption.modifier.categories.map(eachCategory => {
                            return (
                               <ModifierCategory
                                  key={eachCategory.id}
@@ -835,7 +890,7 @@ export const ModifierPopup = props => {
                         })}
                      </div>
                   )}
-               </div>
+               </div>}
                <div
                   style={{ padding: '0 32px' }}
                   className="hern-modifier-popup-add-to-cart-btn-parent-div"
@@ -849,7 +904,7 @@ export const ModifierPopup = props => {
                         />
                      </div>
                   )}
-                  <Button
+                  {!isModifiersLoading && <Button
                      className="hern-product-modifier-pop-up-add-to-cart-btn"
                      onClick={() => {
                         if (
@@ -929,7 +984,7 @@ export const ModifierPopup = props => {
                            </span>
                         </span>
                      )}
-                  </Button>
+                  </Button>}
                </div>
             </div>
             {/* <div

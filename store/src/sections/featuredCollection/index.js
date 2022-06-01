@@ -8,7 +8,7 @@ import {
    Loader,
    Empty,
 } from '../../components'
-import { useQuery } from '@apollo/react-hooks'
+import { useQuery, useSubscription } from '@apollo/react-hooks'
 import _ from 'lodash'
 import { CartContext } from '../../context'
 import { PRODUCTS, PRODUCTS_BY_CATEGORY } from '../../graphql'
@@ -125,7 +125,7 @@ export const FeaturedCollection = ({ config }) => {
       }),
       [brand, locationId, brandLocation?.id]
    )
-   const { loading: productsLoading, error: productsError } = useQuery(
+   const { loading: productsLoading, error: productsError } = useSubscription(
       PRODUCTS,
       {
          skip: isMenuLoading,
@@ -134,7 +134,8 @@ export const FeaturedCollection = ({ config }) => {
             params: argsForByLocation,
          },
          // fetchPolicy: 'network-only',
-         onCompleted: data => {
+         onSubscriptionData: ({ subscriptionData }) => {
+            const { data } = subscriptionData
             if (data && data.products.length) {
                const updatedMenu = categories.map(category => {
                   const updatedProducts = category.products
@@ -157,12 +158,15 @@ export const FeaturedCollection = ({ config }) => {
             }
             setStatus('success')
          },
-         onError: error => {
-            setStatus('error')
-            console.log('Error: ', error)
-         },
       }
    )
+
+   React.useEffect(() => {
+      if (productsError) {
+         setStatus('error')
+      }
+   }, [productsError])
+
    const [productModifier, setProductModifier] = useState(null)
 
    const CustomAreaWrapper = ({ data }) => {
