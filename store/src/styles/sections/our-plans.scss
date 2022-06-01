@@ -639,3 +639,42 @@
       }
    }
 }
+
+// Aggregate View styles
+.hern-plans__aggregate {
+   display: grid;
+   grid-template-columns: repeat(2, 1fr);
+   margin: 58px 100px;
+
+   &__title-wrapper {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      .hern-plans__aggregate__title {
+         font-family: 'Inter';
+         font-style: normal;
+         font-weight: 500;
+         font-size: 24px;
+         line-height: 29px;
+         color: #333333;
+      }
+
+      & > span {
+         color: #ffffff;
+         font-family: 'Inter';
+         font-style: normal;
+         font-weight: 400;
+         font-size: 18px;
+         line-height: 22px;
+         background-color: rgba(51, 51, 51, 0.4);
+         width: 40px;
+         height: 40px;
+         display: flex;
+         align-items: center;
+         justify-content: center;
+         border-radius: 50%;
+         margin-right: 8px;
+      }
+   }
+}

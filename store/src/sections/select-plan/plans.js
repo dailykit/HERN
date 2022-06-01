@@ -178,7 +178,50 @@ export const Plans = ({ config }) => {
             >
                {headingConfig.heading}
             </h1>
+
+            <AggregatedView />
          </div>
       )
    }
+}
+
+// Aggregated View
+
+const AggregatedView = () => {
+   return (
+      <div className="hern-plans__aggregate">
+         <PlansCards />
+         <PlansDetails />
+      </div>
+   )
+}
+
+// plan cards component
+const PlansCards = () => {
+   return (
+      <div>
+         <div className="hern-plans__aggregate__title-wrapper">
+            <span>1</span>{' '}
+            <p className="hern-plans__aggregate__title">Choose your plan</p>
+         </div>
+      </div>
+   )
+}
+
+// planDetails component
+const PlansDetails = () => {
+   return (
+      <div>
+         <div className="hern-plans__aggregate__title-wrapper">
+            <span>2</span>{' '}
+            <p className="hern-plans__aggregate__title">Choose your quantity</p>
+         </div>
+         <PlanCard />
+      </div>
+   )
+}
+
+// plan card component
+const PlanCard = () => {
+   return <div>planCard</div>
 }
