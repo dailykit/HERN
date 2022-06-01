@@ -15,6 +15,7 @@ import { useConfig } from '../lib'
 import { useToasts } from 'react-toast-notifications'
 import { combineCartItems, useQueryParamState, isKiosk } from '../utils'
 import { useTranslation } from './language'
+import { indexOf } from 'lodash'
 
 export const CartContext = React.createContext()
 
@@ -38,8 +39,15 @@ const reducer = (state, { type, payload }) => {
 }
 
 export const CartProvider = ({ children }) => {
-   const { brand, kioskId, selectedOrderTab, locationId, dispatch, orderTabs } =
-      useConfig()
+   const {
+      brand,
+      kioskId,
+      selectedOrderTab,
+      locationId,
+      dispatch,
+      orderTabs,
+      brandLocation,
+   } = useConfig()
    const { addToast } = useToasts()
    const { t } = useTranslation()
    const isKioskMode = isKiosk()
@@ -58,7 +66,18 @@ export const CartProvider = ({ children }) => {
    const [combinedCartItems, setCombinedCartData] = useState(null)
    const [showCartIconToolTip, setShowCartIconToolTip] = useState(false)
    const [dineInTableInfo, setDineInTableInfo] = useState(null)
-
+   const [
+      isCartValidByProductAvailability,
+      setIsCartValidByProductAvailability,
+   ] = useState(false)
+   const argsForByLocation = React.useMemo(
+      () => ({
+         brandId: brand?.id,
+         locationId: locationId,
+         brand_locationId: brandLocation?.id,
+      }),
+      [brand, locationId, brandLocation?.id]
+   )
    React.useEffect(() => {
       // case 1 - user is not authenticated
       //case 1.1 if there is cart-id in local storage , set storedCartId
@@ -133,10 +152,50 @@ export const CartProvider = ({ children }) => {
                },
             }),
          },
+         params: argsForByLocation,
       },
       fetchPolicy: 'no-cache',
    })
 
+   React.useEffect(() => {
+      if (cartItemsData?.cartItems) {
+         for (let node of cartItemsData?.cartItems) {
+            let isCartValid = true
+            const selectedProductOption = node.product.productOptions.find(
+               option => option.id === node.childs[0]?.productOption?.id
+            )
+
+            if (!isEmpty(selectedProductOption)) {
+               isCartValid =
+                  node.product.isAvailable &&
+                  node.product.isPublished &&
+                  selectedProductOption.isAvailable &&
+                  selectedProductOption.isPublished
+            } else {
+               isCartValid =
+                  node.product.isAvailable && node.product.isPublished
+            }
+
+            if (!isCartValid) {
+               setIsCartValidByProductAvailability(false)
+               return
+            }
+
+            if (
+               indexOf(cartItemsData?.cartItems, node) ===
+               cartItemsData?.cartItems.length - 1
+            ) {
+               if (isCartValid) {
+                  setIsCartValidByProductAvailability(true)
+               }
+            }
+         }
+      }
+   }, [cartItemsData?.cartItems])
+   console.log(
+      'isCartValidByProductAvailability',
+      isCartValidByProductAvailability
+   )
    useEffect(() => {
       if (
          !isCartLoading &&
@@ -666,6 +725,7 @@ export const CartProvider = ({ children }) => {
                   update: updateCart,
                },
             },
+            isCartValidByProductAvailability,
          }}
       >
          {children}
