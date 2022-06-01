@@ -122,16 +122,15 @@ const BrandSelector = ({ mouseOver }) => {
          }
       },
    })
+
+   // set brand list in brand context
+   useEffect(() => {
+      if (brandList.length)
+         setBrandContext(prevState => ({ ...prevState, brandList }))
+   }, [brandList])
+   
    console.log('brandContext', brandContext)
    // console.log('brandList', brandList)
-
-   useEffect(() => {
-      setBrandContext({
-         ...brandContext,
-         locationId: null,
-         locationLabel: 'All',
-      })
-   }, [brandContext.brandId])
 
    if (loading) return <InlineLoader />
    return (
@@ -202,6 +201,8 @@ const BrandSelector = ({ mouseOver }) => {
                                        brandName: brand.title,
                                        brandDomain: brand.domain,
                                        logo: brand.logo,
+                                       locationId: null,
+                                       locationLabel: 'All',
                                     })
                                     setBrandArrowClicked(false)
                                  }}

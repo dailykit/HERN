@@ -135,7 +135,8 @@ const App = () => {
       brandName: "",
       locationId: null,
       locationLabel: "",
-      isLoading: true
+      isLoading: true,
+      brandList:[]
    })
 
    console.log("user", user.user.email);
@@ -153,6 +154,7 @@ const App = () => {
             locationId: subscriptionData.data.settings_user[0]?.location?.id || null,
             locationLabel: subscriptionData.data.settings_user[0]?.location?.label || '',
             isLoading: false,
+            brandList:[]
          })
       }
    })

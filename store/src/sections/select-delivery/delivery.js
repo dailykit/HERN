@@ -6,22 +6,24 @@ import { useToasts } from 'react-toast-notifications'
 import { useTranslation, useUser } from '../../context'
 import { BRAND } from '../../graphql'
 import { useConfig } from '../../lib'
-import { Button } from '../../components'
 import { getRoute } from '../../utils'
 import { DeliveryDateSection } from './delivery_date_section'
 import { DeliveryProvider, useDelivery } from './state'
 import { AddressSection } from './address_section'
 import { DeliverySection } from './delivery_section'
-import { SectionTitle } from './section_title'
+import classNames from 'classnames'
+import { isEmpty } from 'lodash'
+import { DeliveryTitleIcons } from '../../assets/icons'
 
-export const Delivery = () => {
+export const Delivery = ({ config }) => {
    return (
       <DeliveryProvider>
-         <DeliveryContent />
+         <DeliveryContent config={config} />
       </DeliveryProvider>
    )
 }
-const DeliveryContent = () => {
+const DeliveryContent = ({ config }) => {
+   console.log('cfg', config)
    const router = useRouter()
    const { user } = useUser()
    const { state, dispatch } = useDelivery()
@@ -84,93 +86,97 @@ const DeliveryContent = () => {
    }
 
    //config properties
-   const theme = configOf('theme-color', 'Visual')
-   const backgroundFromConfig = configOf(
-      'select-delivery-background',
-      'Select-Delivery'
-   )?.background
-   const deliveryDayLabelFromConfig = configOf(
-      'delivery-day',
-      'Select-Delivery'
-   )?.Delivery?.deliveryDayLabel
-   const firstDeliveryDayLabelFromConfig = configOf(
-      'first-delivery',
-      'Select-Delivery'
-   )?.firstDelivery?.firstDeliveryDayLabel
-
-   const addressLabelFromConfig = configOf('address', 'Select-Delivery')
-      ?.address?.selectAddress
-
-   const toggleTunnel = value => {
-      dispatch({ type: 'TOGGLE_TUNNEL', payload: value })
+   const moduleConfig = {
+      title: {
+         address: config?.data?.address?.title?.value || t('Address'),
+         deliveryDay:
+            config?.data?.deliveryDay?.title?.value || t('Delivery Day'),
+         deliveryDate:
+            config?.data?.deliveryDate?.title?.value || t('Delivery Date'),
+      },
+      showIcon: config?.informationVisibility?.showIconOnTitle?.value ?? false,
    }
-   return (
-      <main
-         className="hern-delivery__main"
-         style={
-            backgroundFromConfig && {
-               backgroundImage:
-                  'url(' + backgroundFromConfig?.BackgroundImage?.value + ')',
-               backgroundColor: backgroundFromConfig?.backgroundColor?.value,
-            }
-         }
-      >
-         <section className="hern-delivery__section">
-            <header className="hern-delivery__address-section__header">
-               <SectionTitle
-                  count={1}
-                  title={
-                     addressLabelFromConfig?.value ? (
-                        <p data-translation="true">
-                           {addressLabelFromConfig?.value}
-                        </p>
-                     ) : (
-                        t('Select a delivery Address')
-                     )
-                  }
-               />
 
-               <Button bg={theme?.accent} onClick={() => toggleTunnel(true)}>
-                  {t('Add Address')}
-               </Button>
-            </header>
-            <AddressSection />
-         </section>
-         <section className="hern-delivery__section">
-            <SectionTitle
-               count={2}
-               title={
-                  deliveryDayLabelFromConfig?.value ? (
-                     <p data-translation="true">
-                        {deliveryDayLabelFromConfig?.value}
-                     </p>
-                  ) : (
-                     t('Select a delivery day to get started')
-                  )
-               }
+   const deliveryCardContent = [
+      {
+         id: 1,
+         count: 1,
+         title: moduleConfig.title.address,
+         content: <AddressSection />,
+         identifier: 'address',
+         isActive: !isEmpty(state?.address?.selected),
+      },
+      {
+         id: 2,
+         count: 2,
+         title: moduleConfig.title.deliveryDay,
+         content: <DeliverySection />,
+         identifier: 'delivery-day',
+         isActive: !isEmpty(state?.delivery?.selected),
+      },
+      {
+         id: 3,
+         count: 3,
+         title: moduleConfig.title.deliveryDate,
+         content: <DeliveryDateSection />,
+         identifier: 'delivery-date',
+         isActive: !isEmpty(state?.delivery_date?.selected),
+      },
+   ]
+   return (
+      <main className="hern-delivery__main">
+         {deliveryCardContent.map(content => (
+            <DeliverySectionCard
+               key={content.id}
+               content={content}
+               config={moduleConfig}
             />
-            <DeliverySection />
-         </section>
-         <section className="hern-delivery__section">
-            <SectionTitle
-               count={3}
-               title={
-                  firstDeliveryDayLabelFromConfig?.value ? (
-                     <p data-translation="true">
-                        {firstDeliveryDayLabelFromConfig?.value}
-                     </p>
-                  ) : (
-                     t('Select your first delivery date')
-                  )
-               }
-            />
-            <DeliveryDateSection />
-         </section>
-         <div className="hern-delivery__continue">
-            <Button bg={theme?.accent} onClick={nextStep} disabled={!isValid()}>
-               {t('Continue')}
-            </Button>
-         </div>
+         ))}
+         <button
+            className={classNames('hern-delivery__continue-btn', {
+               'hern-delivery__continue-btn--disabled': !isValid(),
+            })}
+            onClick={nextStep}
+            disabled={!isValid()}
+         >
+            {t('Continue')}
+         </button>
       </main>
+   )
+}
+const DeliverySectionCard = ({ content, config }) => {
+   const Icon = content.Icon
+   return (
+      <div className="hern-delivery__card">
+         <div
+            className={classNames('hern-delivery__card__counter', {
+               'hern-delivery__card__counter--active': content.isActive,
+            })}
+         >
+            <span>{content.count}</span>
+         </div>
+         <div className="hern-delivery__card__content__wrapper">
+            <div
+               className={classNames('hern-delivery__card__content__header', {
+                  'hern-delivery__card__content__header--active':
+                     content.isActive,
+               })}
+            >
+               {config.showIcon && (
+                  <DeliveryTitleIcons
+                     identifier={content.identifier}
+                     color={
+                        content.isActive ? '#333333' : 'rgba(51, 51, 51, 0.4)'
+                     }
+                  />
+               )}
+               &nbsp;{content.title}
+            </div>
+
+            <div className="hern-delivery__card__content">
+               {content.content}
+            </div>
+         </div>
+      </div>
    )
 }

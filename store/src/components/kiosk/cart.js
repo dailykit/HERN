@@ -33,7 +33,7 @@ import {
    getCartItemWithModifiers,
    nestedModifierTemplateIds,
 } from '../../utils'
-import { PRODUCTS, GET_MODIFIER_BY_ID } from '../../graphql'
+import { GET_MODIFIER_BY_ID, PRODUCT_ONE } from '../../graphql'
 import { useConfig, usePayment } from '../../lib'
 import { KioskModifier } from './component'
 import { useLazyQuery, useQuery, useSubscription } from '@apollo/react-hooks'
@@ -338,7 +338,7 @@ const CartCard = props => {
       useState(false) // show modifier and product options details
    const [showChooseIncreaseType, setShowChooseIncreaseType] = useState(false) // show I'll choose or repeat last one popup
    const [showModifier, setShowModifier] = useState(false) // show modifier popup
-   const [forRepeatLastOne, setForRepeatLastOne] = useState(false) // to run repeatLastOne fn in PRODUCTS query
+   const [forRepeatLastOne, setForRepeatLastOne] = useState(false) // to run repeatLastOne fn in PRODUCTS_ONE query
 
    let totalPrice = 0
    let totalDiscount = 0
@@ -368,10 +368,10 @@ const CartCard = props => {
    )
 
    //fetch product detail which to be increase or edit
-   const { data: repeatLastOneData } = useQuery(PRODUCTS, {
+   const { data: repeatLastOneData } = useQuery(PRODUCT_ONE, {
       skip: !modifyProductId,
       variables: {
-         ids: modifyProductId,
+         id: modifyProductId,
          params: argsForByLocation,
       },
       onCompleted: data => {
@@ -382,14 +382,14 @@ const CartCard = props => {
             }
          }
          if (data) {
-            setModifyProduct(data.products[0])
+            setModifyProduct(data.product)
          }
       },
    })
 
    const additionalModifierTemplateIds = React.useMemo(() => {
       if (repeatLastOneData) {
-         return nestedModifierTemplateIds(repeatLastOneData?.products[0])
+         return nestedModifierTemplateIds(repeatLastOneData?.product)
       }
    }, [repeatLastOneData])
 
@@ -424,7 +424,7 @@ const CartCard = props => {
    useEffect(() => {
       if (repeatLastOneData && forRepeatLastOne) {
          if (!additionalModifiersLoading) {
-            repeatLastOne(repeatLastOneData.products[0])
+            repeatLastOne(repeatLastOneData.product)
          }
       }
    }, [repeatLastOneData, additionalModifiersLoading, forRepeatLastOne])
@@ -499,7 +499,7 @@ const CartCard = props => {
 
       const allSelectedOptions = [...singleModifier, ...multipleModifier]
 
-      if (additionalModifierTemplateIds) {
+      if (selectedProductOption.additionalModifiers) {
          selectedProductOption.additionalModifiers.forEach(option => {
             option.modifier.categories.forEach(category => {
                category.options.forEach(option => {
@@ -525,46 +525,89 @@ const CartCard = props => {
             })
          })
          const modifierOptionsConsistAdditionalModifiersWithData =
-            modifierOptionsConsistAdditionalModifiers.map(
-               eachModifierOptionsConsistAdditionalModifiers => {
-                  let additionalModifierOptions = []
-                  additionalModifierTemplates.modifiers.forEach(
-                     eachModifier => {
-                        eachModifier.categories.forEach(eachCategory => {
-                           additionalModifierOptions.push(
-                              ...eachCategory.options.map(eachOption => ({
-                                 ...eachOption,
-                                 categoryId: eachCategory.id,
-                              }))
-                           )
+         modifierOptionsConsistAdditionalModifiers.map(
+            eachModifierOptionsConsistAdditionalModifiers => {
+               let additionalModifierOptions = []
+               selectedProductOption.additionalModifiers.forEach(
+                  additionalModifier => {
+                     if (additionalModifier.modifier) {
+                        additionalModifier.modifier.categories.forEach(
+                           eachCategory => {
+                              eachCategory.options.forEach(eachOption => {
+                                 if (eachOption.additionalModifierTemplate) {
+                                    console.log("getting Error Here",eachOption.additionalModifierTemplate)
+                                    eachOption.additionalModifierTemplate.categories.forEach(
+                                       eachCategory => {
+                                          additionalModifierOptions.push(
+                                             ...eachCategory.options.map(
+                                                eachOptionTemp => ({
+                                                   ...eachOptionTemp,
+                                                   categoryId:
+                                                      eachCategory.id,
+                                                })
+                                             )
+                                          )
+                                       }
+                                    )
+                                 }
+                              })
+                           }
+                        )
+                     }
+                  }
+               )
+               // for single modifiers
+               if (selectedProductOption.modifier) {
+                  selectedProductOption.modifier.categories.forEach(
+                     eachCategory => {
+                        eachCategory.options.forEach(eachOption => {
+                           if (eachOption.additionalModifierTemplateId) {
+                              if (eachOption.additionalModifierTemplate) {
+                                 eachOption.additionalModifierTemplate.categories.forEach(
+                                    eachCategory => {
+                                       additionalModifierOptions.push(
+                                          ...eachCategory.options.map(
+                                             eachOptionTemp => ({
+                                                ...eachOptionTemp,
+                                                categoryId:
+                                                   eachCategory.id,
+                                             })
+                                          )
+                                       )
+                                    }
+                                 )
+                              }
+                           }
                         })
                      }
                   )
-                  const mapedModifierOptions =
-                     eachModifierOptionsConsistAdditionalModifiers.selectedModifierOptionIds.map(
-                        eachId => {
-                           const additionalModifierOption =
-                              additionalModifierOptions.find(
-                                 x => x.id === eachId
-                              )
-                           const selectedOption = {
-                              modifierCategoryID:
-                                 additionalModifierOption.categoryId,
-                              modifierCategoryOptionsID:
-                                 additionalModifierOption.id,
-                              modifierCategoryOptionsPrice:
-                                 additionalModifierOption.price,
-                              cartItem: additionalModifierOption.cartItem,
-                           }
-                           return selectedOption
-                        }
-                     )
-                  return {
-                     ...eachModifierOptionsConsistAdditionalModifiers,
-                     data: mapedModifierOptions,
-                  }
                }
-            )
+
+               const mapedModifierOptions =
+                  eachModifierOptionsConsistAdditionalModifiers.selectedModifierOptionIds.map(
+                     eachId => {
+                        const additionalModifierOption =
+                           additionalModifierOptions.find(
+                              x => x.id === eachId
+                           )
+                        const selectedOption = {
+                           modifierCategoryID:
+                              additionalModifierOption.categoryId,
+                           modifierCategoryOptionsID:
+                              additionalModifierOption.id,
+                           modifierCategoryOptionsPrice:
+                              additionalModifierOption.price,
+                           cartItem: additionalModifierOption.cartItem,
+                        }
+                        return selectedOption
+                     }
+                  )
+               return {
+                  ...eachModifierOptionsConsistAdditionalModifiers,
+                  data: mapedModifierOptions,
+               }
+            }
+         )
 
          // root modifiers options + additional modifier's modifier options
          const resultSelectedModifier = [
