@@ -15,6 +15,7 @@ import moment from 'moment'
 const TimeSlotTunnel = ({ closeTunnel }) => {
    const { recurrenceState } = React.useContext(RecurrenceContext)
    const { type } = useParams()
+   const fulfillmentType = ['PICKUP','DINEIN']
 
    const [timeSlotTunnel, setTimeSlotTunnel] = React.useState([{
       from: {
@@ -43,6 +44,14 @@ const TimeSlotTunnel = ({ closeTunnel }) => {
    }])
    const [advance, setAdvance] = React.useState({
       value: '',
+      meta: {
+         isTouched: false,
+         isValid: true,
+         errors: [],
+      },
+   })
+   const [slotInterval, setSlotInterval] = React.useState({
+      value: '00:15',
       meta: {
          isTouched: false,
          isValid: true,
@@ -194,6 +203,11 @@ const TimeSlotTunnel = ({ closeTunnel }) => {
                type === 'PREORDER_PICKUP' ? +advance.value : null,
             pickUpPrepTime:
                type === 'ONDEMAND_PICKUP' ? +advance.value : null,
+            dineInLeadTime:
+               type === 'PREORDER_DINEIN' ? +advance.value : null,
+            dineInPrepTime:
+               type === 'ONDEMAND_DINEIN' ? +advance.value : null,
+            slotInterval: slotInterval?.value || 15,
          })
          )
          createTimeSlots({
@@ -312,7 +326,7 @@ const TimeSlotTunnel = ({ closeTunnel }) => {
                                  </Form.Group>
                               </Flex>
                               <Spacer size="16px" />
-                              {type.includes('PICKUP') && (
+                              {fulfillmentType.some(el => type.includes(el)) && (
                                  <Form.Group>
                                     <Form.Label htmlFor={`advance-${i}`} title={`Advance ${i}`}>
                                        {`${type.includes('ONDEMAND') ? 'Prep' : 'Lead'
@@ -348,6 +362,41 @@ const TimeSlotTunnel = ({ closeTunnel }) => {
                                        ))}
                                  </Form.Group>
                               )}
+                              <Spacer size="16px" />
+                                 <Form.Group>
+                                    <Form.Label htmlFor={`slotInterval-${i}`} title={`SlotInterval ${i}`}>
+                                       Slot Interval (HH:MM)
+                                    </Form.Label>
+                                    <Form.Time
+                                       id={`slotInterval-${i}`}
+                                       name={`slotInterval-${i}`}
+                                       onChange={e =>
+                                          setSlotInterval({ ...slotInterval, value: e.target.value })
+                                       }
+                                       onBlur={() => {
+                                          const { isValid, errors } = validator.time(
+                                             slotInterval.value
+                                          )
+                                          setSlotInterval({
+                                             ...slotInterval,
+                                             meta: {
+                                                isTouched: true,
+                                                isValid,
+                                                errors,
+                                             },
+                                          })
+                                       }}
+                                       value={slotInterval.value}
+                                       // placeholder="Enter minutes"
+                                       hasError={slotInterval.meta.isTouched && !slotInterval.meta.isValid}
+                                    />
+                                    {slotInterval.meta.isTouched &&
+                                       !slotInterval.meta.isValid &&
+                                       slotInterval.meta.errors.map((error, index) => (
+                                          <Form.Error key={index}>{error}</Form.Error>
+                                       ))}
+                                 </Form.Group>
+                              
                            </>
 
                         )
