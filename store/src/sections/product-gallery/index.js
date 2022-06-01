@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react'
-import { useQuery } from '@apollo/react-hooks'
+import { useQuery, useSubscription } from '@apollo/react-hooks'
 import { Carousel, Col, Row } from 'antd'
 import classNames from 'classnames'
 import { useRouter } from 'next/router'
@@ -27,28 +27,28 @@ export const ProductGallery = ({ config }) => {
       }),
       [brand, locationId, brandLocation?.id]
    )
-   const { loading: productsLoading, error: productsError } = useQuery(
+   const { loading: productsLoading, error: productsError } = useSubscription(
       PRODUCTS,
       {
          variables: {
             ids: config.data.products.value,
             params: argsForByLocation,
          },
-         fetchPolicy: 'network-only',
-         onCompleted: data => {
+         onSubscriptionData: ({ subscriptionData }) => {
+            const { data } = subscriptionData
             if (data && data.products.length) {
                const productsData = data.products
                setProductsData(productsData)
                setStatus('success')
             }
          },
-         onError: error => {
-            setStatus('error')
-            console.log('Error: ', error)
-         },
       }
    )
-
+   React.useEffect(() => {
+      if (productsError) {
+         setStatus('error')
+      }
+   }, [productsError])
    // Setting arrows active color into root variables
    setThemeVariable(
       '--arrow-active-color',

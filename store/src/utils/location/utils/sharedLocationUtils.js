@@ -253,7 +253,7 @@ export const getStoresWithValidations = async props => {
                }
             }
             break
-         case 'SCHEDULED_DINEIN': {
+         case 'PREORDER_DINEIN': {
             if (finalRecurrences.length === 0) {
                const dineInStatus = {
                   status: false,

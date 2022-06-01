@@ -25,7 +25,7 @@ import { RazorpayTunnel, StripeTunnel } from '../../tunnels/Payment'
 export const Aside = () => {
    const params = useParams()
    const { addTab } = useTabs()
-   const { occurenceCustomer } = useManual()
+   const { occurenceCustomer, isCartValidByProductAvailability } = useManual()
    const { customer, fulfillmentInfo, cart } = useManual()
    const [tunnels, openTunnel, closeTunnel] = useTunnel(2)
    const [updateBrandCustomer] = useMutation(MUTATIONS.BRAND.CUSTOMER.UPDATE, {
@@ -94,7 +94,8 @@ export const Aside = () => {
                   onClick={() => openTunnel(1)}
                   disabled={
                      !occurenceCustomer?.itemCountValid ||
-                     !fulfillmentInfo?.type
+                     !fulfillmentInfo?.type ||
+                     !isCartValidByProductAvailability
                   }
                >
                   CHECKOUT

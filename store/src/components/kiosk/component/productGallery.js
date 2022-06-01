@@ -53,7 +53,7 @@ export const ProductGalleryKiosk = ({ config }) => {
       dynamicTrans(languageTags)
    }, [locale])
 
-   const { loading: productsLoading, error: productsError } = useQuery(
+   const { loading: productsLoading, error: productsError } = useSubscription(
       PRODUCTS,
       {
          skip:
@@ -63,18 +63,21 @@ export const ProductGalleryKiosk = ({ config }) => {
             params: argsForByLocation,
          },
          // fetchPolicy: 'network-only',
-         onCompleted: data => {
+         onSubscriptionData: ({ subscriptionData }) => {
+            const { data } = subscriptionData
             if (data && data.products.length > 0) {
                setProducts(data.products)
                setStatus('success')
             }
          },
-         onError: error => {
-            setStatus('error')
-            console.log('Error: ', error)
-         },
       }
    )
+
+   React.useEffect(() => {
+      if (productsError) {
+         setStatus('error')
+      }
+   }, [productsError])
 
    if (!config.productGallery.showProductGallery.value) {
       return null

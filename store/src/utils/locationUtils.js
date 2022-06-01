@@ -312,7 +312,7 @@ export const autoSelectStore = async (
       }
       if (
          fulfillmentType === 'ONDEMAND_DINEIN' ||
-         fulfillmentType === 'SCHEDULED_DINEIN'
+         fulfillmentType === 'PREORDER_DINEIN'
       ) {
          type = 'dineInStatus'
          return type
@@ -375,7 +375,7 @@ export const autoSelectStore = async (
                )
                eachStore[fulfillmentStatus()] = dineInStatus
             }
-            if (fulfillmentType === 'SCHEDULED_DINEIN' && brandRecurrences) {
+            if (fulfillmentType === 'PREORDER_DINEIN' && brandRecurrences) {
                const dineInStatus = isStorePreOrderDineInAvailable(
                   brandRecurrences,
                   eachStore

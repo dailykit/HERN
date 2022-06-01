@@ -358,6 +358,11 @@ const MenuProducts = ({ setCurrentPage, eachCategory, config }) => {
    const [currentGroupProducts, setCurrentGroupedProduct] = useState(
       groupedByType[0].products
    )
+
+   useEffect(() => {
+      setCurrentGroupedProduct(groupedByType[0].products)
+   }, [eachCategory])
+
    const [currentGroup, setCurrentGroup] = useState(groupedByType[0].type)
    const onRadioClick = e => {
       setCurrentGroupedProduct(prev => {
