@@ -147,7 +147,7 @@ const AddressCard = ({
          style={{
             border:
                address?.id === selectedAddress?.id &&
-               '2px solid var(--hern-accent)',
+               '0.5px solid var(--hern-accent)',
             boxShadow: isSelectedCard
                ? 'none'
                : '0px 0px 29px rgba(0, 0, 0, 0.08)',
