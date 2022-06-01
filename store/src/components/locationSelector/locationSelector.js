@@ -114,7 +114,7 @@ export const LocationSelector = props => {
                   </button>
                )}
             {(orderTabFulfillmentType.includes('ONDEMAND_DINEIN') ||
-               orderTabFulfillmentType.includes('SCHEDULED_DINEIN')) &&
+               orderTabFulfillmentType.includes('PREORDER_DINEIN')) &&
                availableFulFillmentType.includes('DINEIN') && (
                   <button
                      className={classNames(
@@ -131,7 +131,7 @@ export const LocationSelector = props => {
                            x =>
                               x.orderFulfillmentTypeLabel ===
                                  'ONDEMAND_DINEIN' ||
-                              x.orderFulfillmentTypeLabel === 'SCHEDULED_DINEIN'
+                              x.orderFulfillmentTypeLabel === 'PREORDER_DINEIN'
                         ).label
                      }
                   </button>

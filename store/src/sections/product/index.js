@@ -24,6 +24,7 @@ export const Product = ({ config }) => {
    const [status, setStatus] = React.useState('loading')
    const { brand, locationId, brandLocation } = useConfig()
    const [productDetails, setProductDetails] = React.useState({})
+   const [productTotalAmount, setProductTotalAmount] = React.useState(null)
 
    const { t, dynamicTrans, locale } = useTranslation()
    const currentLang = React.useMemo(() => locale, [locale])
@@ -132,7 +133,10 @@ export const Product = ({ config }) => {
             >
                {(showProductDetailOnImage ||
                   isEmpty(productDetails?.productOptions)) && (
-                  <ProductInfo productData={productDetails} />
+                  <ProductInfo
+                     productTotalAmount={productTotalAmount}
+                     productData={productDetails}
+                  />
                )}
                <ProductMedia assets={productDetails?.assets} config={config} />
                <div className="hern-veg-non-veg-type">
@@ -195,6 +199,7 @@ export const Product = ({ config }) => {
                         config={config}
                         stepView={true}
                         counterButtonPosition={'BOTTOM'}
+                        setProductTotalAmount={setProductTotalAmount}
                      />
                   )}
                {isEmpty(productDetails?.productOptions) && (
@@ -228,7 +233,7 @@ export const Product = ({ config }) => {
       </div>
    )
 }
-const ProductInfo = ({ productData }) => {
+const ProductInfo = ({ productData, productTotalAmount }) => {
    return (
       <div className={classNames('hern-product__product-info')}>
          <div className={classNames('hern-product__product-header')}>
@@ -236,7 +241,7 @@ const ProductInfo = ({ productData }) => {
                {productData.name}
             </span>
             <span className={classNames('hern-product__product-price')}>
-               {formatCurrency(productData.price)}
+               {formatCurrency(productTotalAmount)}
             </span>
          </div>
          <div className="hern-product_product-additional-text">

@@ -68,14 +68,14 @@ export const PromotionCarousal = props => {
       }
    }, [componentConfig])
 
-   const { data: productsData } = useQuery(PRODUCTS, {
+   const { data: productsData } = useSubscription(PRODUCTS, {
       skip: productIds?.length === 0,
       variables: {
          ids: productIds,
          params: argsForByLocation,
       },
    })
-   // console.log('productsData: ', productsData, productIds)
+   console.log('productsData: ', productsData, productIds)
    const theme = configOf('theme-color', 'Visual')
    const onImageClick = imageDetail => {
       if (imageDetail.belongsTo === 'PRODUCT') {
@@ -92,7 +92,7 @@ export const PromotionCarousal = props => {
                   clickedProduct.isPopupAllowed
                ) {
                   const isProductOptionsAvailable =
-                     productData.productOptions.filter(
+                  clickedProduct.productOptions.filter(
                         option => option.isPublished && option.isAvailable
                      ).length > 0
                   if (isProductOptionsAvailable) {
