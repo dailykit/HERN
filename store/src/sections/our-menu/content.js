@@ -495,7 +495,10 @@ const Product = ({
 
    const ProductIsPublished =
       node?.productOption?.product?.isPublished &&
-      node?.productOption?.isPublished
+      node?.productOption?.isPublished &&
+      !node?.productOption.product.isArchived &&
+      !node?.productOption?.isArchived
+
    const ProductIsAvailable = node?.productOption?.product?.isAvailable
    const isProductOutOfStock = React.useMemo(() => {
       if (ProductIsAvailable) {
@@ -504,7 +507,8 @@ const Product = ({
             node?.productOption?.product?.isPopupAllowed
          ) {
             const availableProductOptions = node?.productOption.filter(
-               option => option.isPublished && option.isAvailable
+               option =>
+                  option.isPublished && option.isAvailable && !option.isArchived
             ).length
             if (availableProductOptions > 0) {
                return false
@@ -539,7 +543,14 @@ const Product = ({
                />
             </span>
          )}
-         <ImageWrapper imageRatio={imageRatio} onClick={openRecipe}>
+         <ImageWrapper
+            imageRatio={imageRatio}
+            onClick={() => {
+               if (!isProductOutOfStock) {
+                  openRecipe
+               }
+            }}
+         >
             {product.image ? (
                <ReactImageFallback
                   src={buildImageUrl('400x300', product.image)}
@@ -564,7 +575,11 @@ const Product = ({
             <a
                className="hern-our-menu__product-link "
                theme={theme}
-               onClick={openRecipe}
+               onClick={() => {
+                  if (!isProductOutOfStock) {
+                     openRecipe
+                  }
+               }}
             >
                <span data-translation="true">{product.name} </span>
                {'-'}

@@ -176,8 +176,14 @@ const Product = ({ node, theme, isAdded, noProductImage, buildImageUrl }) => {
    const isActive = isAdded(node?.cartItem?.subscriptionOccurenceProductId)
    const ProductIsPublished =
       node?.productOption?.product?.isPublished &&
-      node?.productOption?.isPublished
-   const ProductIsAvailable = node?.productOption?.product?.isAvailable
+      node?.productOption?.isPublished &&
+      !node?.productOption.product.isArchived &&
+      !node?.productOption?.isArchived
+
+   const ProductIsAvailable =
+      node?.productOption?.product?.isAvailable &&
+      node?.productOption?.isAvailable
+
    const isProductOutOfStock = React.useMemo(() => {
       if (ProductIsAvailable) {
          if (
@@ -185,7 +191,8 @@ const Product = ({ node, theme, isAdded, noProductImage, buildImageUrl }) => {
             node?.productOption?.product?.isPopupAllowed
          ) {
             const availableProductOptions = node?.productOption.filter(
-               option => option.isPublished && option.isAvailable
+               option =>
+                  option.isPublished && option.isAvailable && !option.isArchived
             ).length
             if (availableProductOptions > 0) {
                return false
@@ -295,7 +302,11 @@ const Product = ({ node, theme, isAdded, noProductImage, buildImageUrl }) => {
          )}
          <div
             className="hern-select-menu__menu__product__img"
-            onClick={isProductOutOfStock ? '' : openRecipe}
+            onClick={() => {
+               if (!isProductOutOfStock) {
+                  openRecipe
+               }
+            }}
          >
             {product.image ? (
                <ReactImageFallback

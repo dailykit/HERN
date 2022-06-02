@@ -236,6 +236,7 @@ export const OCCURENCE_PRODUCTS_BY_CATEGORIES = gql`
                isSingleSelect
                productOption {
                   id
+                  isArchived
                   isPublished: publishedByLocation(args: { params: $params })
                   isAvailable: availabilityByLocation(args: { params: $params })
                   label
@@ -248,6 +249,7 @@ export const OCCURENCE_PRODUCTS_BY_CATEGORIES = gql`
                   }
                   product {
                      name
+                     isArchived
                      isPublished: publishedByLocation(args: { params: $params })
                      isAvailable: availabilityByLocation(
                         args: { params: $params }
@@ -392,8 +394,10 @@ export const CART_BY_WEEK = gql`
                   name
                   isPublished: publishedByLocation(args: { params: $params })
                   isAvailable: availabilityByLocation(args: { params: $params })
+                  isArchived
                   productOptions {
                      id
+                     isArchived
                      isPublished: publishedByLocation(args: { params: $params })
                      isAvailable: availabilityByLocation(
                         args: { params: $params }

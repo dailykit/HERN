@@ -143,11 +143,15 @@ export const MenuProvider = ({ isCheckout = false, children }) => {
                isCartValid =
                   node.product.isAvailable &&
                   node.product.isPublished &&
+                  !node.product.isArchived &&
                   selectedProductOption.isAvailable &&
-                  selectedProductOption.isPublished
+                  selectedProductOption.isPublished &&
+                  !selectedProductOption.isArchived
             } else {
                isCartValid =
-                  node.product.isAvailable && node.product.isPublished
+                  node.product.isAvailable &&
+                  node.product.isPublished &&
+                  !node.product.isArchived
             }
 
             if (!isCartValid) {
