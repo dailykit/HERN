@@ -148,7 +148,7 @@ export const renderComponentByName = (fold, options) => {
       [brand]/get-started/select-plan
       */
       case 'Plans':
-         return <Plans {...getProps('Plans')} />
+         return <Plans config={fold.config} {...getProps('Plans')} />
       /*ROUTES:
       [brand]/our-menu
       */
