@@ -50,8 +50,14 @@ const { Header, Content, Footer } = Layout
 
 export const KioskCart = props => {
    //context
-   const { cartState, methods, addToCart, isFinalCartLoading, storedCartId } =
-      React.useContext(CartContext)
+   const {
+      cartState,
+      methods,
+      addToCart,
+      isFinalCartLoading,
+      storedCartId,
+      isCartValidByProductAvailability,
+   } = React.useContext(CartContext)
    const { cart } = cartState
    const { config, combinedCartItems, setCurrentPage } = props
    const { t, direction } = useTranslation()
@@ -99,7 +105,10 @@ export const KioskCart = props => {
          </div>
       )
    }
-
+   console.log(
+      'isCartValidByProductAvailability',
+      isCartValidByProductAvailability
+   )
    return (
       <Layout
          style={{ height: '100%', overflowY: 'hidden', background: '#fff' }}
@@ -177,6 +186,17 @@ export const KioskCart = props => {
                            {t('CLEAR CART')}
                         </span>
                      </div>
+                     {!isCartValidByProductAvailability && (
+                        <p
+                           style={{
+                              color: '#f33737',
+                              margin: '0 1em',
+                              fontSize: '26px',
+                           }}
+                        >
+                           {t('Some product in cart are not available')}
+                        </p>
+                     )}
                      <div className="hern-kiosk__cart-cards">
                         {combinedCartItems.map((product, index) => {
                            return (
@@ -271,6 +291,7 @@ export const KioskCart = props => {
                            customClass="hern-kiosk__cart-place-order-btn"
                            onClick={placeOrderHandler}
                            buttonConfig={config.kioskSettings.buttonSettings}
+                           disabled={!isCartValidByProductAvailability}
                         >
                            <span className="hern-kiosk__cart-place-order-btn-total">
                               {formatCurrency(
@@ -525,89 +546,91 @@ const CartCard = props => {
             })
          })
          const modifierOptionsConsistAdditionalModifiersWithData =
-         modifierOptionsConsistAdditionalModifiers.map(
-            eachModifierOptionsConsistAdditionalModifiers => {
-               let additionalModifierOptions = []
-               selectedProductOption.additionalModifiers.forEach(
-                  additionalModifier => {
-                     if (additionalModifier.modifier) {
-                        additionalModifier.modifier.categories.forEach(
-                           eachCategory => {
-                              eachCategory.options.forEach(eachOption => {
+            modifierOptionsConsistAdditionalModifiers.map(
+               eachModifierOptionsConsistAdditionalModifiers => {
+                  let additionalModifierOptions = []
+                  selectedProductOption.additionalModifiers.forEach(
+                     additionalModifier => {
+                        if (additionalModifier.modifier) {
+                           additionalModifier.modifier.categories.forEach(
+                              eachCategory => {
+                                 eachCategory.options.forEach(eachOption => {
+                                    if (eachOption.additionalModifierTemplate) {
+                                       console.log(
+                                          'getting Error Here',
+                                          eachOption.additionalModifierTemplate
+                                       )
+                                       eachOption.additionalModifierTemplate.categories.forEach(
+                                          eachCategory => {
+                                             additionalModifierOptions.push(
+                                                ...eachCategory.options.map(
+                                                   eachOptionTemp => ({
+                                                      ...eachOptionTemp,
+                                                      categoryId:
+                                                         eachCategory.id,
+                                                   })
+                                                )
+                                             )
+                                          }
+                                       )
+                                    }
+                                 })
+                              }
+                           )
+                        }
+                     }
+                  )
+                  // for single modifiers
+                  if (selectedProductOption.modifier) {
+                     selectedProductOption.modifier.categories.forEach(
+                        eachCategory => {
+                           eachCategory.options.forEach(eachOption => {
+                              if (eachOption.additionalModifierTemplateId) {
                                  if (eachOption.additionalModifierTemplate) {
-                                    console.log("getting Error Here",eachOption.additionalModifierTemplate)
                                     eachOption.additionalModifierTemplate.categories.forEach(
                                        eachCategory => {
                                           additionalModifierOptions.push(
                                              ...eachCategory.options.map(
                                                 eachOptionTemp => ({
                                                    ...eachOptionTemp,
-                                                   categoryId:
-                                                      eachCategory.id,
+                                                   categoryId: eachCategory.id,
                                                 })
                                              )
                                           )
                                        }
                                     )
                                  }
-                              })
-                           }
-                        )
-                     }
-                  }
-               )
-               // for single modifiers
-               if (selectedProductOption.modifier) {
-                  selectedProductOption.modifier.categories.forEach(
-                     eachCategory => {
-                        eachCategory.options.forEach(eachOption => {
-                           if (eachOption.additionalModifierTemplateId) {
-                              if (eachOption.additionalModifierTemplate) {
-                                 eachOption.additionalModifierTemplate.categories.forEach(
-                                    eachCategory => {
-                                       additionalModifierOptions.push(
-                                          ...eachCategory.options.map(
-                                             eachOptionTemp => ({
-                                                ...eachOptionTemp,
-                                                categoryId:
-                                                   eachCategory.id,
-                                             })
-                                          )
-                                       )
-                                    }
-                                 )
                               }
-                           }
-                        })
-                     }
-                  )
-               }
-
-               const mapedModifierOptions =
-                  eachModifierOptionsConsistAdditionalModifiers.selectedModifierOptionIds.map(
-                     eachId => {
-                        const additionalModifierOption =
-                           additionalModifierOptions.find(
-                              x => x.id === eachId
-                           )
-                        const selectedOption = {
-                           modifierCategoryID:
-                              additionalModifierOption.categoryId,
-                           modifierCategoryOptionsID:
-                              additionalModifierOption.id,
-                           modifierCategoryOptionsPrice:
-                              additionalModifierOption.price,
-                           cartItem: additionalModifierOption.cartItem,
+                           })
                         }
-                        return selectedOption
-                     }
-                  )
-               return {
-                  ...eachModifierOptionsConsistAdditionalModifiers,
-                  data: mapedModifierOptions,
+                     )
+                  }
+
+                  const mapedModifierOptions =
+                     eachModifierOptionsConsistAdditionalModifiers.selectedModifierOptionIds.map(
+                        eachId => {
+                           const additionalModifierOption =
+                              additionalModifierOptions.find(
+                                 x => x.id === eachId
+                              )
+                           const selectedOption = {
+                              modifierCategoryID:
+                                 additionalModifierOption.categoryId,
+                              modifierCategoryOptionsID:
+                                 additionalModifierOption.id,
+                              modifierCategoryOptionsPrice:
+                                 additionalModifierOption.price,
+                              cartItem: additionalModifierOption.cartItem,
+                           }
+                           return selectedOption
+                        }
+                     )
+                  return {
+                     ...eachModifierOptionsConsistAdditionalModifiers,
+                     data: mapedModifierOptions,
+                  }
                }
-            }
-         )
+            )
 
          // root modifiers options + additional modifier's modifier options
          const resultSelectedModifier = [
@@ -655,6 +678,29 @@ const CartCard = props => {
       )
       dynamicTrans(languageTags)
    }, [locale, showAdditionalDetailsOnCard])
+
+   // check product and product option available in cart are valid or not by there isPublished and  isAvailability
+   const isProductAvailable = product => {
+      const selectedProductOption = product.product.productOptions.find(
+         option => option.id === product.childs[0]?.productOption?.id
+      )
+      if (!isEmpty(selectedProductOption)) {
+         return (
+            product.product.isAvailable &&
+            product.product.isPublished &&
+            !product.product.isArchived &&
+            selectedProductOption.isAvailable &&
+            !selectedProductOption.isArchived &&
+            selectedProductOption.isPublished
+         )
+      } else {
+         return (
+            product.product.isAvailable &&
+            product.product.isPublished &&
+            !product.product.isArchived
+         )
+      }
+   }
    return (
       <div className="hern-kiosk__cart-card">
          <div className="hern-kiosk__cart-card-header">
@@ -891,29 +937,35 @@ const CartCard = props => {
                         </div>
                      )}
                </div>
-               <KioskCounterButton
-                  config={config}
-                  quantity={productData.ids.length}
-                  onMinusClick={() => {
-                     removeCartItems([
-                        productData.ids[productData.ids.length - 1],
-                     ])
-                  }}
-                  onPlusClick={() => {
-                     if (productData.childs.length > 0) {
-                        setShowChooseIncreaseType(true)
-                     } else {
-                        setCartDetailSelectedProduct(productData)
-                        setModifyProductId(productData.productId)
-                        setForRepeatLastOne(true)
-                     }
-                  }}
-                  style={{
-                     border: `1px solid ${config.kioskSettings.theme.primaryColor.value}`,
-                     width: '15em',
-                     justifyContent: 'space-around',
-                  }}
-               />
+               {isProductAvailable(productData) ? (
+                  <KioskCounterButton
+                     config={config}
+                     quantity={productData.ids.length}
+                     onMinusClick={() => {
+                        removeCartItems([
+                           productData.ids[productData.ids.length - 1],
+                        ])
+                     }}
+                     onPlusClick={() => {
+                        if (productData.childs.length > 0) {
+                           setShowChooseIncreaseType(true)
+                        } else {
+                           setCartDetailSelectedProduct(productData)
+                           setModifyProductId(productData.productId)
+                           setForRepeatLastOne(true)
+                        }
+                     }}
+                     style={{
+                        border: `1px solid ${config.kioskSettings.theme.primaryColor.value}`,
+                        width: '15em',
+                        justifyContent: 'space-around',
+                     }}
+                  />
+               ) : (
+                  <span className="hern-kiosk__cart-card-warning">
+                     {t('This product is not available')}
+                  </span>
+               )}
             </div>
             <div className="hern-kiosk__cart-card-actions">
                <div className="hern-kiosk__cart-card-action-buttons">
