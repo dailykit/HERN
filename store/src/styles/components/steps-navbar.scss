@@ -8,7 +8,8 @@
       align-items: center;
    }
    @media (max-width: 767px) {
-      display: flex;
+      display: unset;
+      height: auto;
    }
 }
 .hern-steps-navbar__brand {
