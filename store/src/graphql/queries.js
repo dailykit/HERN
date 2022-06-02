@@ -202,6 +202,7 @@ export const OCCURENCE_PRODUCTS_BY_CATEGORIES = gql`
    query categories(
       $subscriptionId: Int_comparison_exp
       $occurenceId: Int_comparison_exp
+      $params: jsonb!
    ) {
       categories: productCategories(
          where: {
@@ -235,6 +236,9 @@ export const OCCURENCE_PRODUCTS_BY_CATEGORIES = gql`
                isSingleSelect
                productOption {
                   id
+                  isArchived
+                  isPublished: publishedByLocation(args: { params: $params })
+                  isAvailable: availabilityByLocation(args: { params: $params })
                   label
                   simpleRecipeYield {
                      yield
@@ -245,9 +249,15 @@ export const OCCURENCE_PRODUCTS_BY_CATEGORIES = gql`
                   }
                   product {
                      name
+                     isArchived
+                     isPublished: publishedByLocation(args: { params: $params })
+                     isAvailable: availabilityByLocation(
+                        args: { params: $params }
+                     )
                      assets
                      additionalText
                      tags
+                     isPopupAllowed
                   }
                }
             }
@@ -343,6 +353,7 @@ export const CART_BY_WEEK = gql`
       $keycloakId: String!
       $weekId: Int!
       $brand_customerId: Int!
+      $params: jsonb!
    ) {
       subscriptionOccurenceCustomer: subscription_subscriptionOccurence_customer_by_pk(
          keycloakId: $keycloakId
@@ -378,6 +389,29 @@ export const CART_BY_WEEK = gql`
                isAutoAdded
                subscriptionOccurenceProductId
                subscriptionOccurenceAddOnProductId
+               product {
+                  id
+                  name
+                  isPublished: publishedByLocation(args: { params: $params })
+                  isAvailable: availabilityByLocation(args: { params: $params })
+                  isArchived
+                  productOptions {
+                     id
+                     isArchived
+                     isPublished: publishedByLocation(args: { params: $params })
+                     isAvailable: availabilityByLocation(
+                        args: { params: $params }
+                     )
+                  }
+               }
+               childs {
+                  id
+                  unitPrice
+                  productOption {
+                     id
+                     label
+                  }
+               }
             }
          }
       }

@@ -26,6 +26,16 @@ export const Content = () => {
    const { brand, configOf, buildImageUrl, noProductImage } =
       useConfig('conventions')
    const { t, dynamicTrans, locale } = useTranslation()
+   const { locationId, brandLocation } = useConfig()
+
+   const argsForByLocation = React.useMemo(
+      () => ({
+         brandId: brand?.id,
+         locationId: locationId,
+         brand_locationId: brandLocation?.id,
+      }),
+      [brand, locationId, brandLocation?.id]
+   )
    const [fetchProducts] = useLazyQuery(OCCURENCE_PRODUCTS_BY_CATEGORIES, {
       onCompleted: ({ categories = [] }) => {
          setCategories(categories)
@@ -76,11 +86,13 @@ export const Content = () => {
                   setIsCategoriesLoading(true)
                   setCurrent(nearestIndex || 0)
                   fetchProducts({
+                     skip: !brand?.id || !locationId || !brandLocation?.id,
                      variables: {
                         occurenceId: {
                            _eq: validOccurences[nearestIndex || 0].id,
                         },
                         subscriptionId: { _eq: subscription.id },
+                        params: argsForByLocation,
                      },
                   })
                }
@@ -165,9 +177,11 @@ export const Content = () => {
       const nextOne = current + 1
       setCurrent(nextOne)
       fetchProducts({
+         skip: !brand?.id || !locationId || !brandLocation?.id,
          variables: {
             occurenceId: { _eq: occurences[nextOne].id },
             subscriptionId: { _eq: subscription.id },
+            params: argsForByLocation,
          },
       })
    }
@@ -177,33 +191,42 @@ export const Content = () => {
       const previousOne = current - 1
       setCurrent(previousOne)
       fetchProducts({
+         skip: !brand?.id || !locationId || !brandLocation?.id,
          variables: {
             occurenceId: { _eq: occurences[previousOne].id },
             subscriptionId: { _eq: subscription.id },
+            params: argsForByLocation,
          },
       })
    }
 
    const config = configOf('primary-labels')?.primaryLabels
    const theme = configOf('theme-color', 'Visual')?.themeColor
-   const imageRatio = useConfig().configOf('image-aspect-ratio', 'Visual')?.imageAspectRatio
+   const imageRatio = useConfig().configOf(
+      'image-aspect-ratio',
+      'Visual'
+   )?.imageAspectRatio
 
-   const yieldLabel = [{
-      singular: config?.yieldLabel?.singular || 'serving',
-      plural: config?.yieldLabel?.singular || 'servings',
-   }
+   const yieldLabel = [
+      {
+         singular: config?.yieldLabel?.singular || 'serving',
+         plural: config?.yieldLabel?.singular || 'servings',
+      },
    ]
-   const itemCountLabel = [{
-      singular: config?.itemLabel?.singular || 'recipe',
-      plural: config?.itemLabel?.singular || 'recipes',
-   }
+   const itemCountLabel = [
+      {
+         singular: config?.itemLabel?.singular || 'recipe',
+         plural: config?.itemLabel?.singular || 'recipes',
+      },
    ]
    if (isEmpty(titles))
       return (
          <>
             <Spacer size="sm" />
             <HelperBar type="info">
-               <HelperBar.SubTitle>{t('No Menu Available!')}</HelperBar.SubTitle>
+               <HelperBar.SubTitle>
+                  {t('No Menu Available!')}
+               </HelperBar.SubTitle>
             </HelperBar>
          </>
       )
@@ -234,8 +257,7 @@ export const Content = () => {
                {[!loading, !loadingTitle].every(node => node) &&
                   title?.servings?.length > 0 && (
                      <section className="hern-our-menu__select-section__serving">
-                        <Form.Label htmlFor="serving" data-translation="true"
-                        >
+                        <Form.Label htmlFor="serving" data-translation="true">
                            {yieldLabel.plural}
                         </Form.Label>
                         <select
@@ -249,7 +271,10 @@ export const Content = () => {
                            }
                         >
                            {title?.servings.map(({ id, size }) => (
-                              <option key={id} value={id} data-translation="true"
+                              <option
+                                 key={id}
+                                 value={id}
+                                 data-translation="true"
                               >
                                  {size}
                               </option>
@@ -263,8 +288,7 @@ export const Content = () => {
                ) &&
                   serving?.counts?.length > 0 && (
                      <section className="hern-our-menu__select-section__counts">
-                        <Form.Label htmlFor="counts" data-translation="true"
-                        >
+                        <Form.Label htmlFor="counts" data-translation="true">
                            {itemCountLabel.plural}
                         </Form.Label>
                         <select
@@ -278,7 +302,10 @@ export const Content = () => {
                            }
                         >
                            {serving?.counts.map(({ id, count }) => (
-                              <option key={id} value={id} data-translation="true"
+                              <option
+                                 key={id}
+                                 value={id}
+                                 data-translation="true"
                               >
                                  {count}
                               </option>
@@ -308,7 +335,10 @@ export const Content = () => {
                            }
                         >
                            {itemCount?.subscriptions.map(({ id, rrule }) => (
-                              <option key={id} value={id} data-translation="true"
+                              <option
+                                 key={id}
+                                 value={id}
+                                 data-translation="true"
                               >
                                  {rrulestr(rrule).toText()}
                               </option>
@@ -337,8 +367,9 @@ export const Content = () => {
                      >
                         <span>
                            <ArrowLeftIcon
-                              className={`hern-our-menu__occurences___btn__icon${current === 0 ? '--disabled' : ''
-                                 }`}
+                              className={`hern-our-menu__occurences___btn__icon${
+                                 current === 0 ? '--disabled' : ''
+                              }`}
                            />
                         </span>
                         {t('Past week')}
@@ -373,10 +404,11 @@ export const Content = () => {
                         {t('Upcoming Week')}
                         <span>
                            <ArrowRightIcon
-                              className={`hern-our-menu__occurences___btn__icon${current === occurences.length - 1
-                                 ? '--disabled'
-                                 : ''
-                                 }`}
+                              className={`hern-our-menu__occurences___btn__icon${
+                                 current === occurences.length - 1
+                                    ? '--disabled'
+                                    : ''
+                              }`}
                            />
                         </span>
                      </button>
@@ -389,7 +421,9 @@ export const Content = () => {
                            key={category.name}
                            className="hern-our-menu__products__wrapper"
                         >
-                           <h4 className="hern-our-menu__products__category-title" data-translation="true"
+                           <h4
+                              className="hern-our-menu__products__category-title"
+                              data-translation="true"
                            >
                               {category.name} (
                               {
@@ -459,8 +493,43 @@ const Product = ({
    const openRecipe = () =>
       router.push(getRoute(`/recipes/${node?.productOption?.id}`))
 
+   const ProductIsPublished =
+      node?.productOption?.product?.isPublished &&
+      node?.productOption?.isPublished &&
+      !node?.productOption.product.isArchived &&
+      !node?.productOption?.isArchived
+
+   const ProductIsAvailable = node?.productOption?.product?.isAvailable
+   const isProductOutOfStock = React.useMemo(() => {
+      if (ProductIsAvailable) {
+         if (
+            node?.productOption.length > 0 &&
+            node?.productOption?.product?.isPopupAllowed
+         ) {
+            const availableProductOptions = node?.productOption.filter(
+               option =>
+                  option.isPublished && option.isAvailable && !option.isArchived
+            ).length
+            if (availableProductOptions > 0) {
+               return false
+            } else {
+               return true
+            }
+         } else {
+            return false
+         }
+      }
+      return true
+   }, [node])
+
+   if (!ProductIsPublished) {
+      return null
+   }
    return (
-      <li className="hern-our-menu__product-list__item">
+      <li
+         className="hern-our-menu__product-list__item"
+         style={{ opacity: `${isProductOutOfStock ? 0.6 : 1}` }}
+      >
          {!!product.type && (
             <span className="hern-our-menu__product-type-indicator">
                <img
@@ -474,7 +543,14 @@ const Product = ({
                />
             </span>
          )}
-         <ImageWrapper imageRatio={imageRatio} onClick={openRecipe}>
+         <ImageWrapper
+            imageRatio={imageRatio}
+            onClick={() => {
+               if (!isProductOutOfStock) {
+                  openRecipe
+               }
+            }}
+         >
             {product.image ? (
                <ReactImageFallback
                   src={buildImageUrl('400x300', product.image)}
@@ -488,7 +564,9 @@ const Product = ({
             )}
          </ImageWrapper>
          {node?.addOnLabel && (
-            <span className="hern-our-menu__product-label" data-translation="true"
+            <span
+               className="hern-our-menu__product-label"
+               data-translation="true"
             >
                {node?.addOnLabel}
             </span>
@@ -497,30 +575,31 @@ const Product = ({
             <a
                className="hern-our-menu__product-link "
                theme={theme}
-               onClick={openRecipe}
-
+               onClick={() => {
+                  if (!isProductOutOfStock) {
+                     openRecipe
+                  }
+               }}
             >
-               <span data-translation="true"
-               >{product.name} </span>
-               {"-"}
-               <span data-translation="true"
-               > {product.label}</span>
+               <span data-translation="true">{product.name} </span>
+               {'-'}
+               <span data-translation="true"> {product.label}</span>
             </a>
          </section>
-         <p data-translation="true"
-         >{product?.additionalText}</p>
-         {
-            product.tags.length > 0 && (
-               <ul className="hern-our-menu__product-tag-list">
-                  {product.tags.map(tag => (
-                     <li className="hern-our-menu__product-tag-list__item" data-translation="true">
-                        {tag}
-                     </li>
-                  ))}
-               </ul>
-            )
-         }
-      </li >
+         <p data-translation="true">{product?.additionalText}</p>
+         {product.tags.length > 0 && (
+            <ul className="hern-our-menu__product-tag-list">
+               {product.tags.map(tag => (
+                  <li
+                     className="hern-our-menu__product-tag-list__item"
+                     data-translation="true"
+                  >
+                     {tag}
+                  </li>
+               ))}
+            </ul>
+         )}
+      </li>
    )
 }
 
