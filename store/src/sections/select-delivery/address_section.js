@@ -29,12 +29,12 @@ export const AddressSection = () => {
 
    //Effect for setting current view to address form if there is no address
    React.useEffect(() => {
-      if (state?.address?.selected) {
+      if (!isEmpty(state?.address?.selected)) {
          setCurrentView('selected-address')
-      } else if (isEmpty(user?.platform_customer?.addresses)) {
-         setCurrentView('address-form')
       } else if (!isEmpty(user?.platform_customer?.addresses)) {
          setCurrentView('address-list')
+      } else {
+         setCurrentView('address-form')
       }
    }, [])
 
