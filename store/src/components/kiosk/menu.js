@@ -100,7 +100,7 @@ const KioskMenu = props => {
          '[data-translation="true"]'
       )
       dynamicTrans(languageTags)
-   }, [])
+   }, [kioskMenus])
    useEffect(() => {
       const kioskMenusClone = JSON.parse(JSON.stringify(kioskMenus))
       const filteredVegMenu = kioskMenusClone

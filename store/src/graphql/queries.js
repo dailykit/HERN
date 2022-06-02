@@ -1301,7 +1301,7 @@ export const PLATFORM_CUSTOMERS = gql`
 `
 
 export const PRODUCTS_BY_CATEGORY = gql`
-   query PRODUCTS_BY_CATEGORY($params: jsonb!) {
+   subscription PRODUCTS_BY_CATEGORY($params: jsonb!) {
       onDemand_getMenuV2copy(args: { params: $params }) {
          data
          id
