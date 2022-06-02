@@ -85,6 +85,8 @@ export const OnDemandOrder = ({ config }) => {
    const { cartState, addToCart } = React.useContext(CartContext)
    const { isMenuLoading, allProductIds, categories } = onDemandMenu
 
+   const [productsList, setProductsList] = React.useState([])
+
    const argsForByLocation = React.useMemo(
       () => ({
          brandId: brand?.id,
@@ -110,29 +112,11 @@ export const OnDemandOrder = ({ config }) => {
             params: argsForByLocation,
          },
          // fetchPolicy: 'network-only',
-         onSubscriptionData: ({subscriptionData}) => {
+         onSubscriptionData: ({ subscriptionData }) => {
             const { data } = subscriptionData
             if (data && data.products.length) {
-               const updatedMenu = categories.map(category => {
-                  const updatedProducts = category.products
-                     .map(productId => {
-                        const found = data.products.find(
-                           ({ id }) => id === productId
-                        )
-                        if (found) {
-                           return found
-                        }
-                        return null
-                     })
-                     .filter(Boolean)
-                  return {
-                     ...category,
-                     products: updatedProducts,
-                  }
-               })
-               setHydratedMenu(updatedMenu)
+               setProductsList(data.products)
             }
-            setStatus('success')
          },
       }
    )
@@ -141,6 +125,29 @@ export const OnDemandOrder = ({ config }) => {
          setStatus('error')
       }
    }, [productsError])
+
+   React.useEffect(() => {
+      if (productsList.length && categories.length) {
+         const updatedMenu = categories.map(category => {
+            const updatedProducts = category.products
+               .map(productId => {
+                  const found = productsList.find(({ id }) => id === productId)
+                  if (found) {
+                     return found
+                  }
+                  return null
+               })
+               .filter(Boolean)
+            return {
+               ...category,
+               products: updatedProducts,
+            }
+         })
+         setHydratedMenu(updatedMenu)
+         setStatus('success')
+      }
+   }, [productsList, categories])
+
    const [productModifier, setProductModifier] = useState(null)
    const CustomAreaWrapper = ({ data }) => {
       return (
