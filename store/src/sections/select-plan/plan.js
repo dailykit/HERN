@@ -281,7 +281,6 @@ export const Plan = ({
                      : 'hern-plan__cover-image'
                }
                style={{
-                  marginTop: '10px',
                   display: `${planViewConfig === 'aggregated' ? 'block' : ''}`,
                }}
             >
@@ -292,8 +291,6 @@ export const Plan = ({
                )}
             </div>
          )}
-
-         {/* CoverImageIllustration */}
 
          {/* Plan title and  icon  */}
 

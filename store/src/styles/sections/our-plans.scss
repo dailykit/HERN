@@ -646,11 +646,13 @@
    grid-template-columns: 1fr 8px 1fr;
    margin: 58px 100px;
    gap: 30px;
-   // border: 3px solid green;
 
    &__left {
-      // border: 2px solid orange;
       padding-right: 6.25em;
+   }
+
+   &__card {
+      height: 100%;
    }
 
    &__divider {
@@ -661,13 +663,7 @@
    }
 
    &__right {
-      // border: 2px solid orange;
       padding-left: 6.25em;
-   }
-
-   &__plan-details {
-      // border: 1px solid red;
-      // padding: 0 30px;
    }
 
    &__title-wrapper {
@@ -719,7 +715,6 @@
       grid-gap: 22px;
       align-items: center;
       padding-right: 20px;
-      padding-left: 20px;
       height: 500px;
       overflow-y: scroll;
    }
@@ -738,11 +733,13 @@
 
 .hern-plan__aggregate {
    position: relative;
+   height: 100%;
 
    &__cover-image {
       border-radius: 6px;
       position: relative;
-      cursor: pointer;
+      height: 100%;
+      object-fit: cover;
    }
 
    &__overlay {
@@ -757,6 +754,8 @@
          rgba(51, 51, 51, 0) 50%,
          rgba(51, 51, 51, 0.93) 85.16%
       );
+
+      cursor: pointer;
    }
 
    &__plan__img {

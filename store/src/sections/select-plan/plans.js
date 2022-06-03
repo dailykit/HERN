@@ -228,7 +228,11 @@ const PlansCards = ({ list, config, planViewConfig, handleSelectedPlan }) => {
          </div>
          <div className="hern-plans__aggregate__cards-wrapper">
             {list.map(plan => (
-               <div key={plan.id} onClick={() => handleSelectedPlan(plan.id)}>
+               <div
+                  className="hern-plans__aggregate__card"
+                  key={plan.id}
+                  onClick={() => handleSelectedPlan(plan.id)}
+               >
                   <Plan
                      plan={plan}
                      itemCount={list.length}
