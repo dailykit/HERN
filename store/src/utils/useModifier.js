@@ -22,7 +22,7 @@ export const useModifier = props => {
 
    // for edit or i'll choose
    useEffect(() => {
-      if (forNewItem || edit) {
+      if (productOption && (forNewItem || edit)) {
          const productOptionId = productCartDetail.childs[0].productOption.id
          const modifierCategoryOptionsIds =
             productCartDetail.childs[0].childs.map(x => x?.modifierOption?.id)
@@ -169,11 +169,11 @@ export const useModifier = props => {
       } else {
          setStatus('success')
       }
-   }, [])
+   }, [productOption])
 
    useEffect(() => {
       // default selected modifiers
-      if (!(forNewItem || edit)) {
+      if (productOption && !(forNewItem || edit)) {
          let singleModifier = []
          let multipleModifier = []
          if (productOption.modifier && simpleModifier) {

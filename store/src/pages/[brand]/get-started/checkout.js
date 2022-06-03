@@ -21,7 +21,7 @@ const Checkout = props => {
    }, [isAuthenticated, isLoading])
 
    return (
-      <Layout noHeader settings={settings}>
+      <Layout noHeader noFooter settings={settings}>
          <SEO seoSettings={seoSettings} />
          <ExternalJSCSSFiles externalFiles={linkedFiles} />
          {isAuthenticated && !isLoading && (

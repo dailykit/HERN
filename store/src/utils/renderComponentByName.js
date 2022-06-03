@@ -163,7 +163,7 @@ export const renderComponentByName = (fold, options) => {
       [brand]/get-started/select-delivery
       */
       case 'Delivery':
-         return <Delivery />
+         return <Delivery config={fold.config} />
       /*ROUTES :
       [brand]/get-started/select-delivery
       */

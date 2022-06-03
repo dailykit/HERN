@@ -7,7 +7,11 @@ import { useTranslation, useUser } from '../context'
 import { getRoute, normalizeAddress } from '../utils'
 import { Billing, CartProduct, Button } from '../components'
 
-const OrderInfo = ({ cart, showViewOrderButton = false }) => {
+const OrderInfo = ({
+   cart,
+   showViewOrderButton = false,
+   showFulfillment = true,
+}) => {
    const router = useRouter()
    const { user } = useUser()
    const { addToast } = useToasts()
@@ -70,35 +74,43 @@ const OrderInfo = ({ cart, showViewOrderButton = false }) => {
             <h4 className="hern-order-info__billings__title">{t('Charges')}</h4>
             <Billing billing={cart?.cartOwnerBilling} />
          </section>
-         <section className="hern-order-info__address">
-            {cart?.fulfillmentInfo?.type?.includes('DELIVERY') ? (
-               <p className="hern-order-info__address__delivery">
-                  <span>{t('Your box will be delivered on')}</span>{' '}
-                  <span>
+         {showFulfillment && (
+            <section className="hern-order-info__address">
+               {cart?.fulfillmentInfo?.type?.includes('DELIVERY') ? (
+                  <p className="hern-order-info__address__delivery">
+                     <span>{t('Your box will be delivered on')}</span>{' '}
+                     <span>
+                        {moment(cart?.fulfillmentInfo?.slot?.from).format(
+                           'MMM D'
+                        )}
+                        &nbsp;<span>{t('between')}</span>{' '}
+                        {moment(cart?.fulfillmentInfo?.slot?.from).format(
+                           'hh:mm A'
+                        )}
+                        &nbsp;-&nbsp;
+                        {moment(cart?.fulfillmentInfo?.slot?.to).format(
+                           'hh:mm A'
+                        )}
+                     </span>{' '}
+                     <span>{t('at')}</span>{' '}
+                     <span>{normalizeAddress(cart?.address)}</span>
+                  </p>
+               ) : (
+                  <p className="hern-order-info__address__pickup">
+                     <span>{t('Pickup your box in between')}</span>
                      {moment(cart?.fulfillmentInfo?.slot?.from).format('MMM D')}
-                     &nbsp;<span>{t('between')}</span>{' '}
+                     ,{' '}
                      {moment(cart?.fulfillmentInfo?.slot?.from).format(
                         'hh:mm A'
-                     )}
-                     &nbsp;-&nbsp;
-                     {moment(cart?.fulfillmentInfo?.slot?.to).format('hh:mm A')}
-                  </span>{' '}
-                  <span>{t('at')}</span>{' '}
-                  <span>{normalizeAddress(cart?.address)}</span>
-               </p>
-            ) : (
-               <p className="hern-order-info__address__pickup">
-                  <span>{t('Pickup your box in between')}</span>
-                  {moment(cart?.fulfillmentInfo?.slot?.from).format(
-                     'MMM D'
-                  )},{' '}
-                  {moment(cart?.fulfillmentInfo?.slot?.from).format('hh:mm A')}{' '}
-                  - {moment(cart?.fulfillmentInfo?.slot?.to).format('hh:mm A')}{' '}
-                  <span>{t('from')}</span>{' '}
-                  {normalizeAddress(cart?.fulfillmentInfo?.address)}
-               </p>
-            )}
-         </section>
+                     )}{' '}
+                     -{' '}
+                     {moment(cart?.fulfillmentInfo?.slot?.to).format('hh:mm A')}{' '}
+                     <span>{t('from')}</span>{' '}
+                     {normalizeAddress(cart?.fulfillmentInfo?.address)}
+                  </p>
+               )}
+            </section>
+         )}
          {showViewOrderButton && (
             <>
                {cart?.paymentStatus === 'SUCCEEDED' ? (

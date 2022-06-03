@@ -117,7 +117,7 @@ export const DeliverySection = ({ planId }) => {
       )
    }
    return (
-      <>
+      <div className="hern-delivery__delivery-days">
          {isEmpty(itemCount?.valid) && !isEmpty(itemCount?.invalid) && (
             <HelperBar type="warning">
                <HelperBar.SubTitle>
@@ -136,13 +136,6 @@ export const DeliverySection = ({ planId }) => {
          )}
          <ul className="hern-delivery__delivery-days__list">
             {itemCount?.valid?.map(day => {
-               const iconClasses = classNames(
-                  'hern-delivery__delivery-days__check-icon',
-                  {
-                     'hern-delivery__delivery-days__check-icon--active':
-                        state.delivery.selected?.id === day.id,
-                  }
-               )
                const dateClasses = classNames(
                   'hern-delivery__delivery-days__list-item',
                   {
@@ -156,61 +149,56 @@ export const DeliverySection = ({ planId }) => {
                      onClick={() => daySelection(day)}
                      className={dateClasses}
                   >
-                     <section className="hern-delivery__delivery-days__content">
-                        <label
-                           className="hern-delivery__delivery-days__label"
-                           data-translation="true"
-                        >
-                           {rrulestr(day.rrule).toText()}
-                        </label>
-                        {day.zipcodes.length > 0 && (
-                           <section className="hern-delivery__delivery-days__fulfillment">
-                              <section className="hern-delivery__delivery-days__fulfillment__delivery">
-                                 <span>
-                                    {day.zipcodes[0].isDeliveryActive ? (
-                                       <TickIcon
-                                          className="hern-delivery__delivery-days__tick-icon"
-                                          size={16}
-                                       />
-                                    ) : (
-                                       <CrossIcon
-                                          size={16}
-                                          className="hern-delivery__delivery-days__cross-icon"
-                                       />
-                                    )}
-                                 </span>
-                                 <p>
-                                    {day.zipcodes[0].deliveryPrice === 0 ? (
-                                       <span> {t('Free Delivery')}&nbsp;</span>
-                                    ) : (
-                                       <>
-                                          <span>
-                                             {' '}
-                                             {t('Delivery at')} &nbsp;
-                                          </span>
-                                          <span>
-                                             {formatCurrency(
-                                                day.zipcodes[0].deliveryPrice
-                                             )}
-                                          </span>
-                                       </>
-                                    )}
-                                 </p>
-                              </section>
-                              {day.zipcodes[0].isPickupActive && (
-                                 <section className="hern-delivery__delivery-days__fulfillment__pickup">
-                                    <span>
-                                       <TickIcon
-                                          className="hern-delivery__delivery-days__tick-icon"
-                                          size={16}
-                                       />
-                                    </span>
-                                    <p>{t('Pickup')}</p>
-                                 </section>
-                              )}
+                     <label
+                        className="hern-delivery__delivery-days__label"
+                        data-translation="true"
+                     >
+                        {rrulestr(day.rrule).toText()}
+                     </label>
+                     {day.zipcodes.length > 0 && (
+                        <section className="hern-delivery__delivery-days__fulfillment">
+                           <section className="hern-delivery__delivery-days__fulfillment__delivery">
+                              <span>
+                                 {day.zipcodes[0].isDeliveryActive ? (
+                                    <TickIcon
+                                       className="hern-delivery__delivery-days__tick-icon"
+                                       size={16}
+                                    />
+                                 ) : (
+                                    <CrossIcon
+                                       size={16}
+                                       className="hern-delivery__delivery-days__cross-icon"
+                                    />
+                                 )}
+                              </span>
+                              <p>
+                                 {day.zipcodes[0].deliveryPrice === 0 ? (
+                                    <span> {t('Free Delivery')}&nbsp;</span>
+                                 ) : (
+                                    <>
+                                       <span> {t('Delivery at')} &nbsp;</span>
+                                       <span>
+                                          {formatCurrency(
+                                             day.zipcodes[0].deliveryPrice
+                                          )}
+                                       </span>
+                                    </>
+                                 )}
+                              </p>
                            </section>
-                        )}
-                     </section>
+                           {day.zipcodes[0].isPickupActive && (
+                              <section className="hern-delivery__delivery-days__fulfillment__pickup">
+                                 <span>
+                                    <TickIcon
+                                       className="hern-delivery__delivery-days__tick-icon"
+                                       size={16}
+                                    />
+                                 </span>
+                                 <p>{t('Pickup')}</p>
+                              </section>
+                           )}
+                        </section>
+                     )}
                   </li>
                )
             })}
@@ -221,67 +209,65 @@ export const DeliverySection = ({ planId }) => {
                      className="hern-delivery__delivery-days__list-item hern-delivery__delivery-days__list-item--invalid"
                      title="Not available on this zipcode"
                   >
-                     <section className="hern-delivery__delivery-days__content">
-                        <label
-                           className="hern-delivery__delivery-days__label"
-                           data-translation="true"
-                        >
-                           {rrulestr(day.rrule).toText()}
-                        </label>
-                        {day.zipcodes.length > 0 && (
-                           <section className="hern-delivery__delivery-days__fulfillment">
-                              <section className="hern-delivery__delivery-days__fulfillment__delivery">
-                                 <span>
-                                    {day.zipcodes[0].isDeliveryActive ? (
-                                       <TickIcon
-                                          className="hern-delivery__delivery-days__tick-icon"
-                                          size={16}
-                                       />
-                                    ) : (
-                                       <CrossIcon
-                                          size={16}
-                                          className="hern-delivery__delivery-days__cross-icon"
-                                       />
-                                    )}
-                                 </span>
-                                 <p>
-                                    {day.zipcodes[0].deliveryPrice === 0 ? (
-                                       <span> {t('Free Delivery')}</span>
-                                    ) : (
-                                       <>
-                                          <span> {t('Delivery at')}</span>
-                                          <span>
-                                             {formatCurrency(
-                                                day.zipcodes[0].deliveryPrice
-                                             )}
-                                          </span>
-                                       </>
-                                    )}
-                                 </p>
-                              </section>
-                              <section className="hern-delivery__delivery-days__fulfillment__pickup">
-                                 <span>
-                                    {day.zipcodes[0].isPickupActive ? (
-                                       <TickIcon
-                                          className="hern-delivery__delivery-days__tick-icon"
-                                          size={16}
-                                       />
-                                    ) : (
-                                       <CrossIcon
-                                          size={16}
-                                          className="hern-delivery__delivery-days__cross-icon"
-                                       />
-                                    )}
-                                 </span>
-                                 <p>{t('Pickup')}</p>
-                              </section>
+                     <label
+                        className="hern-delivery__delivery-days__label"
+                        data-translation="true"
+                     >
+                        {rrulestr(day.rrule).toText()}
+                     </label>
+                     {day.zipcodes.length > 0 && (
+                        <section className="hern-delivery__delivery-days__fulfillment">
+                           <section className="hern-delivery__delivery-days__fulfillment__delivery">
+                              <span>
+                                 {day.zipcodes[0].isDeliveryActive ? (
+                                    <TickIcon
+                                       className="hern-delivery__delivery-days__tick-icon"
+                                       size={16}
+                                    />
+                                 ) : (
+                                    <CrossIcon
+                                       size={16}
+                                       className="hern-delivery__delivery-days__cross-icon"
+                                    />
+                                 )}
+                              </span>
+                              <p>
+                                 {day.zipcodes[0].deliveryPrice === 0 ? (
+                                    <span> {t('Free Delivery')}</span>
+                                 ) : (
+                                    <>
+                                       <span> {t('Delivery at')}</span>
+                                       <span>
+                                          {formatCurrency(
+                                             day.zipcodes[0].deliveryPrice
+                                          )}
+                                       </span>
+                                    </>
+                                 )}
+                              </p>
                            </section>
-                        )}
-                     </section>
+                           <section className="hern-delivery__delivery-days__fulfillment__pickup">
+                              <span>
+                                 {day.zipcodes[0].isPickupActive ? (
+                                    <TickIcon
+                                       className="hern-delivery__delivery-days__tick-icon"
+                                       size={16}
+                                    />
+                                 ) : (
+                                    <CrossIcon
+                                       size={16}
+                                       className="hern-delivery__delivery-days__cross-icon"
+                                    />
+                                 )}
+                              </span>
+                              <p>{t('Pickup')}</p>
+                           </section>
+                        </section>
+                     )}
                   </li>
                )
             })}
          </ul>
-      </>
+      </div>
    )
 }
