@@ -299,6 +299,7 @@ const EmptyStore = dynamic(() =>
 const EmptyReferralIll = dynamic(() =>
    import('./EmptyReferralIll').then(promise => promise.EmptyReferralIll)
 )
+const Cloche = dynamic(() => import('./Cloche').then(promise => promise.Cloche))
 
 export {
    AddressIcon,
@@ -388,4 +389,5 @@ export {
    EmptyCloche,
    EmptyStore,
    EmptyReferralIll,
+   Cloche,
 }
