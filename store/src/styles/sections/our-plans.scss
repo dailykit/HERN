@@ -643,13 +643,38 @@
 // Aggregate View styles
 .hern-plans__aggregate {
    display: grid;
-   grid-template-columns: repeat(2, 1fr);
+   grid-template-columns: 1fr 8px 1fr;
    margin: 58px 100px;
+   gap: 30px;
+   // border: 3px solid green;
+
+   &__left {
+      // border: 2px solid orange;
+      padding: 0 30px;
+   }
+
+   &__divider {
+      width: 1px;
+      height: 240px;
+      border: 4px solid rgba(51, 51, 51, 0.4);
+      align-self: center;
+   }
+
+   &__right {
+      // border: 2px solid orange;
+      padding: 0 50px;
+   }
+
+   &__plan-details {
+      // border: 1px solid red;
+      padding: 0 30px;
+   }
 
    &__title-wrapper {
       display: flex;
       align-items: center;
       justify-content: center;
+      margin-bottom: 36px;
 
       .hern-plans__aggregate__title {
          font-family: 'Inter';
@@ -675,6 +700,121 @@
          justify-content: center;
          border-radius: 50%;
          margin-right: 8px;
+      }
+   }
+
+   &__selectedPlan-title {
+      color: #333333;
+      font-family: 'Lato';
+      font-style: normal;
+      font-weight: 500;
+      font-size: 28px;
+      margin-top: 82px;
+      margin-bottom: 33px;
+   }
+
+   &__cards-wrapper {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(226px, 1fr));
+      grid-gap: 22px;
+      align-items: center;
+      padding-right: 20px;
+      padding-left: 20px;
+      height: 500px;
+      overflow-y: scroll;
+   }
+}
+
+.hern-plan__aggregate {
+   position: relative;
+
+   &__cover-image {
+      border-radius: 6px;
+      position: relative;
+      cursor: pointer;
+   }
+   // &__cover-image__illustartion {
+   //    display: flex;
+   //    align-items: center;
+   //    justify-content: center;
+   //    flex-direction: column;
+   // }
+
+   &__overlay {
+      width: 100%;
+      height: 100%;
+      border-radius: 6px;
+      position: absolute;
+      top: 0;
+      left: 0;
+      background: linear-gradient(
+         180deg,
+         rgba(51, 51, 51, 0) 50%,
+         rgba(51, 51, 51, 0.93) 85.16%
+      );
+   }
+
+   &__plan__img {
+      width: 100%;
+      height: 100%;
+      border-radius: 6px;
+   }
+
+   &__icon-title-wrapper {
+      display: flex;
+      align-items: center;
+      font-family: 'Inter';
+      font-style: normal;
+      font-weight: 500;
+      font-size: 16px;
+      position: absolute;
+      bottom: 8px;
+      left: 10px;
+   }
+
+   &__title {
+      color: #fff;
+   }
+
+   &__servings {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 30px;
+   }
+
+   &__item-counts {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 30px;
+   }
+
+   &__pricing {
+      margin-bottom: 30px;
+   }
+
+   &__pricing-total-price-serving-wrapper {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 8px;
+   }
+
+   &__select-plan__btn {
+      width: 100%;
+      display: flex;
+      border-radius: 999999999px;
+      padding: 16px 30px;
+      background-color: var(--hern-accent);
+      justify-content: center;
+      align-items: center;
+      font-weight: 500;
+      font-family: 'Inter';
+      font-size: 18px;
+      color: #fff;
+      &:hover {
+         background-color: rgba(17, 130, 59, 0.2);
+         color: rgba(51, 51, 51, 0.6);
       }
    }
 }
