@@ -650,24 +650,24 @@
 
    &__left {
       // border: 2px solid orange;
-      padding: 0 30px;
+      padding-right: 6.25em;
    }
 
    &__divider {
-      width: 1px;
+      width: 4px;
+      background-color: rgba(51, 51, 51, 0.4);
       height: 240px;
-      border: 4px solid rgba(51, 51, 51, 0.4);
       align-self: center;
    }
 
    &__right {
       // border: 2px solid orange;
-      padding: 0 50px;
+      padding-left: 6.25em;
    }
 
    &__plan-details {
       // border: 1px solid red;
-      padding: 0 30px;
+      // padding: 0 30px;
    }
 
    &__title-wrapper {
