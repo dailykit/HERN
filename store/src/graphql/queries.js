@@ -841,6 +841,10 @@ export const CUSTOMER = {
                subscriptionPaymentMethodId
                subscriptionOnboardStatus
                subscription {
+                  subscriptionTitle {
+                     title
+                     metaDetails
+                  }
                   recipes: subscriptionItemCount {
                      count
                      price
