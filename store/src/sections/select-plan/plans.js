@@ -199,6 +199,9 @@ const AggregatedView = ({ list, config, planViewConfig }) => {
 
    return (
       <div className="hern-plans__aggregate">
+         {/* TODO-
+         - Create a green border around PlansCards when clicked
+       */}
          <PlansCards
             list={list}
             config={config}
@@ -265,6 +268,10 @@ const PlansDetails = ({ selectedPlan, list, config, planViewConfig }) => {
          <div>
             <div className="hern-plans__aggregate__plan-details">
                <p className="hern-plans__aggregate__selectedPlan-title">
+                  {/* TODO-
+                  - Include plateIllustration
+                */}
+
                   {selectedPlan.title}
                </p>
                <Plan

@@ -29,6 +29,15 @@ export const Plan = ({
    // subscription plan configurations (Display)
    // select button
 
+   /*
+      -TODO-
+      - create a config for when the view is aggregated to make the plantitle configurable
+      -Implement information visibily config
+      -Hover and active state configs need to be created
+      -Implement config for spacing (padding and margin)
+      -Extract illustration svgs into separate files for reusability
+   */
+
    const selectPlanButtonConfig = {
       color: planConfig?.display?.selectPlanButton?.color?.value ?? '#ffffff',
       backgroundColor:
@@ -330,12 +339,24 @@ export const Plan = ({
                         : 'hern-plan__title'
                   }
                >
+                  {/* TODO-
+                  - create a config when the view is aggregated
+                */}
                   <span
                      style={{
-                        color: selectPlanTitleConfig.color,
-                        fontSize: selectPlanTitleConfig.fontSize,
+                        color:
+                           planViewConfig === 'aggregated'
+                              ? '#ffffff'
+                              : selectPlanTitleConfig.color,
+                        fontSize:
+                           planViewConfig === 'aggregated'
+                              ? '16px'
+                              : selectPlanTitleConfig.fontSize,
                         fontFamily: selectPlanTitleConfig.fontFamily,
-                        fontWeight: selectPlanTitleConfig.fontWeight,
+                        fontWeight:
+                           planViewConfig === 'aggregated'
+                              ? '500'
+                              : selectPlanTitleConfig.fontWeight,
                      }}
                      data-translation="true"
                   >
@@ -818,6 +839,9 @@ export const Plan = ({
       </li>
    )
 }
+
+// TODO-
+// -Extract illustration svgs into separate files for reusability
 const PlateIllustration = () => (
    <svg
       width="29"
