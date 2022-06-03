@@ -726,6 +726,8 @@ export const Plan = ({
                         className={
                            planViewConfig === 'card'
                               ? 'hern-plan__card__pricing__total-price'
+                              : planViewConfig === 'aggregated'
+                              ? 'hern-plan__aggregate__pricing__total-price'
                               : 'hern-plan__pricing__total-price'
                         }
                      >
