@@ -3,7 +3,7 @@ import { useRouter } from 'next/router'
 import Link from 'next/link'
 import tw, { styled } from 'twin.macro'
 
-import { HelperBar, Loader, PageBanner } from '../../components'
+import { HelperBar, Loader, PageBanner, PlanInfo } from '../../components'
 import {
    Menu,
    CartPanel,
@@ -17,9 +17,12 @@ import { getRoute } from '../../utils'
 
 export const MenuView = () => {
    return (
-      <MenuProvider>
-         <MenuContent />
-      </MenuProvider>
+      <>
+         <PlanInfo />
+         <MenuProvider>
+            <MenuContent />
+         </MenuProvider>
+      </>
    )
 }
 
