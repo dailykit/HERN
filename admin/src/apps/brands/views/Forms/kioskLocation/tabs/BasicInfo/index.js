@@ -27,7 +27,7 @@ import {
 import moment from 'moment'
 import { CheckIcon } from '../../../../../assets/icons'
 
-export const BasicInfo = () => {
+export const BasicInfo = ({ selectedBrandId }) => {
    const params = useParams()
    const [locationList, setLocationList] = React.useState([])
    const [printerList, setPrinterList] = React.useState([])
@@ -46,7 +46,17 @@ export const BasicInfo = () => {
       },
    })
    const [isPasswordCopied, setIsPasswordCopied] = React.useState(false)
+   const [isPosistCustomerKeyCopied, setIsPosistCustomerKeyCopied] =
+      React.useState(false)
    const [isKioskStatusActive, setIsKioskStatusActive] = React.useState(false)
+   const [posistCustomerKey, setPosistCustomerKey] = React.useState({
+      value: '',
+      meta: {
+         isValid: false,
+         isTouched: false,
+         errors: [],
+      },
+   })
 
    const { error, loading } = useSubscription(KIOSK.KIOSK, {
       variables: {
@@ -81,6 +91,30 @@ export const BasicInfo = () => {
       },
    })
 
+   const {
+      posistError,
+      posistLoading,
+      data: { PosistCustomerKey = {} } = {},
+   } = useSubscription(KIOSK.POSIST_CUSTOMER_KEY, {
+      variables: {
+         brandId: { _eq: selectedBrandId?.id },
+         locationId: { _eq: title.locationId },
+      },
+      onSubscriptionData: ({
+         subscriptionData: { data: { PosistCustomerKey = {} } = {} },
+      }) => {
+         setPosistCustomerKey({
+            value: PosistCustomerKey[0]?.posist_customer_key || '',
+            meta: {
+               isValid: PosistCustomerKey[0]?.posist_customer_key
+                  ? true
+                  : false,
+               isTouched: false,
+               errors: [],
+            },
+         })
+      },
+   })
    // calling printers data
    // const [printerList, setPrinterList] = React.useState([{printerId:'', printerName: ''}])
    const { PrinterError, PrinterListLoading, PrinterData } = useSubscription(
@@ -143,6 +177,17 @@ export const BasicInfo = () => {
       onCompleted: data => {
          toast.success('Updated!')
          console.log('update kiosk data=>>', data)
+      },
+      onError: error => {
+         toast.error('Something went wrong!')
+         logger(error)
+      },
+   })
+
+   const [updatePosist] = useMutation(KIOSK.UPDATE_POSIST_CUSTOMER_KEY, {
+      onCompleted: data => {
+         toast.success('Updated!')
+         // console.log('update POSIST data=>>', data)
       },
       onError: error => {
          toast.error('Something went wrong!')
@@ -225,7 +270,7 @@ export const BasicInfo = () => {
    const updateKioskPrinter = async printer => {
       const { isValid, errors } = validator.name(printer?.title)
       if (isValid) {
-         console.log('update printer printer====?', printer)
+         // console.log('update printer printer====?', printer)
          const { data } = await updateKiosk({
             variables: {
                id: params.id,
@@ -245,10 +290,32 @@ export const BasicInfo = () => {
       })
    }
 
+   const updatePosistCustomerKey = async () => {
+      const { isValid, errors } = validator.name(posistCustomerKey.value)
+      if (isValid) {
+         const { data } = await updatePosist({
+            variables: {
+               brandId: selectedBrandId.id,
+               locationId: title.locationId,
+               _set: {
+                  posist_customer_key: posistCustomerKey.value,
+               },
+            },
+         })
+      }
+      setPosistCustomerKey({
+         ...posistCustomerKey,
+         meta: {
+            isTouched: true,
+            errors,
+            isValid,
+         },
+      })
+   }
    const updateKioskLocation = async newLocation => {
       const { isValid, errors } = validator.name(newLocation.title)
       if (isValid) {
-         console.log('update newLocation====?', newLocation)
+         // console.log('update newLocation====?', newLocation)
          const { data } = await updateKiosk({
             variables: {
                id: params.id,
@@ -267,7 +334,7 @@ export const BasicInfo = () => {
          },
       })
    }
-   if (loading || PrinterListLoading || locationListLoading) {
+   if (loading || PrinterListLoading || locationListLoading || posistLoading) {
       // console.log('loadings::', loading, PrinterListLoading)
       return <InlineLoader />
    }
@@ -412,6 +479,74 @@ export const BasicInfo = () => {
                      />
                   </Form.Group>
                </Flex>
+
+               <Spacer yAxis size="16px" />
+               <Form.Group>
+                  <Form.Label
+                     htmlFor="posistCustomerKey"
+                     title="posistCustomerKey"
+                  >
+                     <ButtonGroup
+                        style={{ gap: '5px' }}
+                        onClick={() => {
+                           copy(posistCustomerKey.value)
+                           setIsPosistCustomerKeyCopied(true)
+                           setTimeout(() => {
+                              setIsPosistCustomerKeyCopied(false)
+                           }, 3000)
+                        }}
+                     >
+                        {'Posist Customer Key   '}
+                        <div
+                           title={isPosistCustomerKeyCopied ? 'Copied' : 'Copy'}
+                        >
+                           {isPosistCustomerKeyCopied ? (
+                              <CheckIcon size={20} />
+                           ) : (
+                              <CopyIcon size={20} />
+                           )}
+                        </div>{' '}
+                     </ButtonGroup>
+                  </Form.Label>
+                  <Flex container alignItems="center">
+                     <Flex>
+                        <Form.Text
+                           disabled={
+                              PosistCustomerKey.length > 0 ? false : true
+                           }
+                           value={posistCustomerKey.value}
+                           placeholder="Enter Posist Customer Key"
+                           id="posistCustomerKey"
+                           name="posistCustomerKey"
+                           onChange={e =>
+                              setPosistCustomerKey({
+                                 ...posistCustomerKey,
+                                 value: e.target.value,
+                              })
+                           }
+                           // onBlur={updateKioskAccessPassword}
+                           hasError={
+                              !posistCustomerKey.meta.isValid &&
+                              posistCustomerKey.meta.isTouched
+                           }
+                        />
+                        {posistCustomerKey.meta.isTouched &&
+                           !posistCustomerKey.meta.isValid &&
+                           posistCustomerKey.meta.errors.map((error, index) => (
+                              <Form.Error key={index}>{error}</Form.Error>
+                           ))}
+                     </Flex>
+                     <Spacer xAxis size="15px" />
+                     <TextButton
+                        type="outline"
+                        size="sm"
+                        onClick={updatePosistCustomerKey}
+                        disabled={PosistCustomerKey.length > 0 ? false : true}
+                     >
+                        Save
+                     </TextButton>
+                  </Flex>
+               </Form.Group>
             </>
          </Flex>
       </div>
