@@ -257,12 +257,12 @@ const PlansCards = ({ list, config, planViewConfig, handleSelectedPlan }) => {
 // planDetails component
 const PlansDetails = ({ selectedPlan, list, config, planViewConfig }) => {
    return (
-      <div>
+      <div className="hern-plans__aggregate__right">
          <div className="hern-plans__aggregate__title-wrapper">
             <span>2</span>{' '}
             <p className="hern-plans__aggregate__title">Choose your quantity</p>
          </div>
-         <div className="hern-plans__aggregate__right">
+         <div>
             <div className="hern-plans__aggregate__plan-details">
                <p className="hern-plans__aggregate__selectedPlan-title">
                   {selectedPlan.title}
