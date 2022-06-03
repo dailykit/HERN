@@ -5,9 +5,12 @@ import { useRouter } from 'next/router'
 import { Result, Spin, Button, Modal } from 'antd'
 import { Wrapper } from './styles'
 import { Button as StyledButton } from '../button'
-import { useWindowSize, isKiosk, isClient } from '../../utils'
+import { useWindowSize, isKiosk, isClient, get_env } from '../../utils'
 import { useCart, useTranslation } from '../../context'
 import { useConfig } from '../../lib'
+import QRCode from 'react-qr-code'
+import KioskButton from '../kiosk/component/button'
+import moment from 'moment'
 
 const PrintProcessingModal = ({
    printDetails,
@@ -23,10 +26,43 @@ const PrintProcessingModal = ({
       printStatus = 'not-started',
       message = '',
    } = printDetails
-   const { setStoredCartId } = useCart()
-   const { setIsIdleScreen, clearCurrentPage } = useConfig()
+   const { storedCartId } = useCart()
+   const { setIsIdleScreen, clearCurrentPage, KioskConfig, settings } =
+      useConfig()
    const { t } = useTranslation()
-
+   const SuccessExtraArea = () => {
+      const [count, setCount] = useState(
+         KioskConfig?.printPopupSettings?.QrTime?.value || 30
+      )
+      React.useEffect(() => {
+         const interval = setInterval(() => {
+            setCount(prev => prev - 1)
+         }, 1000)
+         return () => {
+            clearInterval(interval)
+         }
+      }, [])
+      return (
+         <div
+            style={{
+               display: 'flex',
+               flexDirection: 'column',
+               alignItems: 'center',
+            }}
+         >
+            <span>{moment(count, 'ss').format('mm:ss')}</span>
+            <KioskButton
+               onClick={() => {
+                  window.location.reload()
+               }}
+               buttonConfig={KioskConfig.kioskSettings.buttonSettings}
+               style={{ padding: '0 25px' }}
+            >
+               {t('Exit')}
+            </KioskButton>
+         </div>
+      )
+   }
    const showPrintingStatus = () => {
       let icon = (
          <img
@@ -38,8 +74,38 @@ const PrintProcessingModal = ({
       let title = 'Printing your receipt'
       let subtitle = 'Please wait while we print your receipt'
       let extra = null
+      const path =
+         settings['printing']?.['KioskCustomerTokenTemplate']?.path?.value
+      const template = encodeURIComponent(
+         JSON.stringify({
+            path: path,
+            format: 'pdf',
+            readVar: false,
+         })
+      )
+      const data = encodeURIComponent(JSON.stringify({ cartId: storedCartId }))
       if (printStatus === 'success') {
-         icon = (
+         icon = KioskConfig?.printPopupSettings?.showInvoiceQrCode?.value ? (
+            <div
+               style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+               }}
+            >
+               <QRCode
+                  value={`${get_env(
+                     'BASE_BRAND_URL'
+                  )}/template/?template=${template}&data=${data}`}
+                  level="L"
+                  size="250"
+                  title="hello"
+               />
+               <span style={{ fontSize: '18px' }}>
+                  {t('Scan QR code to get invoice')}
+               </span>
+            </div>
+         ) : (
             <img
                src="/assets/gifs/successful.gif"
                className="payment_status_loader"
@@ -47,6 +113,9 @@ const PrintProcessingModal = ({
          )
          title = 'Printed your receipt successfully'
          subtitle = 'Taking you back to the home page shortly'
+         extra = KioskConfig?.printPopupSettings?.showInvoiceQrCode?.value ? (
+            <SuccessExtraArea />
+         ) : null
       } else if (printStatus === 'failed') {
          icon = (
             <img
@@ -72,6 +141,12 @@ const PrintProcessingModal = ({
 
    useEffect(() => {
       if (printStatus === 'success') {
+         const timer = KioskConfig?.printPopupSettings?.showInvoiceQrCode?.value
+            ? KioskConfig?.printPopupSettings?.QrTime?.value
+               ? KioskConfig?.printPopupSettings?.QrTime?.value * 1000
+               : 30000
+            : 5000
+         console.log('timer', timer)
          setTimeout(async () => {
             if (isKioskMode) {
                // await resetPaymentProviderStates()
@@ -81,7 +156,7 @@ const PrintProcessingModal = ({
                   window.location.reload()
                }
             }
-         }, 5000)
+         }, timer)
       }
    }, [printStatus])
 
@@ -112,7 +187,10 @@ const PrintProcessingModal = ({
                extra={showPrintingStatus().extra}
             />
 
-            {printStatus === 'success' && <Confetti />}
+            {printStatus === 'success' &&
+               !KioskConfig?.printPopupSettings?.showInvoiceQrCode?.value && (
+                  <Confetti />
+               )}
          </Wrapper>
       </Modal>
    )
