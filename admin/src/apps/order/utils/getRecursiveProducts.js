@@ -21,7 +21,7 @@ const convertDisplayNameRecursively = products => {
    if (!isEmpty(products)) {
       products.forEach(product => {
          product.displayName = getName(product.displayName)
-         if (!isEmpty(product.childNodes)) {
+         if (!isEmpty(product.childNodes) && !product.simpleRecipeYieldId) {
             convertDisplayNameRecursively(product.childNodes)
          }
       })
@@ -65,7 +65,7 @@ export const getRecursiveProducts = (nodes = []) => {
          parentIdKeyName: 'parentCartItemId',
       })
       const products = convertDisplayNameRecursively(productsTreeviewData)
-
+      console.log('productsTreeview', productsTreeviewData)
       const refinedProducts = products.map(product => ({
          ...product,
          label: getLabel(product),
