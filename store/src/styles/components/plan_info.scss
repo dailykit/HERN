@@ -1,0 +1,60 @@
+.hern-plan-info {
+   background-color: #f9f9f9;
+   margin-top: 0.5rem;
+   > div {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 16px;
+      margin-bottom: 16px;
+   }
+   .hern-plan-info__title {
+      > h3 {
+         font-family: 'Lato';
+         font-style: normal;
+         font-weight: 600;
+         font-size: 24px;
+         line-height: 29px;
+         color: #333333;
+      }
+      display: flex;
+      align-items: center;
+      gap: 16px;
+   }
+   .hern-plan-info__icon {
+      height: 48px;
+      width: 48px;
+      border-radius: 50%;
+   }
+   .hern-plan-info__desc {
+      font-family: 'Inter';
+      font-style: normal;
+      font-weight: 500;
+      font-size: 14px;
+      line-height: 17px;
+      color: rgba(51, 51, 51, 0.8);
+   }
+   .hern-plan-info__price {
+      font-family: 'Lato';
+      font-style: normal;
+      font-weight: 600;
+      font-size: 24px;
+      line-height: 29px;
+      color: #333333;
+   }
+   @media only screen and (max-width: 767px) {
+      > div {
+         flex-direction: column;
+         align-items: flex-start;
+         gap: 6px;
+      }
+      .hern-plan-info__title > h3 {
+         font-size: 18px;
+      }
+      .hern-plan-info__price {
+         font-size: 18px;
+      }
+   }
+}

@@ -24,6 +24,7 @@ import {
    PaymentOptionsRenderer,
    UserInfo,
    Tunnel,
+   PlanInfo,
 } from '../../components'
 import {
    // usePayment,
@@ -170,6 +171,7 @@ export const Checkout = props => {
          {cart?.source === 'subscription' ? (
             <>
                {router.pathname === '/[brand]/checkout' && <CartPageHeader />}
+               <PlanInfo />
                <div className="hern-subscription-checkout hern-on-demand-cart-section">
                   <div>
                      <div className="hern-on-demand-cart-section__left">

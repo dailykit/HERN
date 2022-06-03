@@ -1,17 +1,17 @@
 import React from 'react'
 
-export const EmptyCloche = ({ color = 'var(--hern-accent)' }) => {
+export const EmptyCloche = ({ color = 'var(--hern-accent)', size = 300 }) => {
    return (
       <svg
-         width="300"
-         height="301"
+         width={size}
+         height={size}
          viewBox="0 0 300 301"
          fill="none"
          xmlns="http://www.w3.org/2000/svg"
       >
          <rect
-            width="300"
-            height="300"
+            width={size}
+            height={size}
             transform="translate(0 0.679688)"
             fill="white"
          />
