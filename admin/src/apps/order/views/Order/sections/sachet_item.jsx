@@ -40,10 +40,21 @@ export const SachetItem = ({ item }) => {
          onClick={select}
       >
          <header>
-            <span title={item.displayName ? item.displayName : 'N/A'}>
+            <span
+               title={
+                  item.displayName
+                     ? item.displayName
+                          .split('->')
+                          .pop()
+                          .split('-')
+                          .shift()
+                          .trim()
+                     : 'N/A'
+               }
+            >
                {item.isModifier && <List.Badge>MODIFIER</List.Badge>}
                {item.displayName
-                  ? item.displayName.split('->').pop().trim()
+                  ? item.displayName.split('->').pop().split('-').shift().trim()
                   : 'N/A'}
             </span>
             <span>{item.supplierItem?.supplierItemName}</span>
