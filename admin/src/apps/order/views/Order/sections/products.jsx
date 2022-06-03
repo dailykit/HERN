@@ -21,7 +21,6 @@ const address = 'apps.order.views.order.'
 export const Products = ({ loading, error, products }) => {
    const { t } = useTranslation()
    const { state, dispatch } = useOrder()
-   console.log('=>>>looking for products', products)
    const [selectedProduct, setSelectedProduct] = React.useState(null)
    const selectProduct = product => {
       setSelectedProduct(product)
@@ -229,7 +228,7 @@ const Title = ({ node }) => {
             <span>{node.displayName}</span>
             {node.isModifier && <StyledBadge>MOD</StyledBadge>}
          </div>
-         {node.simpleRecipeYieldId && (
+         {node.simpleRecipeYieldId && !!node.childNodes.length && (
             <span className="view_sachets" onClick={viewSachetHandler}>
                View Sachets
             </span>
