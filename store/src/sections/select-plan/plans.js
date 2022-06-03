@@ -178,7 +178,118 @@ export const Plans = ({ config }) => {
             >
                {headingConfig.heading}
             </h1>
+
+            <AggregatedView
+               list={list}
+               config={config}
+               planViewConfig={planViewConfig}
+            />
          </div>
       )
    }
+}
+
+// Aggregated View
+const AggregatedView = ({ list, config, planViewConfig }) => {
+   const [selectedPlan, setSelectedPlan] = React.useState(list[0])
+
+   const handleSelectedPlan = planId => {
+      setSelectedPlan(list.filter(item => item.id === planId)[0])
+   }
+
+   return (
+      <div className="hern-plans__aggregate">
+         {/* TODO-
+         - Create a green border around PlansCards when clicked
+       */}
+         <PlansCards
+            list={list}
+            config={config}
+            planViewConfig={planViewConfig}
+            handleSelectedPlan={handleSelectedPlan}
+         />
+
+         <div className="hern-plans__aggregate__divider"></div>
+
+         <PlansDetails
+            selectedPlan={selectedPlan}
+            list={list}
+            config={config}
+            planViewConfig={planViewConfig}
+         />
+      </div>
+   )
+}
+
+// plan cards component
+const PlansCards = ({ list, config, planViewConfig, handleSelectedPlan }) => {
+   return (
+      <div className="hern-plans__aggregate__left">
+         <div className="hern-plans__aggregate__title-wrapper">
+            <span>1</span>{' '}
+            <p className="hern-plans__aggregate__title">Choose your plan</p>
+         </div>
+         <div className="hern-plans__aggregate__cards-wrapper">
+            {list.map(plan => (
+               <div
+                  className="hern-plans__aggregate__card"
+                  key={plan.id}
+                  onClick={() => handleSelectedPlan(plan.id)}
+               >
+                  <Plan
+                     plan={plan}
+                     itemCount={list.length}
+                     planConfig={config}
+                     planViewConfig={planViewConfig}
+                     showSelectPlanButton={false}
+                     showPlanPrice={false}
+                     showPlanRecipes={false}
+                     showPlanServings={false}
+                     showPlanCoverImage={true}
+                     showPlanIcon={false}
+                     showPlanTitle={true}
+                     showOveralay={true}
+                  />
+               </div>
+            ))}
+         </div>
+      </div>
+   )
+}
+
+// planDetails component
+const PlansDetails = ({ selectedPlan, list, config, planViewConfig }) => {
+   return (
+      <div className="hern-plans__aggregate__right">
+         <div className="hern-plans__aggregate__title-wrapper">
+            <span>2</span>{' '}
+            <p className="hern-plans__aggregate__title">Choose your quantity</p>
+         </div>
+         <div>
+            <div className="hern-plans__aggregate__plan-details">
+               <p className="hern-plans__aggregate__selectedPlan-title">
+                  {/* TODO-
+                  - Include plateIllustration
+                */}
+
+                  {selectedPlan.title}
+               </p>
+               <Plan
+                  plan={selectedPlan}
+                  itemCount={list.length}
+                  planConfig={config}
+                  planViewConfig={planViewConfig}
+                  showSelectPlanButton={true}
+                  showPlanPrice={true}
+                  showPlanRecipes={true}
+                  showPlanServings={true}
+                  showPlanCoverImage={false}
+                  showPlanIcon={true}
+                  showPlanTitle={false}
+                  showOveralay={false}
+               />
+            </div>
+         </div>
+      </div>
+   )
 }

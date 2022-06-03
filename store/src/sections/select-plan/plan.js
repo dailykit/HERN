@@ -17,9 +17,26 @@ export const Plan = ({
    itemCount,
    planConfig,
    planViewConfig,
+   showSelectPlanButton = true,
+   showPlanPrice = true,
+   showPlanRecipes = true,
+   showPlanServings = true,
+   showPlanCoverImage = true,
+   showPlanIcon = true,
+   showPlanTitle = true,
+   showOveralay = false,
 }) => {
    // subscription plan configurations (Display)
    // select button
+
+   /*
+      -TODO-
+      - create a config for when the view is aggregated to make the plantitle configurable
+      -Implement information visibily config
+      -Hover and active state configs need to be created
+      -Implement config for spacing (padding and margin)
+      -Extract illustration svgs into separate files for reusability
+   */
 
    const selectPlanButtonConfig = {
       color: planConfig?.display?.selectPlanButton?.color?.value ?? '#ffffff',
@@ -229,16 +246,24 @@ export const Plan = ({
 
    return (
       <li
-         className={planViewConfig === 'card' ? 'hern-plan__card' : 'hern-plan'}
+         className={
+            planViewConfig === 'card'
+               ? 'hern-plan__card'
+               : planViewConfig === 'aggregated'
+               ? 'hern-plan__aggregate'
+               : 'hern-plan'
+         }
       >
          {/* <div className="hern-our-plans__plan__body"> */}
 
          {/* Cover image should maintain 2:1 aspect ratio always  */}
-         {plan.metaDetails?.coverImage ? (
+         {plan.metaDetails?.coverImage && showPlanCoverImage ? (
             <div
                className={
                   planViewConfig === 'card'
                      ? 'hern-plan__card__cover-image'
+                     : planViewConfig === 'aggregated'
+                     ? 'hern-plan__aggregate__cover-image'
                      : 'hern-plan__cover-image'
                }
             >
@@ -247,9 +272,15 @@ export const Plan = ({
                   className={
                      planViewConfig === 'card'
                         ? 'hern-plan__card__plan__img'
+                        : planViewConfig === 'aggregated'
+                        ? 'hern-plan__aggregate__plan__img'
                         : 'hern-plan__plan__img'
                   }
                />
+
+               {showOveralay && (
+                  <div className="hern-plan__aggregate__overlay"></div>
+               )}
             </div>
          ) : (
             <div
@@ -258,58 +289,82 @@ export const Plan = ({
                      ? 'hern-plan__card__cover-image'
                      : 'hern-plan__cover-image'
                }
-               style={{ marginTop: '10px' }}
+               style={{
+                  display: `${planViewConfig === 'aggregated' ? 'block' : ''}`,
+               }}
             >
-               <CardCoverIllustration />
+               {showPlanCoverImage && <CardCoverIllustration />}
+
+               {showOveralay && (
+                  <div className="hern-plan__aggregate__overlay"></div>
+               )}
             </div>
          )}
 
-         {/* CoverImageIllustration */}
-
          {/* Plan title and  icon  */}
 
-         <div
-            className={
-               planViewConfig === 'card'
-                  ? 'hern-plan__card__icon-title-wrapper'
-                  : 'hern-plan__icon-title-wrapper'
-            }
-         >
-            {plan.metaDetails?.icon ? (
-               <div
-                  className={
-                     planViewConfig === 'card'
-                        ? 'hern-plan__card__icon'
-                        : 'hern-plan__icon'
-                  }
-               >
-                  <img src={plan.metaDetails?.icon} />
-               </div>
-            ) : (
-               <PlateIllustration />
-            )}
-
-            <h2
-               title={plan.title}
+         {showPlanTitle && (
+            <div
                className={
                   planViewConfig === 'card'
-                     ? 'hern-plan__card__title'
-                     : 'hern-plan__title'
+                     ? 'hern-plan__card__icon-title-wrapper'
+                     : planViewConfig === 'aggregated'
+                     ? 'hern-plan__aggregate__icon-title-wrapper'
+                     : 'hern-plan__icon-title-wrapper'
                }
             >
-               <span
-                  style={{
-                     color: selectPlanTitleConfig.color,
-                     fontSize: selectPlanTitleConfig.fontSize,
-                     fontFamily: selectPlanTitleConfig.fontFamily,
-                     fontWeight: selectPlanTitleConfig.fontWeight,
-                  }}
-                  data-translation="true"
+               {plan.metaDetails?.icon && showPlanIcon ? (
+                  <div
+                     className={
+                        planViewConfig === 'card'
+                           ? 'hern-plan__card__icon'
+                           : planViewConfig === 'aggregated'
+                           ? 'hern-plan__aggregate__icon'
+                           : 'hern-plan__icon'
+                     }
+                  >
+                     <img src={plan.metaDetails?.icon} />
+                  </div>
+               ) : (
+                  <PlateIllustration />
+               )}
+
+               <h2
+                  title={plan.title}
+                  className={
+                     planViewConfig === 'card'
+                        ? 'hern-plan__card__title'
+                        : planViewConfig === 'aggregated'
+                        ? 'hern-plan__aggregate__title'
+                        : 'hern-plan__title'
+                  }
                >
-                  {plan.title}
-               </span>
-            </h2>
-         </div>
+                  {/* TODO-
+                  - create a config when the view is aggregated
+                */}
+                  <span
+                     style={{
+                        color:
+                           planViewConfig === 'aggregated'
+                              ? '#ffffff'
+                              : selectPlanTitleConfig.color,
+                        fontSize:
+                           planViewConfig === 'aggregated'
+                              ? '16px'
+                              : selectPlanTitleConfig.fontSize,
+                        fontFamily: selectPlanTitleConfig.fontFamily,
+                        fontWeight:
+                           planViewConfig === 'aggregated'
+                              ? '500'
+                              : selectPlanTitleConfig.fontWeight,
+                     }}
+                     data-translation="true"
+                  >
+                     {plan.title}
+                  </span>
+               </h2>
+            </div>
+         )}
 
          {plan?.metaDetails?.description && (
             <p
@@ -348,108 +403,113 @@ export const Plan = ({
                </span>
             ) : ( */}
 
-         <div
-            className={
-               planViewConfig === 'card'
-                  ? 'hern-plan__card__servings'
-                  : 'hern-plan__servings'
-            }
-         >
-            <h4
-               className={
-                  planViewConfig === 'card'
-                     ? 'hern-plan__card__servings__label'
-                     : 'hern-plan__servings__label'
-               }
-            >
-               {/* <span>{t('No. of')}</span>{' '} */}
-               <span
-                  style={{
-                     color: yieldAndItemsCountLabelConfig.color,
-                     fontSize: yieldAndItemsCountLabelConfig.fontSize,
-                     fontWeight: yieldAndItemsCountLabelConfig.fontWeight,
-                  }}
-                  data-translation="true"
-               >
-                  {yieldLabelConfig.plural}
-               </span>
-            </h4>
+         {showPlanServings && (
             <div
                className={
                   planViewConfig === 'card'
-                     ? 'hern-plan__card__servings__list__wrapper'
-                     : 'hern-plan__servings__list__wrapper'
+                     ? 'hern-plan__card__servings'
+                     : planViewConfig === 'aggregated'
+                     ? 'hern-plan__aggregate__servings'
+                     : 'hern-plan__servings'
                }
             >
-               {plansFirstIndex > 0 &&
-                  plan.servings.length > numberOfItemsToShow && (
+               <h4
+                  className={
+                     planViewConfig === 'card'
+                        ? 'hern-plan__card__servings__label'
+                        : 'hern-plan__servings__label'
+                  }
+               >
+                  {/* <span>{t('No. of')}</span>{' '} */}
+                  <span
+                     style={{
+                        color: yieldAndItemsCountLabelConfig.color,
+                        fontSize: yieldAndItemsCountLabelConfig.fontSize,
+                        fontWeight: yieldAndItemsCountLabelConfig.fontWeight,
+                     }}
+                     data-translation="true"
+                  >
+                     {yieldLabelConfig.plural}
+                  </span>
+               </h4>
+               <div
+                  className={
+                     planViewConfig === 'card'
+                        ? 'hern-plan__card__servings__list__wrapper'
+                        : 'hern-plan__servings__list__wrapper'
+                  }
+               >
+                  {plansFirstIndex > 0 &&
+                     plan.servings.length > numberOfItemsToShow && (
+                        <button
+                           className={
+                              planViewConfig === 'card'
+                                 ? 'hern-plan__card__servings__arrow-btn--left'
+                                 : 'hern-plan__servings__arrow-btn--left'
+                           }
+                           onClick={handlePlanPrevious}
+                        >
+                           <BiChevronLeft size={20} />
+                        </button>
+                     )}
+                  <ul
+                     className={
+                        planViewConfig === 'card'
+                           ? 'hern-plan__card__servings__list'
+                           : 'hern-plan__servings__list'
+                     }
+                  >
+                     {plansToShow.map(serving => {
+                        return (
+                           <li
+                              className={classNames(
+                                 `${
+                                    planViewConfig === 'card'
+                                       ? 'hern-plan__card__servings__list-item'
+                                       : 'hern-plan__servings__list-item'
+                                 }`,
+                                 {
+                                    'hern-plan__servings__list-item--active':
+                                       serving.id === defaultServing?.id,
+                                 }
+                              )}
+                              key={serving.id}
+                              onClick={() => setDefaultServing(serving)}
+                              style={{
+                                 borderRadius: countButtonConfig.borderRadius,
+                                 backgroundColor:
+                                    countButtonConfig.backgroundColor,
+                                 fontSize: countButtonConfig.fontSize,
+                                 fontWeight: countButtonConfig.fontWeight,
+                                 color: countButtonConfig.color,
+                              }}
+                           >
+                              <div data-translation="true">{serving.size}</div>
+                              {serving?.metaDetails?.label && (
+                                 <div data-translation="true">
+                                    {serving?.metaDetails?.label}
+                                 </div>
+                              )}
+                           </li>
+                        )
+                     })}
+                  </ul>
+                  {plan.servings.length > plansLastIndex && (
                      <button
                         className={
                            planViewConfig === 'card'
-                              ? 'hern-plan__card__servings__arrow-btn--left'
-                              : 'hern-plan__servings__arrow-btn--left'
+                              ? 'hern-plan__card__servings__arrow-btn--right'
+                              : 'hern-plan__servings__arrow-btn--right'
                         }
-                        onClick={handlePlanPrevious}
+                        onClick={handlePlanNext}
                      >
-                        <BiChevronLeft size={20} />
+                        <BiChevronRight size={20} />
                      </button>
                   )}
-               <ul
-                  className={
-                     planViewConfig === 'card'
-                        ? 'hern-plan__card__servings__list'
-                        : 'hern-plan__servings__list'
-                  }
-               >
-                  {plansToShow.map(serving => {
-                     return (
-                        <li
-                           className={classNames(
-                              `${
-                                 planViewConfig === 'card'
-                                    ? 'hern-plan__card__servings__list-item'
-                                    : 'hern-plan__servings__list-item'
-                              }`,
-                              {
-                                 'hern-plan__servings__list-item--active':
-                                    serving.id === defaultServing?.id,
-                              }
-                           )}
-                           key={serving.id}
-                           onClick={() => setDefaultServing(serving)}
-                           style={{
-                              borderRadius: countButtonConfig.borderRadius,
-                              backgroundColor:
-                                 countButtonConfig.backgroundColor,
-                              fontSize: countButtonConfig.fontSize,
-                              fontWeight: countButtonConfig.fontWeight,
-                              color: countButtonConfig.color,
-                           }}
-                        >
-                           <div data-translation="true">{serving.size}</div>
-                           {serving?.metaDetails?.label && (
-                              <div data-translation="true">
-                                 {serving?.metaDetails?.label}
-                              </div>
-                           )}
-                        </li>
-                     )
-                  })}
-               </ul>
-               {plan.servings.length > plansLastIndex && (
-                  <button
-                     className={
-                        planViewConfig === 'card'
-                           ? 'hern-plan__card__servings__arrow-btn--right'
-                           : 'hern-plan__servings__arrow-btn--right'
-                     }
-                     onClick={handlePlanNext}
-                  >
-                     <BiChevronRight size={20} />
-                  </button>
-               )}
+               </div>
             </div>
-         </div>
+         )}
+
          {/* )} */}
          {/* </section> */}
          {/* <section className="hern-our-plans__plan__items-per-week">
@@ -466,299 +526,322 @@ export const Plan = ({
                      {t('per week')}
                   </span>
                ) : ( */}
-         <div
-            className={
-               planViewConfig === 'card'
-                  ? 'hern-plan__card__item-counts'
-                  : 'hern-plan__item-counts'
-            }
-         >
-            <h4
-               style={{
-                  color: yieldAndItemsCountLabelConfig.color,
-                  fontSize: yieldAndItemsCountLabelConfig.fontSize,
-                  fontWeight: yieldAndItemsCountLabelConfig.fontWeight,
-               }}
-               className={
-                  planViewConfig === 'card'
-                     ? 'hern-plan__card__item-counts__label'
-                     : 'hern-plan__item-counts__label'
-               }
-            >
-               <span data-translation="true">
-                  {itemCountLabelConfig.itemCountLabel}
-               </span>{' '}
-               {t('per week')}
-            </h4>
+
+         {showPlanRecipes && (
             <div
                className={
                   planViewConfig === 'card'
-                     ? 'hern-plan__card__item-counts__list__wrapper'
-                     : 'hern-plan__item-counts__list__wrapper'
+                     ? 'hern-plan__card__item-counts'
+                     : planViewConfig === 'aggregated'
+                     ? 'hern-plan__aggregate__item-counts'
+                     : 'hern-plan__item-counts'
                }
             >
-               {servingsFirstIndex > 0 &&
-                  defaultServing?.itemCounts.length > numberOfItemsToShow && (
+               <h4
+                  style={{
+                     color: yieldAndItemsCountLabelConfig.color,
+                     fontSize: yieldAndItemsCountLabelConfig.fontSize,
+                     fontWeight: yieldAndItemsCountLabelConfig.fontWeight,
+                  }}
+                  className={
+                     planViewConfig === 'card'
+                        ? 'hern-plan__card__item-counts__label'
+                        : 'hern-plan__item-counts__label'
+                  }
+               >
+                  <span data-translation="true">
+                     {itemCountLabelConfig.itemCountLabel}
+                  </span>{' '}
+                  {t('per week')}
+               </h4>
+               <div
+                  className={
+                     planViewConfig === 'card'
+                        ? 'hern-plan__card__item-counts__list__wrapper'
+                        : 'hern-plan__item-counts__list__wrapper'
+                  }
+               >
+                  {servingsFirstIndex > 0 &&
+                     defaultServing?.itemCounts.length >
+                        numberOfItemsToShow && (
+                        <button
+                           className={
+                              planViewConfig === 'card'
+                                 ? 'hern-plan__card__item-counts__arrow-btn--left'
+                                 : 'hern-plan__item-counts__arrow-btn--left'
+                           }
+                           onClick={handleRecipePrevious}
+                        >
+                           <BiChevronLeft size={20} />
+                        </button>
+                     )}
+                  <ul
+                     className={
+                        planViewConfig === 'card'
+                           ? 'hern-plan__card__item-counts__list'
+                           : 'hern-plan__item-counts__list'
+                     }
+                  >
+                     {servingsToShow.map(item => {
+                        return (
+                           <li
+                              className={classNames(
+                                 `${
+                                    planViewConfig === 'card'
+                                       ? 'hern-plan__card__item-counts__list-item'
+                                       : 'hern-plan__item-counts__list-item'
+                                 }`,
+                                 {
+                                    'hern-plan__item-counts__list-item--active':
+                                       item.id === defaultItemCount?.id,
+                                 }
+                              )}
+                              key={item.id}
+                              onClick={() => setDefaultItemCount(item)}
+                           >
+                              <div data-translation="true">{item.count}</div>
+                              {item?.metaDetails?.label && (
+                                 <div data-translation="true">
+                                    {item?.metaDetails?.label}
+                                 </div>
+                              )}
+                           </li>
+                        )
+                     })}
+                  </ul>
+                  {defaultServing?.itemCounts.length > servingsLastIndex && (
                      <button
                         className={
                            planViewConfig === 'card'
-                              ? 'hern-plan__card__item-counts__arrow-btn--left'
-                              : 'hern-plan__item-counts__arrow-btn--left'
+                              ? 'hern-plan__card__servings__arrow-btn--right'
+                              : 'hern-plan__servings__arrow-btn--right'
                         }
-                        onClick={handleRecipePrevious}
+                        onClick={handleRecipeNext}
                      >
-                        <BiChevronLeft size={20} />
+                        <BiChevronRight size={20} />
                      </button>
                   )}
-               <ul
-                  className={
-                     planViewConfig === 'card'
-                        ? 'hern-plan__card__item-counts__list'
-                        : 'hern-plan__item-counts__list'
-                  }
-               >
-                  {servingsToShow.map(item => {
-                     return (
-                        <li
-                           className={classNames(
-                              `${
-                                 planViewConfig === 'card'
-                                    ? 'hern-plan__card__item-counts__list-item'
-                                    : 'hern-plan__item-counts__list-item'
-                              }`,
-                              {
-                                 'hern-plan__item-counts__list-item--active':
-                                    item.id === defaultItemCount?.id,
-                              }
-                           )}
-                           key={item.id}
-                           onClick={() => setDefaultItemCount(item)}
-                        >
-                           <div data-translation="true">{item.count}</div>
-                           {item?.metaDetails?.label && (
-                              <div data-translation="true">
-                                 {item?.metaDetails?.label}
-                              </div>
-                           )}
-                        </li>
-                     )
-                  })}
-               </ul>
-               {defaultServing?.itemCounts.length > servingsLastIndex && (
-                  <button
-                     className={
-                        planViewConfig === 'card'
-                           ? 'hern-plan__card__servings__arrow-btn--right'
-                           : 'hern-plan__servings__arrow-btn--right'
-                     }
-                     onClick={handleRecipeNext}
-                  >
-                     <BiChevronRight size={20} />
-                  </button>
-               )}
+               </div>
             </div>
-         </div>
+         )}
+
          {/* )}
             </section> */}
          {/* <hr /> */}
          {(priceDisplay?.pricePerServing?.isVisible.value === true ||
             priceDisplay?.totalServing?.isVisible.value === true ||
-            priceDisplay?.pricePerPlan?.isVisible.value === true) && (
-            <div
-               className={
-                  planViewConfig === 'card'
-                     ? 'hern-plan__card__pricing'
-                     : 'hern-plan__pricing'
-               }
-            >
+            priceDisplay?.pricePerPlan?.isVisible.value === true) &&
+            showPlanPrice && (
                <div
                   className={
                      planViewConfig === 'card'
-                        ? 'hern-plan__card__pricing-total-price-serving-wrapper'
-                        : 'hern-plan__pricing-total-price-serving-wrapper'
+                        ? 'hern-plan__card__pricing'
+                        : planViewConfig === 'aggregated'
+                        ? 'hern-plan__aggregate__pricing'
+                        : 'hern-plan__pricing'
                   }
                >
-                  {priceDisplay?.totalServing?.isVisible.value === true && (
-                     <section className="hern-plan__pricing__total-serving">
-                        {priceDisplay?.totalServing?.prefix.value && (
+                  <div
+                     className={
+                        planViewConfig === 'card'
+                           ? 'hern-plan__card__pricing-total-price-serving-wrapper'
+                           : planViewConfig === 'aggregated'
+                           ? 'hern-plan__aggregate__pricing-total-price-serving-wrapper'
+                           : 'hern-plan__pricing-total-price-serving-wrapper'
+                     }
+                  >
+                     {priceDisplay?.totalServing?.isVisible.value === true && (
+                        <section className="hern-plan__pricing__total-serving">
+                           {priceDisplay?.totalServing?.prefix.value && (
+                              <span
+                                 className={
+                                    planViewConfig === 'card'
+                                       ? 'hern-plan__card__pricing__total-serving__prefix'
+                                       : 'hern-plan__pricing__total-serving__prefix'
+                                 }
+                                 data-translation="true"
+                              >
+                                 {priceDisplay?.totalServing?.prefix.value}{' '}
+                              </span>
+                           )}
                            <span
                               className={
                                  planViewConfig === 'card'
-                                    ? 'hern-plan__card__pricing__total-serving__prefix'
-                                    : 'hern-plan__pricing__total-serving__prefix'
+                                    ? 'hern-plan__card__pricing__total-serving__price'
+                                    : 'hern-plan__pricing__total-serving__price'
                               }
                               data-translation="true"
                            >
-                              {priceDisplay?.totalServing?.prefix.value}{' '}
+                              {Number.parseFloat(
+                                 (defaultItemCount?.count || 1) *
+                                    (defaultServing?.size || 1)
+                              ).toFixed(0)}{' '}
                            </span>
-                        )}
-                        <span
+                           {priceDisplay?.totalServing?.suffix.value && (
+                              <span
+                                 className={
+                                    planViewConfig === 'card'
+                                       ? 'hern-plan__card__pricing__total-serving__prefix'
+                                       : 'hern-plan__pricing__total-serving__prefix'
+                                 }
+                                 data-translation="true"
+                              >
+                                 {priceDisplay?.totalServing?.suffix.value}
+                              </span>
+                           )}
+                        </section>
+                     )}
+                     {priceDisplay?.pricePerServing?.isVisible.value ===
+                        true && (
+                        <section
                            className={
                               planViewConfig === 'card'
-                                 ? 'hern-plan__card__pricing__total-serving__price'
-                                 : 'hern-plan__pricing__total-serving__price'
+                                 ? 'hern-plan__card__pricing__price-per-serving'
+                                 : 'hern-plan__pricing__price-per-serving'
                            }
-                           data-translation="true"
                         >
-                           {Number.parseFloat(
-                              (defaultItemCount?.count || 1) *
-                                 (defaultServing?.size || 1)
-                           ).toFixed(0)}{' '}
-                        </span>
-                        {priceDisplay?.totalServing?.suffix.value && (
+                           {priceDisplay?.pricePerServing?.prefix.value && (
+                              <span
+                                 className={
+                                    planViewConfig === 'card'
+                                       ? 'hern-plan__card__pricing__price-per-serving__prefix'
+                                       : 'hern-plan__pricing__price-per-serving__prefix'
+                                 }
+                                 data-translation="true"
+                              >
+                                 {priceDisplay?.pricePerServing?.prefix.value}{' '}
+                              </span>
+                           )}
                            <span
                               className={
                                  planViewConfig === 'card'
-                                    ? 'hern-plan__card__pricing__total-serving__prefix'
-                                    : 'hern-plan__pricing__total-serving__prefix'
+                                    ? 'hern-plan__card__pricing__price-per-serving__price'
+                                    : 'hern-plan__pricing__price-per-serving__price'
                               }
                               data-translation="true"
                            >
-                              {priceDisplay?.totalServing?.suffix.value}
+                              {formatCurrency(
+                                 Number.parseFloat(
+                                    (defaultItemCount?.price || 1) /
+                                       ((defaultItemCount?.count || 1) *
+                                          (defaultServing?.size || 1))
+                                 ).toFixed(2)
+                              )}{' '}
+                              <span
+                                 className={
+                                    planViewConfig === 'card'
+                                       ? 'hern-plan__card__pricing__price-per-serving__suffix'
+                                       : 'hern-plan__pricing__price-per-serving__suffix'
+                                 }
+                                 data-translation="true"
+                              >
+                                 {priceDisplay?.pricePerServing?.suffix.value ||
+                                    `per ${yieldLabelConfig.singular}`}
+                              </span>
                            </span>
-                        )}
-                     </section>
-                  )}
-                  {priceDisplay?.pricePerServing?.isVisible.value === true && (
+                        </section>
+                     )}
+                  </div>
+                  {priceDisplay?.pricePerPlan?.isVisible.value === true && (
                      <section
                         className={
                            planViewConfig === 'card'
-                              ? 'hern-plan__card__pricing__price-per-serving'
-                              : 'hern-plan__pricing__price-per-serving'
+                              ? 'hern-plan__card__pricing__total-price'
+                              : planViewConfig === 'aggregated'
+                              ? 'hern-plan__aggregate__pricing__total-price'
+                              : 'hern-plan__pricing__total-price'
                         }
                      >
-                        {priceDisplay?.pricePerServing?.prefix.value && (
+                        {priceDisplay?.pricePerPlan?.prefix && (
                            <span
                               className={
                                  planViewConfig === 'card'
-                                    ? 'hern-plan__card__pricing__price-per-serving__prefix'
-                                    : 'hern-plan__pricing__price-per-serving__prefix'
+                                    ? 'hern-plan__card__pricing__total-price__prefix'
+                                    : 'hern-plan__pricing__total-price__prefix'
                               }
                               data-translation="true"
                            >
-                              {priceDisplay?.pricePerServing?.prefix.value}{' '}
+                              {priceDisplay?.pricePerPlan?.prefix.value}{' '}
                            </span>
                         )}
+                        <br />
                         <span
+                           style={{
+                              color: `${
+                                 colorConfig?.accent?.value
+                                    ? colorConfig?.accent?.value
+                                    : 'rgba(5, 150, 105, 1)'
+                              }`,
+                           }}
                            className={
                               planViewConfig === 'card'
-                                 ? 'hern-plan__card__pricing__price-per-serving__price'
-                                 : 'hern-plan__pricing__price-per-serving__price'
+                                 ? 'hern-plan__card__pricing__total-price__price'
+                                 : 'hern-plan__pricing__total-price__price'
                            }
                            data-translation="true"
                         >
-                           {formatCurrency(
-                              Number.parseFloat(
-                                 (defaultItemCount?.price || 1) /
-                                    ((defaultItemCount?.count || 1) *
-                                       (defaultServing?.size || 1))
-                              ).toFixed(2)
-                           )}{' '}
-                           <span
-                              className={
-                                 planViewConfig === 'card'
-                                    ? 'hern-plan__card__pricing__price-per-serving__suffix'
-                                    : 'hern-plan__pricing__price-per-serving__suffix'
-                              }
-                              data-translation="true"
-                           >
-                              {priceDisplay?.pricePerServing?.suffix.value ||
-                                 `per ${yieldLabelConfig.singular}`}
-                           </span>
+                           {formatCurrency(defaultItemCount?.price)}{' '}
+                        </span>
+                        <span
+                           className={
+                              planViewConfig === 'card'
+                                 ? 'hern-plan__card__pricing__total-price__tax'
+                                 : 'hern-plan__pricing__total-price__tax'
+                           }
+                        >
+                           {defaultItemCount?.isTaxIncluded
+                              ? t('Tax Inclusive')
+                              : t('Tax Exclusive')}{' '}
+                        </span>
+                        <span
+                           className={
+                              planViewConfig === 'card'
+                                 ? 'hern-plan__card__pricing__total-price__suffix'
+                                 : 'hern-plan__pricing__total-price__suffix'
+                           }
+                        >
+                           {(
+                              <span data-translation="true">
+                                 {priceDisplay?.pricePerPlan?.suffix.value}
+                              </span>
+                           ) || <span>{t('Weekly total')}</span>}
                         </span>
                      </section>
                   )}
                </div>
-               {priceDisplay?.pricePerPlan?.isVisible.value === true && (
-                  <section
-                     className={
-                        planViewConfig === 'card'
-                           ? 'hern-plan__card__pricing__total-price'
-                           : 'hern-plan__pricing__total-price'
-                     }
-                  >
-                     {priceDisplay?.pricePerPlan?.prefix && (
-                        <span
-                           className={
-                              planViewConfig === 'card'
-                                 ? 'hern-plan__card__pricing__total-price__prefix'
-                                 : 'hern-plan__pricing__total-price__prefix'
-                           }
-                           data-translation="true"
-                        >
-                           {priceDisplay?.pricePerPlan?.prefix.value}{' '}
-                        </span>
-                     )}
-                     <br />
-                     <span
-                        style={{
-                           color: `${
-                              colorConfig?.accent?.value
-                                 ? colorConfig?.accent?.value
-                                 : 'rgba(5, 150, 105, 1)'
-                           }`,
-                        }}
-                        className={
-                           planViewConfig === 'card'
-                              ? 'hern-plan__card__pricing__total-price__price'
-                              : 'hern-plan__pricing__total-price__price'
-                        }
-                        data-translation="true"
-                     >
-                        {formatCurrency(defaultItemCount?.price)}{' '}
-                     </span>
-                     <span
-                        className={
-                           planViewConfig === 'card'
-                              ? 'hern-plan__card__pricing__total-price__tax'
-                              : 'hern-plan__pricing__total-price__tax'
-                        }
-                     >
-                        {defaultItemCount?.isTaxIncluded
-                           ? t('Tax Inclusive')
-                           : t('Tax Exclusive')}{' '}
-                     </span>
-                     <span
-                        className={
-                           planViewConfig === 'card'
-                              ? 'hern-plan__card__pricing__total-price__suffix'
-                              : 'hern-plan__pricing__total-price__suffix'
-                        }
-                     >
-                        {(
-                           <span data-translation="true">
-                              {priceDisplay?.pricePerPlan?.suffix.value}
-                           </span>
-                        ) || <span>{t('Weekly total')}</span>}
-                     </span>
-                  </section>
-               )}
-            </div>
+            )}
+
+         {showSelectPlanButton && (
+            <button
+               className={
+                  planViewConfig === 'card'
+                     ? 'hern-plan__card__select-plan__btn'
+                     : planViewConfig === 'aggregated'
+                     ? 'hern-plan__aggregate__select-plan__btn'
+                     : 'hern-plan__select-plan__btn'
+               }
+               onClick={() => selectPlan()}
+               style={{
+                  color: selectPlanButtonConfig.color,
+                  backgroundColor: selectPlanButtonConfig.backgroundColor,
+                  fontSize: selectPlanButtonConfig.fontSize,
+                  fontFamily: selectPlanButtonConfig.fontFamily,
+                  fontWeight: selectPlanButtonConfig.fontWeight,
+                  borderRadius: selectPlanButtonConfig.borderRadius,
+                  border: selectPlanButtonConfig.border,
+               }}
+            >
+               {t(`${selectPlanButtonLabelConfig?.buttonLabel}`)}
+            </button>
          )}
-         <button
-            className={
-               planViewConfig === 'card'
-                  ? 'hern-plan__card__select-plan__btn'
-                  : 'hern-plan__select-plan__btn'
-            }
-            onClick={() => selectPlan()}
-            style={{
-               color: selectPlanButtonConfig.color,
-               backgroundColor: selectPlanButtonConfig.backgroundColor,
-               fontSize: selectPlanButtonConfig.fontSize,
-               fontFamily: selectPlanButtonConfig.fontFamily,
-               fontWeight: selectPlanButtonConfig.fontWeight,
-               borderRadius: selectPlanButtonConfig.borderRadius,
-               border: selectPlanButtonConfig.border,
-            }}
-         >
-            {t(`${selectPlanButtonLabelConfig?.buttonLabel}`)}
-         </button>
 
          {/* </div> */}
       </li>
    )
 }
+
+// TODO-
+// -Extract illustration svgs into separate files for reusability
 const PlateIllustration = () => (
    <svg
       width="29"
@@ -803,42 +886,48 @@ const PlateIllustration = () => (
 )
 
 const CardCoverIllustration = () => (
-   <svg
-      width="100%"
-      height="230"
-      viewBox="0 0 420 230"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
+   <div
+      style={{
+         width: '100%',
+         minHeight: '230px',
+         display: 'flex',
+         justifyContent: 'center',
+         alignItems: 'center',
+         backgroundColor: '#F9F9F9',
+      }}
    >
-      <path
-         d="M0 12.894C0 6.26662 5.37258 0.894043 12 0.894043H408C414.627 0.894043 420 6.26663 420 12.894V229.894H0V12.894Z"
-         fill="#F9F9F9"
-         width={420}
-      />
-      <path
-         d="M146.05 184.53C146.467 184.947 146.882 185.154 147.508 185.154H225H225.207L261.454 195.57H262.079C262.496 195.57 262.911 195.362 263.328 195.153C263.953 194.736 264.161 194.111 264.161 193.486V185.155H272.492C273.117 185.155 273.534 184.947 273.951 184.53L284.367 174.114C284.992 173.489 285.199 172.655 284.784 171.823C284.576 170.989 283.742 170.572 282.909 170.572H274.578C273.536 138.076 248.331 111.62 216.459 108.495C217.084 107.454 217.292 106.204 217.292 104.954C217.292 100.996 213.959 97.6627 210 97.6627C206.042 97.6627 202.709 100.996 202.709 104.954C202.709 106.204 203.126 107.454 203.541 108.495C171.671 111.621 146.464 138.075 145.423 170.572H137.091C136.259 170.572 135.425 170.989 135.217 171.821C134.8 172.654 135.009 173.488 135.634 174.113L146.05 184.53ZM259.995 190.778L203.96 174.739H259.995V190.778ZM277.91 174.739L271.66 180.989L264.162 180.987V174.738H272.494L277.91 174.739ZM210.001 101.831C211.667 101.831 213.125 103.29 213.125 104.955C213.125 106.621 211.667 108.079 210.001 108.079C208.334 108.079 206.877 106.62 206.877 104.955C206.877 103.288 208.334 101.831 210.001 101.831ZM210.001 112.246C242.706 112.246 269.369 138.285 270.411 170.573H262.079L189.17 170.571H149.592C150.632 138.285 177.296 112.245 210.001 112.245L210.001 112.246ZM147.508 174.739H188.961L210.834 180.989L148.341 180.987L142.092 174.738L147.508 174.739Z"
-         fill="#333333"
-         fill-opacity="0.4"
-      />
-      <path
-         d="M212.084 120.579C212.084 119.329 211.251 118.495 210 118.495C188.544 118.495 168.963 131.202 160.423 150.991C160.005 152.033 160.423 153.282 161.464 153.699C161.672 153.907 162.089 153.907 162.297 153.907C163.13 153.907 163.964 153.49 164.171 152.657C172.088 134.535 190.212 122.662 210 122.662C211.249 122.662 212.083 121.828 212.083 120.578L212.084 120.579Z"
-         fill="#333333"
-         fill-opacity="0.4"
-      />
-      <path
-         d="M227.915 98.7059C227.29 99.7477 227.707 100.997 228.748 101.414C228.956 101.622 229.373 101.622 229.79 101.622C230.622 101.622 231.248 101.205 231.664 100.58C237.497 89.3323 234.373 83.0827 231.872 77.8749C229.373 72.6672 227.081 68.2919 231.872 58.9183C232.289 57.8765 231.872 56.6269 230.83 56.2099C229.788 55.7928 228.539 56.2099 228.122 57.2517C222.497 68.4997 225.622 74.5414 228.122 79.9571C230.624 84.9569 232.706 89.3322 227.915 98.7057L227.915 98.7059Z"
-         fill="#333333"
-         fill-opacity="0.4"
-      />
-      <path
-         d="M207.085 77.8747C206.46 78.9166 206.877 80.1662 207.917 80.5832C208.125 80.791 208.542 80.791 208.959 80.791C209.792 80.791 210.418 80.3739 210.833 79.7491C216.666 68.5011 213.542 62.2515 211.041 57.0437C208.542 51.836 206.251 47.4607 211.041 38.0872C211.458 37.0453 211.041 35.7957 209.999 35.3787C208.958 34.9617 207.708 35.3787 207.291 36.4205C201.666 47.6685 204.792 53.7103 207.291 59.1259C209.793 64.1257 211.875 68.501 207.085 77.8746L207.085 77.8747Z"
-         fill="#333333"
-         fill-opacity="0.4"
-      />
-      <path
-         d="M188.128 98.7059C187.503 99.7477 187.92 100.997 188.961 101.414C189.169 101.622 189.586 101.622 190.003 101.622C190.835 101.622 191.462 101.205 191.877 100.58C197.71 89.3323 194.586 83.0827 192.085 77.8749C189.586 72.6672 187.294 68.2919 192.085 58.9183C192.502 57.8765 192.085 56.6269 191.043 56.2099C190.001 55.7928 188.752 56.2099 188.335 57.2517C182.71 68.4997 185.835 74.5414 188.335 79.9571C190.837 84.9569 192.919 89.3322 188.128 98.7057L188.128 98.7059Z"
-         fill="#333333"
-         fill-opacity="0.4"
-      />
-   </svg>
+      <svg
+         width="150"
+         height="161"
+         viewBox="0 0 150 161"
+         fill="none"
+         xmlns="http://www.w3.org/2000/svg"
+      >
+         <path
+            d="M11.0495 149.53C11.4666 149.947 11.8821 150.154 12.5084 150.154H89.9997H90.2075L126.454 160.57H127.079C127.496 160.57 127.911 160.362 128.328 160.153C128.953 159.736 129.161 159.111 129.161 158.486V150.155H137.492C138.117 150.155 138.534 149.947 138.951 149.53L149.367 139.114C149.992 138.489 150.199 137.655 149.784 136.823C149.576 135.989 148.742 135.572 147.909 135.572H139.578C138.536 103.076 113.331 76.62 81.4593 73.4954C82.0841 72.4535 82.2919 71.2039 82.2919 69.9543C82.2919 65.9961 78.9586 62.6627 75.0003 62.6627C71.042 62.6627 67.7087 65.996 67.7087 69.9543C67.7087 71.2039 68.1258 72.4536 68.5413 73.4954C36.6714 76.6209 11.4644 103.075 10.4229 135.572H2.09124C1.25863 135.572 0.424574 135.989 0.216785 136.821C-0.200244 137.654 0.00900297 138.488 0.633817 139.113L11.0495 149.53ZM124.995 155.778L68.9597 139.739H124.995V155.778ZM142.91 139.739L136.66 145.989L129.162 145.987V139.738H137.494L142.91 139.739ZM75.0007 66.8306C76.6673 66.8306 78.1247 68.2895 78.1247 69.9547C78.1247 71.6214 76.6673 73.0787 75.0007 73.0787C73.334 73.0787 71.8766 71.6199 71.8766 69.9547C71.8766 68.288 73.334 66.8306 75.0007 66.8306ZM75.0007 77.2461C107.706 77.2461 134.369 103.285 135.411 135.573H127.079L54.1704 135.571H14.5915C15.6319 103.285 42.2956 77.2447 75.0014 77.2447L75.0007 77.2461ZM12.5077 139.739H53.9614L75.8343 145.989L13.3413 145.987L7.09165 139.738L12.5077 139.739Z"
+            fill="#333333"
+            fill-opacity="0.4"
+         />
+         <path
+            d="M77.084 85.5786C77.084 84.3289 76.2513 83.4949 75.0003 83.4949C53.5443 83.4949 33.9632 96.2018 25.4225 115.991C25.0055 117.033 25.4225 118.282 26.4644 118.699C26.6721 118.907 27.0892 118.907 27.297 118.907C28.1296 118.907 28.9636 118.49 29.1714 117.657C37.0876 99.5349 55.2116 87.662 74.9996 87.662C76.2492 87.662 77.0833 86.8279 77.0833 85.5783L77.084 85.5786Z"
+            fill="#333333"
+            fill-opacity="0.4"
+         />
+         <path
+            d="M92.9151 63.7059C92.2903 64.7477 92.7074 65.9974 93.7477 66.4144C93.9555 66.6222 94.3726 66.6222 94.7896 66.6222C95.6222 66.6222 96.2485 66.2051 96.664 65.5803C102.497 54.3323 99.3725 48.0827 96.8718 42.8749C94.3726 37.6672 92.0811 33.2919 96.8718 23.9183C97.2889 22.8765 96.8718 21.6269 95.83 21.2099C94.7881 20.7928 93.5385 21.2099 93.1215 22.2517C87.4968 33.4997 90.6222 39.5414 93.1215 44.9571C95.6237 49.9569 97.7058 54.3322 92.9152 63.7057L92.9151 63.7059Z"
+            fill="#333333"
+            fill-opacity="0.4"
+         />
+         <path
+            d="M72.0846 42.8747C71.4598 43.9166 71.8768 45.1662 72.9172 45.5832C73.125 45.791 73.542 45.791 73.959 45.791C74.7916 45.791 75.4179 45.3739 75.8335 44.7491C81.6662 33.5011 78.542 27.2515 76.0413 22.0437C73.542 16.836 71.2505 12.4607 76.0413 3.08717C76.4583 2.04532 76.0413 0.795683 74.9994 0.378691C73.9576 -0.0383376 72.7079 0.378693 72.2909 1.42054C66.6662 12.6685 69.7917 18.7103 72.2909 24.1259C74.7931 29.1257 76.8753 33.501 72.0846 42.8746L72.0846 42.8747Z"
+            fill="#333333"
+            fill-opacity="0.4"
+         />
+         <path
+            d="M53.1283 63.7059C52.5035 64.7477 52.9205 65.9974 53.9609 66.4144C54.1687 66.6222 54.5857 66.6222 55.0027 66.6222C55.8353 66.6222 56.4616 66.2051 56.8772 65.5803C62.7099 54.3323 59.5857 48.0827 57.085 42.8749C54.5857 37.6672 52.2942 33.2919 57.085 23.9183C57.502 22.8765 57.085 21.6269 56.0431 21.2099C55.0013 20.7928 53.7516 21.2099 53.3346 22.2517C47.7099 33.4997 50.8354 39.5414 53.3346 44.9571C55.8368 49.9569 57.919 54.3322 53.1283 63.7057L53.1283 63.7059Z"
+            fill="#333333"
+            fill-opacity="0.4"
+         />
+      </svg>
+   </div>
 )
