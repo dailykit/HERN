@@ -34,6 +34,7 @@ import CustomerOverTime from '../Reports/ReportTiles/Customers/Tunnels/customerO
 import { BrandContext } from './../../../App'
 import BrandManagerList from '../OperationalMode/Listing/ListForIds/brandId'
 import BrandLocationManagerList from '../OperationalMode/Listing/ListForIds/brandIdLocation'
+import { CloneBrandLocationOperation } from './tunnels/cloneBrandLocationOperation'
 
 const DashboardRightPanel = () => {
    const { user } = useAuth()
@@ -53,7 +54,11 @@ const DashboardRightPanel = () => {
       openBrandLocationTunnel,
       closeBrandLocationTunnel,
    ] = useTunnel(1)
-
+   const [
+      cloneOperationModeTunnels,
+      openOperationModeTunnel,
+      closeOperationModeTunnel,
+   ] = useTunnel(1)
    return (
       <div>
          <DashboardReport>
@@ -86,6 +91,13 @@ const DashboardRightPanel = () => {
                   }}
                >
                   Brand Location Manager Operation Mode
+               </li>
+               <li
+                  onClick={() => {
+                     openOperationModeTunnel(1)
+                  }}
+               >
+                  Clone Brand Location Manager Operational Mode
                </li>
                <li onClick={() => openOrderReportTunnel(1)}>Order Summary</li>
                <li onClick={() => openReportTunnel(1)}>Earnings Overtime</li>
@@ -183,6 +195,13 @@ const DashboardRightPanel = () => {
             <Tunnel popup={true} layer={4} size="md">
                <BrandLocationManagerList
                   closeTunnel={closeBrandLocationTunnel}
+               />
+            </Tunnel>
+         </Tunnels>
+         <Tunnels tunnels={cloneOperationModeTunnels}>
+            <Tunnel popup={true} layer={4} size="md">
+               <CloneBrandLocationOperation
+                  closeTunnel={closeOperationModeTunnel}
                />
             </Tunnel>
          </Tunnels>
