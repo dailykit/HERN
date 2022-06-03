@@ -14,16 +14,20 @@ import { DeliverySection } from './delivery_section'
 import classNames from 'classnames'
 import { isEmpty } from 'lodash'
 import { DeliveryTitleIcons } from '../../assets/icons'
+import { PlanInfo } from '../../components'
 
 export const Delivery = ({ config }) => {
    return (
-      <DeliveryProvider>
-         <DeliveryContent config={config} />
-      </DeliveryProvider>
+      <>
+         <PlanInfo />
+         <DeliveryProvider>
+            <DeliveryContent config={config} />
+         </DeliveryProvider>
+      </>
    )
 }
 const DeliveryContent = ({ config }) => {
-   console.log('cfg', config)
+   console.log('state', state)
    const router = useRouter()
    const { user } = useUser()
    const { state, dispatch } = useDelivery()
@@ -145,7 +149,6 @@ const DeliveryContent = ({ config }) => {
    )
 }
 const DeliverySectionCard = ({ content, config }) => {
-   const Icon = content.Icon
    return (
       <div className="hern-delivery__card">
          <div
