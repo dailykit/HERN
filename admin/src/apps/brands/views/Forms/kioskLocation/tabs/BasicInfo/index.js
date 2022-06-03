@@ -96,6 +96,7 @@ export const BasicInfo = ({ selectedBrandId }) => {
       posistLoading,
       data: { PosistCustomerKey = {} } = {},
    } = useSubscription(KIOSK.POSIST_CUSTOMER_KEY, {
+      skip: !selectedBrandId?.id || title?.locationId,
       variables: {
          brandId: { _eq: selectedBrandId?.id },
          locationId: { _eq: title.locationId },
