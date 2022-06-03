@@ -228,7 +228,7 @@ const Title = ({ node }) => {
             <span>{node.displayName}</span>
             {node.isModifier && <StyledBadge>MOD</StyledBadge>}
          </div>
-         {node.simpleRecipeYieldId && !!node.childNodes.length && (
+         {node.simpleRecipeYieldId && (
             <span className="view_sachets" onClick={viewSachetHandler}>
                View Sachets
             </span>
