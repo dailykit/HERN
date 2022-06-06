@@ -11,12 +11,16 @@ import {
 import Images from './Images'
 import Upload from './Upload'
 import Misc from './Misc'
+import Videos from './Videos'
 
 export const AssetUploader = ({
    height,
-   onMiscSelect,
-   onAssetUpload,
-   onImageSelect,
+   onMiscSelect = () => {},
+   onAssetUpload = () => {},
+   onImageSelect = () => {},
+   onVideoSelect = data => {
+      console.log(data)
+   },
 }) => {
    return (
       <Wrapper height={height}>
@@ -24,6 +28,7 @@ export const AssetUploader = ({
             <HorizontalTabList>
                <HorizontalTab>Upload</HorizontalTab>
                <HorizontalTab>Images</HorizontalTab>
+               <HorizontalTab>Videos</HorizontalTab>
                <HorizontalTab>Misc</HorizontalTab>
             </HorizontalTabList>
             <HorizontalTabPanels>
@@ -32,6 +37,9 @@ export const AssetUploader = ({
                </HorizontalTabPanel>
                <HorizontalTabPanel>
                   <Images onImageSelect={onImageSelect} />
+               </HorizontalTabPanel>
+               <HorizontalTabPanel>
+                  <Videos onVideoSelect={onVideoSelect} />
                </HorizontalTabPanel>
                <HorizontalTabPanel>
                   <Misc onMiscSelect={onMiscSelect} />

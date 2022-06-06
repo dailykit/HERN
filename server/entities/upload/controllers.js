@@ -34,6 +34,7 @@ export const upload = (request, response) => {
                try {
                   const buffer = fs.readFileSync(file.path)
                   let type = await fileType.fromBuffer(buffer)
+                  console.log('type', type)
                   const timestamp = Date.now().toString().slice(-5)
                   let originalFilename = `${timestamp}-${file.originalFilename
                      .split('.')

@@ -1,45 +1,39 @@
 import React from 'react'
 import styled from 'styled-components'
-import { Form, Spacer, IconButton, Filler } from '@dailykit/ui'
+import { Loader, IconButton, Text, Spacer, Filler } from '@dailykit/ui'
 
 import useAssets from './useAssets'
-import { InlineLoader } from '../InlineLoader'
 
-const Images = ({ onImageSelect }) => {
-   const [keyword, setKeyword] = React.useState('')
-   const { images, status, error, remove } = useAssets('images')
+const Video = ({ onVideoSelect }) => {
+   const { videos, status, error, remove } = useAssets('videos')
 
-   if (status === 'LOADING') return <InlineLoader />
+   if (status === 'LOADING') return <Loader />
    if (status === 'ERROR') return <div>{error}</div>
-   if (images.length === 0) {
+   if (videos.length === 0) {
       return (
          <StyledFillerDiv>
-            <Filler message="No Images to show" />
+            <Filler message="No Videos to show" />
          </StyledFillerDiv>
       )
    }
    return (
       <>
-         <Form.Text
-            value={keyword}
-            placeholder="Search Images"
-            onChange={e => setKeyword(e.target.value)}
-         />
-         <Spacer size="16px" />
          <StyledList>
-            {images.map(image => (
+            {videos.map(video => (
                <StyledListItem
-                  key={image.key}
-                  title={image.name}
-                  onClick={() => onImageSelect(image)}
-                  isHidden={!image.url.toLowerCase().includes(keyword)}
+                  key={video.key}
+                  title={video?.metadata?.title || video?.name}
+                  onClick={() => onVideoSelect(video)}
                >
-                  <StyledImage src={image.url} alt={image.name} />
+                  <StyledTag>
+                     <p>{video.name.slice(video.name.lastIndexOf('.') + 1)}</p>
+                  </StyledTag>
+                  <Text as="p">{video.name}</Text>
                   <span>
                      <IconButton
                         size="sm"
                         type="solid"
-                        onClick={e => e.stopPropagation() || remove(image.key)}
+                        onClick={e => e.stopPropagation() || remove(video.key)}
                      >
                         <Trash />
                      </IconButton>
@@ -51,8 +45,7 @@ const Images = ({ onImageSelect }) => {
       </>
    )
 }
-
-export default Images
+export default Video
 
 const StyledFillerDiv = styled.div`
    display: flex;
@@ -61,21 +54,35 @@ const StyledFillerDiv = styled.div`
 `
 
 const StyledList = styled.ul`
+   height: 100%;
    display: grid;
    grid-gap: 8px;
    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
    li {
       height: 120px;
       list-style: none;
-      overflow: hidden;
-      border-radius: 3px;
-      border: 1px solid #e3e3e3;
+      text-align: center;
+   }
+`
+
+const StyledTag = styled.section`
+   display: flex;
+   height: inherit;
+   overflow: hidden;
+   border-radius: 3px;
+   align-items: center;
+   justify-content: center;
+   border: 1px solid #e3e3e3;
+   p {
+      color: #fff;
+      padding: 1px 4px;
+      border-radius: 2px;
+      background: #39d560;
    }
 `
 
 const StyledListItem = styled.li`
    position: relative;
-   ${({ isHidden }) => isHidden && `display:none;`}
    span {
       top: 6px;
       right: 6px;
@@ -85,12 +92,6 @@ const StyledListItem = styled.li`
    :hover span {
       display: block;
    }
-`
-
-const StyledImage = styled.img`
-   width: 100%;
-   height: 100%;
-   object-fit: contain;
 `
 
 const Trash = ({ size = 16, color = '#ffffff' }) => (
