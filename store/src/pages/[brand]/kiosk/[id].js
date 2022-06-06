@@ -170,7 +170,9 @@ const KioskScreen = props => {
    }
    if (brands_locationKiosk.length === 0) {
       const config =
-         kioskDetails.kioskModuleConfig || settings.kiosk['kiosk-config']
+         KioskConfig ||
+         kioskDetails.kioskModuleConfig ||
+         settings.kiosk['kiosk-config']
       return (
          <div className="hern-kiosk__login-container">
             <div className="hern-kiosk__kiosk-info-container">

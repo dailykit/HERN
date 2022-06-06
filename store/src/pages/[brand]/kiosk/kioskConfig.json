@@ -1,659 +1,722 @@
 {
-    "data": {
-        "collectionData": {
-            "type": "multi",
-            "label": "Collections",
-            "value": [
-                {
-                    "id": 1314,
-                    "title": "herfys",
-                    "value": "herfys",
-                    "__typename": "onDemand_collectionDetails"
-                }
-            ],
-            "dataType": "select",
-            "isRequired": "false",
-            "userInsertType": "collectionSelector"
-        },
-        "promotionImages": {
-            "label": "Promotion Image",
-            "value": {
-                "url": [
-                    "https://dailykit-133-test.s3.us-east-2.amazonaws.com/images/Banner+1.jpg",
-                    "https://dailykit-133-test.s3.us-east-2.amazonaws.com/images/Banner+2.png"
-                ]
-            },
-            "default": {
-                "url": [
-                    "https://dailykit-133-test.s3.us-east-2.amazonaws.com/images/1596121558382.png"
-                ]
-            },
-            "dataType": "multipleImagesUpload",
-            "showModal": true,
-            "isRequired": true,
-            "description": "This sets promotion images",
-            "userInsertType": "multipleImagesUpload"
-        },
-        "promotionImageWithEvent": {
-            "label": "Promotion Image With Event",
-            "value": {
-                "images": [
-                    {
-                        "url": "https://dailykit-133-test.s3.us-east-2.amazonaws.com/images/Banner+1.jpg",
-                        "belongsTo": "PRODUCT",
-                        "productId": 2815
-                    },
-                    {
-                        "url": "https://dailykit-133-test.s3.us-east-2.amazonaws.com/images/Banner+2.png",
-                        "belongsTo": "PRODUCT",
-                        "productId": 3128
-                    }
-                ]
-            },
-            "dataType": "multipleImagesUploadWithEvent",
-            "showModal": true,
-            "isRequired": true,
-            "description": "This sets promotion images",
-            "userInsertType": "multipleImagesUploadWithEvent"
-        }
-    },
-    "kioskSettings": {
-        "logo": {
-            "label": "brand Logo",
-            "value": "https://dailykit-133-test.s3.us-east-2.amazonaws.com/images/32397-taco_bell_logo.png",
-            "dataType": "imageUpload",
-            "description": "Logo for brand.",
-            "defaultValue": "https://dailykit-133-test.s3.us-east-2.amazonaws.com/images/32397-taco_bell_logo.png",
-            "userInsertType": "imageUpload"
-        },
-        "theme": {
-            "primaryColor": {
-                "id": "pr-col",
-                "label": "Primary Color",
-                "value": "#7124B4",
-                "default": "#0F6BB1",
-                "dataType": "color",
-                "userInsertType": "colorPicker"
-            },
-            "successColor": {
-                "id": "success-col",
-                "label": "Success Color",
-                "value": "#6CB20D",
-                "default": "#6CB20D",
-                "dataType": "color",
-                "userInsertType": "colorPicker"
-            },
-            "secondaryColor": {
-                "id": "secondary-col",
-                "label": "Secondary Color",
-                "value": "#7124B433",
-                "default": "#7124B433",
-                "dataType": "color",
-                "userInsertType": "colorPicker"
-            },
-            "primaryColorDark": {
-                "id": "prd-col",
-                "label": "Primary Color Dark",
-                "value": "#7124B4",
-                "default": "#05578C",
-                "dataType": "color",
-                "userInsertType": "colorPicker"
-            },
-            "modifierTextColor": {
-                "id": "modifier-text-col",
-                "label": "Modifier Text Color",
-                "value": "#ffffff",
-                "default": "#ffffff",
-                "dataType": "color",
-                "userInsertType": "colorPicker"
-            },
-            "primaryColorLight": {
-                "id": "prd-col",
-                "label": "Primary Color Light",
-                "value": "#7124B433",
-                "default": "#E5F0F7",
-                "dataType": "color",
-                "userInsertType": "colorPicker"
-            },
-            "secondaryColorLight": {
-                "id": "secondary-col-light",
-                "label": "Secondary Color Light",
-                "value": "#FFD45F",
-                "default": "#FFD45F",
-                "dataType": "color",
-                "userInsertType": "colorPicker"
-            },
-            "categorySelectionWarningColor": {
-                "id": "category-selector-warning-col",
-                "label": "Category Selector warning Color",
-                "value": "#ffffff",
-                "default": "#ffffff",
-                "dataType": "color",
-                "userInsertType": "colorPicker"
-            },
-            "primaryColorWithOpacity": {
-                "id": "pr-col-op",
-                "label": "Primary Color With Opacity",
-                "value": "#00406ae5",
-                "default": "#00406ae5",
-                "dataType": "color",
-                "userInsertType": "colorPicker"
-            },
-            "arrowBgColor": {
-                "id": "arrow-bg-col",
-                "label": "Arrow Background Color",
-                "value": "#7124B4",
-                "default": "#7124B4",
-                "dataType": "color",
-                "userInsertType": "colorPicker"
-            },
-            "arrowColor": {
-                "id": "arrow-col",
-                "label": "Arrow Color",
-                "value": "#ffffff",
-                "default": "#ffffff",
-                "dataType": "color",
-                "userInsertType": "colorPicker"
+   "data": {
+      "collectionData": {
+         "type": "multi",
+         "label": "Collections",
+         "value": [
+            {
+               "id": 1314,
+               "title": "herfys",
+               "value": "herfys",
+               "__typename": "onDemand_collectionDetails"
             }
-        },
-        "tickBox": {
-            "tickColor": {
-                "id": "tick-color",
-                "label": "Tick color in tick box",
-                "value": "#FFFFFF",
-                "default": "#ffffff",
-                "dataType": "color",
-                "userInsertType": "colorPicker"
-            },
-            "tickBoxBGonCheck": {
-                "id": "tick-bg-on-check-col",
-                "label": "Tick box background color on check",
-                "value": "#6CB20D",
-                "default": "#6CB20D",
-                "dataType": "color",
-                "userInsertType": "colorPicker"
-            }
-        },
-        "popupSettings": {
-            "showGoToMenuCheckoutPopup": {
-                "label": "Show GO TO MENU - CHECKOUT popup after add to cart.",
-                "value": false,
-                "default": false,
-                "dataType": "boolean",
-                "description": "Show or hide GO TO MENU - CHECKOUT POPUP after click add to cart.",
-                "userInsertType": "checkbox"
-            }
-        },
-        "allowTilt": {
-            "label": "Allow Tilt",
-            "value": true,
-            "default": false,
-            "dataType": "boolean",
-            "description": "Allow Tilt",
-            "userInsertType": "checkbox"
-        },
-        "buttonSettings": {
-            "buttonType": {
-                "type": "single",
-                "label": "Select button color visibility",
-                "value": {
-                    "id": 2,
-                    "title": "Linear",
-                    "value": "LINEAR"
-                },
-                "options": [
-                    {
-                        "id": 1,
-                        "title": "Gradient",
-                        "value": "GRADIENT"
-                    },
-                    {
-                        "id": 2,
-                        "title": "Linear",
-                        "value": "LINEAR"
-                    }
-                ],
-                "dataType": "select",
-                "userInsertType": "dropdown"
-            },
-            "textColor": {
-                "id": "text-col",
-                "label": "Text Color",
-                "value": "#ffffff",
-                "default": "#ffffff",
-                "dataType": "color",
-                "userInsertType": "colorPicker"
-            },
-            "buttonBGColor": {
-                "id": "button-col",
-                "label": "Button Background Color",
-                "value": "#7124B4",
-                "default": "#7124B4",
-                "dataType": "color",
-                "userInsertType": "colorPicker"
-            },
-            "buttonDisabledColor": {
-                "id": "button-disabled-col",
-                "label": "Button Disabled Color",
-                "value": "#7124B433",
-                "default": "#7124B4",
-                "dataType": "color",
-                "userInsertType": "colorPicker"
-            }
-        },
-        "showTableSelectionView": {
-            "label": "Show Table Selection View on checkout page",
-            "value": true,
-            "default": false,
-            "dataType": "boolean",
-            "description": "Show Table Selection View on checkout page",
-            "userInsertType": "checkbox"
-        },
-        "showLanguageSwitcher": {
-            "label": "Show Language Switcher",
-            "value": false,
-            "default": false,
-            "dataType": "boolean",
-            "description": "Show Language Switcher",
-            "userInsertType": "checkbox"
-        },
-        "primaryFont": {
-            "label": "Primary Font",
-            "value": {
-                "fontEmbedLink": {
-                    "label": "Embed link for font",
-                    "value": "https://fonts.googleapis.com/css2?family=Josefin+Sans:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;1,100;1,200;1,300;1,400;1,500;1,600;1,700&display=swap",
-                    "default": "",
-                    "dataType": "text",
-                    "description": "This is link of font that you want to embed in your website. You can find the link in Google Fonts.",
-                    "userInsertType": "textField"
-                },
-                "fontFamily": {
-                    "label": "Name of font family",
-                    "value": "Josefin Sans, sans-serif",
-                    "default": "",
-                    "dataType": "text",
-                    "description": "This is name of font family that you want to use in your website.",
-                    "userInsertType": "textField"
-                }
-            },
-            "default": "",
-            "dataType": "fontFamily",
-            "description": "This is primary font that you want to use in your website.",
-            "userInsertType": "fontFamilyForm"
-        }
-    },
-    "menuSettings": {
-        "showVegToggle": {
-            "label": "Show Veg Toggle",
-            "value": true,
-            "default": false,
-            "dataType": "boolean",
-            "description": "Show Veg Toggle",
-            "userInsertType": "checkbox"
-        }
-    },
-    "productGallery": {
-        "products": {
-            "label": "Products",
-            "value": [
-                3045,
-                2784,
-                3090,
-                2786
-            ],
-            "default": [
-                3044,
-                3045,
-                3046,
-                2814
-            ],
-            "dataType": "select",
-            "description": "Products to show",
-            "userInsertType": "productSelector"
-        },
-        "showProductGallery": {
-            "label": "Show product gallery on cart page",
-            "value": true,
-            "default": false,
-            "dataType": "boolean",
-            "description": "Show or hide product gallery on cart page.",
-            "userInsertType": "checkbox"
-        },
-        "productGalleryTitle": {
-            "label": "Section title",
-            "value": "Try These Products @@AR@@جرب هذه الأصناف @@AR@@",
-            "default": "Try These Products",
-            "dataType": "text",
-            "description": "This will be used as section title",
-            "userInsertType": "textField"
-        },
-        "productGalleryBackgroundImage": {
-            "label": "Product gallery background image",
-            "value": "https://dailykit-133-test.s3.us-east-2.amazonaws.com/images/90994-taco_bell_product-gallery_bg.png",
-            "dataType": "imageUpload",
-            "description": "Product gallery background image.",
-            "defaultValue": "https://dailykit-133-test.s3.us-east-2.amazonaws.com/images/90994-taco_bell_product-gallery_bg.png",
-            "userInsertType": "imageUpload"
-        }
-    },
-    "productSettings": {
-        "defaultImage": {
-            "label": "Default Image for product.",
-            "value": "https://dailykit-133-test.s3.us-east-2.amazonaws.com/images/40881-taco_bell_default_image.png",
-            "default": "",
-            "dataType": "imageUpload",
-            "description": "This will show as product image if specific product image is not exists.",
-            "userInsertType": "imageUpload"
-        },
-        "showSingleProductOption": {
-            "label": "Show product option when there is only one product option.",
-            "value": false,
-            "default": false,
-            "dataType": "boolean",
-            "description": "Show product option when there is only one product option.",
-            "userInsertType": "checkbox"
-        },
-        "showProductCardFullView": {
-            "label": "Show product card full view",
-            "value": true,
-            "default": false,
-            "dataType": "boolean",
-            "description": "Show or hide product card full view.",
-            "userInsertType": "checkbox"
-        }
-    },
-    "idlePageSettings": {
-        "idleTime": {
-            "label": "Time for become screen idle(in seconds).",
-            "value": 600,
-            "default": 30,
-            "dataType": "number",
-            "description": "This is use for make screen inactive.",
-            "userInsertType": "numberField"
-        },
-        "idlePageText": {
-            "label": "Text to show on idle screen.",
-            "value": "Touch to start ordering.",
-            "default": "Touch to start ordering.",
-            "dataType": "text",
-            "description": "This is show text on idle screen.",
-            "userInsertType": "textField"
-        },
-        "idlePageImage": {
-            "label": "Image on idle page.",
-            "value": {
-                "url": [
-                    "https://dailykit-133-test.s3.us-east-2.amazonaws.com/images/idle_page_bg.png"
-                ]
-            },
-            "default": {
-                "url": [
-                    "https://images.unsplash.com/photo-1530554764233-e79e16c91d08?ixid=MnwxMjA3fDB8MHxzZWFyY2h8MXx8YnVyZ2VyfGVufDB8fDB8fA%3D%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=60"
-                ]
-            },
-            "dataType": "multipleImagesUpload",
-            "description": "This will show image on idle page.",
-            "userInsertType": "multipleImagesUpload"
-        },
-        "idlePageTextColor": {
-            "label": "Color of ext to show on idle screen.",
+         ],
+         "dataType": "select",
+         "isRequired": "false",
+         "userInsertType": "collectionSelector"
+      },
+      "promotionImages": {
+         "label": "Promotion Image",
+         "value": {
+            "url": [
+               "https://dailykit-133-test.s3.us-east-2.amazonaws.com/images/Banner+1.jpg",
+               "https://dailykit-133-test.s3.us-east-2.amazonaws.com/images/Banner+2.png"
+            ]
+         },
+         "default": {
+            "url": [
+               "https://dailykit-133-test.s3.us-east-2.amazonaws.com/images/1596121558382.png"
+            ]
+         },
+         "dataType": "multipleImagesUpload",
+         "showModal": true,
+         "isRequired": true,
+         "description": "This sets promotion images",
+         "userInsertType": "multipleImagesUpload"
+      },
+      "promotionImageWithEvent": {
+         "label": "Promotion Image With Event",
+         "value": {
+            "images": [
+               {
+                  "url": "https://dailykit-133-test.s3.us-east-2.amazonaws.com/images/Banner+1.jpg",
+                  "belongsTo": "PRODUCT",
+                  "productId": 2815
+               },
+               {
+                  "url": "https://dailykit-133-test.s3.us-east-2.amazonaws.com/images/Banner+2.png",
+                  "belongsTo": "PRODUCT",
+                  "productId": 3128
+               }
+            ]
+         },
+         "dataType": "multipleImagesUploadWithEvent",
+         "showModal": true,
+         "isRequired": true,
+         "description": "This sets promotion images",
+         "userInsertType": "multipleImagesUploadWithEvent"
+      }
+   },
+   "kioskSettings": {
+      "logo": {
+         "label": "brand Logo",
+         "value": "https://dailykit-133-test.s3.us-east-2.amazonaws.com/images/32397-taco_bell_logo.png",
+         "dataType": "imageUpload",
+         "description": "Logo for brand.",
+         "defaultValue": "https://dailykit-133-test.s3.us-east-2.amazonaws.com/images/32397-taco_bell_logo.png",
+         "userInsertType": "imageUpload"
+      },
+      "brandName": {
+         "dataType": "text",
+         "default": "Brand Name",
+         "description": "This sets the brand's name",
+         "label": "Brand Name",
+         "userInsertType": "textField",
+         "value": "Taco-Bell"
+      },
+      "ShowBrandLogo": {
+         "dataType": "boolean",
+         "default": true,
+         "description": "This tells if brand's logo is visible or not.",
+         "label": "Show brand's logo",
+         "userInsertType": "toggle",
+         "value": true
+      },
+      "ShowBrandName": {
+         "dataType": "boolean",
+         "default": true,
+         "description": "This tells if brand's name is visible or not.",
+         "label": "Show brand's Name",
+         "userInsertType": "toggle",
+         "value": true
+      },
+      "theme": {
+         "primaryColor": {
+            "id": "pr-col",
+            "label": "Primary Color",
+            "value": "#7124B4",
+            "default": "#0F6BB1",
+            "dataType": "color",
+            "userInsertType": "colorPicker"
+         },
+         "successColor": {
+            "id": "success-col",
+            "label": "Success Color",
+            "value": "#6CB20D",
+            "default": "#6CB20D",
+            "dataType": "color",
+            "userInsertType": "colorPicker"
+         },
+         "secondaryColor": {
+            "id": "secondary-col",
+            "label": "Secondary Color",
+            "value": "#7124B433",
+            "default": "#7124B433",
+            "dataType": "color",
+            "userInsertType": "colorPicker"
+         },
+         "primaryColorDark": {
+            "id": "prd-col",
+            "label": "Primary Color Dark",
+            "value": "#7124B4",
+            "default": "#05578C",
+            "dataType": "color",
+            "userInsertType": "colorPicker"
+         },
+         "modifierTextColor": {
+            "id": "modifier-text-col",
+            "label": "Modifier Text Color",
             "value": "#ffffff",
             "default": "#ffffff",
             "dataType": "color",
             "userInsertType": "colorPicker"
-        },
-        "idleScreenWarningTime": {
-            "label": "Time for warning to show device becoming idle(in seconds).",
-            "value": 10,
-            "default": 30,
-            "dataType": "number",
-            "description": "This is use for make screen inactive.",
-            "userInsertType": "numberField"
-        },
-        "showTouchToContinueFooter": {
-            "label": "Show touch to continue footer on idle screen",
-            "value": true,
-            "default": false,
-            "dataType": "boolean",
-            "description": "Show touch to continue footer on idle screen.",
-            "userInsertType": "checkbox"
-        }
-    },
-    "fulfillmentPageSettings": {
-        "backgroundImage": {
-            "label": "Image on idle page.",
-            "value": {
-                "url": [
-                    "https://dailykit-133-test.s3.us-east-2.amazonaws.com/images/24463-fulfillment_page_bg.png"
-                ]
-            },
-            "default": {
-                "url": [
-                    "https://images.unsplash.com/photo-1610440042657-612c34d95e9f?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MTJ8fGJ1cmdlcnN8ZW58MHx8MHx8&auto=format&fit=crop&w=600&q=60"
-                ]
-            },
-            "dataType": "multipleImagesUpload",
-            "description": "This will show image on idle page.",
-            "userInsertType": "multipleImagesUpload"
-        },
-        "showFulfillmentPageBgImageBlur": {
-            "label": "show fulfillment page background image blur",
-            "value": false,
-            "default": true,
-            "dataType": "boolean",
-            "description": "show fulfillment page background image blur.",
-            "userInsertType": "checkbox"
-        },
-        "mainText": {
-            "label": "Main text",
-            "value": "Hungry?",
-            "default": "Hungry?",
-            "dataType": "text",
-            "description": "This will show main text (large text) on idle screen.",
-            "userInsertType": "textField"
-        },
-        "secondaryText": {
-            "label": "Secondary text",
-            "value": "Order Here.",
-            "default": "We will notify you when your order is ready.",
-            "dataType": "text",
-            "description": "This will show secondary text (small text) on idle screen.",
-            "userInsertType": "textField"
-        },
-        "dineInIconImage": {
-            "label": "Dine in icon image",
-            "value": "https://dailykit-133-test.s3.us-east-2.amazonaws.com/images/80088-taco_bell_dine_in_icon_white.png",
-            "dataType": "imageUpload",
-            "description": "Dine in icon image.",
-            "defaultValue": "https://dailykit-133-test.s3.us-east-2.amazonaws.com/images/47469-taco_bell_dine_in_icon.png",
-            "userInsertType": "imageUpload"
-        },
-        "takeAwayIconImage": {
-            "label": "Take away icon image",
-            "value": "https://dailykit-133-test.s3.us-east-2.amazonaws.com/images/25885-taco_bell_take_away_icon_white.png",
-            "dataType": "imageUpload",
-            "description": "Take away icon image.",
-            "defaultValue": "https://dailykit-133-test.s3.us-east-2.amazonaws.com/images/65100-taco_bell_take_away_icon.png",
-            "userInsertType": "imageUpload"
-        },
-        "fulfillmentTypeTextColor": {
-            "label": "Dine in text color",
+         },
+         "primaryColorLight": {
+            "id": "prd-col",
+            "label": "Primary Color Light",
+            "value": "#7124B433",
+            "default": "#E5F0F7",
+            "dataType": "color",
+            "userInsertType": "colorPicker"
+         },
+         "secondaryColorLight": {
+            "id": "secondary-col-light",
+            "label": "Secondary Color Light",
+            "value": "#FFD45F",
+            "default": "#FFD45F",
+            "dataType": "color",
+            "userInsertType": "colorPicker"
+         },
+         "categorySelectionWarningColor": {
+            "id": "category-selector-warning-col",
+            "label": "Category Selector warning Color",
             "value": "#ffffff",
             "default": "#ffffff",
             "dataType": "color",
             "userInsertType": "colorPicker"
-        },
-        "customFulfillmentOption": {
-            "label": "Custom fulfillment option",
-            "value": true,
-            "default": false,
-            "dataType": "boolean",
-            "description": "Show custom fulfillment option.",
-            "userInsertType": "checkbox"
-        }
-    },
-    "progressBarSettings": {
-        "showProgressBackground": {
-            "label": "Show progress bar background",
-            "value": false,
-            "default": true,
-            "dataType": "boolean",
-            "description": "Show progress bar background.",
-            "userInsertType": "checkbox"
-        }
-    },
-    "modifierPopUpSettings": {
-        "theme": {
-            "modifierPopupBackgroundColor": {
-                "label": "Modifier Popup Background Color (Slightly Transparent)",
-                "value": "#30303080",
-                "default": "#30303080",
-                "dataType": "color",
-                "userInsertType": "colorPicker"
-            },
-            "modifierPopupImageBackgroundColor": {
-                "label": "Color for image background",
-                "value": "#0F0000",
-                "default": "#0F0000",
-                "dataType": "color",
-                "userInsertType": "colorPicker"
-            },
-            "modifierPopupOptionsBackgroundColor": {
-                "label": "Color for modifier popup options background",
-                "value": "#F6F5F5",
-                "default": "#F6F5F5",
-                "dataType": "color",
-                "userInsertType": "colorPicker"
-            },
-            "modifierPopupContentBackgroundColor": {
-                "label": "Color for modifier popup content background",
-                "value": "#FFFFFF",
-                "default": "#FFFFFF",
-                "dataType": "color",
-                "userInsertType": "colorPicker"
-            },
-            "modifierPopupCategoryTextColor": {
-                "label": "Color for modifier popup text",
-                "value": "#7124B4",
-                "default": "#7124B4",
-                "dataType": "color",
-                "userInsertType": "colorPicker"
-            },
-            "modifierPopupOptionTextColor": {
-                "label": "Color for modifier popup option text",
-                "value": "#303030",
-                "default": "#303030",
-                "dataType": "color",
-                "userInsertType": "colorPicker"
-            },
-            "modifierCategoryWarningColor": {
-                "label": "Color for modifier category warning",
-                "value": "#303030",
-                "default": "#303030",
-                "dataType": "color",
-                "userInsertType": "colorPicker"
-            },
-            "productTextColor": {
-                "label": "Color for product text",
-                "value": "#303030",
-                "default": "#303030",
-                "dataType": "color",
-                "userInsertType": "colorPicker"
-            },
-            "checkBoxEmptyColor": {
-                "label": "Color for checkbox empty",
-                "value": "#FFFFFF",
-                "default": "#FFFFFF",
-                "dataType": "color",
-                "userInsertType": "colorPicker"
-            },
-            "checkBoxBorderColor": {
-                "label": "Color for checkbox border",
-                "value": "#7124B4",
-                "default": "#7124B4",
-                "dataType": "color",
-                "userInsertType": "colorPicker"
-            },
-            "checkBoxCheckedBGColor": {
-                "label": "Color for checkbox checked Background color",
-                "value": "#7124B4",
-                "default": "#7124B4",
-                "dataType": "color",
-                "userInsertType": "colorPicker"
-            },
-            "checkBoxTickColor": {
-                "id": "tick-color",
-                "label": "Tick color in tick box",
-                "value": "#FFFFFF",
-                "default": "#ffffff",
-                "dataType": "color",
-                "userInsertType": "colorPicker"
-            },
-            "totalTextColor": {
-                "label": "Color for total text",
-                "value": "#ffffff",
-                "default": "#ffffff",
-                "dataType": "color",
-                "userInsertType": "colorPicker"
-            }
-        }
-    },
-    "cartCardSettings": {
-        "showCustomizeOptionInRow": {
-            "label": "Show customize option in row",
-            "value": true,
-            "default": false,
-            "dataType": "boolean",
-            "description": "Show customize option in row (Below the product details.",
-            "userInsertType": "checkbox"
-        },
-        "editIconColor": {
-            "label": "Edit icon color",
-            "value": "#6F6F6F",
-            "default": "#6F6F6F",
+         },
+         "primaryColorWithOpacity": {
+            "id": "pr-col-op",
+            "label": "Primary Color With Opacity",
+            "value": "#00406ae5",
+            "default": "#00406ae5",
             "dataType": "color",
             "userInsertType": "colorPicker"
-        },
-        "deleteIconColor": {
-            "label": "Delete icon color",
-            "value": "#6F6F6F",
-            "default": "#6F6F6F",
-            "dataType": "color",
-            "userInsertType": "colorPicker"
-        }
-    },
-    "dineInTableSettings": {
-        "dineInPopupText": {
-            "label": "Dine in popup text",
-            "value": "Pick a metal card & select your table number",
-            "default": "Dine in",
-            "dataType": "text",
-            "description": "Dine in popup text.",
-            "userInsertType": "textField"
-        },
-        "dineInSelectedTableBgColor": {
-            "label": "Selected table background color",
+         },
+         "arrowBgColor": {
+            "id": "arrow-bg-col",
+            "label": "Arrow Background Color",
             "value": "#7124B4",
             "default": "#7124B4",
             "dataType": "color",
             "userInsertType": "colorPicker"
-        },
-        "dineInSelectedTableTextColor": {
-            "label": "Selected table text color",
+         },
+         "arrowColor": {
+            "id": "arrow-col",
+            "label": "Arrow Color",
+            "value": "#ffffff",
+            "default": "#ffffff",
+            "dataType": "color",
+            "userInsertType": "colorPicker"
+         }
+      },
+      "tickBox": {
+         "tickColor": {
+            "id": "tick-color",
+            "label": "Tick color in tick box",
+            "value": "#FFFFFF",
+            "default": "#ffffff",
+            "dataType": "color",
+            "userInsertType": "colorPicker"
+         },
+         "tickBoxBGonCheck": {
+            "id": "tick-bg-on-check-col",
+            "label": "Tick box background color on check",
+            "value": "#6CB20D",
+            "default": "#6CB20D",
+            "dataType": "color",
+            "userInsertType": "colorPicker"
+         }
+      },
+      "popupSettings": {
+         "showGoToMenuCheckoutPopup": {
+            "label": "Show GO TO MENU - CHECKOUT popup after add to cart.",
+            "value": false,
+            "default": false,
+            "dataType": "boolean",
+            "description": "Show or hide GO TO MENU - CHECKOUT POPUP after click add to cart.",
+            "userInsertType": "checkbox"
+         }
+      },
+      "allowTilt": {
+         "label": "Allow Tilt",
+         "value": true,
+         "default": false,
+         "dataType": "boolean",
+         "description": "Allow Tilt",
+         "userInsertType": "checkbox"
+      },
+      "buttonSettings": {
+         "buttonType": {
+            "type": "single",
+            "label": "Select button color visibility",
+            "value": {
+               "id": 2,
+               "title": "Linear",
+               "value": "LINEAR"
+            },
+            "options": [
+               {
+                  "id": 1,
+                  "title": "Gradient",
+                  "value": "GRADIENT"
+               },
+               {
+                  "id": 2,
+                  "title": "Linear",
+                  "value": "LINEAR"
+               }
+            ],
+            "dataType": "select",
+            "userInsertType": "dropdown"
+         },
+         "textColor": {
+            "id": "text-col",
+            "label": "Text Color",
+            "value": "#ffffff",
+            "default": "#ffffff",
+            "dataType": "color",
+            "userInsertType": "colorPicker"
+         },
+         "buttonBGColor": {
+            "id": "button-col",
+            "label": "Button Background Color",
+            "value": "#7124B4",
+            "default": "#7124B4",
+            "dataType": "color",
+            "userInsertType": "colorPicker"
+         },
+         "buttonDisabledColor": {
+            "id": "button-disabled-col",
+            "label": "Button Disabled Color",
+            "value": "#7124B433",
+            "default": "#7124B4",
+            "dataType": "color",
+            "userInsertType": "colorPicker"
+         }
+      },
+      "showTableSelectionView": {
+         "label": "Show Table Selection View on checkout page",
+         "value": true,
+         "default": false,
+         "dataType": "boolean",
+         "description": "Show Table Selection View on checkout page",
+         "userInsertType": "checkbox"
+      },
+      "showLanguageSwitcher": {
+         "label": "Show Language Switcher",
+         "value": false,
+         "default": false,
+         "dataType": "boolean",
+         "description": "Show Language Switcher",
+         "userInsertType": "checkbox"
+      },
+      "primaryFont": {
+         "label": "Primary Font",
+         "value": {
+            "fontEmbedLink": {
+               "label": "Embed link for font",
+               "value": "https://fonts.googleapis.com/css2?family=Josefin+Sans:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;1,100;1,200;1,300;1,400;1,500;1,600;1,700&display=swap",
+               "default": "",
+               "dataType": "text",
+               "description": "This is link of font that you want to embed in your website. You can find the link in Google Fonts.",
+               "userInsertType": "textField"
+            },
+            "fontFamily": {
+               "label": "Name of font family",
+               "value": "Josefin Sans, sans-serif",
+               "default": "",
+               "dataType": "text",
+               "description": "This is name of font family that you want to use in your website.",
+               "userInsertType": "textField"
+            }
+         },
+         "default": "",
+         "dataType": "fontFamily",
+         "description": "This is primary font that you want to use in your website.",
+         "userInsertType": "fontFamilyForm"
+      }
+   },
+   "menuSettings": {
+      "showVegToggle": {
+         "label": "Show Veg Toggle",
+         "value": true,
+         "default": false,
+         "dataType": "boolean",
+         "description": "Show Veg Toggle",
+         "userInsertType": "checkbox"
+      }
+   },
+   "productGallery": {
+      "products": {
+         "label": "Products",
+         "value": [3045, 2784, 3090, 2786],
+         "default": [3044, 3045, 3046, 2814],
+         "dataType": "select",
+         "description": "Products to show",
+         "userInsertType": "productSelector"
+      },
+      "showProductGallery": {
+         "label": "Show product gallery on cart page",
+         "value": true,
+         "default": false,
+         "dataType": "boolean",
+         "description": "Show or hide product gallery on cart page.",
+         "userInsertType": "checkbox"
+      },
+      "productGalleryTitle": {
+         "label": "Section title",
+         "value": "Try These Products @@AR@@جرب هذه الأصناف @@AR@@",
+         "default": "Try These Products",
+         "dataType": "text",
+         "description": "This will be used as section title",
+         "userInsertType": "textField"
+      },
+      "productGalleryBackgroundImage": {
+         "label": "Product gallery background image",
+         "value": "https://dailykit-133-test.s3.us-east-2.amazonaws.com/images/90994-taco_bell_product-gallery_bg.png",
+         "dataType": "imageUpload",
+         "description": "Product gallery background image.",
+         "defaultValue": "https://dailykit-133-test.s3.us-east-2.amazonaws.com/images/90994-taco_bell_product-gallery_bg.png",
+         "userInsertType": "imageUpload"
+      }
+   },
+   "productSettings": {
+      "defaultImage": {
+         "label": "Default Image for product.",
+         "value": "https://dailykit-133-test.s3.us-east-2.amazonaws.com/images/40881-taco_bell_default_image.png",
+         "default": "",
+         "dataType": "imageUpload",
+         "description": "This will show as product image if specific product image is not exists.",
+         "userInsertType": "imageUpload"
+      },
+      "showSingleProductOption": {
+         "label": "Show product option when there is only one product option.",
+         "value": false,
+         "default": false,
+         "dataType": "boolean",
+         "description": "Show product option when there is only one product option.",
+         "userInsertType": "checkbox"
+      },
+      "showProductCardFullView": {
+         "label": "Show product card full view",
+         "value": true,
+         "default": false,
+         "dataType": "boolean",
+         "description": "Show or hide product card full view.",
+         "userInsertType": "checkbox"
+      }
+   },
+   "idlePageSettings": {
+      "idleTime": {
+         "label": "Time for become screen idle(in seconds).",
+         "value": 600,
+         "default": 30,
+         "dataType": "number",
+         "description": "This is use for make screen inactive.",
+         "userInsertType": "numberField"
+      },
+      "idlePageText": {
+         "label": "Text to show on idle screen.",
+         "value": "Touch to start ordering.",
+         "default": "Touch to start ordering.",
+         "dataType": "text",
+         "description": "This is show text on idle screen.",
+         "userInsertType": "textField"
+      },
+      "idlePageImage": {
+         "label": "Image on idle page.",
+         "value": {
+            "url": [
+               "https://dailykit-133-test.s3.us-east-2.amazonaws.com/images/idle_page_bg.png"
+            ]
+         },
+         "default": {
+            "url": [
+               "https://images.unsplash.com/photo-1530554764233-e79e16c91d08?ixid=MnwxMjA3fDB8MHxzZWFyY2h8MXx8YnVyZ2VyfGVufDB8fDB8fA%3D%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=60"
+            ]
+         },
+         "dataType": "multipleImagesUpload",
+         "description": "This will show image on idle page.",
+         "userInsertType": "multipleImagesUpload"
+      },
+      "idlePageTextColor": {
+         "label": "Color of ext to show on idle screen.",
+         "value": "#ffffff",
+         "default": "#ffffff",
+         "dataType": "color",
+         "userInsertType": "colorPicker"
+      },
+      "idleScreenWarningTime": {
+         "label": "Time for warning to show device becoming idle(in seconds).",
+         "value": 10,
+         "default": 30,
+         "dataType": "number",
+         "description": "This is use for make screen inactive.",
+         "userInsertType": "numberField"
+      },
+      "showTouchToContinueFooter": {
+         "label": "Show touch to continue footer on idle screen",
+         "value": true,
+         "default": false,
+         "dataType": "boolean",
+         "description": "Show touch to continue footer on idle screen.",
+         "userInsertType": "checkbox"
+      }
+   },
+   "fulfillmentPageSettings": {
+      "backgroundImage": {
+         "label": "Image on idle page.",
+         "value": {
+            "url": [
+               "https://dailykit-133-test.s3.us-east-2.amazonaws.com/images/24463-fulfillment_page_bg.png"
+            ]
+         },
+         "default": {
+            "url": [
+               "https://images.unsplash.com/photo-1610440042657-612c34d95e9f?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MTJ8fGJ1cmdlcnN8ZW58MHx8MHx8&auto=format&fit=crop&w=600&q=60"
+            ]
+         },
+         "dataType": "multipleImagesUpload",
+         "description": "This will show image on idle page.",
+         "userInsertType": "multipleImagesUpload"
+      },
+      "showFulfillmentPageBgImageBlur": {
+         "label": "show fulfillment page background image blur",
+         "value": false,
+         "default": true,
+         "dataType": "boolean",
+         "description": "show fulfillment page background image blur.",
+         "userInsertType": "checkbox"
+      },
+      "mainText": {
+         "label": "Main text",
+         "value": "Hungry?",
+         "default": "Hungry?",
+         "dataType": "text",
+         "description": "This will show main text (large text) on idle screen.",
+         "userInsertType": "textField"
+      },
+      "secondaryText": {
+         "label": "Secondary text",
+         "value": "Order Here.",
+         "default": "We will notify you when your order is ready.",
+         "dataType": "text",
+         "description": "This will show secondary text (small text) on idle screen.",
+         "userInsertType": "textField"
+      },
+      "dineInIconImage": {
+         "label": "Dine in icon image",
+         "value": "https://dailykit-133-test.s3.us-east-2.amazonaws.com/images/80088-taco_bell_dine_in_icon_white.png",
+         "dataType": "imageUpload",
+         "description": "Dine in icon image.",
+         "defaultValue": "https://dailykit-133-test.s3.us-east-2.amazonaws.com/images/47469-taco_bell_dine_in_icon.png",
+         "userInsertType": "imageUpload"
+      },
+      "takeAwayIconImage": {
+         "label": "Take away icon image",
+         "value": "https://dailykit-133-test.s3.us-east-2.amazonaws.com/images/25885-taco_bell_take_away_icon_white.png",
+         "dataType": "imageUpload",
+         "description": "Take away icon image.",
+         "defaultValue": "https://dailykit-133-test.s3.us-east-2.amazonaws.com/images/65100-taco_bell_take_away_icon.png",
+         "userInsertType": "imageUpload"
+      },
+      "fulfillmentTypeTextColor": {
+         "label": "Dine in text color",
+         "value": "#ffffff",
+         "default": "#ffffff",
+         "dataType": "color",
+         "userInsertType": "colorPicker"
+      },
+      "customFulfillmentOption": {
+         "label": "Custom fulfillment option",
+         "value": true,
+         "default": false,
+         "dataType": "boolean",
+         "description": "Show custom fulfillment option.",
+         "userInsertType": "checkbox"
+      }
+   },
+   "progressBarSettings": {
+      "showProgressBackground": {
+         "label": "Show progress bar background",
+         "value": false,
+         "default": true,
+         "dataType": "boolean",
+         "description": "Show progress bar background.",
+         "userInsertType": "checkbox"
+      }
+   },
+   "modifierPopUpSettings": {
+      "theme": {
+         "modifierPopupBackgroundColor": {
+            "label": "Modifier Popup Background Color (Slightly Transparent)",
+            "value": "#30303080",
+            "default": "#30303080",
+            "dataType": "color",
+            "userInsertType": "colorPicker"
+         },
+         "modifierPopupImageBackgroundColor": {
+            "label": "Color for image background",
+            "value": "#0F0000",
+            "default": "#0F0000",
+            "dataType": "color",
+            "userInsertType": "colorPicker"
+         },
+         "modifierPopupOptionsBackgroundColor": {
+            "label": "Color for modifier popup options background",
+            "value": "#F6F5F5",
+            "default": "#F6F5F5",
+            "dataType": "color",
+            "userInsertType": "colorPicker"
+         },
+         "modifierPopupContentBackgroundColor": {
+            "label": "Color for modifier popup content background",
             "value": "#FFFFFF",
             "default": "#FFFFFF",
             "dataType": "color",
             "userInsertType": "colorPicker"
-        }
-    },
-    "paymentPopupSettings": {
-        "backgroundColor": {
-            "label": "Payment Popup background color",
+         },
+         "modifierPopupCategoryTextColor": {
+            "label": "Color for modifier popup text",
             "value": "#7124B4",
             "default": "#7124B4",
             "dataType": "color",
             "userInsertType": "colorPicker"
-        }
-    }
+         },
+         "modifierPopupOptionTextColor": {
+            "label": "Color for modifier popup option text",
+            "value": "#303030",
+            "default": "#303030",
+            "dataType": "color",
+            "userInsertType": "colorPicker"
+         },
+         "modifierCategoryWarningColor": {
+            "label": "Color for modifier category warning",
+            "value": "#303030",
+            "default": "#303030",
+            "dataType": "color",
+            "userInsertType": "colorPicker"
+         },
+         "productTextColor": {
+            "label": "Color for product text",
+            "value": "#303030",
+            "default": "#303030",
+            "dataType": "color",
+            "userInsertType": "colorPicker"
+         },
+         "checkBoxEmptyColor": {
+            "label": "Color for checkbox empty",
+            "value": "#FFFFFF",
+            "default": "#FFFFFF",
+            "dataType": "color",
+            "userInsertType": "colorPicker"
+         },
+         "checkBoxBorderColor": {
+            "label": "Color for checkbox border",
+            "value": "#7124B4",
+            "default": "#7124B4",
+            "dataType": "color",
+            "userInsertType": "colorPicker"
+         },
+         "checkBoxCheckedBGColor": {
+            "label": "Color for checkbox checked Background color",
+            "value": "#7124B4",
+            "default": "#7124B4",
+            "dataType": "color",
+            "userInsertType": "colorPicker"
+         },
+         "checkBoxTickColor": {
+            "id": "tick-color",
+            "label": "Tick color in tick box",
+            "value": "#FFFFFF",
+            "default": "#ffffff",
+            "dataType": "color",
+            "userInsertType": "colorPicker"
+         },
+         "totalTextColor": {
+            "label": "Color for total text",
+            "value": "#ffffff",
+            "default": "#ffffff",
+            "dataType": "color",
+            "userInsertType": "colorPicker"
+         }
+      }
+   },
+   "cartCardSettings": {
+      "showCustomizeOptionInRow": {
+         "label": "Show customize option in row",
+         "value": true,
+         "default": false,
+         "dataType": "boolean",
+         "description": "Show customize option in row (Below the product details.",
+         "userInsertType": "checkbox"
+      },
+      "editIconColor": {
+         "label": "Edit icon color",
+         "value": "#6F6F6F",
+         "default": "#6F6F6F",
+         "dataType": "color",
+         "userInsertType": "colorPicker"
+      },
+      "deleteIconColor": {
+         "label": "Delete icon color",
+         "value": "#6F6F6F",
+         "default": "#6F6F6F",
+         "dataType": "color",
+         "userInsertType": "colorPicker"
+      }
+   },
+   "dineInTableSettings": {
+      "dineInPopupText": {
+         "label": "Dine in popup text",
+         "value": "Pick a metal card & select your table number",
+         "default": "Dine in",
+         "dataType": "text",
+         "description": "Dine in popup text.",
+         "userInsertType": "textField"
+      },
+      "dineInSelectedTableBgColor": {
+         "label": "Selected table background color",
+         "value": "#7124B4",
+         "default": "#7124B4",
+         "dataType": "color",
+         "userInsertType": "colorPicker"
+      },
+      "dineInSelectedTableTextColor": {
+         "label": "Selected table text color",
+         "value": "#FFFFFF",
+         "default": "#FFFFFF",
+         "dataType": "color",
+         "userInsertType": "colorPicker"
+      }
+   },
+   "paymentPopupSettings": {
+      "logoAlignment": {
+         "type": "single",
+         "label": "Align Logo Position",
+         "value": {
+            "id": 2,
+            "title": "Center",
+            "value": "center"
+         },
+         "options": [
+            {
+               "id": 1,
+               "title": "Left",
+               "value": "left"
+            },
+            {
+               "id": 2,
+               "title": "Center",
+               "value": "center"
+            },
+            { "id": 3, "title": "Right", "value": "right" }
+         ],
+         "dataType": "select",
+         "userInsertType": "dropdown"
+      },
+      "paymentPopupBackgroundColor": {
+         "id": "payment-bg-col",
+         "label": "Payment Background Color",
+         "value": "rgba(0, 0, 0, 0.4)",
+         "default": "#0F6BB1",
+         "dataType": "color",
+         "userInsertType": "colorPicker"
+      },
+      "paymentContentBackgroundColor": {
+         "id": "payment-content-bg-col",
+         "label": "Payment Content Background Color",
+         "value": "#FFFFFF",
+         "default": "#FFFFFF",
+         "dataType": "color",
+         "userInsertType": "colorPicker"
+      },
+      "textColor": {
+         "id": "payment-text-col",
+         "label": "Payment Text Color",
+         "value": "#7124B4",
+         "default": "#303030",
+         "dataType": "color",
+         "userInsertType": "colorPicker"
+      },
+      "paymentTitleColor": {
+         "id": "payment-title-col",
+         "label": "Payment Title Color",
+         "value": "#FFFFFF",
+         "default": "#7124B4",
+         "dataType": "color",
+         "userInsertType": "colorPicker"
+      }
+   }
 }
