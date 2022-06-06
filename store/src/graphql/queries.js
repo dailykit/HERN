@@ -2469,3 +2469,12 @@ export const GET_PLAN_INFO = gql`
       }
    }
 `
+export const GET_AVAILABLE_ZIP_CODES_BY_SUBSCRIPTION_ID = gql`
+   query GET_AVAILABLE_ZIP_CODES_BY_SUBSCRIPTION_ID($subscriptionId: Int!) {
+      subscription_subscription(where: { id: { _eq: $subscriptionId } }) {
+         availableZipcodes(where: { isDeliveryActive: { _eq: true } }) {
+            zipcode
+         }
+      }
+   }
+`
