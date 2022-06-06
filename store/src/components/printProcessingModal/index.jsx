@@ -11,6 +11,7 @@ import { useConfig } from '../../lib'
 import QRCode from 'react-qr-code'
 import KioskButton from '../kiosk/component/button'
 import moment from 'moment'
+import CryptoJS from 'crypto-js'
 
 const PrintProcessingModal = ({
    printDetails,
@@ -76,14 +77,19 @@ const PrintProcessingModal = ({
       let extra = null
       const path =
          settings['printing']?.['KioskCustomerTokenTemplate']?.path?.value
-      const template = encodeURIComponent(
+
+      // encrypt invoice details
+      const invoiceDetail = CryptoJS.AES.encrypt(
          JSON.stringify({
-            path: path,
-            format: 'pdf',
-            readVar: false,
-         })
-      )
-      const data = encodeURIComponent(JSON.stringify({ cartId: storedCartId }))
+            template: { path: path, format: 'pdf', readVar: false },
+            data: { cartId: storedCartId },
+         }),
+         get_env('ADMIN_SECRET')
+      ).toString()
+
+      // encodeURIComponent
+      const encodedInvoiceDetail = encodeURIComponent(invoiceDetail)
+
       if (printStatus === 'success') {
          icon = KioskConfig?.printPopupSettings?.showInvoiceQrCode?.value ? (
             <div
@@ -96,7 +102,7 @@ const PrintProcessingModal = ({
                <QRCode
                   value={`${get_env(
                      'BASE_BRAND_URL'
-                  )}/template/?template=${template}&data=${data}`}
+                  )}/server/api/invoice/${encodedInvoiceDetail}`}
                   level="L"
                   size="250"
                   title="hello"
