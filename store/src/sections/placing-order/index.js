@@ -173,9 +173,7 @@ const ContentWrapper = () => {
          <header className="hern-placing-order__header">
             <h2
                style={{
-                  color: `${
-                     theme?.accent ? theme?.accent : 'rgba(5,150,105,1)'
-                  }`,
+                  color: `${theme?.accent ? theme?.accent : '#0E0E0E'}`,
                }}
                className="hern-placing-order__header__title"
                theme={theme}
@@ -184,7 +182,8 @@ const ContentWrapper = () => {
             </h2>
          </header>
          <OrderInfo cart={cart} />
-         <ul className="hern-placing-order__steps">
+         <HelperBar.Button onClick={gotoMenu}>Browse Menu</HelperBar.Button>
+         {/* <ul className="hern-placing-order__steps">
             <li
                className={classNames('hern-placing-order__step', {
                   'hern-placing-order__step--active':
@@ -222,7 +221,7 @@ const ContentWrapper = () => {
                {cart.status !== 'ORDER_PENDING' ||
                   (!Boolean(cart.orderId) && <Pulse />)}
             </li>
-         </ul>
+         </ul> */}
          <Spacer />
       </section>
    )

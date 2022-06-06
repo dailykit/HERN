@@ -10,7 +10,7 @@
    -moz-border-radius: 0.5rem;
    -ms-border-radius: 0.5rem;
    -o-border-radius: 0.5rem;
-   margin-bottom: 0.75rem;
+   margin-bottom: 1.688rem;
 }
 .hern-helper-bar--info {
    @extend .hern-helper-bar;
@@ -62,11 +62,16 @@
    }
 }
 .hern-helper-bar__btn {
+   color: #ffffff;
+   font-family: 'Lato';
+   font-style: normal;
+   font-weight: 500;
    margin-top: 0.25rem;
-   padding: 0.25rem 0.5rem;
-   border-radius: 0.25rem;
-   font-size: 0.875rem;
+   padding: 0.625em 6.25em;
+   border-radius: 0.375rem;
+   font-size: 1.25rem;
    line-height: 1.25rem;
+   background-color: var(--hern-accent);
 }
 .hern-helper-bar__title {
    text-align: center;

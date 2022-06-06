@@ -23,10 +23,7 @@
 }
 .hern-placing-order__header {
    width: 100%;
-   margin-top: 0.75rem;
    margin-bottom: 0.75rem;
-   padding-bottom: 0.25rem;
-   border-bottom-width: 1px;
    display: -webkit-box;
    display: -webkit-flex;
    display: -ms-flexbox;
@@ -43,7 +40,10 @@
 .hern-placing-order__header__title {
    color: rgba(5, 150, 105, 1);
    font-size: 1.125rem;
-   line-height: 1.75rem;
+   line-height: 1.2;
+   font-family: 'Lato';
+   font-style: normal;
+   font-weight: 500;
 }
 .hern-placing-order__steps {
    width: 100%;
