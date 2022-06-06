@@ -222,7 +222,7 @@ const RenderStep = ({
    return (
       <>
          <li
-            onClick={() => goToStep(route)}
+            onClick={() => isActive && goToStep(route)}
             className={classNames('hern-steps-navbar__step', {
                'hern-steps-navbar__step--active': isActive,
             })}
