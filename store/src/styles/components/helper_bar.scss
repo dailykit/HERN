@@ -72,6 +72,10 @@
    font-size: 1.25rem;
    line-height: 1.25rem;
    background-color: var(--hern-accent);
+
+   &:hover {
+      background-color: rgba(17, 130, 59, 0.8);
+   }
 }
 .hern-helper-bar__title {
    text-align: center;
