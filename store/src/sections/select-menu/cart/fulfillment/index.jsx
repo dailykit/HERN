@@ -211,7 +211,9 @@ const Fulfillment = () => {
          <Tunnel.Wrapper
             isOpen={isAddressListOpen}
             toggleTunnel={setIsAddressListOpen}
-            style={{ zIndex: 1030 }}
+            style={{ zIndex: 1030, marginTop: '0' }}
+            direction="right"
+            size="sm"
          >
             <AddressList
                closeTunnel={() => setIsAddressListOpen(false)}
@@ -228,6 +230,10 @@ const Fulfillment = () => {
                      setIsAddressListOpen(false)
                   })
                }
+               activeAddressId={
+                  state?.occurenceCustomer?.cart?.address?.id ||
+                  user?.defaultAddress?.id
+               }
             />
          </Tunnel.Wrapper>
       </>
@@ -240,7 +246,6 @@ const FulfillmentOption = ({
    state,
    type,
    zipcode,
-   user,
    setFulfillment,
    setIsAddressListOpen,
 }) => {
@@ -252,14 +257,12 @@ const FulfillmentOption = ({
       'hern-cart-fulfillment__fulfillment-option',
       { 'hern-cart-fulfillment__fulfillment-option--active': isActive }
    )
+   const { user } = useUser()
    return (
       <section
          className={fulfillmentClasses}
          onClick={() => setFulfillment(type)}
       >
-         {/* <aside className="hern-cart-fulfillment__check-icon">
-            <CheckIcon size={13} stroke="currentColor" active={isActive} />
-         </aside> */}
          <main>
             {type === 'DELIVERY' && (
                <>
@@ -270,17 +273,9 @@ const FulfillmentOption = ({
                   ) : (
                      <h3 className="hern-cart-fulfillment__delivery-heading">
                         <span>{t('Delivery at:')}</span>
-                        {/* {formatCurrency(zipcode.deliveryPrice)} */}
                      </h3>
                   )}
                   <div className="hern-cart-fulfillment__delivery-details-wrapper">
-                     {/* <span className="hern-cart-fulfillment__check-icon">
-                        <CheckIcon
-                           size={13}
-                           stroke="currentColor"
-                           active={isActive}
-                        />
-                     </span> */}
                      <p className="hern-cart-fulfillment__delivery-details">
                         {normalizeAddress(
                            state?.occurenceCustomer?.cart?.address ||
@@ -299,43 +294,6 @@ const FulfillmentOption = ({
                         {zipcode?.deliveryTime?.to}
                      </p>
                   </div>
-
-                  <div className="hern-cart-fulfillment__delivery-details-wrapper">
-                     {/* <span className="hern-cart-fulfillment__check-icon">
-                        <CheckIcon
-                           size={13}
-                           stroke="currentColor"
-                           active={isActive}
-                        />
-                     </span> */}
-                     {/* <p className="hern-cart-fulfillment__delivery-details">
-                      
-
-                        <span>
-                           {moment(state?.week?.fulfillmentDate).format(
-                              'MMM D'
-                           )}
-                           &nbsp;
-                        </span>
-                      
-                     </p> */}
-                  </div>
-
-                  {/* <div className="hern-cart-fulfillment__delivery-details-wrapper">
-                      <span className="hern-cart-fulfillment__check-icon">
-                        <CheckIcon
-                           size={13}
-                           stroke="currentColor"
-                           active={isActive}
-                        />
-                     </span>
-                     <p className="hern-cart-fulfillment__delivery-details">
-                        <span>{t('Between')} </span>
-                        {zipcode?.deliveryTime?.from}
-                        &nbsp;-&nbsp;
-                        {zipcode?.deliveryTime?.to}
-                     </p>
-                  </div> */}
                </>
             )}
             {type === 'PICKUP' && (
