@@ -1,15 +1,15 @@
 .hern-helper-bar {
-   padding: 0.5rem 0.75rem;
+   padding: 0 2.25rem;
    height: auto;
    width: 100%;
    display: flex;
-   flex-direction: column;
+   justify-content: space-between;
    align-items: center;
-   border-radius: 0.25rem;
-   -webkit-border-radius: 0.25rem;
-   -moz-border-radius: 0.25rem;
-   -ms-border-radius: 0.25rem;
-   -o-border-radius: 0.25rem;
+   border-radius: 0.5rem;
+   -webkit-border-radius: 0.5rem;
+   -moz-border-radius: 0.5rem;
+   -ms-border-radius: 0.5rem;
+   -o-border-radius: 0.5rem;
    margin-bottom: 0.75rem;
 }
 .hern-helper-bar--info {
@@ -27,8 +27,8 @@
 
 .hern-helper-bar--success {
    @extend .hern-helper-bar;
-   background-color: rgba(167, 243, 208, 1);
-   color: rgba(6, 95, 70, 1);
+   background-color: rgba(17, 130, 59, 0.1);
+
    button {
       border-width: 1px;
       border-color: rgba(6, 95, 70, 1);
@@ -74,5 +74,18 @@
    line-height: 1.75rem;
 }
 .hern-helper-bar__subtitle {
-   text-align: center;
+   & > span {
+      color: #11823b;
+      display: block;
+      font-family: 'Lato';
+      font-style: normal;
+      font-weight: 700;
+      font-size: 32px;
+      margin-bottom: 4px;
+   }
+   font-family: 'Inter';
+   font-style: normal;
+   font-weight: 500;
+   font-size: 18px;
+   color: #333333;
 }
