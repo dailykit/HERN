@@ -11,7 +11,7 @@ export const SubscriptionTunnel = () => {
       <>
          <TunnelHeader
             title="Select Subscription"
-            close={() => tunnels.close(4)}
+            close={() => tunnels.close(5)}
             right={{
                ...(customer?.subscriptionId && {
                   title: 'Save',

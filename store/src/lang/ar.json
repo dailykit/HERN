@@ -395,5 +395,10 @@
    "Confirm & Pay": "تأكيد ودفع",
    "No Store Available": "لا يوجد متجر متوفر",
    "NO store Available on this location": "لا يوجد متجر متوفر في هذا الموقع",
-   "View on map": "عرض على الخريطة"
+   "View on map": "عرض على الخريطة",
+   "Free 1 Ice Cream Cone": "1 ايس كريم بسكوت مجاني",
+   "Out Of Stock": "الكمية غير متوفرة في المخزون",
+   "View Menu": "الإطلاع على قائمة الطعام",
+   "Some product in cart are not available": "Some product in cart are not available",
+   "This product is not available": "This product is not available"
 }

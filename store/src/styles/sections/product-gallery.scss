@@ -162,6 +162,7 @@
 
 @media screen and (max-width: 599px) {
    // mobile
+
    .hern-product_gallery-header {
       margin: 15px 0px;
    }
@@ -170,13 +171,25 @@
       line-height: 34px;
       margin: 15px 0px 10px;
    }
+   
    .hern-product_gallery__container {
+      .ant-row {
+         display: block !important;
+      }
       .hern-product-card-content {
          padding: 0px;
       }
       .hern-product-card-details-2 .hern-product-card__name {
          font-size: 16px;
          line-height: 19px;
+      }
+   }
+   .hern-product-gallery__product__display--1{
+      .hern-product_gallery-carousel{
+         .ant-row {
+            display: flex !important;
+            justify-content: center;
+         }
       }
    }
    .hern-product_gallery_page-button {
@@ -206,9 +219,14 @@
       margin-top: 12px;
    }
 }
-.hern-product-galllery__product__display--1 {
+.hern-product-gallery__product__display--1 {
    .hern-product-card {
       align-items: center;
       flex-direction: column !important;
+   }
+}
+.hern-product-gallery__product__display--1{
+   .hern-product-card__additional-text{
+      text-align: center;
    }
 }

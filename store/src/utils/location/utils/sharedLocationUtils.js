@@ -1,4 +1,4 @@
-import _ from 'lodash'
+import sortBy from 'lodash/sortBy'
 import { getDistance, convertDistance } from 'geolib'
 import {
    isStoreOnDemandDeliveryAvailable,
@@ -40,7 +40,7 @@ const getSortedStoresByAerialDistance = async (brandLocations, address) => {
       })
    )
    // sort by aerial distance
-   const sortedBrandLocationsWithAerialDistance = _.sortBy(
+   const sortedBrandLocationsWithAerialDistance = sortBy(
       brandLocationsWithAerialDistance,
       [x => x.aerialDistance]
    )
@@ -95,7 +95,13 @@ export const getStoresWithValidations = async props => {
             ...(locationId || { locationId: { _eq: locationId } }),
          },
       })
-
+   if (
+      deliverableBrandLocations.length === 0 &&
+      (fulfillmentType === 'ONDEMAND_DELIVERY' ||
+         fulfillmentType === 'PREORDER_DELIVERY')
+   ) {
+      return []
+   }
    const { brandRecurrences } = await graphQLClientSide.request(
       GET_ALL_RECURRENCES,
       {
@@ -116,11 +122,21 @@ export const getStoresWithValidations = async props => {
          },
       }
    )
+   const finalBrandLocations =
+      fulfillmentType === 'ONDEMAND_DELIVERY' ||
+      fulfillmentType === 'PREORDER_DELIVERY'
+         ? deliverableBrandLocations
+         : brandLocations
 
-   const sortedStoresByAerialDistance = await getSortedStoresByAerialDistance(
-      brandLocations,
-      address
-   )
+   //  In case of Pickup and if we already have locationId so we dont have to calculate the sorted arial distance
+   //  and also it will handel the case for user address not available on pickup fulfillment
+   const sortedStoresByAerialDistance =
+      (fulfillmentType === 'ONDEMAND_PICKUP' ||
+         fulfillmentType === 'PREORDER_PICKUP') &&
+      locationId
+         ? finalBrandLocations
+         : await getSortedStoresByAerialDistance(finalBrandLocations, address)
+
    const sortedStoresByAerialDistanceWithValidation = []
 
    for (let i = 0; i < sortedStoresByAerialDistance.length; i++) {
@@ -237,7 +253,7 @@ export const getStoresWithValidations = async props => {
                }
             }
             break
-         case 'SCHEDULED_DINEIN': {
+         case 'PREORDER_DINEIN': {
             if (finalRecurrences.length === 0) {
                const dineInStatus = {
                   status: false,

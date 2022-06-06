@@ -6,8 +6,9 @@ import {
    Divider,
    Button,
    Loader,
+   Empty,
 } from '../../components'
-import { useQuery } from '@apollo/react-hooks'
+import { useQuery, useSubscription } from '@apollo/react-hooks'
 import _ from 'lodash'
 import { CartContext } from '../../context'
 import { PRODUCTS, PRODUCTS_BY_CATEGORY } from '../../graphql'
@@ -15,7 +16,11 @@ import classNames from 'classnames'
 import * as Scroll from 'react-scroll'
 
 import { useConfig } from '../../lib'
-import { setThemeVariable, getRoute } from '../../utils'
+import {
+   setThemeVariable,
+   getRoute,
+   useIntersectionObserver,
+} from '../../utils'
 import { useRouter } from 'next/router'
 import { useToasts } from 'react-toast-notifications'
 import { VegNonVegType } from '../../assets/icons'
@@ -23,11 +28,11 @@ import CartBar from '../order/CartBar'
 import { CustomArea } from './productCustomArea'
 
 export const FeaturedCollection = ({ config }) => {
-   const router = useRouter()
    const { addToast } = useToasts()
 
    // context
-   const { brand, isConfigLoading, locationId, storeStatus } = useConfig()
+   const { brand, isConfigLoading, locationId, storeStatus, brandLocation } =
+      useConfig()
 
    // component state
    const [hydratedMenu, setHydratedMenu] = React.useState([])
@@ -38,11 +43,14 @@ export const FeaturedCollection = ({ config }) => {
       allProductIds: [],
       isMenuLoading: true,
    })
+   const [productsList, setProductsList] = React.useState([])
 
    const date = React.useMemo(() => new Date(Date.now()).toISOString(), [])
    const collectionIdArray = React.useMemo(
       () =>
-         config?.data?.collectionData?.value?.map(collection => collection.id),
+         config?.data?.collectionData?.value?.map(
+            collection => collection.id
+         ) || [],
       [config]
    )
    const menuType = config?.display?.dropdown?.value[0]?.value
@@ -76,7 +84,7 @@ export const FeaturedCollection = ({ config }) => {
    )
 
    // query for get products by category (contain array of product ids)
-   const { error: menuError } = useQuery(PRODUCTS_BY_CATEGORY, {
+   const { error: menuError } = useSubscription(PRODUCTS_BY_CATEGORY, {
       skip: isConfigLoading || !brand?.id,
       variables: {
          params: {
@@ -86,7 +94,8 @@ export const FeaturedCollection = ({ config }) => {
             locationId,
          },
       },
-      onCompleted: data => {
+      onSubscriptionData: ({ subscriptionData }) => {
+         const { data } = subscriptionData
          if (data?.onDemand_getMenuV2copy?.length) {
             const [res] = data.onDemand_getMenuV2copy
             const { menu } = res.data
@@ -99,72 +108,75 @@ export const FeaturedCollection = ({ config }) => {
             }))
          }
       },
-      onError: error => {
+   })
+
+   React.useEffect(() => {
+      if (menuError) {
          setMenuData(prev => ({
             ...prev,
             isMenuLoading: false,
          }))
          setStatus('error')
-         console.log(error)
-      },
-   })
+         console.log(menuError)
+      }
+   }, [menuError])
+
    const { isMenuLoading, allProductIds, categories } = menuData
 
    const argsForByLocation = React.useMemo(
       () => ({
-         params: {
-            brandId: brand?.id,
-            locationId: locationId,
-         },
+         brandId: brand?.id,
+         locationId: locationId,
+         brand_locationId: brandLocation?.id,
       }),
-      [brand, locationId]
+      [brand, locationId, brandLocation?.id]
    )
-   const { loading: productsLoading, error: productsError } = useQuery(
+   const { loading: productsLoading, error: productsError } = useSubscription(
       PRODUCTS,
       {
          skip: isMenuLoading,
          variables: {
             ids: allProductIds,
-            priceArgs: argsForByLocation,
-            discountArgs: argsForByLocation,
-            defaultCartItemArgs: argsForByLocation,
-            productOptionPriceArgs: argsForByLocation,
-            productOptionDiscountArgs: argsForByLocation,
-            productOptionCartItemArgs: argsForByLocation,
-            modifierCategoryOptionPriceArgs: argsForByLocation,
-            modifierCategoryOptionDiscountArgs: argsForByLocation,
-            modifierCategoryOptionCartItemArgs: argsForByLocation,
+            params: argsForByLocation,
          },
          // fetchPolicy: 'network-only',
-         onCompleted: data => {
+         onSubscriptionData: ({ subscriptionData }) => {
+            const { data } = subscriptionData
             if (data && data.products.length) {
-               const updatedMenu = categories.map(category => {
-                  const updatedProducts = category.products
-                     .map(productId => {
-                        const found = data.products.find(
-                           ({ id }) => id === productId
-                        )
-                        if (found) {
-                           return found
-                        }
-                        return null
-                     })
-                     .filter(Boolean)
-                  return {
-                     ...category,
-                     products: updatedProducts,
-                  }
-               })
-               setStatus('success')
-               setHydratedMenu(updatedMenu)
+               setProductsList(data.products)
             }
-         },
-         onError: error => {
-            setStatus('error')
-            console.log('Error: ', error)
          },
       }
    )
+
+   React.useEffect(() => {
+      if (productsList.length && categories.length) {
+         const updatedMenu = categories.map(category => {
+            const updatedProducts = category.products
+               .map(productId => {
+                  const found = productsList.find(({ id }) => id === productId)
+                  if (found) {
+                     return found
+                  }
+                  return null
+               })
+               .filter(Boolean)
+            return {
+               ...category,
+               products: updatedProducts,
+            }
+         })
+         setHydratedMenu(updatedMenu)
+         setStatus('success')
+      }
+   }, [productsList, categories])
+
+   React.useEffect(() => {
+      if (productsError) {
+         setStatus('error')
+      }
+   }, [productsError])
+
    const [productModifier, setProductModifier] = useState(null)
 
    const CustomAreaWrapper = ({ data }) => {
@@ -178,6 +190,17 @@ export const FeaturedCollection = ({ config }) => {
       console.log(productsError)
       return <p>Error</p>
    }
+
+   if (_.isEmpty(hydratedMenu))
+      return (
+         <Empty
+            title="No product found !"
+            description="We are updating our menu with more new items, please check back later."
+            route="/"
+            buttonLabel="Back to home"
+         />
+      )
+
    if (isMenuLoading || status === 'loading' || productsLoading) {
       return <Loader type="order-loading" />
    }
@@ -237,122 +260,17 @@ export const FeaturedCollection = ({ config }) => {
                            )}
                            <div style={{ display: 'flex', flexWrap: 'wrap' }}>
                               {eachCategory.products.map(
-                                 (eachProduct, index) => {
-                                    const VegNonVegIcon = () => (
-                                       <VegNonVegType
-                                          vegNonVegType={
-                                             eachProduct?.VegNonVegType
-                                          }
-                                       />
-                                    )
-                                    return (
-                                       <div
-                                          key={index}
-                                          className="hern-on-demand-order--product-card"
-                                          style={{
-                                             margin: '0 auto',
-                                             maxWidth:
-                                                numberOfProducts === 4
-                                                   ? '280px'
-                                                   : 'auto',
-                                          }}
-                                       >
-                                          <ProductCard
-                                             iconOnImage={VegNonVegIcon}
-                                             onProductNameClick={() =>
-                                                router.push(
-                                                   getRoute(
-                                                      '/products/' +
-                                                         eachProduct.id
-                                                   )
-                                                )
-                                             }
-                                             onImageClick={() =>
-                                                router.push(
-                                                   getRoute(
-                                                      '/products/' +
-                                                         eachProduct.id
-                                                   )
-                                                )
-                                             }
-                                             key={index}
-                                             data={eachProduct}
-                                             showImage={
-                                                (config?.informationVisibility
-                                                   ?.product?.showImage
-                                                   ?.value &&
-                                                   eachProduct.assets.images
-                                                      .length > 0) ??
-                                                true
-                                             }
-                                             canSwipe={
-                                                config?.informationVisibility
-                                                   ?.product?.canSwipe?.value ??
-                                                true
-                                             }
-                                             showSliderArrows={
-                                                config?.informationVisibility
-                                                   ?.product?.showSliderArrows
-                                                   ?.value ?? true
-                                             }
-                                             showSliderIndicators={
-                                                config?.informationVisibility
-                                                   ?.product
-                                                   ?.showSliderIndicators
-                                                   ?.value ?? true
-                                             }
-                                             showImageIcon={
-                                                config?.informationVisibility
-                                                   ?.product?.showImageIcon
-                                                   ?.value
-                                                   ? true
-                                                   : undefined
-                                             }
-                                             showProductPrice={
-                                                config?.informationVisibility
-                                                   ?.product?.showProductPrice
-                                                   ?.value ?? true
-                                             }
-                                             showProductName={
-                                                config?.informationVisibility
-                                                   ?.product?.showProductName
-                                                   ?.value ?? true
-                                             }
-                                             showProductAdditionalText={
-                                                config?.informationVisibility
-                                                   ?.product
-                                                   ?.customAreaComponent
-                                                   ?.value ?? true
-                                             }
-                                             customAreaComponent={
-                                                config?.informationVisibility
-                                                   ?.product
-                                                   ?.showProductAdditionalText
-                                                   ?.value
-                                                   ? CustomAreaWrapper
-                                                   : undefined
-                                             }
-                                             showModifier={
-                                                productModifier &&
-                                                productModifier.id ===
-                                                   eachProduct.id
-                                             }
-                                             closeModifier={closeModifier}
-                                             modifierPopupConfig={{
-                                                showModifierImage:
-                                                   config?.informationVisibility
-                                                      ?.modifier
-                                                      ?.showModifierImage
-                                                      ?.value ?? true,
-                                                counterButtonPosition: 'BOTTOM',
-                                             }}
-                                             customAreaFlex={false}
-                                             modifierWithoutPopup={false}
-                                             config={config}
-                                          />
-                                       </div>
-                                    )
-                                 }
+                                 (eachProduct, index) => (
+                                    <ProductWithIntersection
+                                       key={eachProduct.id}
+                                       eachProduct={eachProduct}
+                                       numberOfProducts={numberOfProducts}
+                                       productModifier={productModifier}
+                                       closeModifier={closeModifier}
+                                       CustomAreaWrapper={CustomAreaWrapper}
+                                       config={config}
+                                    />
+                                 )
                               )}
                            </div>
                            <Divider />
@@ -379,3 +297,117 @@ export const FeaturedCollection = ({ config }) => {
       </>
    )
 }
+
+const ProductWithIntersection = ({
+   eachProduct,
+   numberOfProducts,
+   productModifier,
+   closeModifier,
+   CustomAreaWrapper,
+   config,
+}) => {
+   const router = useRouter()
+
+   const productRef = React.useRef()
+
+   const { entry, isIntersected } = useIntersectionObserver(productRef, {
+      rootMargin: '100px 0px 100px 0px ',
+   })
+   const isVisible = React.useMemo(
+      () => isIntersected || !!entry?.isIntersecting,
+      [entry, isIntersected]
+   )
+   const VegNonVegIcon = () => (
+      <VegNonVegType vegNonVegType={eachProduct?.VegNonVegType} />
+   )
+   return (
+      <div
+         className={classNames('hern-on-demand-order--product-card', {
+            'hern-on-demand-order--product-card-with-bg': !isVisible,
+         })}
+         style={{
+            margin: '0 auto',
+            maxWidth: numberOfProducts === 4 ? '280px' : 'auto',
+         }}
+         ref={productRef}
+      >
+         <ProductWrapper isVisible={isVisible}>
+            <ProductCard
+               iconOnImage={VegNonVegIcon}
+               onProductNameClick={() =>
+                  router.push(getRoute('/products/' + eachProduct.id))
+               }
+               onImageClick={() =>
+                  router.push(getRoute('/products/' + eachProduct.id))
+               }
+               data={eachProduct}
+               showImage={
+                  (config?.informationVisibility?.product?.showImage?.value &&
+                     eachProduct.assets.images.length > 0) ??
+                  true
+               }
+               canSwipe={
+                  config?.informationVisibility?.product?.canSwipe?.value ??
+                  true
+               }
+               showSliderArrows={
+                  config?.informationVisibility?.product?.showSliderArrows
+                     ?.value ?? true
+               }
+               showSliderIndicators={
+                  config?.informationVisibility?.product?.showSliderIndicators
+                     ?.value ?? true
+               }
+               showImageIcon={
+                  config?.informationVisibility?.product?.showImageIcon?.value
+                     ? true
+                     : undefined
+               }
+               showProductPrice={
+                  config?.informationVisibility?.product?.showProductPrice
+                     ?.value ?? true
+               }
+               showProductName={
+                  config?.informationVisibility?.product?.showProductName
+                     ?.value ?? true
+               }
+               showProductAdditionalText={
+                  config?.informationVisibility?.product?.customAreaComponent
+                     ?.value ?? true
+               }
+               customAreaComponent={
+                  config?.informationVisibility?.product
+                     ?.showProductAdditionalText?.value
+                     ? CustomAreaWrapper
+                     : undefined
+               }
+               showModifier={
+                  productModifier && productModifier.id === eachProduct.id
+               }
+               closeModifier={closeModifier}
+               modifierPopupConfig={{
+                  showModifierImage:
+                     config?.informationVisibility?.modifier?.showModifierImage
+                        ?.value ?? true,
+                  counterButtonPosition: 'BOTTOM',
+               }}
+               customAreaFlex={false}
+               modifierWithoutPopup={false}
+               config={config}
+            />
+         </ProductWrapper>
+      </div>
+   )
+}
+function productPropsAreEqual(prevProps, nextProps) {
+   return (
+      prevProps.isVisible === nextProps.isVisible &&
+      prevProps.children === nextProps.children
+   )
+}
+const ProductWrapper = React.memo(({ children, isVisible }) => {
+   if (isVisible) {
+      return <>{children}</>
+   }
+   return <></>
+}, productPropsAreEqual)

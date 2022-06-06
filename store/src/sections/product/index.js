@@ -2,7 +2,13 @@ import React from 'react'
 import { useQuery } from '@apollo/react-hooks'
 import { PRODUCT_DETAILS } from '../../graphql'
 import { useConfig } from '../../lib'
-import { Recipe, ProductCard, Loader, ModifierPopup } from '../../components'
+import {
+   Recipe,
+   ProductCard,
+   Loader,
+   ModifierPopup,
+   ModifierPopupForUnAvailability,
+} from '../../components'
 import { useRouter } from 'next/router'
 import ProductMedia from './ProductMedia'
 import { VegNonVegType } from '../../assets/icons'
@@ -16,8 +22,9 @@ export const Product = ({ config }) => {
    const router = useRouter()
    const { id } = router.query
    const [status, setStatus] = React.useState('loading')
-   const { brand, locationId } = useConfig()
+   const { brand, locationId, brandLocation } = useConfig()
    const [productDetails, setProductDetails] = React.useState({})
+   const [productTotalAmount, setProductTotalAmount] = React.useState(null)
 
    const { t, dynamicTrans, locale } = useTranslation()
    const currentLang = React.useMemo(() => locale, [locale])
@@ -29,28 +36,19 @@ export const Product = ({ config }) => {
 
    const argsForByLocation = React.useMemo(
       () => ({
-         params: {
-            brandId: brand?.id,
-            locationId: locationId,
-         },
+         brandId: brand?.id,
+         locationId: locationId,
+         brand_locationId: brandLocation?.id,
       }),
-      [brand, locationId]
+      [brand, locationId, brandLocation?.id]
    )
    const { loading: productsLoading, error: productsError } = useQuery(
       PRODUCT_DETAILS,
       {
-         skip: !id,
+         skip: !id || !brand?.id || !locationId || !brandLocation?.id,
          variables: {
             id: Number(id),
-            priceArgs: argsForByLocation,
-            discountArgs: argsForByLocation,
-            defaultCartItemArgs: argsForByLocation,
-            productOptionPriceArgs: argsForByLocation,
-            productOptionDiscountArgs: argsForByLocation,
-            productOptionCartItemArgs: argsForByLocation,
-            modifierCategoryOptionPriceArgs: argsForByLocation,
-            modifierCategoryOptionDiscountArgs: argsForByLocation,
-            modifierCategoryOptionCartItemArgs: argsForByLocation,
+            params: argsForByLocation,
          },
          fetchPolicy: 'network-only',
          onCompleted: data => {
@@ -79,6 +77,28 @@ export const Product = ({ config }) => {
          dynamicTrans(languageTags)
       }
    }, [status, currentLang, productsLoading])
+
+   const isProductOutOfStock = React.useMemo(() => {
+      if (productDetails.isAvailable) {
+         if (
+            productDetails.productOptions.length > 0 &&
+            productDetails.isPopupAllowed
+         ) {
+            const availableProductOptions =
+               productDetails.productOptions.filter(
+                  option => option.isPublished && option.isAvailable
+               ).length
+            if (availableProductOptions > 0) {
+               return false
+            } else {
+               return true
+            }
+         } else {
+            return false
+         }
+      }
+      return true
+   }, [productDetails])
 
    const showProductDetailOnImage =
       config?.display?.showProductDetailOnImage?.value ??
@@ -111,8 +131,12 @@ export const Product = ({ config }) => {
                   }
                )}
             >
-               {showProductDetailOnImage && (
-                  <ProductInfo productData={productDetails} />
+               {(showProductDetailOnImage ||
+                  isEmpty(productDetails?.productOptions)) && (
+                  <ProductInfo
+                     productTotalAmount={productTotalAmount}
+                     productData={productDetails}
+                  />
                )}
                <ProductMedia assets={productDetails?.assets} config={config} />
                <div className="hern-veg-non-veg-type">
@@ -131,27 +155,42 @@ export const Product = ({ config }) => {
                   }
                )}
             >
-               {!showProductDetailOnImage && (
-                  <ProductCard
-                     data={productDetails}
-                     showProductPrice={false}
-                     showProductDescription={false}
-                     showImage={false}
-                     showProductName={false}
-                     closeModifier={() => console.log('close')}
-                     customAreaFlex={false}
-                     showModifier={true}
-                     customProductDetails={true}
+               {isProductOutOfStock && (
+                  <ModifierPopupForUnAvailability
+                     productData={productDetails}
+                     closeModifier={() => {}}
+                     showCounterBtn={true}
                      modifierWithoutPopup={true}
-                     showProductCard={false}
+                     customProductDetails={true}
+                     config={config}
                      stepView={true}
-                     modifierPopupConfig={{
-                        counterButtonPosition: 'BOTTOM',
-                     }}
+                     counterButtonPosition={'BOTTOM'}
                   />
                )}
+               {!showProductDetailOnImage &&
+                  !isEmpty(productDetails?.productOptions) &&
+                  !isProductOutOfStock && (
+                     <ProductCard
+                        data={productDetails}
+                        showProductPrice={false}
+                        showProductDescription={false}
+                        showImage={false}
+                        showProductName={false}
+                        closeModifier={() => console.log('close')}
+                        customAreaFlex={false}
+                        showModifier={true}
+                        customProductDetails={true}
+                        modifierWithoutPopup={true}
+                        showProductCard={false}
+                        stepView={true}
+                        modifierPopupConfig={{
+                           counterButtonPosition: 'BOTTOM',
+                        }}
+                     />
+                  )}
                {showProductDetailOnImage &&
-                  !isEmpty(productDetails?.productOptions) && (
+                  !isEmpty(productDetails?.productOptions) &&
+                  !isProductOutOfStock && (
                      <ModifierPopup
                         productData={productDetails}
                         closeModifier={() => {}}
@@ -160,6 +199,7 @@ export const Product = ({ config }) => {
                         config={config}
                         stepView={true}
                         counterButtonPosition={'BOTTOM'}
+                        setProductTotalAmount={setProductTotalAmount}
                      />
                   )}
                {isEmpty(productDetails?.productOptions) && (
@@ -193,7 +233,7 @@ export const Product = ({ config }) => {
       </div>
    )
 }
-const ProductInfo = ({ productData }) => {
+const ProductInfo = ({ productData, productTotalAmount }) => {
    return (
       <div className={classNames('hern-product__product-info')}>
          <div className={classNames('hern-product__product-header')}>
@@ -201,7 +241,7 @@ const ProductInfo = ({ productData }) => {
                {productData.name}
             </span>
             <span className={classNames('hern-product__product-price')}>
-               {formatCurrency(productData.price)}
+               {formatCurrency(productTotalAmount)}
             </span>
          </div>
          <div className="hern-product_product-additional-text">

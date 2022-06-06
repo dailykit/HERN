@@ -22,8 +22,13 @@ import { useConfig } from '../../lib'
 
 export const CartDetails = () => {
    //context
-   const { cartState, methods, combinedCartItems, isFinalCartLoading } =
-      React.useContext(CartContext)
+   const {
+      cartState,
+      methods,
+      combinedCartItems,
+      isFinalCartLoading,
+      isCartValidByProductAvailability,
+   } = React.useContext(CartContext)
 
    const { settings } = useConfig()
    const { user, isAuthenticated } = useUser()
@@ -32,7 +37,7 @@ export const CartDetails = () => {
    const { t } = useTranslation()
 
    const isLoyaltyPointsAvailable =
-      settings?.rewards?.['Loyalty Points Availability']?.['Loyalty Points']
+      settings?.rewards?.['Loyalty Points']?.['Loyalty Points']
          ?.IsLoyaltyPointsAvailable?.value ?? true
 
    //remove cartItem or cartItems
@@ -96,6 +101,11 @@ export const CartDetails = () => {
          <h2>
             <span>{t('Items')}</span>({combinedCartItems.length})
          </h2>
+         {!isCartValidByProductAvailability && (
+            <p className="hern-cart__cart-warning">
+               Some products in cart are not available
+            </p>
+         )}
          {combinedCartItems.map((product, index) => {
             return (
                <CartCard
@@ -113,7 +123,7 @@ export const CartDetails = () => {
                <LoyaltyPoints cart={cartState.cart} version={2} />
             )}
          <Divider />
-         <CartBillingDetails billing={cart.billing} />
+         <CartBillingDetails cart={cart} billing={cart.cartOwnerBilling} />
       </section>
    )
 }

@@ -19,9 +19,10 @@
       "start-hasura": "cd hasura && hasura console"
    },
    "dependencies": {
-      "@tillpos/xml-escpos-helper": "^0.2.2",
+      "@dailykit/xml-escpos-helper": "^1.0.3",
       "add": "^2.0.6",
       "apollo-server-express": "^2.25.2",
+      "arabic-persian-reshaper": "^1.0.1",
       "aws-sdk": "^2.678.0",
       "axios": "^0.21.1",
       "babel-eslint": "^10.1.0",
@@ -42,6 +43,7 @@
       "graphql-request": "^3.4.0",
       "graphql-tools": "^4.0.6",
       "http-proxy-middleware": "^2.0.0",
+      "iconv-lite": "^0.6.3",
       "ics": "^2.31.0",
       "isomorphic-git": "0.75.0",
       "jsonwebtoken": "^8.5.1",

@@ -351,3 +351,15 @@ export const GET_BRAND_CAMPAIGNS = gql`
       }
    }
 `
+
+export const GET_PAYMENT_OPTIONS = gql`
+   subscription paymentOptions {
+      paymentOptions: brands_availablePaymentOption(
+         where: { isActive: { _eq: true } }
+      ) {
+         id
+         description
+         label
+      }
+   }
+`

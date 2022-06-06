@@ -12,7 +12,7 @@ import { useQueryParamState } from '../../../utils'
 import { useConfig } from '../../../lib'
 import { Header } from 'antd/lib/layout/layout'
 import { DineInTableSelection } from '.'
-
+import { useIntl } from 'react-intl'
 const { Step } = Steps
 
 export const ProgressBar = props => {
@@ -21,6 +21,7 @@ export const ProgressBar = props => {
    const { cartState, dineInTableInfo, setDineInTableInfo } =
       React.useContext(CartContext)
    const { t, direction } = useTranslation()
+   const { formatMessage } = useIntl()
    const { cart } = cartState
    const { selectedOrderTab } = useConfig()
 
@@ -157,7 +158,7 @@ export const ProgressBar = props => {
                      color: config.kioskSettings.theme.primaryColor.value,
                   }}
                >
-                  {selectedOrderTab?.label}
+                  {t(selectedOrderTab?.label)}
                </span>
                {(dineInTableInfo?.internalTableLabel ||
                   cartState.cart.locationTableId) && (
@@ -203,7 +204,7 @@ export const ProgressBar = props => {
                   {steps.map((item, index) => (
                      <Step
                         key={item.title}
-                        title={t(item.title)}
+                        title={formatMessage({ id: item.title })}
                         style={{
                            color: `${config.kioskSettings.theme.primaryColor.value}`,
                         }}

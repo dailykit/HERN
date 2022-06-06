@@ -57,6 +57,7 @@ import { useDnd } from '../../../../../../shared/components/DragNDrop/useDnd'
 import { from } from 'apollo-link'
 import { InventoryBundleContext } from '../../../../context/product/inventoryBundle'
 import _ from 'lodash'
+
 const ProductOptions = ({ productId, productName, options, productData }) => {
    const SERVING_TUNNEL_TYPES = ['mealKit', 'readyToEat', 'Meal Kit']
 
@@ -446,8 +447,24 @@ const Option = ({
 
    React.useEffect(() => {
       setHistory({ ...option })
-   }, [option.label, option.price, option.discount, option.quantity])
+   }, [option.label, option.price, option.discount, option.quantity, option.isPublished, option.isAvailable])
 
+   const [isPublished, setIsPublished] = React.useState({
+      value: option.isPublished || '',
+      meta: {
+         isTouched: false,
+         isValid: true,
+         errors: [],
+      },
+   })
+   const [isAvailable, setIsAvailable] = React.useState({
+      value: option.isAvailable || '',
+      meta: {
+         isTouched: false,
+         isValid: true,
+         errors: [],
+      },
+   })
    const [label, setLabel] = React.useState({
       value: option.label || '',
       meta: {
@@ -879,9 +896,10 @@ const Option = ({
                      id={`discount-${option.id}`}
                      name={`discount-${option.id}`}
                      onBlur={() => handleBlur('discount')}
-                     onChange={e =>
-                        setDiscount({ ...discount, value: e.target.value })
-                     }
+                     onChange={e =>{
+                        if(e.target.value>100){ e.target.value=discount.value; return };
+                        return setDiscount({ ...discount, value: e.target.value })
+                     }}
                      value={discount.value}
                      placeholder="Enter discount"
                      hasError={
@@ -889,6 +907,8 @@ const Option = ({
                      }
                   />
                </Flex>
+               <Spacer xAxis size="32px" />
+               
                <Spacer xAxis size="32px" />
                <Flex width="265px" style={{ marginBottom: '22px' }}>
                   <Form.Label title="option-type">Type</Form.Label>
@@ -920,7 +940,8 @@ const Option = ({
       //    .groupBy("label")
       //    .map((value, key) => ({ label: key, additionalModifiers: value }))
       //    .value()
-      console.log("option", option);
+      // console.log("option", option);
+
 
       return (
          <>
@@ -991,8 +1012,17 @@ const Option = ({
                   <Checkbox
                      id='label'
                      checked={productData.defaultProductOptionId === option.id ? true : false}
-                     onChange={productData.defaultProductOptionId === option.id ?
-                        handleRemoveDefaultProductOption : handleDefaultProductOption}
+                     onChange={
+                        productData.defaultProductOptionId === option.id ?
+                        handleRemoveDefaultProductOption : 
+                        (
+                           (option.isAvailable && option.isPublished)?
+                           handleDefaultProductOption : 
+                           ()=>{
+                              window.alert("the product option must be published and available to be default option")
+                           }
+                        )
+                     }
                      isAllSelected={false}
                   >
                      Default Product Option
@@ -1030,7 +1060,80 @@ const Option = ({
                <ComboButton type="ghost" onClick={handleAdditionalAddModifier}>
                   <PlusIcon /> Add Additional Modifiers
                </ComboButton>
+            
+               <Flex container>
+               <Form.Toggle
+               name={`${option.name}-${option.id}-Publish`}
+               value={option.isPublished}
+               onChange={() => {
+                  if(productData.defaultProductOptionId === option.id){
+                     if(window.confirm("You are going to switch off you default product option")){
+                        updateProductOption({
+                           variables: {
+                              id: option.id,
+                              _set: {
+                                 isPublished: !option.isPublished,
+                              },
+                           },
+                        })
+                        // to nullify the default product option
+                        handleRemoveDefaultProductOption()
+                     }
+                  }
+                  else{   updateProductOption({
+                        variables: {
+                           id: option.id,
+                           _set: {
+                              isPublished: !option.isPublished,
+                           },
+                        },
+                     })
+                  }
+               }}
+            >
+               <Flex container alignItems="center">
+                  Published 
+               </Flex>
+            </Form.Toggle>
             </Flex>
+            <Spacer xAxis size="32px" />
+               <Flex container>
+               <Form.Toggle
+               name={`${option.name}-${option.id}-Available`}
+               value={option.isAvailable}
+               onChange={() => {
+                  if(productData.defaultProductOptionId === option.id){
+                     if(window.confirm("You are going to switch off you default product option")){
+                        updateProductOption({
+                           variables: {
+                              id: option.id,
+                              _set: {
+                                 isAvailable: !option.isAvailable,
+                              },
+                           },
+                        })
+                        // to nullify the default product option
+                        handleRemoveDefaultProductOption()
+                     }
+                  }
+                  else{   updateProductOption({
+                        variables: {
+                           id: option.id,
+                           _set: {
+                              isAvailable: !option.isAvailable,
+                           },
+                        },
+                     })
+                  }
+               }}
+            >
+               <Flex container alignItems="center">
+                  Availability
+               </Flex>
+            </Form.Toggle>
+            </Flex>
+            </Flex>
+         
          </>
       )
    }

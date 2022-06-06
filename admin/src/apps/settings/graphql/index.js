@@ -845,10 +845,11 @@ export const DEVICES = {
       }
    `,
    PRINTNODE_DETAILS: gql`
-      query admins {
-         admins: organizationAdmins {
-            email
-            password: printNodePassword
+      query PRINT_NODE_CONFIG($where: deviceHub_config_bool_exp!) {
+         printNodeConfigs: configs(where: $where) {
+            id
+            name
+            value
          }
       }
    `,
@@ -1067,3 +1068,42 @@ export const SCOPE_SELECTOR = gql`
       }
    }
 `
+export const ENVS = {
+   LIST: gql`
+      subscription envsList {
+         settings_env(
+            order_by: { config: desc_nulls_last }
+            where: { isUserInput: { _eq: true } }
+         ) {
+            config
+            id
+            title
+            belongsTo
+         }
+      }
+   `,
+   UPDATE: gql`
+      mutation updateEnv($id: Int!, $_set: settings_env_set_input!) {
+         update_settings_env(where: { id: { _eq: $id } }, _set: $_set) {
+            affected_rows
+            returning {
+               id
+               config
+            }
+         }
+      }
+   `,
+   CREATE: gql`
+      mutation createEnvs($objects: [settings_env_insert_input!]!) {
+         insert_settings_env(
+            on_conflict: { constraint: env_title_belongsTo_key }
+            objects: $objects
+         ) {
+            affected_rows
+            returning {
+               title
+            }
+         }
+      }
+   `,
+}

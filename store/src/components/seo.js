@@ -2,7 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import Head from 'next/head'
 
-export const SEO = ({ seoSettings, richresult, children }) => {
+export const SEO = ({ seoSettings, children }) => {
    const {
       metaTitle,
       metaDescription,
@@ -17,6 +17,7 @@ export const SEO = ({ seoSettings, richresult, children }) => {
       googleAnalyticsId,
       facebookPixelId,
       additionalTags,
+      richResults,
    } = seoSettings
 
    return (
@@ -28,6 +29,7 @@ export const SEO = ({ seoSettings, richresult, children }) => {
             content={metaDescription || ''}
             name="description"
          />
+         {console.log(richResults, "richResults")}
          {/* additionalTags if any */}
          {additionalTags?.length > 0 &&
             additionalTags.map((obj, index) => {
@@ -90,9 +92,12 @@ export const SEO = ({ seoSettings, richresult, children }) => {
                />
             </noscript>
          )}
-         {richresult && (
-            <script type="application/ld+json"> {richresult} </script>
-         )}
+
+         {richResults && (
+            <script
+               type="application/ld+json"
+               dangerouslySetInnerHTML={{ __html: JSON.stringify(richResults) }} />)}
+
          {children}
       </Head>
    )

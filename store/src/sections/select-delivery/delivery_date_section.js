@@ -37,7 +37,8 @@ export const DeliveryDateSection = () => {
    )
    //config properties
    const { configOf } = useConfig('Select-Delivery')
-   const noDatesAvailable = configOf('delivery-day')?.Delivery?.unavailableDateLabel
+   const noDatesAvailable =
+      configOf('delivery-day')?.Delivery?.unavailableDateLabel
    const getStartedDate = configOf('delivery-day')?.Delivery?.getStarted
 
    React.useEffect(() => {
@@ -46,10 +47,10 @@ export const DeliveryDateSection = () => {
             variables: {
                id: state.delivery.selected.id,
                where: {
-                  subscriptionOccurenceView: {
-                     isValid: { _eq: true },
-                     isVisible: { _eq: true },
-                  },
+                  isValid: { _eq: true },
+                  isVisible: { _eq: true },
+                  // subscriptionOccurenceView: {
+                  // },
                },
             },
          })
@@ -73,14 +74,19 @@ export const DeliveryDateSection = () => {
       dispatch({ type: 'SET_SKIP_LIST', payload: skipList })
    }
 
-
    if (loading) return <Loader inline />
    if (Object.keys(state.delivery.selected).length === 0)
       return (
          <>
             <HelperBar type="info">
                <HelperBar.SubTitle>
-                  {(getStartedDate?.value) ? <span data-translation="true">{getStartedDate?.value}</span> : t('Select a delivery day to get started')}
+                  {getStartedDate?.value ? (
+                     <span data-translation="true">
+                        {getStartedDate?.value}
+                     </span>
+                  ) : (
+                     t('Select a delivery day to get started')
+                  )}
                </HelperBar.SubTitle>
             </HelperBar>
          </>
@@ -91,12 +97,7 @@ export const DeliveryDateSection = () => {
          <HelperBar type="warning">
             <HelperBar.SubTitle>
                {noDatesAvailable?.value ? (
-                  <span
-                     data-translation="true"
-
-                  >
-                     {noDatesAvailable?.value}
-                  </span>
+                  <span data-translation="true">{noDatesAvailable?.value}</span>
                ) : (
                   t('No dates are available for delivery on this address.')
                )}

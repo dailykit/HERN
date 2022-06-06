@@ -53,7 +53,8 @@ import CrossIcon from './Cross'
 import LocationMarkerIcon from './LocationMarker'
 import ForwardIcon from './ForwardArrows'
 import UnionIcon from './Union'
-
+import DragIcon from './Drag'
+import LocalBusinessIcon from './LocalBusinessIcon'
 export {
    SearchIcon,
    AddIcon,
@@ -110,6 +111,8 @@ export {
    LocationMarkerIcon,
    ForwardIcon,
    UnionIcon,
+   DragIcon,
+   LocalBusinessIcon
 }
 
 export * from './Tick'

@@ -4,7 +4,8 @@ import Down from './Down'
 import PublishIcon from './Publish'
 import UnPublishIcon from './Unpublish'
 import LocationMarkerIcon from './LocationMarkerDailyKit'
-
+import DragIcon from './Drag'
+import CheckIcon from './Check'
 export {
    MenuIcon,
    CloseIcon,
@@ -12,4 +13,6 @@ export {
    PublishIcon,
    UnPublishIcon,
    LocationMarkerIcon,
+   DragIcon,
+   CheckIcon,
 }

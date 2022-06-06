@@ -34,6 +34,9 @@
 @use './components/userAddressList.scss';
 @use './components/googleSuggestionsList.scss';
 @use './components/modifierOptionCard.scss';
+@use './components/hernImage.scss';
+@use './components/skeleton.scss';
+@use './components/wallet-top-up.scss';
 
 @use './sections/register';
 @use './sections/our-plans';
@@ -80,3 +83,5 @@
 @use './sections/testimonials.scss';
 @use './sections/featured-coupon.scss';
 @use './sections/faq.scss';
+@use './components/delivery_progress.scss';
+@use './components/empty.scss';

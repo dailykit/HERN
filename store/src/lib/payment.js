@@ -34,10 +34,9 @@ import {
    PaymentProcessingModal,
    PrintProcessingModal,
 } from '../components'
-import { isEmpty, set } from 'lodash'
 
 const PaymentContext = createContext()
-const inititalState = {
+const initialState = {
    profileInfo: {
       firstName: '',
       lastName: '',
@@ -57,6 +56,8 @@ const inititalState = {
       printStatus: 'not-started',
       message: '',
    },
+   onPaymentSuccessCallback: () => {},
+   onPaymentCancelCallback: () => {},
 }
 
 const reducer = (state, action) => {
@@ -86,10 +87,11 @@ const reducer = (state, action) => {
 
 export const PaymentProvider = ({ children }) => {
    const router = useRouter()
-   const [state, dispatch] = useReducer(reducer, inititalState)
+   const [state, dispatch] = useReducer(reducer, initialState)
    const [isPaymentLoading, setIsPaymentLoading] = useState(true)
    const [cartId, setCartId] = useState(null)
    const [cartPayment, setCartPayment] = useState(null)
+   const [cartPaymentId, setCartPaymentId] = useState(null)
    const [isProcessingPayment, setIsProcessingPayment] = useState(false)
    const [isPaymentInitiated, setIsPaymentInitiated] = useState(false)
    const { user, isAuthenticated, isLoading } = useUser()
@@ -109,22 +111,31 @@ export const PaymentProvider = ({ children }) => {
    const ALLOW_POSIST_PUSH_ORDER = get_env('ALLOW_POSIST_PUSH_ORDER')
    const brand = configOf('Brand Info', 'brand')
    const theme = configOf('theme-color', 'Visual')?.themeColor
+
    // subscription to get cart payment info
    const {
       data: { cartPayments: cartPaymentsFromQuery = [] } = {},
       error: hasCartPaymentError,
       loading: isCartPaymentLoading,
    } = useSubscription(GET_CART_PAYMENT_INFO, {
-      skip: !cartId,
+      skip: !cartPaymentId && !cartId, // When cartId is not available use cartPaymentId to get the cartPayments
       fetchPolicy: 'no-cache',
       variables: {
          where: {
             isResultShown: {
                _eq: false,
             },
-            cartId: {
-               _eq: cartId,
-            },
+            ...(cartPaymentId
+               ? {
+                    id: {
+                       _eq: cartPaymentId,
+                    },
+                 }
+               : {
+                    cartId: {
+                       _eq: cartId,
+                    },
+                 }),
          },
       },
    })
@@ -229,6 +240,8 @@ export const PaymentProvider = ({ children }) => {
             },
          })
       }
+      // Calling onPaymentCancel Callback which is passed in PaymentOptionRenderer Component
+      state.onPaymentCancelCallback()
    }
    const onPaymentModalClose = async () => {
       await updateCartPayment({
@@ -251,6 +264,8 @@ export const PaymentProvider = ({ children }) => {
          type: 'UPDATE_INITIAL_STATE',
          payload: {
             isPaymentProcessing: false,
+            isPaymentInitiated: false,
+            paymentLifeCycleState: '',
          },
       })
       const url = isClient ? get_env('BASE_BRAND_URL') : ''
@@ -261,14 +276,22 @@ export const PaymentProvider = ({ children }) => {
       console.log('result', data)
    }
 
-   const initializePayment = requiredCartId => {
-      setCartId(requiredCartId)
+   const initializePayment = (
+      requiredCartId,
+      cartPaymentId,
+      paymentLifeCycleState = 'INITIALIZE'
+   ) => {
+      if (requiredCartId) {
+         setCartId(requiredCartId)
+      } else if (cartPaymentId) {
+         setCartPaymentId(cartPaymentId)
+      }
       setIsPaymentInitiated(true)
       setIsProcessingPayment(true)
       dispatch({
          type: 'UPDATE_INITIAL_STATE',
          payload: {
-            paymentLifeCycleState: 'INITIALIZE',
+            paymentLifeCycleState,
          },
       })
    }
@@ -286,7 +309,7 @@ export const PaymentProvider = ({ children }) => {
             },
          },
       })
-      if (!isEmpty(settings) && isClient) {
+      if (!_isEmpty(settings) && isClient) {
          const path =
             settings['printing']?.['KioskCustomerTokenTemplate']?.path?.value
          const DATA_HUB_HTTPS = get_env('DATA_HUB_HTTPS')
@@ -395,10 +418,18 @@ export const PaymentProvider = ({ children }) => {
 
    // setting cartPayment in state
    useEffect(() => {
-      if (!isEmpty(cartPaymentsFromQuery)) {
+      if (!cartId && !cartPaymentId) {
+         setCartId(cartState?.cart?.id || null)
+      }
+      if (!_isEmpty(cartPaymentsFromQuery)) {
          setCartPayment(cartPaymentsFromQuery[0])
+         setCartId(cartPaymentsFromQuery[0].cartId)
+         setIsPaymentInitiated(true)
+         setIsProcessingPayment(true)
       } else {
          setCartPayment(null)
+         setIsPaymentInitiated(false)
+         setIsProcessingPayment(false)
       }
    }, [cartPaymentsFromQuery])
 
@@ -437,15 +468,24 @@ export const PaymentProvider = ({ children }) => {
 
    // initiating payment flow (this is required after coming back from paytm payment page)
    useEffect(() => {
-      if (
-         !_isEmpty(router.query) &&
-         _has(router.query, 'payment') &&
-         _has(router.query, 'id') &&
-         router.query.id
-      ) {
+      if (!_isEmpty(router.query) && _has(router.query, 'payment')) {
          setIsPaymentInitiated(true)
          setIsProcessingPayment(true)
-         setCartId(router.query.id)
+         if (_has(router.query, 'id') && router.query.id) {
+            setCartId(router.query.id)
+         } else if (_has(router.query, 'paymentId') && router.query.paymentId) {
+            setCartPaymentId(router.query.paymentId)
+            let updatedURL = new URL(
+               `${window.location.origin}${router.asPath}`
+            )
+            updatedURL.searchParams.delete('payment')
+            updatedURL.searchParams.delete('paymentId')
+            router.replace(
+               `${updatedURL.pathname}${updatedURL.search}`,
+               undefined,
+               { shallow: true }
+            )
+         }
       }
    }, [router.query])
 
@@ -467,7 +507,7 @@ export const PaymentProvider = ({ children }) => {
    useEffect(() => {
       if (
          cartPayment?.paymentStatus === 'SUCCEEDED' &&
-         ALLOW_POSIST_PUSH_ORDER === 'true'
+         ALLOW_POSIST_PUSH_ORDER === true
       ) {
          console.log(
             'inside terminal payment useffect',
@@ -478,21 +518,14 @@ export const PaymentProvider = ({ children }) => {
             await createPosistOrder()
          })()
       }
+      if (cartPayment?.paymentStatus === 'SUCCEEDED') {
+         // Calling onPaymentCancel Callback which is passed in PaymentOptionRenderer Component
+         state.onPaymentSuccessCallback()
+      }
    }, [cartPayment?.paymentStatus])
 
    // useEffect which checks the payment company and payment related status and does required actions
    useEffect(() => {
-      // console.log(
-      //    'useEffect=>',
-      //    !_isEmpty(cartPayment),
-      //    !_isEmpty(cartPayment?.transactionRemark),
-      //    _has(
-      //       cartPayment,
-      //       'availablePaymentOption.supportedPaymentOption.supportedPaymentCompany.label'
-      //    ),
-      //    !isCartPaymentLoading
-      // )
-
       if (
          isPaymentInitiated &&
          !_isEmpty(cartPayment) &&
@@ -521,12 +554,14 @@ export const PaymentProvider = ({ children }) => {
                      brand,
                      theme,
                      paymentInfo: cartPayment.availablePaymentOption,
-                     profileInfo: cartPayment.cart.customerInfo,
+                     profileInfo: cartPayment?.cart?.customerInfo,
                      ondismissHandler: () => onCancelledHandler(),
                      eventHandler,
                   })
                   console.log('options', options)
-                  await displayRazorpay(options)
+                  if (state.paymentLifeCycleState === 'INITIALIZE') {
+                     await displayRazorpay(options)
+                  }
                })()
             }
          } else if (

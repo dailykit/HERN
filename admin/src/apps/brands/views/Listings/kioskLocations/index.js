@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { toast } from 'react-toastify'
 import { useMutation, useSubscription } from '@apollo/react-hooks'
 import { reactFormatter, ReactTabulator } from '@dailykit/react-tabulator'
@@ -11,6 +11,7 @@ import {
    Tunnels,
    useTunnel,
    TextButton,
+   Spacer,
 } from '@dailykit/ui'
 import { KIOSK, BRANDS } from '../../../graphql'
 import tableOptions from '../../../tableOption'
@@ -34,13 +35,15 @@ export const KioskLocations = () => {
    const tableRef = React.useRef()
    const { tab, addTab } = useTabs()
    const { loading } = useMutation(BRANDS.CREATE_BRAND)
+   const [isLoading, setIsLoading] = React.useState(true)
+   const [kioskList, setKioskList] = React.useState([])
 
    const [deleteKiosk] = useMutation(KIOSK.UPDATE_KIOSK, {
       onCompleted: () => {
-         toast.success('KIOSK deleted!')
+         toast.success('KIOSK inActive!')
       },
       onError: error => {
-         console.log(error)
+         // console.log(error)
          toast.error('Could not delete!')
       },
    })
@@ -50,7 +53,19 @@ export const KioskLocations = () => {
       error,
       loading: listLoading,
       data: { kiosk = {} } = {},
-   } = useSubscription(KIOSK.LIST)
+   } = useSubscription(KIOSK.LIST, {
+      onSubscriptionData: ({ subscriptionData }) => {
+         const kiosks = subscriptionData.data.kiosk.nodes.map(eachKiosk => {
+            eachKiosk.isKioskRunningLive =
+               moment
+                  .duration(moment().diff(moment(eachKiosk.lastActiveTime)))
+                  .asSeconds() < 65
+            return eachKiosk
+         })
+         setKioskList(kiosks)
+         setIsLoading(false)
+      },
+   })
 
    React.useEffect(() => {
       if (!tab) {
@@ -105,6 +120,13 @@ export const KioskLocations = () => {
          maxWidth: 500,
       },
       {
+         title: 'ID',
+         field: 'id',
+         headerSort: true,
+         headerFilter: true,
+         width: 100,
+      },
+      {
          title: 'Domain',
          field: 'accessUrl',
          headerSort: true,
@@ -116,6 +138,20 @@ export const KioskLocations = () => {
                tooltip(identifier)?.description || column.getDefinition().title
             )
          },
+      },
+      {
+         title: 'Last Update',
+         field: 'lastActiveTime',
+         headerSort: true,
+         width: 200,
+         formatter: reactFormatter(<DateFormatter field={'lastActiveTime'} />),
+      },
+      {
+         title: 'Live Running Status',
+         field: 'isKioskRunningLive',
+         headerSort: true,
+         formatter: reactFormatter(<LiveRunningStatusFormatter />),
+         width: 200,
       },
       {
          title: 'Printer',
@@ -130,11 +166,13 @@ export const KioskLocations = () => {
             )
          },
       },
+
       {
          title: 'Status',
          field: 'isActive',
          headerSort: true,
          headerFilter: true,
+         width: 50,
          // formatter: cell => cell.getData().isActive || 'N/A',
          formatter: reactFormatter(<ActiveFormatter />),
          headerTooltip: function (column) {
@@ -161,19 +199,15 @@ export const KioskLocations = () => {
             )
          },
       },
-      //    {
-      //       title: 'Created At',
-      //       field: 'created_at',
-      //       headerFilter: true,
-      //       formatter: reactFormatter(<DateFormatter />),
-      //    },
    ])
 
    if (error) {
       toast.error('Something went wrong!')
       logger(error)
    }
-   if (listLoading) return <InlineLoader />
+
+   if (listLoading || isLoading) return <InlineLoader />
+
    return (
       <StyledWrapper>
          {/* <Banner id="brands-app-brands-listing-top" /> */}
@@ -186,11 +220,9 @@ export const KioskLocations = () => {
             </Flex>
             <div style={{ display: 'flex', gap: '10px' }}>
                <TextButton
-                  type="solid"
+                  type="outline"
                   align="left"
-                  onClick={() =>
-                     addTab('kioskReport', '/brands/kiosks/kioskReport/table')
-                  }
+                  onClick={() => addTab('kioskReport', '/brands/kiosks/report')}
                >
                   Kiosk Report
                </TextButton>
@@ -208,7 +240,7 @@ export const KioskLocations = () => {
                <ReactTabulator
                   ref={tableRef}
                   columns={columns}
-                  data={kiosk?.nodes || []}
+                  data={kioskList}
                   options={{
                      ...tableOptions,
                      placeholder: 'No Kiosks Available Yet !',
@@ -255,7 +287,7 @@ function KioskName({ cell, addTab }) {
             alignItems="center"
          >
             <p
-               title="Click to view this brand"
+               title="Click to view this Kiosk"
                style={{
                   width: '230px',
                   whiteSpace: 'nowrap',
@@ -272,6 +304,32 @@ function KioskName({ cell, addTab }) {
    )
 }
 
+const LiveRunningStatusFormatter = ({ cell }) => {
+   const data = cell.getData()
+   // console.log('dataFo', data)
+   return (
+      <Flex>
+         <Flex container alignItems="center">
+            <div
+               style={{
+                  width: '10px',
+                  height: '10px',
+                  borderRadius: '5px',
+                  backgroundColor: `${
+                     data.isKioskRunningLive ? '#2EB086' : '#FF4949'
+                  }`,
+               }}
+            ></div>
+            <Spacer size="10px" xAxis />
+            <div>{data.isKioskRunningLive ? 'Active' : 'In Active'}</div>
+         </Flex>
+         {/* <div>{`(Last Active time: ${moment(data.lastActiveTime).format(
+            'DD-MM-YYYY HH:mm:ss'
+         )})`}</div> */}
+      </Flex>
+   )
+}
+
 const ActiveFormatter = ({ cell }) => {
    const data = cell.getData()
    return (
@@ -282,12 +340,12 @@ const ActiveFormatter = ({ cell }) => {
       </Flex>
    )
 }
-const DateFormatter = ({ cell }) => {
+const DateFormatter = ({ cell, field }) => {
    const data = cell.getData()
    return (
       <>
          <Text as="text1">
-            {moment(data.created_at).format('DD-MM-YYYY hh:mm A')}
+            {moment(data[field]).format('DD-MM-YYYY hh:mm A')}
          </Text>
       </>
    )

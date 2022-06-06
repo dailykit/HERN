@@ -3,10 +3,9 @@ import classNames from 'classnames'
 import { CloseIcon } from '../../assets/icons'
 import { Loader } from '../index'
 import { useConfig } from '../../lib'
-import _ from 'lodash'
+// import _ from 'lodash'
 import LocationSelectorConfig from '../locatoinSeletorConfig.json'
 import { Divider } from 'antd'
-import 'antd/dist/antd.css'
 import { Delivery, Pickup, DineIn } from './index'
 import { useOnClickOutside, useScript, isClient, get_env } from '../../utils'
 import { useTranslation } from '../../context'
@@ -115,7 +114,7 @@ export const LocationSelector = props => {
                   </button>
                )}
             {(orderTabFulfillmentType.includes('ONDEMAND_DINEIN') ||
-               orderTabFulfillmentType.includes('SCHEDULED_DINEIN')) &&
+               orderTabFulfillmentType.includes('PREORDER_DINEIN')) &&
                availableFulFillmentType.includes('DINEIN') && (
                   <button
                      className={classNames(
@@ -132,7 +131,7 @@ export const LocationSelector = props => {
                            x =>
                               x.orderFulfillmentTypeLabel ===
                                  'ONDEMAND_DINEIN' ||
-                              x.orderFulfillmentTypeLabel === 'SCHEDULED_DINEIN'
+                              x.orderFulfillmentTypeLabel === 'PREORDER_DINEIN'
                         ).label
                      }
                   </button>

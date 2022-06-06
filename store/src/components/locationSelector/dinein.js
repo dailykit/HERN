@@ -1,16 +1,20 @@
-import React, { useState, useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
+import { Modal, Radio, Skeleton } from 'antd'
 import classNames from 'classnames'
-import { Divider, Radio, Modal, Skeleton } from 'antd'
-import { useConfig } from '../../lib'
-import { get_env, useScript, isClient } from '../../utils'
-import { getStoresWithValidations } from '../../utils'
 import GooglePlacesAutocomplete from 'react-google-places-autocomplete'
-import LocationSelectorConfig from '../locatoinSeletorConfig.json'
-import { StoreList } from '../locationSelector/storeList'
-import { GPSIcon, NotFound } from '../../assets/icons'
 import { GoogleSuggestionsList, Loader } from '..'
-import { AddressInfo } from './addressInfo'
+import { GPSIcon, NotFound } from '../../assets/icons'
 import { useTranslation } from '../../context'
+import { useConfig } from '../../lib'
+import {
+   getStoresWithValidations,
+   get_env,
+   isClient,
+   useScript,
+} from '../../utils'
+import { StoreList } from '../locationSelector/storeList'
+import LocationSelectorConfig from '../locatoinSeletorConfig.json'
+import { AddressInfo } from './addressInfo'
 
 // dine in section
 export const DineIn = props => {
@@ -57,6 +61,10 @@ export const DineIn = props => {
          ? 'ONDEMAND_DELIVERY'
          : 'PREORDER_DELIVERY'
    )
+   const [
+      selectedLocationInputDescription,
+      setSelectedLocationInputDescription,
+   ] = useState(null)
 
    const dineInRadioOptions = React.useMemo(() => {
       let options = []
@@ -81,8 +89,8 @@ export const DineIn = props => {
    const [loaded, error] = useScript(
       isClient
          ? `https://maps.googleapis.com/maps/api/js?key=${get_env(
-            'GOOGLE_API_KEY'
-         )}&libraries=places`
+              'GOOGLE_API_KEY'
+           )}&libraries=places`
          : ''
    )
    // location by browser
@@ -124,7 +132,8 @@ export const DineIn = props => {
    useEffect(() => {
       if (userCoordinate.latitude && userCoordinate.longitude) {
          fetch(
-            `https://maps.googleapis.com/maps/api/geocode/json?latlng=${userCoordinate.latitude
+            `https://maps.googleapis.com/maps/api/geocode/json?latlng=${
+               userCoordinate.latitude
             },${userCoordinate.longitude}&key=${get_env('GOOGLE_API_KEY')}`
          )
             .then(res => res.json())
@@ -139,12 +148,19 @@ export const DineIn = props => {
                      .slice(formatted_address.length - 3)
                      .join(',')
                   const address = {}
+                  address.line1 = formatted_address
+                     .slice(0, formatted_address.length - 3)
+                     .join(',')
+                  address.line2 = ''
                   data.results[0].address_components.forEach(node => {
-                     if (node.types.includes('street_number')) {
-                        address.line2 = `${node.long_name} `
+                     if (node.types.includes('sublocality_level_3')) {
+                        address.line2 += `${node.long_name} `
                      }
-                     if (node.types.includes('route')) {
-                        address.line2 += node.long_name
+                     if (node.types.includes('sublocality_level_2')) {
+                        address.line2 += `${node.long_name} `
+                     }
+                     if (node.types.includes('sublocality_level_1')) {
+                        address.line2 += `${node.long_name} `
                      }
                      if (node.types.includes('locality')) {
                         address.city = node.long_name
@@ -201,16 +217,32 @@ export const DineIn = props => {
          fetchStores()
       }
    }, [address, fulfillmentType, brand])
-
+   const SERVER_URL = React.useMemo(() => {
+      const storeMode = process?.env?.NEXT_PUBLIC_MODE || 'production'
+      if (isClient) {
+         return {
+            production: window.location.origin,
+            'full-dev': 'http://localhost:4000',
+            'store-dev': 'http://localhost:4000',
+         }[storeMode]
+      } else {
+         return null
+      }
+   }, [isClient])
    const formatAddress = async input => {
       if (!isClient) return 'Runs only on client side.'
       const response = await fetch(
-         `https://maps.googleapis.com/maps/api/geocode/json?key=${isClient ? get_env('GOOGLE_API_KEY') : ''
-         }&address=${encodeURIComponent(input.description)}`
+         `${SERVER_URL}/server/api/place/details/json?key=${
+            isClient ? get_env('GOOGLE_API_KEY') : ''
+         }&placeid=${input.place_id}&language=en`
       )
+
+      setSelectedLocationInputDescription(input.description)
+
       const data = await response.json()
-      if (data.status === 'OK' && data.results.length > 0) {
-         const [result] = data.results
+      // console.log('this is data', data)
+      if (data.status === 'OK' && data.result) {
+         const result = data.result
          const userCoordinate = {
             latitude: result.geometry.location.lat,
             longitude: result.geometry.location.lng,
@@ -242,7 +274,11 @@ export const DineIn = props => {
          if (address.zipcode) {
             setUserCoordinate(prev => ({ ...prev, ...userCoordinate }))
             setIsGetStoresLoading(true)
-            setAddress({ ...userCoordinate, ...address })
+            setAddress({
+               ...userCoordinate,
+               ...address,
+               searched: input.description,
+            })
          } else {
             showWarningPopup()
          }
@@ -413,6 +449,9 @@ export const DineIn = props => {
                fulfillmentType={fulfillmentType}
                storeDistanceValidation={true}
                address={address}
+               selectedLocationInputDescription={
+                  selectedLocationInputDescription
+               }
             />
          )}
       </div>

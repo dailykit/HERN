@@ -1,11 +1,11 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { isEmpty } from 'lodash'
 import { toast } from 'react-toastify'
 import { useParams } from 'react-router'
 import { Flex, Filler, useTunnel } from '@dailykit/ui'
 import { useQuery, useSubscription } from '@apollo/react-hooks'
 
-import { QUERIES } from '../../../graphql'
+import { GET_BRAND_LOCATION, ORDER_TAB, QUERIES } from '../../../graphql'
 import { logger } from '../../../../../shared/utils'
 import EmptyIllo from '../../../assets/svgs/EmptyIllo'
 import {
@@ -33,6 +33,9 @@ const initial = {
    loyaltyPoints: {},
    productId: null,
    cart: {},
+   location: { id: null },
+   brandLocation: null,
+   orderTabs:[]
 }
 
 const reducers = (state, { type, payload }) => {
@@ -48,6 +51,7 @@ const reducers = (state, { type, payload }) => {
             billing: payload.billing,
             fulfillment: payload.fulfillment,
             loyaltyPoints: payload.loyaltyPoints,
+            location: payload.location,
          }
       case 'SET_CUSTOMER':
          return {
@@ -79,6 +83,17 @@ const reducers = (state, { type, payload }) => {
                paymentStatus,
             },
          }
+      }
+      case 'SET_BRAND_LOCATION':
+         return {
+            ...state,
+            brandLocation: payload,
+         }
+      case 'SET_ORDER_TABS':{
+      return {
+         ...state,
+         orderTabs: payload
+      }
       }
       default:
          return state
@@ -137,6 +152,40 @@ export const ManualProvider = ({ children }) => {
          toast.error('Failed to get customer details, please refresh the page.')
       },
    })
+
+   useQuery(GET_BRAND_LOCATION, {
+      skip: !state.brand?.id || !state.location?.id,
+      variables: {
+         where: {
+            brandId: { _eq: state.brand?.id },
+            locationId: { _eq: state.location?.id },
+         },
+      },
+      onCompleted: ({ brandLocations = [] } = {}) => {
+         if (!isEmpty(brandLocations)) {
+            dispatch({ type: 'SET_BRAND_LOCATION', payload: brandLocations[0] })
+         }
+      },
+   })
+
+   useSubscription(ORDER_TAB, {
+      variables: {
+         where: {
+            isActive: { _eq: true },
+            availableOrderInterfaceLabel: { _eq: 'POS Ordering' },
+            brandId: { _eq: state.brand.id },
+         },
+      },
+      onSubscriptionData: ({subscriptionData}) => {
+         if (subscriptionData.data) {
+            dispatch({
+               type: 'SET_ORDER_TABS',
+               payload: subscriptionData.data.brands_orderTab,
+            })
+         }
+      }
+   })
+
    const { loading, error } = useSubscription(QUERIES.CART.ONE, {
       variables: { id: params.id },
       onSubscriptionData: ({
@@ -167,6 +216,9 @@ export const ManualProvider = ({ children }) => {
                      used: cart.loyaltyPointsUsed,
                      usable: cart.loyaltyPointsUsable,
                   },
+                  location: {
+                     id: cart.locationId,
+                  },
                },
             })
             dispatch({ type: 'SET_CART', payload: cart })
@@ -181,19 +233,6 @@ export const ManualProvider = ({ children }) => {
          setIsCartLoading(false)
       },
    })
-   useQuery(QUERIES.ORGANIZATION, {
-      onCompleted: ({ organizations = [] }) => {
-         if (organizations.length > 0) {
-            const [organization] = organizations
-            dispatch({ type: 'SET_ORGANIZATION', payload: organization })
-         }
-         setOrganizationLoading(false)
-      },
-      onError: () => {
-         setOrganizationLoading(false)
-         toast.error('Failed to fetch organization details!')
-      },
-   })
 
    if (!loading && error) {
       setIsCartLoading(false)
@@ -201,7 +240,7 @@ export const ManualProvider = ({ children }) => {
       toast.error('Something went wrong, please refresh the page.')
       return
    }
-   if (organizationLoading || isCartLoading) return <InlineLoader />
+   if (isCartLoading) return <InlineLoader />
    if (cartError.trim())
       return (
          <Flex container alignItems="center" justifyContent="center">
@@ -227,6 +266,8 @@ export const ManualProvider = ({ children }) => {
             organization: state.organization,
             paymentMethod: state.paymentMethod,
             loyaltyPoints: state.loyaltyPoints,
+            locationId: state.location?.id,
+            brandLocation: state.brandLocation,
             tunnels: {
                address: addressTunnels,
                fulfillment: fulfillmentTunnels,
@@ -235,6 +276,7 @@ export const ManualProvider = ({ children }) => {
                comboComponents: comboComponentTunnels,
                coupons: couponsTunnels,
             },
+            orderTabs:state.orderTabs
          }}
       >
          {children}

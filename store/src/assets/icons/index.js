@@ -99,8 +99,18 @@ const LockIcon = dynamic(() => import('./Lock'))
 const LoginSVG = dynamic(() =>
    import('./Login').then(promise => promise.LoginSVG)
 )
+const LoyaltyPointsIllustration = dynamic(() =>
+   import('./MyLoyaltyPoints').then(
+      promise => promise.LoyaltyPointsIllustration
+   )
+)
 const LoyaltyPointsIcon = dynamic(() =>
    import('./LoyaltyPoints').then(promise => promise.LoyaltyPointsIcon)
+)
+const LoyaltyPointsIllustrationNoTrx = dynamic(() =>
+   import('./MyLoyaltyPoints').then(
+      promise => promise.LoyaltyPointsIllustrationNoTrx
+   )
 )
 const MailIcon = dynamic(() =>
    import('./Mail').then(promise => promise.MailIcon)
@@ -180,6 +190,16 @@ const VegNonVegType = dynamic(() =>
 )
 const WalletIcon = dynamic(() =>
    import('./Wallet').then(promise => promise.WalletIcon)
+)
+const WalletPageIllustration = dynamic(() =>
+   import('./WalletPageIllustration').then(
+      promise => promise.WalletPageIllustration
+   )
+)
+const WalletPageIllustrationResponsive = dynamic(() =>
+   import('./WalletPageIllustration').then(
+      promise => promise.WalletPageIllustrationResponsive
+   )
 )
 const WarningIcon = dynamic(() =>
    import('./Warning').then(promise => promise.WarningIcon)
@@ -266,6 +286,17 @@ const ProfileSidebarIcon = {
    ManageCards,
 }
 
+export * from './DeliveryInfoIcons'
+const EmptyCloche = dynamic(() =>
+   import('./EmptyCloche').then(promise => promise.EmptyCloche)
+)
+const EmptyStore = dynamic(() =>
+   import('./EmptyStore').then(promise => promise.EmptyStore)
+)
+const EmptyReferralIll = dynamic(() =>
+   import('./EmptyReferralIll').then(promise => promise.EmptyReferralIll)
+)
+
 export {
    AddressIcon,
    ArrowLeftIcon,
@@ -303,6 +334,8 @@ export {
    LockIcon,
    LoginSVG,
    LoyaltyPointsIcon,
+   LoyaltyPointsIllustration,
+   LoyaltyPointsIllustrationNoTrx,
    MailIcon,
    Menu,
    MenuIcon,
@@ -346,5 +379,10 @@ export {
    UpVector,
    ProfileSidebarIcon,
    ProductGalleryBG,
+   WalletPageIllustration,
+   WalletPageIllustrationResponsive,
    NoImage,
+   EmptyCloche,
+   EmptyStore,
+   EmptyReferralIll,
 }

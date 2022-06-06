@@ -20,7 +20,11 @@ import {
    CollectionSelector,
    ProductSelector,
    CouponSelector,
+   RadioButton,
    CampaignSelector,
+   RecipeSelector,
+   AnimationSelector,
+   PaymentOptionSelector,
 } from './UIComponents'
 import { Address } from './UIComponents/Address'
 import { useEditMode } from './EditModeContext'
@@ -169,6 +173,7 @@ export const getFieldUI = (
             marginLeft={indentation}
             path={fieldKey}
             onConfigChange={onConfigChange}
+            editMode={editMode}
          />
       )
    } else if (
@@ -312,9 +317,51 @@ export const getFieldUI = (
             editMode={editMode}
          />
       )
+   } else if (
+      field.dataType === 'boolean' &&
+      field.userInsertType === 'radioButton'
+   ) {
+      configUI = (
+         <RadioButton
+            fieldDetail={field}
+            marginLeft={indentation}
+            path={fieldKey}
+            onConfigChange={onConfigChange}
+            editMode={editMode}
+         />
+      )
    } else if (field.userInsertType === 'campaignSelector') {
       configUI = (
          <CampaignSelector
+            fieldDetail={field}
+            marginLeft={indentation}
+            path={fieldKey}
+            onConfigChange={onConfigChange}
+            editMode={editMode}
+         />
+      )
+   } else if (field.userInsertType === 'recipeSelector') {
+      configUI = (
+         <RecipeSelector
+            fieldDetail={field}
+            marginLeft={indentation}
+            path={fieldKey}
+            onConfigChange={onConfigChange}
+            editMode={editMode}
+         />
+      )
+   } else if (field.userInsertType === 'animationSelector') {
+      configUI = (
+         <AnimationSelector
+            fieldDetail={field}
+            marginLeft={indentation}
+            path={fieldKey}
+            onConfigChange={onConfigChange}
+         />
+      )
+   } else if (field.userInsertType === 'paymentOptionSelector') {
+      configUI = (
+         <PaymentOptionSelector
             fieldDetail={field}
             marginLeft={indentation}
             path={fieldKey}

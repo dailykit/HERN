@@ -6,26 +6,32 @@ import {
    Divider,
    Button,
    Loader,
+   Empty,
 } from '../../components'
-import { useQuery } from '@apollo/react-hooks'
-import _ from 'lodash'
+import { useQuery, useSubscription } from '@apollo/react-hooks'
+import isEmpty from 'lodash/isEmpty'
 import { CartContext, onDemandMenuContext, useTranslation } from '../../context'
 import { PRODUCTS } from '../../graphql'
 import classNames from 'classnames'
 import * as Scroll from 'react-scroll'
-import CartBar from './CartBar'
 import { useConfig } from '../../lib'
-import { setThemeVariable, getRoute } from '../../utils'
+import {
+   setThemeVariable,
+   getRoute,
+   useIntersectionObserver,
+} from '../../utils'
+import { ModifierPopupForUnAvailability } from '../../components'
 import { useRouter } from 'next/router'
 import { useToasts } from 'react-toast-notifications'
 import { VegNonVegType } from '../../assets/icons'
 import { CustomArea } from '../featuredCollection/productCustomArea'
+import dynamic from 'next/dynamic'
+const CartBar = dynamic(() => import('./CartBar').then(mod => mod.default))
 
 export const OnDemandOrder = ({ config }) => {
-   const router = useRouter()
    const { addToast } = useToasts()
    const { dynamicTrans, locale } = useTranslation()
-   const { brand, locationId, storeStatus } = useConfig()
+   const { brand, locationId, storeStatus, brandLocation } = useConfig()
 
    const menuType = config?.display?.dropdown?.value[0]?.value
       ? config?.display?.dropdown?.value[0]?.value
@@ -65,6 +71,7 @@ export const OnDemandOrder = ({ config }) => {
       true
    const navbarCategoryAlignment =
       config?.display?.navbarCategoryAlignment?.value?.value ?? 'CENTER'
+   const autoPlaySlider = config?.display?.autoPlaySlider?.value ?? false
 
    setThemeVariable('--hern-number-of-products', numberOfProducts)
    setThemeVariable(
@@ -78,14 +85,15 @@ export const OnDemandOrder = ({ config }) => {
    const { cartState, addToCart } = React.useContext(CartContext)
    const { isMenuLoading, allProductIds, categories } = onDemandMenu
 
+   const [productsList, setProductsList] = React.useState([])
+
    const argsForByLocation = React.useMemo(
       () => ({
-         params: {
-            brandId: brand?.id,
-            locationId: locationId,
-         },
+         brandId: brand?.id,
+         locationId: locationId,
+         brand_locationId: brandLocation?.id,
       }),
-      [brand, locationId]
+      [brand, locationId, brandLocation?.id]
    )
    const currentLang = React.useMemo(() => locale, [locale])
    React.useEffect(() => {
@@ -95,52 +103,51 @@ export const OnDemandOrder = ({ config }) => {
       dynamicTrans(languageTags)
    }, [currentLang])
 
-   const { loading: productsLoading, error: productsError } = useQuery(
+   const { loading: productsLoading, error: productsError } = useSubscription(
       PRODUCTS,
       {
          skip: isMenuLoading,
          variables: {
             ids: allProductIds,
-            priceArgs: argsForByLocation,
-            discountArgs: argsForByLocation,
-            defaultCartItemArgs: argsForByLocation,
-            productOptionPriceArgs: argsForByLocation,
-            productOptionDiscountArgs: argsForByLocation,
-            productOptionCartItemArgs: argsForByLocation,
-            modifierCategoryOptionPriceArgs: argsForByLocation,
-            modifierCategoryOptionDiscountArgs: argsForByLocation,
-            modifierCategoryOptionCartItemArgs: argsForByLocation,
+            params: argsForByLocation,
          },
          // fetchPolicy: 'network-only',
-         onCompleted: data => {
+         onSubscriptionData: ({ subscriptionData }) => {
+            const { data } = subscriptionData
             if (data && data.products.length) {
-               const updatedMenu = categories.map(category => {
-                  const updatedProducts = category.products
-                     .map(productId => {
-                        const found = data.products.find(
-                           ({ id }) => id === productId
-                        )
-                        if (found) {
-                           return found
-                        }
-                        return null
-                     })
-                     .filter(Boolean)
-                  return {
-                     ...category,
-                     products: updatedProducts,
-                  }
-               })
-               setStatus('success')
-               setHydratedMenu(updatedMenu)
+               setProductsList(data.products)
             }
-         },
-         onError: error => {
-            setStatus('error')
-            console.log('Error: ', error)
          },
       }
    )
+   React.useEffect(() => {
+      if (productsError) {
+         setStatus('error')
+      }
+   }, [productsError])
+
+   React.useEffect(() => {
+      if (productsList.length && categories.length) {
+         const updatedMenu = categories.map(category => {
+            const updatedProducts = category.products
+               .map(productId => {
+                  const found = productsList.find(({ id }) => id === productId)
+                  if (found) {
+                     return found
+                  }
+                  return null
+               })
+               .filter(Boolean)
+            return {
+               ...category,
+               products: updatedProducts,
+            }
+         })
+         setHydratedMenu(updatedMenu)
+         setStatus('success')
+      }
+   }, [productsList, categories])
+
    const [productModifier, setProductModifier] = useState(null)
    const CustomAreaWrapper = ({ data }) => {
       return (
@@ -162,6 +169,17 @@ export const OnDemandOrder = ({ config }) => {
    if (isMenuLoading || status === 'loading' || productsLoading) {
       return <Loader type="order-loading" />
    }
+   if (isEmpty(hydratedMenu))
+      return (
+         <Empty
+            title="No items !"
+            description="Looks like store is empty. Wait for some time to order yummy items"
+            route="/"
+            buttonLabel="Back to home"
+            illustration="empty-store"
+         />
+      )
+
    const getWrapperClasses = () => {
       if (menuType === 'fixed-top-nav') {
          if (!showCartOnRight) {
@@ -234,74 +252,17 @@ export const OnDemandOrder = ({ config }) => {
                               </p>
                            </div>
                            <div style={{ display: 'flex', flexWrap: 'wrap' }}>
-                              {eachCategory.products.map(
-                                 (eachProduct, index) => {
-                                    const VegNonVegIcon = () => (
-                                       <VegNonVegType
-                                          vegNonVegType={
-                                             eachProduct?.VegNonVegType
-                                          }
-                                       />
-                                    )
-                                    return (
-                                       <div
-                                          key={index}
-                                          className="hern-on-demand-order--product-card"
-                                          style={{
-                                             margin: '0 auto',
-                                             maxWidth:
-                                                numberOfProducts === 4
-                                                   ? '280px'
-                                                   : 'auto',
-                                          }}
-                                       >
-                                          <ProductCard
-                                             iconOnImage={VegNonVegIcon}
-                                             onProductNameClick={() =>
-                                                router.push(
-                                                   getRoute(
-                                                      '/products/' +
-                                                         eachProduct.id
-                                                   )
-                                                )
-                                             }
-                                             onImageClick={() =>
-                                                router.push(
-                                                   getRoute(
-                                                      '/products/' +
-                                                         eachProduct.id
-                                                   )
-                                                )
-                                             }
-                                             key={index}
-                                             data={eachProduct}
-                                             showProductDescription={true}
-                                             showImage={
-                                                eachProduct.assets.images
-                                                   .length > 0
-                                                   ? true
-                                                   : false
-                                             }
-                                             customAreaComponent={
-                                                CustomAreaWrapper
-                                             }
-                                             showModifier={
-                                                productModifier &&
-                                                productModifier.id ===
-                                                   eachProduct.id
-                                             }
-                                             closeModifier={closeModifier}
-                                             customAreaFlex={false}
-                                             modifierWithoutPopup={false}
-                                             modifierPopupConfig={{
-                                                counterButtonPosition: 'BOTTOM',
-                                             }}
-                                             stepView={false}
-                                          />
-                                       </div>
-                                    )
-                                 }
-                              )}
+                              {eachCategory.products.map(eachProduct => (
+                                 <ProductWithIntersection
+                                    key={eachProduct.id}
+                                    eachProduct={eachProduct}
+                                    numberOfProducts={numberOfProducts}
+                                    productModifier={productModifier}
+                                    closeModifier={closeModifier}
+                                    CustomAreaWrapper={CustomAreaWrapper}
+                                    autoPlaySlider={autoPlaySlider}
+                                 />
+                              ))}
                            </div>
                            <Divider />
                         </Scroll.Element>
@@ -318,3 +279,93 @@ export const OnDemandOrder = ({ config }) => {
       </>
    )
 }
+
+const ProductWithIntersection = ({
+   eachProduct,
+   numberOfProducts,
+   productModifier,
+   closeModifier,
+   CustomAreaWrapper,
+   autoPlaySlider,
+}) => {
+   const router = useRouter()
+   const productRef = React.useRef()
+   const { entry, isIntersected } = useIntersectionObserver(productRef, {
+      rootMargin: '100px 0px 100px 0px ',
+   })
+   const isVisible = React.useMemo(
+      () => isIntersected || !!entry?.isIntersecting,
+      [entry, isIntersected]
+   )
+   const VegNonVegIcon = () => (
+      <VegNonVegType vegNonVegType={eachProduct?.VegNonVegType} />
+   )
+
+   if (
+      eachProduct.isPublished &&
+      eachProduct.productOptions.some(ele => ele.isPublished === true)
+   ) {
+      return (
+         <div
+            className={classNames('hern-on-demand-order--product-card', {
+               'hern-on-demand-order--product-card-with-bg': !isVisible,
+            })}
+            style={{
+               margin: '0 auto',
+               maxWidth: numberOfProducts === 4 ? '280px' : 'auto',
+               opacity:
+                  // isProductOutOfStock &&
+                  eachProduct.isAvailable &&
+                  eachProduct.productOptions.some(
+                     ele => ele.isAvailable === true && ele.isPublished === true
+                  )
+                     ? 1
+                     : 0.6,
+            }}
+            ref={productRef}
+         >
+            <ProductWrapper isVisible={isVisible}>
+               <ProductCard
+                  iconOnImage={VegNonVegIcon}
+                  onProductNameClick={() => {
+                     router.push(getRoute('/products/' + eachProduct.id))
+                  }}
+                  onImageClick={() => {
+                     router.push(getRoute('/products/' + eachProduct.id))
+                  }}
+                  data={eachProduct}
+                  showProductDescription={true}
+                  showImage={
+                     eachProduct.assets.images.length > 0 ? true : false
+                  }
+                  customAreaComponent={CustomAreaWrapper}
+                  showModifier={
+                     productModifier && productModifier.id === eachProduct.id
+                  }
+                  closeModifier={closeModifier}
+                  customAreaFlex={false}
+                  modifierWithoutPopup={false}
+                  modifierPopupConfig={{
+                     counterButtonPosition: 'BOTTOM',
+                  }}
+                  stepView={false}
+               />
+            </ProductWrapper>
+         </div>
+      )
+   } else {
+      return <div></div>
+   }
+}
+function productPropsAreEqual(prevProps, nextProps) {
+   return (
+      prevProps.isVisible === nextProps.isVisible &&
+      prevProps.children === nextProps.children
+   )
+}
+const ProductWrapper = React.memo(({ children, isVisible }) => {
+   if (isVisible) {
+      return <>{children}</>
+   }
+   return <></>
+}, productPropsAreEqual)

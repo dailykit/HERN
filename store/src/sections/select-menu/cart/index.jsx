@@ -34,7 +34,6 @@ export const CartPanel = ({ noSkip, isCheckout }) => {
       },
    })
    const [isCartPanelOpen, setIsCartPanelOpen] = React.useState(false)
-
    const onSubmit = async () => {
       try {
          if (isCheckout) {
@@ -112,6 +111,7 @@ export const CartPanel = ({ noSkip, isCheckout }) => {
                         onClick={onSubmit}
                         disabled={
                            !state?.week?.isValid ||
+                           !state?.isCartValidByProductAvailability ||
                            !state?.occurenceCustomer?.validStatus
                               ?.itemCountValid
                         }

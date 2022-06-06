@@ -3,29 +3,25 @@ import moment from 'moment'
 import { toast } from 'react-toastify'
 import {
    Text,
-   Loader,
    Flex,
    IconButton,
    Spacer,
    Dropdown,
    ButtonGroup,
    TextButton,
-   Collapsible,
    DropdownButton,
 } from '@dailykit/ui'
 import { useSubscription, useQuery, useMutation } from '@apollo/react-hooks'
 import { ReactTabulator, reactFormatter } from '@dailykit/react-tabulator'
-import { useLocation } from 'react-router-dom'
+import { useLocation, useParams } from 'react-router-dom'
 import { StyledWrapper } from './styled'
 import { HeadingTile } from '../../../components'
 // import BrandContext from '../../../context/Brand'
 import {
    CUSTOMERS_COUNT,
    TOTAL_REVENUE,
-   CUSTOMERS_LISTING,
    CUSTOMERS_LISTING_2,
    CUSTOMER_ARCHIVED,
-   UNIQUE_SUBSCRIPTION_FILTER_VALUES,
 } from '../../../graphql'
 import {
    Tooltip,
@@ -43,6 +39,7 @@ import { BrandContext } from '../../../../../App'
 
 const CustomerListing = () => {
    const location = useLocation()
+   const brandDetails = useParams()
    // const [context, setContext] = useContext(BrandContext)
    const [brandContext, setBrandContext] = useContext(BrandContext)
 
@@ -65,7 +62,7 @@ const CustomerListing = () => {
    // Subscription
    const { loading, error1 } = useSubscription(TOTAL_REVENUE, {
       variables: {
-         brandId: brandContext.brandId,
+         brandId: brandDetails.brandId,
       },
       onSubscriptionData: data => {
          setRevenue(
@@ -76,7 +73,7 @@ const CustomerListing = () => {
    })
    const { customerCountLoading, error2 } = useSubscription(CUSTOMERS_COUNT, {
       variables: {
-         brandId: brandContext.brandId,
+         brandId: brandDetails.brandId,
       },
       onSubscriptionData: data => {
          setCustomerCount(
@@ -102,7 +99,7 @@ const CustomerListing = () => {
    // Query
    const { loading: listloading } = useQuery(CUSTOMERS_LISTING_2, {
       variables: {
-         brandId: brandContext.brandId,
+         brandId: brandDetails.brandId,
          order_by: [
             { isSubscriber: 'desc' },
             { isSubscriberTimeStamp: 'desc' },
@@ -167,6 +164,13 @@ const CustomerListing = () => {
       }
    }, [addTab, tab])
 
+   useEffect(() => {
+      if (brandContext.brandId)
+         addTab(
+            'Customers',
+            `/crm/customers-${brandContext.brandName}-${brandContext.brandId}`
+         )
+   }, [brandContext.brandId])
    // Handler
    const deleteHandler = (e, Customer) => {
       e.stopPropagation()

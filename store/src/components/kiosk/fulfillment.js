@@ -3,7 +3,6 @@ import { Button } from 'antd'
 import { useCart, useTranslation } from '../../context'
 import { DineInIcon, TakeOutIcon } from '../../assets/icons'
 import { useConfig } from '../../lib'
-import { rrulestr } from 'rrule'
 import moment from 'moment'
 import { isDateValidInRRule } from '../../utils'
 import { DineInTableSelection } from './component'
@@ -18,7 +17,7 @@ export const FulfillmentSection = props => {
       dispatch,
    } = useConfig()
    const { t, direction, dynamicTrans, locale } = useTranslation()
-   console.log('config', config)
+   // console.log('config', config)
    const { methods, setDineInTableInfo, storedCartId } = useCart()
    const [showDineInTableSelection, setShowDineInTableSelection] =
       useState(false)
@@ -28,12 +27,24 @@ export const FulfillmentSection = props => {
       if (kioskRecurrences && kioskRecurrences.length > 0) {
          const now = new Date() // now
          const start = new Date(now.getTime() - 1000 * 60 * 60 * 24) // yesterday
-         const ondemandPickupRecs = kioskRecurrences.filter(
+         let ondemandPickupRecs = kioskRecurrences.filter(
             eachRec => eachRec.recurrence.type === 'ONDEMAND_PICKUP'
          )
-         const ondemandDineinRecs = kioskRecurrences.filter(
+         let ondemandPickupRecurrenceForBrandLocation =
+            ondemandPickupRecs.filter(rec => rec.brandLocationId)
+         if (ondemandPickupRecurrenceForBrandLocation.length > 0) {
+            ondemandPickupRecs = ondemandPickupRecurrenceForBrandLocation
+         }
+
+         let ondemandDineinRecs = kioskRecurrences.filter(
             eachRec => eachRec.recurrence.type === 'ONDEMAND_DINEIN'
          )
+         let ondemandDineinRecurrenceForBrandLocation =
+            ondemandDineinRecs.filter(rec => rec.brandLocationId)
+         if (ondemandDineinRecurrenceForBrandLocation.length > 0) {
+            ondemandDineinRecs = ondemandDineinRecurrenceForBrandLocation
+         }
+
          // return a boolean value for store available or not
          const recurrencesValidation = recurrences => {
             for (let i = 0; i <= recurrences.length - 1; i++) {

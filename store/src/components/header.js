@@ -2,37 +2,34 @@ import React, { useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { signOut } from 'next-auth/client'
+import classNames from 'classnames'
+import { CSSTransition } from 'react-transition-group'
+
 import {
    getProtectedRoutes,
    get_env,
-   // LoginWrapper,
    formatCurrency,
    getStoresWithValidations,
    useQueryParams,
 } from '../utils'
-
-import { CSSTransition } from 'react-transition-group'
-
 import { useUser, CartContext, useTranslation } from '../context'
-import { isClient, getRoute, LocationSelectorWrapper } from '../utils'
+import { isClient, getRoute } from '../utils'
 import { MenuIcon, UserIcon } from '../assets/icons'
-
 import { ProfileSidebar } from './profile_sidebar'
 import { CrossIcon, CartIcon, LocationIcon, DownVector } from '../assets/icons'
-
 import NavigationBar from './navbar'
 import { useWindowSize } from '../utils/useWindowSize'
 import { LanguageSwitch, TemplateFile } from '.'
-import classNames from 'classnames'
 import { useConfig } from '../lib'
-import isEmpty from 'lodash/isEmpty'
 import isNull from 'lodash/isNull'
 import dynamic from 'next/dynamic'
 
-const LoginWrapper = dynamic(
-   () => import('../utils/loginWrapper').then(promise => promise.LoginWrapper),
-   { ssr: false }
+const LocationSelectorWrapper = dynamic(() =>
+   import('../utils/locationSelectorWrapper').then(
+      promise => promise.LocationSelectorWrapper
+   )
 )
+
 const ReactPixel = isClient ? require('react-facebook-pixel').default : null
 
 export const Header = ({ settings, navigationMenus }) => {
@@ -46,7 +43,6 @@ export const Header = ({ settings, navigationMenus }) => {
    } = useConfig()
    const router = useRouter()
    const { width } = useWindowSize()
-   const { deleteAuth } = useConfig()
    const logout = async () => {
       const currentPathName = router.pathname
       const isRouteProtected = Boolean(
@@ -64,7 +60,6 @@ export const Header = ({ settings, navigationMenus }) => {
    const brand = settings['brand']['theme-brand']
    const headerNavigationSettings =
       settings['navigation']?.['header-navigation']?.headerNavigation
-   // console.log('header navigation : ', headerNavigationSettings?.layout.value)
    const showLocationButton =
       settings?.['navigation']?.['Show Location Selector']?.[
          'Location-Selector'
@@ -75,7 +70,6 @@ export const Header = ({ settings, navigationMenus }) => {
 
    const [toggle, setToggle] = React.useState(true)
    const [isMobileNavVisible, setIsMobileNavVisible] = React.useState(false)
-   const [showLoginPopup, setShowLoginPopup] = React.useState(false)
    const [address, setAddress] = useState(null)
    const [, setUserCoordinate] = useState({
       latitude: null,
@@ -88,21 +82,6 @@ export const Header = ({ settings, navigationMenus }) => {
    const { auth: currentAuth } = useQueryParams()
    const { isAuthenticated, isLoading } = useUser()
 
-   React.useEffect(() => {
-      if (isClient) {
-         if (!isLoading) {
-            if (!isAuthenticated) {
-               if (!(isEmpty(currentAuth) || isNull(currentAuth))) {
-                  setShowLoginPopup(true)
-               }
-            } else {
-               if (!(isEmpty(currentAuth) || isNull(currentAuth))) {
-                  deleteAuth('auth')
-               }
-            }
-         }
-      }
-   }, [currentAuth, isClient, isLoading, isAuthenticated])
    const {
       cartState,
       setStoredCartId,
@@ -169,88 +148,103 @@ export const Header = ({ settings, navigationMenus }) => {
                })
                return
             }
-            const geolocation = isClient ? window.navigator.geolocation : false
-            if (geolocation) {
-               const success = position => {
-                  const latitude = position.coords.latitude
-                  const longitude = position.coords.longitude
-                  setUserCoordinate(prev => ({ ...prev, latitude, longitude }))
-                  fetch(
-                     `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=${get_env(
-                        'GOOGLE_API_KEY'
-                     )}`
-                  )
-                     .then(res => res.json())
-                     .then(data => {
-                        if (data?.status === 'OK' && data.results.length > 0) {
-                           const formatted_address =
-                              data.results[0].formatted_address.split(',')
-                           const mainText = formatted_address
-                              .slice(0, formatted_address.length - 3)
-                              .join(',')
-                           const secondaryText = formatted_address
-                              .slice(formatted_address.length - 3)
-                              .join(',')
-                           const address = {}
-                           data.results[0].address_components.forEach(node => {
-                              if (node.types.includes('locality')) {
-                                 address.city = node.long_name
-                              }
+            if (isClient) {
+               window.onload = function () {
+                  const geolocation = isClient
+                     ? window.navigator.geolocation
+                     : false
+                  if (geolocation) {
+                     const success = position => {
+                        const latitude = position.coords.latitude
+                        const longitude = position.coords.longitude
+                        setUserCoordinate(prev => ({
+                           ...prev,
+                           latitude,
+                           longitude,
+                        }))
+                        fetch(
+                           `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=${get_env(
+                              'GOOGLE_API_KEY'
+                           )}`
+                        )
+                           .then(res => res.json())
+                           .then(data => {
                               if (
-                                 node.types.includes(
-                                    'administrative_area_level_1'
-                                 )
+                                 data?.status === 'OK' &&
+                                 data.results.length > 0
                               ) {
-                                 address.state = node.long_name
-                              }
-                              if (node.types.includes('country')) {
-                                 address.country = node.long_name
-                              }
-                              if (node.types.includes('postal_code')) {
-                                 address.zipcode = node.long_name
+                                 const formatted_address =
+                                    data.results[0].formatted_address.split(',')
+                                 const mainText = formatted_address
+                                    .slice(0, formatted_address.length - 3)
+                                    .join(',')
+                                 const secondaryText = formatted_address
+                                    .slice(formatted_address.length - 3)
+                                    .join(',')
+                                 const address = {}
+                                 data.results[0].address_components.forEach(
+                                    node => {
+                                       if (node.types.includes('locality')) {
+                                          address.city = node.long_name
+                                       }
+                                       if (
+                                          node.types.includes(
+                                             'administrative_area_level_1'
+                                          )
+                                       ) {
+                                          address.state = node.long_name
+                                       }
+                                       if (node.types.includes('country')) {
+                                          address.country = node.long_name
+                                       }
+                                       if (node.types.includes('postal_code')) {
+                                          address.zipcode = node.long_name
+                                       }
+                                    }
+                                 )
+                                 setAddress(prev => ({
+                                    ...prev,
+                                    mainText,
+                                    secondaryText,
+                                    latitude,
+                                    longitude,
+                                    ...address,
+                                 }))
+                                 dispatch({
+                                    type: 'SET_USER_LOCATION',
+                                    payload: {
+                                       mainText,
+                                       secondaryText,
+                                       latitude,
+                                       longitude,
+                                       ...address,
+                                    },
+                                 })
                               }
                            })
-                           setAddress(prev => ({
-                              ...prev,
-                              mainText,
-                              secondaryText,
-                              latitude,
-                              longitude,
-                              ...address,
-                           }))
-                           dispatch({
-                              type: 'SET_USER_LOCATION',
-                              payload: {
-                                 mainText,
-                                 secondaryText,
-                                 latitude,
-                                 longitude,
-                                 ...address,
-                              },
+                           .catch(e => {
+                              console.log('error', e)
                            })
-                        }
+                     }
+                     const error = () => {
+                        console.log('this is error')
+                        setShowLocationSelectionPopup(true)
+                        dispatch({
+                           type: 'SET_STORE_STATUS',
+                           payload: {
+                              status: true,
+                              message: 'Please select location.',
+                              loading: false,
+                           },
+                        })
+                     }
+                     geolocation.getCurrentPosition(success, error, {
+                        maximumAge: 60000,
+                        timeout: 15000,
+                        enableHighAccuracy: true,
                      })
-                     .catch(e => {
-                        console.log('error', e)
-                     })
+                  }
                }
-               const error = () => {
-                  console.log('this is error')
-                  setShowLocationSelectionPopup(true)
-                  dispatch({
-                     type: 'SET_STORE_STATUS',
-                     payload: {
-                        status: true,
-                        message: 'Please select location.',
-                        loading: false,
-                     },
-                  })
-               }
-               geolocation.getCurrentPosition(success, error, {
-                  maximumAge: 60000,
-                  timeout: 15000,
-                  enableHighAccuracy: true,
-               })
             }
          }
       }
@@ -259,7 +253,11 @@ export const Header = ({ settings, navigationMenus }) => {
    React.useEffect(() => {
       if (orderTabs.length > 0) {
          const localOrderTabLabel = localStorage.getItem('orderTab')
-         if (localOrderTabLabel) {
+         if (
+            localOrderTabLabel &&
+            localOrderTabLabel != 'undefined' &&
+            localOrderTabLabel != 'null'
+         ) {
             const selectedOrderTab = orderTabs.find(
                x =>
                   x.orderFulfillmentTypeLabel == JSON.parse(localOrderTabLabel)
@@ -360,7 +358,6 @@ export const Header = ({ settings, navigationMenus }) => {
                logout={logout}
                toggle={toggle}
                setToggle={setToggle}
-               setShowLoginPopup={setShowLoginPopup}
                isMobileNavVisible={isMobileNavVisible}
                setIsMobileNavVisible={setIsMobileNavVisible}
                showLocationButton={showLocationButton}
@@ -374,7 +371,6 @@ export const Header = ({ settings, navigationMenus }) => {
                logout={logout}
                toggle={toggle}
                setToggle={setToggle}
-               setShowLoginPopup={setShowLoginPopup}
                isMobileNavVisible={isMobileNavVisible}
                setIsMobileNavVisible={setIsMobileNavVisible}
                showLocationButton={showLocationButton}
@@ -390,16 +386,6 @@ export const Header = ({ settings, navigationMenus }) => {
          {isClient && width < 768 && (
             <ProfileSidebar toggle={toggle} logout={logout} />
          )}
-         {isClient && (
-            <LoginWrapper
-               closeLoginPopup={() => {
-                  setShowLoginPopup(false)
-                  deleteAuth('auth')
-               }}
-               showLoginPopup={showLoginPopup}
-               currentAuth={currentAuth}
-            />
-         )}
       </>
    )
 }
@@ -408,7 +394,6 @@ const LayoutOne = ({
    logout,
    toggle,
    setToggle,
-   setShowLoginPopup,
    isMobileNavVisible,
    setIsMobileNavVisible,
    showLocationButton,
@@ -431,7 +416,6 @@ const LayoutOne = ({
                logout={logout}
                toggle={toggle}
                setToggle={setToggle}
-               setShowLoginPopup={setShowLoginPopup}
                isMobileNavVisible={isMobileNavVisible}
                setIsMobileNavVisible={setIsMobileNavVisible}
                layout="layout-one"
@@ -473,7 +457,6 @@ const LayoutTwo = ({
    logout,
    toggle,
    setToggle,
-   setShowLoginPopup,
    isMobileNavVisible,
    setIsMobileNavVisible,
    showLocationButton,
@@ -501,7 +484,6 @@ const LayoutTwo = ({
                   logout={logout}
                   toggle={toggle}
                   setToggle={setToggle}
-                  setShowLoginPopup={setShowLoginPopup}
                   isMobileNavVisible={isMobileNavVisible}
                   setIsMobileNavVisible={setIsMobileNavVisible}
                   layout="layout-two"
@@ -556,7 +538,9 @@ const LocationInfo = ({ settings, layout, additionalClasses }) => {
 
       const fulfillmentType = selectedOrderTab?.orderFulfillmentTypeLabel
          ? selectedOrderTab?.orderFulfillmentTypeLabel
-         : selectedOrderTabInLocal
+         : selectedOrderTabInLocal &&
+           selectedOrderTabInLocal != 'undefined' &&
+           selectedOrderTabInLocal != 'null'
          ? JSON.parse(selectedOrderTabInLocal)
          : null
 
@@ -575,13 +559,11 @@ const LocationInfo = ({ settings, layout, additionalClasses }) => {
    }, [selectedOrderTab])
 
    const storeAddress = React.useMemo(() => {
-      const storeAddress = isClient
-         ? localStorage.getItem('pickupLocation')
-         : ''
+      const storeAddress = isClient ? localStorage.getItem('storeLocation') : ''
 
       if (storeAddress) {
          const parseStoreAddress = JSON.parse(
-            localStorage.getItem('pickupLocation')
+            localStorage.getItem('storeLocation')
          )
          return parseStoreAddress
       } else {
@@ -641,7 +623,7 @@ const LocationInfo = ({ settings, layout, additionalClasses }) => {
                            (storeAddress.line1 ||
                               '' + storeAddress.line2 ||
                               '')}
-                        {_.isNull(prefix) && t('Please select address...')}
+                        {isNull(prefix) && t('Please select address...')}
                      </div>
                      <div className="hern-header__location-warning">
                         {!storeStatus?.status ? t(storeStatus?.message) : ''}
@@ -709,6 +691,7 @@ const BrandInfo = ({ settings, layout }) => {
 }
 const Navigation = ({ newNavigationMenus, settings, layout }) => {
    const { isAuthenticated, user, isLoading } = useUser()
+   const { t } = useTranslation()
    const isSubscriptionStore =
       settings?.availability?.isSubscriptionAvailable?.Subscription
          ?.isSubscriptionAvailable?.value
@@ -772,14 +755,13 @@ const AuthMenu = ({
    logout,
    toggle,
    setToggle,
-   setShowLoginPopup,
    isMobileNavVisible,
    setIsMobileNavVisible,
    layout,
 }) => {
    const { isAuthenticated, user, isLoading } = useUser()
    const router = useRouter()
-   const { configOf, setAuth } = useConfig()
+   const { configOf } = useConfig()
    const { width } = useWindowSize()
    const theme = configOf('theme-color', 'Visual')?.themeColor
    const isSubscriptionStore =
@@ -791,7 +773,9 @@ const AuthMenu = ({
       showCartIconToolTip,
    } = React.useContext(CartContext)
    const numberOfItemsOnCart =
-      cartState?.cart?.cartItems_aggregate?.aggregate?.count
+      cartState?.cart?.source === 'subscription'
+         ? null
+         : cartState?.cart?.cartItems_aggregate?.aggregate?.count
 
    const loginButtonLabel =
       settings?.brand['Login Illustrations']?.loginButton?.loginbuttonLabel
@@ -816,11 +800,7 @@ const AuthMenu = ({
                      <div
                         className="hern-navbar-cart-tooltip"
                         style={{
-                           backgroundColor: `${
-                              theme?.accent?.value
-                                 ? theme?.accent?.value
-                                 : 'rgba(37, 99, 235, 1)'
-                           }`,
+                           backgroundColor: `var(--hern-accent)`,
                            color: '#ffffff',
                         }}
                      >
@@ -881,13 +861,9 @@ const AuthMenu = ({
                style={{
                   backgroundColor: `var(--hern-accent)`,
                }}
-               onClick={() => {
-                  setShowLoginPopup(true)
-                  setAuth('sign-in')
-               }}
                id="hern-header__global-login-button"
             >
-               {loginButtonLabel}
+               <Link href={getRoute('/login')}>{loginButtonLabel}</Link>
             </button>
          )}
          <button

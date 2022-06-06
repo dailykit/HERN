@@ -1,13 +1,10 @@
-import React from 'react'
-import { Carousel } from 'antd'
-import { Slide } from 'react-slideshow-image'
-import 'react-slideshow-image/dist/styles.css'
-import { formatCurrency, isClient } from '../utils'
-import { ModifierPopup } from './index'
 import classNames from 'classnames'
-import { EditIcon } from '../assets/icons'
+import React from 'react'
+import { Slide } from 'react-slideshow-image'
 import { useTranslation } from '../context'
+import { formatCurrency, isClient } from '../utils'
 import { HernLazyImage } from '../utils/hernImage'
+import { ModifierPopup, ModifierPopupForUnAvailability } from './index'
 // if (isClient) {
 //    import('lazysizes/plugins/unveilhooks/ls.unveilhooks').then(module => module)
 // }
@@ -49,7 +46,9 @@ export const ProductCard = props => {
       className = '',
       config,
       stepView = false,
+      autoPlaySlider = false,
    } = props
+   // console.log('🚀 ~ file: product_card.jsx ~ line 50 ~ data', data)
    const { t, dynamicTrans, locale } = useTranslation()
    const currentLang = React.useMemo(() => locale, [locale])
    const slideRef = React.useRef()
@@ -73,6 +72,9 @@ export const ProductCard = props => {
          data.assets.images.length !== 1 &&
          canSwipe && { canSwipe: canSwipe }),
    }
+   const getPriceWithDiscount = (price, discount) => {
+      return price - (price * discount) / 100
+   }
 
    React.useEffect(() => {
       const languageTags = document.querySelectorAll(
@@ -86,19 +88,20 @@ export const ProductCard = props => {
       if (!useForThirdParty) {
          if (data.isPopupAllowed && data.productOptions.length > 0) {
             return (
-               data.price -
-               data.discount +
-               ((data?.productOptions[0]?.price || 0) -
-                  (data?.productOptions[0]?.discount || 0))
+               getPriceWithDiscount(data.price, data.discount) +
+               getPriceWithDiscount(
+                  data?.productOptions[0]?.price || 0,
+                  data?.productOptions[0]?.discount
+               )
             )
          } else {
-            return data.price - data.discount
+            return getPriceWithDiscount(data.price, data.discount)
          }
       }
       // when using this product card some where else
       else {
          if (data.price > 0) {
-            return data.price - data.discount
+            return getPriceWithDiscount(data.price, data.discount)
          } else {
             return null
          }
@@ -129,7 +132,11 @@ export const ProductCard = props => {
             <div className={classNames('hern-product-card', className)}>
                {showImage && (
                   <div className="hern-product-card-image-container">
-                     <Slide ref={slideRef} {...properties}>
+                     <Slide
+                        ref={slideRef}
+                        infinite={autoPlaySlider}
+                        autoplay={autoPlaySlider}
+                     >
                         {data.assets.images.map((each, index) => {
                            return (
                               <div key={each}>
@@ -259,17 +266,26 @@ export const ProductCard = props => {
                            </div>
                            {showProductPrice && (
                               <div className="hern-product-card__price">
-                                 {useForThirdParty && data.discount > 0 && (
-                                    <span
-                                       style={{
-                                          textDecoration: 'line-through',
-                                       }}
-                                    >
-                                       {formatCurrency(
-                                          data.price - data.discount
-                                       )}
-                                    </span>
-                                 )}
+                                 {!useForThirdParty &&
+                                    (data.discount > 0 ||
+                                       data.productOptions[0]?.discount >
+                                          0) && (
+                                       <span
+                                          style={{
+                                             textDecoration: 'line-through',
+                                             display: 'inline-block',
+                                             padding: '0px 4px',
+                                          }}
+                                       >
+                                          {data.productOptions.length > 0
+                                             ? formatCurrency(
+                                                  data.price +
+                                                     data.productOptions[0]
+                                                        .price
+                                               )
+                                             : formatCurrency(data.price)}
+                                       </span>
+                                    )}
                                  {finalProductPrice() &&
                                     finalProductPrice() > 0 && (
                                        <span style={{ marginLeft: '6px' }}>
@@ -278,12 +294,6 @@ export const ProductCard = props => {
                                     )}
                               </div>
                            )}
-                           {showProductAdditionalText &&
-                              data?.additionalText && (
-                                 <div className="hern-product-card__additional-text">
-                                    {data.additionalText}
-                                 </div>
-                              )}
                         </div>
                      ) : (
                         <div className="hern-product-card-details-2">

@@ -31,7 +31,7 @@ import { Tree } from 'antd'
 import styled from 'styled-components'
 
 import { Products } from './sections'
-import { formatDate } from '../../utils'
+import { formatDate, getRecursiveProducts } from '../../utils'
 import { findAndSelectSachet } from './methods'
 import { ResponsiveFlex, Styles } from './styled'
 import { QUERIES, MUTATIONS, CREATE_PRINT_JOB } from '../../graphql'
@@ -52,8 +52,6 @@ import {
    Banner,
 } from '../../../../shared/components'
 
-import { ChevronRight, ChevronDown } from '../../../../shared/assets/icons'
-
 const isPickup = value => ['ONDEMAND_PICKUP', 'PREORDER_PICKUP'].includes(value)
 
 const address = 'apps.order.views.order.'
@@ -72,7 +70,7 @@ const Order = () => {
    const [addressTunnels, openAddressTunnel, closeAddressTunnel] = useTunnel(1)
    const [isThirdParty, setIsThirdParty] = React.useState(false)
    const [treeviewProduct, setTreeviewProduct] = React.useState([])
-   const [isSwitchedToTreeview, setIsSwitchedToTreeview] = React.useState(false)
+   const [orderedProducts, setOrderedProducts] = React.useState([])
 
    const [updateOrder] = useMutation(MUTATIONS.ORDER.UPDATE, {
       onCompleted: () => {
@@ -123,56 +121,29 @@ const Order = () => {
       skip: !order?.cartId,
       variables: {
          where: {
-            ...(!isSwitchedToTreeview && { levelType: { _eq: 'orderItem' } }),
             cartId: {
                _eq: order?.cartId,
             },
          },
       },
-      onSubscriptionData: ({ subscriptionData: { data = {} } = {} }) => {
-         setIsThirdParty(Boolean(data?.order?.thirdPartyOrderId))
+      onSubscriptionData: ({
+         subscriptionData: { data: { products = [] } = {} } = {},
+      }) => {
+         // setIsThirdParty(Boolean(data?.order?.thirdPartyOrderId))
+         const refinedProducts = getRecursiveProducts(products)
+         setOrderedProducts(refinedProducts)
       },
    })
 
-   const onSelectHandler = (selectedKeys, { selectedNodes }) => {
-      if (!isEmpty(selectedNodes)) {
-         const [selectedNode] = selectedNodes
-         dispatch({
-            type: 'SELECT_PRODUCT',
-            payload: selectedNode,
-         })
-      }
-   }
-
    React.useEffect(() => {
-      if (isSwitchedToTreeview && !productsLoading && !isEmpty(products)) {
-         const treeViewArray = getTreeViewArray({
-            dataset: products,
-            rootIdKeyName: 'id',
-            parentIdKeyName: 'parentCartItemId',
-         })
-         console.log('treeViewArray', treeViewArray)
-         setTreeviewProduct(treeViewArray)
-
+      if (!productsLoading && !isEmpty(products)) {
          const [product] = products
          dispatch({
             type: 'SELECT_PRODUCT',
             payload: product,
          })
       }
-   }, [productsLoading, products, isSwitchedToTreeview])
-
-   // React.useEffect(() => {
-   //    if (!isEmpty(products)) {
-   //       const treeViewArray = getTreeViewArray({
-   //          dataset: products,
-   //          rootIdKeyName: 'id',
-   //          parentIdKeyName: 'parentCartItemId',
-   //       })
-   //       console.log('treeViewArray', treeViewArray)
-   //       setTreeviewProduct(treeViewArray)
-   //    }
-   // }, [products])
+   }, [productsLoading, products])
 
    /*
    React.useEffect(() => {
@@ -326,10 +297,8 @@ const Order = () => {
                args: {
                   name: 'printKOT',
                   payload: {
-                     new: {
-                        id: order.id,
-                        status: 'ORDER_UNDER_PROCESSING',
-                     },
+                     id: order.id,
+                     status: 'ORDER_UNDER_PROCESSING',
                   },
                },
             },
@@ -350,10 +319,9 @@ const Order = () => {
    const viewKOT = React.useCallback(() => {
       const kots = async () => {
          try {
+            const origin = get_env('REACT_APP_DAILYOS_SERVER_URI')
             const { data: { data = {}, success } = {} } = await axios.get(
-               `${get_env('REACT_APP_DAILYOS_SERVER_URI')}/api/kot-urls?id=${
-                  order.id
-               }`
+               `${origin}/api/kot-urls?id=${order.id}`
             )
             if (success) {
                data.forEach(node => window.open(node.url, '_blank'))
@@ -556,17 +524,6 @@ const Order = () => {
                   </>
                )}
             </Flex>
-            <Spacer size="16px" xAxis />
-            <Form.Group>
-               <Form.Toggle
-                  name="tree_view_toggle"
-                  onChange={() => setIsSwitchedToTreeview(prev => !prev)}
-                  value={isSwitchedToTreeview}
-                  size={32}
-               >
-                  Switch to Tree View
-               </Form.Toggle>
-            </Form.Group>
          </ResponsiveFlex>
          <Spacer size="16px" />
 
@@ -679,101 +636,74 @@ const Order = () => {
             )}
          </Flex>
          <Spacer size="8px" />
-         {isSwitchedToTreeview ? (
-            <>
-               {!isEmpty(treeviewProduct) && (
-                  <TreeContainer
-                     blockNode={true}
-                     onSelect={onSelectHandler}
-                     fieldNames={{
-                        title: 'displayName',
-                        key: 'id',
-                        children: 'childNodes',
-                     }}
-                     treeData={treeviewProduct}
-                     switcherIcon={<ChevronRight size="24" color="#aaa" />}
-                  />
-               )}
-            </>
-         ) : (
-            <>
-               {isThirdParty ? (
-                  <HorizontalTabs>
-                     <HorizontalTabList style={{ padding: '0 16px' }}>
-                        <HorizontalTab>Email Content</HorizontalTab>
-                        <HorizontalTab>Products</HorizontalTab>
-                     </HorizontalTabList>
-                     <HorizontalTabPanels>
-                        <HorizontalTabPanel>
-                           {parser.parse(order?.thirdPartyOrder?.emailContent)}
-                        </HorizontalTabPanel>
-                        <HorizontalTabPanel>
-                           {isNull(order.thirdPartyOrder.products) ? (
-                              <Filler message="No products available." />
-                           ) : (
-                              <Styles.Products>
-                                 {order.thirdPartyOrder.products.map(
-                                    (product, index) => (
-                                       <Styles.ProductItem key={index}>
+         <>
+            {isThirdParty ? (
+               <HorizontalTabs>
+                  <HorizontalTabList style={{ padding: '0 16px' }}>
+                     <HorizontalTab>Email Content</HorizontalTab>
+                     <HorizontalTab>Products</HorizontalTab>
+                  </HorizontalTabList>
+                  <HorizontalTabPanels>
+                     <HorizontalTabPanel>
+                        {parser.parse(order?.thirdPartyOrder?.emailContent)}
+                     </HorizontalTabPanel>
+                     <HorizontalTabPanel>
+                        {isNull(order.thirdPartyOrder.products) ? (
+                           <Filler message="No products available." />
+                        ) : (
+                           <Styles.Products>
+                              {order.thirdPartyOrder.products.map(
+                                 (product, index) => (
+                                    <Styles.ProductItem key={index}>
+                                       <Flex
+                                          container
+                                          alignItems="center"
+                                          justifyContent="space-between"
+                                       >
+                                          <span>{product.label}</span>
+                                          <span>
+                                             {currencyFmt(product.price || 0)}
+                                          </span>
+                                       </Flex>
+                                       <Spacer size="14px" />
+                                       <Flex container alignItems="center">
                                           <Flex
+                                             as="span"
                                              container
                                              alignItems="center"
-                                             justifyContent="space-between"
                                           >
-                                             <span>{product.label}</span>
-                                             <span>
-                                                {currencyFmt(
-                                                   product.price || 0
-                                                )}
-                                             </span>
+                                             <UserIcon size={16} />
                                           </Flex>
-                                          <Spacer size="14px" />
-                                          <Flex container alignItems="center">
-                                             <Flex
-                                                as="span"
-                                                container
-                                                alignItems="center"
-                                             >
-                                                <UserIcon size={16} />
-                                             </Flex>
-                                             <Spacer size="6px" xAxis />
-                                             <span>{product.quantity}</span>
-                                          </Flex>
-                                       </Styles.ProductItem>
-                                    )
-                                 )}
-                              </Styles.Products>
-                           )}
-                        </HorizontalTabPanel>
-                     </HorizontalTabPanels>
-                  </HorizontalTabs>
-               ) : (
-                  <HorizontalTabs
-                  // index={tabIndex} onChange={onTabChange}
-                  >
-                     <HorizontalTabList style={{ padding: '0 16px' }}>
-                        {Object.keys(types).map(key => (
-                           <HorizontalTab key={key}>
-                              {key === 'null' ? 'Others' : key}
-                              <span> ({types[key].length})</span>
-                           </HorizontalTab>
-                        ))}
-                     </HorizontalTabList>
-                     <HorizontalTabPanels>
-                        {Object.values(types).map((listing, index) => (
-                           <HorizontalTabPanel key={index}>
-                              <Products
-                                 products={listing}
-                                 loading={productsLoading}
-                                 error={productsError}
-                              />
-                           </HorizontalTabPanel>
-                        ))}
-                     </HorizontalTabPanels>
-                  </HorizontalTabs>
-               )}
-            </>
-         )}
+                                          <Spacer size="6px" xAxis />
+                                          <span>{product.quantity}</span>
+                                       </Flex>
+                                    </Styles.ProductItem>
+                                 )
+                              )}
+                           </Styles.Products>
+                        )}
+                     </HorizontalTabPanel>
+                  </HorizontalTabPanels>
+               </HorizontalTabs>
+            ) : (
+               <HorizontalTabs>
+                  <HorizontalTabList style={{ padding: '0 16px' }}>
+                     <HorizontalTab>
+                        <span>Products</span>
+                     </HorizontalTab>
+                  </HorizontalTabList>
+                  <HorizontalTabPanels>
+                     <HorizontalTabPanel>
+                        <Products
+                           products={orderedProducts}
+                           loading={productsLoading}
+                           error={productsError}
+                        />
+                     </HorizontalTabPanel>
+                  </HorizontalTabPanels>
+               </HorizontalTabs>
+            )}
+         </>
 
          <EditDeliveryTunnel
             tunnels={tunnels}

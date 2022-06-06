@@ -11,7 +11,7 @@ import { HernLazyImage } from '../../utils/hernImage'
 
 export const PromotionCarousal = props => {
    const { config: componentConfig } = props
-   const { brand, locationId } = useConfig()
+   const { brand, locationId, brandLocation } = useConfig()
    const { configOf, isStoreAvailable } = useConfig()
    const { addToCart } = useCart()
 
@@ -38,14 +38,14 @@ export const PromotionCarousal = props => {
       },
    })
    // get all products from productIds getting from PRODUCT_BY_CATEGORY
+
    const argsForByLocation = React.useMemo(
       () => ({
-         params: {
-            brandId: brand?.id,
-            locationId: locationId,
-         },
+         brandId: brand?.id,
+         locationId: locationId,
+         brand_locationId: brandLocation?.id,
       }),
-      [brand]
+      [brand, locationId, brandLocation?.id]
    )
 
    // take all productIds from promotion carousal images
@@ -67,21 +67,15 @@ export const PromotionCarousal = props => {
          return []
       }
    }, [componentConfig])
-   const { data: productsData } = useQuery(PRODUCTS, {
+
+   const { data: productsData } = useSubscription(PRODUCTS, {
       skip: productIds?.length === 0,
       variables: {
          ids: productIds,
-         priceArgs: argsForByLocation,
-         discountArgs: argsForByLocation,
-         defaultCartItemArgs: argsForByLocation,
-         productOptionPriceArgs: argsForByLocation,
-         productOptionDiscountArgs: argsForByLocation,
-         productOptionCartItemArgs: argsForByLocation,
-         modifierCategoryOptionPriceArgs: argsForByLocation,
-         modifierCategoryOptionDiscountArgs: argsForByLocation,
-         modifierCategoryOptionCartItemArgs: argsForByLocation,
+         params: argsForByLocation,
       },
    })
+   // console.log('productsData: ', productsData, productIds)
    const theme = configOf('theme-color', 'Visual')
    const onImageClick = imageDetail => {
       if (imageDetail.belongsTo === 'PRODUCT') {
@@ -89,13 +83,22 @@ export const PromotionCarousal = props => {
             const clickedProduct = productsData.products.find(
                product => product.id == imageDetail.productId
             )
-            if (clickedProduct) {
+            const isProductAvailable =
+               clickedProduct?.isAvailable && clickedProduct?.isPublished
+
+            if (clickedProduct && isProductAvailable) {
                if (
                   clickedProduct.productOptions.length > 0 &&
                   clickedProduct.isPopupAllowed
                ) {
-                  setShowModifierPopup(true)
-                  setProductData(clickedProduct)
+                  const isProductOptionsAvailable =
+                     clickedProduct.productOptions.filter(
+                        option => option.isPublished && option.isAvailable
+                     ).length > 0
+                  if (isProductOptionsAvailable) {
+                     setShowModifierPopup(true)
+                     setProductData(clickedProduct)
+                  }
                } else {
                   if (isStoreAvailable) {
                      addToCart(clickedProduct.defaultCartItem, 1)
@@ -106,7 +109,12 @@ export const PromotionCarousal = props => {
       }
    }
    if (subsLoading) {
-      return <Loader inline />
+      return (
+         <div style={{ height: '235.5px', width: '100%', display: 'flex' }}>
+            <div className="hern-kiosk__promotion-carousel-skeleton"></div>
+            <div className="hern-kiosk__promotion-carousel-skeleton"></div>
+         </div>
+      )
    }
    if (subsError) {
       return <p>Something went wrong</p>
@@ -152,7 +160,7 @@ export const PromotionCarousal = props => {
             slidesToShow={2}
             slidesToScroll={2}
             infinite={false}
-            style={{ minHeight: '230px' }}
+            style={{ minHeight: '235px' }}
          >
             {data.coupons.map(eachCoupon => {
                if (!eachCoupon.metaDetails?.image) {

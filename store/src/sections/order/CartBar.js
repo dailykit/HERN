@@ -18,7 +18,7 @@ import {
    RightArrowIcon,
 } from '../../assets/icons'
 import { useLazyQuery, useQuery } from '@apollo/react-hooks'
-import { PRODUCTS } from '../../graphql'
+import { PRODUCTS, PRODUCT_ONE } from '../../graphql'
 import Link from 'next/link'
 import { useConfig } from '../../lib'
 
@@ -27,7 +27,7 @@ const CartBar = () => {
    const { cartState, methods, addToCart, combinedCartItems } =
       React.useContext(CartContext)
    const { onDemandMenu } = React.useContext(onDemandMenuContext)
-   const { brand, locationId } = useConfig()
+   const { brand, locationId, brandLocation } = useConfig()
    //context data
    const { cart } = cartState
    //component state
@@ -40,32 +40,23 @@ const CartBar = () => {
 
    const argsForByLocation = React.useMemo(
       () => ({
-         params: {
-            brandId: brand?.id,
-            locationId: locationId,
-         },
+         brandId: brand?.id,
+         locationId: locationId,
+         brand_locationId: brandLocation?.id,
       }),
-      [brand]
+      [brand, locationId, brandLocation?.id]
    )
 
    //fetch product detail which to be increase or edit
-   useQuery(PRODUCTS, {
+   useQuery(PRODUCT_ONE, {
       skip: !increaseProductId,
       variables: {
-         ids: increaseProductId,
-         priceArgs: argsForByLocation,
-         discountArgs: argsForByLocation,
-         defaultCartItemArgs: argsForByLocation,
-         productOptionPriceArgs: argsForByLocation,
-         productOptionDiscountArgs: argsForByLocation,
-         productOptionCartItemArgs: argsForByLocation,
-         modifierCategoryOptionPriceArgs: argsForByLocation,
-         modifierCategoryOptionDiscountArgs: argsForByLocation,
-         modifierCategoryOptionCartItemArgs: argsForByLocation,
+         id: increaseProductId,
+         params: argsForByLocation,
       },
       onCompleted: data => {
          if (data) {
-            setIncreaseProduct(data.products[0])
+            setIncreaseProduct(data.product)
          }
       },
    })

@@ -27,6 +27,10 @@ export const getPageProps = async (params, route) => {
    const domain = 'test.dailykit.org'
    const { settings, seo } = await getSettings(domain, route)
 
+   // adding animationConfig to the settings
+   settings['animationConfig'] =
+      dataByRoute?.brands_brandPages[0]?.animationConfig || null
+
    //pageModules
    const parsedData = await foldsResolver(
       dataByRoute?.brands_brandPages?.[0]?.['brandPageModules'] ?? []
@@ -47,8 +51,8 @@ export const getPageProps = async (params, route) => {
          where: {
             _or: [
                { brandPage: { route: { _eq: route } } },
-               { brandPageModuleId: { _in: fileIds.htmlFileIds } },
-               { htmlFileId: { _in: fileIds.pageModules } },
+               { brandPageModuleId: { _in: fileIds.pageModules } },
+               { htmlFileId: { _in: fileIds.htmlFileIds } },
                {
                   brand: {
                      _or: [

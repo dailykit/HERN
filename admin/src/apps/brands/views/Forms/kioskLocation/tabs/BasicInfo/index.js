@@ -9,25 +9,25 @@ import {
    Spacer,
    Form,
    Dropdown,
-   ButtonTile,
-   HorizontalTab,
-   HorizontalTabs,
-   HorizontalTabList,
-   HorizontalTabPanel,
-   HorizontalTabPanels,
+   ButtonGroup,
+   TextButton,
 } from '@dailykit/ui'
+import { CopyIcon } from '../../../../../../editor/assets/Icons'
 import validator from '../validator'
 import { KIOSK } from '../../../../../graphql'
 import { Wrapper, Label } from '../../../brand/styled'
 import { logger } from '../../../../../../../shared/utils'
 import { useTabs } from '../../../../../../../shared/providers'
+import copy from 'copy-to-clipboard'
 import {
    Banner,
    InlineLoader,
    Tooltip,
 } from '../../../../../../../shared/components'
+import moment from 'moment'
+import { CheckIcon } from '../../../../../assets/icons'
 
-export const BasicInfo = () => {
+export const BasicInfo = ({ selectedBrandId }) => {
    const params = useParams()
    const [locationList, setLocationList] = React.useState([])
    const [printerList, setPrinterList] = React.useState([])
@@ -45,6 +45,18 @@ export const BasicInfo = () => {
          errors: [],
       },
    })
+   const [isPasswordCopied, setIsPasswordCopied] = React.useState(false)
+   const [isPosistCustomerKeyCopied, setIsPosistCustomerKeyCopied] =
+      React.useState(false)
+   const [isKioskStatusActive, setIsKioskStatusActive] = React.useState(false)
+   const [posistCustomerKey, setPosistCustomerKey] = React.useState({
+      value: '',
+      meta: {
+         isValid: false,
+         isTouched: false,
+         errors: [],
+      },
+   })
 
    const { error, loading } = useSubscription(KIOSK.KIOSK, {
       variables: {
@@ -55,75 +67,112 @@ export const BasicInfo = () => {
             data: { kiosk = {} },
          },
       }) => {
-         console.log('data is:', kiosk)
+         setIsKioskStatusActive(prev => {
+            const timeDiff = moment
+               .duration(moment().diff(moment(kiosk[0].lastActiveTime)))
+               .asSeconds()
+            return timeDiff < 65
+         })
          setTitle({
             value: kiosk[0].kioskLabel || '',
             accessUrl: kiosk[0].accessUrl || '',
             printerId: kiosk[0].printerId || '',
-            password: kiosk[0].password || '',
-            location: kiosk[0].location?.city || '',
+            password: kiosk[0].accessPassword,
+            location: kiosk[0].location?.label || '',
             locationId: kiosk[0].location?.id || '',
             meta: {
                isValid: kiosk[0].kioskLabel ? true : false,
                isTouched: false,
                errors: [],
             },
+            lastActiveTime: kiosk[0]?.lastActiveTime,
          })
          setTabTitle(kiosk[0].kioskLabel || '')
-         //  setPrinterList(prevPrinterList => [
-         //     ...prevPrinterList,
-         //     {
-         //        id: kiosk[0].printerId || '',
-         //        title: kiosk[0]?.printerId?.label || '',
-         //     },
-         //  ])
       },
    })
 
+   const {
+      posistError,
+      posistLoading,
+      data: { PosistCustomerKey = {} } = {},
+   } = useSubscription(KIOSK.POSIST_CUSTOMER_KEY, {
+      skip: !selectedBrandId?.id || !title?.locationId,
+      variables: {
+         brandId: { _eq: selectedBrandId?.id },
+         locationId: { _eq: title.locationId },
+      },
+      onSubscriptionData: ({
+         subscriptionData: { data: { PosistCustomerKey = {} } = {} },
+      }) => {
+         setPosistCustomerKey({
+            value: PosistCustomerKey[0]?.posist_customer_key || '',
+            meta: {
+               isValid: PosistCustomerKey[0]?.posist_customer_key
+                  ? true
+                  : false,
+               isTouched: false,
+               errors: [],
+            },
+         })
+      },
+   })
    // calling printers data
    // const [printerList, setPrinterList] = React.useState([{printerId:'', printerName: ''}])
-   const { error1, loading1, data1 } = useSubscription(KIOSK.PRINTERS, {
-      onSubscriptionData: ({
-         subscriptionData: {
-            data: { printers = [] },
+   const { PrinterError, PrinterListLoading, PrinterData } = useSubscription(
+      KIOSK.PRINTERS,
+      {
+         onSubscriptionData: ({
+            subscriptionData: {
+               data: { printers = [] },
+            },
+         }) => {
+            let printersData = printers.map(printer => {
+               return {
+                  id: printer?.printNodeId || '',
+                  title: printer?.name || '',
+                  description:
+                     printer?.printNodeId +
+                        '-' +
+                        printer?.name +
+                        '-' +
+                        printer?.computer?.name || '',
+               }
+            })
+            setPrinterList(previousData => [...previousData, ...printersData])
+            // console.log('printers:', printers, 'printerList:', printerList)
          },
-      }) => {
-         // setPrinterList(printers.map(printers =>   ({id: printers.printNodeId, title: printers.name}) ))
-         //  const name1 = printers.map(printers => {
-         //     return { id: printers.printNodeId, title: printers.name, }
-         //  })
-         //  setPrinterList(name1)
-         let printersData = printers.map(printer => {
-            return {
-               id: printer?.printNodeId || '',
-               title: printer?.name || '',
-            }
-         })
-         setPrinterList(previousData => [...previousData, ...printersData])
-         console.log('printers:', printers, 'printerList:', printerList)
-      },
-   })
-   console.log(printerList)
+      }
+   )
+   // console.log(printerList)
 
-   const { error2, loading2, data2 } = useSubscription(KIOSK.LOCATIONS, {
-      onSubscriptionData: ({
-         subscriptionData: {
-            data: { locations = [] },
+   const { locationError, locationListLoading, locationData } = useSubscription(
+      KIOSK.LOCATIONS,
+      {
+         onSubscriptionData: ({
+            subscriptionData: {
+               data: { locations = [] },
+            },
+         }) => {
+            let locationsData = locations.map(location => {
+               return {
+                  id: location?.id || '',
+                  title: location?.label || '',
+                  description:
+                     location?.id +
+                        '-' +
+                        location?.label +
+                        '-' +
+                        location?.city || '',
+               }
+            })
+            setLocationList(previousLocation => [
+               ...previousLocation,
+               ...locationsData,
+            ])
+            // console.log('locations:', locations, 'locationList:', locationList)
          },
-      }) => {
-         let locationsData = locations.map(location => {
-            return {
-               id: location?.id || '',
-               title: location?.city || '',
-            }
-         })
-         setLocationList(previousLocation => [
-            ...previousLocation,
-            ...locationsData,
-         ])
-         console.log('locations:', locations, 'locationList:', locationList)
-      },
-   })
+      }
+   )
 
    const [updateKiosk] = useMutation(KIOSK.UPDATE_KIOSK, {
       onCompleted: data => {
@@ -135,6 +184,23 @@ export const BasicInfo = () => {
          logger(error)
       },
    })
+
+   const [updatePosist] = useMutation(KIOSK.UPDATE_POSIST_CUSTOMER_KEY, {
+      onCompleted: data => {
+         toast.success('Updated!')
+         // console.log('update POSIST data=>>', data)
+      },
+      onError: error => {
+         toast.error('Something went wrong!')
+         logger(error)
+      },
+   })
+
+   const generatePwd = () => {
+      let newPwd = title.value + '@' + params.id
+      // console.log('pwd::', newPwd)
+      return newPwd
+   }
 
    const updateKioskAccessUrl = async () => {
       const { isValid, errors } = validator.url(title.accessUrl)
@@ -203,14 +269,14 @@ export const BasicInfo = () => {
    }
 
    const updateKioskPrinter = async printer => {
-      const { isValid, errors } = validator.name(printer[0].title)
+      const { isValid, errors } = validator.name(printer?.title)
       if (isValid) {
-         console.log('update printer printer====?', printer)
+         // console.log('update printer printer====?', printer)
          const { data } = await updateKiosk({
             variables: {
                id: params.id,
                _set: {
-                  printerId: printer[0].id,
+                  printerId: printer?.id,
                },
             },
          })
@@ -225,10 +291,32 @@ export const BasicInfo = () => {
       })
    }
 
+   const updatePosistCustomerKey = async () => {
+      const { isValid, errors } = validator.name(posistCustomerKey.value)
+      if (isValid) {
+         const { data } = await updatePosist({
+            variables: {
+               brandId: selectedBrandId.id,
+               locationId: title.locationId,
+               _set: {
+                  posist_customer_key: posistCustomerKey.value,
+               },
+            },
+         })
+      }
+      setPosistCustomerKey({
+         ...posistCustomerKey,
+         meta: {
+            isTouched: true,
+            errors,
+            isValid,
+         },
+      })
+   }
    const updateKioskLocation = async newLocation => {
       const { isValid, errors } = validator.name(newLocation.title)
       if (isValid) {
-         console.log('update newLocation====?', newLocation)
+         // console.log('update newLocation====?', newLocation)
          const { data } = await updateKiosk({
             variables: {
                id: params.id,
@@ -247,84 +335,105 @@ export const BasicInfo = () => {
          },
       })
    }
-
+   if (loading || PrinterListLoading || locationListLoading || posistLoading) {
+      // console.log('loadings::', loading, PrinterListLoading)
+      return <InlineLoader />
+   }
    return (
       <div>
          <Flex padding="16px">
             <>
-               <Form.Group>
-                  <Form.Label>Kiosk Name</Form.Label>
-
-                  <Form.Text
-                     id="kioskLabel"
-                     name="kioskLabel"
-                     value={title.value}
-                     placeholder="Enter kiosk name"
-                     onChange={e =>
-                        setTitle({ ...title, value: e.target.value })
-                     }
-                     onBlur={updateKioskLabel}
-                     hasError={!title.meta.isValid && title.isTouched}
-                  />
-                  {title.meta.isTouched &&
-                     !title.meta.isValid &&
-                     title.meta.errors.map((error, index) => (
-                        <Form.Error key={index}>{error}</Form.Error>
-                     ))}
-               </Form.Group>
-
-               <Spacer yAxis size="16px" />
-               <Form.Group>
-                  <Form.Label htmlFor="accessUrl" title="accessUrl">
-                     Access Url*
-                  </Form.Label>
-                  <Form.Text
-                     id="accessUrl"
-                     name="accessUrl"
-                     value={title.accessUrl}
-                     placeholder="Enter access url"
-                     onChange={e =>
-                        setTitle({ ...title, accessUrl: e.target.value })
-                     }
-                     onBlur={updateKioskAccessUrl}
-                     hasError={!title.meta.isValid && title.isTouched}
-                  />
-                  {title.meta.isTouched &&
-                     !title.meta.isValid &&
-                     title.meta.errors.map((error, index) => (
-                        <Form.Error key={index}>{error}</Form.Error>
-                     ))}
-               </Form.Group>
-
+               <Flex container alignItems="center">
+                  <Text as="h4">Kiosk Status:</Text>
+                  <Flex container alignItems="center">
+                     <Spacer size="16px" xAxis />
+                     <div
+                        style={{
+                           width: '10px',
+                           height: '10px',
+                           borderRadius: '5px',
+                           backgroundColor: `${
+                              isKioskStatusActive ? '#2EB086' : '#FF4949'
+                           }`,
+                        }}
+                     ></div>
+                     <Spacer size="10px" xAxis />
+                     <Text as="text2">
+                        {isKioskStatusActive ? 'Online' : 'Offline'}
+                     </Text>
+                  </Flex>
+                  <Spacer size="30px" xAxis />
+                  <Flex container alignItems="center">
+                     <Spacer size="16px" xAxis />
+                     <Text as="h4">Last Update:</Text>
+                     <Spacer size="16px" xAxis />
+                     <Text as="text2">
+                        {moment(title.lastActiveTime).format(
+                           'YYYY-MM-DD HH:mm:ss'
+                        )}
+                     </Text>
+                  </Flex>
+               </Flex>
                <Spacer yAxis size="16px" />
                <Form.Group>
                   <Form.Label htmlFor="password" title="password">
-                     Access Password
+                     <ButtonGroup
+                        style={{ gap: '5px' }}
+                        onClick={() => {
+                           copy(title.password)
+                           setIsPasswordCopied(true)
+                           setTimeout(() => {
+                              setIsPasswordCopied(false)
+                           }, 3000)
+                        }}
+                     >
+                        {'Access Password   '}
+                        <div title={isPasswordCopied ? 'Copied' : 'Copy'}>
+                           {isPasswordCopied ? (
+                              <CheckIcon size={20} />
+                           ) : (
+                              <CopyIcon size={20} />
+                           )}
+                        </div>{' '}
+                     </ButtonGroup>
                   </Form.Label>
-                  <Form.Password
-                     value={title.password}
-                     placeholder="Enter access password"
-                     id="password"
-                     name="password"
-                     onChange={e =>
-                        setTitle({ ...title, password: e.target.value })
-                     }
-                     onBlur={updateKioskAccessPassword}
-                     hasError={!title.meta.isValid && title.isTouched}
-                  />
-                  {title.meta.isTouched &&
-                     !title.meta.isValid &&
-                     title.meta.errors.map((error, index) => (
-                        <Form.Error key={index}>{error}</Form.Error>
-                     ))}
+                  <Flex container alignItems="center">
+                     <Flex>
+                        <Form.Text
+                           value={title.password}
+                           placeholder="Enter access password"
+                           id="password"
+                           name="password"
+                           onChange={e =>
+                              setTitle({ ...title, password: e.target.value })
+                           }
+                           // onBlur={updateKioskAccessPassword}
+                           hasError={!title.meta.isValid && title.isTouched}
+                        />
+                        {title.meta.isTouched &&
+                           !title.meta.isValid &&
+                           title.meta.errors.map((error, index) => (
+                              <Form.Error key={index}>{error}</Form.Error>
+                           ))}
+                     </Flex>
+                     <Spacer xAxis size="15px" />
+                     <TextButton
+                        type="outline"
+                        size="sm"
+                        onClick={updateKioskAccessPassword}
+                     >
+                        Save
+                     </TextButton>
+                  </Flex>
                </Form.Group>
 
                <Spacer yAxis size="16px" />
-               <Form.Group>
-                  <Form.Label htmlFor="printerId" title="printerId">
-                     Printer
-                  </Form.Label>
-                  <Form.Text
+               <Flex width="35%">
+                  <Form.Group>
+                     <Form.Label htmlFor="printerId" title="printerId">
+                        Printer
+                     </Form.Label>
+                     {/* <Form.Text
                      value={title.printerId}
                      placeholder="Enter printer ID"
                      id="printerId"
@@ -334,38 +443,110 @@ export const BasicInfo = () => {
                      //  }
                      //  onBlur={updateKioskPrinter}
                      //  hasError={!title.meta.isValid && title.isTouched}
-                  />
-                  <Dropdown
-                     type="single"
-                     //  variant="revamp"
-                     defaultName={title.printerId}
-                     isLoading={loading}
-                     addOption={printerList}
-                     options={printerList}
-                     selectedOption={e => updateKioskPrinter(e)}
-                     placeholder="Enter printer name"
-                     addOption={() => console.log('printer ADDED')}
-                  />
-               </Form.Group>
+                  /> */}
+                     <Dropdown
+                        type="single"
+                        //  variant="revamp"
+                        defaultOption={{
+                           id: title.printerId,
+                        }}
+                        isLoading={loading}
+                        addOption={printerList}
+                        options={printerList}
+                        searchedOption={() => {}}
+                        selectedOption={e => updateKioskPrinter(e)}
+                        placeholder="Enter printer name"
+                     />
+                  </Form.Group>
+               </Flex>
 
                <Spacer yAxis size="16px" />
-               <Form.Group>
-                  <Form.Label>Location</Form.Label>
-                  {/* <Form.Text
+               <Flex width={'35%'}>
+                  <Form.Group>
+                     <Form.Label>Location</Form.Label>
+                     {/* <Form.Text
                      value={title.location}
                      placeholder="Enter location"
                   /> */}
-                  <Dropdown
-                     type="single"
-                     //  variant="revamp"
-                     defaultName={title.location}
-                     isLoading={loading}
-                     addOption={locationList}
-                     options={locationList}
-                     selectedOption={e => updateKioskLocation(e)}
-                     placeholder="Choose kiosk location"
-                     addOption={() => console.log('location ADDED')}
-                  />
+                     <Dropdown
+                        type="single"
+                        //  variant="revamp"
+                        defaultName={title.location}
+                        isLoading={loading}
+                        addOption={locationList}
+                        options={locationList}
+                        selectedOption={e => updateKioskLocation(e)}
+                        placeholder="Choose kiosk location"
+                     />
+                  </Form.Group>
+               </Flex>
+
+               <Spacer yAxis size="16px" />
+               <Form.Group>
+                  <Form.Label
+                     htmlFor="posistCustomerKey"
+                     title="posistCustomerKey"
+                  >
+                     <ButtonGroup
+                        style={{ gap: '5px' }}
+                        onClick={() => {
+                           copy(posistCustomerKey.value)
+                           setIsPosistCustomerKeyCopied(true)
+                           setTimeout(() => {
+                              setIsPosistCustomerKeyCopied(false)
+                           }, 3000)
+                        }}
+                     >
+                        {'Posist Customer Key   '}
+                        <div
+                           title={isPosistCustomerKeyCopied ? 'Copied' : 'Copy'}
+                        >
+                           {isPosistCustomerKeyCopied ? (
+                              <CheckIcon size={20} />
+                           ) : (
+                              <CopyIcon size={20} />
+                           )}
+                        </div>{' '}
+                     </ButtonGroup>
+                  </Form.Label>
+                  <Flex container alignItems="center">
+                     <Flex>
+                        <Form.Text
+                           disabled={
+                              PosistCustomerKey.length > 0 ? false : true
+                           }
+                           value={posistCustomerKey.value}
+                           placeholder="Enter Posist Customer Key"
+                           id="posistCustomerKey"
+                           name="posistCustomerKey"
+                           onChange={e =>
+                              setPosistCustomerKey({
+                                 ...posistCustomerKey,
+                                 value: e.target.value,
+                              })
+                           }
+                           // onBlur={updateKioskAccessPassword}
+                           hasError={
+                              !posistCustomerKey.meta.isValid &&
+                              posistCustomerKey.meta.isTouched
+                           }
+                        />
+                        {posistCustomerKey.meta.isTouched &&
+                           !posistCustomerKey.meta.isValid &&
+                           posistCustomerKey.meta.errors.map((error, index) => (
+                              <Form.Error key={index}>{error}</Form.Error>
+                           ))}
+                     </Flex>
+                     <Spacer xAxis size="15px" />
+                     <TextButton
+                        type="outline"
+                        size="sm"
+                        onClick={updatePosistCustomerKey}
+                        disabled={PosistCustomerKey.length > 0 ? false : true}
+                     >
+                        Save
+                     </TextButton>
+                  </Flex>
                </Form.Group>
             </>
          </Flex>

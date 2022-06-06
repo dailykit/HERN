@@ -1,4 +1,4 @@
-import { useQuery } from '@apollo/react-hooks'
+import { useQuery, useSubscription } from '@apollo/react-hooks'
 import React from 'react'
 import { PRODUCTS_BY_CATEGORY } from '../graphql'
 import { useConfig } from './../lib'
@@ -35,7 +35,7 @@ export const OnDemandMenuProvider = ({ children }) => {
       initialState
    )
 
-   useQuery(PRODUCTS_BY_CATEGORY, {
+   const { error: menuError } = useSubscription(PRODUCTS_BY_CATEGORY, {
       skip: isConfigLoading || !brand?.id,
       variables: {
          params: {
@@ -44,7 +44,8 @@ export const OnDemandMenuProvider = ({ children }) => {
             locationId: locationId,
          },
       },
-      onCompleted: data => {
+      onSubscriptionData: ({ subscriptionData }) => {
+         const { data } = subscriptionData
          if (data?.onDemand_getMenuV2copy?.length) {
             const [res] = data.onDemand_getMenuV2copy
             const { menu } = res.data
@@ -58,14 +59,17 @@ export const OnDemandMenuProvider = ({ children }) => {
             })
          }
       },
-      onError: error => {
+   })
+
+   React.useEffect(() => {
+      if (menuError) {
          onDemandMenuDispatch({
             type: 'MENU_LOADING',
             payload: false,
          })
-         console.log(error)
-      },
-   })
+         console.log(menuError)
+      }
+   }, [menuError])
 
    return (
       <onDemandMenuContext.Provider

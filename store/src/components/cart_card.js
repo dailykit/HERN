@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { Modal } from 'antd'
 import isEmpty from 'lodash/isEmpty'
+import { useIntl } from 'react-intl'
 
 import { DeleteIcon, EditIcon, ChevronIcon } from '../assets/icons'
 import { useTranslation, CartContext } from '../context'
@@ -9,7 +10,7 @@ import {
    getCartItemWithModifiers,
    nestedModifierTemplateIds,
 } from '../utils'
-import { PRODUCTS, GET_MODIFIER_BY_ID } from '../graphql'
+import { PRODUCTS, GET_MODIFIER_BY_ID, PRODUCT_ONE } from '../graphql'
 import { useConfig } from '../lib'
 import { ModifierPopup } from '.'
 import { useQuery } from '@apollo/react-hooks'
@@ -20,9 +21,11 @@ import { HernLazyImage } from '../utils/hernImage'
 const CartCard = props => {
    // productData --> product data from cart
    const { productData, removeCartItems, quantity = 0 } = props
-   const { brand, kioskDetails, isConfigLoading } = useConfig()
-   const { addToCart } = React.useContext(CartContext)
+
+   const { brand, locationId, isConfigLoading, brandLocation } = useConfig()
+   const { addToCart, cartState } = React.useContext(CartContext)
    const { t, dynamicTrans, locale } = useTranslation()
+   const { formatMessage } = useIntl()
 
    const [modifyProductId, setModifyProductId] = useState(null)
    const [modifyProduct, setModifyProduct] = useState(null)
@@ -55,28 +58,19 @@ const CartCard = props => {
    const getTotalPrice = React.useMemo(() => price(productData), [productData])
    const argsForByLocation = React.useMemo(
       () => ({
-         params: {
-            brandId: brand?.id,
-            locationId: kioskDetails?.locationId,
-         },
+         brandId: brand?.id,
+         locationId: locationId,
+         brand_locationId: brandLocation?.id,
       }),
-      [brand]
+      [brand, locationId, brandLocation?.id]
    )
 
    //fetch product detail which to be increase or edit
-   const { data: repeatLastOneData } = useQuery(PRODUCTS, {
+   const { data: repeatLastOneData } = useQuery(PRODUCT_ONE, {
       skip: !modifyProductId,
       variables: {
-         ids: modifyProductId,
-         priceArgs: argsForByLocation,
-         discountArgs: argsForByLocation,
-         defaultCartItemArgs: argsForByLocation,
-         productOptionPriceArgs: argsForByLocation,
-         productOptionDiscountArgs: argsForByLocation,
-         productOptionCartItemArgs: argsForByLocation,
-         modifierCategoryOptionPriceArgs: argsForByLocation,
-         modifierCategoryOptionDiscountArgs: argsForByLocation,
-         modifierCategoryOptionCartItemArgs: argsForByLocation,
+         id: modifyProductId,
+         params: argsForByLocation,
       },
       onCompleted: data => {
          // use for repeat last one order
@@ -93,36 +87,34 @@ const CartCard = props => {
 
    const additionalModifierTemplateIds = React.useMemo(() => {
       if (repeatLastOneData) {
-         return nestedModifierTemplateIds(repeatLastOneData?.products[0])
+         return nestedModifierTemplateIds(repeatLastOneData?.product)
       }
    }, [repeatLastOneData])
 
-   const {
-      data: additionalModifierTemplates,
-      loading: additionalModifiersLoading,
-   } = useQuery(GET_MODIFIER_BY_ID, {
-      variables: {
-         priceArgs: argsForByLocation,
-         discountArgs: argsForByLocation,
-         modifierCategoryOptionCartItemArgs: argsForByLocation,
-         id: additionalModifierTemplateIds,
-      },
-      skip:
-         isConfigLoading ||
-         !brand?.id ||
-         !(
-            additionalModifierTemplateIds &&
-            additionalModifierTemplateIds.length > 0
-         ),
-   })
+   // const {
+   //    data: additionalModifierTemplates,
+   //    loading: additionalModifiersLoading,
+   // } = useQuery(GET_MODIFIER_BY_ID, {
+   //    variables: {
+   //       priceArgs: argsForByLocation,
+   //       discountArgs: argsForByLocation,
+   //       modifierCategoryOptionCartItemArgs: argsForByLocation,
+   //       id: additionalModifierTemplateIds,
+   //    },
+   //    skip:
+   //       isConfigLoading ||
+   //       !brand?.id ||
+   //       !(
+   //          additionalModifierTemplateIds &&
+   //          additionalModifierTemplateIds.length > 0
+   //       ),
+   // })
 
    useEffect(() => {
       if (repeatLastOneData && forRepeatLastOne) {
-         if (!additionalModifiersLoading) {
-            repeatLastOne(repeatLastOneData.products[0])
-         }
+         repeatLastOne(repeatLastOneData.product)
       }
-   }, [repeatLastOneData, additionalModifiersLoading, forRepeatLastOne])
+   }, [repeatLastOneData, forRepeatLastOne])
 
    const repeatLastOne = productData => {
       if (cartDetailSelectedProduct.childs.length === 0) {
@@ -134,6 +126,7 @@ const CartCard = props => {
          setShowChooseIncreaseType(false)
          return
       }
+
       const productOptionId =
          cartDetailSelectedProduct.childs[0].productOption.id
       const modifierCategoryOptionsIds =
@@ -194,7 +187,7 @@ const CartCard = props => {
 
       const allSelectedOptions = [...singleModifier, ...multipleModifier]
 
-      if (additionalModifierTemplateIds) {
+      if (selectedProductOption.additionalModifiers) {
          selectedProductOption.additionalModifiers.forEach(option => {
             option.modifier.categories.forEach(category => {
                category.options.forEach(option => {
@@ -223,18 +216,59 @@ const CartCard = props => {
             modifierOptionsConsistAdditionalModifiers.map(
                eachModifierOptionsConsistAdditionalModifiers => {
                   let additionalModifierOptions = []
-                  additionalModifierTemplates.modifiers.forEach(
-                     eachModifier => {
-                        eachModifier.categories.forEach(eachCategory => {
-                           additionalModifierOptions.push(
-                              ...eachCategory.options.map(eachOption => ({
-                                 ...eachOption,
-                                 categoryId: eachCategory.id,
-                              }))
+                  selectedProductOption.additionalModifiers.forEach(
+                     additionalModifier => {
+                        if (additionalModifier.modifier) {
+                           additionalModifier.modifier.categories.forEach(
+                              eachCategory => {
+                                 eachCategory.options.forEach(eachOption => {
+                                    if (eachOption.additionalModifierTemplate) {
+                                       eachOption.additionalModifierTemplate.categories.forEach(
+                                          eachCategory => {
+                                             additionalModifierOptions.push(
+                                                ...eachCategory.options.map(
+                                                   eachOptionTemp => ({
+                                                      ...eachOptionTemp,
+                                                      categoryId:
+                                                         eachCategory.id,
+                                                   })
+                                                )
+                                             )
+                                          }
+                                       )
+                                    }
+                                 })
+                              }
                            )
-                        })
+                        }
                      }
                   )
+                  // for single modifiers
+                  if (selectedProductOption.modifier) {
+                     selectedProductOption.modifier.categories.forEach(
+                        eachCategory => {
+                           eachCategory.options.forEach(eachOption => {
+                              if (eachOption.additionalModifierTemplateId) {
+                                 if (eachOption.additionalModifierTemplate) {
+                                    eachOption.additionalModifierTemplate.categories.forEach(
+                                       eachCategory => {
+                                          additionalModifierOptions.push(
+                                             ...eachCategory.options.map(
+                                                eachOptionTemp => ({
+                                                   ...eachOptionTemp,
+                                                   categoryId: eachCategory.id,
+                                                })
+                                             )
+                                          )
+                                       }
+                                    )
+                                 }
+                              }
+                           })
+                        }
+                     )
+                  }
+
                   const mapedModifierOptions =
                      eachModifierOptionsConsistAdditionalModifiers.selectedModifierOptionIds.map(
                         eachId => {
@@ -308,6 +342,26 @@ const CartCard = props => {
       )
       dynamicTrans(languageTags)
    }, [locale, showAdditionalDetailsOnCard])
+
+   // check product and product option available in cart are valid or not by there isPublished and  isAvailability
+   const isProductAvailable = product => {
+      const selectedProductOption = product.product.productOptions.find(
+         option => option.id === product.childs[0]?.productOption?.id
+      )
+      if (!isEmpty(selectedProductOption)) {
+         return (
+            product.product.isAvailable &&
+            product.product.isPublished &&
+            !product.product.isArchived &&
+            selectedProductOption.isAvailable &&
+            !selectedProductOption.isArchived &&
+            selectedProductOption.isPublished
+         )
+      } else {
+         return product.product.isAvailable && product.product.isPublished
+      }
+   }
+
    return (
       <div className="hern-cart-card">
          <div className="hern-cart-card__img">
@@ -533,24 +587,36 @@ const CartCard = props => {
             </div>
 
             <div className="hern-cart-card__bottom">
-               <CounterButton
-                  count={productData.ids.length}
-                  incrementClick={() => {
-                     if (productData.childs.length > 0) {
-                        setShowChooseIncreaseType(true)
-                     } else {
-                        setCartDetailSelectedProduct(productData)
-                        setModifyProductId(productData.productId)
-                        setForRepeatLastOne(true)
+               {isProductAvailable(productData) ? (
+                  <CounterButton
+                     count={productData.ids.length}
+                     incrementClick={() => {
+                        if (productData.childs.length > 0) {
+                           setShowChooseIncreaseType(true)
+                        } else {
+                           setCartDetailSelectedProduct(productData)
+                           setModifyProductId(productData.productId)
+                           setForRepeatLastOne(true)
+                        }
+                     }}
+                     decrementClick={() =>
+                        removeCartItems([
+                           productData.ids[productData.ids.length - 1],
+                        ])
                      }
-                  }}
-                  decrementClick={() =>
-                     removeCartItems([
-                        productData.ids[productData.ids.length - 1],
-                     ])
-                  }
-                  showDeleteButton
-               />
+                     showDeleteButton
+                  />
+               ) : (
+                  <span
+                     style={{
+                        color: '#f33737',
+                        fontWeight: '500',
+                        fontSize: '13px',
+                     }}
+                  >
+                     This product is not available
+                  </span>
+               )}
                <div className="hern-cart-card__price">
                   {getTotalPrice.totalDiscount > 0 && (
                      <span className="hern-cart-card__price__discount">
@@ -578,7 +644,7 @@ const CartCard = props => {
             />
          )}
          <Modal
-            title={t('Repeat last used customization')}
+            title={formatMessage({ id: 'Repeat last used customization' })}
             visible={showChooseIncreaseType}
             centered={true}
             onCancel={() => {

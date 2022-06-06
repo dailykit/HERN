@@ -27,6 +27,7 @@ export const StoreList = props => {
       setAddress,
       setIsUserExistingAddressSelected,
       isUserExistingAddressSelected,
+      selectedLocationInputDescription,
    } = props
    // console.log('settings', settings)
    const { dispatch, orderTabs } = useConfig()
@@ -104,7 +105,7 @@ export const StoreList = props => {
                lat: address.latitude?.toString(),
                lng: address.longitude?.toString(),
                landmark: address.landmark,
-               searched: '',
+               searched: selectedLocationInputDescription,
             }
             const cartIdInLocal = localStorage.getItem('cart-id')
             if (cartIdInLocal || storedCartId) {
@@ -118,6 +119,7 @@ export const StoreList = props => {
                         address: customerAddress,
                         locationId: firstStoreOfSortedBrandLocation.location.id,
                         orderTabId: selectedOrderTab.id,
+                        fulfillmentInfo: null,
                      },
                   },
                })
@@ -150,7 +152,7 @@ export const StoreList = props => {
             if (
                localStorage.getItem('storeLocationId') &&
                JSON.parse(localStorage.getItem('storeLocationId')) !==
-               firstStoreOfSortedBrandLocation.location.id
+                  firstStoreOfSortedBrandLocation.location.id
             ) {
                const lastStoreLocationId = JSON.parse(
                   localStorage.getItem('storeLocationId')
@@ -176,6 +178,7 @@ export const StoreList = props => {
                   longitude: address.lng.toString(),
                })
             )
+            localStorage.removeItem('storeLocation')
             setShowLocationSelectionPopup(false)
          }
       }
@@ -205,6 +208,7 @@ export const StoreList = props => {
             fulfillmentType={fulfillmentType}
             onRefineLocationCloseIconClick={onRefineLocationCloseIconClick}
             onRefineLocationComplete={onRefineLocationComplete}
+            searched={selectedLocationInputDescription}
          />
       )
    }
@@ -246,7 +250,9 @@ export const StoreList = props => {
       <div className="hern-location-selector__stores-list">
          {showStoresOnMap.value && (
             <div className="hern-location-selector__view-on-map">
-               <span onClick={() => setShowStoreOnMap(true)}>{t('View on map')}</span>
+               <span onClick={() => setShowStoreOnMap(true)}>
+                  {t('View on map')}
+               </span>
             </div>
          )}
          <RefineLocationPopup
@@ -254,6 +260,7 @@ export const StoreList = props => {
             address={address}
             fulfillmentType={fulfillmentType}
             onRefineLocationCloseIconClick={onRefineLocationCloseIconClick}
+            searched={selectedLocationInputDescription}
          />
          {stores.map((eachStore, index) => {
             const {
@@ -290,7 +297,7 @@ export const StoreList = props => {
                      {
                         'hern-store-location-selector__each-store--disabled':
                            disabledLocationDisplayStyle.value?.value ===
-                           'disabled' &&
+                              'disabled' &&
                            !eachStore['fulfillmentStatus'].status,
                      }
                   )}
@@ -309,7 +316,7 @@ export const StoreList = props => {
                            lat: storeAddress.lat.toString(),
                            lng: storeAddress.lng.toString(),
                            landmark: '',
-                           searched: '',
+                           searched: selectedLocationInputDescription,
                         }
                         const cartIdInLocal = localStorage.getItem('cart-id')
                         if (cartIdInLocal || storedCartId) {
@@ -362,7 +369,7 @@ export const StoreList = props => {
                            })
                         )
                         localStorage.setItem(
-                           'pickupLocation',
+                           'storeLocation',
                            JSON.stringify(addressToBeSaveInCart)
                         )
                         setSelectedStore(eachStore)
@@ -399,10 +406,10 @@ export const StoreList = props => {
                   {cardSelectionStyle.value?.value === 'radio' &&
                      (storeDistanceValidation
                         ? !(
-                           disabledLocationDisplayStyle.value?.value ===
-                           'disabled' &&
-                           !eachStore['fulfillmentStatus'].status
-                        )
+                             disabledLocationDisplayStyle.value?.value ===
+                                'disabled' &&
+                             !eachStore['fulfillmentStatus'].status
+                          )
                         : true) && (
                         <RadioIcon
                            size={18}

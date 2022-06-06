@@ -20,6 +20,9 @@ import { toast } from 'react-toastify'
 import { ErrorState, InlineLoader } from '../../../..'
 const SalesByCoupons = () => {
    const [salesByCouponsData, setSalesByCouponsData] = useState([])
+   const [sortedEarningByCouponsData, setSortedEarningByCouponsData] = useState(
+      []
+   ) // used to change graph with sorting of table
    const [status, setStatus] = useState('loading')
    const { brandShopDateState, brandShopDateDispatch } =
       React.useContext(BrandShopDateContext)
@@ -46,6 +49,10 @@ const SalesByCoupons = () => {
                   brandShop.shopTitle
                      ? `AND oc.source = \'${brandShop.shopTitle}\'`
                      : ''
+               } ${
+                  brandShop.locationId
+                     ? `AND oc."locationId" = ${brandShop.locationId}`
+                     : ''
                }`,
                couponWhere: 'id IS NOT NULL',
             },
@@ -69,6 +76,7 @@ const SalesByCoupons = () => {
                }
             )
          setSalesByCouponsData(newData)
+         setSortedEarningByCouponsData(newData)
          setStatus('success')
       },
    })
@@ -94,9 +102,12 @@ const SalesByCoupons = () => {
                   brandShop.shopTitle
                      ? `AND oc.source = \'${brandShop.shopTitle}\'`
                      : ''
+               } ${
+                  brandShop.locationId
+                     ? `AND oc."locationId" = ${brandShop.locationId}`
+                     : ''
                }`,
-               couponWhere: `id IN (${salesByCouponsData
-                  .slice(0, 10)
+               couponWhere: `id IN (${sortedEarningByCouponsData
                   .map(x => x.id)
                   .toString()})`,
             },
@@ -137,7 +148,7 @@ const SalesByCoupons = () => {
                }}
             >
                <SalesByCouponsChart
-                  salesByCouponsData={salesByCouponsData.slice(0, 10)}
+                  salesByCouponsData={sortedEarningByCouponsData.slice(0, 10)}
                   compareSalesData={
                      compareSalesData?.insights_analytics[0]
                         ?.getEarningByCoupons || []
@@ -153,7 +164,10 @@ const SalesByCoupons = () => {
                   padding: '10px 0px',
                }}
             >
-               <SalesByCouponsTable salesByCouponsData={salesByCouponsData} />
+               <SalesByCouponsTable
+                  salesByCouponsData={salesByCouponsData}
+                  setSortedEarningByCouponsData={setSortedEarningByCouponsData}
+               />
             </div>
          </Flex>
       </>
@@ -180,7 +194,7 @@ const SalesByCouponsChart = props => {
          setGraphData(salesByCouponsData)
          setStatus('success')
       }
-   }, [compare])
+   }, [compare, salesByCouponsData])
    if (status === 'loading') {
       return <InlineLoader />
    }

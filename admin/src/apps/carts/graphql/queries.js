@@ -3,7 +3,7 @@ import gql from 'graphql-tag'
 export const QUERIES = {
    CART: {
       ONE: gql`
-         subscription cart($id: Int!) {
+         subscription cart($id: Int!, $params: jsonb!) {
             cart(id: $id) {
                id
                tax
@@ -12,6 +12,7 @@ export const QUERIES = {
                itemTotal
                totalPrice
                customerId
+               locationId
                customerInfo
                paymentStatus
                deliveryPrice
@@ -70,6 +71,23 @@ export const QUERIES = {
                      price: unitPrice
                      name: displayName
                      image: displayImage
+                     product {
+                        isPublished: publishedByLocation(
+                           args: { params: $params }
+                        )
+                        isAvailable: availabilityByLocation(
+                           args: { params: $params }
+                        )
+                        productOptions {
+                           id
+                           isPublished: publishedByLocation(
+                              args: { params: $params }
+                           )
+                           isAvailable: availabilityByLocation(
+                              args: { params: $params }
+                           )
+                        }
+                     }
                      childs {
                         id
                         price: unitPrice
@@ -85,6 +103,15 @@ export const QUERIES = {
                            modifierOption {
                               id
                               name
+                           }
+                           childs {
+                              displayName
+                              price: unitPrice
+                              discount
+                              modifierOption {
+                                 id
+                                 name
+                              }
                            }
                         }
                         customizableProductComponent {
@@ -225,6 +252,18 @@ export const QUERIES = {
                subscriptionAddressId
                subscriptionOnboardStatus
                subscriptionPaymentMethodId
+               subscription {
+                  recipes: subscriptionItemCount {
+                     count
+                     price
+                     tax
+                     isTaxIncluded
+                     servingId: subscriptionServingId
+                     serving: subscriptionServing {
+                        size: servingSize
+                     }
+                  }
+               }
                customer {
                   id
                   email
@@ -291,48 +330,210 @@ export const QUERIES = {
       },
    },
    MENU: gql`
-      query menu($params: jsonb!) {
-         menu: onDemand_getMenuV2(args: { params: $params }) {
+      query PRODUCTS_BY_CATEGORY($params: jsonb!) {
+         onDemand_getMenuV2copy(args: { params: $params }) {
             data
+            id
          }
       }
    `,
    PRODUCTS: {
       LIST: gql`
-         query products($where: products_product_bool_exp = {}) {
+         query products($where: products_product_bool_exp!, $params: jsonb!) {
             products(where: $where) {
                id
                name
                type
                assets
                tags
+               VegNonVegType
                additionalText
                description
-               price
-               discount
+               price: priceByLocation(args: { params: $params })
+               discount: discountByLocation(args: { params: $params })
+               isPublished: publishedByLocation(args: { params: $params })
                isPopupAllowed
-               isPublished
+               isAvailable: availabilityByLocation(args: { params: $params })
                defaultProductOptionId
-               defaultCartItem
+               defaultCartItem: defaultCartItemByLocation(
+                  args: { params: $params }
+               )
+               productionOptionSelectionStatement
+               subCategory
+               productOptions(
+                  where: { isArchived: { _eq: false } }
+                  order_by: { position: desc_nulls_last }
+               ) {
+                  id
+                  position
+                  type
+                  label
+                  price: priceByLocation(args: { params: $params })
+                  discount: discountByLocation(args: { params: $params })
+                  cartItem: cartItemByLocation(args: { params: $params })
+                  isPublished: publishedByLocation(args: { params: $params })
+                  isAvailable: availabilityByLocation(args: { params: $params })
+               }
             }
          }
       `,
       ONE: gql`
-         query product($id: Int!) {
+         subscription product($id: Int!, $params: jsonb!) {
             product(id: $id) {
                id
                name
                type
-               price
-               discount
+               additionalText
+               description
+               price: priceByLocation(args: { params: $params })
+               discount: discountByLocation(args: { params: $params })
+               isPublished: publishedByLocation(args: { params: $params })
+               isAvailable: availabilityByLocation(args: { params: $params })
                defaultProductOptionId
-               defaultCartItem
-               productOptions {
+               defaultCartItem: defaultCartItemByLocation(
+                  args: { params: $params }
+               )
+               productOptions(
+                  where: { isArchived: { _eq: false } }
+                  order_by: { position: desc_nulls_last }
+               ) {
                   id
                   label
-                  price
-                  discount
-                  cartItem
+                  type
+                  price: priceByLocation(args: { params: $params })
+                  discount: discountByLocation(args: { params: $params })
+                  cartItem: cartItemByLocation(args: { params: $params })
+                  isPublished: publishedByLocation(args: { params: $params })
+                  isAvailable: availabilityByLocation(args: { params: $params })
+                  additionalModifiers(where: { isActive: { _eq: true } }) {
+                     type
+                     label
+                     linkedToModifierCategoryOptionId
+                     productOptionId
+                     modifierId
+                     modifier {
+                        id
+                        name
+                        categories(
+                           where: { isVisible: { _eq: true } }
+                           order_by: { position: desc_nulls_last }
+                        ) {
+                           id
+                           name
+                           isRequired
+                           type
+                           limits
+                           options(
+                              where: { isVisible: { _eq: true } }
+                              order_by: { position: desc_nulls_last }
+                           ) {
+                              id
+                              name
+                              price: priceByLocation(args: { params: $params })
+                              discount: discountByLocation(
+                                 args: { params: $params }
+                              )
+                              quantity
+                              image
+                              isActive
+                              additionalModifierTemplateId
+                              isAdditionalModifierRequired
+                              additionalModifierTemplate {
+                                 id
+                                 name
+                                 categories(
+                                    where: { isVisible: { _eq: true } }
+                                    order_by: { position: desc_nulls_last }
+                                 ) {
+                                    id
+                                    name
+                                    isRequired
+                                    type
+                                    limits
+                                    options(
+                                       where: { isVisible: { _eq: true } }
+                                       order_by: { position: desc_nulls_last }
+                                    ) {
+                                       id
+                                       name
+                                       price: priceByLocation(
+                                          args: { params: $params }
+                                       )
+                                       discount: discountByLocation(
+                                          args: { params: $params }
+                                       )
+                                       quantity
+                                       image
+                                       isActive
+                                       additionalModifierTemplateId
+                                       isAdditionalModifierRequired
+                                       sachetItemId
+                                       ingredientSachetId
+                                       cartItem: cartItemByLocation(
+                                          args: { params: $params }
+                                       )
+                                       additionalModifierTemplate {
+                                          id
+                                          name
+                                          categories(
+                                             where: { isVisible: { _eq: true } }
+                                             order_by: {
+                                                position: desc_nulls_last
+                                             }
+                                          ) {
+                                             id
+                                             name
+                                             isRequired
+                                             type
+                                             limits
+                                             options(
+                                                where: {
+                                                   isVisible: { _eq: true }
+                                                }
+                                                order_by: {
+                                                   position: desc_nulls_last
+                                                }
+                                             ) {
+                                                id
+                                                name
+                                                price: priceByLocation(
+                                                   args: { params: $params }
+                                                )
+                                                discount: discountByLocation(
+                                                   args: { params: $params }
+                                                )
+                                                quantity
+                                                image
+                                                isActive
+                                                additionalModifierTemplateId
+                                                isAdditionalModifierRequired
+                                                sachetItemId
+                                                ingredientSachetId
+                                                cartItem: cartItemByLocation(
+                                                   args: { params: $params }
+                                                )
+                                                additionalModifierTemplate {
+                                                   categories {
+                                                      options {
+                                                         name
+                                                      }
+                                                   }
+                                                }
+                                             }
+                                          }
+                                       }
+                                    }
+                                 }
+                              }
+                              sachetItemId
+                              ingredientSachetId
+                              cartItem: cartItemByLocation(
+                                 args: { params: $params }
+                              )
+                           }
+                        }
+                     }
+                  }
                   modifier {
                      id
                      categories(where: { isVisible: { _eq: true } }) {
@@ -344,11 +545,15 @@ export const QUERIES = {
                         options(where: { isVisible: { _eq: true } }) {
                            id
                            name
-                           price
-                           discount
+                           price: priceByLocation(args: { params: $params })
+                           discount: discountByLocation(
+                              args: { params: $params }
+                           )
                            image
                            isActive
-                           cartItem
+                           cartItem: cartItemByLocation(
+                              args: { params: $params }
+                           )
                         }
                      }
                   }
@@ -501,9 +706,10 @@ export const QUERIES = {
    },
    CATEGORIES: {
       LIST: gql`
-         query categories(
+         subscription categories(
             $subscriptionId: Int_comparison_exp
             $subscriptionOccurenceId: Int_comparison_exp
+            $params: jsonb!
          ) {
             categories: productCategories(
                where: {
@@ -538,6 +744,12 @@ export const QUERIES = {
                      productOption {
                         id
                         label
+                        isPublished: publishedByLocation(
+                           args: { params: $params }
+                        )
+                        isAvailable: availabilityByLocation(
+                           args: { params: $params }
+                        )
                         simpleRecipeYield {
                            yield
                            simpleRecipe {
@@ -549,6 +761,12 @@ export const QUERIES = {
                            name
                            assets
                            additionalText
+                           isPublished: publishedByLocation(
+                              args: { params: $params }
+                           )
+                           isAvailable: availabilityByLocation(
+                              args: { params: $params }
+                           )
                         }
                      }
                   }
@@ -584,32 +802,37 @@ export const QUERIES = {
    FULFILLMENT: {
       ONDEMAND: {
          PICKUP: gql`
-            subscription OndemandPickup($brandId: Int!) {
-               onDemandPickup: fulfillmentTypes(
-                  where: {
-                     isActive: { _eq: true }
-                     value: { _eq: "ONDEMAND_PICKUP" }
-                  }
-               ) {
-                  recurrences(
-                     where: {
-                        isActive: { _eq: true }
-                        brands: {
-                           _and: {
-                              brandId: { _eq: $brandId }
-                              isActive: { _eq: true }
-                           }
-                        }
-                     }
-                  ) {
+            subscription GET_ALL_RECURRENCES(
+               $where: fulfilment_brand_recurrence_bool_exp!
+            ) {
+               brandRecurrencesOP: brandRecurrences(where: $where) {
+                  brandId
+                  brandLocationId
+                  recurrenceId
+                  recurrence {
                      id
-                     type
                      rrule
-                     timeSlots(where: { isActive: { _eq: true } }) {
-                        id
-                        to
+                     type
+                     timeSlots {
                         from
+                        to
                         pickUpPrepTime
+                        id
+                        pickUpLeadTime
+                        slotInterval
+                        mileRanges {
+                           id
+                           from
+                           city
+                           distanceType
+                           to
+                           zipcodes
+                           state
+                           prepTime
+                           geoBoundary
+                           isExcluded
+                           leadTime
+                        }
                      }
                   }
                }
@@ -750,5 +973,74 @@ export const QUERIES = {
             }
          `,
       },
+      RECURRENCES: gql`
+         subscription GET_ALL_RECURRENCES(
+            $where: fulfilment_brand_recurrence_bool_exp!
+         ) {
+            brandRecurrences(where: $where) {
+               brandId
+               brandLocationId
+               recurrenceId
+               recurrence {
+                  id
+                  rrule
+                  type
+                  timeSlots {
+                     from
+                     to
+                     pickUpPrepTime
+                     id
+                     pickUpLeadTime
+                     slotInterval
+                     mileRanges {
+                        id
+                        from
+                        city
+                        distanceType
+                        to
+                        zipcodes
+                        state
+                        prepTime
+                        geoBoundary
+                        isExcluded
+                        leadTime
+                     }
+                  }
+               }
+            }
+         }
+      `,
    },
 }
+
+export const GET_BRAND_LOCATION = gql`
+   query GET_BRAND_LOCATION($where: brands_brand_location_bool_exp!) {
+      brandLocations: brands_brand_location(where: $where) {
+         id
+         brandMenuId
+         brandId
+         location {
+            id
+            locationAddress
+            label
+            zipcode
+            city
+            state
+            lat
+            lng
+            country
+         }
+      }
+   }
+`
+export const ORDER_TAB = gql`
+   subscription ORDER_TAB($where: brands_orderTab_bool_exp!) {
+      brands_orderTab(where: $where) {
+         id
+         orderFulfillmentTypeLabel
+         label
+         orderType
+         availableOrderInterfaceLabel
+      }
+   }
+`

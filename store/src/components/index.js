@@ -1,29 +1,23 @@
 import dynamic from 'next/dynamic'
+import { Form } from './form'
+import { Button } from './button'
+import { HernSkeleton } from './hernSkeleton'
+import { Fulfillment } from './fulfillment'
+
 const PaymentProcessingModal = dynamic(() => import('./paymentProcessingModal'))
 const FloatingBar = dynamic(() => import('./floatingBar'))
 const PaymentOptionsRenderer = dynamic(() => import('./paymentOptionsRenderer'))
 const PayButton = dynamic(() => import('./PayButton'))
 const PrintProcessingModal = dynamic(() => import('./printProcessingModal'))
+const WalletTopUp = dynamic(() => import('./walletTopUp'))
 
 const SEO = dynamic(() => import('./seo').then(promise => promise.SEO))
-const Text = dynamic(() => import('./form').then(promise => promise.Text))
-const Label = dynamic(() => import('./form').then(promise => promise.Label))
-const Field = dynamic(() => import('./form').then(promise => promise.Field))
-const TextArea = dynamic(() =>
-   import('./form').then(promise => promise.TextArea)
-)
-const DisabledText = dynamic(() =>
-   import('./form').then(promise => promise.DisabledText)
-)
-const Button = dynamic(() => import('./button').then(promise => promise.Button))
+
 const Layout = dynamic(() => import('./layout').then(promise => promise.Layout))
 const Spacer = dynamic(() => import('./spacer').then(promise => promise.Spacer))
 const Loader = dynamic(() => import('./loader').then(promise => promise.Loader))
 const StepsNavbar = dynamic(() =>
    import('./steps_navbar').then(promise => promise.StepsNavbar)
-)
-const OnDemandMenu = dynamic(() =>
-   import('./on_demand_menu').then(promise => promise.OnDemandMenu)
 )
 
 const PageLoader = dynamic(() =>
@@ -67,9 +61,6 @@ const CardList = dynamic(() =>
    import('./card_list').then(promise => promise.CardList)
 )
 
-const ProductCard = dynamic(() =>
-   import('./product_card').then(promise => promise.ProductCard)
-)
 const BottomCartBar = dynamic(() =>
    import('./bottom_cart_bar').then(promise => promise.BottomCartBar)
 )
@@ -78,6 +69,11 @@ const Divider = dynamic(() =>
 )
 const ModifierPopup = dynamic(() =>
    import('./modifier_popup').then(promise => promise.ModifierPopup)
+)
+const ModifierPopupForUnAvailability = dynamic(() =>
+   import('./modifierPopUpForUnAvailability').then(
+      promise => promise.ModifierPopupForUnAvailability
+   )
 )
 const CounterButton = dynamic(() =>
    import('./counterBtn').then(promise => promise.CounterButton)
@@ -100,9 +96,9 @@ const Recipe = dynamic(() => import('./recipe').then(promise => promise.Recipe))
 const FulfillmentForm = dynamic(() =>
    import('./fulfillment').then(promise => promise.FulfillmentForm)
 )
-const Fulfillment = dynamic(() =>
-   import('./fulfillment').then(promise => promise.Fulfillment)
-)
+// const Fulfillment = dynamic(() =>
+//    import('./fulfillment').then(promise => promise.Fulfillment)
+// )
 const CartPaymentComponent = dynamic(() =>
    import('./cartPayment').then(promise => promise.CartPaymentComponent)
 )
@@ -145,6 +141,7 @@ const ModifierOptionCard = dynamic(() =>
 const ModifierCategory = dynamic(() =>
    import('./modifierCategory').then(promise => promise.ModifierCategory)
 )
+const Empty = dynamic(() => import('./empty').then(promise => promise.Empty))
 
 export {
    PaymentProcessingModal,
@@ -159,7 +156,7 @@ export {
    Spacer,
    Loader,
    StepsNavbar,
-   OnDemandMenu,
+   // OnDemandMenu,
    PageLoader,
    ProfileSidebar,
    StyledArticle,
@@ -174,10 +171,10 @@ export {
    AddressList,
    AddressListHeader,
    CardList,
-   ProductCard,
    BottomCartBar,
    Divider,
    ModifierPopup,
+   ModifierPopupForUnAvailability,
    CounterButton,
    Login,
    LoginWarning,
@@ -200,6 +197,10 @@ export {
    ModifierOptionCard,
    ModifierCategory,
    LanguageSwitch,
+   Empty,
+   Form,
+   HernSkeleton,
+   WalletTopUp,
 }
 
 const TunnelHeader = dynamic(() =>
@@ -212,7 +213,7 @@ const Body = dynamic(() => import('./tunnel').then(promise => promise.Body))
 const Left = dynamic(() => import('./tunnel').then(promise => promise.Left))
 const Right = dynamic(() => import('./tunnel').then(promise => promise.Right))
 const Bottom = dynamic(() => import('./tunnel').then(promise => promise.Bottom))
-export const Form = { Text, Label, Field, TextArea, DisabledText }
+
 export const Tunnel = {
    Wrapper: TunnelWrapper,
    Header: TunnelHeader,
@@ -222,3 +223,5 @@ export const Tunnel = {
    Body,
 }
 export * from './helper_bar'
+export * from './on_demand_menu'
+export * from './product_card'

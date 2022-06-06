@@ -5,7 +5,6 @@ import { useRouter } from 'next/router'
 import { Result, Spin, Button, Modal } from 'antd'
 import isEmpty from 'lodash/isEmpty'
 import Countdown from 'react-countdown'
-
 import { Wrapper } from './styles'
 import { Button as StyledButton } from '../button'
 import PayButton from '../PayButton'
@@ -16,7 +15,7 @@ import {
    formatTerminalStatus,
    isClient,
 } from '../../utils'
-import { useTranslation } from '../../context'
+import { useTranslation, useUser } from '../../context'
 import { useConfig } from '../../lib'
 
 const PaymentProcessingModal = ({
@@ -42,6 +41,7 @@ const PaymentProcessingModal = ({
    const { width, height } = useWindowSize()
    const [countDown, setCountDown] = useState(null)
    const { t } = useTranslation()
+   const { user } = useUser()
 
    const closeModalHandler = async () => {
       setIsCelebrating(false)
@@ -64,11 +64,20 @@ const PaymentProcessingModal = ({
          // initializePrinting()
          await closeModalHandler()
       } else {
-         if (router.pathname !== `/view-order`) {
-            await closeModalHandler()
-            setIsProcessingPayment(false)
-            setIsPaymentInitiated(false)
-            router.push(`/view-order?id=${cartPayment?.cartId}`)
+         await closeModalHandler()
+         setIsProcessingPayment(false)
+         setIsPaymentInitiated(false)
+         if(cartPayment?.cartId){
+            if (cartPayment?.cart.source === 'subscription') {
+               if (user?.isSubscriber) {
+                  router.push(`/placing-order?id=${cartPayment?.cartId}`)
+               }
+               router.push(`/get-started/placing-order?id=${cartPayment?.cartId}`)
+            } else {
+               if (router.pathname !== `/view-order`) {
+                  router.push(`/view-order?id=${cartPayment?.cartId}`)
+               }
+            }
          }
       }
    }
@@ -352,6 +361,11 @@ const PaymentProcessingModal = ({
    //    setCountDown(60)
    // }, [cartPayment?.paymentStatus])
 
+   const PaymentPopUpDesignConfig = useConfig('KioskConfig')?.KioskConfig
+   const arrowBgColor =
+      PaymentPopUpDesignConfig?.kioskSettings?.theme?.arrowBgColor?.value
+   const arrowColor =
+      PaymentPopUpDesignConfig?.kioskSettings?.theme?.arrowColor?.value
    return (
       <Modal
          title={null}
@@ -371,19 +385,30 @@ const PaymentProcessingModal = ({
             overflowY: 'auto',
          }}
          maskStyle={{
-            backgroundColor: isKioskMode ? 'rgba(0, 64, 106, 0.9)' : '#fff',
+            backgroundColor: isKioskMode
+               ? PaymentPopUpDesignConfig?.paymentPopupSettings
+                    ?.paymentPopupBackgroundColor?.value
+               : '#fff',
          }}
       >
          <CartPageHeader
             resetPaymentProviderStates={resetPaymentProviderStates}
             closeModal={closeModal}
+            isCartPaymentEmpty={isEmpty(cartPayment)}
          />
          {/* this payment option selection screen and back button, it will only show in kiosk app  */}
          {isKioskMode && isEmpty(cartPayment) ? (
             <>
                <Wrapper>
                   <div tw="flex flex-col">
-                     <h1 tw="font-extrabold color[rgba(0, 64, 106, 0.9)] text-4xl text-center margin[2rem 0]">
+                     {/* <h1 tw ="font-extrabold text-4xl text-center margin[2rem 0]"> */}
+                     <h1
+                        style={{
+                           color: PaymentPopUpDesignConfig.paymentPopupSettings
+                              .textColor.value,
+                        }}
+                        tw="font-extrabold text-4xl text-center margin[2rem 0]"
+                     >
                         {t('Choose a payment method')}
                      </h1>
                      {PaymentOptions.map(option => {
@@ -394,11 +419,18 @@ const PaymentProcessingModal = ({
                                  className="hern-kiosk__kiosk-button hern-kiosk__cart-place-order-btn"
                                  key={option.id}
                                  selectedAvailablePaymentOptionId={option.id}
+                                 config={PaymentPopUpDesignConfig}
                               >
                                  {t(LABEL[option.label])}
                               </PayButton>
 
-                              <p tw="last:(hidden) font-extrabold margin[2rem 0] color[rgba(0, 64, 106, 0.9)] text-2xl text-center">
+                              <p
+                                 style={{
+                                    color: PaymentPopUpDesignConfig
+                                       .paymentPopupSettings.textColor.value,
+                                 }}
+                                 tw="last:(hidden) font-extrabold margin[2rem 0] text-2xl text-center"
+                              >
                                  {t('OR')}
                               </p>
                            </>
@@ -412,7 +444,10 @@ const PaymentProcessingModal = ({
                   onClick={resetPaymentProviderStates}
                >
                   <div tw="flex items-center">
-                     <ArrowLeftIconBG bgColor="#F7B502" arrowColor="#fff" />
+                     <ArrowLeftIconBG
+                        bgColor={`${arrowBgColor}`}
+                        arrowColor={arrowColor}
+                     />
                      <span tw="ml-4 font-bold text-white text-2xl">Back</span>
                   </div>
                </Button>
@@ -474,11 +509,9 @@ const PaymentProcessingModal = ({
                            }
                            return (
                               <h1 tw="font-extrabold color[rgba(0, 64, 106, 0.9)] text-xl text-center">
-                                 {t(
-                                    `Timeout in ${minutes}:${
-                                       seconds <= 9 ? '0' : ''
-                                    }${seconds}`
-                                 )}
+                                 {`Timeout in ${minutes}:${
+                                    seconds <= 9 ? '0' : ''
+                                 }${seconds}`}
                               </h1>
                            )
                         }}
@@ -506,23 +539,35 @@ const LABEL = {
 const CartPageHeader = ({
    closeModal = () => null,
    resetPaymentProviderStates = () => null,
+   isCartPaymentEmpty = true,
 }) => {
    const { configOf } = useConfig('brand')
+   const PaymentPopUpDesignConfig = useConfig('KioskConfig')
+   const isKioskMode = isKiosk()
+
    const {
-      BrandName: { value: showBrandName } = {},
-      BrandLogo: { value: showBrandLogo } = {},
+      ShowBrandName: { value: showBrandName } = {},
+      ShowBrandLogo: { value: showBrandLogo } = {},
       brandName: { value: brandName } = {},
-      brandLogo: { value: logo } = {},
-   } = configOf('Brand Info')
+      logo: { value: logo } = {},
+   } = !isKioskMode
+      ? configOf('Brand Info')
+      : PaymentPopUpDesignConfig?.KioskConfig?.kioskSettings
+   const logoAlignment =
+      PaymentPopUpDesignConfig?.KioskConfig?.paymentPopupSettings?.logoAlignment
+         ?.value
+
    const theme = configOf('theme-color', 'Visual')?.themeColor
    const themeColor = theme?.accent?.value
       ? theme?.accent?.value
       : 'rgba(5, 150, 105, 1)'
-   const isKioskMode = isKiosk()
    return (
-      <header className="hern-cart-page__header">
+      <header
+         className="hern-cart-page__header"
+         style={{ justifyContent: `${logoAlignment?.value}` }}
+      >
          <div>
-            {!isKioskMode && (
+            {!isKioskMode && isCartPaymentEmpty && (
                <span
                   tw="hover:(cursor-pointer)"
                   onClick={async () => {

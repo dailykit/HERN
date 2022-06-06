@@ -1,30 +1,12 @@
 import React, { useEffect, useState } from 'react'
 import _ from 'lodash'
-import {
-   Col,
-   Layout,
-   Menu,
-   Row,
-   Badge,
-   Steps,
-   Carousel,
-   Space,
-   Radio,
-   Spin,
-   Switch,
-} from 'antd'
+import { Col, Layout, Menu, Row, Spin, Switch } from 'antd'
 import { useQueryParamState, formatCurrency } from '../../utils'
 import { CartContext, useTranslation } from '../../context'
 import { KioskProduct } from './component'
-import { PRODUCTS_BY_CATEGORY, PRODUCTS } from '../../graphql'
 import { useConfig } from '../../lib'
 import { useQuery } from '@apollo/react-hooks'
-import {
-   ArrowLeftIcon,
-   ArrowLeftIconBG,
-   ArrowRightIcon,
-   CartIcon,
-} from '../../assets/icons'
+import { CartIcon } from '../../assets/icons'
 import { Divider } from '../../components'
 import { ProgressBar } from './component/progressBar'
 import { PromotionCarousal } from '../../sections/promotionCarousel'
@@ -33,138 +15,12 @@ import { HernLazyImage } from '../../utils/hernImage'
 import KioskButton from './component/button'
 
 const { Content, Sider, Header, Footer } = Layout
-const { Step } = Steps
 
 export const MenuSection = props => {
-   const { brand, isConfigLoading, kioskDetails, isStoreAvailable } =
-      useConfig()
-   const carousalRef = React.useRef()
-
-   const { config, setCurrentPage } = props
+   const { config, setCurrentPage, hydratedMenu, status } = props
    const [category, changeCategory, deleteCategory] =
       useQueryParamState('productCategoryId')
    // console.log('fromMenuSection')
-
-   const [menuData, setMenuData] = useState({
-      categories: [],
-      allProductIds: [],
-      isMenuLoading: true,
-   })
-   const [status, setStatus] = useState('loading')
-   const [hydratedMenu, setHydratedMenu] = React.useState([])
-
-   const argsForByLocation = React.useMemo(
-      () => ({
-         params: {
-            brandId: brand?.id,
-            locationId: kioskDetails?.locationId,
-         },
-      }),
-      [brand]
-   )
-   // useEffect(() => {
-   //    const translateString = document.querySelectorAll("span");
-   //    t(translateString);
-
-   //  }, []);
-
-   const date = React.useMemo(() => new Date(Date.now()).toISOString(), [])
-   // get all categories by locationId, brandId and collection(s) provide to kiosk(by config)
-   const { error: menuError } = useQuery(PRODUCTS_BY_CATEGORY, {
-      skip: isConfigLoading || !brand?.id,
-      variables: {
-         params: {
-            brandId: brand?.id,
-            date,
-            ...(config.data.collectionData.value.length > 0 && {
-               collectionIdArray: config.data.collectionData.value.map(
-                  each => each.id
-               ),
-            }),
-            locationId: kioskDetails?.locationId,
-         },
-      },
-      onCompleted: data => {
-         // console.log('v2Data', data)
-         if (data?.onDemand_getMenuV2copy?.length) {
-            const [res] = data.onDemand_getMenuV2copy
-            const { menu } = res.data
-            const ids = menu.map(category => category.products).flat()
-            setMenuData(prev => ({
-               ...prev,
-               allProductIds: ids,
-               categories: menu,
-               isMenuLoading: false,
-            }))
-         }
-      },
-      onError: error => {
-         setMenuData(prev => ({
-            ...prev,
-            isMenuLoading: false,
-         }))
-         setStatus('error')
-         console.log(error)
-      },
-   })
-
-   // get all products from productIds getting from PRODUCT_BY_CATEGORY
-   const { loading: productsLoading, error: productsError } = useQuery(
-      PRODUCTS,
-      {
-         skip: menuData.isMenuLoading,
-         variables: {
-            ids: menuData.allProductIds,
-            priceArgs: argsForByLocation,
-            discountArgs: argsForByLocation,
-            defaultCartItemArgs: argsForByLocation,
-            productOptionPriceArgs: argsForByLocation,
-            productOptionDiscountArgs: argsForByLocation,
-            productOptionCartItemArgs: argsForByLocation,
-            modifierCategoryOptionPriceArgs: argsForByLocation,
-            modifierCategoryOptionDiscountArgs: argsForByLocation,
-            modifierCategoryOptionCartItemArgs: argsForByLocation,
-         },
-         // fetchPolicy: 'network-only',
-         onCompleted: data => {
-            if (data && data.products.length && hydratedMenu.length === 0) {
-               const updatedMenu = menuData.categories.map(category => {
-                  const updatedProducts = category.products
-                     .map(productId => {
-                        const found = data.products.find(
-                           ({ id }) => id === productId
-                        )
-                        if (found) {
-                           return found
-                        }
-                        return null
-                     })
-                     .filter(Boolean)
-                  return {
-                     ...category,
-                     products: updatedProducts,
-                  }
-               })
-               setStatus('success')
-               setHydratedMenu(updatedMenu)
-            }
-         },
-         onError: error => {
-            setStatus('error')
-            console.log('Error: ', error)
-         },
-      }
-   )
-
-   const memoHydratedMenu = React.useMemo(() => hydratedMenu, [hydratedMenu])
-   const lastCarousal = e => {
-      e.stopPropagation()
-      carousalRef.current.prev()
-   }
-   const nextCarousal = e => {
-      e.stopPropagation()
-      carousalRef.current.next()
-   }
 
    if (status === 'loading') {
       return (
@@ -198,7 +54,7 @@ export const MenuSection = props => {
             config={config}
             categoryId={category}
             changeCategory={changeCategory}
-            kioskMenus={memoHydratedMenu}
+            kioskMenus={hydratedMenu}
             setCurrentPage={setCurrentPage}
          />
       </Layout>
@@ -217,8 +73,19 @@ const KioskMenu = props => {
    const { isStoreAvailable } = useConfig()
 
    const menuRef = React.useRef()
+   const kioskFinalMenu = React.useMemo(() => {
+      if (showVegMenuOnly) {
+         return vegMenu
+      } else {
+         return kioskMenus
+      }
+   }, [kioskMenus, showVegMenuOnly])
+
    const [selectedCategory, setSelectedCategory] = useState(
-      (categoryId && categoryId.toString()) || '0'
+      (categoryId && categoryId.toString()) ||
+         kioskFinalMenu
+            .findIndex(x => x.isCategoryPublished && x.isCategoryAvailable)
+            .toString()
    )
    const [showVegMenuOnly, setShowVegMenuOnly] = useState(false)
    const [vegMenu, setVegMenu] = useState(null)
@@ -233,7 +100,7 @@ const KioskMenu = props => {
          '[data-translation="true"]'
       )
       dynamicTrans(languageTags)
-   }, [])
+   }, [kioskMenus])
    useEffect(() => {
       const kioskMenusClone = JSON.parse(JSON.stringify(kioskMenus))
       const filteredVegMenu = kioskMenusClone
@@ -251,13 +118,6 @@ const KioskMenu = props => {
          .filter(eachCategory => eachCategory.products.length > 0)
       setVegMenu(filteredVegMenu)
    }, [kioskMenus])
-   const kioskFinalMenu = React.useMemo(() => {
-      if (showVegMenuOnly) {
-         return vegMenu
-      } else {
-         return kioskMenus
-      }
-   }, [kioskMenus, showVegMenuOnly])
 
    return (
       <Layout
@@ -277,6 +137,9 @@ const KioskMenu = props => {
                defaultSelectedKeys={[selectedCategory]}
             >
                {kioskFinalMenu.map((eachCategory, index) => {
+                  if (!eachCategory.isCategoryPublished) {
+                     return null
+                  }
                   return (
                      <Menu.Item key={index} style={{ height: '13em' }}>
                         <div
@@ -441,7 +304,7 @@ const KioskMenu = props => {
                                           ? t('Item')
                                           : t('Items')}{' '}
                                        {formatCurrency(
-                                          cart?.cartOwnerBilling?.balanceToPay
+                                          cart?.cartOwnerBilling?.totalToPay
                                        )}
                                     </span>
                                     <div
@@ -495,6 +358,11 @@ const MenuProducts = ({ setCurrentPage, eachCategory, config }) => {
    const [currentGroupProducts, setCurrentGroupedProduct] = useState(
       groupedByType[0].products
    )
+
+   useEffect(() => {
+      setCurrentGroupedProduct(groupedByType[0].products)
+   }, [eachCategory])
+
    const [currentGroup, setCurrentGroup] = useState(groupedByType[0].type)
    const onRadioClick = e => {
       setCurrentGroupedProduct(prev => {
@@ -570,6 +438,15 @@ const MenuProducts = ({ setCurrentPage, eachCategory, config }) => {
          )}
          <Row gutter={[16, 16]} style={{ marginBottom: '2em' }}>
             {currentGroupProducts.map((eachProduct, index2) => {
+               const publishedProductOptions =
+                  eachProduct.productOptions.length > 0 &&
+                  eachProduct.productOptions.filter(
+                     option => option.isPublished
+                  ).length == 0
+
+               if (!eachProduct.isPublished || publishedProductOptions) {
+                  return null
+               }
                return (
                   <Col span={8} className="gutter-row" key={eachProduct?.id}>
                      <KioskProduct

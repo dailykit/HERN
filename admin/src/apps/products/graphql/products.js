@@ -72,6 +72,7 @@ export const PRODUCT = {
             isPopupAllowed
             isValid
             isPublished
+            isAvailable
             posist_baseItemId
             defaultProductOptionId
             subCategory
@@ -85,6 +86,8 @@ export const PRODUCT = {
                type
                label
                price
+               isPublished
+               isAvailable
                discount
                quantity
                posist_baseItemId
@@ -169,12 +172,12 @@ export const PRODUCT = {
    //SEO SETTINGS
    UPDATE_PRODUCT_SETTING: gql`
       mutation upsertProductSetting(
-         $object: [products_product_productPageSetting_insert_input!]!
+         $object: [products_product_productSetting_insert_input!]!
       ) {
-         upsertProductSetting: insert_products_product_productPageSetting(
+         upsertProductSetting: insert_products_product_productSetting(
             objects: $object
             on_conflict: {
-               constraint: product_productPageSetting_pkey
+               constraint: product_productSetting_pkey
                update_columns: value
             }
          ) {
@@ -186,17 +189,18 @@ export const PRODUCT = {
    `,
    //for seo settings(lazy query)
    PRODUCT_PAGE_SETTINGS: gql`
-      query productPageSettings(
+      query productSettings(
          $identifier: String_comparison_exp!
          $type: String_comparison_exp!
          $productId: Int_comparison_exp!
+         $brandId: Int_comparison_exp!
       ) {
-         products_productPageSetting(
+         products_productSetting(
             where: { identifier: $identifier, type: $type }
          ) {
             id
-            product: product_productPageSettings(
-               where: { productId: $productId }
+            product: product_productSettings(
+               where: { productId: $productId, brandId: $brandId }
             ) {
                productId
                value
@@ -204,14 +208,16 @@ export const PRODUCT = {
          }
       }
    `,
+
    //product setting
    SETTING: gql`
-      subscription productSettings($productId: Int!) {
+      subscription productSettings($productId: Int!, $brandId: Int!) {
          products_product_productSetting(
             where: {
                _and: {
                   productId: { _eq: $productId }
                   productSetting: { isDynamicForm: { _eq: true } }
+                  brandId: { _eq: $brandId }
                }
             }
          ) {
@@ -441,11 +447,18 @@ export const ADDITIONAL_MODIFIER = {
       }
    `,
 }
+
 // getting productSettingId using identifier
 export const PRODUCT_ID = gql`
-   query MyQuery($identifier: String_comparison_exp!) {
+   query MyQuery(
+      $identifier: String_comparison_exp!
+      $brandId: Int_comparison_exp!
+   ) {
       products_product_productSetting(
-         where: { productSetting: { identifier: $identifier } }
+         where: {
+            productSetting: { identifier: $identifier }
+            brandId: $brandId
+         }
          limit: 1
       ) {
          productSettingId

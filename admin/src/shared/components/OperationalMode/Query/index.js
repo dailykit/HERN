@@ -58,9 +58,13 @@ export const COLLECTION_PRODUCT_OPTIONS = gql`
       $brandId1: Int!
       $brand_locationId: Int!
    ) {
-      productOptions(order_by: { id: asc }) {
+      productOptions(
+         where: { isArchived: { _eq: false } }
+         order_by: { id: asc }
+      ) {
          id
          price
+         label
          productPrice_brand_locations(
             where: {
                brandId: { _eq: $brandId1 }

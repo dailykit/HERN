@@ -16,7 +16,7 @@ export default function ThemeStore({ show, closePopup, setCreateType }) {
       setClickedTempId(templateId)
       try {
          await axios.post(
-            `https://test.dailykit.org/template/download${templatePath}`
+            `${window.location.origin}/template/download${templatePath}`
          )
          setIsLoading(false)
          closePopup()
@@ -50,7 +50,7 @@ export default function ThemeStore({ show, closePopup, setCreateType }) {
                        route
                        thumbnail
                      }
-                   }         
+                   }
         `,
                },
             })

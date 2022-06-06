@@ -1,24 +1,16 @@
-import { Button, Loader } from '.'
+import { Button } from '.'
 import Link from 'next/link'
+import { useRouter } from 'next/router'
 import { useConfig } from '../lib'
 import classNames from 'classnames'
 import React, { useState } from 'react'
 import Countdown from 'react-countdown'
-import { signIn, getSession, providers } from 'next-auth/client'
-import { detectCountry, getRoute, get_env, isClient } from '../utils'
-import PhoneInput, {
-   formatPhoneNumber,
-   formatPhoneNumberIntl,
-   isValidPhoneNumber,
-} from 'react-phone-number-input'
+import { signIn, getSession } from 'next-auth/client'
+import { getRoute, get_env, isClient, useQueryParams } from '../utils'
+import PhoneInput, { isValidPhoneNumber } from 'react-phone-number-input'
 import 'react-phone-number-input/style.css'
 import { useToasts } from 'react-toast-notifications'
-import {
-   CheckBoxIcon,
-   CloseIcon,
-   FacebookIcon,
-   GoogleIcon,
-} from '../assets/icons'
+import { CheckBoxIcon, FacebookIcon, GoogleIcon } from '../assets/icons'
 import {
    FORGOT_PASSWORD,
    INSERT_OTP_TRANSACTION,
@@ -29,14 +21,13 @@ import {
    RESEND_OTP,
 } from '../graphql'
 import {
+   useApolloClient,
    useLazyQuery,
    useMutation,
    useQuery,
    useSubscription,
 } from '@apollo/react-hooks'
 import axios from 'axios'
-import isEmpty from 'lodash/isEmpty'
-import isNull from 'lodash/isNull'
 
 import {
    deleteStoredReferralCode,
@@ -45,42 +36,35 @@ import {
    getStoredReferralCode,
 } from '../utils/referrals'
 import gql from 'graphql-tag'
-import { useRouter } from 'next/router'
 import { useTranslation } from '../context'
+import { useForm } from 'react-hook-form'
 
 const ReactPixel = isClient ? require('react-facebook-pixel').default : null
 
 export const Login = props => {
    //props
    const {
-      closeLoginPopup,
       loginBy = 'email',
+      brandDefaultLogInMethod,
       forceLogin = false,
-      isSilentlyLogin = true,
       singleLoginMethod = false,
       callbackURL,
       socialLogin = true,
       showBackground = false,
-      currentAuth = null,
    } = props
 
    //loginBy --> initial login method ('email', 'otp' , 'signup', 'forgotPassword').
-   //isSilentlyLogin --> page not reload after login.
-   //closeLoginPopup --> fn to close popup.
    //forceLogin --> disable close icon and only close when successfully signup or login.
    //singleLoginMethod --> only use one method for log in either email or phone num. (based on loginBy).
    //callbackURL --> callback url for signIn (string)
    //socialLogin --> need social login or not
-   const router = useRouter()
 
    //component state
    const [defaultLogin, setDefaultLogin] = useState(loginBy)
-   const { configOf, setAuth } = useConfig()
-   const authConfig = configOf('Auth Methods', 'brand')
    const { t } = useTranslation()
    const showCreateOne = React.useMemo(() => {
       if (singleLoginMethod) {
-         if (loginBy === 'email') {
+         if (loginBy === 'email' || (loginBy === 'signup' && brandDefaultLogInMethod==='email')) {
             return true
          } else {
             return false
@@ -88,12 +72,7 @@ export const Login = props => {
       } else {
          return true
       }
-   }, [])
-   React.useEffect(() => {
-      if (!isNull(currentAuth)) {
-         setDefaultLogin(loginBy)
-      }
-   }, [currentAuth])
+   }, [singleLoginMethod])
 
    return (
       <div
@@ -111,38 +90,7 @@ export const Login = props => {
             {(defaultLogin === 'email' || defaultLogin === 'otp') && (
                <span>{t('Log In')}</span>
             )}
-
-            {defaultLogin === 'forgotPassword' && (
-               <span>{t('Forgot Password')}</span>
-            )}
             {defaultLogin === 'signup' && <span>{t('Sign Up')}</span>}
-
-            {/* google or facebook */}
-            {socialLogin && <SocialLogin callbackURL={callbackURL} />}
-            {defaultLogin !== 'signup' &&
-               showCreateOne &&
-               authConfig.loginSettings?.signup?.value && (
-                  <footer className="hern-login-v1__footer">
-                     <span>{t('No account?')} </span>{' '}
-                     <button
-                        className="hern-login-v1__create-one-btn"
-                        onClick={() => {
-                           setAuth('sign-up')
-                           setDefaultLogin('signup')
-                        }}
-                     >
-                        {t('Create one')}
-                     </button>
-                  </footer>
-               )}
-            {!forceLogin && (
-               <CloseIcon
-                  size={18}
-                  stroke={'#404040'}
-                  style={{ cursor: 'pointer' }}
-                  onClick={closeLoginPopup}
-               />
-            )}
          </div>
          {forceLogin && (
             <div className="hern-login-v1__custom-warning">
@@ -164,30 +112,19 @@ export const Login = props => {
             {defaultLogin === 'email' && (
                <Email
                   setDefaultLogin={setDefaultLogin}
-                  isSilentlyLogin={isSilentlyLogin}
-                  closeLoginPopup={closeLoginPopup}
                   callbackURL={callbackURL}
                />
             )}
-            {defaultLogin === 'otp' && (
-               <OTPLogin
-                  closeLoginPopup={closeLoginPopup}
-                  isSilentlyLogin={isSilentlyLogin}
-                  callbackURL={callbackURL}
-               />
-            )}
-            {defaultLogin === 'forgotPassword' && (
-               <ForgotPassword closeLoginPopup={closeLoginPopup} />
-            )}
-            {defaultLogin === 'signup' && (
+            {defaultLogin === 'otp' && <OTPLogin callbackURL={callbackURL} />}
+            {defaultLogin === 'forgotPassword' && <ForgotPassword />}
+            {defaultLogin === 'signup' && ( brandDefaultLogInMethod === 'otp' ? (
+               <OTPLogin callbackURL={callbackURL} />
+            ): (
                <Signup
                   setDefaultLogin={setDefaultLogin}
-                  isSilentlyLogin={isSilentlyLogin}
-                  closeLoginPopup={closeLoginPopup}
                   callbackURL={callbackURL}
                />
-            )}
-            {/* {defaultLogin === 'email' ? <Email /> : <OTPLogin />} */}
+            ))}
 
             {!singleLoginMethod && (
                <>
@@ -197,7 +134,6 @@ export const Login = props => {
                         className="hern-login-login-switcher-btn"
                         variant="outline"
                         onClick={() => {
-                           setAuth('sign-in')
                            defaultLogin === 'email'
                               ? setDefaultLogin('otp')
                               : setDefaultLogin('email')
@@ -223,10 +159,20 @@ export const Login = props => {
                   className="hern-login-v1__create-one-btn"
                   onClick={() => {
                      setDefaultLogin('signup')
-                     setAuth('sign-up')
                   }}
                >
                   {t('Create one')}
+               </button>
+            </footer>
+         )}
+         {defaultLogin === 'signup' && showCreateOne && (
+            <footer className="hern-login-v1__footer">
+               <span>{t('Already have an account ?')} </span>
+               <button
+                  className="hern-login-v1__create-one-btn"
+                  onClick={() => setDefaultLogin('email')}
+               >
+                  {t('Login')}
                </button>
             </footer>
          )}
@@ -237,10 +183,9 @@ export const Login = props => {
 //email log in
 const Email = props => {
    //props
-   const { setDefaultLogin, isSilentlyLogin, closeLoginPopup, callbackURL } =
-      props
+   const { setDefaultLogin, callbackURL } = props
    const { addToast } = useToasts()
-   const { setAuth, deleteAuth } = useConfig()
+   const router = useRouter()
    //component state
    const [loading, setLoading] = React.useState(false)
    const [error, setError] = React.useState('')
@@ -296,18 +241,15 @@ const Email = props => {
                phone: form.phone,
             })
             addToast(t('Login successfully!'), { appearance: 'success' })
-            const landedOn = isClient && localStorage.getItem('landed_on')
-            if (!isSilentlyLogin) {
-               if (isClient && landedOn) {
+            if (isClient) {
+               const landedOn = localStorage.getItem('landed_on')
+               if (landedOn) {
+                  const route = landedOn.replace(window.location.origin, '')
                   localStorage.removeItem('landed_on')
-                  window.location.href = landedOn
+                  router.push(getRoute(route))
                } else {
-                  window.location.href = getRoute('/menu')
+                  router.push(getRoute('/order'))
                }
-               deleteAuth('auth')
-            } else {
-               deleteAuth('auth')
-               closeLoginPopup()
             }
          }
       } catch (error) {
@@ -372,7 +314,6 @@ const Email = props => {
                className="hern-login-v1__forgot-password"
                onClick={() => {
                   setDefaultLogin('forgotPassword')
-                  setAuth('forgotPassword')
                }}
             >
                <span>{t('Forgot password')}</span>
@@ -387,13 +328,7 @@ const Email = props => {
             })}
             onClick={() => isValid && submit()}
          >
-            {loading ? (
-               <>
-                  <span>{t('LOGGING IN')}</span>
-               </>
-            ) : (
-               t('LOGIN')
-            )}
+            {loading ? <span>{t('LOGGING IN')}</span> : t('LOGIN')}
          </Button>
       </div>
    )
@@ -402,10 +337,11 @@ const Email = props => {
 //  login with otp
 const OTPLogin = props => {
    //props
-   const { isSilentlyLogin, closeLoginPopup, callbackURL } = props
+   const { callbackURL } = props
    const { addToast } = useToasts()
    const { t } = useTranslation()
-   const { deleteAuth } = useConfig()
+   const router = useRouter()
+   const { brand } = useConfig()
    //component state
    const [error, setError] = React.useState('')
    const [loading, setLoading] = React.useState(false)
@@ -417,6 +353,26 @@ const OTPLogin = props => {
    const [resending, setResending] = React.useState(false)
    const [time, setTime] = React.useState(null)
    const [isNewUser, setIsNewUser] = React.useState(false)
+   const params = useQueryParams()
+   const [isReferralFieldVisible, setIsReferralFieldVisible] =
+      React.useState(false)
+   React.useEffect(() => {
+      if (params['invite-code']) {
+         const setInviteCode = async () => {
+            const isCodeValid = await isReferralCodeValid(
+               brand.id,
+               params['invite-code'],
+               true
+            )
+
+            if (isCodeValid) {
+               setIsReferralFieldVisible(true)
+               setForm({ ...form, code: params['invite-code'] })
+            }
+         }
+         setInviteCode()
+      }
+   }, [params])
 
    //check user already exist
    const [checkCustomerExistence] = useLazyQuery(PLATFORM_CUSTOMERS, {
@@ -427,6 +383,8 @@ const OTPLogin = props => {
       },
       onError: () => {},
    })
+
+   const apolloClient = useApolloClient()
 
    //resend otp
    const [resendOTP] = useMutation(RESEND_OTP, {
@@ -473,7 +431,7 @@ const OTPLogin = props => {
    //insert a entry of phone number in table and get otp code then send sms
    const [insertOtpTransaction] = useMutation(INSERT_OTP_TRANSACTION, {
       onCompleted: async ({ insertOtp = {} } = {}) => {
-         if (insertOtp?.code) {
+         if (insertOtp?.id) {
             setOtpId(insertOtp?.id)
             setHasOtpSent(true)
             setSendingOtp(false)
@@ -517,35 +475,65 @@ const OTPLogin = props => {
          }
          const emailRegex =
             /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-         if (isNewUser && !emailRegex.test(form.email)) {
-            setError('Please enter a valid email!')
-            addToast(t('Please enter a valid email!'), {
-               appearance: 'error',
+         if (isNewUser) {
+            if (!emailRegex.test(form.email)) {
+               setError('Please enter a valid email!')
+               addToast(t('Please enter a valid email!'), {
+                  appearance: 'error',
+               })
+               setLoading(false)
+               return
+            }
+            const data = await apolloClient.query({
+               query: PLATFORM_CUSTOMERS,
+               variables: { where: { email: { _eq: form.email } } },
             })
-            setLoading(false)
-            return
+            const { customers } = data.data
+            if (customers.length > 0) {
+               setError('This email is already in use!')
+               addToast(t('This email is already in use!'), {
+                  appearance: 'error',
+               })
+               setLoading(false)
+               return
+            }
          }
 
          setError('')
+         const isCodeValid = await isReferralCodeValid(
+            brand.id,
+            form.code,
+            true
+         )
+         if (!isCodeValid) {
+            deleteStoredReferralCode()
+            return setError(
+               <>
+                  <span>{t('Referral code is not valid')}</span>
+                  <span>{'!'}</span>
+               </>
+            )
+         }
+         if (form.code) {
+            setStoredReferralCode(form.code)
+         }
+
          const response = await signIn('otp', {
             redirect: false,
             ...form,
             ...(callbackURL && { callbackUrl: callbackURL }),
          })
          if (response?.status === 200) {
-            const landedOn = localStorage.getItem('landed_on')
             addToast(t('Login successfully!'), { appearance: 'success' })
-            if (!isSilentlyLogin) {
+            if (isClient) {
+               const landedOn = localStorage.getItem('landed_on')
                if (landedOn) {
+                  const route = landedOn.replace(window.location.origin, '')
                   localStorage.removeItem('landed_on')
-                  window.location.href = landedOn
+                  router.push(getRoute(route))
                } else {
-                  window.location.href = getRoute('/menu')
+                  router.push(getRoute('/order'))
                }
-               deleteAuth('auth')
-            } else {
-               closeLoginPopup()
-               deleteAuth('auth')
             }
          } else {
             setLoading(false)
@@ -634,6 +622,7 @@ const OTPLogin = props => {
                      {t('Phone Number')}
                   </label>
                   <PhoneInput
+                     autoFocus
                      className={`hern-login-v1__otp__phone__input hern-login-v1__otp__phone__input${
                         !(form.phone === '' || form.phone === undefined) &&
                         !(
@@ -706,6 +695,7 @@ const OTPLogin = props => {
                         onChange={onChange}
                         value={form.email}
                         placeholder="Enter your email"
+                        autoFocus
                      />
                   </fieldset>
                )}
@@ -722,8 +712,38 @@ const OTPLogin = props => {
                      value={form.otp}
                      placeholder="Enter the otp"
                      onKeyPress={handleSubmitOTPKeyPress}
+                     autoFocus={!isNewUser}
                   />
                </fieldset>
+               {isNewUser && (
+                  <>
+                     {isReferralFieldVisible ? (
+                        <fieldset className="hern-login-v1__fieldset">
+                           <label
+                              className="hern-login-v1__label"
+                              htmlFor="code"
+                           >
+                              {t('Referral Code')}
+                           </label>
+                           <input
+                              className="hern-login-v1__input"
+                              name="code"
+                              type="text"
+                              onChange={onChange}
+                              value={form.code}
+                              placeholder="Enter referral code"
+                           />
+                        </fieldset>
+                     ) : (
+                        <button
+                           className="hern-signup-v1__referral-code"
+                           onClick={() => setIsReferralFieldVisible(true)}
+                        >
+                           {t('Got a referral code?')}
+                        </button>
+                     )}
+                  </>
+               )}
                <button
                   style={{ height: '40px' }}
                   className={`hern-login-v1__otp-submit ${
@@ -875,61 +895,59 @@ const SocialLogin = props => {
 }
 
 //forgot password
-const ForgotPassword = props => {
-   //props
-   const { closeLoginPopup } = props
+const ForgotPassword = () => {
    const { t } = useTranslation()
    const { addToast } = useToasts()
-   const { configOf, deleteAuth } = useConfig()
+   const [isEmailSent, setIsEmailSent] = React.useState(false)
+   const [email, setEmail] = React.useState('')
 
-   const theme = configOf('theme-color', 'Visual')
+   const {
+      register,
+      handleSubmit,
+      formState: { errors },
+   } = useForm()
 
-   const [error, setError] = React.useState('')
-   const [form, setForm] = React.useState({
-      email: '',
+   const [checkCustomerExistence] = useLazyQuery(PLATFORM_CUSTOMERS, {
+      variables: {
+         where: { email: { _eq: email } },
+      },
+      onCompleted: ({ customers = [] }) => {
+         if (customers.length > 0) {
+            //customer exists
+            submit()
+         } else {
+            //customer doesn't exist
+            addToast("The email you have entered doesn't have an account", {
+               appearance: 'info',
+            })
+         }
+      },
+      onError: () => {},
    })
-
-   const isValid = form.email
 
    const [forgotPassword, { loading }] = useMutation(FORGOT_PASSWORD, {
       onCompleted: () => {
          addToast(t('Email sent!'), { appearance: 'success' })
-         closeLoginPopup()
-         deleteAuth('auth')
+         setIsEmailSent(true)
       },
       onError: error => {
          addToast(error.message, { appearance: 'error' })
       },
    })
 
-   const onChange = e => {
-      const { name, value } = e.target
-      setForm(form => ({
-         ...form,
-         [name]: value,
-      }))
-   }
-
    const submit = async () => {
       try {
-         setError('')
          if (isClient) {
             const origin = get_env('BASE_BRAND_URL')
             forgotPassword({
                variables: {
-                  email: form.email,
+                  email,
                   origin,
                },
             })
          }
       } catch (error) {
          if (error?.code === 401) {
-            setError(
-               <>
-                  <span>{t('Email or password is incorrect')}</span>
-                  <span>{'!'}</span>
-               </>
-            )
             addToast(
                <>
                   <span>{t('Email or password is incorrect')}</span>
@@ -942,37 +960,74 @@ const ForgotPassword = props => {
          }
       }
    }
+   if (isEmailSent) {
+      return (
+         <div className="hern-login-v1__forgot-password__email-sent">
+            <h3>
+               An email was sent to <span>{email}</span>{' '}
+            </h3>
+            <p>
+               Please check your email and follow the instructions to reset your
+               password.
+            </p>
+            <Link href={getRoute('/order')}>
+               <a>
+                  <Button onClick={() => {}}>Explore our menu </Button>
+               </a>
+            </Link>
+         </div>
+      )
+   }
+
    return (
-      <div className="hern-forgot-password-v1">
-         <fieldset className="hern-login-v1__fieldset">
-            <label htmlFor="email" className="hern-login-v1__label">
-               <span>{t('Email')}</span>
-            </label>
-            <input
-               className="hern-login-v1__input"
-               type="email"
-               name="email"
-               id="email"
-               value={form.email}
-               onChange={onChange}
-               placeholder="Enter your email"
-            />
-         </fieldset>
-         <button
-            className={classNames('hern-forgot-password-v1__submit-btn', {
-               'hern-forgot-password-v1__submit-btn--disabled':
-                  !isValid || loading,
-            })}
-            disabled={!isValid || loading}
-            style={{ height: '40px' }}
-            onClick={() => isValid && submit()}
-         >
-            {t('SEND EMAIL')}
-         </button>
-         {error && (
-            <span className="hern-forgot-password-v1__error">{error}</span>
-         )}
-      </div>
+      <form
+         onClick={handleSubmit(data => {
+            setEmail(data.email)
+            checkCustomerExistence()
+         })}
+      >
+         <div className="hern-forgot-password-v1">
+            <fieldset className="hern-login-v1__fieldset">
+               <label htmlFor="email" className="hern-login-v1__label">
+                  <span>{t('Email')}</span>
+               </label>
+               <input
+                  className="hern-login-v1__input"
+                  type="email"
+                  name="email"
+                  id="email"
+                  {...register('email', {
+                     required: {
+                        value: true,
+                        message: 'Please enter your email address',
+                     },
+                     pattern: {
+                        value: /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
+                        message: 'Invalid email address',
+                     },
+                  })}
+                  placeholder="Enter your email"
+               />
+            </fieldset>
+            {errors.email && (
+               <span className="hern-forgot-password-v1__error">
+                  {errors.email.message}
+               </span>
+            )}
+            <button
+               type="submit"
+               className={classNames('hern-forgot-password-v1__submit-btn', {
+                  'hern-forgot-password-v1__submit-btn--disabled':
+                     errors.email || loading,
+               })}
+               disabled={errors.email || loading}
+               style={{ height: '40px' }}
+               m
+            >
+               {t('SEND EMAIL')}
+            </button>
+         </div>
+      </form>
    )
 }
 
@@ -996,14 +1051,13 @@ function validateEmail(email) {
 //signup
 const Signup = props => {
    //props
-   const { setDefaultLogin, isSilentlyLogin, closeLoginPopup, callbackURL } =
-      props
+   const { setDefaultLogin, callbackURL } = props
    const { t } = useTranslation()
    //component state
    const [showPassword, setShowPassword] = useState(false)
    const { addToast } = useToasts()
-   const { brand, deleteAuth } = useConfig()
-
+   const { brand } = useConfig()
+   const router = useRouter()
    const [emailExists, setEmailExists] = React.useState(false)
    const [hasAccepted, setHasAccepted] = React.useState(false)
    const [isReferralFieldVisible, setIsReferralFieldVisible] =
@@ -1020,33 +1074,44 @@ const Signup = props => {
       phone: '',
       code: '',
    })
+   const params = useQueryParams()
+   React.useEffect(() => {
+      if (params['invite-code']) {
+         const setInviteCode = async () => {
+            const isCodeValid = await isReferralCodeValid(
+               brand.id,
+               params['invite-code'],
+               true
+            )
 
-   const [checkCustomerExistence] = useLazyQuery(PLATFORM_CUSTOMERS, {
-      onCompleted: ({ customers = [] }) => {
-         if (customers.length > 0) {
-            setEmailExists(true)
-            addToast(<span>{t('User already exist')}</span>, {
-               appearance: 'info',
-            })
+            if (isCodeValid) {
+               setIsReferralFieldVisible(true)
+               setForm({ ...form, code: params['invite-code'] })
+            }
          }
-      },
-      onError: () => {},
-   })
+         setInviteCode()
+      }
+   }, [params])
 
-   const [applyReferralCode] = useMutation(MUTATIONS.CUSTOMER_REFERRAL.UPDATE, {
-      onCompleted: () => {
-         addToast(<span>{t('Referral code applied!')}</span>, {
-            appearance: 'success',
-         })
-         deleteStoredReferralCode()
-      },
-      onError: error => {
-         console.log(error)
-         addToast(<span>{t('Referral code not applied!')}</span>, {
-            appearance: 'error',
-         })
-      },
-   })
+   const apolloClient = useApolloClient()
+
+   const checkCustomerExistence = async email => {
+      const data = await apolloClient.query({
+         query: PLATFORM_CUSTOMERS,
+         variables: {
+            where: { email: { _eq: email } },
+         },
+      })
+      const customers = data?.data?.customers
+      if (customers.length > 0) {
+         setEmailError('Email already exists')
+         setEmailExists(true)
+         return true
+      }
+      setEmailError('')
+      setEmailExists(false)
+      return false
+   }
 
    const [insertPlatformCustomer] = useMutation(INSERT_PLATFORM_CUSTOMER, {
       onCompleted: async ({ insertCustomer = {} } = {}) => {
@@ -1059,29 +1124,19 @@ const Signup = props => {
                   ...(callbackURL && { callbackUrl: callbackURL }),
                })
                if (response?.status === 200) {
-                  const session = await getSession()
-                  const storedCode = getStoredReferralCode(null)
-                  if (storedCode && session?.user?.id) {
-                     await applyReferralCode({
-                        variables: {
-                           brandId: brand.id,
-                           keycloakId: session?.user?.id,
-                           _set: {
-                              referredByCode: storedCode,
-                           },
-                        },
-                     })
-                  }
-                  addToast(<span>{t('Login successfully')}</span>, {
-                     appearance: 'success',
-                  })
-                  if (!isSilentlyLogin) {
-                     window.location.href =
-                        get_env('BASE_BRAND_URL') +
-                        getRoute('/get-started/select-plan')
-                  } else {
-                     closeLoginPopup()
-                     deleteAuth('auth')
+                  addToast(t('Login successfully!'), { appearance: 'success' })
+                  if (isClient) {
+                     const landedOn = localStorage.getItem('landed_on')
+                     if (landedOn) {
+                        const route = landedOn.replace(
+                           window.location.origin,
+                           ''
+                        )
+                        localStorage.removeItem('landed_on')
+                        router.push(getRoute(route))
+                     } else {
+                        router.push(getRoute('/order'))
+                     }
                   }
                   setLoading(false)
                } else {
@@ -1121,44 +1176,9 @@ const Signup = props => {
       },
    })
 
-   const [forgotPassword, { loading: forgotPasswordLoading }] = useMutation(
-      FORGOT_PASSWORD,
-      {
-         onCompleted: ({ forgotPassword = {} } = {}) => {
-            if (forgotPassword?.success) {
-               setForgotPasswordText(
-                  <span>
-                     {t(
-                        'An email has been sent to your provided email. Please check your inbox.'
-                     )}
-                  </span>
-               )
-               setTimeout(() => {
-                  setForgotPasswordText('')
-               }, 4000)
-            }
-            addToast(
-               <span>{t('Successfully sent the set password email.')}</span>,
-               {
-                  appearance: 'success',
-               }
-            )
-            closeLoginPopup()
-            deleteAuth('auth')
-         },
-         onError: () => {
-            addToast(
-               <span>{t('Failed to send the set password email.')}</span>,
-               {
-                  appearance: 'error',
-               }
-            )
-         },
-      }
-   )
-
    const isValid =
       validateEmail(form.email) &&
+      !emailExists &&
       form.password &&
       form.password.length >= 6 &&
       form.phone &&
@@ -1168,21 +1188,7 @@ const Signup = props => {
    const onEmailBlur = async e => {
       const { value } = e.target
       if (validateEmail(value)) {
-         setEmailError('')
-         // const url =
-         //    new URL(get_env('DATA_HUB_HTTPS')).origin +
-         //    '/server/api/customer/' +
-         //    value
-         // const { status, data } = await axios.get(url)
-         // console.log('existStatus', status, url, typeof data, data)
-         // if (status === 200 && data?.success && data?.data?.id) {
-         //    setEmailExists(true)
-         // } else {
-         //    setEmailExists(false)
-         // }
-         checkCustomerExistence({
-            variables: { where: { email: { _eq: value } } },
-         })
+         await checkCustomerExistence(value)
       } else {
          setEmailError(
             <>
@@ -1212,6 +1218,9 @@ const Signup = props => {
 
    const submit = async () => {
       try {
+         if (await checkCustomerExistence(form.email)) {
+            return
+         }
          setError('')
          setLoading(true)
          const isCodeValid = await isReferralCodeValid(
@@ -1232,7 +1241,7 @@ const Signup = props => {
             setStoredReferralCode(form.code)
          }
 
-         const url = `${get_env('BASE_BRAND_URL')}/api/hash`
+         const url = `/api/hash`
          const { data } = await axios.post(url, { password: form.password })
 
          if (data?.success && data?.hash) {
@@ -1295,204 +1304,146 @@ const Signup = props => {
             <span className="hern-signup-v1__signup-error">{emailError}</span>
          )}
          {/* !emailExists */}
-         {!emailExists ? (
-            <>
-               <fieldset
-                  className="hern-login-v1__fieldset"
-                  style={passwordError ? { marginBottom: '0.25rem' } : null}
-               >
-                  <label className="hern-login-v1__label" htmlFor="password">
-                     <span>{t('Password')}</span>
+         <>
+            <fieldset
+               className="hern-login-v1__fieldset"
+               style={passwordError ? { marginBottom: '0.25rem' } : null}
+            >
+               <label className="hern-login-v1__label" htmlFor="password">
+                  <span>{t('Password')}</span>
+               </label>
+               <input
+                  className="hern-login-v1__input"
+                  name="password"
+                  type={showPassword ? 'text' : 'password'}
+                  onChange={onChange}
+                  value={form.password}
+                  placeholder="Enter your password"
+                  onBlur={e =>
+                     e.target.value.length < 6
+                        ? setPasswordError(
+                             <>
+                                <span>
+                                   {t(
+                                      'Password must be at least 6 letters long'
+                                   )}
+                                </span>
+                                <span>{'!'}</span>
+                             </>
+                          )
+                        : setPasswordError('')
+                  }
+               />
+            </fieldset>
+            <div className="hern-signup-v1__password-config">
+               <CheckBoxIcon
+                  showTick={showPassword}
+                  size={18}
+                  onClick={() => {
+                     setShowPassword(prevState => !prevState)
+                  }}
+                  style={{ cursor: 'pointer' }}
+               />
+               <span>{t('Show password')}</span>
+            </div>
+            {passwordError && (
+               <span className="hern-signup-v1__signup-error">
+                  {passwordError}
+               </span>
+            )}
+            <fieldset
+               className="hern-login-v1__fieldset"
+               style={phoneError ? { marginBottom: '0.25rem' } : null}
+            >
+               <label className="hern-login-v1__label" htmlFor="phone">
+                  <span> {t('Phone Number')}</span>
+               </label>
+               <PhoneInput
+                  className={`hern-login-v1__otp__phone__input hern-login-v1__otp__phone__input${
+                     !(form.phone === '' || form.phone === undefined) &&
+                     !(form.phone && isValidPhoneNumber(form.phone))
+                        ? '-invalid'
+                        : '-valid'
+                  }`}
+                  initialValueFormat="national"
+                  value={form.phone}
+                  onChange={e => {
+                     if (
+                        !(e === '' || e === undefined) &&
+                        !(e && isValidPhoneNumber(e))
+                     ) {
+                        setPhoneError('Please enter a valid phone number')
+                     } else {
+                        setPhoneError('')
+                        setForm(form => ({
+                           ...form,
+                           ['phone']: e,
+                        }))
+                     }
+                  }}
+                  defaultCountry={get_env('COUNTRY_CODE')}
+                  placeholder="Enter your phone number"
+               />
+            </fieldset>
+            {phoneError && (
+               <span className="hern-signup-v1__signup-error">
+                  {phoneError}
+               </span>
+            )}
+            {isReferralFieldVisible ? (
+               <fieldset className="hern-login-v1__fieldset">
+                  <label className="hern-login-v1__label" htmlFor="code">
+                     {t('Referral Code')}
                   </label>
                   <input
                      className="hern-login-v1__input"
-                     name="password"
-                     type={showPassword ? 'text' : 'password'}
+                     name="code"
+                     type="text"
                      onChange={onChange}
-                     value={form.password}
-                     placeholder="Enter your password"
-                     onBlur={e =>
-                        e.target.value.length < 6
-                           ? setPasswordError(
-                                <>
-                                   <span>
-                                      {t(
-                                         'Password must be at least 6 letters long'
-                                      )}
-                                   </span>
-                                   <span>{'!'}</span>
-                                </>
-                             )
-                           : setPasswordError('')
-                     }
+                     value={form.code}
+                     placeholder="Enter referral code"
                   />
                </fieldset>
-               <div className="hern-signup-v1__password-config">
-                  <CheckBoxIcon
-                     showTick={showPassword}
-                     size={18}
-                     onClick={() => {
-                        setShowPassword(prevState => !prevState)
-                     }}
-                     style={{ cursor: 'pointer' }}
-                  />
-                  <span>{t('Show password')}</span>
-               </div>
-               {passwordError && (
-                  <span className="hern-signup-v1__signup-error">
-                     {passwordError}
-                  </span>
-               )}
-               <fieldset
-                  className="hern-login-v1__fieldset"
-                  style={phoneError ? { marginBottom: '0.25rem' } : null}
-               >
-                  <label className="hern-login-v1__label" htmlFor="phone">
-                     <span> {t('Phone Number')}</span>
-                  </label>
-                  <PhoneInput
-                     className={`hern-login-v1__otp__phone__input hern-login-v1__otp__phone__input${
-                        !(form.phone === '' || form.phone === undefined) &&
-                        !(form.phone && isValidPhoneNumber(form.phone))
-                           ? '-invalid'
-                           : '-valid'
-                     }`}
-                     initialValueFormat="national"
-                     value={form.phone}
-                     onChange={e => {
-                        if (
-                           !(e === '' || e === undefined) &&
-                           !(e && isValidPhoneNumber(e))
-                        ) {
-                           setPhoneError('Please enter a valid phone number')
-                        } else {
-                           setPhoneError('')
-                           setForm(form => ({
-                              ...form,
-                              ['phone']: e,
-                           }))
-                        }
-                     }}
-                     defaultCountry={get_env('COUNTRY_CODE')}
-                     placeholder="Enter your phone number"
-                  />
-               </fieldset>
-               {phoneError && (
-                  <span className="hern-signup-v1__signup-error">
-                     {phoneError}
-                  </span>
-               )}
-               {isReferralFieldVisible ? (
-                  <fieldset className="hern-login-v1__fieldset">
-                     <label className="hern-login-v1__label" htmlFor="code">
-                        {t('Referral Code')}
-                     </label>
-                     <input
-                        className="hern-login-v1__input"
-                        name="code"
-                        type="text"
-                        onChange={onChange}
-                        value={form.code}
-                        placeholder="Enter referral code"
-                     />
-                  </fieldset>
-               ) : (
-                  <button
-                     className="hern-signup-v1__referral-code"
-                     onClick={() => setIsReferralFieldVisible(true)}
-                  >
-                     {t('Got a referral code?')}
-                  </button>
-               )}
-               <section className="hern-signup-v1__signup__term">
-                  <input
-                     className="hern-signup__signup__term__checkbox"
-                     type="checkbox"
-                     name="terms&copy;conditions"
-                     id="terms&copy;conditions"
-                     onChange={() => setHasAccepted(!hasAccepted)}
-                  />
-                  <label
-                     className="hern-login-v1__label"
-                     htmlFor="terms&copy;conditions"
-                     style={{ marginLeft: '4px' }}
-                  >
-                     {t('I accept')}{' '}
-                     <Link href={getRoute('/terms-and-conditions')}>
-                        <a className="hern-signup__signup__term__link">
-                           {t('terms and conditions')}
-                        </a>
-                     </Link>
-                  </label>
-               </section>
+            ) : (
                <button
-                  className={`hern-signup-v1__signup__submit ${
-                     !hasAccepted || !isValid || loading
-                        ? 'hern-signup-v1__signup__submit--disabled'
-                        : ''
-                  }`}
-                  onClick={() => isValid && submit()}
+                  className="hern-signup-v1__referral-code"
+                  onClick={() => setIsReferralFieldVisible(true)}
                >
-                  {loading ? t('REGISTERING') : t('REGISTER')}
+                  {t('Got a referral code?')}
                </button>
-            </>
-         ) : (
-            <>
-               <p className="hern-signup-v1__signup__email-already-exits">
-                  {t(
-                     'Looks like your email already exists. If you remember your password then go to'
-                  )}
-                  &nbsp;
-                  <button
-                     className="hern-signup-v1__signup__login-switch"
-                     onClick={() => setDefaultLogin('email')}
-                  >
-                     {t('login')}
-                  </button>
-                  &nbsp;or
-               </p>
-               <button
-                  onClick={() =>
-                     forgotPassword({
-                        variables: {
-                           email: form.email,
-                           origin: location.origin,
-                           type: 'set_password',
-                           ...(isClient &&
-                              !isSilentlyLogin &&
-                              localStorage.getItem('landed_on') && {
-                                 redirectUrl: localStorage.getItem('landed_on'),
-                              }),
-                        },
-                     })
-                  }
-                  className={`hern-login-v1__login-btn ${
-                     !form.email || forgotPasswordLoading
-                        ? 'hern-login-v1__login-btn--disabled'
-                        : ''
-                  }`}
-                  style={{
-                     height: '40px',
-                     margin: '0',
-                     color: '#ffffff',
-                     backgroundColor: 'var(--hern-accent)',
-                  }}
+            )}
+            <section className="hern-signup-v1__signup__term">
+               <input
+                  className="hern-signup__signup__term__checkbox"
+                  type="checkbox"
+                  name="terms&copy;conditions"
+                  id="terms&copy;conditions"
+                  onChange={() => setHasAccepted(!hasAccepted)}
+               />
+               <label
+                  className="hern-login-v1__label"
+                  htmlFor="terms&copy;conditions"
+                  style={{ marginLeft: '4px' }}
                >
-                  {forgotPasswordLoading ? (
-                     <>
-                        <span>{t('SENDING EMAIL')}</span>
-                     </>
-                  ) : (
-                     t('SEND LOGIN EMAIL')
-                  )}
-               </button>
-               {forgotPasswordText && (
-                  <p className="hern-signup-v1__signup__forgot-text">
-                     {forgotPasswordText}
-                  </p>
-               )}
-            </>
-         )}
+                  {t('I accept')}{' '}
+                  <Link href={getRoute('/terms-and-conditions')}>
+                     <a className="hern-signup__signup__term__link">
+                        {t('terms and conditions')}
+                     </a>
+                  </Link>
+               </label>
+            </section>
+            <button
+               className={`hern-signup-v1__signup__submit ${
+                  !hasAccepted || !isValid || loading
+                     ? 'hern-signup-v1__signup__submit--disabled'
+                     : ''
+               }`}
+               onClick={() => isValid && submit()}
+            >
+               {loading ? t('REGISTERING') : t('REGISTER')}
+            </button>
+         </>
          {error && (
             <span className="hern-signup-v1__signup-error">{error}</span>
          )}

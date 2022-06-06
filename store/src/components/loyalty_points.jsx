@@ -21,12 +21,8 @@ export const LoyaltyPoints = ({ cart, version = 1 }) => {
          ? cart.loyaltyPointsUsed
          : cart.loyaltyPointsUsable
    )
-   console.log(
-      cart.loyaltyPointsUsed < cart.loyaltyPointsUsable,
-      cart.loyaltyPointsUsed,
-      cart.loyaltyPointsUsable
-   )
    const [updateCart] = useMutation(MUTATIONS.CART.UPDATE, {
+      refetchQueries: ['subscriptionOccurenceCustomer'],
       onCompleted: () => console.log('Loyalty points added!'),
       onError: error => console.log(error),
    })
@@ -88,7 +84,7 @@ export const LoyaltyPoints = ({ cart, version = 1 }) => {
       )
    }
 
-   if (!cart.loyaltyPointsUsable) return null
+   if (!cart.loyaltyPointsUsable && !cart.loyaltyPointsUsed) return null
 
    return (
       <div

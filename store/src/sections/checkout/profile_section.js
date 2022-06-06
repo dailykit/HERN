@@ -14,7 +14,7 @@ export const ProfileSection = () => {
       const { lastName, firstName, phoneNumber } = profileInfo
       setProfileInfo({
          lastName: lastName || user?.platform_customer?.lastName,
-         firstName: firstName || user?.platform_customer?.firstName,
+         firsName: firstName || user?.platform_customer?.firstName,
          phoneNumber: phoneNumber || user?.platform_customer?.phoneNumber,
       })
       // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -37,14 +37,13 @@ export const ProfileSection = () => {
             paragraph={{ rows: 4, width: Array(5).fill(550) }}
          >
             <Form.Field tw="w-full md:w-3/12">
-               <Form.Label>First Name*</Form.Label>
+               <Form.Label>First name*</Form.Label>
                <Form.Text
                   required
                   type="text"
                   name="firstName"
                   onChange={e => handleChange(e)}
                   value={profileInfo?.firstName}
-                  placeholder="Enter your first name"
                />
             </Form.Field>
             <Form.Field tw="w-full md:w-3/12">
@@ -55,7 +54,6 @@ export const ProfileSection = () => {
                   name="lastName"
                   onChange={e => handleChange(e)}
                   value={profileInfo?.lastName}
-                  placeholder="Enter your last name"
                />
             </Form.Field>
             <Form.Field tw="w-full md:w-3/12">
@@ -69,9 +67,9 @@ export const ProfileSection = () => {
                   placeholder="Enter your phone no. eg. 987 987 9876"
                />
             </Form.Field>
-            {!user?.isSubscriber && !user?.customerReferral?.referredByCode && (
+            {/* {!user?.isSubscriber && !user?.customerReferral?.referredByCode && (
                <Referral />
-            )}
+            )} */}
          </Skeleton>
       </main>
    )

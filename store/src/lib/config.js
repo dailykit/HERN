@@ -1,10 +1,10 @@
 import { useQuery } from '@apollo/react-hooks'
-import { has, isEmpty } from 'lodash'
+// import { has, isEmpty } from 'lodash'
+import has from 'lodash/has'
+import isEmpty from 'lodash/isEmpty'
 import React from 'react'
-import { ORDER_TAB } from '../graphql'
-import { rrulestr } from 'rrule'
-import { get_env, isClient, useQueryParamState } from '../utils'
-import moment from 'moment'
+import { GET_BRAND_LOCATION, ORDER_TAB } from '../graphql'
+import { get_env, isClient, isKiosk, useQueryParamState } from '../utils'
 const ConfigContext = React.createContext()
 
 const initialState = {
@@ -31,6 +31,8 @@ const initialState = {
       ONDEMAND_DINEIN: false,
       isValidated: false, // show that above two values are validate or not, initially false
    },
+   KioskConfig: null,
+   brandLocation: null,
 }
 
 const reducers = (state, { type, payload }) => {
@@ -59,12 +61,19 @@ const reducers = (state, { type, payload }) => {
          return { ...state, lastLocationId: payload }
       case 'SET_KIOSK_RECURRENCES':
          return { ...state, kioskRecurrences: payload }
+      case 'SET_KIOSK_POPUP_CONFIG':
+         return { ...state, KioskConfig: payload }
       case 'SET_KIOSK_AVAILABILITY': {
          return {
             ...state,
             kioskAvailability: { ...state.kioskAvailability, ...payload },
          }
       }
+      case 'SET_BRAND_LOCATION':
+         return {
+            ...state,
+            brandLocation: payload,
+         }
       default:
          return state
    }
@@ -82,6 +91,28 @@ export const ConfigProvider = ({ children }) => {
 
    const [showLocationSelectorPopup, setShowLocationSelectionPopup] =
       React.useState(false)
+
+   useQuery(GET_BRAND_LOCATION, {
+      skip: !state.brand?.id || !state.locationId || isKiosk(),
+      variables: {
+         where: {
+            brandId: {
+               _eq: state.brand?.id,
+            },
+            locationId: {
+               _eq: state.locationId,
+            },
+         },
+      },
+      onCompleted: data => {
+         if (data && data.brandLocations.length > 0) {
+            dispatch({
+               type: 'SET_BRAND_LOCATION',
+               payload: data.brandLocations[0],
+            })
+         }
+      },
+   })
 
    useQuery(ORDER_TAB, {
       skip: isLoading || !orderInterfaceType,
@@ -196,6 +227,7 @@ export const ConfigProvider = ({ children }) => {
             currentAuth,
             setAuth,
             deleteAuth,
+            // KioskConfig,
          }}
       >
          {children}
@@ -222,6 +254,7 @@ export const useConfig = (globalType = '') => {
       currentAuth,
       setAuth,
       deleteAuth,
+      // KioskConfig,
    } = React.useContext(ConfigContext)
 
    const hasConfig = React.useCallback(
@@ -290,5 +323,7 @@ export const useConfig = (globalType = '') => {
       currentAuth,
       setAuth,
       deleteAuth,
+      KioskConfig: state.KioskConfig,
+      brandLocation: state.brandLocation,
    }
 }

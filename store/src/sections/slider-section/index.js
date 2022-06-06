@@ -1,47 +1,76 @@
 import React from 'react'
 import { Carousel } from 'antd'
+import dynamic from 'next/dynamic'
 import { ArrowLeftIcon, ArrowRightIcon } from '../../assets/icons'
-import { HernLazyImage } from '../../utils/hernImage'
-import { isClient } from '../../utils'
+// import { HernLazyImage } from '../../utils/hernImage'
+import { isClient, useWindowOnload } from '../../utils'
+import ReactHTMLParser from 'react-html-parser'
+const HernLazyImage = dynamic(() =>
+   import('../../utils/hernImage').then(promise => promise.HernLazyImage)
+)
+import Link from 'next/link'
 
 export const SliderSection = ({ config }) => {
-   const showDotsOnSlider =
-      config?.display?.slider?.showDotsOnSilder?.value ?? false
-   const showArrowsOnSlider =
-      config?.display?.slider?.showSliderArrow?.value ?? false
-   const sliderContent = config.display.slider.content.images.value ?? false
-   const getStartedURL = config?.data?.callToActionButtonURL.value ?? '#'
+   const sliderConfig = {
+      autoPlay: config?.autoPlay?.value,
+      showArrow: config?.showArrow?.value,
+      showDots: config?.showDots?.value,
+      content: config?.sliderContent?.value.map(slider => {
+         return {
+            image: slider.find(item => item.filedKey === 'sliderImage').value,
+            video: slider.find(item => item.filedKey === 'sliderVideo').value,
+            description: slider.find(
+               item => item.filedKey === 'sliderDescription'
+            ).value,
+            title: slider.find(item => item.filedKey === 'sliderTitle').value,
+            showCallToActionButton: slider.find(
+               item => item.filedKey === 'showSliderCTAButton'
+            ).value,
+            callToActionButtonLabel: slider.find(
+               item => item.filedKey === 'sliderCTAButtonLabel'
+            ).value,
+            callToActionButtonLink: slider.find(
+               item => item.filedKey === 'sliderCTAButtonLink'
+            ).value,
+         }
+      }),
+   }
+   const { isWindowLoading } = useWindowOnload()
    return (
-      <>
-         {sliderContent && (
+      <div
+         style={{
+            width: '100%',
+            minHeight: 'calc(100vw / 2 )',
+            position: 'relative',
+         }}
+      >
+         <div className="hern-slider-section-overlay"></div>
+         {sliderConfig.content && (
             <Carousel
                className="hern-slider_section-carousel"
-               arrows={showArrowsOnSlider}
-               dots={showDotsOnSlider}
-               prevArrow={showArrowsOnSlider ? <LeftArrow /> : false}
-               nextArrow={showArrowsOnSlider ? <RightArrow /> : false}
-               autoplay={true}
+               arrows={sliderConfig.showArrow}
+               dots={sliderConfig.showDots}
+               prevArrow={sliderConfig.showArrow ? <LeftArrow /> : false}
+               nextArrow={sliderConfig.showArrow ? <RightArrow /> : false}
+               autoplay={!isWindowLoading && sliderConfig.autoPlay}
             >
-               {sliderContent &&
-                  config.display.slider.content.images.value.map(
-                     (imageSrc, index) => {
-                        return (
-                           <SliderDiv
-                              content={config.display.slider.content}
-                              index={index}
-                              getStartedURL={getStartedURL}
-                              key={imageSrc}
-                           />
-                        )
-                     }
-                  )}
+               {sliderConfig.content.length > 0 &&
+                  sliderConfig.content.map((content, index) => {
+                     return (
+                        <SliderDiv
+                           content={content}
+                           index={index}
+                           key={index}
+                        />
+                     )
+                  })}
             </Carousel>
          )}
-      </>
+      </div>
    )
 }
 
-const SliderDiv = ({ content, index, getStartedURL }) => {
+const SliderDiv = ({ content, index }) => {
    if (!isClient) {
       return null
    }
@@ -49,22 +78,20 @@ const SliderDiv = ({ content, index, getStartedURL }) => {
       const innerWidth = isClient ? window.innerWidth : ''
       if (0 < innerWidth && innerWidth <= 468) {
          return {
-            width: 420,
-            height: 210,
+            width: innerWidth,
+            height: innerWidth / 2,
          }
       } else if (469 <= innerWidth && innerWidth <= 900) {
          return {
-            width: 820,
-            height: 410,
+            width: innerWidth,
+            height: innerWidth / 2,
          }
-      }
-      //  else if (901 <= innerWidth) {
-      //    return {
-      //       width: null,
-      //       height: null,
-      //    }
-      // }
-      else {
+      } else if (901 <= innerWidth) {
+         return {
+            width: innerWidth,
+            height: innerWidth / 2,
+         }
+      } else {
          return {
             width: null,
             height: null,
@@ -73,20 +100,15 @@ const SliderDiv = ({ content, index, getStartedURL }) => {
    }, [isClient])
    return (
       <div
-         style={{
-            position: 'relative',
-         }}
+         className={`hern-slider-section__content-wrapper hern-slider-section__content-${
+            index + 1
+         }`}
       >
          <HernLazyImage
-            dataSrc={
-               content.images.value[index]
-                  ? content.images.value[index]
-                  : content.images.default
-            }
+            dataSrc={content.image}
             width={sliderImageSize.width}
             height={sliderImageSize.height}
-            // alt="products"
-            // width="100%"
+            className="hern-slider_section-image"
          />
          {/* <video muted autoplay="autoplay" loop="loop" preload="auto">
                 <source src={content.video.value[index]?content.video.value[index]:content.video.default}></source>
@@ -94,21 +116,23 @@ const SliderDiv = ({ content, index, getStartedURL }) => {
          <div className="hern-slider-section__content">
             <div>
                <h1 className="hern-slider_section-heading">
-                  {content.heading.value[index]
-                     ? content.heading.value[index]
-                     : content.heading.default}
+                  {ReactHTMLParser(content.title)}
                </h1>
                <p className="hern-slider_section-description">
-                  {content.description.value[index]
-                     ? content.description.value[index]
-                     : content.description.default}
+                  {ReactHTMLParser(content.description)}
                </p>
-               <a
-                  href={getStartedURL}
-                  className="hern-slider_section-get_started_button"
-               >
-                  Get Started
-               </a>
+
+               {content.callToActionButtonLabel &&
+                  content.callToActionButtonLink && (
+                     <Link
+                        href={content.callToActionButtonLink}
+                        className="hern-slider_section-get_started_button"
+                     >
+                        <a>
+                           {ReactHTMLParser(content.callToActionButtonLabel)}
+                        </a>
+                     </Link>
+                  )}
             </div>
          </div>
       </div>

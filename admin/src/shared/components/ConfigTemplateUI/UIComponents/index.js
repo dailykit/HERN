@@ -13,7 +13,7 @@ import {
    TunnelHeader,
    useTunnel,
 } from '@dailykit/ui'
-import { Image, Carousel } from 'antd'
+import { Image, Carousel, Radio } from 'antd'
 import {
    Tooltip,
    RichTextEditor,
@@ -30,13 +30,18 @@ import gql from 'graphql-tag'
 import { useSubscription } from '@apollo/react-hooks'
 import validator from '../../../../apps/brands/views/validator'
 import CustomColorPicker from './CustomColorPicker'
+import animationList from './animations.json'
 
 //antd components
 import { Typography, Slider } from 'antd'
 
 import { BrandContext } from '../../../../App'
 import { useContext } from 'react'
-import { GET_BRAND_COUPONS, GET_BRAND_CAMPAIGNS } from '../../../graphql'
+import {
+   GET_BRAND_COUPONS,
+   GET_BRAND_CAMPAIGNS,
+   GET_PAYMENT_OPTIONS,
+} from '../../../graphql'
 
 const { Paragraph } = Typography
 
@@ -259,6 +264,55 @@ export const Checkbox = ({ fieldDetail, marginLeft, path, onConfigChange }) => (
       />
    </Flex>
 )
+export const RadioButton = ({
+   fieldDetail,
+   marginLeft,
+   path,
+   onConfigChange,
+   editMode,
+}) => {
+   const options = fieldDetail?.options
+   const [value, setValue] = React.useState(fieldDetail?.value?.value || '')
+
+   const onChange = e => {
+      setValue(e.target.value)
+      // passing the selected object in the value key of config(fieldDetail)
+      onConfigChange(
+         e,
+         [options.find(option => option.value == e.target.value)][0]
+      )
+   }
+
+   return (
+      <Flex
+         container
+         justifyContent="space-between"
+         alignItems="center"
+         margin={`0 0 0 ${marginLeft}`}
+      >
+         <Flex container alignItems="flex-end">
+            <Form.Label title={fieldDetail.label} htmlFor="checkbox">
+               {fieldDetail.label.toUpperCase()}
+            </Form.Label>
+            <Tooltip identifier="checkbox_component_info" />
+         </Flex>
+         {editMode ? (
+            <Radio.Group
+               name={path}
+               id={path}
+               onChange={onChange}
+               value={value}
+            >
+               {options.map(option => {
+                  return <Radio value={option.value}>{option.title}</Radio>
+               })}
+            </Radio.Group>
+         ) : (
+            <p> {fieldDetail?.value && fieldDetail?.value.title} </p>
+         )}
+      </Flex>
+   )
+}
 export const Date = ({
    fieldDetail,
    marginLeft,
@@ -325,7 +379,13 @@ export const Time = ({
       )}
    </Flex>
 )
-export const Select = ({ fieldDetail, marginLeft, path, onConfigChange }) => {
+export const Select = ({
+   fieldDetail,
+   marginLeft,
+   path,
+   onConfigChange,
+   editMode,
+}) => {
    const [searchOption, setSearchOption] = useState('')
    const [searchResult, setSearchResult] = useState(fieldDetail?.options)
    const selectedOptionHandler = options => {
@@ -343,6 +403,9 @@ export const Select = ({ fieldDetail, marginLeft, path, onConfigChange }) => {
       )
       setSearchResult(result)
    }, [searchOption])
+   {
+      console.log(editMode, 'editMode')
+   }
    return (
       <Flex
          container
@@ -356,17 +419,23 @@ export const Select = ({ fieldDetail, marginLeft, path, onConfigChange }) => {
             </Form.Label>
             <Tooltip identifier="select_component_info" />
          </Flex>
-         <Dropdown
-            type={fieldDetail?.type || 'single'}
-            options={searchResult}
-            defaultValue={
-               fieldDetail?.type === 'single' && fieldDetail?.value?.id
-            }
-            defaultOptions={fieldDetail?.value}
-            searchedOption={option => setSearchOption(option)}
-            selectedOption={option => selectedOptionHandler(option)}
-            placeholder="type what you're looking for..."
-         />
+         {editMode ? (
+            <DropdownWrapper>
+               <Dropdown
+                  type={fieldDetail?.type || 'single'}
+                  options={searchResult}
+                  //defaultOptions takes the default value
+                  defaultOptions={fieldDetail?.value}
+                  searchedOption={option => setSearchOption(option)}
+                  selectedOption={option => selectedOptionHandler(option)}
+                  placeholder="type what you're looking for..."
+               />
+            </DropdownWrapper>
+         ) : (
+            <Text as="h4" className="showPhoneNumber">
+               {fieldDetail?.value?.title || 'choose one of the options...'}
+            </Text>
+         )}
       </Flex>
    )
 }
@@ -680,6 +749,7 @@ export const PhoneNumberSelector = ({
       </PhoneNumSelector>
    )
 }
+
 export const ImageUpload = props => {
    // props
    const { fieldDetail, path, onConfigChange, editMode } = props
@@ -814,6 +884,7 @@ export const ImageUpload = props => {
       </>
    )
 }
+
 export const MultipleImageUpload = props => {
    // props
    const { fieldDetail, path, onConfigChange, editMode } = props
@@ -897,15 +968,7 @@ export const MultipleImageUpload = props => {
    )
 }
 
-const PRODUCT_ID = gql`
-   subscription ProductCollections {
-      collections: products(order_by: { created_at: desc }) {
-         id
-         title: name
-         value: name
-      }
-   }
-`
+//Product Selector
 export const ProductSelector = props => {
    // props
    const { fieldDetail, marginLeft, path, onConfigChange, editMode } = props
@@ -965,94 +1028,6 @@ export const ProductSelector = props => {
       </>
    )
 }
-
-export const ImageContainer = styled.div`
-   display: flex;
-   flex-direction: ${props =>
-      props.flexDirection ? props.flexDirection : 'row-reverse'};
-   justify-content: flex-end;
-   height: ${props => props.height || 'auto'};
-   width: ${props => props.width || 'auto'};
-   position: relative;
-   margin-bottom: 16px;
-   img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-   }
-   button {
-      float: right;
-      margin: 4px 4px 0 4px;
-   }
-   .slick-dots li.slick-active button,
-   .ant-carousel .slick-dots li button {
-      background: #000;
-   }
-   .ant-carousel .slick-dots-bottom {
-      height: 2px;
-   }
-   .fallback-image-container {
-      display: flex;
-      flex-wrap: wrap;
-      align-content: flex-start;
-      text-align: center;
-      flex-direction: column;
-   }
-   .ant-carousel > .slick-slider {
-      height: 10rem !important;
-      .slick-list > .slick-track > .slick-slide > div > div > img {
-         max-height: 120px !important;
-         width: auto;
-      }
-   }
-`
-export const PhoneNumSelector = styled.div`
-   .showPhoneNumber {
-      color: #555b6e;
-   }
-   .PhoneInput {
-      border-radius: 6px;
-      border: 1px solid #e3e3e3;
-      margin-top: 12px;
-      width: 13rem;
-   }
-   .PhoneInputCountry {
-      padding-left: 12px;
-   }
-   .PhoneInputInput {
-      text-align: left;
-      font-size: 16px;
-      padding: 0 12px;
-      height: 40px;
-      border: none;
-      border-left: 1px solid #e3e3e3;
-   }
-   h4 {
-      font-size: 15px;
-   }
-`
-export const NoValueSpan = styled.span`
-   color: #919699;
-   font-size: 14px;
-   font-weight: 400;
-`
-export const ColorLabel = styled.p`
-   margin: 0.5rem;
-   margin-bottom: 0.5rem !important;
-   cursor: default;
-   background-color: ${props => props.backgroundColor};
-   padding: 0.5em;
-   font-weight: 500;
-   color: grey;
-`
-
-export const ImageWrapper = styled.div`
-   display: flex;
-   align-items: center;
-   justify-content: space-between;
-   padding: 1rem 1.5rem;
-   padding-right: ${props => props.paddingRight || '0.4rem'};
-`
 
 // Coupon Selector
 export const CouponSelector = props => {
@@ -1187,6 +1162,292 @@ export const CampaignSelector = props => {
                   {fieldDetail?.value?.title || 'choose campaign...'}
                </Text>
             )}
+         </Flex>
+      </>
+   )
+}
+
+// Recipe Selector
+export const RecipeSelector = props => {
+   const { fieldDetail, marginLeft, path, onConfigChange, editMode } = props
+
+   const {
+      loading: subsLoading,
+      error: subsError,
+      data: { collections = [] } = {},
+   } = useSubscription(GET_ALL_RECIPES)
+
+   const selectedOptionHandler = options => {
+      const e = {
+         target: {
+            name: path,
+         },
+      }
+
+      onConfigChange(e, options)
+   }
+   if (subsLoading) {
+      return <InlineLoader />
+   }
+
+   if (subsError) {
+      return <ErrorState message="recipe not found" />
+   }
+
+   return (
+      <>
+         <Flex
+            container
+            justifyContent="space-between"
+            alignItems="center"
+            margin={`0 0 0 ${marginLeft}`}
+         >
+            <Flex container alignItems="flex-end">
+               <Form.Label title={fieldDetail.label} htmlFor="select">
+                  {fieldDetail.label.toUpperCase()}
+               </Form.Label>
+               <Tooltip identifier="select_component_info" />
+            </Flex>
+            {editMode ? (
+               <DropdownWrapper>
+                  <Dropdown
+                     type={fieldDetail?.type || 'single'}
+                     options={collections}
+                     defaultOption={fieldDetail?.value}
+                     searchedOption={option => console.log(option)}
+                     selectedOption={option => selectedOptionHandler(option)}
+                     placeholder="choose recipe..."
+                  />
+               </DropdownWrapper>
+            ) : (
+               <Text
+                  as="h4"
+                  className="recipeName"
+                  style={{ width: 'fit-content' }}
+               >
+                  {fieldDetail?.value?.title || 'choose recipe...'}
+               </Text>
+            )}
+         </Flex>
+      </>
+   )
+}
+
+// Payment Option Selector
+export const PaymentOptionSelector = props => {
+   // props
+   const { fieldDetail, marginLeft, path, onConfigChange, editMode } = props
+   const [brandContext, setBrandContext] = useContext(BrandContext)
+
+   const {
+      loading: subsLoading,
+      error: subsError,
+      data: { paymentOptions = [] } = {},
+   } = useSubscription(GET_PAYMENT_OPTIONS)
+
+   const selectedOptionHandler = options => {
+      const e = {
+         target: {
+            name: path,
+         },
+      }
+      onConfigChange(e, options)
+   }
+   if (subsLoading) {
+      return <InlineLoader />
+   }
+   if (subsError) {
+      return <ErrorState message="payment option not found" />
+   }
+
+   return (
+      <>
+         <Flex
+            container
+            justifyContent="space-between"
+            alignItems="center"
+            margin={`0 0 0 ${marginLeft}`}
+         >
+            <Flex container alignItems="flex-end">
+               <Form.Label title={fieldDetail.label} htmlFor="select">
+                  {fieldDetail.label.toUpperCase()}
+               </Form.Label>
+               <Tooltip identifier="select_component_info" />
+            </Flex>
+            {editMode ? (
+               <div>
+                  <Dropdown
+                     type={fieldDetail?.type || 'single'}
+                     options={paymentOptions.map(paymentOption => {
+                        return {
+                           id: paymentOption.id,
+                           title: paymentOption?.label || '',
+                           value: paymentOption.id,
+                        }
+                     })}
+                     defaultOption={fieldDetail?.value}
+                     searchedOption={option => console.log(option)}
+                     selectedOption={option => selectedOptionHandler(option)}
+                     placeholder="choose campaign..."
+                  />
+               </div>
+            ) : (
+               <Text as="h4" className="showPhoneNumber">
+                  {fieldDetail?.value?.title || 'choose payment option...'}
+               </Text>
+            )}
+         </Flex>
+      </>
+   )
+}
+
+const PRODUCT_ID = gql`
+   subscription ProductCollections {
+      collections: products(order_by: { created_at: desc }) {
+         id
+         title: name
+         value: name
+      }
+   }
+`
+
+const GET_ALL_RECIPES = gql`
+   subscription RecipeCollections {
+      collections: simpleRecipes(order_by: { created_at: desc }) {
+         id
+         title: name
+         value: name
+      }
+   }
+`
+
+export const ImageContainer = styled.div`
+   display: flex;
+   flex-direction: ${props =>
+      props.flexDirection ? props.flexDirection : 'row-reverse'};
+   justify-content: flex-end;
+   height: ${props => props.height || 'auto'};
+   width: ${props => props.width || 'auto'};
+   position: relative;
+   margin-bottom: 16px;
+   img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+   }
+   button {
+      float: right;
+      margin: 4px 4px 0 4px;
+   }
+   .slick-dots li.slick-active button,
+   .ant-carousel.slick-dots li button {
+      background: #000;
+   }
+   .ant-carousel.slick-dots-bottom {
+      height: 2px;
+   }
+   .fallback-image-container {
+      display: flex;
+      flex-wrap: wrap;
+      align-content: flex-start;
+      text-align: center;
+      flex-direction: column;
+   }
+   .ant-carousel > .slick-slider {
+      height: 10rem !important;
+      .slick-list > .slick-track > .slick-slide > div > div > img {
+         max-height: 120px !important;
+         width: auto;
+      }
+   }
+`
+export const PhoneNumSelector = styled.div`
+   .showPhoneNumber {
+      color: #555b6e;
+   }
+   .PhoneInput {
+      border-radius: 6px;
+      border: 1px solid #e3e3e3;
+      margin-top: 12px;
+      width: 13rem;
+   }
+   .PhoneInputCountry {
+      padding-left: 12px;
+   }
+   .PhoneInputInput {
+      text-align: left;
+      font-size: 16px;
+      padding: 0 12px;
+      height: 40px;
+      border: none;
+      border-left: 1px solid #e3e3e3;
+   }
+   h4 {
+      font-size: 15px;
+   }
+`
+export const NoValueSpan = styled.span`
+   color: #919699;
+   font-size: 14px;
+   font-weight: 400;
+`
+export const ColorLabel = styled.p`
+   margin: 0.5rem;
+   margin-bottom: 0.5rem !important;
+   cursor: default;
+   background-color: ${props => props.backgroundColor};
+   padding: 0.5em;
+   font-weight: 500;
+   color: grey;
+`
+export const ImageWrapper = styled.div`
+   display: flex;
+   align-items: center;
+   justify-content: space-between;
+   padding: 1rem 1.5rem;
+   padding-right: ${props => props.paddingRight || '0.4rem'};
+`
+export const DropdownWrapper = styled.div`
+   width: '50%' div[data-type= 'text' ] {
+      text-align: end !important;
+   }
+`
+
+export const AnimationSelector = props => {
+   // props
+   const { fieldDetail, marginLeft, path, onConfigChange } = props
+
+   const selectedOptionHandler = options => {
+      const e = {
+         target: {
+            name: path,
+         },
+      }
+      onConfigChange(e, options)
+   }
+
+   return (
+      <>
+         <Flex
+            container
+            justifyContent="space-between"
+            alignItems="center"
+            margin={`0 0 0 ${marginLeft}`}
+         >
+            <Flex container alignItems="flex-end">
+               <Form.Label title={fieldDetail.label} htmlFor="select">
+                  {fieldDetail.label.toUpperCase()}
+               </Form.Label>
+               <Tooltip identifier="select_component_info" />
+            </Flex>
+            <Dropdown
+               type={fieldDetail?.type || 'single'}
+               options={animationList}
+               defaultOption={fieldDetail?.value}
+               searchedOption={option => console.log(option)}
+               selectedOption={option => selectedOptionHandler(option)}
+               placeholder="choose animation..."
+            />
          </Flex>
       </>
    )

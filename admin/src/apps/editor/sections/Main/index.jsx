@@ -17,6 +17,7 @@ import { MainWrapper } from './styles'
 
 const Main = () => {
    const { globalState, setPopupInfo, setContextMenuInfo } = useGlobalContext()
+   const ROOT_PATH = get_env('REACT_APP_ROOT_FOLDER')
    const mainWidth = () => {
       let width = '100%'
       if (globalState.isSidebarVisible) {
@@ -67,7 +68,7 @@ const Main = () => {
       const option = {
          type: createType,
          action: 'create',
-         contextPath: './templates',
+         contextPath: ROOT_PATH,
       }
 
       if (createType === 'folder') {
@@ -116,10 +117,9 @@ const Main = () => {
    const mutationHandler = async (type, nodeType) => {
       if (type === 'create') {
          if (nodeType === 'FILE') {
-            const filePath = `${path.replace(
-               get_env('REACT_APP_ROOT_FOLDER'),
-               ''
-            )}/${name}.${fileTypeRef.current}`
+            const filePath = `${path.replace(ROOT_PATH, '')}/${name}.${
+               fileTypeRef.current
+            }`
             await createFile({
                variables: {
                   path: filePath,
@@ -128,10 +128,7 @@ const Main = () => {
             })
             fileTypeRef.current = ''
          } else {
-            const folderPath = `${path.replace(
-               get_env('REACT_APP_ROOT_FOLDER'),
-               ''
-            )}/${name}`
+            const folderPath = `${path.replace(ROOT_PATH, '')}/${name}`
             await createFolder({
                variables: {
                   path: folderPath,
@@ -166,14 +163,14 @@ const Main = () => {
          }
       } else if (type === 'delete') {
          if (nodeType === 'FILE') {
-            const filePath = path.replace(/.\/templates/g, '')
+            const filePath = path.replace(ROOT_PATH, '')
             await deleteFile({
                variables: {
                   path: filePath,
                },
             })
          } else {
-            const folderPath = path.replace('./template/templates', '')
+            const folderPath = path.replace(ROOT_PATH, '')
             await deleteFolder({
                variables: {
                   path: folderPath,
@@ -211,9 +208,7 @@ const Main = () => {
                closePopup={closePopup}
                action={globalState.contextMenuInfo.action}
                treeViewData={nestedFolders}
-               nodePath={
-                  globalState?.contextMenuInfo?.contextPath || './templates'
-               }
+               nodePath={globalState?.contextMenuInfo?.contextPath || ROOT_PATH}
                nodeType={globalState.contextMenuInfo.type}
                name={name}
                setName={updatedName => setName(updatedName)}

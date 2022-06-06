@@ -33,32 +33,37 @@ import {
    getCartItemWithModifiers,
    nestedModifierTemplateIds,
 } from '../../utils'
-import { PRODUCTS, GET_MODIFIER_BY_ID } from '../../graphql'
+import { GET_MODIFIER_BY_ID, PRODUCT_ONE } from '../../graphql'
 import { useConfig, usePayment } from '../../lib'
 import { KioskModifier } from './component'
-import { useLazyQuery, useQuery } from '@apollo/react-hooks'
+import { useLazyQuery, useQuery, useSubscription } from '@apollo/react-hooks'
 import KioskButton from './component/button'
 import { ProgressBar } from './component/progressBar'
 import { Coupon } from '../coupon'
 import isEmpty from 'lodash/isEmpty'
 import { HernLazyImage } from '../../utils/hernImage'
 import isNull from 'lodash/isNull'
+import { get_env } from '../../utils'
+import { useIntl } from 'react-intl'
 
 const { Header, Content, Footer } = Layout
 
 export const KioskCart = props => {
    //context
-   const { cartState, methods, addToCart, isFinalCartLoading, storedCartId } =
-      React.useContext(CartContext)
+   const {
+      cartState,
+      methods,
+      addToCart,
+      isFinalCartLoading,
+      storedCartId,
+      isCartValidByProductAvailability,
+   } = React.useContext(CartContext)
    const { cart } = cartState
    const { config, combinedCartItems, setCurrentPage } = props
    const { t, direction } = useTranslation()
    const { setIsProcessingPayment, setIsPaymentInitiated, updatePaymentState } =
       usePayment()
-   const { selectedOrderTab } = useConfig()
-   const [showDineInTableSelection, setShowDineInTableSelection] =
-      useState(false)
-
+   const SHOW_FREEBIE_MSG = get_env('SHOW_FREEBIE_MSG')
    //remove cartItem or cartItems
    const removeCartItems = cartItemIds => {
       methods.cartItems.delete({
@@ -100,7 +105,10 @@ export const KioskCart = props => {
          </div>
       )
    }
-
+   console.log(
+      'isCartValidByProductAvailability',
+      isCartValidByProductAvailability
+   )
    return (
       <Layout
          style={{ height: '100%', overflowY: 'hidden', background: '#fff' }}
@@ -178,6 +186,17 @@ export const KioskCart = props => {
                            {t('CLEAR CART')}
                         </span>
                      </div>
+                     {!isCartValidByProductAvailability && (
+                        <p
+                           style={{
+                              color: '#f33737',
+                              margin: '0 1em',
+                              fontSize: '26px',
+                           }}
+                        >
+                           {t('Some product in cart are not available')}
+                        </p>
+                     )}
                      <div className="hern-kiosk__cart-cards">
                         {combinedCartItems.map((product, index) => {
                            return (
@@ -199,6 +218,9 @@ export const KioskCart = props => {
                      <Header className="hern-kiosk__cart-page-offer">
                         <Offers config={config} />
                      </Header>
+                     {SHOW_FREEBIE_MSG === 'true' && (
+                        <FreebieMessage msg={t('Free 1 Ice Cream Cone')} />
+                     )}
                      <Content className="hern-kiosk__cart-page-price-detail">
                         <div className="hern-kiosk-cart-bill-details">
                            <span>{t('BILL DETAILS')}</span>
@@ -250,8 +272,8 @@ export const KioskCart = props => {
                                  <span style={{ fontWeight: 'bold' }}>
                                     {formatCurrency(
                                        (
-                                          cart?.cartOwnerBilling
-                                             ?.balanceToPay || 0
+                                          cart?.cartOwnerBilling?.totalToPay ||
+                                          0
                                        ).toFixed(2)
                                     )}
                                  </span>
@@ -269,11 +291,12 @@ export const KioskCart = props => {
                            customClass="hern-kiosk__cart-place-order-btn"
                            onClick={placeOrderHandler}
                            buttonConfig={config.kioskSettings.buttonSettings}
+                           disabled={!isCartValidByProductAvailability}
                         >
                            <span className="hern-kiosk__cart-place-order-btn-total">
                               {formatCurrency(
                                  (
-                                    cart?.cartOwnerBilling?.balanceToPay || 0
+                                    cart?.cartOwnerBilling?.totalToPay || 0
                                  ).toFixed(2)
                               )}
                            </span>
@@ -317,11 +340,16 @@ export const KioskCart = props => {
 const CartCard = props => {
    // productData --> product data from cart
    const { config, productData, removeCartItems, quantity = 0 } = props
-   const { brand, kioskDetails, isConfigLoading, selectedOrderTab } =
-      useConfig()
+   const {
+      brand,
+      kioskDetails,
+      isConfigLoading,
+      selectedOrderTab,
+      brandLocation,
+   } = useConfig()
    const { addToCart } = React.useContext(CartContext)
    const { t, dynamicTrans, locale } = useTranslation()
-
+   const { formatMessage } = useIntl()
    const [modifyProductId, setModifyProductId] = useState(null)
    const [modifyProduct, setModifyProduct] = useState(null)
    const [modifierType, setModifierType] = useState(null)
@@ -331,7 +359,7 @@ const CartCard = props => {
       useState(false) // show modifier and product options details
    const [showChooseIncreaseType, setShowChooseIncreaseType] = useState(false) // show I'll choose or repeat last one popup
    const [showModifier, setShowModifier] = useState(false) // show modifier popup
-   const [forRepeatLastOne, setForRepeatLastOne] = useState(false) // to run repeatLastOne fn in PRODUCTS query
+   const [forRepeatLastOne, setForRepeatLastOne] = useState(false) // to run repeatLastOne fn in PRODUCTS_ONE query
 
    let totalPrice = 0
    let totalDiscount = 0
@@ -353,28 +381,19 @@ const CartCard = props => {
    const getTotalPrice = React.useMemo(() => price(productData), [productData])
    const argsForByLocation = React.useMemo(
       () => ({
-         params: {
-            brandId: brand?.id,
-            locationId: kioskDetails?.locationId,
-         },
+         brandId: brand?.id,
+         locationId: kioskDetails?.locationId,
+         brand_locationId: brandLocation?.id,
       }),
-      [brand]
+      [brand, kioskDetails?.locationId, brandLocation?.id]
    )
 
    //fetch product detail which to be increase or edit
-   const { data: repeatLastOneData } = useQuery(PRODUCTS, {
+   const { data: repeatLastOneData } = useQuery(PRODUCT_ONE, {
       skip: !modifyProductId,
       variables: {
-         ids: modifyProductId,
-         priceArgs: argsForByLocation,
-         discountArgs: argsForByLocation,
-         defaultCartItemArgs: argsForByLocation,
-         productOptionPriceArgs: argsForByLocation,
-         productOptionDiscountArgs: argsForByLocation,
-         productOptionCartItemArgs: argsForByLocation,
-         modifierCategoryOptionPriceArgs: argsForByLocation,
-         modifierCategoryOptionDiscountArgs: argsForByLocation,
-         modifierCategoryOptionCartItemArgs: argsForByLocation,
+         id: modifyProductId,
+         params: argsForByLocation,
       },
       onCompleted: data => {
          // use for repeat last one order
@@ -384,14 +403,14 @@ const CartCard = props => {
             }
          }
          if (data) {
-            setModifyProduct(data.products[0])
+            setModifyProduct(data.product)
          }
       },
    })
 
    const additionalModifierTemplateIds = React.useMemo(() => {
       if (repeatLastOneData) {
-         return nestedModifierTemplateIds(repeatLastOneData?.products[0])
+         return nestedModifierTemplateIds(repeatLastOneData?.product)
       }
    }, [repeatLastOneData])
 
@@ -426,7 +445,7 @@ const CartCard = props => {
    useEffect(() => {
       if (repeatLastOneData && forRepeatLastOne) {
          if (!additionalModifiersLoading) {
-            repeatLastOne(repeatLastOneData.products[0])
+            repeatLastOne(repeatLastOneData.product)
          }
       }
    }, [repeatLastOneData, additionalModifiersLoading, forRepeatLastOne])
@@ -501,7 +520,7 @@ const CartCard = props => {
 
       const allSelectedOptions = [...singleModifier, ...multipleModifier]
 
-      if (additionalModifierTemplateIds) {
+      if (selectedProductOption.additionalModifiers) {
          selectedProductOption.additionalModifiers.forEach(option => {
             option.modifier.categories.forEach(category => {
                category.options.forEach(option => {
@@ -530,18 +549,63 @@ const CartCard = props => {
             modifierOptionsConsistAdditionalModifiers.map(
                eachModifierOptionsConsistAdditionalModifiers => {
                   let additionalModifierOptions = []
-                  additionalModifierTemplates.modifiers.forEach(
-                     eachModifier => {
-                        eachModifier.categories.forEach(eachCategory => {
-                           additionalModifierOptions.push(
-                              ...eachCategory.options.map(eachOption => ({
-                                 ...eachOption,
-                                 categoryId: eachCategory.id,
-                              }))
+                  selectedProductOption.additionalModifiers.forEach(
+                     additionalModifier => {
+                        if (additionalModifier.modifier) {
+                           additionalModifier.modifier.categories.forEach(
+                              eachCategory => {
+                                 eachCategory.options.forEach(eachOption => {
+                                    if (eachOption.additionalModifierTemplate) {
+                                       console.log(
+                                          'getting Error Here',
+                                          eachOption.additionalModifierTemplate
+                                       )
+                                       eachOption.additionalModifierTemplate.categories.forEach(
+                                          eachCategory => {
+                                             additionalModifierOptions.push(
+                                                ...eachCategory.options.map(
+                                                   eachOptionTemp => ({
+                                                      ...eachOptionTemp,
+                                                      categoryId:
+                                                         eachCategory.id,
+                                                   })
+                                                )
+                                             )
+                                          }
+                                       )
+                                    }
+                                 })
+                              }
                            )
-                        })
+                        }
                      }
                   )
+                  // for single modifiers
+                  if (selectedProductOption.modifier) {
+                     selectedProductOption.modifier.categories.forEach(
+                        eachCategory => {
+                           eachCategory.options.forEach(eachOption => {
+                              if (eachOption.additionalModifierTemplateId) {
+                                 if (eachOption.additionalModifierTemplate) {
+                                    eachOption.additionalModifierTemplate.categories.forEach(
+                                       eachCategory => {
+                                          additionalModifierOptions.push(
+                                             ...eachCategory.options.map(
+                                                eachOptionTemp => ({
+                                                   ...eachOptionTemp,
+                                                   categoryId: eachCategory.id,
+                                                })
+                                             )
+                                          )
+                                       }
+                                    )
+                                 }
+                              }
+                           })
+                        }
+                     )
+                  }
+
                   const mapedModifierOptions =
                      eachModifierOptionsConsistAdditionalModifiers.selectedModifierOptionIds.map(
                         eachId => {
@@ -614,6 +678,29 @@ const CartCard = props => {
       )
       dynamicTrans(languageTags)
    }, [locale, showAdditionalDetailsOnCard])
+
+   // check product and product option available in cart are valid or not by there isPublished and  isAvailability
+   const isProductAvailable = product => {
+      const selectedProductOption = product.product.productOptions.find(
+         option => option.id === product.childs[0]?.productOption?.id
+      )
+      if (!isEmpty(selectedProductOption)) {
+         return (
+            product.product.isAvailable &&
+            product.product.isPublished &&
+            !product.product.isArchived &&
+            selectedProductOption.isAvailable &&
+            !selectedProductOption.isArchived &&
+            selectedProductOption.isPublished
+         )
+      } else {
+         return (
+            product.product.isAvailable &&
+            product.product.isPublished &&
+            !product.product.isArchived
+         )
+      }
+   }
    return (
       <div className="hern-kiosk__cart-card">
          <div className="hern-kiosk__cart-card-header">
@@ -850,29 +937,35 @@ const CartCard = props => {
                         </div>
                      )}
                </div>
-               <KioskCounterButton
-                  config={config}
-                  quantity={productData.ids.length}
-                  onMinusClick={() => {
-                     removeCartItems([
-                        productData.ids[productData.ids.length - 1],
-                     ])
-                  }}
-                  onPlusClick={() => {
-                     if (productData.childs.length > 0) {
-                        setShowChooseIncreaseType(true)
-                     } else {
-                        setCartDetailSelectedProduct(productData)
-                        setModifyProductId(productData.productId)
-                        setForRepeatLastOne(true)
-                     }
-                  }}
-                  style={{
-                     border: `1px solid ${config.kioskSettings.theme.primaryColor.value}`,
-                     width: '15em',
-                     justifyContent: 'space-around',
-                  }}
-               />
+               {isProductAvailable(productData) ? (
+                  <KioskCounterButton
+                     config={config}
+                     quantity={productData.ids.length}
+                     onMinusClick={() => {
+                        removeCartItems([
+                           productData.ids[productData.ids.length - 1],
+                        ])
+                     }}
+                     onPlusClick={() => {
+                        if (productData.childs.length > 0) {
+                           setShowChooseIncreaseType(true)
+                        } else {
+                           setCartDetailSelectedProduct(productData)
+                           setModifyProductId(productData.productId)
+                           setForRepeatLastOne(true)
+                        }
+                     }}
+                     style={{
+                        border: `1px solid ${config.kioskSettings.theme.primaryColor.value}`,
+                        width: '15em',
+                        justifyContent: 'space-around',
+                     }}
+                  />
+               ) : (
+                  <span className="hern-kiosk__cart-card-warning">
+                     {t('This product is not available')}
+                  </span>
+               )}
             </div>
             <div className="hern-kiosk__cart-card-actions">
                <div className="hern-kiosk__cart-card-action-buttons">
@@ -1126,7 +1219,7 @@ const CartCard = props => {
                </div>
             )}
          <Modal
-            title={t('Repeat last used customization')}
+            title={formatMessage({ id: 'Repeat last used customization' })}
             visible={showChooseIncreaseType}
             centered={true}
             onCancel={() => {
@@ -1265,3 +1358,13 @@ const Offers = props => {
       </div>
    )
 }
+
+const FreebieMessage = ({ msg }) => (
+   <div className="hern-kiosk__cart-page-freebie">
+      <h2 className="hern-kiosk__cart-page-freebie-content">{msg}</h2>
+      <img
+         src="/assets/gifs/gift.gif"
+         className="hern-kiosk__cart-page-freebie-gif"
+      />
+   </div>
+)

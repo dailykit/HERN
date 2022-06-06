@@ -183,7 +183,7 @@ export const renderComponentByName = (fold, options) => {
       [brand]/login
       */
       case 'Login':
-         return <Login />
+         return <Login config={fold.config} />
       /*ROUTES :
       [brand]/terms-and-condition
       */
@@ -258,7 +258,7 @@ export const renderComponentByName = (fold, options) => {
       [brand]/account/wallet
       */
       case 'Wallet':
-         return <Wallet />
+         return <Wallet config={fold.config} />
       /*ROUTES :
       [brand]/account/referrals
       */

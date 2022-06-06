@@ -3,7 +3,7 @@ import { useSubscription } from '@apollo/react-hooks'
 import { useUser, useTranslation } from '../context'
 import { COUPONS } from '../graphql'
 import { useConfig } from '../lib'
-import { useMenu, MenuProvider } from '../sections/select-menu'
+// import { useMenu, MenuProvider } from '../sections/select-menu'
 import { Loader } from './loader'
 import {
    ArrowLeftIcon,
@@ -32,11 +32,9 @@ const Coupons_List = ({
    const showListOnCarousel =
       brandConfig['Coupon list orientation']?.showInCarousel?.value ?? false
    const [orderInterfaceType] = useQueryParamState('oiType', 'Website')
-   const { state = {} } = isKioskMode ? {} : useMenu()
    const { brand } = useConfig()
    const { user } = useUser()
-   const { id } =
-      isKioskMode || upFrontLayout ? cart : state?.occurenceCustomer?.cart
+   const { id } = cart
    const { t } = useTranslation()
 
    const [availableCoupons, setAvailableCoupons] = React.useState([])
@@ -115,7 +113,7 @@ const Coupons_List = ({
       return !coupon.rewards.some(reward => reward.condition.isValid)
    }
 
-   if (loading) return <Loader />
+   if (loading) return <Loader inline />
    if (isKioskMode || upFrontLayout) {
       const CouponCard = ({ coupon }) => {
          return (
@@ -221,7 +219,6 @@ const Coupons_List = ({
             </div>
          )
       }
-      console.log('brand-config', brandConfig)
       return (
          <div className={upFrontLayout ? 'hern-upfront-coupons-list' : ''}>
             {!availableCoupons.length && (
@@ -234,7 +231,13 @@ const Coupons_List = ({
                <div style={{ display: 'flex', alignItems: 'center' }}>
                   {(showListOnCarousel || isKioskMode) && (
                      <ArrowLeftIcon
-                        className="hern-upfront-coupons-list__carousal-left-arrow hern-upfront-coupons-list__carousal-arrow"
+                        className={classNames(
+                           'hern-upfront-coupons-list__carousal-left-arrow hern-upfront-coupons-list__carousal-arrow',
+                           {
+                              'hern-upfront-coupons-list__carousal-arrow-kiosk':
+                                 isKioskMode,
+                           }
+                        )}
                         size={42}
                         onClick={lastCarousal}
                      />
@@ -266,7 +269,13 @@ const Coupons_List = ({
                   </div>
                   {(showListOnCarousel || isKioskMode) && (
                      <ArrowRightIcon
-                        className="hern-upfront-coupons-list__carousal-right-arrow hern-upfront-coupons-list__carousal-arrow"
+                        className={classNames(
+                           'hern-upfront-coupons-list__carousal-right-arrow hern-upfront-coupons-list__carousal-arrow',
+                           {
+                              'hern-upfront-coupons-list__carousal-arrow-kiosk':
+                                 isKioskMode,
+                           }
+                        )}
                         size={42}
                         onClick={nextCarousal}
                      />
@@ -328,8 +337,4 @@ const Coupons_List = ({
    )
 }
 
-export const CouponsList = props => (
-   <MenuProvider>
-      <Coupons_List {...props} />
-   </MenuProvider>
-)
+export const CouponsList = props => <Coupons_List {...props} />

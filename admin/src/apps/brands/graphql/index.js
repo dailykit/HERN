@@ -211,7 +211,78 @@ export const PLANS = {
       }
    `,
 }
-
+export const BRAND_COUPONS = {
+   LIST: gql`
+      subscription brandCoupons($brandId: Int_comparison_exp!) {
+         brandCoupons(
+            where: { brandId: $brandId }
+            order_by: { position: desc_nulls_last }
+         ) {
+            id
+            brandId
+            couponId
+            isActive
+            position
+            coupon {
+               code
+            }
+         }
+      }
+   `,
+   TUNNEL_LIST: gql`
+      subscription couponList($brandId: Int!) {
+         coupons(
+            order_by: { isActive: desc_nulls_last }
+            where: {
+               _not: {
+                  brands: {
+                     brand: { brand_coupons: { brandId: { _eq: $brandId } } }
+                  }
+               }
+            }
+         ) {
+            code
+            id
+            metaDetails
+            isActive
+         }
+      }
+   `,
+   UPSERT_BRAND_COUPONS: gql`
+      mutation upsertBrandCoupons($objects: [crm_brand_coupon_insert_input!]!) {
+         createBrandCoupons(
+            objects: $objects
+            on_conflict: {
+               constraint: brand_coupon_id_key
+               update_columns: isActive
+            }
+         ) {
+            affected_rows
+         }
+      }
+   `,
+   DELETE: gql`
+      mutation deleteBrandCoupon($brandId: Int!, $couponId: Int!) {
+         deleteBrandCoupon(brandId: $brandId, couponId: $couponId) {
+            id
+         }
+      }
+   `,
+   UPDATE: gql`
+      mutation updateBrandCoupon(
+         $_set: crm_brand_coupon_set_input!
+         $brandId: Int!
+         $couponId: Int!
+      ) {
+         updateBrandCoupon(
+            pk_columns: { brandId: $brandId, couponId: $couponId }
+            _set: $_set
+         ) {
+            id
+         }
+      }
+   `,
+}
 export const LOCATIONS = {
    AGGREGATE: gql`
       subscription locations {
@@ -381,7 +452,6 @@ export const BRAND_ID_LIST = gql`
       }
    }
 `
-
 // getting brandSettingId using identifier
 export const BRAND_ID = gql`
    query MyQuery($identifier: String_comparison_exp!) {
@@ -395,7 +465,7 @@ export const BRAND_ID = gql`
 `
 export const KIOSK = {
    AGGREGATE: gql`
-      subscription MySubscription {
+      subscription KIOSK {
          brands_locationKiosk_aggregate {
             aggregate {
                count
@@ -404,7 +474,7 @@ export const KIOSK = {
       }
    `,
    LIST: gql`
-      subscription MySubscription {
+      subscription KIOSK_LIST {
          kiosk: brands_locationKiosk_aggregate {
             aggregate {
                count
@@ -415,6 +485,7 @@ export const KIOSK = {
                KioskLabel: internalLocationKioskLabel
                printerId
                isActive
+               lastActiveTime
             }
          }
       }
@@ -431,7 +502,9 @@ export const KIOSK = {
             location {
                city
                id
+               label
             }
+            lastActiveTime
          }
       }
    `,
@@ -453,10 +526,14 @@ export const KIOSK = {
       }
    `,
    PRINTERS: gql`
-      subscription MySubscription {
+      subscription PRINTERS {
          printers {
             name
             printNodeId
+            computerId
+            computer {
+               name
+            }
          }
       }
    `,
@@ -475,7 +552,7 @@ export const KIOSK = {
    `,
 
    GET_KIOSKS: gql`
-      query GET_KIOSK($id: Int!) {
+      subscription GET_KIOSK($id: Int!) {
          kiosk: brands_locationKiosk_by_pk(id: $id) {
             accessPassword
             accessUrl
@@ -504,12 +581,13 @@ export const KIOSK = {
          ) {
             label
             id
+            posist_tabType
          }
       }
    `,
 
    UPDATE_KIOSK: gql`
-      mutation MyMutation2(
+      mutation UPDATE_KIOSK(
          $id: Int!
          $_set: brands_locationKiosk_set_input = {}
       ) {
@@ -523,7 +601,7 @@ export const KIOSK = {
    `,
 
    CREATE_KIOSK_ORDER_TAB: gql`
-      mutation MyMutation(
+      mutation CREATE_KIOSK_ORDER_TAB(
          $objects: [brands_locationKiosk_orderTab_insert_input!]!
       ) {
          insert_brands_locationKiosk_orderTab(objects: $objects) {
@@ -533,7 +611,7 @@ export const KIOSK = {
    `,
 
    UPDATE_KIOSK_ORDER_TAB: gql`
-      mutation MyMutation(
+      mutation UPDATE_KIOSK_ORDER_TAB(
          $orderTabId: Int!
          $locationKioskId: Int!
          $_set: brands_locationKiosk_orderTab_set_input = {}
@@ -550,6 +628,22 @@ export const KIOSK = {
             orderTabId
             posist_tabId
             posist_tabType
+         }
+      }
+   `,
+
+   DELETE_KIOSK_ORDER_TAB: gql`
+      mutation DELETE_KIOSK_ORDER_TAB(
+         $locationKioskId: Int_comparison_exp!
+         $orderTabId: Int_comparison_exp!
+      ) {
+         delete_brands_locationKiosk_orderTab(
+            where: {
+               locationKioskId: $locationKioskId
+               orderTabId: $orderTabId
+            }
+         ) {
+            affected_rows
          }
       }
    `,
@@ -581,6 +675,212 @@ export const KIOSK = {
             terminalId
             time
             zipcode
+         }
+      }
+   `,
+   POSIST_CUSTOMER_KEY: gql`
+      subscription PosistCustomerKey(
+         $brandId: Int_comparison_exp!
+         $locationId: Int_comparison_exp!
+      ) {
+         PosistCustomerKey: brands_brand_location(
+            where: { brandId: $brandId, locationId: $locationId }
+         ) {
+            id
+            brandId
+            locationId
+            posist_customer_key
+         }
+      }
+   `,
+
+   UPDATE_POSIST_CUSTOMER_KEY: gql`
+      mutation updatePosistCustomerKey(
+         $_set: brands_brand_location_set_input!
+         $brandId: Int!
+         $locationId: Int!
+      ) {
+         update_brands_brand_location_by_pk(
+            pk_columns: { brandId: $brandId, locationId: $locationId }
+            _set: $_set
+         ) {
+            posist_customer_key
+            brandId
+            locationId
+         }
+      }
+   `,
+}
+export const PAYMENT_OPTIONS = {
+   AGGREGATE: gql`
+      subscription paymentOptions {
+         brands_availablePaymentOption_aggregate {
+            aggregate {
+               count
+            }
+         }
+      }
+   `,
+   LIST: gql`
+      subscription availablePaymentOptions {
+         brands_availablePaymentOption(
+            order_by: { position: desc_nulls_last }
+         ) {
+            id
+            label
+            isValid
+            isActive
+            position
+            description
+            privateCreds
+            publicCreds
+            supportedPaymentOption {
+               paymentOptionLabel
+               supportedPaymentCompany {
+                  label
+                  logo
+               }
+            }
+            SUCCEEDED: cartPayments_aggregate(
+               where: {
+                  paymentStatus: { _eq: "SUCCEEDED" }
+                  isTest: { _eq: false }
+               }
+            ) {
+               aggregate {
+                  count
+                  sum {
+                     amount
+                  }
+                  avg {
+                     amount
+                  }
+               }
+            }
+         }
+      }
+   `,
+   UPDATE: gql`
+      mutation updatePaymantOption(
+         $id: Int!
+         $_set: brands_availablePaymentOption_set_input!
+      ) {
+         update_brands_availablePaymentOption_by_pk(
+            pk_columns: { id: $id }
+            _set: $_set
+         ) {
+            id
+         }
+      }
+   `,
+   DELETE: gql`
+      mutation deletePaymentOption($id: Int!) {
+         delete_brands_availablePaymentOption(where: { id: { _eq: $id } }) {
+            affected_rows
+         }
+      }
+   `,
+   COMPANY_LIST: gql`
+      subscription paymentCompany {
+         brands_supportedPaymentCompany {
+            label
+            id
+            logo
+            supportedPaymentOptions {
+               id
+               paymentOptionLabel
+               publicCredsConfig
+               privateCredsConfig
+               availablePaymentOptions {
+                  description
+                  label
+                  publicCreds
+                  privateCreds
+               }
+            }
+         }
+      }
+   `,
+   UPDATE_LABEL: gql`
+      mutation upsetLabel(
+         $objects: [brands_availablePaymentOption_insert_input!]!
+         $supportedPaymentOptionId: Int!
+      ) {
+         insert_brands_availablePaymentOption(
+            objects: $objects
+            on_conflict: {
+               constraint: availablePaymentOption_label_key
+               where: {
+                  supportedPaymentOptionId: { _eq: $supportedPaymentOptionId }
+               }
+            }
+         ) {
+            affected_rows
+            returning {
+               label
+               id
+            }
+         }
+      }
+   `,
+   VIEW_CREDS: gql`
+      subscription updateCreds($id: Int_comparison_exp!) {
+         brands_availablePaymentOption(where: { id: $id }) {
+            id
+            description
+            label
+            privateCreds
+            publicCreds
+         }
+      }
+   `,
+   UPDATE_CREDS: gql`
+      mutation updatePayment(
+         $_set: brands_availablePaymentOption_set_input!
+         $id: Int!
+      ) {
+         update_brands_availablePaymentOption(
+            where: { id: { _eq: $id } }
+            _set: $_set
+         ) {
+            affected_rows
+         }
+      }
+   `,
+
+   VIEW: gql`
+      subscription availablePayment($id: Int!) {
+         brands_availablePaymentOption_by_pk(id: $id) {
+            id
+            isActive
+            isValid
+            label
+            privateCreds
+            publicCreds
+            description
+            supportedPaymentOption {
+               paymentOptionLabel
+               supportedPaymentCompany {
+                  label
+                  logo
+               }
+            }
+            SUCCEEDED: cartPayments_aggregate(
+               where: {
+                  paymentStatus: { _eq: "SUCCEEDED" }
+                  isTest: { _eq: false }
+               }
+            ) {
+               aggregate {
+                  count
+                  sum {
+                     amount
+                  }
+                  avg {
+                     amount
+                  }
+               }
+            }
          }
       }
    `,

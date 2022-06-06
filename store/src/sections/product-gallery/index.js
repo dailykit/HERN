@@ -1,16 +1,15 @@
-import React from 'react'
-import { PRODUCTS } from '../../graphql'
-import { useQuery } from '@apollo/react-hooks'
-import { useConfig } from '../../lib'
-import { Loader } from '../../components'
-import { Carousel, Row, Col } from 'antd'
-import { ProductCard } from '../../components/product_card'
-import { ArrowLeftIcon, ArrowRightIcon } from '../../assets/icons'
-import { useRouter } from 'next/router'
-import { getRoute, isClient } from '../../utils'
-import { CustomArea } from '../featuredCollection/productCustomArea'
-import { setThemeVariable } from '../../utils'
+import React, { useEffect } from 'react'
+import { useQuery, useSubscription } from '@apollo/react-hooks'
+import { Carousel, Col, Row } from 'antd'
 import classNames from 'classnames'
+import { useRouter } from 'next/router'
+import { ArrowLeftIcon, ArrowRightIcon } from '../../assets/icons'
+import { Loader } from '../../components'
+import { ProductCard } from '../../components/product_card'
+import { PRODUCTS } from '../../graphql'
+import { useConfig } from '../../lib'
+import { getRoute, isClient, setThemeVariable } from '../../utils'
+import { CustomArea } from '../featuredCollection/productCustomArea'
 
 export const ProductGallery = ({ config }) => {
    const [productsData, setProductsData] = React.useState([])
@@ -18,46 +17,38 @@ export const ProductGallery = ({ config }) => {
       config.informationVisibility.productOrientation.value.value
    )
    const [status, setStatus] = React.useState('loading')
-   const { brand, locationId } = useConfig()
+   const { brand, locationId, brandLocation } = useConfig()
+
    const argsForByLocation = React.useMemo(
       () => ({
-         params: {
-            brandId: brand?.id,
-            locationId: locationId,
-         },
+         brandId: brand?.id,
+         locationId: locationId,
+         brand_locationId: brandLocation?.id,
       }),
-      [brand]
+      [brand, locationId, brandLocation?.id]
    )
-   const { loading: productsLoading, error: productsError } = useQuery(
+   const { loading: productsLoading, error: productsError } = useSubscription(
       PRODUCTS,
       {
          variables: {
             ids: config.data.products.value,
-            priceArgs: argsForByLocation,
-            discountArgs: argsForByLocation,
-            defaultCartItemArgs: argsForByLocation,
-            productOptionPriceArgs: argsForByLocation,
-            productOptionDiscountArgs: argsForByLocation,
-            productOptionCartItemArgs: argsForByLocation,
-            modifierCategoryOptionPriceArgs: argsForByLocation,
-            modifierCategoryOptionDiscountArgs: argsForByLocation,
-            modifierCategoryOptionCartItemArgs: argsForByLocation,
+            params: argsForByLocation,
          },
-         fetchPolicy: 'network-only',
-         onCompleted: data => {
+         onSubscriptionData: ({ subscriptionData }) => {
+            const { data } = subscriptionData
             if (data && data.products.length) {
                const productsData = data.products
                setProductsData(productsData)
                setStatus('success')
             }
          },
-         onError: error => {
-            setStatus('error')
-            console.log('Error: ', error)
-         },
       }
    )
-
+   React.useEffect(() => {
+      if (productsError) {
+         setStatus('error')
+      }
+   }, [productsError])
    // Setting arrows active color into root variables
    setThemeVariable(
       '--arrow-active-color',
@@ -84,7 +75,7 @@ export const ProductGallery = ({ config }) => {
    return (
       <div
          className={classNames('hern-product_gallery__container', {
-            'hern-product-galllery__product__display--1':
+            'hern-product-gallery__product__display--1':
                config?.informationVisibility?.productDetailType?.value?.value,
          })}
       >
@@ -133,7 +124,7 @@ export const ProductGallery = ({ config }) => {
                         margin: '20px 0px',
                      }}
                   >
-                     <Col span={12} style={{ textAlign: 'center' }}>
+                     <Col span={24} style={{ textAlign: 'center' }}>
                         <a
                            class="hern-product_gallery_page-button"
                            href={

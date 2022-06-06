@@ -20,16 +20,11 @@ export const useQueryParams = () => {
       var oldQs = location.search
 
       function handler() {
-         console.log(
-            'Query-string changed:',
-            oldQs || '(empty)',
-            '=>',
-            location.search || '(empty)'
-         )
          oldQs = location.search
          setParams(qs.parse(location.search))
       }
 
+      handler()
       // Assign listeners
       history.pushState = track(history.pushState, handler)
       history.replaceState = track(history.replaceState, handler)

@@ -1,6 +1,6 @@
 import React from 'react'
 import moment from 'moment'
-import { forEach, isEqual } from 'lodash'
+import { forEach, isEmpty, isEqual } from 'lodash'
 import styled, { css } from 'styled-components'
 import { toast } from 'react-toastify'
 import { useParams } from 'react-router'
@@ -34,7 +34,7 @@ import {
 import { SearchIcon, CloseIcon } from '../../../../../../../shared/assets/icons'
 
 export const Main = () => {
-   const { brand } = useManual()
+   const { brand, locationId, brandLocation } = useManual()
    const [menu, setMenu] = React.useState([])
    const [categories, setCategories] = React.useState([])
    const [isMenuEmpty, setIsMenuEmpty] = React.useState(false)
@@ -51,7 +51,7 @@ export const Main = () => {
       { id: 2, title: 'All Products' },
    ]
 
-   const [fetchProducts] = useLazyQuery(QUERIES.PRODUCTS.LIST, {
+   const [fetchProducts, { error }] = useLazyQuery(QUERIES.PRODUCTS.LIST, {
       onCompleted: ({ products = [] }) => {
          const _menu = []
          categories.map(category => {
@@ -62,6 +62,7 @@ export const Main = () => {
                ),
             })
          })
+
          const productIds = products.map(product => product.id)
          setMenuProductsIds(productIds)
          setMenu(_menu)
@@ -76,50 +77,73 @@ export const Main = () => {
          setIsMenuLoading(false)
       },
    })
-   useQuery(QUERIES.MENU, {
-      skip: !brand?.id,
+   const argsForByLocation = React.useMemo(
+      () => ({
+         brandId: brand?.id,
+         locationId: locationId,
+         brand_locationId: brandLocation?.id,
+      }),
+      [brand, locationId, brandLocation?.id]
+   )
+
+   // get on-demand menu
+   const { error: menuError } = useQuery(QUERIES.MENU, {
+      skip: !brand?.id || !locationId || !brandLocation?.id,
       variables: {
-         params: { brandId: brand?.id, date: moment().format('YYYY-MM-DD') },
+         params: {
+            brandId: brand?.id,
+            date: moment().format('YYYY-MM-DD'),
+            locationId,
+            brand_locationId: brandLocation?.id,
+         },
       },
       onCompleted: async (data = {}) => {
-         try {
-            if (
-               isEqual(data, {
-                  menu: [{ data: { menu: [] }, __typename: 'onDemand_menu' }],
-               })
-            ) {
-               setIsMenuEmpty(true)
-               setHasMenuError(false)
-               setIsMenuLoading(false)
-               return
-            }
-            const [_data] = data.menu
-            const { data: { menu = [] } = {} } = _data
-            setCategories(menu)
-            const ids = menu.map(({ products }) => products).flat()
+         console.log('datamenu', data, !isEmpty(data.onDemand_getMenuV2copy))
+         if (!isEmpty(data.onDemand_getMenuV2copy)) {
+            try {
+               if (
+                  isEqual(data, {
+                     menu: [
+                        { data: { menu: [] }, __typename: 'onDemand_menu' },
+                     ],
+                  })
+               ) {
+                  setIsMenuEmpty(true)
+                  setHasMenuError(false)
+                  setIsMenuLoading(false)
+                  return
+               }
+               const [_data] = data.onDemand_getMenuV2copy
+               const { data: { menu = [] } = {} } = _data
+               setCategories(menu)
+               const ids = menu.map(({ products }) => products).flat()
 
-            if (ids.length === 0) {
-               setIsMenuEmpty(true)
-               setHasMenuError(false)
-               setIsMenuLoading(false)
-               return
-            }
-            await fetchProducts({
-               variables: {
-                  where: {
-                     isArchived: { _eq: false },
-                     id: { _in: ids },
+               if (ids.length === 0) {
+                  setIsMenuEmpty(true)
+                  setHasMenuError(false)
+                  setIsMenuLoading(false)
+                  return
+               }
+               await fetchProducts({
+                  variables: {
+                     // ids: ids,
+                     where: {
+                        isArchived: { _eq: false },
+                        id: { _in: ids },
+                     },
+                     params: argsForByLocation,
                   },
-               },
-            })
-         } catch (error) {
-            logger(error)
-            setIsMenuLoading(false)
-            setHasMenuError(true)
-            setIsMenuEmpty(false)
-            toast.error(
-               'There was an issue in fetching the menu for today, please try again!'
-            )
+               })
+            } catch (error) {
+               logger(error)
+               console.log('fixme', error)
+               setIsMenuLoading(false)
+               setHasMenuError(true)
+               setIsMenuEmpty(false)
+               toast.error(
+                  'There was an issue in fetching the menu for today, please try again!'
+               )
+            }
          }
       },
       onError: error => {
@@ -203,15 +227,19 @@ export const Main = () => {
          </Flex>
          <Spacer size="20px" />
          {showMenu ? (
-            <Menu menu={menu} menuProductIds={menuProductIds} />
+            <Menu
+               menu={menu}
+               menuProductIds={menuProductIds}
+               argsForByLocation={argsForByLocation}
+            />
          ) : (
-            <AllProducts />
+            <AllProducts argsForByLocation={argsForByLocation} />
          )}
       </Styles.Main>
    )
 }
 
-const Menu = ({ menu, menuProductIds }) => {
+const Menu = ({ menu, menuProductIds, argsForByLocation }) => {
    const { id: cartId } = useParams()
    const { cart, tunnels, dispatch } = useManual()
 
@@ -251,6 +279,7 @@ const Menu = ({ menu, menuProductIds }) => {
                               id: { _in: menuProductIds },
                               name: { _ilike: `%${e.target.value}%` },
                            },
+                           params: argsForByLocation,
                         },
                      })
                   }}
@@ -271,13 +300,20 @@ const Menu = ({ menu, menuProductIds }) => {
                alignItems="center"
                justifyContent="space-between"
             >
-               <AnchorNav>
+               <AnchorNav
+                  style={{
+                     overflow: 'auto',
+                     width: '100%',
+                     justifyContent: 'unset',
+                  }}
+               >
                   {menu.map(item => (
                      <AnchorNavItem
                         key={item.title}
                         label={item.title}
                         targetElement={item.title}
                         containerId="categories"
+                        style={{ whiteSpace: 'nowrap', marginBottom: '13px' }}
                      />
                   ))}
                </AnchorNav>
@@ -330,7 +366,7 @@ const Menu = ({ menu, menuProductIds }) => {
    )
 }
 
-const AllProducts = () => {
+const AllProducts = ({ argsForByLocation }) => {
    const { id: cartId } = useParams()
    const { cart, tunnels, dispatch } = useManual()
    const [showSearch, setShowSearch] = React.useState(false)
@@ -350,6 +386,7 @@ const AllProducts = () => {
    useQuery(QUERIES.PRODUCTS.LIST, {
       variables: {
          where: { isPublished: { _eq: true }, isArchived: { _eq: false } },
+         params: argsForByLocation,
       },
       onCompleted: data => {
          setAllProducts(data.products)
@@ -371,6 +408,7 @@ const AllProducts = () => {
                   isArchived: { _eq: false },
                   name: { _ilike: `%${value}%` },
                },
+               params: argsForByLocation,
             },
          })
       } else {

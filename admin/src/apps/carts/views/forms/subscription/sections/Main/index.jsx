@@ -1,9 +1,9 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { uniqBy } from 'lodash'
 import styled from 'styled-components'
 import { toast } from 'react-toastify'
 import { Element } from 'react-scroll'
-import { useMutation, useQuery } from '@apollo/react-hooks'
+import { useMutation, useQuery, useSubscription } from '@apollo/react-hooks'
 import { useParams } from 'react-router'
 import {
    Tag,
@@ -24,22 +24,40 @@ import { InlineLoader } from '../../../../../../../shared/components'
 import { currencyFmt, logger } from '../../../../../../../shared/utils'
 
 export const Main = () => {
-   const { subscriptionOccurenceId, customer } = useManual()
+   const { subscriptionOccurenceId, customer, brand, location, brandLocation } =
+      useManual()
    const [hasMenuError, setHasMenuError] = React.useState(false)
-   const { loading, data: { categories = [] } = {} } = useQuery(
-      QUERIES.CATEGORIES.LIST,
-      {
-         variables: {
-            subscriptionId: { _eq: customer.subscriptionId },
-            subscriptionOccurenceId: { _eq: subscriptionOccurenceId },
-         },
-         onError: error => {
-            logger(error)
-            setHasMenuError(true)
-         },
-      }
+   const argsForByLocation = React.useMemo(
+      () => ({
+         brandId: brand?.id,
+         locationId: location?.id,
+         brand_locationId: brandLocation?.id,
+      }),
+      [brand, location?.id, brandLocation?.id]
    )
+   console.log('argsForByLocation', argsForByLocation)
 
+   const {
+      loading,
+      data: { categories = [] } = {},
+      error: categoryError,
+   } = useSubscription(QUERIES.CATEGORIES.LIST, {
+      variables: {
+         subscriptionId: { _eq: customer.subscriptionId },
+         subscriptionOccurenceId: { _eq: subscriptionOccurenceId },
+         params: argsForByLocation,
+      },
+      onSubscriptionComplete: data => {
+         console.log('this data for category', data)
+      },
+   })
+   useEffect(() => {
+      if (categoryError) {
+         logger(categoryError)
+         setHasMenuError(true)
+      }
+   }, [categoryError])
+   console.log('categories', categories)
    if (loading) return <InlineLoader />
    if (hasMenuError)
       return (
@@ -88,9 +106,16 @@ export const Main = () => {
 
 const Menu = ({ categories = [] }) => {
    const { cart } = useManual()
+   const [insertedProductId, setInsertedProductId] = React.useState(null)
    const [insert, { loading }] = useMutation(MUTATIONS.CART.ITEM.INSERT, {
-      onCompleted: () => toast.success('Successfully added the product!'),
-      onError: () => toast.error('Failed to add the product!'),
+      onCompleted: () => {
+         toast.success('Successfully added the product!')
+         setInsertedProductId(null)
+      },
+      onError: () => {
+         toast.error('Failed to add the product!')
+         setInsertedProductId(null)
+      },
    })
    return (
       <>
@@ -135,14 +160,27 @@ const Menu = ({ categories = [] }) => {
                      </Text>
                      <Spacer size="14px" />
                      <Styles.Cards>
-                        {products.map(product => (
-                           <Product
-                              cart={cart}
-                              key={product.id}
-                              data={product}
-                              insert={{ mutate: insert, loading }}
-                           />
-                        ))}
+                        {products.map(product => {
+                           if (
+                              !product.productOption.isPublished ||
+                              !product.productOption.product.isPublished
+                           )
+                              return null
+                           return (
+                              <Product
+                                 cart={cart}
+                                 key={product.id}
+                                 data={product}
+                                 setInsertedProductId={setInsertedProductId}
+                                 insert={{
+                                    mutate: insert,
+                                    loading:
+                                       loading &&
+                                       insertedProductId === product.id,
+                                 }}
+                              />
+                           )
+                        })}
                      </Styles.Cards>
                      <Spacer size="24px" />
                   </Element>
@@ -170,23 +208,27 @@ const insertCartId = (node, cartId) => {
    return node
 }
 
-const Product = ({ cart, data, insert }) => {
+const Product = ({ cart, data, insert, setInsertedProductId }) => {
    const params = useParams()
    const { occurenceCustomer } = useManual()
 
    const add = () => {
       if (occurenceCustomer?.itemCountValid) {
-         toast.warn("You're cart is already full!")
+         toast.warn('Your cart is already full!')
          return
       }
       const cart = insertCartId(data.cartItem, params?.id)
+      setInsertedProductId(data.id)
       insert.mutate({ variables: { object: cart } })
    }
 
    const product = {
       addOnLabel: data.addOnLabel,
       addOnPrice: data.addOnPrice,
-      isAvailable: data.isAvailable,
+      isAvailable:
+         data.isAvailable &&
+         data.productOption.isAvailable &&
+         data.productOption.product.isAvailable,
       name: data?.productOption?.product?.name || '',
       label: data?.productOption?.label || '',
       type: data?.productOption?.simpleRecipeYield?.simpleRecipe?.type,

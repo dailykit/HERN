@@ -1,16 +1,20 @@
-import React, { useState, useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
+import { Modal, Radio, Skeleton } from 'antd'
 import classNames from 'classnames'
-import { Radio, Modal, Skeleton } from 'antd'
-import { useConfig } from '../../lib'
-import { get_env, useScript, isClient } from '../../utils'
-import { getStoresWithValidations } from '../../utils'
 import GooglePlacesAutocomplete from 'react-google-places-autocomplete'
-import LocationSelectorConfig from '../locatoinSeletorConfig.json'
-import { StoreList } from '../locationSelector/storeList'
+import { GoogleSuggestionsList, Loader, UserAddressList } from '..'
 import { GPSIcon, NotFound } from '../../assets/icons'
-import { Loader, UserAddressList, GoogleSuggestionsList } from '..'
-import { AddressInfo } from './addressInfo'
 import { useTranslation } from '../../context'
+import { useConfig } from '../../lib'
+import {
+   getStoresWithValidations,
+   get_env,
+   isClient,
+   useScript,
+} from '../../utils'
+import { StoreList } from '../locationSelector/storeList'
+import LocationSelectorConfig from '../locatoinSeletorConfig.json'
+import { AddressInfo } from './addressInfo'
 
 // delivery section
 export const Delivery = props => {
@@ -72,6 +76,10 @@ export const Delivery = props => {
    const [showRefineLocation, setShowRefineLocation] = useState(false)
    const [isGetStoresLoading, setIsGetStoresLoading] = useState(true)
    const [stores, setStores] = useState(null)
+   const [
+      selectedLocationInputDescription,
+      setSelectedLocationInputDescription,
+   ] = useState(null)
    const [isUserExistingAddressSelected, setIsUserExistingAddressSelected] =
       useState(false)
 
@@ -204,17 +212,33 @@ export const Delivery = props => {
            )}&libraries=places`
          : ''
    )
+   const SERVER_URL = React.useMemo(() => {
+      const storeMode = process?.env?.NEXT_PUBLIC_MODE || 'production'
+      if (isClient) {
+         return {
+            production: window.location.origin,
+            'full-dev': 'http://localhost:4000',
+            'store-dev': 'http://localhost:4000',
+         }[storeMode]
+      } else {
+         return null
+      }
+   }, [isClient])
    const formatAddress = async input => {
       if (!isClient) return 'Runs only on client side.'
-      // console.log('inputfn', input)
+
+      setSelectedLocationInputDescription(input.description)
+
       const response = await fetch(
-         `https://maps.googleapis.com/maps/api/geocode/json?key=${
+         `${SERVER_URL}/server/api/place/details/json?key=${
             isClient ? get_env('GOOGLE_API_KEY') : ''
-         }&address=${encodeURIComponent(input.description)}`
+         }&placeid=${input.place_id}&language=en`
       )
+
       const data = await response.json()
-      if (data.status === 'OK' && data.results.length > 0) {
-         const [result] = data.results
+      // console.log('this is data', data)
+      if (data.status === 'OK' && data.result) {
+         const result = data.result
          const userCoordinate = {
             latitude: result.geometry.location.lat.toString(),
             longitude: result.geometry.location.lng.toString(),
@@ -223,18 +247,22 @@ export const Delivery = props => {
             mainText: input.structured_formatting.main_text,
             secondaryText: input.structured_formatting.secondary_text,
          }
+         const formatted_address = result.formatted_address.split(',')
+         // set line1 from formatted_address bcz it has more info than address_component
+         address.line1 = formatted_address
+            .slice(0, formatted_address.length - 3)
+            .join(',')
+         address.line2 = ''
+         // line to most probably not use
          result.address_components.forEach(node => {
-            if (node.types.includes('street_number')) {
-               address.line2 = `${node.long_name} `
+            if (node.types.includes('sublocality_level_3')) {
+               address.line2 += `${node.long_name} `
             }
-            if (node.types.includes('route')) {
-               address.line2 += node.long_name
+            if (node.types.includes('sublocality_level_2')) {
+               address.line2 += `${node.long_name} `
             }
-            if (node.types.includes('street_number')) {
-               address.line2 = `${node.long_name} `
-            }
-            if (node.types.includes('route')) {
-               address.line2 += node.long_name
+            if (node.types.includes('sublocality_level_1')) {
+               address.line2 += `${node.long_name} `
             }
             if (node.types.includes('locality')) {
                address.city = node.long_name
@@ -252,7 +280,11 @@ export const Delivery = props => {
          if (address.zipcode) {
             setUserCoordinate(prev => ({ ...prev, ...userCoordinate }))
             setIsGetStoresLoading(true)
-            setAddress({ ...userCoordinate, ...address })
+            setAddress({
+               ...userCoordinate,
+               ...address,
+               searched: input.description,
+            })
          } else {
             showWarningPopup()
          }
@@ -437,6 +469,9 @@ export const Delivery = props => {
                   setIsUserExistingAddressSelected
                }
                isUserExistingAddressSelected={isUserExistingAddressSelected}
+               selectedLocationInputDescription={
+                  selectedLocationInputDescription
+               }
             />
          )}
          {(stores == null || stores?.length == 0) && (
