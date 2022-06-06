@@ -208,24 +208,26 @@ export default CreateBrandLocation
 const LocationSelector = props => {
    const { i, eachLocation, location, setLocation } = props
    const [address, setAddress] = React.useState(null)
-   const [loaded, error] = useScript(
-      `https://maps.googleapis.com/maps/api/js?key=${get_env(
-         'REACT_APP_MAPS_API_KEY'
-      )}&libraries=places`
-   )
 
    const formatAddress = async input => {
-      // console.log('inputfn', input)
+      console.log('inputfn', input)
 
+      // const response = await fetch(
+      //    `https://maps.googleapis.com/maps/api/geocode/json?key=${get_env(
+      //       'REACT_APP_MAPS_API_KEY'
+      //    )}&address=${encodeURIComponent(input.value.description)}`
+      // )
       const response = await fetch(
-         `https://maps.googleapis.com/maps/api/geocode/json?key=${get_env(
+         `${get_env(
+            'REACT_APP_DAILYOS_SERVER_URI'
+         )}/api/place/details/json?key=${get_env(
             'REACT_APP_MAPS_API_KEY'
-         )}&address=${encodeURIComponent(input.value.description)}`
+         )}&placeid=${input.value.place_id}&language=en`
       )
       const data = await response.json()
-      // console.log('data', data)
-      if (data.status === 'OK' && data.results.length > 0) {
-         const [result] = data.results
+      console.log('data for new location', data, input.value.place_id)
+      if (data.status === 'OK' && data.result) {
+         const result = data.result
          const userCoordinate = {
             latitude: result.geometry.location.lat,
             longitude: result.geometry.location.lng,
@@ -239,6 +241,8 @@ const LocationSelector = props => {
             showGooglePlacesAutocompleteOutside: false,
          }
          setLocation([...newLocation])
+      } else {
+         console.log('data for new location', data)
       }
    }
    React.useEffect(() => {
@@ -252,29 +256,27 @@ const LocationSelector = props => {
    // console.log('address', location)
    return (
       <>
-         {loaded && !error && (
-            <>
-               {eachLocation.showGooglePlacesAutocompleteOutside && (
-                  <GooglePlacesAutocomplete
-                     selectProps={{
-                        placeholder: 'Enter Your Store Location',
-                        onChange: input => formatAddress(input),
-                     }}
+         <>
+            {eachLocation.showGooglePlacesAutocompleteOutside && (
+               <GooglePlacesAutocomplete
+                  selectProps={{
+                     placeholder: 'Enter Your Store Location',
+                     onChange: input => formatAddress(input),
+                  }}
+               />
+            )}
+            {location[i].address && (
+               <>
+                  <RefineLocationPopup
+                     geoCoordinates={address}
+                     i={i}
+                     eachLocation={eachLocation}
+                     location={location}
+                     setLocation={setLocation}
                   />
-               )}
-               {location[i].address && (
-                  <>
-                     <RefineLocationPopup
-                        geoCoordinates={address}
-                        i={i}
-                        eachLocation={eachLocation}
-                        location={location}
-                        setLocation={setLocation}
-                     />
-                  </>
-               )}
-            </>
-         )}
+               </>
+            )}
+         </>
       </>
    )
 }
@@ -306,7 +308,9 @@ const BrandLocationMap = props => {
 
    React.useEffect(() => {
       if (eachLocation.address.latitude && eachLocation.address.longitude) {
-         // console.log('geo', eachLocation.address)
+         // console.log(
+         //    'geo',
+         // )
 
          // making initial locationSelector of this instance disable
          const newLocation = [...location]
@@ -364,7 +368,7 @@ const BrandLocationMap = props => {
                }
             })
             .catch(e => {
-               console.log('error', e)
+               console.log('error1', e)
             })
       }
    }, [eachLocation.address])
@@ -441,7 +445,7 @@ const BrandLocationMap = props => {
             }
          })
          .catch(e => {
-            console.log('error', e)
+            console.log('error2', e)
          })
    }
    // console.log('address', address)
