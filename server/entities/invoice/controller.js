@@ -4,9 +4,7 @@ import get_env from '../../../get_env'
 import { getUrlDetails } from '../../utils'
 
 export const getInvoice = async (req, res) => {
-   console.log('body', req.params)
    const { detail } = req.params
-   console.log('env', get_env('HASURA_GRAPHQL_ADMIN_SECRET'))
    const secretKey = await get_env('HASURA_GRAPHQL_ADMIN_SECRET')
    const detailBytes = CryptoJS.AES.decrypt(detail, secretKey)
    const decryptDetail = JSON.parse(detailBytes.toString(CryptoJS.enc.Utf8))
@@ -28,14 +26,13 @@ export const getInvoice = async (req, res) => {
       )
       if (invoice.status === 200) {
          if (format === 'pdf') {
-            console.log('invoice', invoice.data)
             res.type('application/pdf')
             return res.send(invoice.data)
          }
          return res.send(invoice.data)
       }
    } catch (error) {
-      console.log('error', error)
+      console.error('error', error)
       res.send({ error })
    }
 }
