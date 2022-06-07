@@ -93,3 +93,21 @@
    width: 100%;
    text-align: center;
 }
+
+@media (max-width: 1024px) {
+   .hern-placing-order-info__wrapper {
+      flex-direction: column;
+   }
+
+   .hern-placing-order__header {
+      max-width: 100%;
+   }
+
+   .hern-placing-order-info__left {
+      width: 100%;
+   }
+
+   .hern-placing-order-info__right {
+      width: 100%;
+   }
+}
