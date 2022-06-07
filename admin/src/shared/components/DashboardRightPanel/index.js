@@ -54,11 +54,7 @@ const DashboardRightPanel = () => {
       openBrandLocationTunnel,
       closeBrandLocationTunnel,
    ] = useTunnel(1)
-   const [
-      cloneOperationModeTunnels,
-      openOperationModeTunnel,
-      closeOperationModeTunnel,
-   ] = useTunnel(1)
+
    return (
       <div>
          <DashboardReport>
@@ -91,13 +87,6 @@ const DashboardRightPanel = () => {
                   }}
                >
                   Brand Location Manager Operation Mode
-               </li>
-               <li
-                  onClick={() => {
-                     openOperationModeTunnel(1)
-                  }}
-               >
-                  Clone Brand Location Manager Operational Mode
                </li>
                <li onClick={() => openOrderReportTunnel(1)}>Order Summary</li>
                <li onClick={() => openReportTunnel(1)}>Earnings Overtime</li>
@@ -195,13 +184,6 @@ const DashboardRightPanel = () => {
             <Tunnel popup={true} layer={4} size="md">
                <BrandLocationManagerList
                   closeTunnel={closeBrandLocationTunnel}
-               />
-            </Tunnel>
-         </Tunnels>
-         <Tunnels tunnels={cloneOperationModeTunnels}>
-            <Tunnel popup={true} layer={4} size="md">
-               <CloneBrandLocationOperation
-                  closeTunnel={closeOperationModeTunnel}
                />
             </Tunnel>
          </Tunnels>
