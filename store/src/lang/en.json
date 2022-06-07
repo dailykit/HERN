@@ -400,5 +400,7 @@
    "Out Of Stock": "Out Of Stock",
    "View Menu": "View Menu",
    "Some product in cart are not available": "Some product in cart are not available",
-   "This product is not available": "This product is not available"
+   "This product is not available": "This product is not available",
+   "Scan QR code to get invoice": "Scan QR code to get invoice",
+   "Exit": "Exit"
 }
