@@ -3,7 +3,6 @@
    height: auto;
    width: 100%;
    display: flex;
-   justify-content: space-between;
    align-items: center;
    border-radius: 0.5rem;
    -webkit-border-radius: 0.5rem;
@@ -83,7 +82,7 @@
    line-height: 1.75rem;
 }
 .hern-helper-bar__subtitle {
-   margin: 0 25px;
+   margin: 0px auto 0px 35px;
    & > span {
       color: #11823b;
       display: block;
@@ -103,6 +102,7 @@
 @media (max-width: 1024px) {
    .hern-helper-bar {
       padding: 0 13px;
+      justify-content: space-between;
    }
    .hern-helper-bar__subtitle {
       & > span {
@@ -111,6 +111,7 @@
 
       font-size: 15px;
       text-align: center;
+      margin: 0 35px;
    }
 }
 
