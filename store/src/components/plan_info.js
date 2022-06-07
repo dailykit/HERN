@@ -42,32 +42,37 @@ const PlanInfo = () => {
          ?.subscriptionTitle?.metaDetails?.icon,
    }
    const planInfo = user?.subscription ? planInfoUser : planInfoFetched
-   console.log('planInfo', planInfo)
+
    return (
       <div className="hern-plan-info">
          <div>
             <div className="hern-plan-info__title">
                {planInfo.icon ? (
                   <HernLazyImage
-                     className="hern-plan-info__icon"
+                     className="hern-plan-info__img"
                      dataSrc={planInfo.icon}
                   />
                ) : (
-                  <Cloche size={48} />
+                  <div className="hern-plan-info__icon">
+                     <Cloche size={48} />
+                  </div>
                )}
 
                <h3>{planInfo.title}</h3>
             </div>
-            {planInfo.servingSize && (
-               <div className="hern-plan-info__desc">
-                  Serving size : {planInfo.servingSize}
-               </div>
-            )}
-            {planInfo.count && (
-               <div className="hern-plan-info__desc">
-                  Recipes per week : {planInfo.count}
-               </div>
-            )}
+            <div className="hern-plan-info__desc__wrapper">
+               {planInfo.servingSize && (
+                  <div className="hern-plan-info__desc">
+                     Serving size : {planInfo.servingSize}
+                  </div>
+               )}
+               {planInfo.count && (
+                  <div className="hern-plan-info__desc">
+                     Recipes per week : {planInfo.count}
+                  </div>
+               )}
+            </div>
+
             {planInfo.price && (
                <div className="hern-plan-info__price">
                   {formatCurrency(planInfo.price)}
