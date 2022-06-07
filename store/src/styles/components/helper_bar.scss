@@ -83,6 +83,7 @@
    line-height: 1.75rem;
 }
 .hern-helper-bar__subtitle {
+   margin: 0 25px;
    & > span {
       color: #11823b;
       display: block;
@@ -97,4 +98,31 @@
    font-weight: 500;
    font-size: 18px;
    color: #333333;
+}
+
+@media (max-width: 1024px) {
+   .hern-helper-bar {
+      padding: 0 13px;
+   }
+   .hern-helper-bar__subtitle {
+      & > span {
+         font-size: 25px;
+      }
+
+      font-size: 15px;
+      text-align: center;
+   }
+}
+
+@media (max-width: 768px) {
+   .hern-helper-bar__subtitle {
+      & > span {
+         font-size: 18px;
+      }
+
+      font-size: 12px;
+   }
+   .hern-helper-bar__btn {
+      font-size: 1rem;
+   }
 }
