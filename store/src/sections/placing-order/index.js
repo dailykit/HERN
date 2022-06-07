@@ -8,7 +8,7 @@ import { useConfig } from '../../lib'
 import { isClient, get_env, getRoute } from '../../utils'
 import { useUser } from '../../context'
 import { CART_STATUS } from '../../graphql'
-import OrderInfo from '../../sections/OrderInfo'
+import PlacingOrderInfo from './PlacingOrderInfo'
 import { Loader, HelperBar, Spacer } from '../../components'
 import { PlacedOrderIllo, CartIllo, PaymentIllo } from '../../assets/icons'
 import classNames from 'classnames'
@@ -181,8 +181,8 @@ const ContentWrapper = () => {
                Order Summary
             </h2>
          </header>
-         <OrderInfo cart={cart} />
-         <HelperBar.Button onClick={gotoMenu}>Browse Menu</HelperBar.Button>
+         <PlacingOrderInfo cart={cart} gotoMenu={gotoMenu} />
+         {/* <HelperBar.Button onClick={gotoMenu}>Browse Menu</HelperBar.Button> */}
          {/* <ul className="hern-placing-order__steps">
             <li
                className={classNames('hern-placing-order__step', {
