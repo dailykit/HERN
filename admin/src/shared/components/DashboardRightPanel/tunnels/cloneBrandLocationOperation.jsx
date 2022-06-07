@@ -15,10 +15,12 @@ import options from '../../DashboardTables/tableOptions'
 import { isNull } from 'lodash'
 import { toast } from 'react-toastify'
 import { logger } from '../../../utils'
+import { useParams } from 'react-router-dom'
+import { Tooltip } from 'antd'
 
 export const CloneBrandLocationOperation = ({ closeTunnel }) => {
-   const [brandContext] = React.useContext(BrandContext)
-   const [selectedBrandId, setSelectedBrandId] = React.useState(null)
+   const brandDetail = useParams()
+
    const [fromLocation, setFromLocation] = React.useState({
       fromBrandLocationId: null,
       fromBrandLocationsList: [],
@@ -29,21 +31,13 @@ export const CloneBrandLocationOperation = ({ closeTunnel }) => {
    })
    const [clickedButton, setClickedButton] = React.useState(null)
 
-   const {
-      loading,
-      error,
-      data: brandList,
-   } = useSubscription(BRAND_ID, {
-      skip: Boolean(brandContext.brandId),
-   })
-
    const { loading: brandLocationLoading, error: brandLocationError } =
       useQuery(BRAND_LOCATION_ID, {
-         skip: !brandContext.brandId && !selectedBrandId,
+         skip: !brandDetail.brandId,
          variables: {
             where: {
                brandId: {
-                  _eq: brandContext.brandId || selectedBrandId,
+                  _eq: brandDetail.brandId,
                },
                isActive: {
                   _eq: true,
@@ -87,10 +81,12 @@ export const CloneBrandLocationOperation = ({ closeTunnel }) => {
    const [upsertMuatation, { loading: upsertLoading, error: upsertError }] =
       useMutation(PRODUCT_PRICE_BRAND_LOCATION_UPSERT, {
          onCompleted: () => {
-            toast.success('Successfully updated brand!')
+            const message = clickedButton === 'MERGE' ? 'Merged' : 'Cloned'
+            toast.success(`Successfully ${message}!`)
          },
          onError: error => {
-            toast.error('Failed to clone!')
+            const message = clickedButton === 'MERGE' ? 'Merged' : 'Cloned'
+            toast.error(`Failed To ${message}!`)
             logger(error)
             console.error(error)
          },
@@ -100,17 +96,17 @@ export const CloneBrandLocationOperation = ({ closeTunnel }) => {
       DELETE_PRODUCT_BRAND_LOCATION,
       {
          onCompleted: () => {
-            cloneMachine()
+            mergeMachine()
          },
          onError: error => {
-            toast.error('Failed to clone!!')
+            toast.error('Failed to clone!')
             logger(error)
             console.error(error)
          },
       }
    )
    // insert or upsert row
-   const cloneMachine = async () => {
+   const mergeMachine = async () => {
       try {
          if (products_productPrice_brand_location.length == 0) {
             throw 'No products found for this brand location'
@@ -176,7 +172,7 @@ export const CloneBrandLocationOperation = ({ closeTunnel }) => {
                ],
             },
          })
-         closeTunnel(1)
+         closeTunnel()
       } catch (error) {
          console.log('error', error)
          toast.error(error)
@@ -184,7 +180,7 @@ export const CloneBrandLocationOperation = ({ closeTunnel }) => {
       }
    }
 
-   const hardCloneMachine = () => {
+   const cloneMachine = () => {
       if (products_productPrice_brand_location.length === 0) {
          toast.error('No products found for this brand location')
       } else {
@@ -202,105 +198,77 @@ export const CloneBrandLocationOperation = ({ closeTunnel }) => {
    return (
       <>
          <TunnelHeader
-            title="Select Brand Name"
-            close={() => closeTunnel(1)}
+            title="Clone Product And Product Option Data"
+            close={() => closeTunnel()}
             nextAction="Done"
          />
-
-         {loading ? (
-            <InlineLoader />
-         ) : error ? (
-            <> Something went wrong {console.error(error)}</>
-         ) : (
-            <Flex margin="20px">
-               {brandContext?.brandId ? (
-                  <Text as="text1">Brand: {brandContext?.brandName}</Text>
-               ) : (
-                  <>
-                     {
-                        // select brand
-                     }
-                     <Text as="text1">Select Brand</Text>
+         <Flex margin="20px">
+            <Text as={'text2'}>Brand: {brandDetail.brandName}</Text>
+         </Flex>
+         <Flex margin="20px">
+            <>
+               <Flex container>
+                  <Flex width="50%">
+                     <Text as="text1">From Location:</Text>
                      <Spacer size="8px" />
-                     <Dropdown
-                        type="single"
-                        options={brandList.brandsAggregate.nodes}
-                        searchedOption={option => console.log(option)}
-                        selectedOption={option => {
-                           setSelectedBrandId(option.id)
-                        }}
-                        placeholder="Select Brand..."
-                     />
-                  </>
-               )}
-               <Spacer size="30px" />
-               {!selectedBrandId &&
-               !brandContext.brandId ? null : brandLocationLoading ? (
-                  <InlineLoader />
-               ) : brandLocationError ? (
-                  <Text as="text1">
-                     Something went wrong {console.error(brandLocationError)}
-                  </Text>
-               ) : (
-                  <>
-                     <Flex container>
-                        <Flex width="50%">
-                           <Text as="text1">Select From Location</Text>
-                           <Spacer size="8px" />
-                           {fromLocation.fromBrandLocationsList.length === 0 ? (
-                              <Text as="text1">No Location Available</Text>
-                           ) : (
-                              <Dropdown
-                                 type="single"
-                                 options={fromLocation.fromBrandLocationsList}
-                                 searchedOption={option => console.log(option)}
-                                 selectedOption={op => {
-                                    setFromLocation(prev => ({
-                                       ...prev,
-                                       fromBrandLocationId: op.id,
-                                    }))
-                                    const newToLocations =
-                                       fromLocation.fromBrandLocationsList.filter(
-                                          brandLoc => brandLoc.id !== op.id
-                                       )
-                                    setToLocation(prev => ({
-                                       ...prev,
-                                       toBrandLocationsList: newToLocations,
-                                    }))
-                                 }}
-                                 placeholder="Select From Location...."
-                              />
-                           )}
-                        </Flex>
-                        <Spacer size="20px" xAxis />
+                     {brandLocationLoading ? (
+                        <InlineLoader />
+                     ) : brandLocationError ? (
+                        <span>Something went wrong</span>
+                     ) : fromLocation.fromBrandLocationsList.length === 0 ? (
+                        <Text as="text1">No Location Available</Text>
+                     ) : (
+                        <Dropdown
+                           type="single"
+                           options={fromLocation.fromBrandLocationsList}
+                           searchedOption={option => console.log(option)}
+                           selectedOption={op => {
+                              setFromLocation(prev => ({
+                                 ...prev,
+                                 fromBrandLocationId: op.id,
+                              }))
+                              const newToLocations =
+                                 fromLocation.fromBrandLocationsList.filter(
+                                    brandLoc => brandLoc.id !== op.id
+                                 )
+                              setToLocation(prev => ({
+                                 ...prev,
+                                 toBrandLocationsList: newToLocations,
+                              }))
+                           }}
+                           placeholder="Select From Location...."
+                        />
+                     )}
+                  </Flex>
+                  <Spacer size="20px" xAxis />
 
-                        <Flex width="50%">
-                           <Text as="text1">Select To Locations</Text>
-                           <Spacer size="8px" />
-                           {toLocation.toBrandLocationsList.length === 0 ? (
-                              <Text as="text1">No Location Available</Text>
-                           ) : (
-                              <Dropdown
-                                 type="multiple"
-                                 options={toLocation.toBrandLocationsList}
-                                 searchedOption={option => console.log(option)}
-                                 selectedOption={ops => {
-                                    setToLocation(prev => ({
-                                       ...prev,
-                                       toBrandLocationIds: ops.map(
-                                          brandLoc => brandLoc.id
-                                       ),
-                                    }))
-                                 }}
-                                 placeholder="Select To Locations...."
-                              />
-                           )}
-                        </Flex>
+                  {products_productPrice_brand_location.length > 0 && (
+                     <Flex width="50%">
+                        <Text as="text1">To Locations</Text>
+                        <Spacer size="8px" />
+                        {toLocation.toBrandLocationsList.length === 0 ? (
+                           <Text as="text1">No Location Available</Text>
+                        ) : (
+                           <Dropdown
+                              type="multiple"
+                              options={toLocation.toBrandLocationsList}
+                              searchedOption={option => console.log(option)}
+                              selectedOption={ops => {
+                                 setToLocation(prev => ({
+                                    ...prev,
+                                    toBrandLocationIds: ops.map(
+                                       brandLoc => brandLoc.id
+                                    ),
+                                 }))
+                              }}
+                              placeholder="Select To Locations...."
+                           />
+                        )}
                      </Flex>
-                  </>
-               )}{' '}
-            </Flex>
-         )}
+                  )}
+               </Flex>
+            </>
+         </Flex>
 
          {fromLocation.fromBrandLocationId &&
             !productProductOptionLoading &&
@@ -320,51 +288,79 @@ export const CloneBrandLocationOperation = ({ closeTunnel }) => {
                display: 'flex',
             }}
          >
-            <TextButton
-               type="solid"
-               disabled={
-                  !toLocation.toBrandLocationIds ||
-                  Boolean(toLocation.toBrandLocationIds?.length == 0) ||
-                  upsertLoading
+            <Tooltip
+               placement="top"
+               title={
+                  'This action will replace existing entry or create an new entry for product and product option.'
                }
-               onClick={() => {
-                  const confirmText = prompt(
-                     `This action will replace existing entry or create an new entry for product and product option. Enter 'CONFIRM' to confirm`
-                  )
-                  if (confirmText === 'CONFIRM') {
-                     setClickedButton('CLONE')
-                     cloneMachine()
-                  }
-               }}
-               isLoading={upsertLoading && clickedButton === 'CLONE'}
             >
-               Clone
-            </TextButton>
+               <TextButton
+                  type="solid"
+                  disabled={
+                     !toLocation.toBrandLocationIds ||
+                     products_productPrice_brand_location.length === 0 ||
+                     Boolean(toLocation.toBrandLocationIds?.length == 0) ||
+                     upsertLoading
+                  }
+                  onClick={() => {
+                     const openConfirmModal = () => {
+                        const confirmText = prompt(
+                           `This action will replace existing entry or create an new entry for product and product option. Enter 'CONFIRM' to confirm`
+                        )
+                        if (confirmText === null) {
+                           return
+                        } else if (confirmText === 'CONFIRM') {
+                           setClickedButton('MERGE')
+                           cloneMachine()
+                        } else {
+                           openConfirmModal()
+                        }
+                     }
+                     openConfirmModal()
+                  }}
+                  isLoading={upsertLoading && clickedButton === 'MERGE'}
+               >
+                  Merge
+               </TextButton>
+            </Tooltip>
             <Spacer size="10px" xAxis />
-            <TextButton
-               type="solid"
-               disabled={
-                  !toLocation.toBrandLocationIds ||
-                  Boolean(toLocation.toBrandLocationIds?.length == 0) ||
-                  upsertLoading ||
-                  deleteLoading
-               }
-               onClick={() => {
-                  const confirmText = prompt(
-                     `This action will delete all existing data from this brand locations and then make clone. Enter 'CONFIRM' to confirm`
-                  )
-                  if (confirmText === 'CONFIRM') {
-                     setClickedButton('HARDCLONE')
-                     hardCloneMachine()
-                  }
-               }}
-               isLoading={
-                  (upsertLoading || deleteLoading) &&
-                  clickedButton === 'HARDCLONE'
-               }
+            <Tooltip
+               placement="top"
+               title={`This action will delete all existing data from these brand locations and then make clone.`}
             >
-               Hard Clone
-            </TextButton>
+               <TextButton
+                  type="solid"
+                  disabled={
+                     !toLocation.toBrandLocationIds ||
+                     products_productPrice_brand_location.length === 0 ||
+                     Boolean(toLocation.toBrandLocationIds?.length == 0) ||
+                     upsertLoading ||
+                     deleteLoading
+                  }
+                  onClick={() => {
+                     const openConfirmModal = () => {
+                        const confirmText = prompt(
+                           `This action will replace existing entry or create an new entry for product and product option. Enter 'CONFIRM' to confirm`
+                        )
+                        if (confirmText === null) {
+                           return
+                        } else if (confirmText === 'CONFIRM') {
+                           setClickedButton('CLONE')
+                           cloneMachine()
+                        } else {
+                           openConfirmModal()
+                        }
+                     }
+                     openConfirmModal()
+                  }}
+                  isLoading={
+                     (upsertLoading || deleteLoading) &&
+                     clickedButton === 'CLONE'
+                  }
+               >
+                  Clone
+               </TextButton>
+            </Tooltip>
          </footer>
       </>
    )
