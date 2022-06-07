@@ -86,7 +86,7 @@ const CreateBrandLocation = ({ closeTunnel }) => {
                })
             }
          }
-         console.log('The input contains:', input)
+         // console.log('The input contains:', input)
          setLocation([locationInstance])
          toast.success('Successfully created the Location!')
          closeTunnel(1)
@@ -210,7 +210,7 @@ const LocationSelector = props => {
    const [address, setAddress] = React.useState(null)
 
    const formatAddress = async input => {
-      console.log('inputfn', input)
+      // console.log('inputfn', input)
 
       // const response = await fetch(
       //    `https://maps.googleapis.com/maps/api/geocode/json?key=${get_env(
@@ -225,7 +225,7 @@ const LocationSelector = props => {
          )}&placeid=${input.value.place_id}&language=en`
       )
       const data = await response.json()
-      console.log('data for new location', data, input.value.place_id)
+      // console.log('data for new location', data, input.value.place_id)
       if (data.status === 'OK' && data.result) {
          const result = data.result
          const userCoordinate = {
@@ -242,7 +242,7 @@ const LocationSelector = props => {
          }
          setLocation([...newLocation])
       } else {
-         console.log('data for new location', data)
+         console.log('data', data)
       }
    }
    React.useEffect(() => {
@@ -368,7 +368,7 @@ const BrandLocationMap = props => {
                }
             })
             .catch(e => {
-               console.log('error1', e)
+               console.error('error1', e)
             })
       }
    }, [eachLocation.address])
@@ -445,7 +445,7 @@ const BrandLocationMap = props => {
             }
          })
          .catch(e => {
-            console.log('error2', e)
+            console.error('error2', e)
          })
    }
    // console.log('address', address)
@@ -647,7 +647,7 @@ const LocationForm = props => {
       setLocation([...newLocation])
       // console.log(newLocation)
    }
-   console.log('location', location, address)
+   // console.log('location', location, address)
    return (
       <>
          <Flex
