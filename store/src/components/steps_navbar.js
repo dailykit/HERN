@@ -9,6 +9,7 @@ import { useTranslation, useUser } from '../context'
 import { getProtectedRoutes, getRoute, isClient, get_env } from '../utils'
 import { StepNavProgress } from '../assets/icons/StepNavProgress'
 import classNames from 'classnames'
+import { HernLazyImage } from '../utils/hernImage'
 
 const routes = {
    '/[brand]/get-started/select-plan': {
@@ -138,36 +139,22 @@ export const StepsNavbar = () => {
 
    return (
       <div className="hern-steps-navbar">
-         <div>
-            <Link href={getRoute('/')}>
-               <div className="hern-steps-navbar__brand">
-                  {brand?.brandLogo?.value && (
-                     <img
-                        className="hern-steps-navbar__brand__img"
-                        src={brand?.brandLogo?.value}
-                        alt={brand?.brandName?.value || 'Subscription Shop'}
-                     />
-                  )}
-                  {brand?.brandName?.value && (
-                     <span className="hern-steps-navbar__brand__text">
-                        {brand?.brandName?.value}
-                     </span>
-                  )}
-               </div>
-            </Link>
-            <section className="hern-steps-navbar__logout">
-               {isAuthenticated ? (
-                  <button
-                     onClick={logout}
-                     className="hern-steps-navbar__logout__btn"
-                  >
-                     {t('Logout')}
-                  </button>
-               ) : (
-                  <span />
+         <Link href={getRoute('/')}>
+            <div className="hern-steps-navbar__brand">
+               {brand?.brandLogo?.value && (
+                  <HernLazyImage
+                     className="hern-steps-navbar__brand__img"
+                     dataSrc={brand?.brandLogo?.value}
+                     alt={brand?.brandName?.value || 'Subscription Shop'}
+                  />
                )}
-            </section>
-         </div>
+               {brand?.brandName?.value && (
+                  <span className="hern-steps-navbar__brand__text">
+                     {brand?.brandName?.value}
+                  </span>
+               )}
+            </div>
+         </Link>
          <section className="hern-steps-navbar__progress">
             <ul className="hern-steps-navbar__steps">
                <RenderStep
@@ -205,6 +192,55 @@ export const StepsNavbar = () => {
                />
             </ul>
          </section>
+         <section className="hern-steps-navbar__logout">
+            {isAuthenticated ? (
+               <button
+                  onClick={logout}
+                  className="hern-steps-navbar__logout__btn"
+               >
+                  {t('Logout')}
+               </button>
+            ) : (
+               <span />
+            )}
+         </section>
+         {/* <section className="hern-steps-navbar__progress">
+            <ul className="hern-steps-navbar__steps">
+               <RenderStep
+                  goToStep={goToStep}
+                  canGoToStep={canGoToStep}
+                  isActive={currentStep >= 0}
+                  route="/[brand]/get-started/select-plan"
+                  label="Select Plan"
+                  step="select-plan"
+               />
+               <RenderStep
+                  goToStep={goToStep}
+                  canGoToStep={canGoToStep}
+                  isActive={currentStep >= 33}
+                  route="/[brand]/get-started/select-delivery"
+                  label="Select Delivery"
+                  step="select-delivery"
+               />
+               <RenderStep
+                  goToStep={goToStep}
+                  canGoToStep={canGoToStep}
+                  isActive={currentStep >= 66}
+                  route="/[brand]/get-started/select-menu"
+                  label="Select Menu"
+                  step="select-menu"
+               />
+               <RenderStep
+                  goToStep={goToStep}
+                  canGoToStep={canGoToStep}
+                  isActive={currentStep === 100}
+                  route="/[brand]/get-started/checkout"
+                  label="Checkout"
+                  step="checkout"
+                  tail={false}
+               />
+            </ul>
+         </section> */}
       </div>
    )
 }
