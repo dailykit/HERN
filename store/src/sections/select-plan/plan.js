@@ -326,7 +326,17 @@ export const Plan = ({
                      <img src={plan.metaDetails?.icon} />
                   </div>
                ) : (
-                  <PlateIllustration />
+                  <div
+                     className={
+                        planViewConfig === 'card'
+                           ? 'hern-plan__card__icon'
+                           : planViewConfig === 'aggregated'
+                           ? 'hern-plan__aggregate__icon'
+                           : 'hern-plan__icon'
+                     }
+                  >
+                     <PlateIllustration />
+                  </div>
                )}
 
                <h2
@@ -350,12 +360,12 @@ export const Plan = ({
                               : selectPlanTitleConfig.color,
                         fontSize:
                            planViewConfig === 'aggregated'
-                              ? '16px'
+                              ? '15px'
                               : selectPlanTitleConfig.fontSize,
                         fontFamily: selectPlanTitleConfig.fontFamily,
                         fontWeight:
                            planViewConfig === 'aggregated'
-                              ? '500'
+                              ? '400'
                               : selectPlanTitleConfig.fontWeight,
                      }}
                      data-translation="true"

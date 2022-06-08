@@ -209,7 +209,7 @@ const AggregatedView = ({ list, config, planViewConfig }) => {
             handleSelectedPlan={handleSelectedPlan}
          />
 
-         <div className="hern-plans__aggregate__divider"></div>
+         {/* <div className="hern-plans__aggregate__divider"></div> */}
 
          <PlansDetails
             selectedPlan={selectedPlan}

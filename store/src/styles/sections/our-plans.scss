@@ -647,13 +647,15 @@
 
 // Aggregate View styles
 .hern-plans__aggregate {
-   display: grid;
-   grid-template-columns: 1fr 8px 1fr;
-   margin: 58px 100px;
-   gap: 30px;
+   display: flex;
+   justify-content: space-between;
+   flex-wrap: wrap;
+   max-width: 1140px;
+   margin: 40px auto;
 
    &__left {
-      padding-right: 6.25em;
+      // padding-right: 6.25em;
+      width: 600px;
    }
 
    &__card {
@@ -670,7 +672,8 @@
    }
 
    &__right {
-      padding-left: 8.25em;
+      // padding-left: 8.25em;
+      width: 400px;
    }
 
    &__title-wrapper {
@@ -738,11 +741,10 @@
    }
 
    @media (max-width: 1024px) {
-      grid-template-columns: 1fr;
       margin: 58px 20px;
 
       &__left {
-         padding: unset;
+         margin: 0 auto 36px auto;
       }
 
       &__divider {
@@ -806,7 +808,7 @@
    }
 
    &__icon {
-      color: red;
+      display: none;
    }
 
    &__title {
