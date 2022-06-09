@@ -170,6 +170,7 @@ export const PromotionCarousal = props => {
                   <div
                      className="hern-kiosk__promotion-image"
                      key={eachCoupon.id}
+                     data-coupon-id={eachCoupon.id}
                   >
                      <HernLazyImage
                         dataSrc={eachCoupon.metaDetails.image}
