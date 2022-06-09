@@ -70,6 +70,7 @@ const OrderInfo = ({
                </section>
             </>
          )}
+
          <section className="hern-cart-billing">
             <h4 className="hern-order-info__billings__title">{t('Charges')}</h4>
             <Billing billing={cart?.cartOwnerBilling} />
@@ -111,6 +112,7 @@ const OrderInfo = ({
                )}
             </section>
          )}
+
          {showViewOrderButton && (
             <>
                {cart?.paymentStatus === 'SUCCEEDED' ? (
