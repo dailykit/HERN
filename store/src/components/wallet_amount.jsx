@@ -7,7 +7,7 @@ import { useConfig } from '../lib'
 import { Info, WalletIcon } from '../assets/icons'
 import classNames from 'classnames'
 import { Button, LoginWarningWithText } from '.'
-import { Link } from 'react-scroll'
+import Link from 'next/link'
 
 export const WalletAmount = ({ cart, version }) => {
    const { user } = useUser()
