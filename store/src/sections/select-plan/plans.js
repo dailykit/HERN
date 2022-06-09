@@ -9,6 +9,7 @@ import { useConfig } from '../../lib'
 import { useUser } from '../../context'
 import { SkeletonPlan } from './skeletons'
 import { HelperBar } from '../../components'
+import { PlateIllustration } from '../../assets/icons/PlateIllustration'
 
 export const Plans = ({ config }) => {
    const { user } = useUser()
@@ -209,7 +210,7 @@ const AggregatedView = ({ list, config, planViewConfig }) => {
             handleSelectedPlan={handleSelectedPlan}
          />
 
-         <div className="hern-plans__aggregate__divider"></div>
+         {/* <div className="hern-plans__aggregate__divider"></div> */}
 
          <PlansDetails
             selectedPlan={selectedPlan}
@@ -271,7 +272,9 @@ const PlansDetails = ({ selectedPlan, list, config, planViewConfig }) => {
                   {/* TODO-
                   - Include plateIllustration
                 */}
-
+                  <span>
+                     <PlateIllustration />
+                  </span>
                   {selectedPlan.title}
                </p>
                <Plan

@@ -270,13 +270,13 @@
          display: flex;
          margin: 0 16px 16px 16px;
          border-radius: 999999999px;
-         padding: 12px;
+         padding: 10px 36px;
          background-color: var(--hern-accent);
          justify-content: center;
          align-items: center;
          font-weight: 500;
          font-family: 'Inter';
-         font-size: 18px;
+         font-size: 14px;
          color: #fff;
       }
 
@@ -290,7 +290,7 @@
          display: flex;
          padding: 0 16px;
          margin-top: 32px;
-         align-items: center;
+         flex-direction: column;
          justify-content: space-between;
          width: 100%;
       }
@@ -299,7 +299,7 @@
          display: flex;
          padding: 0 16px;
          margin-top: 16px;
-         align-items: center;
+         flex-direction: column;
          justify-content: space-between;
          width: 100%;
       }
@@ -313,6 +313,7 @@
          color: rgba(51, 51, 51, 0.6);
          text-transform: capitalize;
          display: flex;
+         flex-direction: column;
          justify-content: space-between;
       }
    }
@@ -404,6 +405,10 @@
       font-weight: 600;
       text-align: center;
       margin: 32px 0;
+   }
+
+   @media (max-width: 768px) {
+      grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
    }
 }
 
@@ -643,17 +648,23 @@
          color: rgba(51, 51, 51, 0.6);
       }
    }
+
+   @media (max-width: 768px) {
+      height: unset;
+   }
 }
 
 // Aggregate View styles
 .hern-plans__aggregate {
-   display: grid;
-   grid-template-columns: 1fr 8px 1fr;
-   margin: 58px 100px;
-   gap: 30px;
+   display: flex;
+   justify-content: space-between;
+   flex-wrap: wrap;
+   max-width: 1140px;
+   margin: 40px auto;
 
    &__left {
-      padding-right: 6.25em;
+      // padding-right: 6.25em;
+      width: 600px;
    }
 
    &__card {
@@ -670,7 +681,8 @@
    }
 
    &__right {
-      padding-left: 8.25em;
+      // padding-left: 8.25em;
+      width: 400px;
    }
 
    &__title-wrapper {
@@ -714,6 +726,12 @@
       font-size: 28px;
       margin-top: 82px;
       margin-bottom: 33px;
+
+      display: flex;
+
+      & > span {
+         margin-right: 13px;
+      }
    }
 
    &__cards-wrapper {
@@ -738,11 +756,10 @@
    }
 
    @media (max-width: 1024px) {
-      grid-template-columns: 1fr;
       margin: 58px 20px;
 
       &__left {
-         padding: unset;
+         margin: 0 auto 36px auto;
       }
 
       &__divider {
@@ -806,7 +823,7 @@
    }
 
    &__icon {
-      color: red;
+      display: none;
    }
 
    &__title {

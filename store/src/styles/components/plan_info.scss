@@ -7,7 +7,7 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 8px 16px;
+      padding: 6px 16px;
       margin-bottom: 16px;
    }
    .hern-plan-info__title {
@@ -15,18 +15,31 @@
          font-family: 'Lato';
          font-style: normal;
          font-weight: 600;
-         font-size: 24px;
-         line-height: 29px;
+         font-size: 18px;
          color: #333333;
       }
       display: flex;
       align-items: center;
       gap: 16px;
    }
-   .hern-plan-info__icon {
-      height: 48px;
-      width: 48px;
+   .hern-plan-info__img {
+      height: 36px;
+      width: 36px;
       border-radius: 50%;
+   }
+   .hern-plan-info__icon {
+      > svg {
+         height: 36px;
+         width: 36px;
+      }
+      border-radius: 50%;
+      transform: translateY(-4px);
+   }
+   .hern-plan-info__desc__wrapper {
+      display: flex;
+      align-items: center;
+      gap: 6rem;
+      margin: 0 0.75rem;
    }
    .hern-plan-info__desc {
       font-family: 'Inter';
@@ -35,26 +48,55 @@
       font-size: 14px;
       line-height: 17px;
       color: rgba(51, 51, 51, 0.8);
+      white-space: nowrap;
    }
    .hern-plan-info__price {
       font-family: 'Lato';
       font-style: normal;
       font-weight: 600;
-      font-size: 24px;
+      font-size: 18px;
       line-height: 29px;
       color: #333333;
+      white-space: nowrap;
    }
+
    @media only screen and (max-width: 767px) {
       > div {
-         flex-direction: column;
-         align-items: flex-start;
          gap: 6px;
+         padding: 8px 4px;
       }
-      .hern-plan-info__title > h3 {
-         font-size: 18px;
+      .hern-plan-info__title {
+         gap: 6px;
+         > h3 {
+            font-size: 12px;
+         }
+      }
+      .hern-plan-info__desc__wrapper {
+         gap: 1rem;
       }
       .hern-plan-info__price {
-         font-size: 18px;
+         font-size: 12px;
+      }
+      .hern-plan-info__desc {
+         font-size: 8px;
+      }
+      .hern-plan-info__img {
+         height: 20px;
+         width: 20px;
+      }
+      .hern-plan-info__icon {
+         transform: translateY(-4px);
+         svg {
+            height: 24px;
+            width: 24px;
+         }
+      }
+   }
+   @media only screen and (max-width: 390px) {
+      .hern-plan-info__desc__wrapper {
+         flex-direction: column;
+         align-items: flex-start;
+         gap: unset;
       }
    }
 }

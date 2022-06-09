@@ -480,12 +480,19 @@ const AddressLabel = ({ setAddress, address }) => {
          label: 'Other',
       },
    ]
+   console.log('addres', address)
    return (
       <div className="hern-delivery__address-tunnel__address-label">
          {showInputField ? (
             <Form.Field>
                <Form.Label>{t('Label')}</Form.Label>
                <Input
+                  onChange={e =>
+                     setAddress({
+                        ...address,
+                        label: e.target.value,
+                     })
+                  }
                   addonBefore={
                      <div className="hern-delivery__address-tunnel__address-label__addon-before">
                         <span>Other</span>
