@@ -108,14 +108,14 @@ const Toggle = ({ open, toggle }) => {
       >
          {open ? (
             <ChevronIcon
-               direction="down"
+               direction="up"
                color="var(--hern-accent)"
                width={12}
                height={6}
             />
          ) : (
             <ChevronIcon
-               direction="up"
+               direction="down"
                color="var(--hern-accent)"
                height={15}
                width={8}
