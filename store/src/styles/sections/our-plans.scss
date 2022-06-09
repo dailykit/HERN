@@ -270,13 +270,13 @@
          display: flex;
          margin: 0 16px 16px 16px;
          border-radius: 999999999px;
-         padding: 12px;
+         padding: 10px 36px;
          background-color: var(--hern-accent);
          justify-content: center;
          align-items: center;
          font-weight: 500;
          font-family: 'Inter';
-         font-size: 18px;
+         font-size: 14px;
          color: #fff;
       }
 
@@ -290,7 +290,7 @@
          display: flex;
          padding: 0 16px;
          margin-top: 32px;
-         align-items: center;
+         flex-direction: column;
          justify-content: space-between;
          width: 100%;
       }
@@ -299,7 +299,7 @@
          display: flex;
          padding: 0 16px;
          margin-top: 16px;
-         align-items: center;
+         flex-direction: column;
          justify-content: space-between;
          width: 100%;
       }
@@ -313,6 +313,7 @@
          color: rgba(51, 51, 51, 0.6);
          text-transform: capitalize;
          display: flex;
+         flex-direction: column;
          justify-content: space-between;
       }
    }
