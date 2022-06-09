@@ -33,6 +33,7 @@ import { toast } from 'react-toastify'
 import SpecificPriceTunnel from './BulkActionTunnel/Tunnel/specificPriceTunnel'
 import { useWindowSize } from '../../../../hooks'
 import { InlineLoader } from '../../..'
+import { CloneBrandLocationOperation } from '../../../DashboardRightPanel/tunnels/cloneBrandLocationOperation'
 
 const LiveMenu = () => {
    const brandDetail = useParams()
@@ -459,6 +460,11 @@ const LiveMenuProductTable = ({ brandDetail }) => {
                   selectedRows={selectedRows}
                   removeSelectedRow={removeSelectedRow}
                   setSelectedRows={setSelectedRows}
+               />
+            </Tunnel>
+            <Tunnel layer={2} size="md">
+               <CloneBrandLocationOperation
+                  closeTunnel={() => closeTunnel(2)}
                />
             </Tunnel>
          </Tunnels>
@@ -1004,7 +1010,7 @@ const ActionBar = ({
             <Flex
                container
                as="header"
-               width="25%"
+               width="45%"
                alignItems="center"
                justifyContent="space-between"
             >
@@ -1016,7 +1022,7 @@ const ActionBar = ({
                      : `${selectedRows.length} ${title}s`}{' '}
                   selected
                </Text>
-               <ButtonGroup align="left">
+               <ButtonGroup align="left" style={{ alignItems: 'center' }}>
                   <TextButton
                      type="ghost"
                      size="sm"
@@ -1031,6 +1037,9 @@ const ActionBar = ({
                      }
                   >
                      APPLY BULK ACTIONS
+                  </TextButton>
+                  <TextButton type="outline" onClick={() => openTunnel(2)}>
+                     Clone
                   </TextButton>
                </ButtonGroup>
             </Flex>
