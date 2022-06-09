@@ -72,9 +72,11 @@ export const getRazorpayOptions = ({
          order_id: razorpay_order_id,
          notes,
          prefill: {
-            name: `${profileInfo?.customerFirstName || ''} ${
-               profileInfo?.customerLastName || ''
-            }`,
+            name: profileInfo?.customerFirstName
+               ? `${profileInfo?.customerFirstName || ''} ${
+                    profileInfo?.customerLastName || ''
+                 }`
+               : '',
             email: `${profileInfo?.customerEmail || ''}`,
             contact: `${profileInfo?.customerPhone || ''}`,
             ...checkout_option,
