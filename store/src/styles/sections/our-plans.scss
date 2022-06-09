@@ -726,6 +726,12 @@
       font-size: 28px;
       margin-top: 82px;
       margin-bottom: 33px;
+
+      display: flex;
+
+      & > span {
+         margin-right: 13px;
+      }
    }
 
    &__cards-wrapper {
