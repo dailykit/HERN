@@ -402,7 +402,10 @@ const FulfillmentOptionCustom = props => {
                },
             })
          }
-         if (!askedPhoneNumber) {
+         if (
+            !askedPhoneNumber ||
+            (askedPhoneNumber && isClient && localStorage.getItem('phone'))
+         ) {
             setCurrentPage('menuPage')
          }
       }
