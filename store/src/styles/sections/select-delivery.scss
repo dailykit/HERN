@@ -240,6 +240,11 @@
                color: #ffffff;
             }
          }
+
+         @media (max-width: 768px) {
+            width: 1.875rem;
+            height: 1.875rem;
+         }
       }
       &__content__wrapper {
          background: #ffffff;
@@ -270,6 +275,12 @@
             &:hover {
                color: var(--hern-accent);
             }
+         }
+
+         @media (max-width: 768px) {
+            font-size: 1.125rem;
+            grid-gap: 0.375rem;
+            margin-bottom: 1.25rem;
          }
       }
    }
@@ -323,6 +334,7 @@
          display: flex;
          align-items: center;
          gap: 0.5rem;
+         margin-bottom: 20px;
          &:hover {
             opacity: 0.8;
             box-shadow: none;
@@ -338,6 +350,11 @@
          &:hover {
             opacity: 0.8;
          }
+      }
+
+      @media (max-width: 768px) {
+         margin: unset;
+         justify-content: flex-start;
       }
    }
 
@@ -431,6 +448,10 @@
    }
    &__tunnel {
       margin-top: 3rem;
+
+      @media (max-width: 768px) {
+         margin-top: unset;
+      }
    }
 }
 .hern-delivery__delivery-days {
