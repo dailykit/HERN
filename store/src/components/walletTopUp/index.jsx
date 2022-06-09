@@ -7,7 +7,7 @@ import { useRouter } from 'next/router'
 function WalletTopUp(props){
    const { user } = useUser()
    const router = useRouter()
-
+   
    const [topUpAmount, setTopUpAmount] = useState(null)
    const [showPaymentOptions, setShowPaymentOptions] = useState(false)
    const amountField = useRef();
@@ -66,6 +66,7 @@ function WalletTopUp(props){
                      metaData={{
                         paymentFor: "walletTopUp",
                         walletId: user.wallet.id,
+                        customerkeycloakId: user.keycloakId,
                         amount: topUpAmount,
                         walletAmount: topUpAmount,
                         redirectTo: router.asPath

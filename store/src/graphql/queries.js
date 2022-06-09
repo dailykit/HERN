@@ -1014,6 +1014,18 @@ export const CUSTOMER = {
          }
       }
    `,
+   PROFILE_INFO: gql`
+      query customer($keycloakId: String!) {
+         customer(keycloakId: $keycloakId) {
+            platform_customer: platform_customer {
+               customerEmail: email
+               customerFirstName: firstName
+               customerLastName: lastName
+               customerPhone: phoneNumber
+            }
+         }
+      }
+   `,
 }
 
 export const GET_FILEID = gql`
@@ -1992,6 +2004,7 @@ export const GET_CART_PAYMENT_INFO = gql`
          isTest
          paymentStatus
          paymentType
+         metaData
          transactionRemark
          isResultShown
          stripeInvoiceId
