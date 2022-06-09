@@ -36,6 +36,7 @@ export const Plan = ({
       -Hover and active state configs need to be created
       -Implement config for spacing (padding and margin)
       -Extract illustration svgs into separate files for reusability
+      - Create config for the congratulations page
    */
 
    const selectPlanButtonConfig = {
