@@ -39,6 +39,10 @@
       background-size: cover;
       background-position: center;
    }
+
+   @media (max-width: 768px) {
+      height: 300px;
+   }
 }
 
 //  .hern-select-menu__header__heading {

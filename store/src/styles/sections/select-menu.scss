@@ -170,6 +170,10 @@
    font-size: 2.25rem;
    color: rgba(51, 51, 51, 0.8);
    margin: 2.25rem 0 1.25rem 0;
+
+   @media (max-width: 768px) {
+      font-size: 1.125rem;
+   }
 }
 
 .hern-select-menu__menu__products {
