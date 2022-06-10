@@ -119,6 +119,7 @@
 
       @media (max-width: 768px) {
          margin: 0;
+         background-color: rgba(17, 130, 59, 0.2);
       }
    }
 }
@@ -180,12 +181,12 @@
    // margin-left: auto;
 }
 .hern-steps-navbar__logout__btn {
-   border: 0.3px solid #3f4441;
-   border-radius: 2px;
-   padding: 0.25rem 1rem;
-   color: #3f4441;
-   border-radius: 0.25rem;
+   color: #ffffff;
    font-weight: 500;
+   background-color: var(--hern-accent);
+   border-radius: 30px;
+   font-size: 1rem;
+   padding: 0.625rem 1.25rem;
 }
 
 .hern-steps-navbar__step__tail {
