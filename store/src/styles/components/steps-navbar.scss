@@ -15,6 +15,10 @@
    //    display: unset;
    //    height: auto;
    // }
+
+   @media (max-width: 768px) {
+      margin-bottom: 1.125rem;
+   }
 }
 .hern-steps-navbar__brand {
    text-decoration: none;
@@ -40,9 +44,14 @@
    // flex-direction: column;
    // justify-content: center;
    // margin: auto;
-   // @media (max-width: 767px) {
-   //    display: none;
-   // }
+   @media (max-width: 768px) {
+      display: none;
+   }
+}
+.hern-steps-mobile-navbar__progress {
+   @media (min-width: 768px) {
+      display: none;
+   }
 }
 .hern-steps-navbar__progressbar {
    margin: 8px auto;
@@ -111,6 +120,36 @@
          height: 100%;
          width: 100%;
       }
+
+      @media (max-width: 768px) {
+         margin: 0;
+         background-color: rgba(17, 130, 59, 0.2);
+      }
+   }
+}
+
+.hern-steps-mobile-navbar__step {
+   @extend .hern-steps-navbar__step;
+
+   > div {
+      height: 8px;
+      width: 8px;
+      box-shadow: 0px 0px 6.33342px rgba(0, 0, 0, 0.1);
+      border-radius: 50%;
+      background-color: rgba(17, 130, 59, 0.2);
+   }
+
+   > div > span {
+      position: absolute;
+      left: 0;
+      color: #b1b1b1;
+      margin-top: 4px;
+      font-family: 'Inter';
+      font-style: normal;
+      font-weight: 500;
+      font-size: 8px;
+      line-height: 15px;
+      color: rgba(51, 51, 51, 0.8);
    }
 }
 
@@ -129,17 +168,33 @@
    }
 }
 
+.hern-steps-mobile-navbar__step--active {
+   @extend .hern-steps-navbar__step--active;
+
+   > div > span {
+      font-family: 'Inter';
+      font-style: normal;
+      font-weight: 500;
+      font-size: 8px;
+      color: rgba(51, 51, 51, 0.8);
+   }
+}
+
 .hern-steps-navbar__logout {
    //padding: 0 1rem;
    // margin-left: auto;
 }
 .hern-steps-navbar__logout__btn {
-   border: 0.3px solid #3f4441;
-   border-radius: 2px;
-   padding: 0.25rem 1rem;
-   color: #3f4441;
-   border-radius: 0.25rem;
+   color: #ffffff;
    font-weight: 500;
+   background-color: var(--hern-accent);
+   border-radius: 30px;
+   font-size: 1rem;
+   padding: 0.625rem 1.25rem;
+
+   @media (max-width: 768px) {
+      display: none;
+   }
 }
 
 .hern-steps-navbar__step__tail {
@@ -151,5 +206,14 @@
    border-radius: 2.6px;
    @media only screen and (max-width: 768px) {
       width: 48px;
+   }
+}
+
+.hern-steps-mobile-navbar__step__tail {
+   @extend .hern-steps-navbar__step__tail;
+   @media only screen and (max-width: 768px) {
+      width: 88px;
+      height: 1px;
+      background-color: rgba(17, 130, 59, 0.2);
    }
 }

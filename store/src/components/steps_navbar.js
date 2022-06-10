@@ -138,26 +138,116 @@ export const StepsNavbar = () => {
    }
 
    return (
-      <div className="hern-steps-navbar">
-         <Link href={getRoute('/')}>
-            <div className="hern-steps-navbar__brand">
-               {brand?.brandLogo?.value && (
-                  <HernLazyImage
-                     className="hern-steps-navbar__brand__img"
-                     dataSrc={brand?.brandLogo?.value}
-                     alt={brand?.brandName?.value || 'Subscription Shop'}
+      <>
+         <div className="hern-steps-navbar">
+            <Link href={getRoute('/')}>
+               <div className="hern-steps-navbar__brand">
+                  {brand?.brandLogo?.value && (
+                     <HernLazyImage
+                        className="hern-steps-navbar__brand__img"
+                        dataSrc={brand?.brandLogo?.value}
+                        alt={brand?.brandName?.value || 'Subscription Shop'}
+                     />
+                  )}
+                  {brand?.brandName?.value && (
+                     <span className="hern-steps-navbar__brand__text">
+                        {brand?.brandName?.value}
+                     </span>
+                  )}
+               </div>
+            </Link>
+            <section className="hern-steps-navbar__progress">
+               <ul className="hern-steps-navbar__steps">
+                  <RenderStep
+                     goToStep={goToStep}
+                     canGoToStep={canGoToStep}
+                     isActive={currentStep >= 0}
+                     route="/[brand]/get-started/select-plan"
+                     label="Select Plan"
+                     step="select-plan"
                   />
+                  <RenderStep
+                     goToStep={goToStep}
+                     canGoToStep={canGoToStep}
+                     isActive={currentStep >= 33}
+                     route="/[brand]/get-started/select-delivery"
+                     label="Select Delivery"
+                     step="select-delivery"
+                  />
+                  <RenderStep
+                     goToStep={goToStep}
+                     canGoToStep={canGoToStep}
+                     isActive={currentStep >= 66}
+                     route="/[brand]/get-started/select-menu"
+                     label="Select Menu"
+                     step="select-menu"
+                  />
+                  <RenderStep
+                     goToStep={goToStep}
+                     canGoToStep={canGoToStep}
+                     isActive={currentStep === 100}
+                     route="/[brand]/get-started/checkout"
+                     label="Checkout"
+                     step="checkout"
+                     tail={false}
+                  />
+               </ul>
+            </section>
+
+            <section className="hern-steps-navbar__logout">
+               {isAuthenticated ? (
+                  <button
+                     onClick={logout}
+                     className="hern-steps-navbar__logout__btn"
+                  >
+                     {t('Logout')}
+                  </button>
+               ) : (
+                  <span />
                )}
-               {brand?.brandName?.value && (
-                  <span className="hern-steps-navbar__brand__text">
-                     {brand?.brandName?.value}
-                  </span>
-               )}
-            </div>
-         </Link>
-         <section className="hern-steps-navbar__progress">
+            </section>
+            {/* <section className="hern-steps-navbar__progress">
+               <ul className="hern-steps-navbar__steps">
+                  <RenderStep
+                     goToStep={goToStep}
+                     canGoToStep={canGoToStep}
+                     isActive={currentStep >= 0}
+                     route="/[brand]/get-started/select-plan"
+                     label="Select Plan"
+                     step="select-plan"
+                  />
+                  <RenderStep
+                     goToStep={goToStep}
+                     canGoToStep={canGoToStep}
+                     isActive={currentStep >= 33}
+                     route="/[brand]/get-started/select-delivery"
+                     label="Select Delivery"
+                     step="select-delivery"
+                  />
+                  <RenderStep
+                     goToStep={goToStep}
+                     canGoToStep={canGoToStep}
+                     isActive={currentStep >= 66}
+                     route="/[brand]/get-started/select-menu"
+                     label="Select Menu"
+                     step="select-menu"
+                  />
+                  <RenderStep
+                     goToStep={goToStep}
+                     canGoToStep={canGoToStep}
+                     isActive={currentStep === 100}
+                     route="/[brand]/get-started/checkout"
+                     label="Checkout"
+                     step="checkout"
+                     tail={false}
+                  />
+               </ul>
+            </section> */}
+         </div>
+
+         <section className="hern-steps-navbar hern-steps-mobile-navbar__progress">
             <ul className="hern-steps-navbar__steps">
-               <RenderStep
+               <MobileRenderStep
                   goToStep={goToStep}
                   canGoToStep={canGoToStep}
                   isActive={currentStep >= 0}
@@ -165,7 +255,7 @@ export const StepsNavbar = () => {
                   label="Select Plan"
                   step="select-plan"
                />
-               <RenderStep
+               <MobileRenderStep
                   goToStep={goToStep}
                   canGoToStep={canGoToStep}
                   isActive={currentStep >= 33}
@@ -173,7 +263,7 @@ export const StepsNavbar = () => {
                   label="Select Delivery"
                   step="select-delivery"
                />
-               <RenderStep
+               <MobileRenderStep
                   goToStep={goToStep}
                   canGoToStep={canGoToStep}
                   isActive={currentStep >= 66}
@@ -181,7 +271,7 @@ export const StepsNavbar = () => {
                   label="Select Menu"
                   step="select-menu"
                />
-               <RenderStep
+               <MobileRenderStep
                   goToStep={goToStep}
                   canGoToStep={canGoToStep}
                   isActive={currentStep === 100}
@@ -192,56 +282,7 @@ export const StepsNavbar = () => {
                />
             </ul>
          </section>
-         <section className="hern-steps-navbar__logout">
-            {isAuthenticated ? (
-               <button
-                  onClick={logout}
-                  className="hern-steps-navbar__logout__btn"
-               >
-                  {t('Logout')}
-               </button>
-            ) : (
-               <span />
-            )}
-         </section>
-         {/* <section className="hern-steps-navbar__progress">
-            <ul className="hern-steps-navbar__steps">
-               <RenderStep
-                  goToStep={goToStep}
-                  canGoToStep={canGoToStep}
-                  isActive={currentStep >= 0}
-                  route="/[brand]/get-started/select-plan"
-                  label="Select Plan"
-                  step="select-plan"
-               />
-               <RenderStep
-                  goToStep={goToStep}
-                  canGoToStep={canGoToStep}
-                  isActive={currentStep >= 33}
-                  route="/[brand]/get-started/select-delivery"
-                  label="Select Delivery"
-                  step="select-delivery"
-               />
-               <RenderStep
-                  goToStep={goToStep}
-                  canGoToStep={canGoToStep}
-                  isActive={currentStep >= 66}
-                  route="/[brand]/get-started/select-menu"
-                  label="Select Menu"
-                  step="select-menu"
-               />
-               <RenderStep
-                  goToStep={goToStep}
-                  canGoToStep={canGoToStep}
-                  isActive={currentStep === 100}
-                  route="/[brand]/get-started/checkout"
-                  label="Checkout"
-                  step="checkout"
-                  tail={false}
-               />
-            </ul>
-         </section> */}
-      </div>
+      </>
    )
 }
 
@@ -273,6 +314,39 @@ const RenderStep = ({
                <span>{t(label)}</span>
             </div>
             {tail && <span className="hern-steps-navbar__step__tail"></span>}
+         </li>
+      </>
+   )
+}
+const MobileRenderStep = ({
+   route,
+   step,
+   isActive,
+   label,
+   canGoToStep,
+   goToStep,
+   tail = true,
+}) => {
+   const { t } = useTranslation()
+   return (
+      <>
+         <li
+            // style={{ border: '1px solid red' }}
+            onClick={() => isActive && goToStep(route)}
+            className={classNames('hern-steps-mobile-navbar__step', {
+               'hern-steps-mobile-navbar__step--active': isActive,
+            })}
+         >
+            <div>
+               <div
+                  style={{ width: '8px', height: '8px' }}
+                  className="hern-steps-navbar__step__icon"
+               ></div>
+               <span>{t(label)}</span>
+            </div>
+            {tail && (
+               <span className="hern-steps-mobile-navbar__step__tail"></span>
+            )}
          </li>
       </>
    )
