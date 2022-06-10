@@ -192,6 +192,43 @@ export const StepsNavbar = () => {
                />
             </ul>
          </section>
+         <section className="hern-steps-mobile-navbar__progress">
+            <ul className="hern-steps-navbar__steps">
+               <MobileRenderStep
+                  goToStep={goToStep}
+                  canGoToStep={canGoToStep}
+                  isActive={currentStep >= 0}
+                  route="/[brand]/get-started/select-plan"
+                  label="Select Plan"
+                  step="select-plan"
+               />
+               <MobileRenderStep
+                  goToStep={goToStep}
+                  canGoToStep={canGoToStep}
+                  isActive={currentStep >= 33}
+                  route="/[brand]/get-started/select-delivery"
+                  label="Select Delivery"
+                  step="select-delivery"
+               />
+               <MobileRenderStep
+                  goToStep={goToStep}
+                  canGoToStep={canGoToStep}
+                  isActive={currentStep >= 66}
+                  route="/[brand]/get-started/select-menu"
+                  label="Select Menu"
+                  step="select-menu"
+               />
+               <MobileRenderStep
+                  goToStep={goToStep}
+                  canGoToStep={canGoToStep}
+                  isActive={currentStep === 100}
+                  route="/[brand]/get-started/checkout"
+                  label="Checkout"
+                  step="checkout"
+                  tail={false}
+               />
+            </ul>
+         </section>
          <section className="hern-steps-navbar__logout">
             {isAuthenticated ? (
                <button
@@ -273,6 +310,38 @@ const RenderStep = ({
                <span>{t(label)}</span>
             </div>
             {tail && <span className="hern-steps-navbar__step__tail"></span>}
+         </li>
+      </>
+   )
+}
+const MobileRenderStep = ({
+   route,
+   step,
+   isActive,
+   label,
+   canGoToStep,
+   goToStep,
+   tail = true,
+}) => {
+   const { t } = useTranslation()
+   return (
+      <>
+         <li
+            onClick={() => isActive && goToStep(route)}
+            className={classNames('hern-steps-mobile-navbar__step', {
+               'hern-steps-mobile-navbar__step--active': isActive,
+            })}
+         >
+            <div>
+               <div
+                  style={{ width: '8px', height: '8px' }}
+                  className="hern-steps-navbar__step__icon"
+               ></div>
+               <span>{t(label)}</span>
+            </div>
+            {tail && (
+               <span className="hern-steps-mobile-navbar__step__tail"></span>
+            )}
          </li>
       </>
    )
