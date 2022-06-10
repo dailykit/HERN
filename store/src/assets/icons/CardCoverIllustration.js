@@ -2,7 +2,7 @@ export const CardCoverIllustration = () => (
    <div
       style={{
          width: '100%',
-         minHeight: '230px',
+         minHeight: '100%',
          display: 'flex',
          justifyContent: 'center',
          alignItems: 'center',
