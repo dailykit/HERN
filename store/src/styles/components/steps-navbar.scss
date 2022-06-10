@@ -15,6 +15,10 @@
    //    display: unset;
    //    height: auto;
    // }
+
+   @media (max-width: 768px) {
+      margin-bottom: 1.125rem;
+   }
 }
 .hern-steps-navbar__brand {
    text-decoration: none;
@@ -187,6 +191,10 @@
    border-radius: 30px;
    font-size: 1rem;
    padding: 0.625rem 1.25rem;
+
+   @media (max-width: 768px) {
+      display: none;
+   }
 }
 
 .hern-steps-navbar__step__tail {
