@@ -6,16 +6,20 @@ export const getSettings = async (domain, path = '/') => {
    const data = await client.request(SETTINGS_QUERY, {
       domain,
    })
-   console.log("hello")
    if (data) {
       const settings = {}
 
       data.settings.forEach(setting => {
+         console.log('parsee', parseConfig(setting.value))
          if (settings[setting.meta.type]) {
-            settings[setting.meta.type][setting.meta.identifier] = parsedConfigValue(setting.value)
+            settings[setting.meta.type][setting.meta.identifier] = parseConfig(
+               setting.value
+            )
          } else {
             settings[setting.meta.type] = {}
-            settings[setting.meta.type][setting.meta.identifier] = parsedConfigValue(setting.value)
+            settings[setting.meta.type][setting.meta.identifier] = parseConfig(
+               setting.value
+            )
          }
       })
 
@@ -53,32 +57,22 @@ export const getSettings = async (domain, path = '/') => {
    return { seo: null, settings: null }
 }
 
-function parsedConfigValue(setting) {
-   const allPaths = getAllPaths(setting, 'value')
-   console.log(setting)
-   for (let i = 0; i < allPaths.length; i++) {
-
-      console.log(allPaths[i], "🌻", allPaths, setting[allPaths[i]])
-   }
-
-   return (
-      setting
-   )
-}
-export default parsedConfigValue
-
-function getAllPaths(obj, key, prev = '') {
-   const result = []
-
-   for (let k in obj) {
-      let path = prev + (prev ? '.' : '') + k;
-
-      if (k == key) {
-         result.push(path)
-      } else if (typeof obj[k] == 'object') {
-         result.push(...getAllPaths(obj[k], key, path))
+function parseConfig(obj) {
+   const parsedObj = {}
+   for (let key in obj) {
+      const value = obj[key]
+      if (typeof value === 'object' && !Array.isArray(value)) {
+         if (value.hasOwnProperty('value')) {
+            parsedObj[key] = { ...parsedObj[key] }
+            parsedObj[key]['value'] = value['value'] ?? value['default']
+            continue
+         }
+         const tempObj = parseConfig(value)
+         for (let nestedKey in tempObj) {
+            parsedObj[key] = { ...parsedObj[key], [nestedKey]: {} }
+            parsedObj[key][nestedKey] = tempObj[nestedKey]
+         }
       }
    }
-
-   return result
+   return parsedObj
 }
