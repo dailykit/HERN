@@ -13,12 +13,26 @@ export const KioskHeader = props => {
    const { formatMessage } = useIntl()
    const [showReloadWarningPopup, setShowReloadWarningPopup] =
       React.useState(false)
+
    return (
-      <div className="hern-kiosk__kiosk-header-container">
-         <img
-            src={config.kioskSettings.logo.value}
-            className="hern-kiosk__kiosk-header-logo"
-         />
+      <div
+         className={classNames('hern-kiosk__kiosk-header-container', {
+            'hern-kiosk__kiosk-header-container--centered-logo':
+               config.kioskSettings?.header?.alignLogo?.value?.value ===
+               'center',
+         })}
+      >
+         <div className="hern-kiosk__kiosk-header__brand">
+            <img
+               src={config.kioskSettings.logo.value}
+               className="hern-kiosk__kiosk-header-logo"
+            />
+            {config.kioskSettings.ShowBrandName.value &&
+               config.kioskSettings.brandName.value && (
+                  <h3>{config.kioskSettings.brandName.value}</h3>
+               )}
+         </div>
+
          <LanguageSelector
             config={config}
             setShowReloadWarningPopup={setShowReloadWarningPopup}
@@ -142,7 +156,18 @@ const LanguageSelector = props => {
             style={{
                margin: '0 20px',
                color: '#fff',
-               fontSize: '16px',
+               textTransform: `${
+                  config?.kioskSettings?.header?.resetButton?.textTransform
+                     ?.value
+                     ? config.kioskSettings.header.resetButton.textTransform
+                          .value
+                     : 'capitalize'
+               }`,
+               fontSize: `${
+                  config?.kioskSettings?.header?.resetButton?.fontSize?.value
+                     ? config.kioskSettings.header.resetButton.fontSize.value
+                     : '1rem'
+               }`,
             }}
          >
             {t('Reset')}
