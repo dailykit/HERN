@@ -76,8 +76,8 @@ export const AddressTunnel = props => {
    const [loaded, error] = useScript(
       isClient
          ? `https://maps.googleapis.com/maps/api/js?key=${get_env(
-            'GOOGLE_API_KEY'
-         )}&libraries=places`
+              'GOOGLE_API_KEY'
+           )}&libraries=places`
          : ''
    )
    const [addressWarnings, setAddressWarnings] = React.useState({
@@ -88,7 +88,8 @@ export const AddressTunnel = props => {
       if (!isClient) return 'Runs only on client side.'
 
       const response = await fetch(
-         `https://maps.googleapis.com/maps/api/geocode/json?key=${isClient ? get_env('GOOGLE_API_KEY') : ''
+         `https://maps.googleapis.com/maps/api/geocode/json?key=${
+            isClient ? get_env('GOOGLE_API_KEY') : ''
          }&address=${encodeURIComponent(input.description)}`
       )
       const data = await response.json()
@@ -156,7 +157,7 @@ export const AddressTunnel = props => {
          lat: userLocationInLocal.latitude.toString(),
          lng: userLocationInLocal.longitude.toString(),
          line2: userLocationInLocal.address.mainText,
-         searched: '',
+         searched: userLocationInLocal.searched || '',
       }
       if (user?.keycloakId) {
          if (outside) {
@@ -277,7 +278,8 @@ export const AddressTunnel = props => {
          <>
             <section className="hern-delivery__address-tunnel__address-search">
                <Form.Label>
-                  <span>{t('Search')}</span>{selectedOrderTab ? ' ' + selectedOrderTab.label : ''}
+                  <span>{t('Search')}</span>
+                  {selectedOrderTab ? ' ' + selectedOrderTab.label : ''}
                   <span>{t('Address')}</span>
                </Form.Label>
                {loaded && !error && (
@@ -298,7 +300,9 @@ export const AddressTunnel = props => {
                         <Form.Label>
                            {t('Apartment/Building Info/Street info*')}
                            <span className="hern-address-warning">
-                              {addressWarnings.line1 ? t('fill this field') : null}
+                              {addressWarnings.line1
+                                 ? t('fill this field')
+                                 : null}
                            </span>
                         </Form.Label>
                         <Form.Text
@@ -372,7 +376,7 @@ export const AddressTunnel = props => {
          toggleTunnel={() => toggleTunnel(false)}
          size="sm"
       >
-         <Tunnel.Header title={t("Add Address")}>
+         <Tunnel.Header title={t('Add Address')}>
             <Button size="sm" onClick={() => toggleTunnel(false)}>
                <CloseIcon
                   size={20}
@@ -484,7 +488,11 @@ export const AddressTunnel = props => {
                         formStatus === 'SAVING'
                      }
                   >
-                     {formStatus === 'SAVING' ? <span>{t('Saving...')}</span> : <span>{t('Save Address')}</span>}
+                     {formStatus === 'SAVING' ? (
+                        <span>{t('Saving...')}</span>
+                     ) : (
+                        <span>{t('Save Address')}</span>
+                     )}
                   </Button>
                   <Spacer />
                </>

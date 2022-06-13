@@ -22,7 +22,7 @@ import React, { useEffect } from 'react'
 import { toast } from 'react-toastify'
 import { DeleteIcon, PlusIcon } from '../../../../../shared/assets/icons'
 import { Banner, InlineLoader } from '../../../../../shared/components'
-import { get_env, logger } from '../../../../../shared/utils'
+import { get_env, logger, useScript } from '../../../../../shared/utils'
 import { LOCATIONS } from '../../../graphql'
 import { StyledHeader, StyledWrapper } from '../styled'
 import tableOptions from '../../../tableOption'
@@ -48,7 +48,11 @@ export const Locations = () => {
    const [tunnels, openTunnel, closeTunnel] = useTunnel(3)
    const [selectedRowData, setSelectedRowData] = React.useState(null)
    const [isLoading, setIsLoading] = React.useState(true)
-
+   const [loaded, mapError] = useScript(
+      `https://maps.googleapis.com/maps/api/js?key=${get_env(
+         'REACT_APP_MAPS_API_KEY'
+      )}&libraries=places`
+   )
    const groupByOptions = [
       { id: 1, title: 'Label', payLoad: 'label' },
       { id: 2, title: 'City', payLoad: 'city' },

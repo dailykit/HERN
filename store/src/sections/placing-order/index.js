@@ -67,11 +67,13 @@ const ContentWrapper = () => {
    const gotoMenu = () => {
       isClient && window.localStorage.removeItem('plan')
       if (isClient) {
-         window.location.href = cart?.fulfillmentInfo?.slot?.from
-            ? `${get_env('BASE_BRAND_URL')}/menu?d=${moment(
-                 cart?.fulfillmentInfo?.slot?.from
-              ).format('YYYY-MM-DD')}`
-            : `${get_env('BASE_BRAND_URL')}/menu`
+         cart?.fulfillmentInfo?.slot?.from
+            ? router.push(
+                 `/menu?d=${moment(cart?.fulfillmentInfo?.slot?.from).format(
+                    'YYYY-MM-DD'
+                 )}`
+              )
+            : router.push(`/menu`)
       }
    }
 

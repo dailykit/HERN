@@ -61,12 +61,13 @@ const BrandListing = ({ closeTunnel }) => {
                                  key={option.id}
                                  title={option.title}
                                  isActive={option.id === current.id}
-                                 onClick={() =>
+                                 onClick={() => {
                                     addTab(
                                        'Customers',
                                        `/crm/customers-${option.title}-${option.id}`
                                     )
-                                 }
+                                    closeTunnel(1)
+                                 }}
                               />
                            ))}
                      </ListOptions>

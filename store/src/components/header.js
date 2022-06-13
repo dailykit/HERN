@@ -253,7 +253,11 @@ export const Header = ({ settings, navigationMenus }) => {
    React.useEffect(() => {
       if (orderTabs.length > 0) {
          const localOrderTabLabel = localStorage.getItem('orderTab')
-         if (localOrderTabLabel) {
+         if (
+            localOrderTabLabel &&
+            localOrderTabLabel != 'undefined' &&
+            localOrderTabLabel != 'null'
+         ) {
             const selectedOrderTab = orderTabs.find(
                x =>
                   x.orderFulfillmentTypeLabel == JSON.parse(localOrderTabLabel)
@@ -534,7 +538,9 @@ const LocationInfo = ({ settings, layout, additionalClasses }) => {
 
       const fulfillmentType = selectedOrderTab?.orderFulfillmentTypeLabel
          ? selectedOrderTab?.orderFulfillmentTypeLabel
-         : selectedOrderTabInLocal
+         : selectedOrderTabInLocal &&
+           selectedOrderTabInLocal != 'undefined' &&
+           selectedOrderTabInLocal != 'null'
          ? JSON.parse(selectedOrderTabInLocal)
          : null
 
@@ -553,13 +559,11 @@ const LocationInfo = ({ settings, layout, additionalClasses }) => {
    }, [selectedOrderTab])
 
    const storeAddress = React.useMemo(() => {
-      const storeAddress = isClient
-         ? localStorage.getItem('pickupLocation')
-         : ''
+      const storeAddress = isClient ? localStorage.getItem('storeLocation') : ''
 
       if (storeAddress) {
          const parseStoreAddress = JSON.parse(
-            localStorage.getItem('pickupLocation')
+            localStorage.getItem('storeLocation')
          )
          return parseStoreAddress
       } else {
@@ -687,6 +691,7 @@ const BrandInfo = ({ settings, layout }) => {
 }
 const Navigation = ({ newNavigationMenus, settings, layout }) => {
    const { isAuthenticated, user, isLoading } = useUser()
+   const { t } = useTranslation()
    const isSubscriptionStore =
       settings?.availability?.isSubscriptionAvailable?.Subscription
          ?.isSubscriptionAvailable?.value
@@ -768,7 +773,9 @@ const AuthMenu = ({
       showCartIconToolTip,
    } = React.useContext(CartContext)
    const numberOfItemsOnCart =
-      cartState?.cart?.cartItems_aggregate?.aggregate?.count
+      cartState?.cart?.source === 'subscription'
+         ? null
+         : cartState?.cart?.cartItems_aggregate?.aggregate?.count
 
    const loginButtonLabel =
       settings?.brand['Login Illustrations']?.loginButton?.loginbuttonLabel

@@ -1,6 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
-import { Form, Spacer, IconButton } from '@dailykit/ui'
+import { Form, Spacer, IconButton, Filler } from '@dailykit/ui'
 
 import useAssets from './useAssets'
 import { InlineLoader } from '../InlineLoader'
@@ -11,6 +11,13 @@ const Images = ({ onImageSelect }) => {
 
    if (status === 'LOADING') return <InlineLoader />
    if (status === 'ERROR') return <div>{error}</div>
+   if (images.length === 0) {
+      return (
+         <StyledFillerDiv>
+            <Filler message="No Images to show" />
+         </StyledFillerDiv>
+      )
+   }
    return (
       <>
          <Form.Text
@@ -46,6 +53,12 @@ const Images = ({ onImageSelect }) => {
 }
 
 export default Images
+
+const StyledFillerDiv = styled.div`
+   display: flex;
+   align-items: center;
+   justify-content: center;
+`
 
 const StyledList = styled.ul`
    display: grid;

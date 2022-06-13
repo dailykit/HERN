@@ -55,12 +55,20 @@ const Content = () => {
    }, [currentLang])
 
    if (loading) return <Loader inline />
-   return (
+   return !isReferralAvailable ? (
+      <section className="hern-referrals__content">
+         <header className="hern-referrals__header">
+            <h2 className="hern-referrals__not_available_header">
+               {t('This scheme is not available right now')}
+            </h2>
+         </header>
+      </section>
+   ) : (
       <section className="hern-referrals__content">
          <header className="hern-referrals__header">
             <h2 className="hern-referrals__header__title">{t('Referrals')}</h2>
          </header>
-         {referralsAllowed && !!user.customerReferral && (
+         {!!user.customerReferral && (
             <>
                <div className="hern-referrals__customer-referral-code__title">
                   {t('Your Referral Code')}
@@ -92,59 +100,14 @@ const Content = () => {
                </div>
                <Spacer />
                <div className="hern-referral__referred">
-                  <span> {t('Friends referred by me')} :</span>
-                  <span style={{ color: 'var(--hern-accent)' }}>
+                  <span> {t('Friends Referred')} :</span>
+                  <span style={{ color: 'green', fontWeight: 'bold' }}>
                      &nbsp;{customerReferrals.length}
                   </span>
                </div>
-               {customerReferrals.length > 0 ? (
-                  <table className="hern-referrals__table">
-                     <thead>
-                        <tr>
-                           <th>{t('First Name')}</th>
-                           <th>{t('Last Name')}</th>
-                        </tr>
-                     </thead>
-                     <tbody>
-                        {customerReferrals.map(ref => (
-                           <tr key={ref.id}>
-                              <td
-                                 className="hern-referrals__table__cell"
-                                 data-translation="true"
-                              >
-                                 {!isEmpty(
-                                    ref.customer.platform_customer.firstName
-                                 )
-                                    ? ref.customer.platform_customer.firstName
-                                    : 'N/A'}
-                              </td>
-
-                              <td
-                                 className="hern-referrals__table__cell"
-                                 data-translation="true"
-                              >
-                                 {!isEmpty(
-                                    ref.customer.platform_customer.lastName
-                                 )
-                                    ? ref.customer.platform_customer.lastName
-                                    : 'N/A'}
-                              </td>
-                           </tr>
-                        ))}
-                     </tbody>
-                  </table>
-               ) : (
-                  <div
-                     style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        marginBottom: '2rem',
-                     }}
-                  >
-                     <EmptyReferralIll />
-                  </div>
-               )}
+               <div className="hern-referrals-illustration-icon">
+                  <EmptyReferralIll />
+               </div>
             </>
          )}
       </section>

@@ -174,14 +174,16 @@ export const OnDemandCart = () => {
 }
 const PaymentSection = () => {
    const { isAuthenticated } = useUser()
-   const { cartState } = React.useContext(CartContext)
+   const { cartState, isCartValidByProductAvailability } =
+      React.useContext(CartContext)
    const [open, setOpen] = React.useState(true)
    const [isTunnelOpen, setIsTunnelOpen] = React.useState(false)
    const isDisabled =
       !cartState?.cart.fulfillmentInfo ||
       !cartState.cart?.customerInfo?.customerFirstName ||
       !cartState.cart?.customerInfo?.customerLastName ||
-      !cartState.cart?.customerInfo?.customerPhone
+      !cartState.cart?.customerInfo?.customerPhone ||
+      !isCartValidByProductAvailability
    console.log('first', cartState)
    const isSmallerDevice = isClient && window.innerWidth < 768
    const { t } = useTranslation()
@@ -278,7 +280,7 @@ const PaymentSection = () => {
                >
                   {t('Make Payment')}
                   {`(${formatCurrency(
-                     cartState?.cart?.cartOwnerBilling?.balanceToPay
+                     cartState?.cart?.cartOwnerBilling?.totalToPay
                   )})`}
                </button>
                <Tunnel.Bottom

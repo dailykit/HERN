@@ -202,6 +202,7 @@ export const OCCURENCE_PRODUCTS_BY_CATEGORIES = gql`
    query categories(
       $subscriptionId: Int_comparison_exp
       $occurenceId: Int_comparison_exp
+      $params: jsonb!
    ) {
       categories: productCategories(
          where: {
@@ -235,6 +236,9 @@ export const OCCURENCE_PRODUCTS_BY_CATEGORIES = gql`
                isSingleSelect
                productOption {
                   id
+                  isArchived
+                  isPublished: publishedByLocation(args: { params: $params })
+                  isAvailable: availabilityByLocation(args: { params: $params })
                   label
                   simpleRecipeYield {
                      yield
@@ -245,9 +249,15 @@ export const OCCURENCE_PRODUCTS_BY_CATEGORIES = gql`
                   }
                   product {
                      name
+                     isArchived
+                     isPublished: publishedByLocation(args: { params: $params })
+                     isAvailable: availabilityByLocation(
+                        args: { params: $params }
+                     )
                      assets
                      additionalText
                      tags
+                     isPopupAllowed
                   }
                }
             }
@@ -343,6 +353,7 @@ export const CART_BY_WEEK = gql`
       $keycloakId: String!
       $weekId: Int!
       $brand_customerId: Int!
+      $params: jsonb!
    ) {
       subscriptionOccurenceCustomer: subscription_subscriptionOccurence_customer_by_pk(
          keycloakId: $keycloakId
@@ -363,6 +374,7 @@ export const CART_BY_WEEK = gql`
             walletAmountUsed
             loyaltyPointsUsed
             billingDetails
+            cartOwnerBilling
             fulfillmentInfo
             transactionId
             paymentMethodId
@@ -377,6 +389,29 @@ export const CART_BY_WEEK = gql`
                isAutoAdded
                subscriptionOccurenceProductId
                subscriptionOccurenceAddOnProductId
+               product {
+                  id
+                  name
+                  isPublished: publishedByLocation(args: { params: $params })
+                  isAvailable: availabilityByLocation(args: { params: $params })
+                  isArchived
+                  productOptions {
+                     id
+                     isArchived
+                     isPublished: publishedByLocation(args: { params: $params })
+                     isAvailable: availabilityByLocation(
+                        args: { params: $params }
+                     )
+                  }
+               }
+               childs {
+                  id
+                  unitPrice
+                  productOption {
+                     id
+                     label
+                  }
+               }
             }
          }
       }
@@ -407,6 +442,7 @@ export const CART_BY_WEEK_SUBSCRIPTION = gql`
             walletAmountUsed
             loyaltyPointsUsed
             billingDetails
+            cartOwnerBilling
             fulfillmentInfo
             transactionId
             paymentMethodId
@@ -493,12 +529,14 @@ export const CART_SUBSCRIPTION = gql`
          paymentStatus
          deliveryPrice
          billingDetails
+         cartOwnerBilling
          fulfillmentInfo
          transactionId
          transactionRemark
          stripeInvoiceId
          stripeInvoiceDetails
          customerKeycloakId
+         customerInfo
          retryPaymentMethod
          activeCartPaymentId
          activeCartPayment {
@@ -559,6 +597,7 @@ export const CART_STATUS = gql`
          paymentStatus
          fulfillmentInfo
          billingDetails
+         cartOwnerBilling
          customerKeycloakId
          amount
          products: cartItems(where: { level: { _eq: 1 } }) {
@@ -975,6 +1014,18 @@ export const CUSTOMER = {
          }
       }
    `,
+   PROFILE_INFO: gql`
+      query customer($keycloakId: String!) {
+         customer(keycloakId: $keycloakId) {
+            platform_customer: platform_customer {
+               customerEmail: email
+               customerFirstName: firstName
+               customerLastName: lastName
+               customerPhone: phoneNumber
+            }
+         }
+      }
+   `,
 }
 
 export const GET_FILEID = gql`
@@ -1115,6 +1166,7 @@ export const WALLETS = gql`
       wallets(
          where: { brandId: { _eq: $brandId }, keycloakId: { _eq: $keycloakId } }
       ) {
+         id
          amount
          walletTransactions(order_by: { created_at: desc_nulls_last }) {
             id
@@ -1221,6 +1273,7 @@ export const BRAND_PAGE = gql`
          isArchived
          published
          route
+         animationConfig
          brandPageSettings {
             value
             brandPageSetting {
@@ -1236,6 +1289,7 @@ export const BRAND_PAGE = gql`
             id
             internalModuleIdentifier
             config
+            animationConfig
             moduleType
             isHidden
             fileId
@@ -1293,7 +1347,7 @@ export const PLATFORM_CUSTOMERS = gql`
 `
 
 export const PRODUCTS_BY_CATEGORY = gql`
-   query PRODUCTS_BY_CATEGORY($params: jsonb!) {
+   subscription PRODUCTS_BY_CATEGORY($params: jsonb!) {
       onDemand_getMenuV2copy(args: { params: $params }) {
          data
          id
@@ -1301,18 +1355,7 @@ export const PRODUCTS_BY_CATEGORY = gql`
    }
 `
 export const PRODUCTS = gql`
-   query Products(
-      $ids: [Int!]!
-      $priceArgs: priceByLocation_products_product_args!
-      $discountArgs: discountByLocation_products_product_args!
-      $defaultCartItemArgs: defaultCartItemByLocation_products_product_args!
-      $productOptionCartItemArgs: cartItemByLocation_products_productOption_args!
-      $productOptionDiscountArgs: discountByLocation_products_productOption_args!
-      $productOptionPriceArgs: priceByLocation_products_productOption_args!
-      $modifierCategoryOptionCartItemArgs: cartItemByLocation_onDemand_modifierCategoryOption_args!
-      $modifierCategoryOptionDiscountArgs: discountByLocation_onDemand_modifierCategoryOption_args!
-      $modifierCategoryOptionPriceArgs: priceByLocation_onDemand_modifierCategoryOption_args!
-   ) {
+   subscription Products($ids: [Int!]!, $params: jsonb!) {
       products(where: { isArchived: { _eq: false }, id: { _in: $ids } }) {
          id
          name
@@ -1322,12 +1365,13 @@ export const PRODUCTS = gql`
          VegNonVegType
          additionalText
          description
-         price: priceByLocation(args: $priceArgs)
-         discount: discountByLocation(args: $discountArgs)
+         price: priceByLocation(args: { params: $params })
+         discount: discountByLocation(args: { params: $params })
          isPopupAllowed
-         isPublished
+         isPublished: publishedByLocation(args: { params: $params })
+         isAvailable: availabilityByLocation(args: { params: $params })
          defaultProductOptionId
-         defaultCartItem: defaultCartItemByLocation(args: $defaultCartItemArgs)
+         defaultCartItem: defaultCartItemByLocation(args: { params: $params })
          productionOptionSelectionStatement
          subCategory
          productOptions(
@@ -1338,314 +1382,17 @@ export const PRODUCTS = gql`
             position
             type
             label
-            price: priceByLocation(args: $productOptionPriceArgs)
-            discount: discountByLocation(args: $productOptionDiscountArgs)
-            cartItem: cartItemByLocation(args: $productOptionCartItemArgs)
-            additionalModifiers(where: { isActive: { _eq: true } }) {
-               type
-               label
-               linkedToModifierCategoryOptionId
-               productOptionId
-               modifierId
-               modifier {
-                  id
-                  name
-                  categories(
-                     where: { isVisible: { _eq: true } }
-                     order_by: { position: desc_nulls_last }
-                  ) {
-                     id
-                     name
-                     isRequired
-                     type
-                     limits
-                     options(
-                        where: { isVisible: { _eq: true } }
-                        order_by: { position: desc_nulls_last }
-                     ) {
-                        id
-                        name
-                        price: priceByLocation(
-                           args: $modifierCategoryOptionPriceArgs
-                        )
-                        discount: discountByLocation(
-                           args: $modifierCategoryOptionDiscountArgs
-                        )
-                        quantity
-                        image
-                        isActive
-                        additionalModifierTemplateId
-                        isAdditionalModifierRequired
-                        additionalModifierTemplate {
-                           id
-                           name
-                           categories(
-                              where: { isVisible: { _eq: true } }
-                              order_by: { position: desc_nulls_last }
-                           ) {
-                              id
-                              name
-                              isRequired
-                              type
-                              limits
-                              options(
-                                 where: { isVisible: { _eq: true } }
-                                 order_by: { position: desc_nulls_last }
-                              ) {
-                                 id
-                                 name
-                                 price: priceByLocation(
-                                    args: $modifierCategoryOptionPriceArgs
-                                 )
-                                 discount: discountByLocation(
-                                    args: $modifierCategoryOptionDiscountArgs
-                                 )
-                                 quantity
-                                 image
-                                 isActive
-                                 additionalModifierTemplateId
-                                 isAdditionalModifierRequired
-                                 sachetItemId
-                                 ingredientSachetId
-                                 cartItem: cartItemByLocation(
-                                    args: $modifierCategoryOptionCartItemArgs
-                                 )
-                                 additionalModifierTemplate {
-                                    id
-                                    name
-                                    categories(
-                                       where: { isVisible: { _eq: true } }
-                                       order_by: { position: desc_nulls_last }
-                                    ) {
-                                       id
-                                       name
-                                       isRequired
-                                       type
-                                       limits
-                                       options(
-                                          where: { isVisible: { _eq: true } }
-                                          order_by: {
-                                             position: desc_nulls_last
-                                          }
-                                       ) {
-                                          id
-                                          name
-                                          price: priceByLocation(
-                                             args: $modifierCategoryOptionPriceArgs
-                                          )
-                                          discount: discountByLocation(
-                                             args: $modifierCategoryOptionDiscountArgs
-                                          )
-                                          quantity
-                                          image
-                                          isActive
-                                          additionalModifierTemplateId
-                                          isAdditionalModifierRequired
-                                          sachetItemId
-                                          ingredientSachetId
-                                          cartItem: cartItemByLocation(
-                                             args: $modifierCategoryOptionCartItemArgs
-                                          )
-                                          additionalModifierTemplate {
-                                             categories {
-                                                options {
-                                                   name
-                                                }
-                                             }
-                                          }
-                                       }
-                                    }
-                                 }
-                              }
-                           }
-                        }
-                        sachetItemId
-                        ingredientSachetId
-                        cartItem: cartItemByLocation(
-                           args: $modifierCategoryOptionCartItemArgs
-                        )
-                     }
-                  }
-               }
-            }
-            modifier {
-               id
-               name
-               categories(
-                  where: { isVisible: { _eq: true } }
-                  order_by: { position: desc_nulls_last }
-               ) {
-                  id
-                  name
-                  isRequired
-                  type
-                  limits
-                  options(
-                     where: { isVisible: { _eq: true } }
-                     order_by: { position: desc_nulls_last }
-                  ) {
-                     id
-                     name
-                     price: priceByLocation(
-                        args: $modifierCategoryOptionPriceArgs
-                     )
-                     discount: discountByLocation(
-                        args: $modifierCategoryOptionDiscountArgs
-                     )
-                     quantity
-                     image
-                     isActive
-                     additionalModifierTemplateId
-                     isAdditionalModifierRequired
-                     sachetItemId
-                     ingredientSachetId
-                     cartItem: cartItemByLocation(
-                        args: $modifierCategoryOptionCartItemArgs
-                     )
-                     additionalModifierTemplate {
-                        id
-                        name
-                        categories(
-                           where: { isVisible: { _eq: true } }
-                           order_by: { position: desc_nulls_last }
-                        ) {
-                           id
-                           name
-                           isRequired
-                           type
-                           limits
-                           options(
-                              where: { isVisible: { _eq: true } }
-                              order_by: { position: desc_nulls_last }
-                           ) {
-                              id
-                              name
-                              price: priceByLocation(
-                                 args: $modifierCategoryOptionPriceArgs
-                              )
-                              discount: discountByLocation(
-                                 args: $modifierCategoryOptionDiscountArgs
-                              )
-                              quantity
-                              image
-                              isActive
-                              additionalModifierTemplateId
-                              isAdditionalModifierRequired
-                              sachetItemId
-                              ingredientSachetId
-                              cartItem: cartItemByLocation(
-                                 args: $modifierCategoryOptionCartItemArgs
-                              )
-                              additionalModifierTemplate {
-                                 id
-                                 name
-                                 categories(
-                                    where: { isVisible: { _eq: true } }
-                                    order_by: { position: desc_nulls_last }
-                                 ) {
-                                    id
-                                    name
-                                    isRequired
-                                    type
-                                    limits
-                                    options(
-                                       where: { isVisible: { _eq: true } }
-                                       order_by: { position: desc_nulls_last }
-                                    ) {
-                                       id
-                                       name
-                                       price: priceByLocation(
-                                          args: $modifierCategoryOptionPriceArgs
-                                       )
-                                       discount: discountByLocation(
-                                          args: $modifierCategoryOptionDiscountArgs
-                                       )
-                                       quantity
-                                       image
-                                       isActive
-                                       additionalModifierTemplateId
-                                       isAdditionalModifierRequired
-                                       sachetItemId
-                                       ingredientSachetId
-                                       cartItem: cartItemByLocation(
-                                          args: $modifierCategoryOptionCartItemArgs
-                                       )
-                                       additionalModifierTemplate {
-                                          id
-                                          name
-                                          categories(
-                                             where: { isVisible: { _eq: true } }
-                                             order_by: {
-                                                position: desc_nulls_last
-                                             }
-                                          ) {
-                                             id
-                                             name
-                                             isRequired
-                                             type
-                                             limits
-                                             options(
-                                                where: {
-                                                   isVisible: { _eq: true }
-                                                }
-                                                order_by: {
-                                                   position: desc_nulls_last
-                                                }
-                                             ) {
-                                                id
-                                                name
-                                                price: priceByLocation(
-                                                   args: $modifierCategoryOptionPriceArgs
-                                                )
-                                                discount: discountByLocation(
-                                                   args: $modifierCategoryOptionDiscountArgs
-                                                )
-                                                quantity
-                                                image
-                                                isActive
-                                                additionalModifierTemplateId
-                                                isAdditionalModifierRequired
-                                                sachetItemId
-                                                ingredientSachetId
-                                                cartItem: cartItemByLocation(
-                                                   args: $modifierCategoryOptionCartItemArgs
-                                                )
-                                                additionalModifierTemplate {
-                                                   categories {
-                                                      options {
-                                                         name
-                                                      }
-                                                   }
-                                                }
-                                             }
-                                          }
-                                       }
-                                    }
-                                 }
-                              }
-                           }
-                        }
-                     }
-                  }
-               }
-            }
+            price: priceByLocation(args: { params: $params })
+            discount: discountByLocation(args: { params: $params })
+            cartItem: cartItemByLocation(args: { params: $params })
+            isPublished: publishedByLocation(args: { params: $params })
+            isAvailable: availabilityByLocation(args: { params: $params })
          }
       }
    }
 `
 export const PRODUCT_DETAILS = gql`
-   query Products(
-      $id: Int!
-      $priceArgs: priceByLocation_products_product_args!
-      $discountArgs: discountByLocation_products_product_args!
-      $defaultCartItemArgs: defaultCartItemByLocation_products_product_args!
-      $productOptionCartItemArgs: cartItemByLocation_products_productOption_args!
-      $productOptionDiscountArgs: discountByLocation_products_productOption_args!
-      $productOptionPriceArgs: priceByLocation_products_productOption_args!
-      $modifierCategoryOptionCartItemArgs: cartItemByLocation_onDemand_modifierCategoryOption_args!
-      $modifierCategoryOptionDiscountArgs: discountByLocation_onDemand_modifierCategoryOption_args!
-      $modifierCategoryOptionPriceArgs: priceByLocation_onDemand_modifierCategoryOption_args!
-   ) {
+   query Products($id: Int!, $params: jsonb!) {
       products(where: { isArchived: { _eq: false }, id: { _eq: $id } }) {
          id
          name
@@ -1655,12 +1402,14 @@ export const PRODUCT_DETAILS = gql`
          VegNonVegType
          additionalText
          description
-         price: priceByLocation(args: $priceArgs)
-         discount: discountByLocation(args: $discountArgs)
+         price: priceByLocation(args: { params: $params })
+         discount: discountByLocation(args: { params: $params })
          isPopupAllowed
-         isPublished
+         isPublished: publishedByLocation(args: { params: $params })
+         isAvailable: availabilityByLocation(args: { params: $params })
          defaultProductOptionId
-         defaultCartItem: defaultCartItemByLocation(args: $defaultCartItemArgs)
+         defaultCartItem: defaultCartItemByLocation(args: { params: $params })
+         productionOptionSelectionStatement
          productOptions(
             where: { isArchived: { _eq: false } }
             order_by: { position: desc_nulls_last }
@@ -1669,9 +1418,11 @@ export const PRODUCT_DETAILS = gql`
             position
             type
             label
-            price: priceByLocation(args: $productOptionPriceArgs)
-            discount: discountByLocation(args: $productOptionDiscountArgs)
-            cartItem: cartItemByLocation(args: $productOptionCartItemArgs)
+            isPublished: publishedByLocation(args: { params: $params })
+            isAvailable: availabilityByLocation(args: { params: $params })
+            price: priceByLocation(args: { params: $params })
+            discount: discountByLocation(args: { params: $params })
+            cartItem: cartItemByLocation(args: { params: $params })
             additionalModifiers(where: { isActive: { _eq: true } }) {
                type
                label
@@ -1687,20 +1438,14 @@ export const PRODUCT_DETAILS = gql`
                      options(where: { isVisible: { _eq: true } }) {
                         id
                         name
-                        price: priceByLocation(
-                           args: $modifierCategoryOptionPriceArgs
-                        )
-                        discount: discountByLocation(
-                           args: $modifierCategoryOptionDiscountArgs
-                        )
+                        price: priceByLocation(args: { params: $params })
+                        discount: discountByLocation(args: { params: $params })
                         quantity
                         image
                         isActive
                         sachetItemId
                         ingredientSachetId
-                        cartItem: cartItemByLocation(
-                           args: $modifierCategoryOptionCartItemArgs
-                        )
+                        cartItem: cartItemByLocation(args: { params: $params })
                      }
                   }
                }
@@ -1717,20 +1462,14 @@ export const PRODUCT_DETAILS = gql`
                   options(where: { isVisible: { _eq: true } }) {
                      id
                      name
-                     price: priceByLocation(
-                        args: $modifierCategoryOptionPriceArgs
-                     )
-                     discount: discountByLocation(
-                        args: $modifierCategoryOptionDiscountArgs
-                     )
+                     price: priceByLocation(args: { params: $params })
+                     discount: discountByLocation(args: { params: $params })
                      quantity
                      image
                      isActive
                      sachetItemId
                      ingredientSachetId
-                     cartItem: cartItemByLocation(
-                        args: $modifierCategoryOptionCartItemArgs
-                     )
+                     cartItem: cartItemByLocation(args: { params: $params })
                   }
                }
             }
@@ -1788,6 +1527,7 @@ export const GET_CART = gql`
          id
          status
          tax
+         source
          orderId
          discount
          itemTotal
@@ -2106,8 +1846,8 @@ export const ONDEMAND_DINE_BRAND_RECURRENCES = gql`
       }
    }
 `
-export const SCHEDULED_DINEIN_BRAND_RECURRENCES = gql`
-   query SCHEDULED_DINEIN_BRAND_RECURRENCES(
+export const PREORDER_DINEIN_BRAND_RECURRENCES = gql`
+   query PREORDER_DINEIN_BRAND_RECURRENCES(
       $where: fulfilment_brand_recurrence_bool_exp!
    ) {
       brandRecurrences(where: $where) {
@@ -2121,6 +1861,8 @@ export const SCHEDULED_DINEIN_BRAND_RECURRENCES = gql`
                from
                to
                id
+               dineInLeadTime
+               dineInPrepTime
                mileRanges {
                   id
                   from
@@ -2178,7 +1920,10 @@ export const GET_JS_CSS_FILES = gql`
 `
 
 export const GET_CART_ITEMS_BY_CART = gql`
-   subscription GET_CART_ITEMS_BY_CART($where: order_cartItem_bool_exp!) {
+   subscription GET_CART_ITEMS_BY_CART(
+      $where: order_cartItem_bool_exp!
+      $params: jsonb!
+   ) {
       cartItems(where: $where) {
          cartItemId: id
          parentCartItemId
@@ -2216,6 +1961,17 @@ export const GET_CART_ITEMS_BY_CART = gql`
                }
             }
          }
+         product {
+            isPublished: publishedByLocation(args: { params: $params })
+            isAvailable: availabilityByLocation(args: { params: $params })
+            isArchived
+            productOptions {
+               isPublished: publishedByLocation(args: { params: $params })
+               isAvailable: availabilityByLocation(args: { params: $params })
+               isArchived
+               id
+            }
+         }
          productId
       }
    }
@@ -2243,10 +1999,12 @@ export const GET_CART_PAYMENT_INFO = gql`
          cartId
          cart {
             customerInfo
+            source
          }
          isTest
          paymentStatus
          paymentType
+         metaData
          transactionRemark
          isResultShown
          stripeInvoiceId
@@ -2307,6 +2065,39 @@ export const GET_PAYMENT_OPTIONS = gql`
       }
    }
 `
+
+export const GET_AVAILABLE_PAYMENT_OPTIONS = gql`
+   subscription availablePaymentOptions($ids: [Int!]) {
+      availablePaymentOptions: brands_availablePaymentOption(
+         where: { isActive: { _eq: true }, id: { _in: $ids } }
+         order_by: { position: desc_nulls_last }
+      ) {
+         id
+         isActive
+         isDown
+         isRecommended
+         isValid
+         label
+         description
+         position
+         publicCreds
+         showCompanyName
+         supportedPaymentOption {
+            id
+            country
+            supportedPaymentCompanyId
+            paymentOptionLabel
+            isLoginRequired
+            canShowWhileLoggedIn
+            supportedPaymentCompany {
+               id
+               label
+            }
+         }
+      }
+   }
+`
+
 export const GET_MODIFIER_BY_ID = gql`
    query GET_MODIFIER_BY_ID(
       $priceArgs: priceByLocation_onDemand_modifierCategoryOption_args!
@@ -2497,19 +2288,226 @@ export const COUPON_BY_ID = gql`
    }
 `
 export const GET_PAGE_ROUTES = gql`
-query MyQuery($domain: String!) {
-  brands(where: {_or: [{domain: {_eq: $domain}}, {isDefault: {_eq: true}}]}) {
-    brandPages(where: {isArchived: {_eq: false}, published: {_eq: true}, isAllowedToCrawl: {_eq: true}}) {
-      route
-    }
-  }
-}`
+   query MyQuery($domain: String!) {
+      brands(
+         where: {
+            _or: [{ domain: { _eq: $domain } }, { isDefault: { _eq: true } }]
+         }
+      ) {
+         brandPages(
+            where: {
+               isArchived: { _eq: false }
+               published: { _eq: true }
+               isAllowedToCrawl: { _eq: true }
+            }
+         ) {
+            route
+         }
+      }
+   }
+`
 export const GET_DISALLOWED_PAGE_ROUTES = gql`
-query MyQuery($domain: String!) {
-  brands(where: {_or: [{domain: {_eq: $domain}}, {isDefault: {_eq: true}}]}) {
-    brandPages(where: {isArchived: {_eq: false}, published: {_eq: true}, isAllowedToCrawl: {_eq: false}}) {
-      route
-    }
-  }
-}
+   query MyQuery($domain: String!) {
+      brands(
+         where: {
+            _or: [{ domain: { _eq: $domain } }, { isDefault: { _eq: true } }]
+         }
+      ) {
+         brandPages(
+            where: {
+               isArchived: { _eq: false }
+               published: { _eq: true }
+               isAllowedToCrawl: { _eq: false }
+            }
+         ) {
+            route
+         }
+      }
+   }
+`
+export const LOCATION_KIOSK_VALIDATION = gql`
+   query LOCATION_KIOSK_VALIDATION($where: brands_locationKiosk_bool_exp!) {
+      brands_locationKiosk(where: $where) {
+         id
+      }
+   }
+`
+
+export const PRODUCT_ONE = gql`
+   query Product($id: Int!, $params: jsonb!) {
+      product(id: $id) {
+         id
+         name
+         type
+         assets
+         tags
+         VegNonVegType
+         additionalText
+         description
+         price: priceByLocation(args: { params: $params })
+         discount: discountByLocation(args: { params: $params })
+         isPopupAllowed
+         isPublished: publishedByLocation(args: { params: $params })
+         isAvailable: availabilityByLocation(args: { params: $params })
+         defaultProductOptionId
+         defaultCartItem: defaultCartItemByLocation(args: { params: $params })
+         productionOptionSelectionStatement
+         subCategory
+         productOptions(
+            where: { isArchived: { _eq: false } }
+            order_by: { position: desc_nulls_last }
+         ) {
+            id
+            position
+            type
+            label
+            price: priceByLocation(args: { params: $params })
+            discount: discountByLocation(args: { params: $params })
+            cartItem: cartItemByLocation(args: { params: $params })
+            isPublished: publishedByLocation(args: { params: $params })
+            isAvailable: availabilityByLocation(args: { params: $params })
+            additionalModifiers(where: { isActive: { _eq: true } }) {
+               type
+               label
+               linkedToModifierCategoryOptionId
+               productOptionId
+               modifierId
+               modifier {
+                  id
+                  name
+                  categories(
+                     where: { isVisible: { _eq: true } }
+                     order_by: { position: desc_nulls_last }
+                  ) {
+                     id
+                     name
+                     isRequired
+                     type
+                     limits
+                     options(
+                        where: { isVisible: { _eq: true } }
+                        order_by: { position: desc_nulls_last }
+                     ) {
+                        id
+                        name
+                        price: priceByLocation(args: { params: $params })
+                        discount: discountByLocation(args: { params: $params })
+                        quantity
+                        image
+                        isActive
+                        additionalModifierTemplateId
+                        isAdditionalModifierRequired
+                        additionalModifierTemplate {
+                           id
+                           name
+                           categories(
+                              where: { isVisible: { _eq: true } }
+                              order_by: { position: desc_nulls_last }
+                           ) {
+                              id
+                              name
+                              isRequired
+                              type
+                              limits
+                              options(
+                                 where: { isVisible: { _eq: true } }
+                                 order_by: { position: desc_nulls_last }
+                              ) {
+                                 id
+                                 name
+                                 price: priceByLocation(
+                                    args: { params: $params }
+                                 )
+                                 discount: discountByLocation(
+                                    args: { params: $params }
+                                 )
+                                 quantity
+                                 image
+                                 isActive
+                                 additionalModifierTemplateId
+                                 isAdditionalModifierRequired
+                                 sachetItemId
+                                 ingredientSachetId
+                                 cartItem: cartItemByLocation(
+                                    args: { params: $params }
+                                 )
+                              }
+                           }
+                        }
+                        sachetItemId
+                        ingredientSachetId
+                        cartItem: cartItemByLocation(args: { params: $params })
+                     }
+                  }
+               }
+            }
+            modifier {
+               id
+               name
+               categories(
+                  where: { isVisible: { _eq: true } }
+                  order_by: { position: desc_nulls_last }
+               ) {
+                  id
+                  name
+                  isRequired
+                  type
+                  limits
+                  options(
+                     where: { isVisible: { _eq: true } }
+                     order_by: { position: desc_nulls_last }
+                  ) {
+                     id
+                     name
+                     price: priceByLocation(args: { params: $params })
+                     discount: discountByLocation(args: { params: $params })
+                     quantity
+                     image
+                     isActive
+                     additionalModifierTemplateId
+                     isAdditionalModifierRequired
+                     sachetItemId
+                     ingredientSachetId
+                     cartItem: cartItemByLocation(args: { params: $params })
+                     additionalModifierTemplate {
+                        id
+                        name
+                        categories(
+                           where: { isVisible: { _eq: true } }
+                           order_by: { position: desc_nulls_last }
+                        ) {
+                           id
+                           name
+                           isRequired
+                           type
+                           limits
+                           options(
+                              where: { isVisible: { _eq: true } }
+                              order_by: { position: desc_nulls_last }
+                           ) {
+                              id
+                              name
+                              price: priceByLocation(args: { params: $params })
+                              discount: discountByLocation(
+                                 args: { params: $params }
+                              )
+                              quantity
+                              image
+                              isActive
+                              additionalModifierTemplateId
+                              isAdditionalModifierRequired
+                              sachetItemId
+                              ingredientSachetId
+                              cartItem: cartItemByLocation(
+                                 args: { params: $params }
+                              )
+                           }
+                        }
+                     }
+                  }
+               }
+            }
+         }
+      }
+   }
 `

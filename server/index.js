@@ -49,13 +49,10 @@ import {
    createScheduledEvent,
    sendOtp
 } from './entities/events'
-import {
-   handleCustomerSignup,
-   handleSubscriptionCancelled,
-   emailTemplateHandler
-} from './entities/emails'
+import { emailTemplateHandler } from './entities/emails'
 
 import './lib/stripe'
+import { InvoiceRouter } from './entities/invoice'
 
 const router = express.Router()
 
@@ -89,6 +86,7 @@ router.use('/api/experience', ExperienceRouter)
 router.use('/api/cards', CardRouter)
 router.use('/api/refund', RefundRouter)
 router.use('/api/payment', NewPaymentRouter)
+router.use('/api/invoice', InvoiceRouter)
 
 router.get('/api/account-details/:id', getAccountDetails)
 
@@ -112,11 +110,6 @@ router.post('/event/create-cron-event', createCronEvent)
 router.post('/event/create-new-scheduled-event', createScheduledEvent)
 router.post('/event/send-otp', sendOtp)
 
-router.post('/webhook/emails/handle-customer-signup', handleCustomerSignup)
-router.post(
-   '/webhook/emails/handle-subscription-cancelled',
-   handleSubscriptionCancelled
-)
 router.use('/api/developer', DeveloperRouter)
 
 router.post('/webhook/email-template-handler', emailTemplateHandler)

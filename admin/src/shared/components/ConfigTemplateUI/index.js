@@ -32,12 +32,13 @@ const ConfigUI = ({
    isChangeSaved,
    setIsSavedChange,
    noneditMode,
-   setLinkedModuleId,
+   setLinkedModuleId = null,
    setMode,
-   mode,
+   mode = 'editing',
    saveAllSettings,
    setSaveAllSettings,
    alertShow,
+   singleConfigUI = false
 }) => {
    const [configJSON, setConfigJSON] = React.useState({})
    const [fields, setFields] = React.useState([])
@@ -358,8 +359,9 @@ const ConfigUI = ({
 
    return (
       <Styles.ConfigTemplateUI>
+         {/* By Default singleConfigUI is false */}
          {config ? (
-            <>
+            !singleConfigUI ? (
                <Card
                   title={
                      identifier ? (
@@ -418,6 +420,7 @@ const ConfigUI = ({
                      <div key={index}>{config}</div>
                   ))}
 
+                  {/*modal for warning 👇*/}
                   <Modal
                      centered
                      visible={modalVisible}
@@ -456,12 +459,15 @@ const ConfigUI = ({
                         </Content>
                      </Layout>
                   </Modal>
-               </Card>
-            </>
+                  {/*modal for warning 👆*/}
+               </Card>) : <> {fields.map((config, index) => (
+                  <div key={index}>{config}</div>
+               ))}</>
+
          ) : (
             <Flex container justifyContent="center" padding="16px">
                <Filler
-                  message="No brand's setting selected yet"
+                  message="There are no settings available for this component."
                   width="60%"
                   height="60%"
                />

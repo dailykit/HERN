@@ -1,31 +1,31 @@
-import { useQuery } from '@apollo/react-hooks'
+import { useQuery, useSubscription } from '@apollo/react-hooks'
 import React, { useState } from 'react'
 import { PRODUCTS, PRODUCTS_BY_CATEGORY } from '../../../graphql'
 import { useConfig } from '../../../lib'
 
 export const useKioskMenu = collectionIds => {
-   const { brand, isConfigLoading, kioskDetails } = useConfig()
+   const { brand, isConfigLoading, kioskDetails, brandLocation } = useConfig()
    const [menuData, setMenuData] = useState({
       categories: [],
       allProductIds: [],
       isMenuLoading: true,
    })
    const [status, setStatus] = useState('loading')
+   const [productsList, setProductsList] = useState([])
    const [hydratedMenu, setHydratedMenu] = React.useState([])
 
    const argsForByLocation = React.useMemo(
       () => ({
-         params: {
-            brandId: brand?.id,
-            locationId: kioskDetails?.locationId,
-         },
+         brandId: brand?.id,
+         locationId: kioskDetails?.locationId,
+         brand_locationId: brandLocation?.id,
       }),
-      [brand, kioskDetails?.locationId]
+      [brand, kioskDetails?.locationId, brandLocation?.id]
    )
 
    const date = React.useMemo(() => new Date(Date.now()).toISOString(), [])
    // get all categories by locationId, brandId and collection(s) provide to kiosk(by config)
-   const { error: menuError } = useQuery(PRODUCTS_BY_CATEGORY, {
+   const { error: menuError } = useSubscription(PRODUCTS_BY_CATEGORY, {
       skip: isConfigLoading || !brand?.id,
       variables: {
          params: {
@@ -35,10 +35,12 @@ export const useKioskMenu = collectionIds => {
                collectionIdArray: collectionIds,
             }),
             locationId: kioskDetails?.locationId,
+            brand_locationId: brandLocation?.id,
          },
       },
-      onCompleted: data => {
+      onSubscriptionData: ({ subscriptionData }) => {
          // console.log('v2Data', data)
+         const { data } = subscriptionData
          if (data?.onDemand_getMenuV2copy?.length) {
             const [res] = data.onDemand_getMenuV2copy
             const { menu } = res.data
@@ -51,55 +53,36 @@ export const useKioskMenu = collectionIds => {
             }))
          }
       },
-      onError: error => {
+   })
+
+   React.useEffect(() => {
+      if (menuError) {
          setMenuData(prev => ({
             ...prev,
             isMenuLoading: false,
          }))
          setStatus('error')
-         console.log(error)
-      },
-   })
+         console.log(menuError)
+      }
+   }, [menuError])
 
    // get all products from productIds getting from PRODUCT_BY_CATEGORY
-   const { loading: productsLoading, error: productsError } = useQuery(
+   const { loading: productsLoading, error: productsError } = useSubscription(
       PRODUCTS,
       {
          skip: menuData.isMenuLoading,
          variables: {
             ids: menuData.allProductIds,
-            priceArgs: argsForByLocation,
-            discountArgs: argsForByLocation,
-            defaultCartItemArgs: argsForByLocation,
-            productOptionPriceArgs: argsForByLocation,
-            productOptionDiscountArgs: argsForByLocation,
-            productOptionCartItemArgs: argsForByLocation,
-            modifierCategoryOptionPriceArgs: argsForByLocation,
-            modifierCategoryOptionDiscountArgs: argsForByLocation,
-            modifierCategoryOptionCartItemArgs: argsForByLocation,
+            params: argsForByLocation,
          },
          // fetchPolicy: 'network-only',
-         onCompleted: data => {
-            if (data && data.products.length && hydratedMenu.length === 0) {
-               const updatedMenu = menuData.categories.map(category => {
-                  const updatedProducts = category.products
-                     .map(productId => {
-                        const found = data.products.find(
-                           ({ id }) => id === productId
-                        )
-                        if (found) {
-                           return found
-                        }
-                        return null
-                     })
-                     .filter(Boolean)
-                  return {
-                     ...category,
-                     products: updatedProducts,
-                  }
-               })
+         onSubscriptionData: ({ subscriptionData }) => {
+            if (
+               subscriptionData.data &&
+               subscriptionData.data.products.length
+            ) {
+               setProductsList(subscriptionData.data.products)
                setStatus('success')
-               setHydratedMenu(updatedMenu)
             }
          },
          onError: error => {
@@ -108,6 +91,25 @@ export const useKioskMenu = collectionIds => {
          },
       }
    )
-
+   React.useEffect(() => {
+      if (productsList.length && menuData.categories.length) {
+         const updatedMenu = menuData.categories.map(category => {
+            const updatedProducts = category.products
+               .map(productId => {
+                  const found = productsList.find(({ id }) => id === productId)
+                  if (found) {
+                     return found
+                  }
+                  return null
+               })
+               .filter(Boolean)
+            return {
+               ...category,
+               products: updatedProducts,
+            }
+         })
+         setHydratedMenu(updatedMenu)
+      }
+   }, [productsList, menuData])
    return { status, hydratedMenu }
 }

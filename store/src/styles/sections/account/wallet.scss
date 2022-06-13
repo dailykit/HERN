@@ -12,9 +12,6 @@
    padding-left: 1.5rem;
    padding-right: 1.5rem;
    width: 100%;
-   @media (min-width: 768px) {
-      width: 50%;
-   }
 }
 
 .hern-wallet__header {
@@ -40,13 +37,13 @@
    line-height: 38px;
 }
 
-.hern-wallet__total_balance_title{
+.hern-wallet__total_balance_title {
    font-weight: 500;
    font-size: 16px;
    color: #202020;
 }
 
-.hern-wallet__transaction_title{
+.hern-wallet__transaction_title {
    font-weight: 700;
    font-size: 20px;
    line-height: 22px;
@@ -56,7 +53,7 @@
    margin-bottom: 10px;
 }
 
-.hern-wallet__balance{
+.hern-wallet__balance {
    font-family: 'Roboto';
    font-weight: 700;
    font-size: 23px;
@@ -65,13 +62,12 @@
    margin-left: 15px;
 }
 
-.hern-wallet__table_wrapper{
-   overflow-x: auto;
+.hern-wallet__table_wrapper {
    width: 100%;
 }
 
 .hern-wallet__table {
-   margin: 0.5rem 0px;
+   margin: 2.5rem 0.2rem;
    table-layout: auto;
    font-weight: 400;
    font-size: 14px;
@@ -86,40 +82,41 @@
 }
 .hern-wallet__table__cell {
    border-width: 1px;
-   padding: 0.55rem 0.5rem;
-   min-width: 100px;
+   padding: 18px;
+   min-width: 99px;
 }
 
-.hern-wallet__no_txn{
-   font-size: 14px;
+.hern-wallet__no_txn {
+   position: relative;
+   top: 20px;
 }
 
-.hern-wallet__referral_code_block{
+.hern-wallet__referral_code_block {
    color: #202020;
    margin-top: 10px;
    margin-bottom: 25px;
-   .hern-wallet__referral_code_title{
+   .hern-wallet__referral_code_title {
       font-weight: 700;
       font-size: 16px;
       line-height: 19px;
       margin-bottom: 5.5px;
    }
 
-   .hern-wallet__referral_code_field{
-      border: 1px dashed var(--hern-accent);
-      box-sizing: border-box;
-      border-radius: 10px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-   }
-   .hern-wallet__referral_code{
+   // .hern-wallet__referral_code_field {
+   //    border: 1px dashed var(--hern-accent);
+   //    box-sizing: border-box;
+   //    border-radius: 10px;
+   //    display: flex;
+   //    justify-content: space-between;
+   //    align-items: center;
+   // }
+   .hern-wallet__referral_code {
       font-weight: 500;
       font-size: 16px;
       line-height: 19px;
       padding: 0px 10px;
    }
-   .hern-wallet__referral_code_copy{
+   .hern-wallet__referral_code_copy {
       background-color: var(--hern-accent);
       color: #fff;
       border-radius: 0px 10px 10px 0px;
@@ -139,25 +136,77 @@
       line-height: 28px;
    }
 
-   .hern-wallet__referral_code_block{
-      .hern-wallet__referral_code{
+   .hern-wallet__referral_code_block {
+      .hern-wallet__referral_code {
          font-size: 11px;
          line-height: 11px;
       }
-      .hern-wallet__referral_code_copy{
+      .hern-wallet__referral_code_copy {
          font-size: 12px;
       }
    }
 
-   .hern-wallet__table__cell{
+   .hern-wallet__table__cell {
       padding: 0.25rem 0.2rem;
    }
 }
 
-@media (max-width: 376px){
-   .hern-wallet__referral_code_block{
-      .hern-wallet__referral_code_copy{
+@media (max-width: 376px) {
+   .hern-wallet__referral_code_block {
+      .hern-wallet__referral_code_copy {
          font-size: 9px;
+      }
+   }
+}
+.hern-wallet_no_txn {
+   position: relative;
+   bottom: 7px;
+   left: 27px;
+}
+
+@media screen and (max-width: 767px) {
+   .hern-wallet_no_txn {
+      left: -6px;
+      top: 30px;
+   }
+   .hern-wallet__table__cell {
+      border-width: 1px;
+      min-width: 60px;
+      padding: 10px;
+   }
+}
+.hern-wallet-wallet-illustration {
+   background: #ffffff;
+   box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.25);
+   border-radius: 20px;
+   padding: 96px;
+   position: relative;
+   margin-bottom: 96px;
+   > p {
+      color: #2e186a;
+      text-align: center;
+      margin-top: 16px;
+      font-weight: 700;
+   }
+   > a {
+      background-color: var(--hern-accent);
+      color: #fff;
+      padding: 6px 12px;
+      position: absolute;
+      border-radius: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 280px;
+      bottom: -24px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-weight: 500;
+      > span {
+         display: inline-block;
+         background-color: #fff;
+         padding: 8px 12px;
+         border-radius: 6px;
       }
    }
 }

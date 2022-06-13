@@ -1,4 +1,4 @@
-import { useQuery } from '@apollo/react-hooks'
+import { useQuery, useSubscription } from '@apollo/react-hooks'
 import React, { useState, useEffect } from 'react'
 import { Loader } from '../..'
 import { PRODUCTS } from '../../../graphql'
@@ -17,17 +17,17 @@ import {
 import { HernLazyImage } from '../../../utils/hernImage'
 
 export const ProductGalleryKiosk = ({ config }) => {
-   const { brand, isConfigLoading, kioskDetails, configOf } = useConfig()
+   const { brand, isConfigLoading, kioskDetails, configOf, brandLocation } =
+      useConfig()
    const { locale, dynamicTrans, t } = useTranslation()
 
    const argsForByLocation = React.useMemo(
       () => ({
-         params: {
-            brandId: brand?.id,
-            locationId: kioskDetails?.locationId,
-         },
+         brandId: brand?.id,
+         locationId: kioskDetails?.locationId,
+         brand_locationId: brandLocation?.id,
       }),
-      [brand, kioskDetails]
+      [brand, kioskDetails?.locationId, brandLocation?.id]
    )
 
    const theme = configOf('theme-color', 'Visual')
@@ -53,36 +53,31 @@ export const ProductGalleryKiosk = ({ config }) => {
       dynamicTrans(languageTags)
    }, [locale])
 
-   const { loading: productsLoading, error: productsError } = useQuery(
+   const { loading: productsLoading, error: productsError } = useSubscription(
       PRODUCTS,
       {
          skip:
             !config.productGallery.showProductGallery.value || isConfigLoading,
          variables: {
             ids: config.productGallery.products.value,
-            priceArgs: argsForByLocation,
-            discountArgs: argsForByLocation,
-            defaultCartItemArgs: argsForByLocation,
-            productOptionPriceArgs: argsForByLocation,
-            productOptionDiscountArgs: argsForByLocation,
-            productOptionCartItemArgs: argsForByLocation,
-            modifierCategoryOptionPriceArgs: argsForByLocation,
-            modifierCategoryOptionDiscountArgs: argsForByLocation,
-            modifierCategoryOptionCartItemArgs: argsForByLocation,
+            params: argsForByLocation,
          },
          // fetchPolicy: 'network-only',
-         onCompleted: data => {
+         onSubscriptionData: ({ subscriptionData }) => {
+            const { data } = subscriptionData
             if (data && data.products.length > 0) {
                setProducts(data.products)
                setStatus('success')
             }
          },
-         onError: error => {
-            setStatus('error')
-            console.log('Error: ', error)
-         },
       }
    )
+
+   React.useEffect(() => {
+      if (productsError) {
+         setStatus('error')
+      }
+   }, [productsError])
 
    if (!config.productGallery.showProductGallery.value) {
       return null
@@ -152,11 +147,18 @@ export const ProductGalleryKiosk = ({ config }) => {
             />
             <Carousel
                ref={carousalRef}
-               slidesToShow={4}
+               slidesToShow={
+                  products.filter(product => product.isPublished).length < 4
+                     ? products.filter(product => product.isPublished).length
+                     : 4
+               }
                slidesToScroll={4}
                infinite={false}
             >
                {products.map(eachProduct => {
+                  if (!eachProduct.isPublished) {
+                     return null
+                  }
                   return (
                      <ProductGalleryCard
                         product={eachProduct}
@@ -242,10 +244,13 @@ const ProductGalleryCard = ({ product, config }) => {
             })}
             buttonConfig={config.kioskSettings.buttonSettings}
             onClick={() => {
-               addToCart(product.defaultCartItem, 1)
+               if (product.isPublished && product.isAvailable) {
+                  addToCart(product.defaultCartItem, 1)
+               }
             }}
+            disabled={!product.isAvailable}
          >
-            {t('Add')}
+            {product.isAvailable ? t('Add') : t('Out of Stock')}
          </KioskButton>
       </div>
    )

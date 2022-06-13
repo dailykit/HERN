@@ -33,6 +33,7 @@ import { toast } from 'react-toastify'
 import SpecificPriceTunnel from './BulkActionTunnel/Tunnel/specificPriceTunnel'
 import { useWindowSize } from '../../../../hooks'
 import { InlineLoader } from '../../..'
+import { CloneBrandLocationOperation } from '../../../DashboardRightPanel/tunnels/cloneBrandLocationOperation'
 
 const LiveMenu = () => {
    const brandDetail = useParams()
@@ -229,6 +230,13 @@ const LiveMenuProductTable = ({ brandDetail }) => {
          field: 'specificDiscount',
          hozAlign: 'center',
          headerFilter: true,
+      },
+      {
+         title: 'Product Category',
+         field: 'category',
+         headerFilter: true,
+         hozAlign: 'center',
+         width: 150,
       },
       {
          title: 'Published',
@@ -454,6 +462,11 @@ const LiveMenuProductTable = ({ brandDetail }) => {
                   setSelectedRows={setSelectedRows}
                />
             </Tunnel>
+            <Tunnel layer={2} size="md">
+               <CloneBrandLocationOperation
+                  closeTunnel={() => closeTunnel(2)}
+               />
+            </Tunnel>
          </Tunnels>
          <Tunnels tunnels={popupTunnels}>
             <Tunnel layer={1} size="md">
@@ -508,6 +521,7 @@ const LiveMenuProductOptionTable = ({ brandDetail }) => {
                // )
                return {
                   id: productOptions.id,
+                  label: productOptions.label,
                   name: productOptions.product.name,
                   brandId: brandDetail.brandId,
                   brand_locationId: brandDetail.brandLocationId
@@ -597,7 +611,17 @@ const LiveMenuProductOptionTable = ({ brandDetail }) => {
          //    console.log('cell clicked ', e, cell)
          // },
       },
-
+      {
+         title: 'Label',
+         field: 'label',
+         headerFilter: true,
+         frozen: true,
+         width: 120,
+         hozAlign: 'center',
+         // cellClick: function (e, cell) {
+         //    console.log('cell clicked ', e, cell)
+         // },
+      },
       {
          title: 'Product Name',
          field: 'name',
@@ -629,6 +653,13 @@ const LiveMenuProductOptionTable = ({ brandDetail }) => {
          field: 'specificDiscount',
          headerFilter: true,
          hozAlign: 'center',
+      },
+      {
+         title: 'Product Category',
+         field: 'category',
+         headerFilter: true,
+         hozAlign: 'center',
+         width: 150,
       },
       {
          title: 'Published',
@@ -979,7 +1010,7 @@ const ActionBar = ({
             <Flex
                container
                as="header"
-               width="25%"
+               width="45%"
                alignItems="center"
                justifyContent="space-between"
             >
@@ -991,7 +1022,7 @@ const ActionBar = ({
                      : `${selectedRows.length} ${title}s`}{' '}
                   selected
                </Text>
-               <ButtonGroup align="left">
+               <ButtonGroup align="left" style={{ alignItems: 'center' }}>
                   <TextButton
                      type="ghost"
                      size="sm"
@@ -1006,6 +1037,9 @@ const ActionBar = ({
                      }
                   >
                      APPLY BULK ACTIONS
+                  </TextButton>
+                  <TextButton type="outline" onClick={() => openTunnel(2)}>
+                     Clone
                   </TextButton>
                </ButtonGroup>
             </Flex>

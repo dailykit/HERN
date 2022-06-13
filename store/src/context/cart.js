@@ -15,6 +15,7 @@ import { useConfig } from '../lib'
 import { useToasts } from 'react-toast-notifications'
 import { combineCartItems, useQueryParamState, isKiosk } from '../utils'
 import { useTranslation } from './language'
+import { indexOf } from 'lodash'
 
 export const CartContext = React.createContext()
 
@@ -38,8 +39,15 @@ const reducer = (state, { type, payload }) => {
 }
 
 export const CartProvider = ({ children }) => {
-   const { brand, kioskId, selectedOrderTab, locationId, dispatch, orderTabs } =
-      useConfig()
+   const {
+      brand,
+      kioskId,
+      selectedOrderTab,
+      locationId,
+      dispatch,
+      orderTabs,
+      brandLocation,
+   } = useConfig()
    const { addToast } = useToasts()
    const { t } = useTranslation()
    const isKioskMode = isKiosk()
@@ -58,7 +66,18 @@ export const CartProvider = ({ children }) => {
    const [combinedCartItems, setCombinedCartData] = useState(null)
    const [showCartIconToolTip, setShowCartIconToolTip] = useState(false)
    const [dineInTableInfo, setDineInTableInfo] = useState(null)
-
+   const [
+      isCartValidByProductAvailability,
+      setIsCartValidByProductAvailability,
+   ] = useState(false)
+   const argsForByLocation = React.useMemo(
+      () => ({
+         brandId: brand?.id,
+         locationId: locationId,
+         brand_locationId: brandLocation?.id,
+      }),
+      [brand, locationId, brandLocation?.id]
+   )
    React.useEffect(() => {
       // case 1 - user is not authenticated
       //case 1.1 if there is cart-id in local storage , set storedCartId
@@ -133,9 +152,50 @@ export const CartProvider = ({ children }) => {
                },
             }),
          },
+         params: argsForByLocation,
       },
       fetchPolicy: 'no-cache',
    })
+
+   React.useEffect(() => {
+      if (cartItemsData?.cartItems) {
+         for (let node of cartItemsData?.cartItems) {
+            let isCartValid = true
+            const selectedProductOption = node.product.productOptions.find(
+               option => option.id === node.childs[0]?.productOption?.id
+            )
+
+            if (!isEmpty(selectedProductOption)) {
+               isCartValid =
+                  node.product.isAvailable &&
+                  node.product.isPublished &&
+                  !node.product.isArchived &&
+                  selectedProductOption.isAvailable &&
+                  selectedProductOption.isPublished &&
+                  !selectedProductOption.isArchived
+            } else {
+               isCartValid =
+                  node.product.isAvailable &&
+                  node.product.isPublished &&
+                  !node.product.isArchived
+            }
+
+            if (!isCartValid) {
+               setIsCartValidByProductAvailability(false)
+               return
+            }
+
+            if (
+               indexOf(cartItemsData?.cartItems, node) ===
+               cartItemsData?.cartItems.length - 1
+            ) {
+               if (isCartValid) {
+                  setIsCartValidByProductAvailability(true)
+               }
+            }
+         }
+      }
+   }, [cartItemsData?.cartItems])
 
    useEffect(() => {
       if (
@@ -316,33 +376,43 @@ export const CartProvider = ({ children }) => {
             break
          case 'PREORDER_PICKUP':
             customerAddressFromLocal = JSON.parse(
-               localStorage.getItem('pickupLocation')
+               localStorage.getItem('storeLocation')
             )
             break
          case 'ONDEMAND_PICKUP':
             customerAddressFromLocal = JSON.parse(
-               localStorage.getItem('pickupLocation')
+               localStorage.getItem('storeLocation')
+            )
+            break
+         case 'ONDEMAND_DINEIN':
+            customerAddressFromLocal = JSON.parse(
+               localStorage.getItem('storeLocation')
+            )
+            break
+         case 'SCHEDULE_DINEIN':
+            customerAddressFromLocal = JSON.parse(
+               localStorage.getItem('storeLocation')
             )
             break
       }
 
       const customerAddress = {
-         line1: customerAddressFromLocal?.line1,
-         line2: customerAddressFromLocal?.line2,
-         city: customerAddressFromLocal?.city,
-         state: customerAddressFromLocal?.state,
-         country: customerAddressFromLocal?.country,
-         zipcode: customerAddressFromLocal?.zipcode,
-         notes: customerAddressFromLocal?.notes,
-         label: customerAddressFromLocal?.label,
+         line1: customerAddressFromLocal?.line1 || '',
+         line2: customerAddressFromLocal?.line2 || '',
+         city: customerAddressFromLocal?.city || '',
+         state: customerAddressFromLocal?.state || '',
+         country: customerAddressFromLocal?.country || '',
+         zipcode: customerAddressFromLocal?.zipcode || '',
+         notes: customerAddressFromLocal?.notes || '',
+         label: customerAddressFromLocal?.label || '',
          lat:
             customerAddressFromLocal?.latitude?.toString() ||
             customerAddressFromLocal?.lat?.toString(),
          lng:
             customerAddressFromLocal?.longitude?.toString() ||
             customerAddressFromLocal?.lng?.toString(),
-         landmark: customerAddressFromLocal?.landmark || null,
-         searched: '',
+         landmark: customerAddressFromLocal?.landmark || '',
+         searched: customerAddressFromLocal?.searched || '',
       }
       if (!isAuthenticated) {
          //without login
@@ -453,6 +523,9 @@ export const CartProvider = ({ children }) => {
                customerKeycloakId: {
                   _eq: user?.keycloakId,
                },
+               source: {
+                  _neq: 'subscription',
+               },
             },
          },
          skip: !(brand?.id && user?.keycloakId && orderTabs.length > 0),
@@ -521,6 +594,7 @@ export const CartProvider = ({ children }) => {
                         secondaryText: `${addressInCart.city}, ${addressInCart.state} ${addressInCart.zipcode}, ${addressInCart.country}`,
                         state: addressInCart.state,
                         zipcode: addressInCart.zipcode,
+                        searched: addressInCart.searched || '',
                      }
                      const orderTabForLocal =
                         subscriptionData.data.carts[0].fulfillmentInfo?.type ||
@@ -528,7 +602,7 @@ export const CartProvider = ({ children }) => {
                            eachOrderTab =>
                               eachOrderTab.id ===
                               subscriptionData.data.carts[0].orderTabId
-                        ).orderFulfillmentTypeLabel
+                        )?.orderFulfillmentTypeLabel
                      const locationIdForLocal =
                         subscriptionData.data.carts[0].locationId
                      localStorage.setItem(
@@ -540,7 +614,7 @@ export const CartProvider = ({ children }) => {
                         orderTabForLocal === 'PREORDER_PICKUP'
                      ) {
                         localStorage.setItem(
-                           'pickupLocation',
+                           'storeLocation',
                            JSON.stringify(addressToBeSaveInLocal)
                         )
                      } else if (
@@ -652,6 +726,7 @@ export const CartProvider = ({ children }) => {
                   update: updateCart,
                },
             },
+            isCartValidByProductAvailability,
          }}
       >
          {children}

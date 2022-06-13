@@ -20,6 +20,7 @@ import {
    ListOptions,
    TunnelHeader,
    useSingleList,
+   Text,
 } from '@dailykit/ui'
 
 import { InlineLoader } from '../../../'
@@ -31,7 +32,7 @@ import { MUTATIONS, QUERIES } from '../../graphql'
 export const CustomerTunnel = () => {
    const [search, setSearch] = React.useState('')
    const [customers, setCustomers] = React.useState([])
-   const { mode, methods, brand, tunnels, dispatch } = useManual()
+   const { mode, methods, brand, tunnels, dispatch, location } = useManual()
    const [isCustomersLoading, setIsCustomersLoading] = React.useState(true)
    const [customerTunnels, openCustomerTunnel, closeCustomerTunnel] =
       useTunnel(1)
@@ -61,7 +62,7 @@ export const CustomerTunnel = () => {
       if (mode === 'ONDEMAND') {
          await methods.cart.create.mutate(current)
       } else {
-         tunnels.open(4)
+         tunnels.open(5)
       }
    }
 
@@ -69,7 +70,7 @@ export const CustomerTunnel = () => {
       <>
          <TunnelHeader
             title="Select Customer"
-            close={() => tunnels.close(3)}
+            close={() => tunnels.close(4)}
             right={{
                action: () => onSave(),
                disabled: !current?.id,
@@ -78,6 +79,11 @@ export const CustomerTunnel = () => {
             }}
          />
          <Flex padding="16px" overflowY="auto" height="calc(100vh - 196px)">
+            <div style={{ margin: '5px 10px' }}>
+               <Text as="h3">Brand:{brand?.title || 'N/A'}</Text>
+               <Text as="h3">Location:{location?.label || 'N/A'}</Text>
+            </div>
+
             {isCustomersLoading ? (
                <InlineLoader />
             ) : (

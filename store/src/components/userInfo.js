@@ -42,6 +42,7 @@ export const UserInfo = props => {
                   settingCartinfo={settingCartinfo}
                   setSettingCartinfo={setSettingCartinfo}
                   handleClose={handleClose}
+                  cart={props.cart}
                   {...props}
                />
             ) : (
@@ -50,11 +51,12 @@ export const UserInfo = props => {
                   handleOpen={() => setIsUserFormOpen(true)}
                   handleEdit={handleEdit}
                   setSettingCartinfo={setSettingCartinfo}
+                  cart={props.cart}
                />
             )
          ) : (
             <>
-               <UserDetails handleEdit={handleEdit} />
+               <UserDetails handleEdit={handleEdit} cart={props.cart} />
                <Tunnel.Right
                   title={
                      <div style={{ display: 'flex', alignItems: 'center' }}>
@@ -70,6 +72,7 @@ export const UserInfo = props => {
                   <UserInfoForm
                      tunnel={true}
                      handleClose={handleClose}
+                     cart={props.cart}
                      {...props}
                   />
                </Tunnel.Right>
@@ -85,12 +88,12 @@ const UserInfoForm = props => {
       handleClose,
       settingCartinfo,
       setSettingCartinfo,
+      cart,
    } = props
-   const { cartState, methods } = React.useContext(CartContext)
+   const { methods } = React.useContext(CartContext)
    const { user } = useUser()
    const { addToast } = useToasts()
    const { t } = useTranslation()
-   const { cart } = cartState
    const {
       register,
       handleSubmit,
@@ -268,14 +271,14 @@ const UserDetails = ({
    handleOpen,
    settingCartinfo,
    setSettingCartinfo,
+   cart,
 }) => {
-   const { cartState } = React.useContext(CartContext)
    const isSmallerDevice = isClient && window.innerWidth < 768
    const { t } = useTranslation()
    const hasUserInfo =
-      cartState?.cart?.customerInfo?.customerFirstName?.length ||
-      cartState?.cart?.customerInfo?.customerLastName?.length ||
-      cartState?.cart?.customerInfo?.customerPhone?.length
+      cart?.customerInfo?.customerFirstName?.length ||
+      cart?.customerInfo?.customerLastName?.length ||
+      cart?.customerInfo?.customerPhone?.length
 
    React.useEffect(() => {
       if (!isSmallerDevice && !hasUserInfo && !settingCartinfo) {
@@ -299,12 +302,12 @@ const UserDetails = ({
                   </span>
                   <div>
                      <span>
-                        {cartState?.cart?.customerInfo?.customerFirstName +
+                        {cart?.customerInfo?.customerFirstName +
                            ' ' +
-                           cartState?.cart?.customerInfo?.customerLastName}
+                           cart?.customerInfo?.customerLastName}
                      </span>
                      <span className="hern-user-info--closed__phone-no">
-                        {cartState?.cart?.customerInfo?.customerPhone}
+                        {cart?.customerInfo?.customerPhone}
                      </span>
                   </div>
                </div>

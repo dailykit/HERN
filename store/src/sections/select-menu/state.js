@@ -1,6 +1,6 @@
 import React from 'react'
 import moment from 'moment'
-import { isEmpty } from 'lodash'
+import { isEmpty, indexOf } from 'lodash'
 import { useRouter } from 'next/router'
 import { useToasts } from 'react-toast-notifications'
 import { useMutation, useQuery, useSubscription } from '@apollo/react-hooks'
@@ -32,7 +32,6 @@ const initialState = {
 }
 
 const reducers = (state, { type, payload }) => {
-
    switch (type) {
       case 'SET_WEEK': {
          return {
@@ -57,7 +56,6 @@ const reducers = (state, { type, payload }) => {
          }
       default:
          return state
-
    }
 }
 
@@ -83,7 +81,7 @@ const insertCartId = (node, cartId) => {
    return node
 }
 
-export const MenuProvider = ({ isCheckout, children }) => {
+export const MenuProvider = ({ isCheckout = false, children }) => {
    const router = useRouter()
    const { user } = useUser()
    const { addToast } = useToasts()
@@ -92,26 +90,86 @@ export const MenuProvider = ({ isCheckout, children }) => {
    const [cart, setCart] = React.useState({})
    const [fulfillment, setFulfillment] = React.useState({})
    const [isCustomerLoading, setIsCustomerLoading] = React.useState(true)
+   const [
+      isCartValidByProductAvailability,
+      setIsCartValidByProductAvailability,
+   ] = React.useState(false)
    const [state, dispatch] = React.useReducer(reducers, initialState)
+   const { locationId, brandLocation } = useConfig()
+   const argsForByLocation = React.useMemo(
+      () => ({
+         brandId: brand?.id,
+         locationId: locationId,
+         brand_locationId: brandLocation?.id,
+      }),
+      [brand, locationId, brandLocation?.id]
+   )
    const {
       error: occurenceCustomerError,
       loading: occurenceCustomerLoading,
       data: { subscriptionOccurenceCustomer: occurenceCustomer = {} } = {},
       subscribeToMore,
    } = useQuery(CART_BY_WEEK, {
-      skip: !state.week.id || !user.keycloakId || !user.brandCustomerId,
+      skip:
+         !state.week.id ||
+         !user.keycloakId ||
+         !user.brandCustomerId ||
+         !brand?.id ||
+         !locationId ||
+         !brandLocation?.id,
       variables: {
          weekId: state.week.id,
          keycloakId: user?.keycloakId,
          brand_customerId: user?.brandCustomerId,
+         params: argsForByLocation,
       },
       onCompleted: () => {
-         dispatch({ type: 'IS_CART_FULL', payload: false })
+         dispatch({
+            type: 'IS_CART_FULL',
+            payload: false,
+         })
          setIsCustomerLoading(false)
       },
    })
+   // check availability of product in cart
+   React.useEffect(() => {
+      if (occurenceCustomer?.cart?.products) {
+         for (let node of occurenceCustomer.cart.products) {
+            let isCartValid = true
+            const selectedProductOption = node.product.productOptions.find(
+               option => option.id === node.childs[0]?.productOption?.id
+            )
+            if (!isEmpty(selectedProductOption)) {
+               isCartValid =
+                  node.product.isAvailable &&
+                  node.product.isPublished &&
+                  !node.product.isArchived &&
+                  selectedProductOption.isAvailable &&
+                  selectedProductOption.isPublished &&
+                  !selectedProductOption.isArchived
+            } else {
+               isCartValid =
+                  node.product.isAvailable &&
+                  node.product.isPublished &&
+                  !node.product.isArchived
+            }
 
-   console.log(cart, 'Cart')
+            if (!isCartValid) {
+               setIsCartValidByProductAvailability(false)
+               return
+            }
+            if (
+               indexOf(occurenceCustomer.cart.products, node) ===
+               occurenceCustomer.cart.products.length - 1
+            ) {
+               if (isCartValid) {
+                  setIsCartValidByProductAvailability(true)
+               }
+            }
+         }
+      }
+   }, [occurenceCustomer?.cart?.products])
+
    React.useEffect(() => {
       if (
          !isCustomerLoading &&
@@ -133,7 +191,6 @@ export const MenuProvider = ({ isCheckout, children }) => {
                if (!subscriptionData.data) {
                   return prev
                }
-
                return JSON.parse(JSON.stringify(subscriptionData.data))
             },
          })
@@ -187,8 +244,7 @@ export const MenuProvider = ({ isCheckout, children }) => {
          },
       })
 
-   //query 
-
+   //query
 
    React.useEffect(() => {
       if (!loadingZipcode && !isEmpty(zipcode) && state.week?.fulfillmentDate) {
@@ -249,10 +305,10 @@ export const MenuProvider = ({ isCheckout, children }) => {
       variables: {
          id: user?.subscriptionId,
          where: {
-            subscriptionOccurenceView: {
-               isValid: { _eq: true },
-               isVisible: { _eq: true },
-            },
+            isValid: { _eq: true },
+            isVisible: { _eq: true },
+            // subscriptionOccurenceView: {
+            // },
             ...(Boolean(router.query.date) && {
                fulfillmentDate: {
                   _eq: router.query.date,
@@ -290,12 +346,13 @@ export const MenuProvider = ({ isCheckout, children }) => {
                   payload: subscription?.occurences[0],
                })
                if (!isCheckout) {
-                  const queryDate = new URL(location.href).searchParams.get('d')
+                  const queryDate =
+                     d || new URL(location.href).searchParams.get('d')
                   if (!queryDate) {
                      router.push(
                         getRoute(
                            '/menu?d=' +
-                           subscription?.occurences[0].fulfillmentDate
+                              subscription?.occurences[0].fulfillmentDate
                         )
                      )
                   }
@@ -311,8 +368,8 @@ export const MenuProvider = ({ isCheckout, children }) => {
                      router.push(
                         getRoute(
                            '/menu?d=' +
-                           subscription?.occurences[validWeekIndex]
-                              .fulfillmentDate
+                              subscription?.occurences[validWeekIndex]
+                                 .fulfillmentDate
                         )
                      )
                   }
@@ -383,11 +440,12 @@ export const MenuProvider = ({ isCheckout, children }) => {
       })
    }
 
-   const store = configOf('Store Availability', 'availability')?.storeAvailability
-
+   const store = configOf(
+      'Store Availability',
+      'availability'
+   )?.storeAvailability
    const addProduct = (item, product) => {
       dispatch({ type: 'CART_STATE', payload: 'SAVING' })
-
 
       const isSkipped = occurenceCustomer?.isSkipped
       if (occurenceCustomer?.validStatus?.hasCart) {
@@ -519,8 +577,8 @@ export const MenuProvider = ({ isCheckout, children }) => {
                   customerId: user.id,
                   source: 'subscription',
                   paymentStatus: 'PENDING',
-                  locationId: zipcode?.locationId,
                   address: user.defaultAddress,
+                  locationId: zipcode?.locationId,
                   fulfillmentInfo: fulfillment,
                   customerKeycloakId: user.keycloakId,
                   subscriptionOccurenceId: state.week.id,
@@ -654,13 +712,17 @@ export const MenuProvider = ({ isCheckout, children }) => {
          !Boolean(state.week?.id),
       ].every(node => node)
    )
-
       return <PageLoader />
 
    return (
       <MenuContext.Provider
          value={{
-            state: { ...state, occurenceCustomer: cart, fulfillment },
+            state: {
+               ...state,
+               occurenceCustomer: cart,
+               fulfillment,
+               isCartValidByProductAvailability,
+            },
             methods: {
                products: {
                   add: addProduct,

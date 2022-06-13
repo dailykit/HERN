@@ -2,9 +2,9 @@ import React from 'react'
 import { useRouter } from 'next/router'
 import tw, { styled, css } from 'twin.macro'
 import { useToasts } from 'react-toast-notifications'
-import { useMutation, useSubscription } from '@apollo/react-hooks'
+import { useSubscription } from '@apollo/react-hooks'
 
-import { useConfig, usePayment } from '../../lib'
+import { useConfig } from '../../lib'
 import * as Icon from '../../assets/icons'
 import OrderInfo from '../../sections/OrderInfo'
 import { OnDemandCart } from '../cart'
@@ -20,6 +20,7 @@ import {
    Button,
    HelperBar,
    PaymentOptionsRenderer,
+   UserInfo,
 } from '../../components'
 import {
    // usePayment,
@@ -35,20 +36,10 @@ import Link from 'next/link'
 
 export const Checkout = props => {
    const router = useRouter()
-   const { id } = useQueryParams()
+   const { id } = router.query
    const { isAuthenticated, isLoading, user } = useUser()
-   const {
-      isPaymentLoading,
-      paymentLifeCycleState,
-      paymentInfo,
-      profileInfo,
-      setPaymentInfo,
-      setIsProcessingPayment,
-      setProfileInfo,
-      updatePaymentState,
-      setIsPaymentInitiated,
-   } = usePayment()
-   const { cartState } = useCart()
+
+   const { cartState, isFinalCartLoading } = useCart()
    const { addToast } = useToasts()
    const { t } = useTranslation()
    const authTabRef = React.useRef()
@@ -56,85 +47,19 @@ export const Checkout = props => {
    const [otpPageUrl, setOtpPageUrl] = React.useState('')
    const [isOverlayOpen, toggleOverlay] = React.useState(false)
    const [overlayMessage, setOverlayMessage] = React.useState('')
-
+   const [loading, setLoading] = React.useState(true)
    const {
-      loading,
       error,
       data: { cart = { paymentStatus: '', transactionRemark: {} } } = {},
    } = useSubscription(QUERIES.CART_SUBSCRIPTION, {
-      skip: isEmpty(cartState) || !cartState?.cart?.id,
+      skip: isEmpty(id),
       variables: {
-         id: cartState?.cart?.id,
+         id,
+      },
+      onSubscriptionData: () => {
+         setLoading(false)
       },
    })
-
-   const [updateCart] = useMutation(QUERIES.UPDATE_CART, {
-      onCompleted: () => {
-         updatePaymentState({
-            paymentLifeCycleState: 'PROCESSING',
-         })
-      },
-      onError: error => {
-         updatePaymentState({
-            paymentLifeCycleState: 'FAILED',
-         })
-         addToast(error.message, { appearance: 'error' })
-      },
-   })
-
-   const isStripe =
-      paymentInfo?.selectedAvailablePaymentOption?.supportedPaymentOption
-         ?.supportedPaymentCompany?.label === 'stripe'
-
-   const [updatePlatformCustomer] = useMutation(
-      QUERIES.UPDATE_PLATFORM_CUSTOMER,
-      {
-         onCompleted: () => {
-            updateCart({
-               variables: {
-                  id: cart.id,
-                  _inc: { paymentRetryAttempt: 1 },
-                  _set: {
-                     paymentMethodId: isStripe
-                        ? paymentInfo?.selectedAvailablePaymentOption
-                           ?.selectedPaymentMethodId || null
-                        : null,
-                     toUseAvailablePaymentOptionId:
-                        paymentInfo?.selectedAvailablePaymentOption?.id,
-                  },
-               },
-            })
-         },
-         onError: error => {
-            console.log('updatePlatformCustomer -> error -> ', error)
-            addToast(t('Failed to update the user profile!'), {
-               appearance: 'success',
-            })
-         },
-      }
-   )
-
-   const handleSubmit = () => {
-      // toggleOverlay(true)
-      setIsProcessingPayment(true)
-      if (!isEmpty(profileInfo)) {
-         setIsPaymentInitiated(true)
-         updatePaymentState({
-            paymentLifeCycleState: 'INCREMENT_PAYMENT_RETRY_ATTEMPT',
-         })
-
-         updatePlatformCustomer({
-            variables: {
-               keycloakId: user.keycloakId,
-               _set: {
-                  firstName: profileInfo.firstName,
-                  lastName: profileInfo.lastName,
-                  phoneNumber: profileInfo.phone,
-               },
-            },
-         })
-      }
-   }
 
    const onOverlayClose = () => {
       setOtpPageUrl('')
@@ -151,35 +76,42 @@ export const Checkout = props => {
       }
    }, [isAuthenticated, isLoading])
 
-   if ((loading || isPaymentLoading) && cart?.source === 'subscription')
-      return <Loader inline />
+   React.useEffect(() => {
+      if (!isEmpty(cartState) && cartState?.cart?.id) {
+         setLoading(false)
+      }
+   }, [cartState?.cart?.id])
+
    if (
       isClient &&
       !new URLSearchParams(location.search).get('id') &&
       cart?.source === 'subscription'
    ) {
       return (
-         <Main>
-            <div tw="pt-4 w-full">
-               <HelperBar>
-                  <HelperBar.Title>
-                     Oh no! Looks like you've wandered on an unknown path, let's
-                     get you to home.
-                  </HelperBar.Title>
-                  <HelperBar.Button
-                     onClick={() =>
-                     (window.location.href =
-                        get_env('BASE_BRAND_URL') + getRoute('/'))
-                     }
-                  >
-                     Go to Home
-                  </HelperBar.Button>
-               </HelperBar>
-            </div>
-         </Main>
+         // <Main>
+         //    <div tw="pt-4 w-full">
+         //       <HelperBar>
+         //          <HelperBar.Title>
+         //             Oh no! Looks like you've wandered on an unknown path, let's
+         //             get you to home.
+         //          </HelperBar.Title>
+         //          <HelperBar.Button onClick={() => router.push('/')}>
+         //             Go to Home
+         //          </HelperBar.Button>
+         //       </HelperBar>
+         //    </div>
+         // </Main>
+         <div className="hern-cart-empty-cart">
+            <EmptyCart />
+            <span>Oops! Your cart is empty </span>
+            <Button className="hern-cart-go-to-menu-btn" onClick={() => {}}>
+               <Link href="/order">GO TO MENU</Link>
+            </Button>
+         </div>
       )
    }
    if (error) {
+      setLoading(false)
       return (
          <Main>
             <div tw="pt-4 w-full">
@@ -204,8 +136,8 @@ export const Checkout = props => {
                   </HelperBar.Title>
                   <HelperBar.Button
                      onClick={() =>
-                     (window.location.href =
-                        get_env('BASE_BRAND_URL') + getRoute('/'))
+                        (window.location.href =
+                           get_env('BASE_BRAND_URL') + getRoute('/'))
                      }
                   >
                      Go to Home
@@ -220,7 +152,7 @@ export const Checkout = props => {
          <div className="hern-cart-empty-cart">
             <EmptyCart />
             <span>Oops! Your cart is empty </span>
-            <Button className="hern-cart-go-to-menu-btn" onClick={() => { }}>
+            <Button className="hern-cart-go-to-menu-btn" onClick={() => {}}>
                <Link href="/order">GO TO MENU</Link>
             </Button>
          </div>
@@ -248,6 +180,7 @@ export const Checkout = props => {
    //       </Main>
    //    )
    // }
+   if (loading) return <Loader inline />
    return (
       <>
          {cart?.source === 'subscription' ? (
@@ -256,9 +189,9 @@ export const Checkout = props => {
                   <header tw="my-3 pb-1 border-b flex items-center justify-between">
                      <SectionTitle theme={theme}>Profile Details</SectionTitle>
                   </header>
-                  <ProfileSection />
-                  {!isEmpty(cartState) && (
-                     <PaymentOptionsRenderer cartId={cartState?.cart?.id} />
+                  <UserInfo cart={cart} />
+                  {!isEmpty(cart) && (
+                     <PaymentOptionsRenderer cartId={cart?.id} />
                   )}
                </Form>
                {cart?.products?.length > 0 && (
@@ -335,9 +268,9 @@ const SectionTitle = styled.h3(
 
 const Main = styled.main`
    display: flex;
-   padding: 0 16px;
+   padding: 64px 16px 16px 16px;
    margin-bottom: 24px;
-   min-height: calc(100vh - 160px);
+   min-height: calc(100vh - 220px);
    ${tw`gap-4`}
    @media (max-width: 768px) {
       flex-direction: column;

@@ -2,7 +2,7 @@ import gql from 'graphql-tag'
 
 export const EARNING_BY_PRODUCT = gql`
    subscription EARNING_BY_PRODUCT(
-      $earningByProductArgs: insights_getEarningByProducts_args!
+      $earningByProductArgs: getEarningsByProducts_insights_analytics_args!
    ) {
       insights_analytics {
          getEarningsByProducts(args: $earningByProductArgs)
@@ -11,7 +11,7 @@ export const EARNING_BY_PRODUCT = gql`
 `
 export const EARNING_BY_CUSTOMERS = gql`
    subscription TOP_CUSTOMERS(
-      $earningByCustomerArg: insights_getTopCustomers_args!
+      $earningByCustomerArg: getTopCustomers_insights_analytics_args!
    ) {
       insights_analytics {
          getTopCustomers(args: $earningByCustomerArg)
@@ -27,6 +27,20 @@ export const TOTAL_EARNING = gql`
                amountPaid
             }
          }
+      }
+   }
+`
+export const GET_STORE_LOCATION_INSIGHTS = gql`
+   subscription GET_STORE_LOCATION_INSIGHT($params: jsonb!) {
+      insights_analytics {
+         getLocationInsights(args: { params: $params })
+      }
+   }
+`
+export const GET_BRAND_INSIGHT = gql`
+   subscription GET_BRAND_INSIGHT($params: jsonb!) {
+      insights_analytics {
+         getBrandInsights(args: { params: $params })
       }
    }
 `

@@ -238,7 +238,7 @@ const RecipeForm = () => {
       const clonedSimpleRecipeIngredients = state.simpleRecipeIngredients.map(
          ing => ({
             ingredientId: ing.ingredient.id,
-            processingId: ing.processing.id,
+            processingId: ing.processing?.id,
             position: ing.position,
          })
       )

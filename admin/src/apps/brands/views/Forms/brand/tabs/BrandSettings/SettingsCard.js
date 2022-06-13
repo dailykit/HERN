@@ -96,13 +96,6 @@ export const SettingsCard = ({ setting, title, isChangeSaved, setIsSavedChange, 
         }
         else {
             //normal updating setting(save button in each config)
-            console.log({
-                "object": {
-                    "brandId": params?.id,
-                    "brandSettingId": setting?.brandSetting?.id,
-                    "value": config,
-                }
-            })
             updateSetting({
                 variables: {
                     object: {

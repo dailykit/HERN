@@ -3,15 +3,23 @@ import classNames from 'classnames'
 import React, { useState } from 'react'
 import { Button, CounterButton, ModifierPopup } from '../../components'
 import { CartContext, useTranslation } from '../../context'
-import { useConfig } from '../../lib'
+import { PRODUCT_ONE } from '../../graphql'
+import { graphQLClientSide, useConfig } from '../../lib'
 import { getCartItemWithModifiers } from '../../utils'
 
 export const CustomArea = props => {
    const { data, setProductModifier, showAddToCartButtonFullWidth } = props
    const { addToCart, combinedCartItems, methods, cartState } =
       React.useContext(CartContext)
-   const { locationId, storeStatus, configOf, setShowLocationSelectionPopup } =
-      useConfig()
+   const {
+      locationId,
+      storeStatus,
+      configOf,
+      setShowLocationSelectionPopup,
+      brand,
+      brandLocation,
+   } = useConfig()
+
    const theme = configOf('theme-color', 'Visual')?.themeColor
    const addToCartButtonConfig = configOf('Add to cart button', 'Visual')?.[
       'Add to cart Button'
@@ -24,7 +32,23 @@ export const CustomArea = props => {
    const [productCartItemIds, setProductCartItemIds] = React.useState([])
    const [showChooseIncreaseType, setShowChooseIncreaseType] = useState(false)
    const [showModifierPopup, setShowModifierPopup] = React.useState(false)
-
+   const isProductOutOfStock = React.useMemo(() => {
+      if (data.isAvailable) {
+         if (data.productOptions.length > 0 && data.isPopupAllowed) {
+            const availableProductOptions = data.productOptions.filter(
+               option => option.isPublished && option.isAvailable
+            ).length
+            if (availableProductOptions > 0) {
+               return false
+            } else {
+               return true
+            }
+         } else {
+            return false
+         }
+      }
+      return true
+   }, [data])
    const { t } = useTranslation()
 
    React.useLayoutEffect(() => {
@@ -52,8 +76,23 @@ export const CustomArea = props => {
    const closeModifier = () => {
       setShowModifierPopup(false)
    }
+   const argsForByLocation = React.useMemo(
+      () => ({
+         brandId: brand?.id,
+         locationId: locationId,
+         brand_locationId: brandLocation?.id,
+      }),
+      [brand, locationId, brandLocation?.id]
+   )
 
-   const repeatLastOne = async productData => {
+   const repeatLastOne1 = async productData => {
+      const { product: productCompleteData } = await graphQLClientSide.request(
+         PRODUCT_ONE,
+         {
+            id: productData.id,
+            params: argsForByLocation,
+         }
+      )
       // select latest added product
       const cartDetailSelectedOfLatestProduct = cartState.cartItems
          .filter(x => x.productId === productData.id)
@@ -70,7 +109,7 @@ export const CustomArea = props => {
       const productOptionId =
          cartDetailSelectedOfLatestProduct.childs[0].productOption.id
 
-      const selectedProductOption = productData.productOptions.find(
+      const selectedProductOption = productCompleteData.productOptions.find(
          eachProductOption => eachProductOption.id === productOptionId
       )
 
@@ -206,6 +245,7 @@ export const CustomArea = props => {
                data: value,
             }))
             .value()
+
          const cartItem = getCartItemWithModifiers(
             selectedProductOption.cartItem,
             allModifierOption.map(x => x.cartItem),
@@ -222,6 +262,227 @@ export const CustomArea = props => {
          await addToCart(cartItem, 1)
          setShowChooseIncreaseType(false)
       }
+   }
+
+   const repeatLastOne = async productData => {
+      const { product: productCompleteData } = await graphQLClientSide.request(
+         PRODUCT_ONE,
+         {
+            id: productData.id,
+            params: argsForByLocation,
+         }
+      )
+      console.log(
+         'hhh',
+         cartState.cartItems
+            .filter(x => x.productId === productData.id)
+            .sort((a, b) => new Date(a.created_at) - new Date(b.created_at))
+      )
+      const cartDetailSelectedOfLatestProduct = cartState.cartItems
+         .filter(x => x.productId === productData.id)
+         .sort((a, b) => new Date(a.created_at) - new Date(b.created_at))
+         .pop()
+      if (cartDetailSelectedOfLatestProduct.childs.length === 0) {
+         addToCart(productCompleteData.defaultCartItem, 1)
+         setShowChooseIncreaseType(false)
+         return
+      }
+      const productOptionId =
+         cartDetailSelectedOfLatestProduct.childs[0].productOption.id
+      const modifierCategoryOptionsIds =
+         cartDetailSelectedOfLatestProduct.childs[0].childs.map(
+            x => x?.modifierOption?.id
+         )
+
+      //selected product option
+      const selectedProductOption = productCompleteData.productOptions?.find(
+         x => x.id == productOptionId
+      )
+
+      // select all modifier option id which has modifier option ( parent modifier option id)
+      const modifierOptionsConsistAdditionalModifiers =
+         cartDetailSelectedOfLatestProduct.childs[0].childs
+            .map(eachModifierOption => {
+               if (eachModifierOption.childs.length > 0) {
+                  return {
+                     parentModifierOptionId:
+                        eachModifierOption.modifierOption.id,
+                     selectedModifierOptionIds: eachModifierOption.childs.map(
+                        x => x.modifierOption.id
+                     ),
+                  }
+               } else {
+                  return null
+               }
+            })
+            .filter(eachId => eachId !== null)
+
+      //selected modifiers
+      let singleModifier = []
+      let multipleModifier = []
+      let singleAdditionalModifier = []
+      let multipleAdditionalModifier = []
+      if (selectedProductOption.modifier) {
+         selectedProductOption.modifier.categories.forEach(category => {
+            category.options.forEach(option => {
+               const selectedOption = {
+                  modifierCategoryID: category.id,
+                  modifierCategoryOptionsID: option.id,
+                  modifierCategoryOptionsPrice: option.price,
+                  cartItem: option.cartItem,
+               }
+               if (category.type === 'single') {
+                  if (modifierCategoryOptionsIds.includes(option.id)) {
+                     singleModifier = singleModifier.concat(selectedOption)
+                  }
+               }
+               if (category.type === 'multiple') {
+                  if (modifierCategoryOptionsIds.includes(option.id)) {
+                     multipleModifier = multipleModifier.concat(selectedOption)
+                  }
+               }
+            })
+         })
+      }
+
+      const allSelectedOptions = [...singleModifier, ...multipleModifier]
+
+      if (selectedProductOption.additionalModifiers) {
+         selectedProductOption.additionalModifiers.forEach(option => {
+            option.modifier.categories.forEach(category => {
+               category.options.forEach(option => {
+                  const selectedOption = {
+                     modifierCategoryID: category.id,
+                     modifierCategoryOptionsID: option.id,
+                     modifierCategoryOptionsPrice: option.price,
+                     cartItem: option.cartItem,
+                  }
+                  if (category.type === 'single') {
+                     if (modifierCategoryOptionsIds.includes(option.id)) {
+                        singleAdditionalModifier =
+                           singleAdditionalModifier.concat(selectedOption)
+                     }
+                  }
+                  if (category.type === 'multiple') {
+                     if (modifierCategoryOptionsIds.includes(option.id)) {
+                        multipleAdditionalModifier =
+                           multipleAdditionalModifier.concat(selectedOption)
+                     }
+                  }
+               })
+            })
+         })
+         const modifierOptionsConsistAdditionalModifiersWithData =
+            modifierOptionsConsistAdditionalModifiers.map(
+               eachModifierOptionsConsistAdditionalModifiers => {
+                  let additionalModifierOptions = []
+                  selectedProductOption.additionalModifiers.forEach(
+                     additionalModifier => {
+                        if (additionalModifier.modifier) {
+                           additionalModifier.modifier.categories.forEach(
+                              eachCategory => {
+                                 eachCategory.options.forEach(eachOption => {
+                                    if (eachOption.additionalModifierTemplate) {
+                                       console.log(
+                                          'getting Error Here',
+                                          eachOption.additionalModifierTemplate
+                                       )
+                                       eachOption.additionalModifierTemplate.categories.forEach(
+                                          eachCategory => {
+                                             additionalModifierOptions.push(
+                                                ...eachCategory.options.map(
+                                                   eachOptionTemp => ({
+                                                      ...eachOptionTemp,
+                                                      categoryId:
+                                                         eachCategory.id,
+                                                   })
+                                                )
+                                             )
+                                          }
+                                       )
+                                    }
+                                 })
+                              }
+                           )
+                        }
+                     }
+                  )
+                  // for single modifiers
+                  if (selectedProductOption.modifier) {
+                     selectedProductOption.modifier.categories.forEach(
+                        eachCategory => {
+                           eachCategory.options.forEach(eachOption => {
+                              if (eachOption.additionalModifierTemplateId) {
+                                 if (eachOption.additionalModifierTemplate) {
+                                    eachOption.additionalModifierTemplate.categories.forEach(
+                                       eachCategory => {
+                                          additionalModifierOptions.push(
+                                             ...eachCategory.options.map(
+                                                eachOptionTemp => ({
+                                                   ...eachOptionTemp,
+                                                   categoryId: eachCategory.id,
+                                                })
+                                             )
+                                          )
+                                       }
+                                    )
+                                 }
+                              }
+                           })
+                        }
+                     )
+                  }
+
+                  const mapedModifierOptions =
+                     eachModifierOptionsConsistAdditionalModifiers.selectedModifierOptionIds.map(
+                        eachId => {
+                           const additionalModifierOption =
+                              additionalModifierOptions.find(
+                                 x => x.id === eachId
+                              )
+                           const selectedOption = {
+                              modifierCategoryID:
+                                 additionalModifierOption.categoryId,
+                              modifierCategoryOptionsID:
+                                 additionalModifierOption.id,
+                              modifierCategoryOptionsPrice:
+                                 additionalModifierOption.price,
+                              cartItem: additionalModifierOption.cartItem,
+                           }
+                           return selectedOption
+                        }
+                     )
+                  return {
+                     ...eachModifierOptionsConsistAdditionalModifiers,
+                     data: mapedModifierOptions,
+                  }
+               }
+            )
+
+         // root modifiers options + additional modifier's modifier options
+         const resultSelectedModifier = [
+            ...allSelectedOptions,
+            ...singleAdditionalModifier,
+            ...multipleAdditionalModifier,
+         ]
+         const cartItem = getCartItemWithModifiers(
+            selectedProductOption.cartItem,
+            resultSelectedModifier.map(x => x.cartItem),
+            modifierOptionsConsistAdditionalModifiersWithData
+         )
+
+         addToCart(cartItem, 1)
+         setShowChooseIncreaseType(false)
+         return
+      }
+
+      const cartItem = getCartItemWithModifiers(
+         selectedProductOption.cartItem,
+         allSelectedOptions.map(x => x.cartItem)
+      )
+
+      addToCart(cartItem, 1)
+      setShowChooseIncreaseType(false)
    }
 
    return (
@@ -285,46 +546,64 @@ export const CustomArea = props => {
                modifierWithoutPopup={false}
             />
          )}
-         {availableQuantityInCart === 0 ? (
+         {isProductOutOfStock ? (
             <Button
                className={classNames('hern-custom-area-add-btn', {
                   'hern-custom-area-add-btn--rounded':
                      addToCartButtonConfig?.variant?.value?.value === 'rounded',
                })}
-               type="outline"
-               onClick={async () => {
-                  if (!locationId) {
-                     setShowLocationSelectionPopup(true)
-                  } else {
-                     if (data.productOptions.length > 0) {
-                        setProductModifier(data)
-                        setShowModifierPopup(true)
-                     } else {
-                        await addToCart(data.defaultCartItem, 1)
-                     }
-                  }
-               }}
             >
-               {t(`${addToCartButtonConfig?.label?.value ?? 'ADD'}`)}
+               {t(`${addToCartButtonConfig?.label?.value ?? 'Out Of Stock'}`)}
             </Button>
          ) : (
-            <CounterButton
-               count={availableQuantityInCart}
-               incrementClick={async () => {
-                  if (data.productOptions.length > 0 && data.isPopupAllowed) {
-                     setShowChooseIncreaseType(true)
-                  } else {
-                     await addToCart(data.defaultCartItem, 1)
-                  }
-               }}
-               decrementClick={() => {
-                  removeCartItems([
-                     productCartItemIds[availableQuantityInCart - 1],
-                  ])
-               }}
-               showDeleteButton
-            />
+            <>
+               {availableQuantityInCart === 0 ? (
+                  <Button
+                     className={classNames('hern-custom-area-add-btn', {
+                        'hern-custom-area-add-btn--rounded':
+                           addToCartButtonConfig?.variant?.value?.value ===
+                           'rounded',
+                     })}
+                     type="outline"
+                     onClick={async () => {
+                        if (!locationId) {
+                           setShowLocationSelectionPopup(true)
+                        } else {
+                           if (data.productOptions.length > 0) {
+                              setProductModifier(data)
+                              setShowModifierPopup(true)
+                           } else {
+                              await addToCart(data.defaultCartItem, 1)
+                           }
+                        }
+                     }}
+                  >
+                     {t(`${addToCartButtonConfig?.label?.value ?? 'ADD'}`)}
+                  </Button>
+               ) : (
+                  <CounterButton
+                     count={availableQuantityInCart}
+                     incrementClick={async () => {
+                        if (
+                           data.productOptions.length > 0 &&
+                           data.isPopupAllowed
+                        ) {
+                           setShowChooseIncreaseType(true)
+                        } else {
+                           await addToCart(data.defaultCartItem, 1)
+                        }
+                     }}
+                     decrementClick={() => {
+                        removeCartItems([
+                           productCartItemIds[availableQuantityInCart - 1],
+                        ])
+                     }}
+                     showDeleteButton
+                  />
+               )}
+            </>
          )}
+
          {data.productOptions.length > 0 && <span>{t('Customizable')}</span>}
       </div>
    )

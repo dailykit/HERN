@@ -8,7 +8,7 @@ import {
    Loader,
    Empty,
 } from '../../components'
-import { useQuery } from '@apollo/react-hooks'
+import { useQuery, useSubscription } from '@apollo/react-hooks'
 import _ from 'lodash'
 import { CartContext } from '../../context'
 import { PRODUCTS, PRODUCTS_BY_CATEGORY } from '../../graphql'
@@ -31,7 +31,8 @@ export const FeaturedCollection = ({ config }) => {
    const { addToast } = useToasts()
 
    // context
-   const { brand, isConfigLoading, locationId, storeStatus } = useConfig()
+   const { brand, isConfigLoading, locationId, storeStatus, brandLocation } =
+      useConfig()
 
    // component state
    const [hydratedMenu, setHydratedMenu] = React.useState([])
@@ -42,11 +43,14 @@ export const FeaturedCollection = ({ config }) => {
       allProductIds: [],
       isMenuLoading: true,
    })
+   const [productsList, setProductsList] = React.useState([])
 
    const date = React.useMemo(() => new Date(Date.now()).toISOString(), [])
    const collectionIdArray = React.useMemo(
       () =>
-         config?.data?.collectionData?.value?.map(collection => collection.id),
+         config?.data?.collectionData?.value?.map(
+            collection => collection.id
+         ) || [],
       [config]
    )
    const menuType = config?.display?.dropdown?.value[0]?.value
@@ -80,7 +84,7 @@ export const FeaturedCollection = ({ config }) => {
    )
 
    // query for get products by category (contain array of product ids)
-   const { error: menuError } = useQuery(PRODUCTS_BY_CATEGORY, {
+   const { error: menuError } = useSubscription(PRODUCTS_BY_CATEGORY, {
       skip: isConfigLoading || !brand?.id,
       variables: {
          params: {
@@ -90,7 +94,8 @@ export const FeaturedCollection = ({ config }) => {
             locationId,
          },
       },
-      onCompleted: data => {
+      onSubscriptionData: ({ subscriptionData }) => {
+         const { data } = subscriptionData
          if (data?.onDemand_getMenuV2copy?.length) {
             const [res] = data.onDemand_getMenuV2copy
             const { menu } = res.data
@@ -103,72 +108,75 @@ export const FeaturedCollection = ({ config }) => {
             }))
          }
       },
-      onError: error => {
+   })
+
+   React.useEffect(() => {
+      if (menuError) {
          setMenuData(prev => ({
             ...prev,
             isMenuLoading: false,
          }))
          setStatus('error')
-         console.log(error)
-      },
-   })
+         console.log(menuError)
+      }
+   }, [menuError])
+
    const { isMenuLoading, allProductIds, categories } = menuData
 
    const argsForByLocation = React.useMemo(
       () => ({
-         params: {
-            brandId: brand?.id,
-            locationId: locationId,
-         },
+         brandId: brand?.id,
+         locationId: locationId,
+         brand_locationId: brandLocation?.id,
       }),
-      [brand, locationId]
+      [brand, locationId, brandLocation?.id]
    )
-   const { loading: productsLoading, error: productsError } = useQuery(
+   const { loading: productsLoading, error: productsError } = useSubscription(
       PRODUCTS,
       {
          skip: isMenuLoading,
          variables: {
             ids: allProductIds,
-            priceArgs: argsForByLocation,
-            discountArgs: argsForByLocation,
-            defaultCartItemArgs: argsForByLocation,
-            productOptionPriceArgs: argsForByLocation,
-            productOptionDiscountArgs: argsForByLocation,
-            productOptionCartItemArgs: argsForByLocation,
-            modifierCategoryOptionPriceArgs: argsForByLocation,
-            modifierCategoryOptionDiscountArgs: argsForByLocation,
-            modifierCategoryOptionCartItemArgs: argsForByLocation,
+            params: argsForByLocation,
          },
          // fetchPolicy: 'network-only',
-         onCompleted: data => {
+         onSubscriptionData: ({ subscriptionData }) => {
+            const { data } = subscriptionData
             if (data && data.products.length) {
-               const updatedMenu = categories.map(category => {
-                  const updatedProducts = category.products
-                     .map(productId => {
-                        const found = data.products.find(
-                           ({ id }) => id === productId
-                        )
-                        if (found) {
-                           return found
-                        }
-                        return null
-                     })
-                     .filter(Boolean)
-                  return {
-                     ...category,
-                     products: updatedProducts,
-                  }
-               })
-               setHydratedMenu(updatedMenu)
+               setProductsList(data.products)
             }
-            setStatus('success')
-         },
-         onError: error => {
-            setStatus('error')
-            console.log('Error: ', error)
          },
       }
    )
+
+   React.useEffect(() => {
+      if (productsList.length && categories.length) {
+         const updatedMenu = categories.map(category => {
+            const updatedProducts = category.products
+               .map(productId => {
+                  const found = productsList.find(({ id }) => id === productId)
+                  if (found) {
+                     return found
+                  }
+                  return null
+               })
+               .filter(Boolean)
+            return {
+               ...category,
+               products: updatedProducts,
+            }
+         })
+         setHydratedMenu(updatedMenu)
+         setStatus('success')
+      }
+   }, [productsList, categories])
+
+   React.useEffect(() => {
+      if (productsError) {
+         setStatus('error')
+      }
+   }, [productsError])
+
    const [productModifier, setProductModifier] = useState(null)
 
    const CustomAreaWrapper = ({ data }) => {

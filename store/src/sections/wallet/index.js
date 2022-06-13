@@ -1,24 +1,25 @@
 import React from 'react'
 import { useConfig } from '../../lib'
 import { useTranslation, useUser } from '../../context'
-import { Spacer, ProfileSidebar, Form } from '../../components'
-import { formatCurrency } from '../../utils'
+import { Spacer, ProfileSidebar, Form, WalletTopUp } from '../../components'
+import { formatCurrency, useWindowSize } from '../../utils'
 import * as moment from 'moment'
 import { useToasts } from 'react-toast-notifications'
-import { get_env } from '../../utils'
-import { BiClipboard } from 'react-icons/bi'
-import CopyToClipboard from 'react-copy-to-clipboard'
+import { getRoute } from '../../utils'
+import { AiOutlineArrowRight } from 'react-icons/ai'
+import { WalletPageIllustration } from '../../assets/icons'
+import Link from 'next/link'
 
-export const Wallet = () => {
+export const Wallet = ({ config }) => {
    return (
       <main className="hern-wallet__main">
          <ProfileSidebar />
-         <Content />
+         <Content config={config} />
       </main>
    )
 }
 
-const Content = () => {
+const Content = ({ config }) => {
    const { addToast } = useToasts()
    const { user } = useUser()
    const { configOf } = useConfig()
@@ -28,7 +29,11 @@ const Content = () => {
       'Wallet',
       'rewards'
    )?.Wallet?.isWalletAvailable
-
+   const availablePaymentOptionIds =
+      config?.paymentOptions?.value.map(option => {
+         return option[0].value.value
+      }) || []
+   const { width, height } = useWindowSize()
    const currentLang = React.useMemo(() => locale, [locale])
    React.useEffect(() => {
       const languageTags = document.querySelectorAll(
@@ -37,7 +42,15 @@ const Content = () => {
       dynamicTrans(languageTags)
    }, [currentLang])
 
-   return (
+   return !isAvailable ? (
+      <section className="hern-wallet__content">
+         <header className="hern-wallet__header">
+            <h2 className="hern-wallet__not_available_header">
+               {t('This scheme is not available right now')}
+            </h2>
+         </header>
+      </section>
+   ) : (
       <section className="hern-wallet__content">
          <header className="hern-wallet__header">
             <h2
@@ -51,7 +64,7 @@ const Content = () => {
                {t('WALLET BALANCE')}
             </h2>
          </header>
-         {isAvailable && !!user.wallet && (
+         {!!user.wallet && (
             <>
                <div style={{ display: 'flex', alignItems: 'center' }}>
                   <span className="hern-wallet__total_balance_title">
@@ -62,35 +75,10 @@ const Content = () => {
                   </span>
                </div>
                <Spacer />
-               <div className="hern-wallet__referral_code_block">
-                  <p className="hern-wallet__referral_code_title">
-                     Refer and earn
-                  </p>
-                  <div className="hern-wallet__referral_code_field">
-                     <span className="hern-wallet__referral_code">
-                        {user?.customerReferral?.referralCode}
-                     </span>
-                     <CopyToClipboard
-                        text={`${get_env(
-                           'BASE_BRAND_URL'
-                        )}/sign-up?invite-code=${
-                           user?.customerReferral?.referralCode
-                        }`}
-                        onCopy={() =>
-                           addToast(t('Invite like copied!'), {
-                              appearance: 'success',
-                           })
-                        }
-                     >
-                        <button className="hern-wallet__referral_code_copy">
-                           <BiClipboard />
-                           <span style={{ marginLeft: '5px' }}>
-                              Copy Invite Link
-                           </span>
-                        </button>
-                     </CopyToClipboard>
-                  </div>
-               </div>
+               <WalletTopUp
+                  availablePaymentOptionIds={availablePaymentOptionIds}
+               />
+               <Spacer />
                <p className="hern-wallet__transaction_title">
                   {t('TRANSACTION HISTORY')}
                </p>
@@ -138,7 +126,24 @@ const Content = () => {
                      </table>
                   </div>
                ) : (
-                  <p class="hern-wallet__no_txn">No transactions available</p>
+                  <div className="hern-wallet-wallet-illustration">
+                     <WalletPageIllustration />
+                     <p>
+                        Oops! it’s look like you don’t have any transaction
+                        history yet
+                     </p>
+                     <Link href={getRoute('/account/referrals')}>
+                        <a>
+                           Refer and Earn
+                           <span>
+                              <AiOutlineArrowRight
+                                 color="var(--hern-accent)"
+                                 size={16}
+                              />
+                           </span>
+                        </a>
+                     </Link>
+                  </div>
                )}
             </>
          )}

@@ -845,10 +845,11 @@ export const DEVICES = {
       }
    `,
    PRINTNODE_DETAILS: gql`
-      query admins {
-         admins: organizationAdmins {
-            email
-            password: printNodePassword
+      query PRINT_NODE_CONFIG($where: deviceHub_config_bool_exp!) {
+         printNodeConfigs: configs(where: $where) {
+            id
+            name
+            value
          }
       }
    `,

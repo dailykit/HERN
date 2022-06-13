@@ -1,7 +1,7 @@
 import PaytmChecksum from 'paytmchecksum'
 
 import { transactionStatus } from './functions'
-import { CART_PAYMENT } from '../../graphql'
+import { CART_PAYMENT, BRAND } from '../../graphql'
 import { client } from '../../../../lib/graphql'
 import get_env from '../../../../../get_env'
 
@@ -31,6 +31,13 @@ const razorpayWebhookEvents = async arg => {
       const { cartPayment } = await client.request(CART_PAYMENT, {
          id: orderId
       })
+
+      if (cartPayment.metaData && cartPayment.metaData.has('brandId')) {
+         var { brand } = await client.request(BRAND, {
+            id: cartPayment.metaData.brandId
+         })
+      }
+
       const requiredData = {
          cartPaymentId: orderId,
          transactionRemark: body,
@@ -38,7 +45,10 @@ const razorpayWebhookEvents = async arg => {
          paymentStatus: body.resultInfo.resultStatus,
          transactionId: body.txnId,
          cartId: cartPayment.cartId,
-         domain: cartPayment.cart.brand.domain
+         domain: cartPayment.cart
+            ? cartPayment.cart.brand.domain
+            : brand.domain,
+         metaData: cartPayment.metaData
       }
       console.log('requiredData', requiredData)
 

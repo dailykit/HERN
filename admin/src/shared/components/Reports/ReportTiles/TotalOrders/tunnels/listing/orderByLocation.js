@@ -150,14 +150,18 @@ const OrderByLocationTable = props => {
    const searchedOption = option => console.log(option)
    // fn run after table data loaded
    const dataLoaded = () => {
-      const defaultShowColumns =
-         localStorage.getItem('order-by-location-table-show-columns') || []
+      const defaultShowColumns = localStorage.getItem(
+         'order-by-location-table-show-columns'
+      )
 
-      const defaultGroupByColumns =
-         localStorage.getItem('order-by-location-table-groupBy-columns') || []
+      const defaultGroupByColumns = localStorage.getItem(
+         'order-by-location-table-groupBy-columns'
+      )
 
-      const parseDefaultShowColumns = JSON.parse(defaultShowColumns)
-      const parseDefaultGroupByColumns = JSON.parse(defaultGroupByColumns)
+      const parseDefaultShowColumns =
+         defaultShowColumns && JSON.parse(defaultShowColumns)
+      const parseDefaultGroupByColumns =
+         defaultGroupByColumns && JSON.parse(defaultGroupByColumns)
       if (parseDefaultShowColumns) {
          columns.forEach(eachOption => {
             if (

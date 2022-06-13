@@ -7,26 +7,27 @@ import { useConfig } from '../lib'
 import { Info, WalletIcon } from '../assets/icons'
 import classNames from 'classnames'
 import { Button, LoginWarningWithText } from '.'
+import Link from 'next/link'
 
 export const WalletAmount = ({ cart, version }) => {
    const { user } = useUser()
    const { configOf } = useConfig()
    const walletSettings = configOf('Wallet', 'rewards')
    const isVersion2 = React.useMemo(() => version === 2, [version])
-   console.log('cartInWalletAmount', cart, user)
    const [amount, setAmount] = React.useState(cart.walletAmountUsable)
 
    const [updateCart] = useMutation(MUTATIONS.CART.UPDATE, {
+      refetchQueries: ['subscriptionOccurenceCustomer'],
       onCompleted: () => console.log('Wallet amount added!'),
       onError: error => console.log(error),
    })
-   const WalletHeader = () => {
+   const WalletHeader = (props) => {
       return (
          <div
             style={{
                display: 'flex',
                alignItems: 'center',
-               marginBottom: '10px',
+               marginBottom: props.marginBottom || '10px',
             }}
          >
             <WalletIcon />
@@ -64,7 +65,21 @@ export const WalletAmount = ({ cart, version }) => {
          </div>
       )
    }
-   if (!cart.walletAmountUsable) return null
+   if (!cart.walletAmountUsable) return (
+      <div 
+         className={classNames('hern-wallet-amount', {
+            'hern-wallet-amount-v2': isVersion2,
+         })}>
+         <div className='' style={{display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "10px"}}>
+            <WalletHeader marginBottom="0px" />
+            <div className="" style={{display: "flex", flexDirection: "column"}}>
+               <small>Balance: {formatCurrency(user.wallet?.amount)}</small>
+               <small><Link href={"/account/wallet"}>Top Up your wallet</Link></small>
+            </div>
+         </div>
+
+      </div>
+   )
    return (
       <div
          className={classNames('hern-wallet-amount', {
@@ -158,6 +173,9 @@ export const WalletAmount = ({ cart, version }) => {
                         {formatCurrency(user.wallet?.amount)}
                      </small>
                   )}
+               </div>
+               <div className="" style={{textAlign: 'right'}}>
+                  <small><Link href={"/account/wallet"}>Top Up your wallet</Link></small>
                </div>
             </>
          )}

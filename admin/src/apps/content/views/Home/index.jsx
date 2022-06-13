@@ -96,7 +96,7 @@ export const Home = () => {
                onClick={() => addTab('Navbar Menu', '/content/navbarMenu')}
                tileSvg={<NavbarMenuSvg />}
             />
-            <DashboardTile
+            {/* <DashboardTile
                title="Settings"
                onClick={() => addTab('Settings', '/content/settings')}
                tileSvg={<SettingsSvg />}
@@ -105,7 +105,7 @@ export const Home = () => {
                title="Blocks"
                onClick={() => addTab('Blocks', '/content/blocks')}
                tileSvg={<BlocksSvg />}
-            />
+            /> */}
          </StyledCardList>
          <Banner id="content-app-home-bottom" />
       </StyledHome>

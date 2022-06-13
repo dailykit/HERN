@@ -31,6 +31,7 @@ export const KioskLocation = () => {
    const params = useParams()
    const { tab, addTab, setTabTitle } = useTabs()
    const [brandList, setBrandList] = React.useState([])
+   const [selectedBrandId, setSelectedBrandId] = React.useState()
    const [title, setTitle] = React.useState({
       value: '',
       accessUrl: '',
@@ -42,7 +43,7 @@ export const KioskLocation = () => {
       },
    })
 
-   const [update] = useMutation(KIOSK.UPDATE_KIOSK, {
+   const [updateKiosk] = useMutation(KIOSK.UPDATE_KIOSK, {
       onCompleted: () => toast.success('Successfully updated KIOSK!'),
       onError: error => {
          toast.error('Failed to update KIOSK!')
@@ -63,7 +64,7 @@ export const KioskLocation = () => {
             data: { kiosk = {} },
          },
       }) => {
-         console.log('data is:', kiosk)
+         // console.log('data is:', kiosk)
          setTitle({
             value: kiosk[0].kioskLabel || '',
             accessUrl: kiosk[0]?.accessUrl || '',
@@ -85,7 +86,7 @@ export const KioskLocation = () => {
                data: { brands = {} },
             },
          }) => {
-            console.log('brands data', brands)
+            // console.log('brands data', brands)
             const brandsData = brands?.nodes.map(brand => {
                return {
                   id: brand?.id || '',
@@ -97,12 +98,21 @@ export const KioskLocation = () => {
          },
       }
    )
-   console.log('brandlist made now::>', brandList)
+   // console.log('brandlist made now::>', brandList)
 
    React.useEffect(() => {
       if (!tab && !loading && !isEmpty(kiosk)) {
          addTab(kiosk?.title || 'N/A', `/kiosks/kiosks/${kiosk[0].id}`)
          console.log('data:', loading)
+      }
+      /// set brandID
+      if (title.accessUrl) {
+         // console.log('accessUrLLL', title.accessUrl.split('/')[0])
+         const result = brandList.filter(
+            ele => ele.title === title.accessUrl.split('/')[0]
+         )
+         // console.log('accessUrLLL 2', result)
+         setSelectedBrandId(result[0])
       }
    }, [tab, addTab, loading, kiosk])
 
@@ -117,7 +127,7 @@ export const KioskLocation = () => {
          },
       })
       if (validator.name(e.target.value).isValid) {
-         update({
+         updateKiosk({
             variables: {
                id: params.id,
                _set: {
@@ -171,54 +181,6 @@ export const KioskLocation = () => {
                      ))}
                </Form.Group>
 
-               {/* <Form.Group>
-                  <Flex container alignItems="flex-end">
-                     <Form.Label
-                        htmlFor="accessUrl"
-                        title="Copy Kiosk Access URL"
-                     >
-                     
-                        <ButtonGroup
-                           onClick={() => {
-                              copy(title.accessUrl)
-                           }}
-                        >
-                           {'Domain*    '}
-                           <div>
-                              <CopyIcon size={20} />
-                           </div>
-                        </ButtonGroup>
-                     </Form.Label>
-                  </Flex>
-                  
-                  <Form.Text
-                     id="accessUrl"
-                     name="accessUrl"
-                     placeholder="Enter the kiosk Domain"
-                     style={{ marginTop: '-2px' }}
-                     value={title.accessUrl}
-                     disabled={kiosk?.isDefault}
-                     onChange={e =>
-                        setTitle({ ...title, accessUrl: e.target.value })
-                     }
-                     // onBlur={e => updateTitle(e)}
-                     onBlur={e =>
-                        update({
-                           variables: {
-                              id: params.id,
-                              _set: { accessUrl: e.target.value },
-                           },
-                        })
-                     }
-                  />
-                  {title.meta.isTouched &&
-                     !title.meta.isValid &&
-                     title.meta.errors.map((error, index) => (
-                        <Form.Error key={index}>{error}</Form.Error>
-                     ))}
-                  
-               </Form.Group> */}
-
                <Form.Group>
                   <Flex container alignItems="flex-end">
                      <Form.Label
@@ -255,8 +217,8 @@ export const KioskLocation = () => {
                               addOption={brandList}
                               options={brandList}
                               defaultName={title.accessUrl.split('/kiosk')[0]}
-                              selectedOption={e =>
-                                 update({
+                              selectedOption={e => {
+                                 updateKiosk({
                                     variables: {
                                        id: params.id,
                                        _set: {
@@ -265,9 +227,12 @@ export const KioskLocation = () => {
                                        },
                                     },
                                  })
-                              }
+                                 setSelectedBrandId(e)
+                              }}
+                              onChange={e => {
+                                 setSelectedBrandId(e)
+                              }}
                               placeholder="Enter brand domain"
-                              // addOption={() => console.log('Brand Added')}
                            />
                         </div>
                      </div>
@@ -297,7 +262,7 @@ export const KioskLocation = () => {
                      kiosk[0]?.printerId &&
                      kiosk[0]?.location?.id
                   ) {
-                     update({
+                     updateKiosk({
                         variables: {
                            id: params.id,
                            _set: { isActive: !kiosk[0].isActive || false },
@@ -329,31 +294,23 @@ export const KioskLocation = () => {
             <HorizontalTabList>
                <HorizontalTab>Basic Info</HorizontalTab>
                <HorizontalTab>Link Order Tab</HorizontalTab>
-               <HorizontalTab>Kiosk Config</HorizontalTab>
+               {/* <HorizontalTab>Kiosk Config</HorizontalTab> */}
             </HorizontalTabList>
             <HorizontalTabPanels>
-               <HorizontalTabPanel style={{ height: 'auto' }}>
-                  <BasicInfo />
+               <HorizontalTabPanel style={{ height: '100%' }}>
+                  <BasicInfo selectedBrandId={selectedBrandId} />
                </HorizontalTabPanel>
                <HorizontalTabPanel>
                   <LinkOrderTab />
                </HorizontalTabPanel>
-               <HorizontalTabPanel>
+               {/* <HorizontalTabPanel>
                   <KioskConfig />
-               </HorizontalTabPanel>
+               </HorizontalTabPanel> */}
             </HorizontalTabPanels>
          </HorizontalTabs>
          <Banner id="brands-app-brands-brand-details-bottom" />
       </Wrapper>
    )
 }
-// const KioskLocation = ()=>{
-//    const params = useParams()
-//    console.log("id:",params.id)
-//    return (
-//       <div>
-//          <h1>hello</h1>
-//       </div>
-//    )
-// }
+
 export default KioskLocation

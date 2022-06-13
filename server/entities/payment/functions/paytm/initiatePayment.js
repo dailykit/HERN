@@ -18,7 +18,8 @@ const initiatePayment = async arg => {
          amount,
          oldAmount,
          host,
-         cartId
+         cartId,
+         metaData
       } = arg
       let paymentMode = []
       let customerInfo = {
@@ -29,10 +30,17 @@ const initiatePayment = async arg => {
       }
       const PAYTM_MERCHANT_ID = await get_env('PAYTM_MERCHANT_ID')
       const PAYTM_API_URL = await get_env('PAYTM_API_URL')
-      const orderId = `ORD-${cartId}-${cartPaymentId}`
-      const { cart = {} } = await client.request(CART, {
-         id: cartId
-      })
+
+      let orderId
+      if (cartId) {
+         orderId = `ORD-${cartId}-${cartPaymentId}`
+         var { cart = {} } = await client.request(CART, {
+            id: cartId
+         })
+      } else {
+         orderId = `ORD-${cartPaymentId}`
+      }
+
       const { availablePaymentOption = {} } = await client.request(
          AVAILABLE_PAYMENT_OPTION,
          {

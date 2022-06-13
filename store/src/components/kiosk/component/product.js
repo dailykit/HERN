@@ -9,35 +9,40 @@ import {
    nestedModifierTemplateIds,
 } from '../../../utils'
 import { KioskModifier, KioskCounterButton } from '.'
-import { GET_MODIFIER_BY_ID } from '../../../graphql'
+import { GET_MODIFIER_BY_ID, PRODUCT_ONE } from '../../../graphql'
 import { useQuery } from '@apollo/react-hooks'
-import { useConfig } from '../../../lib'
+import { useConfig, graphQLClientSide } from '../../../lib'
 import { HernLazyImage } from '../../../utils/hernImage'
+import { getPriceWithDiscount } from '../../../utils'
 import moment from 'moment'
 import classNames from 'classnames'
 import isNull from 'lodash/isNull'
 import isEmpty from 'lodash/isEmpty'
-
+import { useIntl } from 'react-intl'
 const { Header, Content, Footer } = Layout
 
 export const KioskProduct = props => {
    // context
    const { cartState, methods, addToCart, combinedCartItems } =
       React.useContext(CartContext)
-   const { brand, isConfigLoading, kioskDetails, isStoreAvailable } =
-      useConfig()
+   const {
+      brand,
+      isConfigLoading,
+      kioskDetails,
+      isStoreAvailable,
+      brandLocation,
+   } = useConfig()
 
    const { config, productData, setCurrentPage } = props
    const { t, locale, dynamicTrans } = useTranslation()
+   const { formatMessage } = useIntl()
    const [showModifier, setShowModifier] = useState(false)
    const [availableQuantityInCart, setAvailableQuantityInCart] = useState(0)
    const currentLang = React.useMemo(() => locale, [locale])
 
    // const [combinedCartItems, setCombinedCartData] = useState(null)
    const [showChooseIncreaseType, setShowChooseIncreaseType] = useState(false) // show I'll choose or repeat last one popup
-   const additionalModifierTemplateIds = React.useMemo(() => {
-      return nestedModifierTemplateIds(productData)
-   }, [productData])
+
 
    useEffect(() => {
       const languageTags = document.querySelectorAll(
@@ -57,26 +62,25 @@ export const KioskProduct = props => {
    }, [combinedCartItems])
    const argsForByLocation = React.useMemo(
       () => ({
-         params: {
             brandId: brand?.id,
             locationId: kioskDetails?.locationId,
-         },
+            brand_locationId: brandLocation?.id,
       }),
-      [brand]
+      [brand, kioskDetails?.locationId, brandLocation?.id]
    )
 
-   const { data: additionalModifierTemplates } = useQuery(GET_MODIFIER_BY_ID, {
-      variables: {
-         priceArgs: argsForByLocation,
-         discountArgs: argsForByLocation,
-         modifierCategoryOptionCartItemArgs: argsForByLocation,
-         id: additionalModifierTemplateIds,
-      },
-      skip:
-         isConfigLoading ||
-         !brand?.id ||
-         !(additionalModifierTemplateIds.length > 0),
-   })
+   // const { data: additionalModifierTemplates } = useQuery(GET_MODIFIER_BY_ID, {
+   //    variables: {
+   //       priceArgs: argsForByLocation,
+   //       discountArgs: argsForByLocation,
+   //       modifierCategoryOptionCartItemArgs: argsForByLocation,
+   //       id: additionalModifierTemplateIds,
+   //    },
+   //    skip:
+   //       isConfigLoading ||
+   //       !brand?.id ||
+   //       !(additionalModifierTemplateIds.length > 0),
+   // })
 
    // counter button (-) delete last cartItem
    const onMinusClick = cartItemIds => {
@@ -92,7 +96,14 @@ export const KioskProduct = props => {
    }
 
    // repeat last order
-   const repeatLastOne = productData => {
+   const repeatLastOne = async productData => {
+      const { product: productCompleteData } = await graphQLClientSide.request(
+         PRODUCT_ONE,
+         {
+               id: productData.id,
+               params: argsForByLocation,
+         }
+      )
       const cartDetailSelectedProduct = cartState.cartItems
          .filter(x => x.productId === productData.id)
          .sort((a, b) => new Date(a.created_at) - new Date(b.created_at))
@@ -110,7 +121,7 @@ export const KioskProduct = props => {
          )
 
       //selected product option
-      const selectedProductOption = productData.productOptions.find(
+      const selectedProductOption = productCompleteData.productOptions.find(
          x => x.id == productOptionId
       )
 
@@ -160,7 +171,7 @@ export const KioskProduct = props => {
          })
       }
       const allSelectedOptions = [...singleModifier, ...multipleModifier]
-      if (additionalModifierTemplateIds) {
+      if (selectedProductOption.additionalModifiers.length) {
          selectedProductOption.additionalModifiers.forEach(option => {
             option.modifier.categories.forEach(category => {
                category.options.forEach(option => {
@@ -189,18 +200,61 @@ export const KioskProduct = props => {
             modifierOptionsConsistAdditionalModifiers.map(
                eachModifierOptionsConsistAdditionalModifiers => {
                   let additionalModifierOptions = []
-                  additionalModifierTemplates.modifiers.forEach(
-                     eachModifier => {
-                        eachModifier.categories.forEach(eachCategory => {
-                           additionalModifierOptions.push(
-                              ...eachCategory.options.map(eachOption => ({
-                                 ...eachOption,
-                                 categoryId: eachCategory.id,
-                              }))
+                  selectedProductOption.additionalModifiers.forEach(
+                     additionalModifier => {
+                        if (additionalModifier.modifier) {
+                           additionalModifier.modifier.categories.forEach(
+                              eachCategory => {
+                                 eachCategory.options.forEach(eachOption => {
+                                    if (eachOption.additionalModifierTemplate) {
+                                       console.log("getting Error Here",eachOption.additionalModifierTemplate)
+                                       eachOption.additionalModifierTemplate.categories.forEach(
+                                          eachCategory => {
+                                             additionalModifierOptions.push(
+                                                ...eachCategory.options.map(
+                                                   eachOptionTemp => ({
+                                                      ...eachOptionTemp,
+                                                      categoryId:
+                                                         eachCategory.id,
+                                                   })
+                                                )
+                                             )
+                                          }
+                                       )
+                                    }
+                                 })
+                              }
                            )
-                        })
+                        }
                      }
                   )
+                  // for single modifiers
+                  if (selectedProductOption.modifier) {
+                     selectedProductOption.modifier.categories.forEach(
+                        eachCategory => {
+                           eachCategory.options.forEach(eachOption => {
+                              if (eachOption.additionalModifierTemplateId) {
+                                 if (eachOption.additionalModifierTemplate) {
+                                    eachOption.additionalModifierTemplate.categories.forEach(
+                                       eachCategory => {
+                                          additionalModifierOptions.push(
+                                             ...eachCategory.options.map(
+                                                eachOptionTemp => ({
+                                                   ...eachOptionTemp,
+                                                   categoryId:
+                                                      eachCategory.id,
+                                                })
+                                             )
+                                          )
+                                       }
+                                    )
+                                 }
+                              }
+                           })
+                        }
+                     )
+                  }
+
                   const mapedModifierOptions =
                      eachModifierOptionsConsistAdditionalModifiers.selectedModifierOptionIds.map(
                         eachId => {
@@ -264,6 +318,68 @@ export const KioskProduct = props => {
          }
       }
    }, [isStoreAvailable])
+
+   const isProductOutOfStock = React.useMemo(() => {
+      if (productData.isAvailable) {
+         if (
+            productData.productOptions.length > 0 &&
+            productData.isPopupAllowed
+         ) {
+            const availableProductOptions = productData.productOptions.filter(
+               option => option.isPublished && option.isAvailable
+            ).length
+            if (availableProductOptions > 0) {
+               return false
+            } else {
+               return true
+            }
+         } else {
+            return false
+         }
+      }
+      return true
+   }, [productData])
+
+   const defaultProductOption = React.useMemo(() => {
+      if (productData.productOptions.length === 0) {
+         return {}
+      }
+      if (isProductOutOfStock) {
+         return productData.productOptions[0]
+      }
+      return (
+         productData.productOptions.find(
+            x =>
+               x.id === productData.defaultProductOptionId &&
+               x.isPublished &&
+               x.isAvailable
+         ) ||
+         productData.productOptions.find(x => x.isPublished && x.isAvailable)
+      )
+   }, [productData, isProductOutOfStock])
+
+   const handelAddToCartClick = () => {
+      // product availability
+      if (productData.isAvailable) {
+         if (showAddToCartButton) {
+            if (
+               productData.productOptions.length > 0 &&
+               productData.isPopupAllowed
+            ) {
+               const availableProductOptions =
+                  productData.productOptions.filter(
+                     option => option.isAvailable && option.isPublished
+                  ).length
+               if (availableProductOptions > 0) {
+                  setShowModifier(true)
+               }
+            } else {
+               addToCart(productData.defaultCartItem, 1)
+            }
+         }
+      }
+   }
+
    return (
       <>
          <div
@@ -346,20 +462,7 @@ export const KioskProduct = props => {
                                           }),
                                        }}
                                        onClick={() => {
-                                          if (showAddToCartButton) {
-                                             if (
-                                                productData.productOptions
-                                                   .length > 0 &&
-                                                productData.isPopupAllowed
-                                             ) {
-                                                setShowModifier(true)
-                                             } else {
-                                                addToCart(
-                                                   productData.defaultCartItem,
-                                                   1
-                                                )
-                                             }
-                                          }
+                                          handelAddToCartClick()
                                        }}
                                     />
                                  )}
@@ -395,11 +498,14 @@ export const KioskProduct = props => {
                      <span className="hern-kiosk__menu-product-price">
                         {/* <sup></sup> */}
                         {formatCurrency(
-                           productData.price -
-                              productData.discount +
-                              (productData?.productOptions[0]?.price ||
-                                 0 - productData?.productOptions[0]?.discount ||
-                                 0)
+                           getPriceWithDiscount(
+                              productData.price,
+                              productData.discount
+                           ) +
+                              getPriceWithDiscount(
+                                 defaultProductOption?.price || 0,
+                                 defaultProductOption?.discount || 0
+                              )
                         )}
                      </span>
                   </div>
@@ -408,19 +514,15 @@ export const KioskProduct = props => {
                         <KioskButton
                            onClick={() => {
                               // setShowModifier(true)
-                              if (
-                                 productData.productOptions.length > 0 &&
-                                 productData.isPopupAllowed
-                              ) {
-                                 setShowModifier(true)
-                              } else {
-                                 addToCart(productData.defaultCartItem, 1)
-                              }
+                              handelAddToCartClick()
                            }}
+                           disabled={isProductOutOfStock}
                            buttonConfig={config.kioskSettings.buttonSettings}
                         >
                            {isStoreAvailable
-                              ? t('Add To Cart')
+                              ? isProductOutOfStock
+                                 ? t('Out Of Stock')
+                                 : t('Add To Cart')
                               : t('View Product')}
                         </KioskButton>
                      ) : null
@@ -452,7 +554,7 @@ export const KioskProduct = props => {
             </Layout>
          </div>
          <Modal
-            title={t('Repeat last used customization')}
+            title={formatMessage({ id: 'Repeat last used customization' })}
             visible={showChooseIncreaseType}
             centered={true}
             onCancel={() => {

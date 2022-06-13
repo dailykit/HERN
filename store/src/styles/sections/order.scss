@@ -56,6 +56,7 @@
    padding-top: 0.4em;
    padding-bottom: 0.4em;
    scroll-margin: 6em 0 0 0;
+   overflow-wrap: break-word;
 }
 .hern-product-category-heading-with-bg {
    border-bottom: 2px solid black;
@@ -113,6 +114,12 @@
    align-items: center;
 }
 .hern-on-demand-order--product-card {
+   > .hern-product-card{
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      @media (max-width: 479px){ flex-direction: row;}
+   }
    width: 100%;
    @media (max-width: 479px) {
       max-width: 100% !important;

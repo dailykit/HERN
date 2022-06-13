@@ -4,7 +4,7 @@ import { Slide } from 'react-slideshow-image'
 import { useTranslation } from '../context'
 import { formatCurrency, isClient } from '../utils'
 import { HernLazyImage } from '../utils/hernImage'
-import { ModifierPopup } from './index'
+import { ModifierPopup, ModifierPopupForUnAvailability } from './index'
 // if (isClient) {
 //    import('lazysizes/plugins/unveilhooks/ls.unveilhooks').then(module => module)
 // }
@@ -46,8 +46,9 @@ export const ProductCard = props => {
       className = '',
       config,
       stepView = false,
+      autoPlaySlider = false,
    } = props
-   console.log('🚀 ~ file: product_card.jsx ~ line 50 ~ data', data)
+   // console.log('🚀 ~ file: product_card.jsx ~ line 50 ~ data', data)
    const { t, dynamicTrans, locale } = useTranslation()
    const currentLang = React.useMemo(() => locale, [locale])
    const slideRef = React.useRef()
@@ -131,7 +132,11 @@ export const ProductCard = props => {
             <div className={classNames('hern-product-card', className)}>
                {showImage && (
                   <div className="hern-product-card-image-container">
-                     <Slide ref={slideRef} {...properties}>
+                     <Slide
+                        ref={slideRef}
+                        infinite={autoPlaySlider}
+                        autoplay={autoPlaySlider}
+                     >
                         {data.assets.images.map((each, index) => {
                            return (
                               <div key={each}>

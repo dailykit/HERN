@@ -271,7 +271,7 @@ const BulkActions = ({
    const [updatedColumn, setUpdatedColumn] = React.useState([])
    const [showPopup, setShowPopup] = React.useState(false)
    const [popupHeading, setPopupHeading] = React.useState('')
-
+   const [selectedBrandLocation, setSelectedBrandLocation] = React.useState([])
    // product options modifier
    const handleModifierClear = () => {
       productOptionsTableRef.current.clearModifier()
@@ -911,11 +911,24 @@ const BulkActions = ({
                   productId: eachId.id,
                   brand_locationId: eachId.brand_locationId,
                }))
-               console.log('newData', newData)
-               console.log('objects key', Object.keys(newBulkAction))
+               const newDataWithMultipleLocation = []
+               selectedRows.forEach(eachId => {
+                  selectedBrandLocation.forEach(eachBrandLocation => {
+                     newDataWithMultipleLocation.push({
+                        ...newBulkAction,
+                        productId: eachId.id,
+                        brand_locationId: eachBrandLocation,
+                     })
+                  })
+               })
+               // console.log('newData', newData, newDataWithMultipleLocation)
+               // console.log('objects key', Object.keys(newBulkAction))
                fn({
                   variables: {
-                     objects: newData,
+                     objects:
+                        selectedBrandLocation.length == 0
+                           ? newData
+                           : newDataWithMultipleLocation,
                      constraint:
                         'productPrice_brand_location_brand_locationId_productId_key',
                      update_columns: Object.keys(newBulkAction),
@@ -931,9 +944,22 @@ const BulkActions = ({
                }))
                console.log('newData', newData)
                console.log('objects key', Object.keys(newBulkAction))
+               const newDataWithMultipleLocation = []
+               selectedRows.forEach(eachId => {
+                  selectedBrandLocation.forEach(eachBrandLocation => {
+                     newDataWithMultipleLocation.push({
+                        ...newBulkAction,
+                        productOptionId: eachId.id,
+                        brand_locationId: eachBrandLocation,
+                     })
+                  })
+               })
                fn({
                   variables: {
-                     objects: newData,
+                     objects:
+                        selectedBrandLocation.length == 0
+                           ? newData
+                           : newDataWithMultipleLocation,
                      constraint:
                         'productPrice_brand_location_brand_locationId_productOptionId_ke',
                      update_columns: Object.keys(newBulkAction),
@@ -1155,6 +1181,7 @@ const BulkActions = ({
                      setBulkActions={setBulkActions}
                      additionalBulkAction={additionalBulkAction}
                      setAdditionalBulkAction={setAdditionalBulkAction}
+                     setSelectedBrandLocation={setSelectedBrandLocation}
                   />
                )}
                {(table === 'Brand Product Option' ||
@@ -1170,6 +1197,7 @@ const BulkActions = ({
                      setBulkActions={setBulkActions}
                      additionalBulkAction={additionalBulkAction}
                      setAdditionalBulkAction={setAdditionalBulkAction}
+                     setSelectedBrandLocation={setSelectedBrandLocation}
                   />
                )}
             </Flex>
