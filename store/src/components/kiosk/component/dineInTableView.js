@@ -40,11 +40,7 @@ export const DineInTableSelection = props => {
          <KioskButton
             buttonConfig={config.kioskSettings.buttonSettings}
             customClass={classNames(
-               'hern-kiosk__dine-in-selection-confirm-btn',
-               {
-                  'hern-kiosk__dine-in-selection-confirm-btn--disabled':
-                     !selectedLocationTableId,
-               }
+               'hern-kiosk__dine-in-selection-confirm-btn'
             )}
             disabled={!selectedLocationTableId}
             onClick={() => {
@@ -56,7 +52,8 @@ export const DineInTableSelection = props => {
                onClose()
             }}
          >
-            {t('CONFIRM')}
+            {/* TODO: Button text should be dynamic (from config) */}
+            {t('Proceed')}
          </KioskButton>
       )
    }
@@ -73,30 +70,33 @@ export const DineInTableSelection = props => {
          headerStyle={{
             textAlign: 'center',
             fontSize: '52px !important',
-            fontWeight: '800',
+            fontWeight: '700',
+            color: '#303030',
+            height: '160px',
+            background: '#FFFFFF',
+            boxShadow: '0px 1px 20px rgba(0, 0, 0, 0.1)',
          }}
          className="hern-kiosk__table-selection-drawer"
          destroyOnClose={true}
          footer={<DineInFooter />}
+         // TODO: Close icon should be from assets folder and should use same icon for phone number and table selection
          closeIcon={
-            <ArrowLeftIcon
-               className="hern-kiosk__dine-in-selection-back"
-               size={42}
-               onClose={() => {
-                  setSelectedLocationTableId(null)
-                  onClose()
-               }}
-               style={{
-                  backgroundColor: `${
-                     config?.kioskSettings?.theme?.arrowBgColor?.value ||
-                     theme?.accent
-                  }99`,
-                  color: `${
-                     config?.kioskSettings?.theme?.arrowColor?.value ||
-                     '#000000'
-                  }`,
-               }}
-            />
+            <svg
+               width="42"
+               height="42"
+               viewBox="0 0 42 42"
+               fill="none"
+               xmlns="http://www.w3.org/2000/svg"
+            >
+               <rect width="42" height="42" rx="21" fill="#7124B4" />
+               <path
+                  d="M31.5 21.4113H10.5M10.5 21.4113L18.7889 14.8749M10.5 21.4113L18.7889 27.1249"
+                  stroke="white"
+                  stroke-width="3"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+               />
+            </svg>
          }
       >
          <div className="hern-kiosk__dine-in-heading-wrapper">
@@ -124,12 +124,17 @@ export const DineInTableSelection = props => {
                               clipPath:
                                  'polygon(0 0, 100% 0, 100% 100%, 0 98%)',
                            }),
+                           // TODO: This design should be config based and should use svg insted of border
                            ...(eachTable.id !== selectedLocationTableId && {
-                              backgroundColor:
-                                 config.kioskSettings.theme.primaryColorLight
-                                    .value,
-                              color: config.dineInTableSettings
-                                 .dineInSelectedTableTextColor.value,
+                              // backgroundColor:
+                              //    config.kioskSettings.theme.primaryColorLight
+                              //       .value,
+                              // color: config.dineInTableSettings
+                              //    .dineInSelectedTableTextColor.value,
+                              border:
+                                 6 +
+                                 'px solid ' +
+                                 config.kioskSettings.theme.primaryColor.value,
                               clipPath:
                                  'polygon(0 0, 100% 0, 100% 100%, 0 98%)',
                            }),

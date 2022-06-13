@@ -53,6 +53,24 @@
    height: 100%;
    align-items: center;
 }
+.hern-kiosk__kiosk-header-container--centered-logo {
+   display: grid;
+   grid-template-columns: 1fr auto;
+   justify-items: center;
+   align-content: center;
+}
+.hern-kiosk__kiosk-header__brand {
+   display: flex;
+   align-items: center;
+   gap: 1rem;
+   > h3 {
+      font-weight: 800;
+      font-size: 2.5rem;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: #ffffff;
+   }
+}
 .hern-kiosk__kiosk-header-logo {
    height: 7em;
    width: 7em;
@@ -129,27 +147,20 @@
 }
 .hern-kiosk__fulfillment-option-template-2 {
    z-index: 1000;
-   // background: #ffffff;
-   // border: 4px solid rgba(111, 111, 111, 0.5);
    box-sizing: border-box;
-   // box-shadow: 0px 6px 20px rgba(0, 0, 0, 0.2);
    border-radius: 1px;
-   width: 30em;
-   height: 30em;
+   width: 430px;
+   height: 430px;
    position: relative;
    display: flex;
-   justify-content: center;
    flex-direction: column;
    align-items: center;
-   // background: #fff;
-   // &::after {
-   //    content: ' ';
-   //    width: 40px;
-   //    height: 40px;
-   //    background-color: red;
-   //    position: absolute;
-   //    bottom: 0;
-   // }
+   cursor: pointer;
+   padding: 90px 0 60px 0;
+   &:active {
+      opacity: 0.8;
+      box-shadow: 0px 6px 20px rgba(0, 0, 0, 0.2);
+   }
 }
 
 .hern-kiosk__fulfillment-view-menu-btn-wrapper {
@@ -1047,8 +1058,15 @@
    }
 }
 .hern-kiosk__table-selection-drawer {
+   .ant-drawer-body {
+      padding: 5rem 3.5rem 2rem 3.5rem;
+   }
+   .ant-drawer-footer {
+      padding: 0;
+      border: none;
+   }
    .ant-drawer-header {
-      margin-top: 15px;
+      // margin-top: 15px;
       .ant-drawer-title {
          font-size: 42px;
          font-weight: 700;
@@ -1191,11 +1209,13 @@
    margin-top: 15px;
 }
 .hern-kiosk__dine-in-heading {
-   font-weight: 600;
-   font-size: 28px;
-   line-height: 49px;
+   font-weight: 700;
+   font-size: 56px;
+   text-align: center;
    letter-spacing: 0.04em;
    text-transform: uppercase;
+   color: #202020;
+   opacity: 0.8;
 }
 .hern-kiosk__dine-in-tables {
    display: grid;
@@ -1217,23 +1237,31 @@
 }
 
 .hern-kiosk__dine-in-selection-confirm-btn {
-   padding: 2em 2em;
-   height: 2.5em;
-   display: flex;
-   align-items: center;
+   background: var(--hern-primary-color);
+   box-shadow: 0px -4px 6px #d1e3f5;
    width: 100%;
-   justify-content: center;
-   font-size: 1.3rem;
+   padding: 40px initial;
+   font-weight: 700;
+   font-size: 68px;
+   text-transform: uppercase;
+   color: #ffffff;
+   border-radius: 0;
+   &:active {
+      opacity: 0.8;
+   }
+   // &:disabled {
+   //    opacity: 0.5;
+   // }
 }
 .hern-kiosk__dine-in-selection-confirm-btn--disabled {
    cursor: not-allowed;
 }
 .hern-kiosk__dine-in-selection-back {
-   position: absolute;
-   stroke: currentColor;
+   // position: absolute;
+   // stroke: currentColor;
 
-   z-index: 100;
-   border-radius: 50%;
+   // z-index: 100;
+   // border-radius: 50%;
 }
 .hern-kiosk__dine-in-table-detail {
    position: absolute;
@@ -1311,4 +1339,126 @@
    color: #f00;
    font-size: 16px;
    margin-top: 18px;
+}
+.hern-kiosk__phone-number-drawer {
+   background: #ffffff;
+   .ant-drawer-body {
+      padding: 0;
+   }
+   .ant-drawer-header {
+      box-shadow: 0px 1px 20px rgba(0, 0, 0, 0.1);
+      height: 160px;
+   }
+   .ant-drawer-title {
+      text-align: center;
+      font-weight: 700;
+      font-size: 3.5rem;
+      text-align: center;
+      color: #303030;
+   }
+
+   .hern-kiosk__phone-number-drawer__skip-btn {
+      font-style: normal;
+      font-weight: 700;
+      font-size: 40px;
+      line-height: 55px;
+      text-align: center;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--hern-primary-color);
+      opacity: 0.8;
+   }
+}
+.hern-kiosk__number-pad {
+   display: grid;
+   grid-template-columns: repeat(3, 280px);
+   grid-auto-rows: 140px;
+   grid-gap: 60px;
+   margin-bottom: 56px;
+   padding: initial 60px;
+
+   > div {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #f9f9f9;
+      box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.08);
+      border-radius: 20px;
+      font-style: normal;
+      font-weight: 600;
+      font-size: 80px;
+      color: #202020;
+      cursor: pointer;
+      .hern-kiosk__phone-number-drawer__number__clear-btn {
+         font-size: 60px;
+      }
+      &:active {
+         background: rgba(113, 36, 180, 0.1);
+         box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.08);
+         border-radius: 20px;
+         color: #7124b4;
+      }
+   }
+}
+.hern-kiosk__phone-number-drawer__number__input {
+   width: 100%;
+   display: block;
+   padding: 0.5rem 60px;
+   margin-bottom: 60px;
+   > input {
+      display: block;
+      width: 100%;
+      height: 140px;
+      background-color: #f9f9f9;
+      border-radius: 2px;
+      border: none;
+      outline: none;
+      text-align: center;
+      font-size: 80px !important;
+      font-weight: 600;
+      color: #202020;
+   }
+}
+.hern-kiosk__phone-number-drawer__content {
+   display: flex;
+   flex-direction: column;
+   justify-content: space-between;
+   height: 100%;
+   .hern-kiosk__phone-number-drawer__header {
+      padding: 140px 92px initial 92px;
+      > h1 {
+         font-weight: 700;
+         font-size: 60px;
+         text-align: center;
+         letter-spacing: 0.04em;
+         text-transform: capitalize;
+         color: #202020;
+         opacity: 0.8;
+         margin-bottom: 0.5rem;
+      }
+      > p {
+         font-weight: 700;
+         font-size: 40px;
+         text-align: center;
+         text-transform: capitalize;
+         color: #202020;
+         opacity: 0.8;
+      }
+   }
+   .hern-kiosk__phone-number-drawer__number__proceed-btn {
+      background: var(--hern-primary-color);
+      box-shadow: 0px -4px 6px #d1e3f5;
+      width: 100%;
+      padding: 40px initial;
+      font-weight: 700;
+      font-size: 68px;
+      text-transform: uppercase;
+      color: #ffffff;
+      &:active {
+         opacity: 0.8;
+      }
+      &:disabled {
+         opacity: 0.5;
+      }
+   }
 }
