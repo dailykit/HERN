@@ -80,8 +80,8 @@
 
 .hern-steps-navbar__steps {
    width: 100%;
-   display: grid;
-   grid-template-columns: repeat(4, minmax(0, 1fr));
+   display: flex;
+   justify-content: center;
 }
 .hern-steps-navbar__step {
    position: relative;
@@ -150,6 +150,7 @@
       font-size: 8px;
       line-height: 15px;
       color: rgba(51, 51, 51, 0.8);
+      transform: translateX(-40%);
    }
 }
 
