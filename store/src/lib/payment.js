@@ -7,7 +7,11 @@ import {
 } from 'react'
 import _has from 'lodash/has'
 import _isEmpty from 'lodash/isEmpty'
-import { useSubscription, useMutation } from '@apollo/react-hooks'
+import {
+   useSubscription,
+   useMutation,
+   useApolloClient,
+} from '@apollo/react-hooks'
 import { useToasts } from 'react-toast-notifications'
 import axios from 'axios'
 import { useRouter } from 'next/router'
@@ -17,6 +21,7 @@ import {
    UPDATE_CART_PAYMENT,
    CREATE_PRINT_JOB,
    UPDATE_CART,
+   CUSTOMER,
 } from '../graphql'
 import { useUser, useCart, useTranslation } from '../context'
 import { useConfig } from '../lib'
@@ -34,6 +39,7 @@ import {
    PaymentProcessingModal,
    PrintProcessingModal,
 } from '../components'
+import { ConversationInstance } from 'twilio/lib/rest/conversations/v1/conversation'
 
 const PaymentContext = createContext()
 const initialState = {
@@ -106,6 +112,7 @@ export const PaymentProvider = ({ children }) => {
    const { cartState } = useCart()
    const { addToast } = useToasts()
    const { t } = useTranslation()
+   const apolloClient = useApolloClient()
 
    const BY_PASS_TERMINAL_PAYMENT = get_env('BY_PASS_TERMINAL_PAYMENT')
    const ALLOW_POSIST_PUSH_ORDER = get_env('ALLOW_POSIST_PUSH_ORDER')
@@ -414,6 +421,17 @@ export const PaymentProvider = ({ children }) => {
       setIsProcessingPayment(false)
    }
 
+   const getCustomerInfo = async keycloakId => {
+      let customerData = await apolloClient.query({
+         query: CUSTOMER.PROFILE_INFO,
+         variables: {
+            keycloakId: keycloakId,
+         },
+      })
+      customerData = customerData.data?.customer?.platform_customer
+      return customerData
+   }
+
    //<---------  methods to set/update reducer state  --------->
 
    // setting cartPayment in state
@@ -554,7 +572,11 @@ export const PaymentProvider = ({ children }) => {
                      brand,
                      theme,
                      paymentInfo: cartPayment.availablePaymentOption,
-                     profileInfo: cartPayment?.cart?.customerInfo,
+                     profileInfo:
+                        cartPayment?.cart?.customerInfo ||
+                        (await getCustomerInfo(
+                           cartPayment?.metaData.customerkeycloakId
+                        )),
                      ondismissHandler: () => onCancelledHandler(),
                      eventHandler,
                   })
