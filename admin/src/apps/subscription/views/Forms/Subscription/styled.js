@@ -34,11 +34,11 @@ export const Wrapper = styled.div`
          > span {
             font-size: 14px;
          }
-         // &[data-selected] {
-         //    span {
-         //       color: #fff;
-         //    }
-         // }
+         &[data-selected] {
+            span {
+               color: #000000;
+            }
+         }
       }
    }
    #itemCountTabList {
