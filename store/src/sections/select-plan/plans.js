@@ -19,7 +19,7 @@ export const Plans = ({ config }) => {
    const [isLoading, setIsLoading] = React.useState(true)
 
    // Plan view Config
-   const planViewConfig = config?.display?.planView?.value?.value ?? 'card'
+   const planViewConfig = 'aggregated'
 
    //Config
    const headingConfig = {
