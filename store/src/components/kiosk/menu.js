@@ -37,7 +37,7 @@ export const MenuSection = props => {
       )
    }
    if (status === 'error') {
-      return <div>Somthing went wring</div>
+      return <div>Something went wrong</div>
    }
    return (
       <Layout>
