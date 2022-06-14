@@ -161,7 +161,7 @@ const AddressCard = ({
             </span>
          </div>
          <div
-            style={{ minHeight: isSelectedCard ? 'auto' : '96px' }}
+            style={{ minHeight: isSelectedCard ? 'auto' : '30px' }}
             className="hern-delivery__address__list-item__address"
          >
             {normalizeAddress(address)}
