@@ -154,8 +154,8 @@ export const AddressTunnel = props => {
          <div className="hern-delivery__address--outside">
             <section className="hern-delivery__address-tunnel__address-search">
                <Form.Label>
-                  <span>{t('Search')}</span>
-                  {selectedOrderTab ? ' ' + selectedOrderTab.label : ''}
+                  <span>{t('Search')}</span> &nbsp;
+                  {/* {selectedOrderTab ? ' ' + selectedOrderTab.label : ''} */}
                   <span>{t('Address')}</span>
                </Form.Label>
                {loaded && !error && (
