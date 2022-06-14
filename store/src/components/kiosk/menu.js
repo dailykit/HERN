@@ -241,15 +241,32 @@ const KioskMenu = props => {
          </div>
          <Content>
             <Layout style={{ height: '100%', backgroundColor: '#fff' }}>
-               <Header theme={'light'} className="hern-kiosk__menu-header">
-                  <Row className="hern-kiosk__menu-header-row">
+               <Header
+                  style={{
+                     ...(config?.menuSettings?.header?.height?.value && {
+                        height: config.menuSettings.header.height.value,
+                     }),
+                  }}
+                  theme={'light'}
+                  className="hern-kiosk__menu-header"
+               >
+                  <Row
+                     style={{
+                        ...(config?.menuSettings?.header?.alignItems?.value
+                           ?.value && {
+                           alignItems:
+                              config.menuSettings.header.alignItems.value.value,
+                        }),
+                     }}
+                     className="hern-kiosk__menu-header-row"
+                  >
                      {config.menuSettings?.showVegToggle?.value && (
                         <Col
                            span={4}
                            className="hern-kiosk__menu-header-veg-switch"
                         >
                            <span className="hern-kiosk__menu-header-veg-text">
-                              {t('VEG')}
+                              {t('Veg')}
                            </span>
                            <Switch
                               onClick={checked => {
@@ -277,6 +294,12 @@ const KioskMenu = props => {
                               className="hern-kiosk__menu-header-heading"
                               style={{
                                  color: `${config.kioskSettings.theme.primaryColor.value}`,
+                                 ...(config?.menuSettings?.header?.fontSize
+                                    ?.value && {
+                                    fontSize:
+                                       config.menuSettings.header.fontSize
+                                          .value,
+                                 }),
                               }}
                            >
                               {t('Menu')}
