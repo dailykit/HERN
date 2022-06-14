@@ -299,8 +299,7 @@
    font-weight: 600;
 }
 .hern-kiosk__menu-category-side-bar {
-   box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
-   overflow: auto;
+   overflow-y: auto;
    padding-top: 1em;
    &::-webkit-scrollbar {
       width: 6px;
@@ -319,6 +318,34 @@
       .hern-kiosk__menu-page-product-category-title {
          // color: #0f6bb1;
       }
+   }
+}
+.hern-kiosk__menu-category-side-bar__wrapper {
+   box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+}
+.hern-kiosk__menu-category-arrow {
+   display: flex;
+   justify-content: center;
+   width: 100%;
+   background-color: #ffffff;
+
+   &:first-child {
+      padding-top: 12px;
+      padding-bottom: 8px;
+   }
+   &:last-child {
+      padding-bottom: 12px;
+      padding-top: 8px;
+   }
+   > span {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 1.75rem;
+      width: 1.75rem;
+      border-radius: 50%;
+      background: rgba(113, 36, 180, 0.1);
+      backdrop-filter: blur(4px);
    }
 }
 .hern-kiosk__menu-header-veg-switch {

@@ -13,6 +13,7 @@ import { PromotionCarousal } from '../../sections/promotionCarousel'
 import * as Scroll from 'react-scroll'
 import { HernLazyImage } from '../../utils/hernImage'
 import KioskButton from './component/button'
+import { BiChevronDown, BiChevronUp } from 'react-icons/bi'
 
 const { Content, Sider, Header, Footer } = Layout
 
@@ -45,7 +46,15 @@ export const MenuSection = props => {
             {/* Promotion, coupons and progress bar */}
             <Layout style={{ height: '100%' }}>
                <ProgressBar config={config} setCurrentPage={setCurrentPage} />
-               <Content className="hern-kiosk__menu-promotion-coupons">
+               <Content
+                  style={{
+                     margin: config?.promotionalCarouselSettings
+                        ?.fullScreenCarousel?.value
+                        ? 0
+                        : '0 1em',
+                  }}
+                  className="hern-kiosk__menu-promotion-coupons"
+               >
                   <PromotionCarousal config={config} />
                </Content>
             </Layout>
@@ -71,7 +80,11 @@ const KioskMenu = props => {
    const { cartState, showCartIconToolTip } = React.useContext(CartContext)
    const { cart } = cartState
    const { isStoreAvailable } = useConfig()
+   const sidebarRef = React.useRef()
 
+   const scroll = scrollOffset => {
+      sidebarRef.current.scrollTop += scrollOffset
+   }
    const menuRef = React.useRef()
    const kioskFinalMenu = React.useMemo(() => {
       if (showVegMenuOnly) {
@@ -125,74 +138,106 @@ const KioskMenu = props => {
             height: `calc(100vh - ${isStoreAvailable ? '37em' : '42em'})`,
          }}
       >
-         <Sider
-            width={250}
-            theme={'light'}
-            className="hern-kiosk__menu-category-side-bar"
-         >
-            <Menu
+         <div className="hern-kiosk__menu-category-side-bar__wrapper">
+            {config.menuSettings?.category?.showArrow?.value && (
+               <button
+                  className="hern-kiosk__menu-category-arrow"
+                  onClick={() => scroll(-200)}
+               >
+                  <span>
+                     <BiChevronUp color="var(--hern-primary-color)" size={28} />
+                  </span>
+               </button>
+            )}
+            <Sider
+               width={250}
                theme={'light'}
-               mode={'vertical'}
-               onSelect={onCategorySelect}
-               defaultSelectedKeys={[selectedCategory]}
+               className="hern-kiosk__menu-category-side-bar"
+               ref={sidebarRef}
+               style={{
+                  scrollBehavior: 'smooth',
+                  height: config.menuSettings?.category?.showArrow?.value
+                     ? 'calc(100% - 86px)'
+                     : '100%',
+               }}
             >
-               {kioskFinalMenu.map((eachCategory, index) => {
-                  if (!eachCategory.isCategoryPublished) {
-                     return null
-                  }
-                  return (
-                     <Menu.Item key={index} style={{ height: '13em' }}>
-                        <div
-                           className="hern-kiosk__menu-page-product-category"
-                           style={{
-                              ...(index == selectedCategory && {
-                                 border: ` 4px solid ${config.kioskSettings.theme.primaryColor.value}`,
-                              }),
-                           }}
-                        >
-                           <Scroll.Link
-                              containerId="hern-kiosk__menu-list"
-                              smooth={true}
-                              // activeClass="hern-on-demand-menu__navigationAnchor-li--active"
-                              onSetActive={to => {
-                                 setSelectedCategory(index)
-                                 // changeCategory(index)
-                                 // console.log('thisIsTo', to)
+               <Menu
+                  theme={'light'}
+                  mode={'vertical'}
+                  onSelect={onCategorySelect}
+                  defaultSelectedKeys={[selectedCategory]}
+               >
+                  {kioskFinalMenu.map((eachCategory, index) => {
+                     if (!eachCategory.isCategoryPublished) {
+                        return null
+                     }
+                     return (
+                        <Menu.Item key={index} style={{ height: '13em' }}>
+                           <div
+                              className="hern-kiosk__menu-page-product-category"
+                              style={{
+                                 ...(index == selectedCategory && {
+                                    border: ` 4px solid ${config.kioskSettings.theme.primaryColor.value}`,
+                                 }),
                               }}
-                              to={eachCategory.name}
-                              spy={true}
-                              className="hern-kiosk__category-scroll-link"
                            >
-                              <HernLazyImage
-                                 dataSrc={
-                                    eachCategory?.imageUrl ||
-                                    config.productSettings.defaultImage.value
-                                 }
-                                 alt="category image"
-                                 style={{ width: '100px', height: '100px' }}
-                                 width={100}
-                                 height={100}
-                                 className="hern-kiosk__menu-page-product-category-image"
-                              />
-                              <span
-                                 className="hern-kiosk__menu-page-product-category-title"
-                                 style={{
-                                    ...((index == selectedCategory ||
-                                       index == categoryId) && {
-                                       color: `${config.kioskSettings.theme.primaryColor.value}`,
-                                    }),
+                              <Scroll.Link
+                                 containerId="hern-kiosk__menu-list"
+                                 smooth={true}
+                                 // activeClass="hern-on-demand-menu__navigationAnchor-li--active"
+                                 onSetActive={to => {
+                                    setSelectedCategory(index)
+                                    // changeCategory(index)
+                                    // console.log('thisIsTo', to)
                                  }}
-                                 data-translation="true"
+                                 to={eachCategory.name}
+                                 spy={true}
+                                 className="hern-kiosk__category-scroll-link"
                               >
-                                 {eachCategory.name}
-                              </span>
-                           </Scroll.Link>
-                        </div>
-                     </Menu.Item>
-                  )
-               })}
-            </Menu>
-         </Sider>
+                                 <HernLazyImage
+                                    dataSrc={
+                                       eachCategory?.imageUrl ||
+                                       config.productSettings.defaultImage.value
+                                    }
+                                    alt="category image"
+                                    style={{ width: '100px', height: '100px' }}
+                                    width={100}
+                                    height={100}
+                                    className="hern-kiosk__menu-page-product-category-image"
+                                 />
+                                 <span
+                                    className="hern-kiosk__menu-page-product-category-title"
+                                    style={{
+                                       ...((index == selectedCategory ||
+                                          index == categoryId) && {
+                                          color: `${config.kioskSettings.theme.primaryColor.value}`,
+                                       }),
+                                    }}
+                                    data-translation="true"
+                                 >
+                                    {eachCategory.name}
+                                 </span>
+                              </Scroll.Link>
+                           </div>
+                        </Menu.Item>
+                     )
+                  })}
+               </Menu>
+            </Sider>
+            {config.menuSettings?.category?.showArrow?.value && (
+               <button
+                  className="hern-kiosk__menu-category-arrow"
+                  onClick={() => scroll(200)}
+               >
+                  <span>
+                     <BiChevronDown
+                        color="var(--hern-primary-color)"
+                        size={28}
+                     />
+                  </span>
+               </button>
+            )}
+         </div>
          <Content>
             <Layout style={{ height: '100%', backgroundColor: '#fff' }}>
                <Header theme={'light'} className="hern-kiosk__menu-header">
