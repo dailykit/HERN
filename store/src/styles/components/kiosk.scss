@@ -280,6 +280,15 @@
       }
    }
 }
+//Bold progress for step bar
+.hern-kiosk__step-bar-wrapper {
+   .ant-steps-item-title::after {
+      top: 10px !important;
+      height: 12px !important;
+      background-color: rgba(113, 36, 180, 0.4) !important;
+      border-radius: 20px;
+   }
+}
 .hern-kiosk__step-bar-count {
    width: 45px;
    height: 45px;

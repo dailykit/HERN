@@ -13,6 +13,7 @@ import { useConfig } from '../../../lib'
 import { Header } from 'antd/lib/layout/layout'
 import { DineInTableSelection } from '.'
 import { useIntl } from 'react-intl'
+import classNames from 'classnames'
 const { Step } = Steps
 
 export const ProgressBar = props => {
@@ -183,7 +184,13 @@ export const ProgressBar = props => {
                   </div>
                )}
             </div>
-            <div style={{ display: 'flex', alignItems: 'center' }}>
+            <div
+               className={classNames({
+                  'hern-kiosk__step-bar-wrapper':
+                     config?.progressBarSettings?.boldProgressBarTail?.value,
+               })}
+               style={{ display: 'flex', alignItems: 'center' }}
+            >
                {config?.progressBarSettings?.showBackButton?.value !==
                   false && (
                   <>
