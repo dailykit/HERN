@@ -248,6 +248,32 @@
 .hern-kiosk__menu-carousal-right-arrow {
    right: 0;
 }
+//Override default carousel dots
+.hern-kiosk__promotion__carousel {
+   .slick-dots {
+      bottom: 16px !important;
+      li {
+         background-color: rgba(255, 255, 255, 0.25);
+         backdrop-filter: blur(20px);
+         height: 12px;
+         width: 12px;
+         border-radius: 50%;
+      }
+      > li.slick-active {
+         height: 12px;
+         width: 12px;
+         border-radius: 50%;
+         > button {
+            background-color: rgba(255, 255, 255, 0.8);
+         }
+      }
+      li > button {
+         height: 12px;
+         width: 12px;
+         border-radius: 50%;
+      }
+   }
+}
 .hern-kiosk__promotion-image {
    display: flex !important;
    justify-content: center !important;
