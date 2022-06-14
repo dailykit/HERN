@@ -92,6 +92,7 @@ const Kiosk = props => {
          setStoredCartId(null)
          resetPaymentProviderStates()
       }
+      isClient && localStorage.removeItem('phone')
    }
 
    const handleOnActive = event => {
