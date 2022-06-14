@@ -1475,7 +1475,13 @@ const AdditionalModifiers = forwardRef(
                >
                   <span
                      className="hern-kiosk__additional-modifier-label"
-                     style={{ color: '#ffffff' }}
+                     style={{
+                        color: config?.modifierPopUpSettings?.theme
+                           ?.addModifierLabelColor?.value
+                           ? config?.modifierPopUpSettings?.theme
+                                ?.addModifierLabelColor?.value
+                           : '#ffffff',
+                     }}
                      data-translation="true"
                   >
                      {eachAdditionalModifier.label}
@@ -1489,9 +1495,25 @@ const AdditionalModifiers = forwardRef(
                               </span>
                            )} */}
                   {showCustomize ? (
-                     <UpVector stroke="#ffffff" />
+                     <UpVector
+                        stroke={
+                           config?.modifierPopUpSettings?.theme
+                              ?.addModifierLabelColor?.value
+                              ? config?.modifierPopUpSettings?.theme
+                                   ?.addModifierLabelColor?.value
+                              : '#ffffff'
+                        }
+                     />
                   ) : (
-                     <DownVector stroke="#ffffff" />
+                     <DownVector
+                        stroke={
+                           config?.modifierPopUpSettings?.theme
+                              ?.addModifierLabelColor?.value
+                              ? config?.modifierPopUpSettings?.theme
+                                   ?.addModifierLabelColor?.value
+                              : '#ffffff'
+                        }
+                     />
                   )}
                </div>
                {showCustomize &&
@@ -1519,7 +1541,7 @@ const AdditionalModifiers = forwardRef(
                                  <span
                                     className="hern-kiosk__modifier-category-label-text"
                                     style={{
-                                       color: `${config.kioskSettings.theme.modifierTextColor.value}`,
+                                       color: `${config.modifierPopUpSettings.theme.modifierPopupCategoryTextColor.value}`,
                                     }}
                                     data-translation="true"
                                  >
@@ -1598,7 +1620,12 @@ const AdditionalModifiers = forwardRef(
                                                       width={95}
                                                    />
 
-                                                   <span className="hern-kiosk__modifier--option-name">
+                                                   <span
+                                                      style={{
+                                                         color: `${config.modifierPopUpSettings.theme.modifierPopupOptionTextColor.value}`,
+                                                      }}
+                                                      className="hern-kiosk__modifier--option-name"
+                                                   >
                                                       <span data-translation="true">
                                                          {eachOption.name}
                                                       </span>
@@ -1617,14 +1644,17 @@ const AdditionalModifiers = forwardRef(
                                                 {isModifierOptionInProduct() ? (
                                                    <RoundCheckBoxIcon
                                                       fill={
-                                                         config.kioskSettings
-                                                            .tickBox
-                                                            .tickBoxBGonCheck
+                                                         config
+                                                            .modifierPopUpSettings
+                                                            .theme
+                                                            .checkBoxCheckedBGColor
                                                             .value
                                                       }
                                                       tickFill={
-                                                         config.kioskSettings
-                                                            .tickBox.tickColor
+                                                         config
+                                                            .modifierPopUpSettings
+                                                            .theme
+                                                            .checkBoxTickColor
                                                             .value
                                                       }
                                                       size={50}
@@ -1632,8 +1662,10 @@ const AdditionalModifiers = forwardRef(
                                                 ) : (
                                                    <NoTickRoundCheckBoxIcon
                                                       fill={
-                                                         config.kioskSettings
-                                                            .theme.primaryColor
+                                                         config
+                                                            .modifierPopUpSettings
+                                                            .theme
+                                                            .checkBoxEmptyColor
                                                             .value
                                                       }
                                                       size={50}
@@ -2037,7 +2069,7 @@ const ModifierOptionsList = forwardRef((props, ref) => {
                      <span
                         className="hern-kiosk__modifier-category-label-text"
                         style={{
-                           color: `${config.kioskSettings.theme.modifierTextColor.value}`,
+                           color: `${config.modifierPopUpSettings.theme.modifierPopupCategoryTextColor.value}`,
                         }}
                         data-translation="true"
                      >
@@ -2108,7 +2140,12 @@ const ModifierOptionsList = forwardRef((props, ref) => {
                                        width={95}
                                     />
 
-                                    <span className="hern-kiosk__modifier--option-name">
+                                    <span
+                                       style={{
+                                          color: `${config.modifierPopUpSettings.theme.modifierPopupOptionTextColor.value}`,
+                                       }}
+                                       className="hern-kiosk__modifier--option-name"
+                                    >
                                        <span data-translation="true">
                                           {eachOption.name}
                                        </span>
@@ -2127,20 +2164,20 @@ const ModifierOptionsList = forwardRef((props, ref) => {
                                  {isModifierOptionInProduct() ? (
                                     <RoundCheckBoxIcon
                                        fill={
-                                          config.kioskSettings.tickBox
-                                             .tickBoxBGonCheck.value
+                                          config.modifierPopUpSettings.theme
+                                             .checkBoxCheckedBGColor.value
                                        }
                                        tickFill={
-                                          config.kioskSettings.tickBox.tickColor
-                                             .value
+                                          config.modifierPopUpSettings.theme
+                                             .checkBoxTickColor.value
                                        }
                                        size={50}
                                     />
                                  ) : (
                                     <NoTickRoundCheckBoxIcon
                                        fill={
-                                          config.kioskSettings.theme
-                                             .primaryColor.value
+                                          config.modifierPopUpSettings.theme
+                                             .checkBoxEmptyColor.value
                                        }
                                        size={50}
                                     />
