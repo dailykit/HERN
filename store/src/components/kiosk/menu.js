@@ -14,6 +14,7 @@ import * as Scroll from 'react-scroll'
 import { HernLazyImage } from '../../utils/hernImage'
 import KioskButton from './component/button'
 import { BiChevronDown, BiChevronUp } from 'react-icons/bi'
+import classNames from 'classnames'
 
 const { Content, Sider, Header, Footer } = Layout
 
@@ -290,32 +291,53 @@ const KioskMenu = props => {
                               setCurrentPage('cartPage')
                            }}
                         >
-                           <KioskButton
-                              customClass="hern-kiosk__goto-cart-btn"
-                              buttonConfig={config.kioskSettings.buttonSettings}
-                           >
+                           {config?.menuSettings?.cartButton?.variant?.value
+                              ?.value === 'simple' ? (
                               <CartIcon
                                  size={25}
                                  stroke={
                                     config.kioskSettings.buttonSettings
                                        .textColor.value
                                  }
+                                 variant="simple"
                               />
-                              <span
-                                 className="hern-kiosk__goto-cart-btn-text"
-                                 style={{
-                                    color: `${config.kioskSettings.buttonSettings.textColor.value}`,
-                                 }}
+                           ) : (
+                              <KioskButton
+                                 customClass="hern-kiosk__goto-cart-btn"
+                                 buttonConfig={
+                                    config.kioskSettings.buttonSettings
+                                 }
                               >
-                                 {t('Go To Cart')}
-                              </span>
-                           </KioskButton>
+                                 <CartIcon
+                                    size={25}
+                                    stroke={
+                                       config.kioskSettings.buttonSettings
+                                          .textColor.value
+                                    }
+                                    variant="bag"
+                                 />
+                                 <span
+                                    className="hern-kiosk__goto-cart-btn-text"
+                                    style={{
+                                       color: `${config.kioskSettings.buttonSettings.textColor.value}`,
+                                    }}
+                                 >
+                                    {t('Go To Cart')}
+                                 </span>
+                              </KioskButton>
+                           )}
+
                            <div
                               style={{
                                  position: 'absolute',
                                  top: '-1.2em',
                                  right: '-17px',
                               }}
+                              className={classNames({
+                                 'hern-kiosk__cart-count--simple':
+                                    config?.menuSettings?.cartButton?.variant
+                                       ?.value?.value === 'simple',
+                              })}
                            >
                               {cart?.cartItems_aggregate?.aggregate?.count >
                                  0 && (
@@ -329,15 +351,37 @@ const KioskMenu = props => {
                            </div>
                            {cart?.cartItems_aggregate?.aggregate?.count > 0 &&
                               showCartIconToolTip && (
-                                 <div className="hern-kiosk__cart-tool-tip">
+                                 <div
+                                    style={{
+                                       left:
+                                          config?.menuSettings?.toolTip?.variant
+                                             ?.value?.value === 'square'
+                                             ? '0'
+                                             : 'auto',
+                                    }}
+                                    className="hern-kiosk__cart-tool-tip"
+                                 >
                                     <span
                                        className="hern-kiosk__cart-tool-tip-text"
                                        style={{
-                                          background:
-                                             config.kioskSettings.theme
-                                                .secondaryColorLight.value,
-                                          color: config.kioskSettings.theme
-                                             .primaryColor.value,
+                                          background: config?.menuSettings
+                                             ?.toolTip?.backgroundColor?.value
+                                             ? config?.menuSettings?.toolTip
+                                                  ?.backgroundColor?.value
+                                             : config.kioskSettings.theme
+                                                  .secondaryColorLight.value,
+                                          color: config?.menuSettings?.toolTip
+                                             ?.color?.value
+                                             ? config?.menuSettings?.toolTip
+                                                  ?.color?.value
+                                             : config.kioskSettings.theme
+                                                  .primaryColor.value,
+                                          borderRadius:
+                                             config?.menuSettings?.toolTip
+                                                ?.variant?.value?.value ===
+                                             'square'
+                                                ? '0px'
+                                                : '12px',
                                        }}
                                     >
                                        {
@@ -355,9 +399,18 @@ const KioskMenu = props => {
                                     <div
                                        className="hern-kiosk__cart-tip"
                                        style={{
-                                          background:
-                                             config.kioskSettings.theme
-                                                .secondaryColorLight.value,
+                                          background: config?.menuSettings
+                                             ?.toolTip?.backgroundColor?.value
+                                             ? config?.menuSettings?.toolTip
+                                                  ?.backgroundColor?.value
+                                             : config.kioskSettings.theme
+                                                  .secondaryColorLight.value,
+                                          ...(config?.menuSettings?.toolTip
+                                             ?.variant?.value?.value ===
+                                             'square' && {
+                                             zIndex: '-1',
+                                             width: '28px',
+                                          }),
                                        }}
                                     ></div>
                                  </div>

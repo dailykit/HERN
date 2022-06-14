@@ -1135,6 +1135,18 @@
       }
    }
 }
+//Simple cart variant style
+.hern-kiosk__cart-count--simple {
+   left: 96px !important;
+   top: -8px !important;
+   .hern-kiosk__cart-item-badge {
+      background-color: var(--hern-primary-color);
+      height: 16px;
+      width: 16px;
+      font-size: 10px;
+      padding: 0;
+   }
+}
 .hern-kiosk__cart-item-badge {
    background: #ff0000;
    display: flex;
