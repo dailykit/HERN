@@ -184,18 +184,27 @@ export const ProgressBar = props => {
                )}
             </div>
             <div style={{ display: 'flex', alignItems: 'center' }}>
-               {direction === 'ltr' ? (
-                  <ArrowLeftIconBG
-                     style={{ marginRight: '1em' }}
-                     onClick={handleArrowClick}
-                     bgColor={config.kioskSettings.theme.primaryColor.value}
-                  />
-               ) : (
-                  <ArrowRightIconBG
-                     style={{ marginRight: '1em' }}
-                     onClick={handleArrowClick}
-                     bgColor={config.kioskSettings.theme.primaryColor.value}
-                  />
+               {config?.progressBarSettings?.showBackButton?.value !==
+                  false && (
+                  <>
+                     {direction === 'ltr' ? (
+                        <ArrowLeftIconBG
+                           style={{ marginRight: '1em' }}
+                           onClick={handleArrowClick}
+                           bgColor={
+                              config.kioskSettings.theme.primaryColor.value
+                           }
+                        />
+                     ) : (
+                        <ArrowRightIconBG
+                           style={{ marginRight: '1em' }}
+                           onClick={handleArrowClick}
+                           bgColor={
+                              config.kioskSettings.theme.primaryColor.value
+                           }
+                        />
+                     )}
+                  </>
                )}
                <Steps
                   current={current}
