@@ -308,7 +308,7 @@ const RenderStep = ({
                <div className="hern-steps-navbar__step__icon">
                   {StepNavProgress(
                      step,
-                     isActive ? '#fff' : 'var(--hern-accent)'
+                     isActive ? '#fff' : 'rgba(17, 130, 59, 0.2)'
                   )}
                </div>
                <span>{t(label)}</span>
