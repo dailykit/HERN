@@ -189,7 +189,16 @@ const Kiosk = props => {
                <KioskHeader config={kioskConfig} />
             </Header>
             <Layout className="hern-kiosk__content-layout">
-               <InfoBar />
+               <InfoBar
+                  backgroundColor={
+                     kioskConfig?.infoBar?.storeNotAvailable?.backgroundColor
+                        ?.value || '#fc4f4f'
+                  }
+                  message={
+                     kioskConfig?.infoBar?.storeNotAvailable?.text?.value ||
+                     'Not accepting orders right now. Feel free to browse the menu.'
+                  }
+               />
                {currentPage === 'fulfillmentPage' && (
                   <Content>
                      <FulfillmentSection
