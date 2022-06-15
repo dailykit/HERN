@@ -762,10 +762,12 @@
       padding-right: 20px;
       height: 390px;
       overflow-y: scroll;
+      grid-auto-rows: minmax(186px, auto);
 
       @media (max-width: 768px) {
          padding-right: 4px;
          height: 370px;
+         grid-auto-rows: minmax(148px, auto);
       }
    }
 
