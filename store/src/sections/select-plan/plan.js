@@ -30,7 +30,7 @@ export const Plan = ({
 }) => {
    // subscription plan configurations (Display)
    // select button
-
+   console.log('plans--->', plan, 'showPlanServings', showPlanServings)
    /*
       -TODO-
       - create a config for when the view is aggregated to make the plantitle configurable
@@ -130,18 +130,24 @@ export const Plan = ({
    const [selectedPlan, setSelectedPlan] = React.useState(null)
    const numberOfItemsToShow = 4
    const [servingsFirstIndex, setServingsFirstIndex] = React.useState(0)
-   const [servingsLastIndex, setServingsLastIndex] =
-      React.useState(numberOfItemsToShow)
+   const [servingsLastIndex, setServingsLastIndex] = React.useState(4)
 
    const [plansFirstIndex, setPlansFirstIndex] = React.useState(0)
-   const [plansLastIndex, setPlansLastIndex] =
-      React.useState(numberOfItemsToShow)
+   const [plansLastIndex, setPlansLastIndex] = React.useState(4)
 
-   const plansToShow = plan.servings.slice(plansFirstIndex, plansLastIndex)
+   const plansToShow = React.useMemo(
+      () => plan?.servings.slice(plansFirstIndex, plansLastIndex),
+      [plansLastIndex, plan]
+   )
+   console.log('plans serving-->', plansToShow)
 
-   const servingsToShow = defaultServing?.itemCounts.slice(
-      servingsFirstIndex,
-      servingsLastIndex
+   const servingsToShow = React.useMemo(
+      () =>
+         defaultServing?.itemCounts.slice(
+            servingsFirstIndex,
+            servingsLastIndex
+         ),
+      [servingsLastIndex, defaultServing]
    )
 
    const handlePlanNext = () => {
@@ -436,13 +442,13 @@ export const Plan = ({
                   {/* <span>{t('No. of')}</span>{' '} */}
                   <span
                      style={{
-                        color: yieldAndItemsCountLabelConfig.color,
-                        fontSize: yieldAndItemsCountLabelConfig.fontSize,
-                        fontWeight: yieldAndItemsCountLabelConfig.fontWeight,
+                        color: yieldAndItemsCountLabelConfig?.color,
+                        fontSize: yieldAndItemsCountLabelConfig?.fontSize,
+                        fontWeight: yieldAndItemsCountLabelConfig?.fontWeight,
                      }}
                      data-translation="true"
                   >
-                     {yieldLabelConfig.plural}
+                     {yieldLabelConfig?.plural}
                   </span>
                </h4>
                <div
@@ -453,7 +459,7 @@ export const Plan = ({
                   }
                >
                   {plansFirstIndex > 0 &&
-                     plan.servings.length > numberOfItemsToShow && (
+                     plan?.servings?.length > numberOfItemsToShow && (
                         <button
                            className={
                               planViewConfig === 'card'
@@ -473,6 +479,7 @@ export const Plan = ({
                      }
                   >
                      {plansToShow.map(serving => {
+                        console.log('servings:', serving)
                         return (
                            <li
                               className={classNames(
@@ -507,7 +514,7 @@ export const Plan = ({
                         )
                      })}
                   </ul>
-                  {plan.servings.length > plansLastIndex && (
+                  {plan?.servings?.length > plansLastIndex && (
                      <button
                         className={
                            planViewConfig === 'card'
@@ -552,9 +559,9 @@ export const Plan = ({
             >
                <h4
                   style={{
-                     color: yieldAndItemsCountLabelConfig.color,
-                     fontSize: yieldAndItemsCountLabelConfig.fontSize,
-                     fontWeight: yieldAndItemsCountLabelConfig.fontWeight,
+                     color: yieldAndItemsCountLabelConfig?.color,
+                     fontSize: yieldAndItemsCountLabelConfig?.fontSize,
+                     fontWeight: yieldAndItemsCountLabelConfig?.fontWeight,
                   }}
                   className={
                      planViewConfig === 'card'
@@ -563,7 +570,7 @@ export const Plan = ({
                   }
                >
                   <span data-translation="true">
-                     {itemCountLabelConfig.itemCountLabel}
+                     {itemCountLabelConfig?.itemCountLabel}
                   </span>{' '}
                   {t('per week')}
                </h4>
@@ -575,7 +582,7 @@ export const Plan = ({
                   }
                >
                   {servingsFirstIndex > 0 &&
-                     defaultServing?.itemCounts.length >
+                     defaultServing?.itemCounts?.length >
                         numberOfItemsToShow && (
                         <button
                            className={
@@ -595,32 +602,33 @@ export const Plan = ({
                            : 'hern-plan__item-counts__list'
                      }
                   >
-                     {servingsToShow.map(item => {
-                        return (
-                           <li
-                              className={classNames(
-                                 `${
-                                    planViewConfig === 'card'
-                                       ? 'hern-plan__card__item-counts__list-item'
-                                       : 'hern-plan__item-counts__list-item'
-                                 }`,
-                                 {
-                                    'hern-plan__item-counts__list-item--active':
-                                       item.id === defaultItemCount?.id,
-                                 }
-                              )}
-                              key={item.id}
-                              onClick={() => setDefaultItemCount(item)}
-                           >
-                              <div data-translation="true">{item.count}</div>
-                              {item?.metaDetails?.label && (
-                                 <div data-translation="true">
-                                    {item?.metaDetails?.label}
-                                 </div>
-                              )}
-                           </li>
-                        )
-                     })}
+                     {servingsToShow &&
+                        servingsToShow.map(item => {
+                           return (
+                              <li
+                                 className={classNames(
+                                    `${
+                                       planViewConfig === 'card'
+                                          ? 'hern-plan__card__item-counts__list-item'
+                                          : 'hern-plan__item-counts__list-item'
+                                    }`,
+                                    {
+                                       'hern-plan__item-counts__list-item--active':
+                                          item.id === defaultItemCount?.id,
+                                    }
+                                 )}
+                                 key={item.id}
+                                 onClick={() => setDefaultItemCount(item)}
+                              >
+                                 <div data-translation="true">{item.count}</div>
+                                 {item?.metaDetails?.label && (
+                                    <div data-translation="true">
+                                       {item?.metaDetails?.label}
+                                    </div>
+                                 )}
+                              </li>
+                           )
+                        })}
                   </ul>
                   {defaultServing?.itemCounts.length > servingsLastIndex && (
                      <button
