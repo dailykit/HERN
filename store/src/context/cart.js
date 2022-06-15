@@ -210,32 +210,19 @@ export const CartProvider = ({ children }) => {
          oiType === 'Kiosk Ordering'
       ) {
          const cart = cartData.carts[0]
-         const terminalPaymentOption = cart?.paymentMethods.find(
-            option =>
-               option?.supportedPaymentOption?.paymentOptionLabel === 'TERMINAL'
-         )
-         const codPaymentOption = cart?.paymentMethods.find(
-            option =>
-               option?.supportedPaymentOption?.paymentOptionLabel === 'CASH'
-         )
-         const terminalPaymentOptionId = !isEmpty(terminalPaymentOption)
-            ? terminalPaymentOption?.id
-            : null
-         const codPaymentOptionId = !isEmpty(codPaymentOption)
-            ? codPaymentOption?.id
-            : null
+         const finalPaymentOptions = []
+         cart?.paymentMethods
+            .sort((a, b) => a.position - b.position)
+            .forEach(option => {
+               finalPaymentOptions.push({
+                  label: option?.supportedPaymentOption
+                     ?.paymentOptionLabelToShow,
+                  id: option?.id,
+               })
+            })
          cartReducer({
             type: 'KIOSK_PAYMENT_OPTION',
-            payload: [
-               {
-                  label: 'TERMINAL',
-                  id: terminalPaymentOptionId,
-               },
-               {
-                  label: 'COD',
-                  id: codPaymentOptionId,
-               },
-            ],
+            payload: finalPaymentOptions,
          })
       }
    }, [cartData, isCartLoading])

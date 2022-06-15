@@ -1585,6 +1585,7 @@ export const GET_CART = gql`
                country
                supportedPaymentCompanyId
                paymentOptionLabel
+               paymentOptionLabelToShow
                supportedPaymentCompany {
                   id
                   label
