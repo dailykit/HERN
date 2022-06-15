@@ -61,6 +61,23 @@ export const KioskCart = props => {
    const { cart } = cartState
    const { config, combinedCartItems, setCurrentPage } = props
    const { t, direction } = useTranslation()
+
+   const { configOf } = useConfig('brand')
+   const labelConfig = configOf('BillingDetails', 'brand')
+   const label = {
+      vat: labelConfig?.labelForBillingDetailsField?.VAT?.value || 'VAT',
+      itemTotal:
+         labelConfig?.labelForBillingDetailsField?.itemTotal?.value ||
+         'Item Total',
+      discount:
+         labelConfig?.labelForBillingDetailsField?.discount?.value ||
+         'Discount',
+      totalPrice:
+         labelConfig?.labelForBillingDetailsField?.totalPrice?.value ||
+         'Total Price',
+   }
+   console.log('config,', label, labelConfig)
+
    const { setIsProcessingPayment, setIsPaymentInitiated, updatePaymentState } =
       usePayment()
    const SHOW_FREEBIE_MSG = get_env('SHOW_FREEBIE_MSG')
@@ -105,10 +122,6 @@ export const KioskCart = props => {
          </div>
       )
    }
-   console.log(
-      'isCartValidByProductAvailability',
-      isCartValidByProductAvailability
-   )
    return (
       <Layout
          style={{ height: '100%', overflowY: 'hidden', background: '#fff' }}
@@ -227,7 +240,7 @@ export const KioskCart = props => {
                            <ul className="hern-kiosk-cart-bill-details-list">
                               <li>
                                  <span style={{ fontWeight: 'bold' }}>
-                                    {t('Item Total')}
+                                    {t(label.itemTotal)}
                                  </span>
                                  <span style={{ fontWeight: 'bold' }}>
                                     {formatCurrency(
@@ -241,7 +254,7 @@ export const KioskCart = props => {
                                  </span>
                               </li>
                               <li>
-                                 <span>{t('Discount')}</span>
+                                 <span>{t(label.discount)}</span>
                                  <span>
                                     {'-'}{' '}
                                     {formatCurrency(
@@ -253,7 +266,7 @@ export const KioskCart = props => {
                                  </span>
                               </li>
                               <li>
-                                 <span>{t('VAT')}</span>
+                                 <span>{t(label.vat)}</span>
                                  <span>
                                     {formatCurrency(
                                        (
@@ -267,7 +280,7 @@ export const KioskCart = props => {
                               </li>
                               <li>
                                  <span style={{ fontWeight: 'bold' }}>
-                                    {t('Total Price')}
+                                    {t(label.totalPrice)}
                                  </span>
                                  <span style={{ fontWeight: 'bold' }}>
                                     {formatCurrency(
