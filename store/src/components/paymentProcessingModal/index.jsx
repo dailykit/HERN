@@ -67,12 +67,14 @@ const PaymentProcessingModal = ({
          await closeModalHandler()
          setIsProcessingPayment(false)
          setIsPaymentInitiated(false)
-         if(cartPayment?.cartId){
+         if (cartPayment?.cartId) {
             if (cartPayment?.cart.source === 'subscription') {
                if (user?.isSubscriber) {
                   router.push(`/placing-order?id=${cartPayment?.cartId}`)
                }
-               router.push(`/get-started/placing-order?id=${cartPayment?.cartId}`)
+               router.push(
+                  `/get-started/placing-order?id=${cartPayment?.cartId}`
+               )
             } else {
                if (router.pathname !== `/view-order`) {
                   router.push(`/view-order?id=${cartPayment?.cartId}`)
@@ -366,6 +368,14 @@ const PaymentProcessingModal = ({
       PaymentPopUpDesignConfig?.kioskSettings?.theme?.arrowBgColor?.value
    const arrowColor =
       PaymentPopUpDesignConfig?.kioskSettings?.theme?.arrowColor?.value
+
+   const LABEL = {
+      COD:
+         PaymentPopUpDesignConfig?.paymentPopupSettings
+            ?.labelForPaymentButton?.['COD']?.value || 'PAY AT COUNTER',
+      TERMINAL: 'PAY VIA CARD',
+   }
+
    return (
       <Modal
          title={null}
@@ -530,11 +540,6 @@ const PaymentProcessingModal = ({
 }
 
 export default PaymentProcessingModal
-
-const LABEL = {
-   COD: 'PAY AT COUNTER',
-   TERMINAL: 'PAY VIA CARD',
-}
 
 const CartPageHeader = ({
    closeModal = () => null,

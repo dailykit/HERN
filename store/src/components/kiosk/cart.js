@@ -253,7 +253,12 @@ export const KioskCart = props => {
                                  </span>
                               </li>
                               <li>
-                                 <span>{t('VAT')}</span>
+                                 <span>
+                                    {t(
+                                       config?.billingDetails?.labelForVAT
+                                          ?.value || 'VAT'
+                                    )}
+                                 </span>
                                  <span>
                                     {formatCurrency(
                                        (
