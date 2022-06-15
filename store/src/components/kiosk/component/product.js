@@ -19,6 +19,7 @@ import classNames from 'classnames'
 import isNull from 'lodash/isNull'
 import isEmpty from 'lodash/isEmpty'
 import { useIntl } from 'react-intl'
+import { BiPlus } from 'react-icons/bi'
 const { Header, Content, Footer } = Layout
 
 export const KioskProduct = props => {
@@ -43,7 +44,6 @@ export const KioskProduct = props => {
    // const [combinedCartItems, setCombinedCartData] = useState(null)
    const [showChooseIncreaseType, setShowChooseIncreaseType] = useState(false) // show I'll choose or repeat last one popup
 
-
    useEffect(() => {
       const languageTags = document.querySelectorAll(
          '[data-translation="true"]'
@@ -62,9 +62,9 @@ export const KioskProduct = props => {
    }, [combinedCartItems])
    const argsForByLocation = React.useMemo(
       () => ({
-            brandId: brand?.id,
-            locationId: kioskDetails?.locationId,
-            brand_locationId: brandLocation?.id,
+         brandId: brand?.id,
+         locationId: kioskDetails?.locationId,
+         brand_locationId: brandLocation?.id,
       }),
       [brand, kioskDetails?.locationId, brandLocation?.id]
    )
@@ -100,8 +100,8 @@ export const KioskProduct = props => {
       const { product: productCompleteData } = await graphQLClientSide.request(
          PRODUCT_ONE,
          {
-               id: productData.id,
-               params: argsForByLocation,
+            id: productData.id,
+            params: argsForByLocation,
          }
       )
       const cartDetailSelectedProduct = cartState.cartItems
@@ -207,7 +207,6 @@ export const KioskProduct = props => {
                               eachCategory => {
                                  eachCategory.options.forEach(eachOption => {
                                     if (eachOption.additionalModifierTemplate) {
-                                       console.log("getting Error Here",eachOption.additionalModifierTemplate)
                                        eachOption.additionalModifierTemplate.categories.forEach(
                                           eachCategory => {
                                              additionalModifierOptions.push(
@@ -241,8 +240,7 @@ export const KioskProduct = props => {
                                              ...eachCategory.options.map(
                                                 eachOptionTemp => ({
                                                    ...eachOptionTemp,
-                                                   categoryId:
-                                                      eachCategory.id,
+                                                   categoryId: eachCategory.id,
                                                 })
                                              )
                                           )
@@ -389,6 +387,12 @@ export const KioskProduct = props => {
                   filter:
                      'drop-shadow(0px 0.64912px 3.2456px rgba(0, 107, 177, 0.4))',
                }),
+               ...(config?.productSettings?.shadowOnProductCard?.value && {
+                  boxShadow: '0px 1px 8px rgba(0, 0, 0, 0.1)',
+               }),
+               ...(config?.productSettings?.squareCorner?.value && {
+                  borderRadius: '0',
+               }),
             }}
          >
             <Layout style={{ height: '100%' }}>
@@ -519,11 +523,69 @@ export const KioskProduct = props => {
                            disabled={isProductOutOfStock}
                            buttonConfig={config.kioskSettings.buttonSettings}
                         >
-                           {isStoreAvailable
-                              ? isProductOutOfStock
-                                 ? t('Out Of Stock')
-                                 : t('Add To Cart')
-                              : t('View Product')}
+                           <span
+                              style={{
+                                 ...(config?.menuSettings
+                                    ?.productAddToCartButton?.fontWeight
+                                    ?.value && {
+                                    fontWeight:
+                                       config?.menuSettings
+                                          ?.productAddToCartButton?.fontWeight
+                                          ?.value,
+                                 }),
+                                 ...(config?.menuSettings
+                                    ?.productAddToCartButton?.fontSize
+                                    ?.value && {
+                                    fontSize:
+                                       config?.menuSettings
+                                          ?.productAddToCartButton?.fontSize
+                                          ?.value,
+                                 }),
+                              }}
+                           >
+                              {isStoreAvailable ? (
+                                 isProductOutOfStock ? (
+                                    t(
+                                       config?.menuSettings
+                                          ?.productAddToCartButton
+                                          ?.outOfStockLabel?.value ||
+                                          'Out Of Stock'
+                                    )
+                                 ) : (
+                                    <div
+                                       style={{
+                                          display: 'flex',
+                                          alignItems: 'center',
+                                          justifyContent: 'center',
+                                       }}
+                                    >
+                                       <span>
+                                          {t(
+                                             config?.menuSettings
+                                                ?.productAddToCartButton
+                                                ?.addToCartLabel?.value ||
+                                                'Add To Cart'
+                                          )}
+                                       </span>
+
+                                       {config?.menuSettings
+                                          ?.productAddToCartButton?.showIcon
+                                          ?.value && (
+                                          <>
+                                             &nbsp;
+                                             <BiPlus size={16} />
+                                          </>
+                                       )}
+                                    </div>
+                                 )
+                              ) : (
+                                 t(
+                                    config?.menuSettings?.productAddToCartButton
+                                       ?.viewProductLabel?.value ||
+                                       'View Product'
+                                 )
+                              )}
+                           </span>
                         </KioskButton>
                      ) : null
                   ) : (

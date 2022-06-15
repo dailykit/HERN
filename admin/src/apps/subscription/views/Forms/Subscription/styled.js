@@ -4,7 +4,8 @@ export const Wrapper = styled.div`
    width: 100%;
    overflow: hidden;
    background: #e3e3e3;
-   height: calc(100vh - 40px);
+   height: calc(120vh - 20px);
+
    #servingTabs {
       overflow-y: auto;
       height: calc(100% - 48px);
@@ -35,7 +36,7 @@ export const Wrapper = styled.div`
          }
          &[data-selected] {
             span {
-               color: #fff;
+               color: #000000;
             }
          }
       }
@@ -111,9 +112,9 @@ export const MetaDetailsSection = styled.section`
       overflow: hidden;
       border: none;
    }
-   .metadetail_container{
-      gap:25px;
-      border: 2px solid #F3F3F3;
+   .metadetail_container {
+      gap: 25px;
+      border: 2px solid #f3f3f3;
       border-radius: 8px;
    }
 `

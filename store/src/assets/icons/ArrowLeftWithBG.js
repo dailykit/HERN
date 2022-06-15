@@ -17,8 +17,8 @@ export const ArrowLeftIconBG = props => {
          {...rest}
       >
          <rect
-            width="56"
-            height="56"
+            width={size}
+            height={size}
             rx="28"
             fill={bgColor}
             fillOpacity="0.8"
