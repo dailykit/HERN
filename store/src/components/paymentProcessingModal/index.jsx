@@ -421,7 +421,7 @@ const PaymentProcessingModal = ({
                                  selectedAvailablePaymentOptionId={option.id}
                                  config={PaymentPopUpDesignConfig}
                               >
-                                 {t(LABEL[option.label])}
+                                 {t(option.label)}
                               </PayButton>
 
                               <p
@@ -530,11 +530,6 @@ const PaymentProcessingModal = ({
 }
 
 export default PaymentProcessingModal
-
-const LABEL = {
-   COD: 'PAY AT COUNTER',
-   TERMINAL: 'PAY VIA CARD',
-}
 
 const CartPageHeader = ({
    closeModal = () => null,
