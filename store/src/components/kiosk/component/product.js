@@ -387,6 +387,12 @@ export const KioskProduct = props => {
                   filter:
                      'drop-shadow(0px 0.64912px 3.2456px rgba(0, 107, 177, 0.4))',
                }),
+               ...(config?.productSettings?.shadowOnProductCard?.value && {
+                  boxShadow: '0px 1px 8px rgba(0, 0, 0, 0.1)',
+               }),
+               ...(config?.productSettings?.squareCorner?.value && {
+                  borderRadius: '0',
+               }),
             }}
          >
             <Layout style={{ height: '100%' }}>
@@ -527,6 +533,14 @@ export const KioskProduct = props => {
                                           ?.productAddToCartButton?.fontWeight
                                           ?.value,
                                  }),
+                                 ...(config?.menuSettings
+                                    ?.productAddToCartButton?.fontSize
+                                    ?.value && {
+                                    fontSize:
+                                       config?.menuSettings
+                                          ?.productAddToCartButton?.fontSize
+                                          ?.value,
+                                 }),
                               }}
                            >
                               {isStoreAvailable ? (
@@ -559,7 +573,7 @@ export const KioskProduct = props => {
                                           ?.value && (
                                           <>
                                              &nbsp;
-                                             <BiPlus size={20} />
+                                             <BiPlus size={16} />
                                           </>
                                        )}
                                     </div>
