@@ -13,7 +13,12 @@ import {
 import { useUser } from '.'
 import { useConfig } from '../lib'
 import { useToasts } from 'react-toast-notifications'
-import { combineCartItems, useQueryParamState, isKiosk } from '../utils'
+import {
+   combineCartItems,
+   useQueryParamState,
+   isKiosk,
+   isClient,
+} from '../utils'
 import { useTranslation } from './language'
 import { indexOf } from 'lodash'
 
@@ -441,6 +446,12 @@ export const CartProvider = ({ children }) => {
                ...(oiType === 'Kiosk Ordering' &&
                   !isEmpty(terminalPayment) && {
                      toUseAvailablePaymentOptionId: terminalPayment.id,
+                  }),
+               ...(oiType === 'Kiosk Ordering' &&
+                  !isEmpty(isClient && localStorage.getItem('phone')) && {
+                     customerInfo: {
+                        customerPhone: localStorage.getItem('phone'),
+                     },
                   }),
             }
             // console.log('object new cart', object)

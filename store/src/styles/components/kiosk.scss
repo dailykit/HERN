@@ -248,6 +248,32 @@
 .hern-kiosk__menu-carousal-right-arrow {
    right: 0;
 }
+//Override default carousel dots
+.hern-kiosk__promotion__carousel {
+   .slick-dots {
+      bottom: 16px !important;
+      li {
+         background-color: rgba(255, 255, 255, 0.25);
+         backdrop-filter: blur(20px);
+         height: 12px;
+         width: 12px;
+         border-radius: 50%;
+      }
+      > li.slick-active {
+         height: 12px;
+         width: 12px;
+         border-radius: 50%;
+         > button {
+            background-color: rgba(255, 255, 255, 0.8);
+         }
+      }
+      li > button {
+         height: 12px;
+         width: 12px;
+         border-radius: 50%;
+      }
+   }
+}
 .hern-kiosk__promotion-image {
    display: flex !important;
    justify-content: center !important;
@@ -280,6 +306,15 @@
       }
    }
 }
+//Bold progress for step bar
+.hern-kiosk__step-bar-wrapper {
+   .ant-steps-item-title::after {
+      top: 10px !important;
+      height: 12px !important;
+      background-color: rgba(113, 36, 180, 0.4) !important;
+      border-radius: 20px;
+   }
+}
 .hern-kiosk__step-bar-count {
    width: 45px;
    height: 45px;
@@ -290,8 +325,7 @@
    font-weight: 600;
 }
 .hern-kiosk__menu-category-side-bar {
-   box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
-   overflow: auto;
+   overflow-y: auto;
    padding-top: 1em;
    &::-webkit-scrollbar {
       width: 6px;
@@ -310,6 +344,34 @@
       .hern-kiosk__menu-page-product-category-title {
          // color: #0f6bb1;
       }
+   }
+}
+.hern-kiosk__menu-category-side-bar__wrapper {
+   box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+}
+.hern-kiosk__menu-category-arrow {
+   display: flex;
+   justify-content: center;
+   width: 100%;
+   background-color: #ffffff;
+
+   &:first-child {
+      padding-top: 12px;
+      padding-bottom: 8px;
+   }
+   &:last-child {
+      padding-bottom: 12px;
+      padding-top: 8px;
+   }
+   > span {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 1.75rem;
+      width: 1.75rem;
+      border-radius: 50%;
+      background: rgba(113, 36, 180, 0.1);
+      backdrop-filter: blur(4px);
    }
 }
 .hern-kiosk__menu-header-veg-switch {
@@ -1071,6 +1133,18 @@
          font-size: 42px;
          font-weight: 700;
       }
+   }
+}
+//Simple cart variant style
+.hern-kiosk__cart-count--simple {
+   left: 96px !important;
+   top: -8px !important;
+   .hern-kiosk__cart-item-badge {
+      background-color: var(--hern-primary-color);
+      height: 16px;
+      width: 16px;
+      font-size: 10px;
+      padding: 0;
    }
 }
 .hern-kiosk__cart-item-badge {
