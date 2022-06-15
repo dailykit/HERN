@@ -86,7 +86,7 @@ const ProfileForm = () => {
             <h2
                className="hern-profile__profile-form__header__title"
                style={{
-                  color: `${theme.accent ? theme.accent : 'rgba(5,150,105,1)'}`,
+                  color: `${theme.accent ? theme.accent : '#333333'}`,
                }}
             >
                {t('Profile')}
@@ -305,12 +305,14 @@ const CurrentPlan = () => {
       )
    return (
       <div className="hern-profile__current-plan">
-         <hr className="hern-profile__divider" />
+         {/* <hr className="hern-profile__divider" /> */}
          <Spacer size="xl" />
          <h4
             className="hern-profile__current-plan__heading"
             style={{
-               color: `${theme.accent ? theme.accent : 'rgba(5,150,105,1)'}`,
+               color: `${
+                  theme.accent ? theme.accent : 'rgba(51, 51, 51, 0.6)'
+               }`,
             }}
          >
             <span> {t('Your current plan')}</span> {isPlanPaused && `(PAUSED)`}
@@ -318,23 +320,23 @@ const CurrentPlan = () => {
          <div className="hern-profile__current-plan__card">
             <div>
                <small className="hern-profile__current-plan__card__changeplan-key">
-                  {t('Name')}
+                  {t('Name:')}
                </small>
                <p className="hern-profile__current-plan__card__changeplan-value">
                   {plan?.name}
                </p>
             </div>
-            <div>
+            <div className="hern-profile__current-plan__details">
                <small className="hern-profile__current-plan__card__changeplan-key">
-                  {t('Item Count')}
+                  {t('No.of Servings: ')}
                </small>
                <p className="hern-profile__current-plan__card__changeplan-value">
                   {plan?.itemCount}
                </p>
             </div>
-            <div>
+            <div className="hern-profile__current-plan__details">
                <small className="hern-profile__current-plan__card__changeplan-key">
-                  {t('Servings')}
+                  {t('Recipes per Week: ')}
                </small>
                <p className="hern-profile__current-plan__card__changeplan-value">
                   {plan?.servings}
@@ -348,8 +350,8 @@ const CurrentPlan = () => {
          >
             {t('Change Plan')}
          </Button>
-         <Spacer size="xl" />
-         <hr className="hern-profile__divider" />
+         {/* <Spacer size="xl" /> */}
+         {/* <hr className="hern-profile__divider" /> */}
          <Spacer size="xl" />
          {isPauseFormVisible ? (
             <form

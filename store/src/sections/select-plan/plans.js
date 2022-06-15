@@ -195,7 +195,8 @@ const AggregatedView = ({ list, config, planViewConfig }) => {
    const [selectedPlan, setSelectedPlan] = React.useState(list[0])
 
    const handleSelectedPlan = planId => {
-      setSelectedPlan(list.filter(item => item.id === planId)[0])
+      let plan = list.filter(item => item.id === planId)[0]
+      setSelectedPlan(plan)
    }
 
    return (
@@ -208,6 +209,7 @@ const AggregatedView = ({ list, config, planViewConfig }) => {
             config={config}
             planViewConfig={planViewConfig}
             handleSelectedPlan={handleSelectedPlan}
+            selectedPlan={selectedPlan}
          />
 
          {/* <div className="hern-plans__aggregate__divider"></div> */}
@@ -223,7 +225,13 @@ const AggregatedView = ({ list, config, planViewConfig }) => {
 }
 
 // plan cards component
-const PlansCards = ({ list, config, planViewConfig, handleSelectedPlan }) => {
+const PlansCards = ({
+   list,
+   config,
+   planViewConfig,
+   handleSelectedPlan,
+   selectedPlan,
+}) => {
    return (
       <div className="hern-plans__aggregate__left">
          <div className="hern-plans__aggregate__title-wrapper">
@@ -233,6 +241,12 @@ const PlansCards = ({ list, config, planViewConfig, handleSelectedPlan }) => {
          <div className="hern-plans__aggregate__cards-wrapper">
             {list.map(plan => (
                <div
+                  style={{
+                     border:
+                        plan.id === selectedPlan.id ? '2px solid #11823B' : '',
+                     padding: '5px',
+                     borderRadius: '6px',
+                  }}
                   className="hern-plans__aggregate__card"
                   key={plan.id}
                   onClick={() => handleSelectedPlan(plan.id)}

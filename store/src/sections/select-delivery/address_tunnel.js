@@ -153,16 +153,17 @@ export const AddressTunnel = props => {
       return (
          <div className="hern-delivery__address--outside">
             <section className="hern-delivery__address-tunnel__address-search">
-               <Form.Label>
-                  <span>{t('Search')}</span>
+               {/* <Form.Label>
+                  <span>{t('Search')}</span> &nbsp;
                   {selectedOrderTab ? ' ' + selectedOrderTab.label : ''}
                   <span>{t('Address')}</span>
-               </Form.Label>
+               </Form.Label> */}
                {loaded && !error && (
                   <GooglePlacesAutocomplete
                      inputClassName="hern-store-location-selector-main__location-input"
                      onSelect={data => formatAddress(data)}
                      apiKey={get_env('GOOGLE_API_KEY')}
+                     placeholder="Search address"
                   />
                )}
             </section>
