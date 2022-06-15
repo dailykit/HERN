@@ -6,6 +6,7 @@
    .hern-delivery__address-tunnel__label__btn-group {
       display: flex;
       align-items: center;
+      flex-wrap: wrap;
       gap: 1rem;
       .hern-delivery__address-tunnel__label__btn-group__btn {
          background-color: #fff;
