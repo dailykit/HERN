@@ -320,23 +320,23 @@ const CurrentPlan = () => {
          <div className="hern-profile__current-plan__card">
             <div>
                <small className="hern-profile__current-plan__card__changeplan-key">
-                  {t('Name')}
+                  {t('Name:')}
                </small>
                <p className="hern-profile__current-plan__card__changeplan-value">
                   {plan?.name}
                </p>
             </div>
-            <div style={{ display: 'flex', alignItems: 'center' }}>
+            <div className="hern-profile__current-plan__details">
                <small className="hern-profile__current-plan__card__changeplan-key">
-                  {t('Item Count: ')}
+                  {t('No.of Servings: ')}
                </small>
                <p className="hern-profile__current-plan__card__changeplan-value">
                   {plan?.itemCount}
                </p>
             </div>
-            <div style={{ display: 'flex', alignItems: 'center' }}>
+            <div className="hern-profile__current-plan__details">
                <small className="hern-profile__current-plan__card__changeplan-key">
-                  {t('Servings: ')}
+                  {t('Recipes per Week: ')}
                </small>
                <p className="hern-profile__current-plan__card__changeplan-value">
                   {plan?.servings}

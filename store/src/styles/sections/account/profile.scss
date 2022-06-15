@@ -62,6 +62,11 @@
    .hern-profile__profile-form__error {
       color: #bf1650;
    }
+
+   @media (max-width: 768px) {
+      flex-direction: column;
+      gap: 0;
+   }
 }
 .hern-profile__current-plan {
    padding: 1.5rem;
