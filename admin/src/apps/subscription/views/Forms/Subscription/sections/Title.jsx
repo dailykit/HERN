@@ -227,11 +227,11 @@ const Title = () => {
                as="section"
                height="calc(100% - 89px)"
                padding="0 14px 14px 14px"
+               style={{ minHeight: '500px'}}
             >
                <Flex
                   container
                   as="header"
-                  height="48px"
                   alignItems="center"
                   justifyContent="space-between"
                   style={{ padding: '0px 18px' }}

@@ -46,7 +46,7 @@ const ProductsSection = () => {
    const readyToEatTableRef = React.useRef()
    const inventoryTableRef = React.useRef()
    const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
-   const columns = [
+   const columns = React.useMemo(()=>[
       {
          title: 'Product',
          headerFilter: true,
@@ -72,7 +72,6 @@ const ProductsSection = () => {
             )
          },
       },
-
       {
          title: 'Label',
          field: 'label',
@@ -108,9 +107,9 @@ const ProductsSection = () => {
             )
          },
       },
-   ]
+   ],[])
 
-   const handleRowSelection = row => {
+   const handleRowSelection = React.useCallback((row) => {
       const data = row.getData()
 
       if (row.isSelected()) {
@@ -120,13 +119,14 @@ const ProductsSection = () => {
                option: { id: data.id },
             },
          })
+         toast.success('item selected ')
       } else {
          dispatch({
             type: 'REMOVE_PRODUCT',
             payload: data.id,
          })
       }
-   }
+   },[])
 
    const isValid =
       !isEmpty(state.plans.selected) &&
@@ -211,7 +211,7 @@ const ProductsSection = () => {
 
 export default ProductsSection
 
-const MealKits = ({ columns, mealKitTableRef, handleRowSelection }) => {
+const MealKits = React.memo(({ columns, mealKitTableRef, handleRowSelection }) => {
    const {
       error,
       loading,
@@ -245,9 +245,9 @@ const MealKits = ({ columns, mealKitTableRef, handleRowSelection }) => {
          }}
       />
    )
-}
+})
 
-const ReadyToEats = ({ columns, handleRowSelection, readyToEatTableRef }) => {
+const ReadyToEats = React.memo( ({ columns, handleRowSelection, readyToEatTableRef }) =>{
    const {
       error,
       loading,
@@ -282,9 +282,9 @@ const ReadyToEats = ({ columns, handleRowSelection, readyToEatTableRef }) => {
          }}
       />
    )
-}
+})
 
-const Inventory = ({ inventoryTableRef, handleRowSelection }) => {
+const Inventory = React.memo(({ inventoryTableRef, handleRowSelection }) => {
    const { tooltip } = useTooltip()
    const {
       error,
@@ -357,7 +357,7 @@ const Inventory = ({ inventoryTableRef, handleRowSelection }) => {
          }}
       />
    )
-}
+})
 
 const SaveTunnel = ({
    tunnels,
