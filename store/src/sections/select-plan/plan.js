@@ -139,7 +139,7 @@ export const Plan = ({
       () => plan?.servings.slice(plansFirstIndex, plansLastIndex),
       [plansLastIndex, plan]
    )
-   console.log('plans serving-->', plansToShow)
+   // console.log('user details', user)
 
    const servingsToShow = React.useMemo(
       () =>
@@ -147,7 +147,7 @@ export const Plan = ({
             servingsFirstIndex,
             servingsLastIndex
          ),
-      [servingsLastIndex, defaultServing]
+      [servingsLastIndex, defaultServing, plansToShow]
    )
 
    const handlePlanNext = () => {
@@ -241,7 +241,11 @@ export const Plan = ({
       })
       if (!isAuthenticated && !isLoading) {
          isClient &&
+            // (user?.isSubscriber
+            //    ? localStorage.setItem('redirect_to', '/select-menu')
+            //    :
             localStorage.setItem('redirect_to', '/get-started/select-delivery')
+         //   )
          router.push(getRoute('/login'))
       } else {
          router.push(getRoute('/get-started/select-delivery'))
@@ -581,7 +585,7 @@ export const Plan = ({
                         : 'hern-plan__item-counts__list__wrapper'
                   }
                >
-                  {servingsFirstIndex > 0 &&
+                  {servingsFirstIndex >= 0 &&
                      defaultServing?.itemCounts?.length >
                         numberOfItemsToShow && (
                         <button
