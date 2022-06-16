@@ -41,7 +41,7 @@ const PlanInfo = () => {
       icon: subscription_subscriptionItemCount[0]?.subscriptionServing
          ?.subscriptionTitle?.metaDetails?.icon,
    }
-   const planInfo = user?.subscription ? planInfoUser : planInfoFetched
+   const planInfo = user?.isSubscriber ? planInfoUser : planInfoFetched
 
    return (
       <div className="hern-plan-info">
