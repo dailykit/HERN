@@ -192,6 +192,7 @@
    box-shadow: 0px 1px 5px rgb(0 0 0 / 8%);
 }
 .hern-select-menu__menu__product--active {
+   border: 2px solid var(--hern-accent);
 }
 .hern-select-menu__menu__product__img {
    display: flex;
