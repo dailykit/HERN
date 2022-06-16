@@ -6,6 +6,7 @@
    .hern-delivery__address-tunnel__label__btn-group {
       display: flex;
       align-items: center;
+      flex-wrap: wrap;
       gap: 1rem;
       .hern-delivery__address-tunnel__label__btn-group__btn {
          background-color: #fff;
@@ -114,6 +115,7 @@
       background-color: #fff;
       border: 0.3px solid rgba(51, 51, 51, 0.4);
       border-radius: 0.5rem;
+      margin-bottom: 20px;
    }
 
    .google-places-autocomplete {
@@ -255,8 +257,7 @@
          box-shadow: 0px 0px 29px rgba(0, 0, 0, 0.08);
          border-radius: 4px;
          width: 100%;
-         // padding: 2rem 3rem;
-         padding: 1.563rem 2.813rem;
+         padding: 2rem;
       }
       &__content {
          display: block;
@@ -265,12 +266,12 @@
          font-family: 'Lato';
          font-style: normal;
          font-weight: 600;
-         font-size: 1.5rem;
+         font-size: 1.25rem;
          color: rgba(51, 51, 51, 0.4);
          display: flex;
          align-items: center;
          gap: 0.5rem;
-         margin-bottom: 1.5rem;
+         margin-bottom: 0.938rem;
          &--active {
             color: #333333;
          }
@@ -322,7 +323,7 @@
 .hern-delivery__address {
    &__add-change-btn {
       display: flex;
-      margin: -4rem 0 2rem auto;
+      margin: -4rem 0 1rem auto;
       width: 100%;
       justify-content: flex-end;
       &--add {
@@ -331,7 +332,7 @@
          font-family: 'Lato';
          font-style: normal;
          font-weight: 600;
-         font-size: 16px;
+         font-size: 0.813rem;
          line-height: 23px;
          color: var(--hern-accent);
          padding: 0.5rem 1.5rem;
@@ -349,7 +350,7 @@
          font-family: 'Inter';
          font-style: normal;
          font-weight: 600;
-         font-size: 1rem;
+         font-size: 0.813rem;
          line-height: 20px;
          color: var(--hern-accent);
          &:hover {
@@ -392,7 +393,7 @@
             font-family: 'Lato';
             font-style: normal;
             font-weight: 500;
-            font-size: 1.25rem;
+            font-size: 1rem;
             line-height: 23px;
             color: #333333;
             text-transform: capitalize;
@@ -417,7 +418,6 @@
          font-size: 0.875rem;
          line-height: 19px;
          color: rgba(51, 51, 51, 0.6);
-         margin-bottom: 1rem;
          min-height: 96px;
       }
       &__select-address-btn {

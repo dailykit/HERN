@@ -741,7 +741,7 @@ const Navigation = ({ newNavigationMenus, settings, layout }) => {
             )}
             {!user?.isSubscriber && isSubscriptionStore && (
                <li className={getListItemsClasses(getRoute('/our-plans'))}>
-                  <Link href={getRoute('/our-plans')}>
+                  <Link href={getRoute('/get-started/select-plan')}>
                      <a>{t('Get Started')}</a>
                   </Link>
                </li>

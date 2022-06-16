@@ -1,6 +1,7 @@
 .hern-profile-sidebar--toggle {
    display: none;
-   background-color: rgba(243, 244, 246, 1);
+   background-color: #f9f9f9;
+   border-radius: 4px;
    @media (min-width: 768px) {
       display: block;
       min-height: calc(100vh - 64px);
@@ -52,6 +53,16 @@
    line-height: 27px;
    color: rgba(64, 64, 64, 0.8);
    padding: 28px 16px;
+   margin: 2.5px;
+   border-radius: 4px;
+
+   & > span {
+      font-family: 'Inter';
+      font-style: normal;
+      font-weight: 500;
+      font-size: 20px;
+      color: rgba(51, 51, 51, 0.8);
+   }
    &:hover {
       background: #e5e5e5;
    }
