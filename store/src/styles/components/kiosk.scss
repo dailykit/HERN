@@ -1580,3 +1580,47 @@
       border-radius: 0.5rem;
    }
 }
+
+/**Repeat last one style override */
+.hern-kiosk__increase-type-modal {
+   .hern-kiosk__product-type-mods__menu-product-name {
+      font-weight: 700;
+      font-size: 28px;
+      color: #6f6f6f;
+      text-transform: capitalize;
+      margin-bottom: 28px;
+      display: block;
+   }
+   .ant-modal-close {
+      top: 24px;
+      right: 24px;
+   }
+   .ant-modal-title {
+      font-weight: 600;
+      font-size: 36px;
+   }
+   .ant-modal-body {
+      padding: 0 40px 40px 40px;
+   }
+   .ant-modal-header {
+      border-radius: 0.5rem 0.5rem 0 0;
+      padding: 40px;
+      border-bottom: none;
+   }
+   .ant-modal-content {
+      border-radius: 0.5rem;
+   }
+   .hern-kiosk__kiosk-button-linear {
+      padding: 24px 64px !important;
+      font-weight: 700;
+      font-size: 30px;
+      line-height: 32px;
+      white-space: nowrap;
+      margin-right: 48px;
+      border-radius: 0;
+      border: 4px solid var(--hern-primary-color) !important;
+      &:last-child {
+         margin-right: 0;
+      }
+   }
+}

@@ -20,6 +20,7 @@ import isNull from 'lodash/isNull'
 import isEmpty from 'lodash/isEmpty'
 import { useIntl } from 'react-intl'
 import { BiPlus } from 'react-icons/bi'
+import { RoundedCloseIcon } from '../../../assets/icons/RoundedCloseIcon'
 const { Header, Content, Footer } = Layout
 
 export const KioskProduct = props => {
@@ -622,9 +623,33 @@ export const KioskProduct = props => {
             onCancel={() => {
                setShowChooseIncreaseType(false)
             }}
-            closable={false}
+            closable={
+               config?.productSettings?.repeatLastOne?.showCloseIcon?.value
+                  ? config?.productSettings?.repeatLastOne?.showCloseIcon?.value
+                  : false
+            }
             footer={null}
+            width={
+               config?.productSettings?.repeatLastOne?.variant?.value?.value ===
+               'large'
+                  ? 800
+                  : 520
+            }
+            className={classNames({
+               'hern-kiosk__increase-type-modal':
+                  config?.productSettings?.repeatLastOne?.variant?.value
+                     ?.value === 'large',
+            })}
+            closeIcon={<RoundedCloseIcon />}
          >
+            {config?.productSettings?.repeatLastOne?.showProductName?.value && (
+               <span
+                  className="hern-kiosk__product-type-mods__menu-product-name"
+                  data-translation="true"
+               >
+                  {productData.name}
+               </span>
+            )}
             <div
                style={{
                   display: 'flex',
@@ -654,7 +679,11 @@ export const KioskProduct = props => {
                   }}
                   buttonConfig={config.kioskSettings.buttonSettings}
                >
-                  {t('REPEAT LAST ONE')}
+                  {t(
+                     config?.productSettings?.repeatLastOne
+                        ?.labelForRepeatLastOneButton?.value ||
+                        'REPEAT LAST ONE'
+                  )}
                </KioskButton>
             </div>
          </Modal>
