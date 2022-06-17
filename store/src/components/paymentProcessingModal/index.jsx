@@ -8,7 +8,12 @@ import Countdown from 'react-countdown'
 import { Wrapper } from './styles'
 import { Button as StyledButton } from '../button'
 import PayButton from '../PayButton'
-import { ArrowLeftIconBG, ArrowLeftIcon } from '../../assets/icons'
+import {
+   ArrowLeftIconBG,
+   ArrowLeftIcon,
+   RoundedCloseIcon,
+   PaymentOptionIcon,
+} from '../../assets/icons'
 import {
    useWindowSize,
    isKiosk,
@@ -34,7 +39,6 @@ const PaymentProcessingModal = ({
    setIsProcessingPayment = () => null,
    setIsPaymentInitiated = () => null,
 }) => {
-   console.log('PaymentProcessingModal')
    const router = useRouter()
    const isKioskMode = isKiosk()
    const [isCelebrating, setIsCelebrating] = useState(false)
@@ -67,12 +71,14 @@ const PaymentProcessingModal = ({
          await closeModalHandler()
          setIsProcessingPayment(false)
          setIsPaymentInitiated(false)
-         if(cartPayment?.cartId){
+         if (cartPayment?.cartId) {
             if (cartPayment?.cart.source === 'subscription') {
                if (user?.isSubscriber) {
                   router.push(`/placing-order?id=${cartPayment?.cartId}`)
                }
-               router.push(`/get-started/placing-order?id=${cartPayment?.cartId}`)
+               router.push(
+                  `/get-started/placing-order?id=${cartPayment?.cartId}`
+               )
             } else {
                if (router.pathname !== `/view-order`) {
                   router.push(`/view-order?id=${cartPayment?.cartId}`)
@@ -378,6 +384,7 @@ const PaymentProcessingModal = ({
          width={isKioskMode ? 780 : 'auto'}
          onCancel={closeModalHandler}
          zIndex={10000}
+         className="hern-kiosk-payment-modal"
          bodyStyle={{
             maxHeight: '100%',
             height: isKioskMode ? '100%' : 'calc(100vh - 16px)',
@@ -400,6 +407,12 @@ const PaymentProcessingModal = ({
          {isKioskMode && isEmpty(cartPayment) ? (
             <>
                <Wrapper>
+                  <button
+                     onClick={() => setIsProcessingPayment(false)}
+                     className="hern-kiosk__payment-modal-close"
+                  >
+                     <RoundedCloseIcon />
+                  </button>
                   <div tw="flex flex-col">
                      {/* <h1 tw ="font-extrabold text-4xl text-center margin[2rem 0]"> */}
                      <h1
@@ -407,38 +420,41 @@ const PaymentProcessingModal = ({
                            color: PaymentPopUpDesignConfig.paymentPopupSettings
                               .textColor.value,
                         }}
-                        tw="font-extrabold text-4xl text-center margin[2rem 0]"
+                        tw="font-bold text-4xl text-center margin[1rem 0 3rem 0]"
                      >
                         {t('Choose a payment method')}
                      </h1>
-                     {PaymentOptions.map(option => {
-                        return (
-                           <>
-                              <PayButton
-                                 cartId={cartId}
-                                 className="hern-kiosk__kiosk-button hern-kiosk__cart-place-order-btn"
-                                 key={option.id}
-                                 selectedAvailablePaymentOptionId={option.id}
-                                 config={PaymentPopUpDesignConfig}
-                              >
-                                 {t(option.label)}
-                              </PayButton>
-
-                              <p
-                                 style={{
-                                    color: PaymentPopUpDesignConfig
-                                       .paymentPopupSettings.textColor.value,
-                                 }}
-                                 tw="last:(hidden) font-extrabold margin[2rem 0] text-2xl text-center"
-                              >
-                                 {t('OR')}
-                              </p>
-                           </>
-                        )
-                     })}
+                     <div
+                        style={{
+                           display: 'grid',
+                           gridTemplateColumns: 'repeat(auto-fit,220px)',
+                           gridGap: '1.5rem',
+                           justifyContent: 'center',
+                           alignContent: 'center',
+                        }}
+                     >
+                        {PaymentOptions.map(option => {
+                           return (
+                              <>
+                                 <PayButton
+                                    cartId={cartId}
+                                    className="hern-kiosk__kiosk-button hern-kiosk__cart-place-order-btn"
+                                    key={option.id}
+                                    selectedAvailablePaymentOptionId={option.id}
+                                    config={PaymentPopUpDesignConfig}
+                                 >
+                                    <PaymentOptionIcon
+                                       identifier={option.identifier}
+                                    />
+                                    <span> {t(option.label)}</span>
+                                 </PayButton>
+                              </>
+                           )
+                        })}
+                     </div>
                   </div>
                </Wrapper>
-               <Button
+               {/* <Button
                   type="link"
                   tw="fixed top-8 left-4"
                   onClick={resetPaymentProviderStates}
@@ -450,7 +466,7 @@ const PaymentProcessingModal = ({
                      />
                      <span tw="ml-4 font-bold text-white text-2xl">Back</span>
                   </div>
-               </Button>
+               </Button> */}
             </>
          ) : (
             <Wrapper>
@@ -558,8 +574,10 @@ const CartPageHeader = ({
       : 'rgba(5, 150, 105, 1)'
    return (
       <header
-         className="hern-cart-page__header"
-         style={{ justifyContent: `${logoAlignment?.value}` }}
+         style={{
+            display: 'flex',
+            justifyContent: `center`,
+         }}
       >
          <div>
             {!isKioskMode && isCartPaymentEmpty && (
@@ -585,10 +603,8 @@ const CartPageHeader = ({
                </span>
             )}
             {showBrandLogo && logo && (
-               <img src={logo} alt={brandName} tw="height[40px]" />
+               <img src={logo} alt={brandName} tw="height[80px]" />
             )}
-            &nbsp;&nbsp;
-            {showBrandName && brandName && <span>{brandName}</span>}
          </div>
       </header>
    )
