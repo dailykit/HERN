@@ -478,6 +478,7 @@ const PhoneNumber = ({
             <button
                onClick={() => {
                   setVisible(false)
+                  isClient && localStorage.setItem('phone', '2222222222')
                   if (
                      isClient &&
                      localStorage.getItem('fulfillmentType') !==
