@@ -283,6 +283,7 @@ export const FulfillmentSection = props => {
             onConfirmClick={onTableSelectionConfirmClick}
          />
          <PhoneNumber
+            config={config}
             visible={visible}
             number={number}
             setVisible={setVisible}
@@ -375,7 +376,8 @@ const FulfillmentOptionCustom = props => {
    const { t } = useTranslation()
    const { methods } = useCart()
 
-   const askedPhoneNumber = config?.askPhoneNumber.value ?? false
+   const askedPhoneNumber =
+      config?.phoneNoScreenSettings?.askPhoneNumber.value ?? false
    const onFulfillmentClick = () => {
       if (!kioskAvailability[fulfillment.orderFulfillmentTypeLabel]) {
          return
@@ -461,6 +463,7 @@ const FulfillmentOptionCustom = props => {
 }
 
 const PhoneNumber = ({
+   config,
    visible,
    setVisible,
    number,
@@ -500,10 +503,19 @@ const PhoneNumber = ({
          }
       >
          <div className="hern-kiosk__phone-number-drawer__content">
-            {/* TODO:  This header should be config based*/}
             <div className="hern-kiosk__phone-number-drawer__header">
-               <h1>Taco’bout The Order Details?</h1>
-               <p>Enter Your Mobile Number &amp; Get Details On WhatsApp</p>
+               <h1>
+                  {t(
+                     config?.phoneNoScreenSettings?.title?.value ||
+                        'Want to Get update about your Order Details?'
+                  )}
+               </h1>
+               <p>
+                  {t(
+                     config?.phoneNoScreenSettings?.description?.value ||
+                        'Enter Your Mobile Number & Get Details On WhatsApp'
+                  )}
+               </p>
             </div>
             <div className="hern-kiosk__phone-number-drawer__number">
                <div className="hern-kiosk__phone-number-drawer__number__input">
