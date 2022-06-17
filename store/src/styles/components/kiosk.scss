@@ -646,20 +646,21 @@
    height: 80vh;
    width: 80vw;
    // background-color: red;
-   margin: 5em 0 0 0;
+   // margin: 5em 0 0 0;
    border-radius: 2.5em;
    position: relative;
 }
 .hern-kiosk__menu-product-modifier-pop-up-scrollPart {
    height: 90%;
    overflow-y: auto;
+   //background-color: var(--hern-primary-color);
 }
 .hern-kiosk__menu-product-modifier-header {
    display: flex;
    flex-direction: column;
    align-items: center;
    justify-content: center;
-   border-radius: 2.5em 2.5em 0 0;
+   // border-radius: 2.5em 2.5em 0 0;
 }
 .hern-kiosk__additional-modifier {
    padding: 1.3em;
@@ -822,6 +823,25 @@
    height: 5.8vh;
    border-radius: 0em 0em 2.5em 2.5em;
 }
+//Applicable when using large footer on modifier popup
+.hern-kiosk__modifier-popup-footer--large {
+   height: 184px;
+   padding: 0 56px;
+   > div {
+      white-space: nowrap;
+   }
+   > div > span {
+      font-weight: 700;
+      font-size: 36px;
+   }
+   > button {
+      white-space: nowrap;
+      font-weight: 700;
+      font-size: 56px;
+      padding: 0;
+      width: auto;
+   }
+}
 .hern-kiosk__modifier-add-to-cart {
    padding: 1em;
    font-weight: 700;
@@ -845,7 +865,7 @@
    text-transform: capitalize;
 }
 .hern-kiosk__modifier-total-price {
-   margin: 0 1em;
+   margin: 0 1rem;
    color: #ffffff;
    font-size: 2em;
 }
@@ -1622,5 +1642,21 @@
       &:last-child {
          margin-right: 0;
       }
+   }
+}
+.hern-kiosk__menu-product-modifier-pop-up-container--close {
+   position: absolute;
+   left: 0;
+   right: 0;
+   top: 0;
+   height: 100px;
+   z-index: 100;
+   display: flex;
+   justify-content: space-between;
+   align-items: center;
+   padding: 0 28px;
+   > h4 {
+      font-weight: 700;
+      font-size: 24px;
    }
 }
