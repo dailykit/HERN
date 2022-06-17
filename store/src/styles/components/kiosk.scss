@@ -485,6 +485,7 @@
 .hern-kiosk__cart-tool-tip {
    position: absolute;
    // bottom: -5px;
+   z-index: 9999;
    transform: translateY(40px);
    animation-name: cart-tool-tip;
    animation-duration: 3s;
