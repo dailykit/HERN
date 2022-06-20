@@ -4,6 +4,8 @@
    min-height: calc(100vh - 64px);
    grid-template-columns: 300px 1fr;
    position: relative;
+   max-width: 1200px;
+   margin: 27px auto;
    @media (max-width: 768px) {
       display: block;
    }
@@ -13,7 +15,7 @@
    padding-right: 1.5rem;
    width: 100%;
    @media (min-width: 768px) {
-      width: 50%;
+      // width: 50%;
    }
 }
 .hern-account-loyalty-points__header {
@@ -33,9 +35,12 @@
    justify-content: space-between;
 }
 .hern-account-loyalty-points__header__title {
-   color: rgba(5, 150, 105, 1);
-   font-size: 1.5rem;
+   color: #333333;
    line-height: 2rem;
+   font-family: 'Inter';
+   font-style: normal;
+   font-weight: 600;
+   font-size: 24px;
 }
 .hern-account-loyalty-points__table {
    margin-top: 4.5rem;
@@ -77,14 +82,14 @@
 }
 
 .hern-account-loyalty-points-available {
-   width: 685px;
-   height: 186px;
-   color: black;
-   background: #ffffff;
-   box-shadow: 0px 0px 1px rgb(29 25 25 / 40%);
-   border-radius: 20px;
-   position: relative;
-   left: 79px;
+   // width: 685px;
+   // height: 186px;
+   // color: black;
+   // background: #ffffff;
+   // box-shadow: 0px 0px 1px rgb(29 25 25 / 40%);
+   // border-radius: 20px;
+   // position: relative;
+   // left: 79px;
 }
 
 .hern-account-loyalty-points_transaction_history {
@@ -101,27 +106,48 @@
 
 .hern-account-loyalty-points_header_subtitle {
    color: black;
-   margin-left: 43%;
-   margin-top: -8em;
+   // margin-left: 43%;
+   // margin-top: -8em;
    font-weight: bolder;
    font-size: larger;
    text-align: center;
+   display: flex;
 }
 .hern-account-loyalty-points-your-available {
-   font-weight: bold;
-   font-size: 27px;
+   font-family: 'Inter';
+   font-style: normal;
+   font-weight: 500;
+   font-size: 20px;
+   color: #333333;
 }
 .hern-account-loyalty-points-value {
-   color: green;
-   font-size: 50px;
-   position: relative;
-   bottom: -20px;
-   font-weight: bolder;
+   font-family: 'Inter';
+   font-style: normal;
+   font-weight: 500;
+   font-size: 28px;
+   color: #333333;
+   margin-left: 5px;
+   display: flex;
+   align-items: center;
+   gap: 4px;
 }
+
 .hern-account-loyalty-points-illustration-no-trx {
    position: relative;
    top: 100px;
-   left: 320px;
+   left: 0;
+   display: flex;
+   flex-direction: column;
+   align-items: center;
+}
+
+.hern-account-loyalty-points-title-no-trx {
+   font-family: 'Lato';
+   font-style: normal;
+   font-weight: 600;
+   font-size: 28px;
+   color: #333333cc;
+   margin-top: 50px;
 }
 
 @media screen and (max-width: 767px) {
