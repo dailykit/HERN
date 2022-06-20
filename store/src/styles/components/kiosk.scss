@@ -594,6 +594,11 @@
 .hern-kiosk__menu-product-name {
    font-size: 1.3em;
    font-weight: 700;
+   display: flex;
+   gap: 8px;
+   > svg {
+      transform: translateY(5px);
+   }
 }
 .hern-kiosk__menu-product-description {
    white-space: nowrap;
