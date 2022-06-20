@@ -201,7 +201,7 @@ const Product = ({ node, theme, isAdded, noProductImage, buildImageUrl }) => {
          if (isSingleSelect && !isActive) return true
       }
 
-      return false
+      return true
    }
 
    const product = {

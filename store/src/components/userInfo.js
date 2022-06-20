@@ -196,7 +196,7 @@ const UserInfoForm = props => {
                   }
                   loading={savingUserInfo}
                >
-                  {t('save')}
+                  {t('Save')}
                </Button>
             </div>
             <div className="hern-user-info__name-field">
