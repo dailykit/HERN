@@ -77,7 +77,7 @@ const Content = () => {
             </div>
          ) : (
             <div className="hern-account-loyalty-points-available">
-               <LoyaltyPointsIllustration height={110} width={130} />
+               {/* <LoyaltyPointsIllustration height={110} width={130} /> */}
                <p className="hern-account-loyalty-points_header_subtitle">
                   <p className="hern-account-loyalty-points-your-available">
                      {t('Loyalty Points:')}

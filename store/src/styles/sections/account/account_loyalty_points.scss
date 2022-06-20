@@ -148,13 +148,19 @@
    font-size: 28px;
    color: #333333cc;
    margin-top: 50px;
+
+   @media (max-width: 768px) {
+      font-size: 18.2026px;
+      text-align: center;
+      margin-top: 20px;
+   }
 }
 
 @media screen and (max-width: 767px) {
    .hern-account-loyalty-points-available {
       width: 322px;
       left: -1.5px;
-      height: 124px;
+      // height: 124px;
    }
 
    .hern-account-loyalty-points__table {
@@ -162,8 +168,8 @@
       width: auto;
    }
    .hern-account-loyalty-points-your-available {
-      font-size: 13px;
-      margin-top: 51px;
+      font-size: 18px;
+      // margin-top: 51px
    }
    .hern-account-loyalty-points-value {
       font-size: 26px;
