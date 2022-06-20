@@ -381,7 +381,7 @@ const PaymentProcessingModal = ({
          keyboard={false}
          maskClosable={false}
          centered
-         width={isKioskMode ? 780 : 'auto'}
+         width={isKioskMode ? 800 : 'auto'}
          onCancel={closeModalHandler}
          zIndex={10000}
          className="hern-kiosk-payment-modal"
@@ -420,7 +420,7 @@ const PaymentProcessingModal = ({
                            color: PaymentPopUpDesignConfig.paymentPopupSettings
                               .textColor.value,
                         }}
-                        tw="font-bold text-4xl text-center margin[1rem 0 3rem 0]"
+                        tw="font-bold text-4xl text-center margin[3.5rem 0 5rem 0]"
                      >
                         {t('Choose a payment method')}
                      </h1>
@@ -444,6 +444,7 @@ const PaymentProcessingModal = ({
                                     config={PaymentPopUpDesignConfig}
                                  >
                                     <PaymentOptionIcon
+                                       color="var(--hern-primary-color)"
                                        identifier={option.identifier}
                                     />
                                     <span> {t(option.label)}</span>

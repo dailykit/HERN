@@ -1570,9 +1570,18 @@
    color: #202020 !important;
    max-width: 220px;
    border: 3px solid var(--hern-primary-color);
+   > span {
+      font-size: 24px;
+      display: inline-block;
+      margin-top: 2rem;
+      margin-bottom: 0.25rem;
+      white-space: nowrap;
+      color: var(--hern-primary-color);
+      font-weight: 700;
+   }
    > svg {
-      height: 72px;
-      width: 72px;
+      height: 96px;
+      width: 96px;
    }
    &:active {
       opacity: 0.8;

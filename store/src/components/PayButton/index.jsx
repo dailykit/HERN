@@ -169,7 +169,8 @@ function PayButton({
                active
                style={{
                   ...(isKiosk && {
-                     height: '145px',
+                     height: '220px',
+                     borderRadius: '12px',
                   }),
                }}
                size="large"
