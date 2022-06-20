@@ -72,7 +72,16 @@ export const initiatePaymentHandler = async (req, res) => {
                ? req.body.event.data.old.amount
                : 0
          }
-         const result = await method.default(data, 'initialize')
+         let result
+         if (
+            company === 'paytm' &&
+            availablePaymentOption.supportedPaymentOption.paymentOptionLabel ===
+               'QR'
+         ) {
+            result = await method.default(data, 'initializeQR')
+         } else {
+            result = await method.default(data, 'initialize')
+         }
          if (result.success) {
             res.status(200).json(result)
          } else {

@@ -27,6 +27,31 @@ export const Wrapper = styled.div`
       max-height: 300px;
       margin: 0 auto;
    }
+   .qr_code_card {
+      display: flex;
+      flex-direction: column;
+      border-radius: 20px;
+      position: relative;
+   }
+   .qr_code_card .msg {
+      font-weight: 700;
+      font-size: 32px;
+      line-height: 42px;
+      letter-spacing: 0.04em;
+      text-transform: capitalize;
+      margin: 40px auto 30px;
+   }
+   .qr_code_card .qr_code {
+      border-radius: 10px;
+   }
+   .qr_code_card .total_amount {
+      font-weight: 400;
+      font-size: 40px;
+      line-height: 40px;
+      letter-spacing: 0.04em;
+      text-transform: capitalize;
+      margin: 35px auto 40px;
+   }
    .authenticateBtn {
       background: #38a169;
       border: none;
