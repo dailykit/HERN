@@ -87,6 +87,10 @@ const KioskMenu = props => {
       sidebarRef.current.scrollTop += scrollOffset
    }
    const menuRef = React.useRef()
+   const [showVegMenuOnly, setShowVegMenuOnly] = useState(false)
+   const [vegMenu, setVegMenu] = useState(null)
+   const { t, dynamicTrans, direction } = useTranslation()
+
    const kioskFinalMenu = React.useMemo(() => {
       if (showVegMenuOnly) {
          return vegMenu
@@ -101,9 +105,6 @@ const KioskMenu = props => {
             .findIndex(x => x.isCategoryPublished && x.isCategoryAvailable)
             .toString()
    )
-   const [showVegMenuOnly, setShowVegMenuOnly] = useState(false)
-   const [vegMenu, setVegMenu] = useState(null)
-   const { t, dynamicTrans, direction } = useTranslation()
 
    const onCategorySelect = e => {
       setSelectedCategory(e.key)

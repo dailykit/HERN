@@ -20,6 +20,7 @@ import isNull from 'lodash/isNull'
 import isEmpty from 'lodash/isEmpty'
 import { useIntl } from 'react-intl'
 import { BiPlus } from 'react-icons/bi'
+import { RoundedCloseIcon } from '../../../assets/icons/RoundedCloseIcon'
 const { Header, Content, Footer } = Layout
 
 export const KioskProduct = props => {
@@ -489,6 +490,13 @@ export const KioskProduct = props => {
                         className="hern-kiosk__menu-product-name"
                         data-translation="true"
                      >
+                        {config.menuSettings?.showVegToggle?.value &&
+                           productData.VegNonVegType !== null && (
+                              <KioskVegNonVegTypeIcon
+                                 type={productData.VegNonVegType}
+                              />
+                           )}
+
                         {productData.name}
                      </span>
                      {productData.additionalText && (
@@ -592,7 +600,6 @@ export const KioskProduct = props => {
                      <KioskCounterButton
                         config={config}
                         onMinusClick={() => {
-                           // console.log('combinedCartItems')
                            const idsAv = combinedCartItems
                               .filter(x => x.productId === productData.id)
                               .map(x => x.ids)
@@ -622,9 +629,33 @@ export const KioskProduct = props => {
             onCancel={() => {
                setShowChooseIncreaseType(false)
             }}
-            closable={false}
+            closable={
+               config?.productSettings?.repeatLastOne?.showCloseIcon?.value
+                  ? config?.productSettings?.repeatLastOne?.showCloseIcon?.value
+                  : false
+            }
             footer={null}
+            width={
+               config?.productSettings?.repeatLastOne?.variant?.value?.value ===
+               'large'
+                  ? 800
+                  : 520
+            }
+            className={classNames({
+               'hern-kiosk__increase-type-modal':
+                  config?.productSettings?.repeatLastOne?.variant?.value
+                     ?.value === 'large',
+            })}
+            closeIcon={<RoundedCloseIcon />}
          >
+            {config?.productSettings?.repeatLastOne?.showProductName?.value && (
+               <span
+                  className="hern-kiosk__product-type-mods__menu-product-name"
+                  data-translation="true"
+               >
+                  {productData.name}
+               </span>
+            )}
             <div
                style={{
                   display: 'flex',
@@ -654,7 +685,11 @@ export const KioskProduct = props => {
                   }}
                   buttonConfig={config.kioskSettings.buttonSettings}
                >
-                  {t('REPEAT LAST ONE')}
+                  {t(
+                     config?.productSettings?.repeatLastOne
+                        ?.labelForRepeatLastOneButton?.value ||
+                        'REPEAT LAST ONE'
+                  )}
                </KioskButton>
             </div>
          </Modal>
@@ -670,5 +705,50 @@ export const KioskProduct = props => {
             />
          )}
       </>
+   )
+}
+const KioskVegNonVegTypeIcon = ({ type }) => {
+   const isVeg = type === 'veg' || type === 'vegetarian'
+   if (type == null) return <></>
+   if (isVeg) {
+      return (
+         <svg
+            width="17"
+            height="17"
+            viewBox="0 0 17 17"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+         >
+            <rect
+               x="0.757812"
+               y="1.11987"
+               width="15"
+               height="15"
+               stroke="#4E9914"
+            />
+            <circle cx="8.25781" cy="8.61987" r="4" fill="#4E9914" />
+         </svg>
+      )
+   }
+   return (
+      <svg
+         width="17"
+         height="17"
+         viewBox="0 0 17 17"
+         fill="none"
+         xmlns="http://www.w3.org/2000/svg"
+      >
+         <rect
+            x="1.25781"
+            y="1.11993"
+            width="15"
+            height="15"
+            stroke="#D53440"
+         />
+         <path
+            d="M8.75781 4.61993L12.7578 11.0199H4.75781L8.75781 4.61993Z"
+            fill="#D53440"
+         />
+      </svg>
    )
 }
