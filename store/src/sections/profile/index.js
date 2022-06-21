@@ -346,7 +346,10 @@ const CurrentPlan = () => {
          <Button
             size="sm"
             theme={theme}
-            onClick={() => router.push(getRoute(`/change-plan`))}
+            onClick={() => {
+               localStorage.setItem('changing-plan', true)
+               router.push(getRoute(`/change-plan`))
+            }}
          >
             {t('Change Plan')}
          </Button>
