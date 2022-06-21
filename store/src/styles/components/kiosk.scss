@@ -485,6 +485,7 @@
 .hern-kiosk__cart-tool-tip {
    position: absolute;
    // bottom: -5px;
+   z-index: 9999;
    transform: translateY(40px);
    animation-name: cart-tool-tip;
    animation-duration: 3s;
@@ -593,6 +594,11 @@
 .hern-kiosk__menu-product-name {
    font-size: 1.3em;
    font-weight: 700;
+   display: flex;
+   gap: 8px;
+   > svg {
+      transform: translateY(5px);
+   }
 }
 .hern-kiosk__menu-product-description {
    white-space: nowrap;
@@ -646,20 +652,21 @@
    height: 80vh;
    width: 80vw;
    // background-color: red;
-   margin: 5em 0 0 0;
+   // margin: 5em 0 0 0;
    border-radius: 2.5em;
    position: relative;
 }
 .hern-kiosk__menu-product-modifier-pop-up-scrollPart {
    height: 90%;
    overflow-y: auto;
+   //background-color: var(--hern-primary-color);
 }
 .hern-kiosk__menu-product-modifier-header {
    display: flex;
    flex-direction: column;
    align-items: center;
    justify-content: center;
-   border-radius: 2.5em 2.5em 0 0;
+   // border-radius: 2.5em 2.5em 0 0;
 }
 .hern-kiosk__additional-modifier {
    padding: 1.3em;
@@ -822,6 +829,25 @@
    height: 5.8vh;
    border-radius: 0em 0em 2.5em 2.5em;
 }
+//Applicable when using large footer on modifier popup
+.hern-kiosk__modifier-popup-footer--large {
+   height: 184px;
+   padding: 0 56px;
+   > div {
+      white-space: nowrap;
+   }
+   > div > span {
+      font-weight: 700;
+      font-size: 36px;
+   }
+   > button {
+      white-space: nowrap;
+      font-weight: 700;
+      font-size: 40px;
+      padding: 0;
+      width: auto;
+   }
+}
 .hern-kiosk__modifier-add-to-cart {
    padding: 1em;
    font-weight: 700;
@@ -845,7 +871,7 @@
    text-transform: capitalize;
 }
 .hern-kiosk__modifier-total-price {
-   margin: 0 1em;
+   margin: 0 1rem;
    color: #ffffff;
    font-size: 2em;
 }
@@ -1534,5 +1560,118 @@
       &:disabled {
          opacity: 0.5;
       }
+   }
+}
+
+/** Pay button */
+.hern-kiosk__pay-button {
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   flex-direction: column;
+   padding: 24px;
+   border-radius: 0.5rem;
+   background: #fff !important;
+   color: #202020 !important;
+   max-width: 220px;
+   border: 3px solid var(--hern-primary-color);
+   > span {
+      font-size: 24px;
+      display: inline-block;
+      margin-top: 2rem;
+      margin-bottom: 0.25rem;
+      white-space: nowrap;
+      color: var(--hern-primary-color);
+      font-weight: 700;
+   }
+   > svg {
+      height: 96px;
+      width: 96px;
+   }
+   &:active {
+      opacity: 0.8;
+   }
+   &:disabled {
+      opacity: 0.5;
+   }
+}
+/**close payment modal **/
+.hern-kiosk__payment-modal-close {
+   position: absolute;
+   top: 32px;
+   right: 32px;
+   z-index: 10000;
+   > svg {
+      height: 36px;
+      width: 36px;
+   }
+}
+/*Payment modal style override*/
+.hern-kiosk-payment-modal {
+   .ant-modal-body {
+      padding: 32px 32px 48px 32px;
+   }
+   .ant-modal-content {
+      border-radius: 0.5rem;
+   }
+}
+
+/**Repeat last one style override */
+.hern-kiosk__increase-type-modal {
+   .hern-kiosk__product-type-mods__menu-product-name {
+      font-weight: 700;
+      font-size: 28px;
+      color: #6f6f6f;
+      text-transform: capitalize;
+      margin-bottom: 28px;
+      display: block;
+   }
+   .ant-modal-close {
+      top: 24px;
+      right: 24px;
+   }
+   .ant-modal-title {
+      font-weight: 600;
+      font-size: 36px;
+   }
+   .ant-modal-body {
+      padding: 0 40px 40px 40px;
+   }
+   .ant-modal-header {
+      border-radius: 0.5rem 0.5rem 0 0;
+      padding: 40px;
+      border-bottom: none;
+   }
+   .ant-modal-content {
+      border-radius: 0.5rem;
+   }
+   .hern-kiosk__kiosk-button-linear {
+      padding: 24px 64px !important;
+      font-weight: 700;
+      font-size: 30px;
+      line-height: 32px;
+      white-space: nowrap;
+      margin-right: 48px;
+      border-radius: 0;
+      border: 4px solid var(--hern-primary-color) !important;
+      &:last-child {
+         margin-right: 0;
+      }
+   }
+}
+.hern-kiosk__menu-product-modifier-pop-up-container--close {
+   position: absolute;
+   left: 0;
+   right: 0;
+   top: 0;
+   height: 100px;
+   z-index: 100;
+   display: flex;
+   justify-content: space-between;
+   align-items: center;
+   padding: 0 28px;
+   > h4 {
+      font-weight: 700;
+      font-size: 24px;
    }
 }

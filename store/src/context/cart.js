@@ -215,6 +215,7 @@ export const CartProvider = ({ children }) => {
             .sort((a, b) => a.position - b.position)
             .forEach(option => {
                finalPaymentOptions.push({
+                  identifier: option?.label,
                   label: option?.supportedPaymentOption
                      ?.paymentOptionLabelToShow,
                   id: option?.id,
