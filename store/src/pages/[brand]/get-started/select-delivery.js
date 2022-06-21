@@ -22,7 +22,10 @@ const SelectDelivery = props => {
 
    React.useEffect(() => {
       if (isAuthenticated && !isLoading) {
-         isClient && user?.isSubscriber && router.push(getRoute('/menu'))
+         isClient &&
+            localStorage.getItem('changing-plan') !== 'true' &&
+            user?.isSubscriber &&
+            router.push(getRoute('/menu'))
       }
    }, [isAuthenticated, isLoading])
    React.useEffect(() => {
