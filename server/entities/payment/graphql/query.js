@@ -23,6 +23,13 @@ query CART_PAYMENT($id: Int!) {
       brand{
         domain
       }
+      availablePaymentOption {
+         id
+         label
+         supportedPaymentOption {
+            paymentOptionLabel
+         }
+      }
     }
  }
 }

@@ -58,7 +58,10 @@ const razorpayWebhookEvents = async arg => {
          code: 200,
          data: requiredData,
          company: 'paytm',
-         received: true
+         received: true,
+         doRedirect:
+            cartPayment.cart.availablePaymentOption.supportedPaymentOption
+               .paymentOptionLabel !== 'QR'
       }
    } catch (error) {
       return { success: false, code: 500, error }

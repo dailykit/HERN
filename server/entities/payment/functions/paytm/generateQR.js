@@ -1,5 +1,5 @@
 import _isEmtpy from 'lodash/isEmpty'
-const PaytmChecksum = require('PaytmChecksum')
+const PaytmChecksum = require('paytmchecksum')
 const axios = require('axios')
 import { CART } from '../../graphql'
 import { client } from '../../../../lib/graphql'
