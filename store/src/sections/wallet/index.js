@@ -55,13 +55,11 @@ const Content = ({ config }) => {
          <header className="hern-wallet__header">
             <h2
                style={{
-                  color: `${
-                     theme?.accent ? theme?.accent : 'rgba(5,150,105,1)'
-                  }`,
+                  color: `${theme?.accent ? theme?.accent : '#333333'}`,
                }}
                className="hern-wallet__header__title"
             >
-               {t('WALLET BALANCE')}
+               {t('Wallet Balance')}
             </h2>
          </header>
          {!!user.wallet && (
@@ -80,7 +78,7 @@ const Content = ({ config }) => {
                />
                <Spacer />
                <p className="hern-wallet__transaction_title">
-                  {t('TRANSACTION HISTORY')}
+                  {t('Transaction History')}
                </p>
                {user.wallet.walletTransactions.length > 0 ? (
                   <div className="hern-wallet__table_wrapper">
