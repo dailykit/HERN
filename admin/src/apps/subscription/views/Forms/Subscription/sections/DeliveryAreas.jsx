@@ -19,6 +19,7 @@ import {
    Checkbox,
    TextButton,
    ButtonGroup,
+   Dropdown,
 } from '@dailykit/ui'
 
 import PickUpTunnel from './PickUp'
@@ -37,6 +38,7 @@ import {
    SUBSCRIPTION_ZIPCODES,
    INSERT_SUBSCRIPTION_ZIPCODES,
    UPDATE_SUBSCRIPTION_ZIPCODE,
+   LOCATIONS,
 } from '../../../../graphql'
 import { DeliveryArea } from './BulkActionTunnel/deliveryArea'
 
@@ -99,6 +101,12 @@ const DeliveryAreas = ({ id, setAreasTotal }) => {
                   column.getDefinition().title
                )
             },
+         },
+         {
+            title: 'LocationId',
+            field: 'locationId',
+            headerFilter: true,
+            cssClass: 'cell',
          },
          {
             field: 'deliveryPrice',
@@ -405,6 +413,8 @@ const AreasTunnel = ({
       isActive: true,
    })
    const [zipcodes, setZipcodes] = React.useState('')
+   const [locationList, setLocationList] = React.useState([])
+   const [selectedLocation, setSelectedLocation] = React.useState()
    const [tunnels, openOptionTunnel, closeOptionTunnel] = useTunnel(1)
    const [insertSubscriptionZipcodes, { loading: creating }] = useMutation(
       INSERT_SUBSCRIPTION_ZIPCODES,
@@ -431,6 +441,34 @@ const AreasTunnel = ({
          onError: error => {
             logger(error)
             toast.success('Failed to update the delivery area!')
+         },
+      }
+   )
+   const { locationError, locationListLoading, locationData } = useSubscription(
+      LOCATIONS,
+      {
+         onSubscriptionData: ({
+            subscriptionData: {
+               data: { locations = [] },
+            },
+         }) => {
+            let locationsData = locations.map(location => {
+               return {
+                  id: location?.id || '',
+                  title: location?.label || '',
+                  description:
+                     location?.id +
+                        '-' +
+                        location?.label +
+                        '-' +
+                        location?.city || '',
+               }
+            })
+            setLocationList(previousLocation => [
+               ...previousLocation,
+               ...locationsData,
+            ])
+            // console.log('locations:', locations, 'locationList:', locationList)
          },
       }
    )
@@ -467,6 +505,7 @@ const AreasTunnel = ({
             deliveryTime: { from: delivery.from, to: delivery.to },
             isPickupActive: pickupOption?.id ? isPickupActive : false,
             subscriptionPickupOptionId: pickupOption?.id || null,
+            locationId: selectedLocation?.id || null,
          }))
          insertSubscriptionZipcodes({
             variables: {
@@ -487,6 +526,7 @@ const AreasTunnel = ({
                   deliveryTime: { from: delivery.from, to: delivery.to },
                   isPickupActive: pickupOption?.id ? isPickupActive : false,
                   subscriptionPickupOptionId: pickupOption?.id || null,
+                  locationId: selectedLocation?.id || null,
                },
             },
          })
@@ -537,6 +577,28 @@ const AreasTunnel = ({
             {mode === 'ADD' && (
                <Form.Hint>Enter comma seperated zipcodes.</Form.Hint>
             )}
+
+            <Spacer yAxis size="16px" />
+               <Flex width={'35%'}>
+                  <Form.Group>
+                     <Text as='h3'>Location</Text>
+                     {/* <Form.Text
+                     value={title.location}
+                     placeholder="Enter location"
+                  /> */}
+                     <Dropdown
+                        type="single"
+                        //  variant="revamp"
+                        // defaultName={title.location}
+                        isLoading={locationListLoading}
+                        addOption={locationList}
+                        options={locationList}
+                        selectedOption={e => setSelectedLocation(e)}
+                        searchedOption={()=>{}}
+                        placeholder="Choose location"
+                     />
+                  </Form.Group>
+               </Flex>
             <Spacer size="24px" />
             <Text as="h3">Delivery</Text>
             <Spacer size="18px" />

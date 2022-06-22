@@ -331,7 +331,7 @@ const CurrentPlan = () => {
                   {t('No.of Servings: ')}
                </small>
                <p className="hern-profile__current-plan__card__changeplan-value">
-                  {plan?.itemCount}
+                  {plan?.servings}
                </p>
             </div>
             <div className="hern-profile__current-plan__details">
@@ -339,14 +339,17 @@ const CurrentPlan = () => {
                   {t('Recipes per Week: ')}
                </small>
                <p className="hern-profile__current-plan__card__changeplan-value">
-                  {plan?.servings}
+                  {plan?.itemCount}
                </p>
             </div>
          </div>
          <Button
             size="sm"
             theme={theme}
-            onClick={() => router.push(getRoute(`/change-plan`))}
+            onClick={() => {
+               localStorage.setItem('changing-plan', true)
+               router.push(getRoute(`/change-plan`))
+            }}
          >
             {t('Change Plan')}
          </Button>

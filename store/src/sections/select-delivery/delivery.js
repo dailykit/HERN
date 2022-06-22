@@ -140,7 +140,12 @@ const DeliveryContent = ({ config }) => {
             className={classNames('hern-delivery__continue-btn', {
                'hern-delivery__continue-btn--disabled': !isValid(),
             })}
-            onClick={nextStep}
+            onClick={() => {
+               nextStep()
+               if (localStorage.getItem('changing-plan')) {
+                  localStorage.removeItem('changing-plan')
+               }
+            }}
             disabled={!isValid()}
          >
             {t('Continue')}
