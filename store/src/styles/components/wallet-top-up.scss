@@ -1,82 +1,83 @@
-.hern-wallet__top-up{
-	margin: 10px 0px;
-	.hern-wallet__top-up-header{
-		font-family: 'Roboto';
-		font-weight: 600;
-		font-size: 18px;
-		line-height: 20px;
-		color: rgba(64, 64, 64, 0.8);
-	}
-	.hern-wallet__top-up-field-group{
-		display: flex;
-		flex-direction: column;
-	}
-	.hern-wallet__top-up-field-group-label{
-		font-family: 'Roboto';
-		font-weight: 400;
-		font-size: 16px;
-		line-height: 18px;
-		color: rgba(64, 64, 64, 0.6);
-		margin-top: 6px;
-		margin-bottom: 8px;
-	}
-	.hern-wallet__top-up-amount-block{
-		display: flex;
-		align-items: center;
-		flex-wrap: wrap;
-	}
-	.hern-wallet__top-up-amount-field-group{
-		position: relative;
-		.hern-wallet__top-up-amount-field-icon{
-			position: absolute;
-			top: 50%;
-			transform: translateY(-50%);
-			color: rgba(64, 64, 64, 0.8);
-			margin-left: 10px;
-		}
-	}
-	.hern-wallet__top-up-amount{
-		border: 1px solid rgba(64, 64, 64, 0.4);
-		border-radius: 6px;
-		padding: 10px 10px 10px 35px;
-		width: 350px;
-		font-family: 'Roboto';
-		font-weight: 600;
-		font-size: 28px;
-		line-height: 28px;
-		color: rgba(64, 64, 64, 0.8);
-		margin-right: 8px;
-	}
-	.hern-wallet__top-up-amount-add{
-		font-style: normal;
-		font-family: 'Roboto';
-		font-weight: 600;
-		font-size: 20px;
-		line-height: 20px;
-		border: 1px solid rgba(64, 64, 64, 0.4);
-		color: var(--hern-accent);
-		border-radius: 4px;
-		padding: 10px 24px;
-		margin: 8px;
-	}
-	.hern-wallet__top-up-card{
-		display: flex;
-		align-items: center;
-		> p{
-			font-weight: bold;
-			font-size: 15px;
-		}
-		.hern-wallet__top-up-amount-card-close-btn{
-			font-size: 15px;
-			color: red;
-			margin-left: 24px;
-			cursor: pointer;
-		}
-	}
-	.hern-wallet__top-up-payment-block{
-		margin-top: 22px;
-		.hern-wallet__top-up-header{
-			margin-bottom: 12px;
-		}
-	}
+.hern-wallet__top-up {
+   margin: 10px 0px;
+   .hern-wallet__top-up-header {
+      font-family: 'Roboto';
+      font-weight: 600;
+      font-size: 18px;
+      line-height: 20px;
+      color: rgba(64, 64, 64, 0.8);
+   }
+   .hern-wallet__top-up-field-group {
+      display: flex;
+      flex-direction: column;
+   }
+   .hern-wallet__top-up-field-group-label {
+      font-family: 'Roboto';
+      font-weight: 400;
+      font-size: 16px;
+      line-height: 18px;
+      color: rgba(64, 64, 64, 0.6);
+      margin-top: 6px;
+      margin-bottom: 8px;
+   }
+   .hern-wallet__top-up-amount-block {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+   }
+   .hern-wallet__top-up-amount-field-group {
+      position: relative;
+      .hern-wallet__top-up-amount-field-icon {
+         position: absolute;
+         top: 50%;
+         transform: translateY(-50%);
+         color: rgba(64, 64, 64, 0.8);
+         margin-left: 10px;
+      }
+   }
+   .hern-wallet__top-up-amount {
+      border: 1px solid rgba(64, 64, 64, 0.4);
+      border-radius: 6px;
+      padding: 10px 10px 10px 35px;
+      width: 350px;
+      font-family: 'Roboto';
+      font-weight: 600;
+      font-size: 28px;
+      line-height: 28px;
+      color: rgba(64, 64, 64, 0.8);
+      margin-right: 8px;
+   }
+   .hern-wallet__top-up-amount-add {
+      font-style: normal;
+      font-family: 'Inter';
+      font-weight: 600;
+      font-size: 20px;
+      line-height: 24px;
+      border: 1px solid var(--hern-accent);
+      color: #fff;
+      border-radius: 22px;
+      padding: 10px 20px;
+      margin: 8px;
+      background: var(--hern-accent);
+   }
+   .hern-wallet__top-up-card {
+      display: flex;
+      align-items: center;
+      > p {
+         font-weight: bold;
+         font-size: 15px;
+      }
+      .hern-wallet__top-up-amount-card-close-btn {
+         font-size: 15px;
+         color: red;
+         margin-left: 24px;
+         cursor: pointer;
+      }
+   }
+   .hern-wallet__top-up-payment-block {
+      margin-top: 22px;
+      .hern-wallet__top-up-header {
+         margin-bottom: 12px;
+      }
+   }
 }

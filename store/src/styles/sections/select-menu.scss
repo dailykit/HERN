@@ -528,7 +528,24 @@
    margin-bottom: 0.75rem;
 }
 .hern-cart-plan-products__list {
-   max-height: 257px;
+   // max-height: 257px;
+   max-height: 300px;
+   overflow-y: auto;
+   padding: 5px;
+
+   &::-webkit-scrollbar {
+      width: 0.25em;
+   }
+
+   &::-webkit-scrollbar-track {
+      box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+   }
+
+   &::-webkit-scrollbar-thumb {
+      background-color: rgba(51, 51, 51, 0.4);
+      outline: 1px solid rgba(51, 51, 51, 0.4);
+      border-radius: 4px;
+   }
 }
 
 .hern-cart-add-on-products__tunnel {
@@ -588,8 +605,23 @@
    }
 }
 .hern-cart-add-on-products__list {
+   padding: 5px;
    overflow-y: auto;
-   max-height: 257px;
+   max-height: 300px;
+
+   &::-webkit-scrollbar {
+      width: 0.25em;
+   }
+
+   &::-webkit-scrollbar-track {
+      box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+   }
+
+   &::-webkit-scrollbar-thumb {
+      background-color: rgba(51, 51, 51, 0.4);
+      outline: 1px solid rgba(51, 51, 51, 0.4);
+      border-radius: 4px;
+   }
 }
 /*Addons*/
 .hern-cart-add-ons__section {

@@ -89,7 +89,12 @@ const ChangePlanSection = () => {
    }
    const deliveryDayLabel = configOf('delivery-day', 'Select-Delivery')
    const firstDeliveryDayLabel = configOf('first-delivery', 'Select-Delivery')
-   console.log("deliveryDayLabel", deliveryDayLabel, "firstDeliveryDayLabel", firstDeliveryDayLabel)
+   console.log(
+      'deliveryDayLabel',
+      deliveryDayLabel,
+      'firstDeliveryDayLabel',
+      firstDeliveryDayLabel
+   )
    return (
       <>
          <h2
@@ -113,7 +118,8 @@ const ChangePlanSection = () => {
                   className="hern-change-plan__section-title"
                   style={themeColor}
                >
-                  {firstDeliveryDayLabel?.value || 'Select your first delivery date'}
+                  {firstDeliveryDayLabel?.value ||
+                     'Select your first delivery date'}
                </h3>
                <DeliveryDateSection />
                <div className="hern-change-plan__continue-btn-wrapper">

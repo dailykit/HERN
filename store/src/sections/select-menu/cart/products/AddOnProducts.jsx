@@ -140,6 +140,7 @@ const AddOns = () => {
       const index = products?.findIndex(
          node => node.subscriptionOccurenceAddOnProductId === id
       )
+
       return index === -1 ? false : true
    }
 
@@ -174,6 +175,7 @@ const AddOns = () => {
                         theme={theme}
                         key={node.id}
                         isAdded={isAdded}
+                        products={state.occurenceCustomer?.cart?.products || []}
                      />
                   ))}
                </ul>
@@ -183,8 +185,21 @@ const AddOns = () => {
    )
 }
 
-const AddOnProduct = ({ node, isAdded, theme }) => {
+const AddOnProduct = ({ node, isAdded, theme, products }) => {
    const { state, methods } = useMenu()
+   const [isActive, setIsActive] = React.useState(false)
+
+   React.useEffect(() => {
+      setIsActive(
+         products.findIndex(
+            product =>
+               product.subscriptionOccurenceAddOnProductId ===
+               node?.cartItem?.subscriptionOccurenceAddOnProductId
+         ) !== -1
+      )
+   }, [products])
+
+   console.log('ISACTIVE: ', isActive)
 
    const canAdd = () => {
       const conditions = [!node.isSingleSelect, state?.week?.isValid]
@@ -196,7 +211,6 @@ const AddOnProduct = ({ node, isAdded, theme }) => {
       )
    }
 
-   const isActive = isAdded(node?.cartItem?.subscriptionOccurenceAddOnProductId)
    const product = {
       name: node?.productOption?.product?.name || '',
       label: node?.productOption?.label || '',
@@ -241,12 +255,12 @@ const AddOnProduct = ({ node, isAdded, theme }) => {
          </div>
          {canAdd() && (
             <button
-               onClick={() =>
+               onClick={() => {
                   methods.products.add(
                      node.cartItem,
                      node?.productOption?.product
                   )
-               }
+               }}
                className="hern-add-on__products__list-item__add-btn"
             >
                {isActive ? 'Repeat +' : 'Add +'}
