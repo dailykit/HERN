@@ -4,6 +4,7 @@
    width: 100%;
    display: flex;
    align-items: center;
+   justify-content: center;
    border-radius: 0.5rem;
    -webkit-border-radius: 0.5rem;
    -moz-border-radius: 0.5rem;
@@ -82,7 +83,8 @@
    line-height: 1.75rem;
 }
 .hern-helper-bar__subtitle {
-   margin: 0px auto 0px 35px;
+   // margin: 0px auto 0px 35px;
+   padding: 0.75rem;
    & > span {
       color: #11823b;
       display: block;
@@ -92,10 +94,10 @@
       font-size: 32px;
       margin-bottom: 4px;
    }
-   font-family: 'Inter';
+   font-family: 'lato';
    font-style: normal;
-   font-weight: 500;
-   font-size: 18px;
+   font-weight: 400;
+   font-size: 16px;
    color: #333333;
 }
 
