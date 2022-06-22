@@ -284,6 +284,7 @@ export const SUBSCRIPTION_ZIPCODES = gql`
       ) {
          isDemo
          zipcode
+         locationId
          isActive
          deliveryTime
          deliveryPrice
@@ -296,6 +297,19 @@ export const SUBSCRIPTION_ZIPCODES = gql`
             time
             address
          }
+      }
+   }
+`
+
+export const LOCATIONS = gql`
+   subscription locationList {
+      locations: brands_location {
+         id
+         city
+         isActive
+         lat
+         lng
+         label
       }
    }
 `
