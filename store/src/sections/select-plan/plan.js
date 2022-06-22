@@ -585,7 +585,7 @@ export const Plan = ({
                         : 'hern-plan__item-counts__list__wrapper'
                   }
                >
-                  {servingsFirstIndex >= 0 &&
+                  {servingsFirstIndex > 0 &&
                      defaultServing?.itemCounts?.length >
                         numberOfItemsToShow && (
                         <button
