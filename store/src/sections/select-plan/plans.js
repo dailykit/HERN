@@ -6,7 +6,7 @@ import classNames from 'classnames'
 import { Plan } from './plan'
 import { PLANS } from '../../graphql'
 import { useConfig } from '../../lib'
-import { useUser } from '../../context'
+import { useTranslation, useUser } from '../../context'
 import { SkeletonPlan } from './skeletons'
 import { HelperBar } from '../../components'
 import { PlateIllustration } from '../../assets/icons/PlateIllustration'
@@ -17,6 +17,7 @@ export const Plans = ({ config }) => {
    const { addToast } = useToasts()
    const [list, setList] = React.useState([])
    const [isLoading, setIsLoading] = React.useState(true)
+   const { t, dynamicTrans, locale } = useTranslation()
 
    // Plan view Config
    const planViewConfig = config?.display?.planView?.value?.value ?? 'card'
@@ -33,6 +34,14 @@ export const Plans = ({ config }) => {
          config?.display?.heading?.textAlign?.value[0]?.value ?? 'center',
       spacing: config?.display?.heading?.spacing?.value ?? '32px 0',
    }
+
+   const currentLang = React.useMemo(() => locale, [locale])
+   React.useEffect(() => {
+      const languageTags = document.querySelectorAll(
+         '[data-translation="true"]'
+      )
+      dynamicTrans(languageTags)
+   }, [currentLang])
 
    const { error } = useSubscription(PLANS, {
       variables: {
@@ -232,11 +241,22 @@ const PlansCards = ({
    handleSelectedPlan,
    selectedPlan,
 }) => {
+   const { t, dynamicTrans, locale } = useTranslation()
+   const currentLang = React.useMemo(() => locale, [locale])
+   React.useEffect(() => {
+      const languageTags = document.querySelectorAll(
+         '[data-translation="true"]'
+      )
+      dynamicTrans(languageTags)
+   }, [currentLang])
+
    return (
       <div className="hern-plans__aggregate__left">
          <div className="hern-plans__aggregate__title-wrapper">
             <span>1</span>{' '}
-            <p className="hern-plans__aggregate__title">Choose your plan</p>
+            <p className="hern-plans__aggregate__title">
+               {t('Choose your plan')}
+            </p>
          </div>
          <div className="hern-plans__aggregate__cards-wrapper">
             {list.map(plan => (
@@ -274,11 +294,22 @@ const PlansCards = ({
 
 // planDetails component
 const PlansDetails = ({ selectedPlan, list, config, planViewConfig }) => {
+   const { t, dynamicTrans, locale } = useTranslation()
+   const currentLang = React.useMemo(() => locale, [locale])
+   React.useEffect(() => {
+      const languageTags = document.querySelectorAll(
+         '[data-translation="true"]'
+      )
+      dynamicTrans(languageTags)
+   }, [currentLang])
+
    return (
       <div className="hern-plans__aggregate__right">
          <div className="hern-plans__aggregate__title-wrapper">
             <span>2</span>{' '}
-            <p className="hern-plans__aggregate__title">Choose your quantity</p>
+            <p className="hern-plans__aggregate__title">
+               {t('Choose your quantity')}
+            </p>
          </div>
          <div>
             <div className="hern-plans__aggregate__plan-details">

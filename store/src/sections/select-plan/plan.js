@@ -452,7 +452,7 @@ export const Plan = ({
                      }}
                      data-translation="true"
                   >
-                     {yieldLabelConfig?.plural}
+                     {t(`${yieldLabelConfig?.plural}`)}
                   </span>
                </h4>
                <div

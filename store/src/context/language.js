@@ -2,12 +2,13 @@ import React from 'react'
 import en from '../lang/en.json'
 import fr from '../lang/fr.json'
 import ar from '../lang/ar.json'
+import nl from '../lang/nl.json'
 
 import { IntlProvider, FormattedMessage } from 'react-intl'
 import { isClient, isKiosk } from '../utils'
 const LanguageContext = React.createContext()
 
-const languages = { en, fr, ar }
+const languages = { en, fr, ar, nl }
 const rltLanguages = ['ar'] //Languages are read from right to left
 
 export const LanguageProvider = ({ children }) => {
@@ -29,8 +30,15 @@ export const LanguageProvider = ({ children }) => {
       {
          langCode: 'fr',
          title: 'French',
-         default: false,
+         default: true,
          flagIcon: 'https://flagicons.lipis.dev/flags/4x3/fr.svg',
+         direction: 'ltr',
+      },
+      {
+         langCode: 'nl',
+         title: 'Dutch',
+         default: true,
+         flagIcon: 'https://flagicons.lipis.dev/flags/4x3/nl.svg',
          direction: 'ltr',
       },
    ]
@@ -60,6 +68,10 @@ export const LanguageProvider = ({ children }) => {
             : ''
          if (languageInLocal == 'ar') {
             changeLocale('ar')
+         } else if (languageInLocal == 'fr') {
+            changeLocale('fr')
+         } else if (languageInLocal == 'nl') {
+            changeLocale('nl')
          } else if (languageInLocal == 'en') {
             changeLocale('en')
          } else if (languageInLocal == 'fr') {
@@ -98,9 +110,18 @@ export const useTranslation = () => {
          }
          let innerHTMLToBe = langPattern
          if (locale === 'en') {
-            if (langPattern && langPattern.match(/\@@AR@@(.*?)\@@AR@@/g)) {
-               const arabic = langPattern.match(/\@@AR@@(.*?)\@@AR@@/g)[0]
-               innerHTMLToBe = langPattern.replaceAll(arabic, '')
+            if (
+               (langPattern && langPattern.match(/\@@AR@@(.*?)\@@AR@@/g)) ||
+               langPattern.match(/\@@FR@@(.*?)\@@FR@@/g) ||
+               langPattern.match(/\@@NL@@(.*?)\@@NL@@/g)
+            ) {
+               const arabic = langPattern.match(/\@@AR@@(.*?)\@@AR@@/g)?.[0]
+               const french = langPattern.match(/\@@FR@@(.*?)\@@FR@@/g)?.[0]
+               const dutch = langPattern.match(/\@@NL@@(.*?)\@@NL@@/g)?.[0]
+               innerHTMLToBe = langPattern
+                  .replaceAll(french, '')
+                  ?.replaceAll(arabic, '')
+                  ?.replaceAll(dutch, '')
             }
             tag.innerHTML = innerHTMLToBe
          }
@@ -109,6 +130,20 @@ export const useTranslation = () => {
                tag.innerHTML = langPattern
                   .match(/\@@AR@@(.*?)\@@AR@@/g)[0]
                   .replaceAll('@@AR@@', '')
+            }
+         }
+         if (locale === 'fr') {
+            if (langPattern && langPattern.match(/\@@FR@@(.*?)\@@FR@@/g)) {
+               tag.innerHTML = langPattern
+                  .match(/\@@FR@@(.*?)\@@FR@@/g)[0]
+                  .replaceAll('@@FR@@', '')
+            }
+         }
+         if (locale === 'nl') {
+            if (langPattern && langPattern.match(/\@@NL@@(.*?)\@@NL@@/g)) {
+               tag.innerHTML = langPattern
+                  .match(/\@@NL@@(.*?)\@@NL@@/g)[0]
+                  .replaceAll('@@NL@@', '')
             }
          }
       })
@@ -121,6 +156,7 @@ export const useTranslation = () => {
          '[data-translation="true"]'
       )
       dynamicTrans(languageTags)
+      console.log('current language', currentLang)
    }, [currentLang])
 
    return {

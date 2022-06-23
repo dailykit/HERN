@@ -13,6 +13,7 @@
    "ADD TO CART": "AJOUTER AU PANIER",
    "Customize": "Personnaliser",
    "CHECKOUT": "VÉRIFIER",
+   "Checkout": "Vérifier",
    "SEE MENU": "VOIR MENU",
    "REVIEW ORDER": "VOIR LA COMMANDE",
    "CLEAR CART": "VIDER LE PANIER",
@@ -206,6 +207,7 @@
    "Following days are not available for delivery on this address.": "Les jours suivants ne sont pas disponibles pour la livraison à cette adresse.",
    "No days are available for delivery on this address.": "Aucun jour n'est disponible pour la livraison à cette adresse.",
    "Select Plan": "Sélectionnez le plan",
+   "Select plan": "Sélectionnez le plan",
    "Select an address to get started": "Sélectionnez une adresse pour commencer",
    "Failed to fetch delivery days": "Échec de la récupération des jours de livraison",
    "Select a delivery day to get started": "Sélectionnez un jour de livraison pour commencer",
@@ -292,6 +294,7 @@
    "Customers Referred": "Clients référés",
    "Error": "Erreur",
    "Select Date": "Sélectionner une date",
+   "Select Delivery": "Sélectionnez la livraison",
    "All Orders": "Tous les ordres",
    "View Details": "Voir les détails",
    "Orders": "Orders",
@@ -398,5 +401,7 @@
    "View on map": "Voir sur la carte",
    "Free 1 Ice Cream Cone": "1 cornet de crème glacée gratuit",
    "Out Of Stock": "En rupture de stock",
-   "View Menu": "Afficher le menu"
+   "View Menu": "Afficher le menu",
+   "Choose your plan": "Choisissez votre forfait",
+   "Choose your quantity": "Choisissez votre quantité"
 }
