@@ -26,6 +26,13 @@ export const LanguageProvider = ({ children }) => {
          flagIcon: 'https://flagicons.lipis.dev/flags/4x3/sa.svg',
          direction: 'rtl',
       },
+      {
+         langCode: 'fr',
+         title: 'French',
+         default: false,
+         flagIcon: 'https://flagicons.lipis.dev/flags/4x3/fr.svg',
+         direction: 'ltr',
+      },
    ]
    const [locale, changeLocale] = React.useState(
       locales.find(x => x.default).langCode
@@ -55,6 +62,8 @@ export const LanguageProvider = ({ children }) => {
             changeLocale('ar')
          } else if (languageInLocal == 'en') {
             changeLocale('en')
+         } else if (languageInLocal == 'fr') {
+            changeLocale('fr')
          }
       }
    }, [])
