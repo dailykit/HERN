@@ -151,6 +151,7 @@ const AddressCard = ({
             boxShadow: isSelectedCard
                ? 'none'
                : '0px 0px 29px rgba(0, 0, 0, 0.08)',
+            paddingTop: isSelectedCard ? '25px' : 'none',
          }}
       >
          <div className="hern-delivery__address__list-item__header">

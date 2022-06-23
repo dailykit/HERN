@@ -10,6 +10,7 @@ import { getProtectedRoutes, getRoute, isClient, get_env } from '../utils'
 import { StepNavProgress } from '../assets/icons/StepNavProgress'
 import classNames from 'classnames'
 import { HernLazyImage } from '../utils/hernImage'
+import { LanguageSwitch } from './language_switch'
 
 const routes = {
    '/[brand]/get-started/select-plan': {
@@ -193,6 +194,10 @@ export const StepsNavbar = () => {
                   />
                </ul>
             </section>
+
+            <div className="hern-steps-navbar__change__lang">
+               <LanguageSwitch />
+            </div>
 
             <section className="hern-steps-navbar__logout">
                {isAuthenticated ? (
