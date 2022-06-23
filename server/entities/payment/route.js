@@ -3,6 +3,7 @@ import express from 'express'
 import {
    initiatePaymentHandler,
    handlePaymentWebhook,
+   handlePaytmQRWebhook,
    handleCartPayment,
    createSetupIntent,
    listSetupIntent,
@@ -22,6 +23,9 @@ router.post('/initiate-payment', initiatePaymentHandler)
 
 // Stripe webhook events
 router.post('/handle-payment-webhook', handlePaymentWebhook)
+
+// Paytm QR Webhook Event
+router.post('/handle-paytm-qr-webhook', handlePaytmQRWebhook)
 
 // Setup Intents
 router.get('/setup-intent', listSetupIntent)
