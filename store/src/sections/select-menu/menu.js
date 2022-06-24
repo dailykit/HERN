@@ -165,13 +165,19 @@ export const Menu = () => {
 }
 
 const Product = ({ node, theme, isAdded, noProductImage, buildImageUrl }) => {
-   const router = useRouter()
+   // const router = useRouter()
    const { addToast } = useToasts()
    const { state, methods } = useMenu()
    const { t, dynamicTrans, locale } = useTranslation()
    const { formatMessage } = useIntl()
-   const openRecipe = () =>
-      router.push(getRoute(`/recipes/${node?.productOption?.id}`))
+   const openRecipe = () => {
+      window.open(
+         getRoute(`/recipes/${node?.productOption?.id}`),
+         '_blank',
+         'noopener,noreferrer'
+      )
+      // router.push(getRoute(`/recipes/${node?.productOption?.id}`))
+   }
 
    // const add = debounce(function (item, node) {
    //    if (state.occurenceCustomer?.betweenPause) {
@@ -353,54 +359,54 @@ const Product = ({ node, theme, isAdded, noProductImage, buildImageUrl }) => {
          )}
 
          <div style={{ padding: '0.5rem' }}>
-         <section className="hern-select-menu__menu__product__link">
-            <CheckIcon size={16} className={checkIconClasses} />
-            <a theme={theme} onClick={isProductOutOfStock ? '' : openRecipe}>
-               <span data-translation="true">{product.name}</span>
-               {'-'}
-               <span data-translation="true">{product.label}</span>
-            </a>
-         </section>
-         <p
-            className="hern-select-menu__menu__product__link__additional-text"
-            data-translation="true"
-         >
-            {product?.additionalText}
-         </p>
-         {canAdd() && (
-            <button
-               className={btnClasses}
-               theme={theme}
-               disabled={
-                  !node.isAvailable &&
-                  isProductOutOfStock &&
-                  state.occurenceCustomer?.validStatus?.itemCountValid
-               }
-               onClick={() => {
-                  if (!isProductOutOfStock) {
-                     add(node.cartItem, node)
-                  }
-               }}
-               title={
-                  node.isAvailable && !isProductOutOfStock
-                     ? formatMessage({ id: 'Add product' })
-                     : formatMessage({
-                          id: 'This product is out of stock.',
-                       })
-               }
+            <section className="hern-select-menu__menu__product__link">
+               <CheckIcon size={16} className={checkIconClasses} />
+               <a theme={theme} onClick={isProductOutOfStock ? '' : openRecipe}>
+                  <span data-translation="true">{product.name}</span>
+                  {'-'}
+                  <span data-translation="true">{product.label}</span>
+               </a>
+            </section>
+            <p
+               className="hern-select-menu__menu__product__link__additional-text"
+               data-translation="true"
             >
-               {node.isAvailable && !isProductOutOfStock ? (
-                  <>
-                     {isActive ? t('REPEAT') : t('ADD')}
-                     {node.addOnPrice > 0 && ' + '}
-                     {node.addOnPrice > 0 &&
-                        formatCurrency(Number(node.addOnPrice) || 0)}
-                  </>
-               ) : (
-                  t('Out of Stock')
-               )}
-            </button>
-         )}
+               {product?.additionalText}
+            </p>
+            {canAdd() && (
+               <button
+                  className={btnClasses}
+                  theme={theme}
+                  disabled={
+                     !node.isAvailable &&
+                     isProductOutOfStock &&
+                     state.occurenceCustomer?.validStatus?.itemCountValid
+                  }
+                  onClick={() => {
+                     if (!isProductOutOfStock) {
+                        add(node.cartItem, node)
+                     }
+                  }}
+                  title={
+                     node.isAvailable && !isProductOutOfStock
+                        ? formatMessage({ id: 'Add product' })
+                        : formatMessage({
+                             id: 'This product is out of stock.',
+                          })
+                  }
+               >
+                  {node.isAvailable && !isProductOutOfStock ? (
+                     <>
+                        {isActive ? t('REPEAT') : t('ADD')}
+                        {node.addOnPrice > 0 && ' + '}
+                        {node.addOnPrice > 0 &&
+                           formatCurrency(Number(node.addOnPrice) || 0)}
+                     </>
+                  ) : (
+                     t('Out of Stock')
+                  )}
+               </button>
+            )}
          </div>
       </li>
    )
