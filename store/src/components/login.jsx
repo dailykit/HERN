@@ -38,6 +38,7 @@ import {
 import gql from 'graphql-tag'
 import { useTranslation } from '../context'
 import { useForm } from 'react-hook-form'
+import { handleLoginSuccess } from '../utils'
 
 const ReactPixel = isClient ? require('react-facebook-pixel').default : null
 
@@ -194,7 +195,7 @@ const Email = props => {
       password: '',
    })
    const [showPassword, setShowPassword] = useState(false)
-
+   const { loginSuccess } = handleLoginSuccess()
    const isValid = React.useMemo(() => form.email && form.password, [form])
    const { t } = useTranslation()
    //handle input field change
@@ -240,17 +241,8 @@ const Email = props => {
                email: form.email,
                phone: form.phone,
             })
-            addToast(t('Login successfully!'), { appearance: 'success' })
-            if (isClient) {
-               const landedOn = localStorage.getItem('landed_on')
-               if (landedOn) {
-                  const route = landedOn.replace(window.location.origin, '')
-                  localStorage.removeItem('landed_on')
-                  router.push(getRoute(route))
-               } else {
-                  router.push(getRoute('/order'))
-               }
-            }
+            //handle redirection and toast message after successfully logged in
+            loginSuccess()
          }
       } catch (error) {
          console.error(error)
@@ -356,6 +348,7 @@ const OTPLogin = props => {
    const params = useQueryParams()
    const [isReferralFieldVisible, setIsReferralFieldVisible] =
       React.useState(false)
+   const { loginSuccess } = handleLoginSuccess()
    React.useEffect(() => {
       if (params['invite-code']) {
          const setInviteCode = async () => {
@@ -524,17 +517,8 @@ const OTPLogin = props => {
             ...(callbackURL && { callbackUrl: callbackURL }),
          })
          if (response?.status === 200) {
-            addToast(t('Login successfully!'), { appearance: 'success' })
-            if (isClient) {
-               const landedOn = localStorage.getItem('landed_on')
-               if (landedOn) {
-                  const route = landedOn.replace(window.location.origin, '')
-                  localStorage.removeItem('landed_on')
-                  router.push(getRoute(route))
-               } else {
-                  router.push(getRoute('/order'))
-               }
-            }
+            //handle toast notification and redirection after sign in
+            loginSuccess()
          } else {
             setLoading(false)
             setError(t('Entered OTP is incorrect, please try again!'))
@@ -1075,6 +1059,7 @@ const Signup = props => {
       code: '',
    })
    const params = useQueryParams()
+   const { loginSuccess } = handleLoginSuccess()
    React.useEffect(() => {
       if (params['invite-code']) {
          const setInviteCode = async () => {
@@ -1124,20 +1109,8 @@ const Signup = props => {
                   ...(callbackURL && { callbackUrl: callbackURL }),
                })
                if (response?.status === 200) {
-                  addToast(t('Login successfully!'), { appearance: 'success' })
-                  if (isClient) {
-                     const landedOn = localStorage.getItem('landed_on')
-                     if (landedOn) {
-                        const route = landedOn.replace(
-                           window.location.origin,
-                           ''
-                        )
-                        localStorage.removeItem('landed_on')
-                        router.push(getRoute(route))
-                     } else {
-                        router.push(getRoute('/order'))
-                     }
-                  }
+                  //handle login success message and redirection
+                  loginSuccess()
                   setLoading(false)
                } else {
                   setLoading(false)

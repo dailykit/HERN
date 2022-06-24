@@ -1,135 +1,69 @@
 .hern-address-list {
-   padding: 16px 0;
+   padding: 1.25rem;
 }
 .hern-address-list__header {
-   margin-bottom: 16px;
-   display: -webkit-box;
-   display: -webkit-flex;
-   display: -ms-flexbox;
    display: flex;
-   -webkit-align-items: center;
-   -webkit-box-align: center;
-   -ms-flex-align: center;
    align-items: center;
-   -webkit-box-pack: justify;
-   -webkit-justify-content: space-between;
-   -ms-flex-pack: justify;
-   justify-content: space-between;
+   gap: 1rem;
+   margin-bottom: 1rem;
 }
 .hern-address-list__heading {
-   margin: 0;
+   font-family: 'Inter';
    font-style: normal;
-   font-weight: 600;
-   font-size: 15px;
-   line-height: 17px;
-   color: rgba(64, 64, 64, 0.8);
-}
-.hern-address-list__close-btn {
-   border-radius: 9999px;
-   border-width: 2px;
-   border-color: rgba(52, 211, 153, 1);
-   height: 1.5rem;
-   width: 2rem;
-   display: -webkit-box;
-   display: -webkit-flex;
-   display: -ms-flexbox;
-   display: flex;
-   -webkit-align-items: center;
-   -webkit-box-align: center;
-   -ms-flex-align: center;
-   align-items: center;
-   -webkit-box-pack: center;
-   -webkit-justify-content: center;
-   -ms-flex-pack: center;
-   justify-content: center;
-}
-
-.hern-address-list__address {
-   color: rgba(64, 64, 64, 0.8);
-   padding: 0.5rem;
-   margin: 0 1rem;
-   border-radius: 0.125rem;
-   cursor: pointer;
-   background: #f9f9f9;
-   padding: 14px 16px;
-   border-radius: 8px;
-   display: block;
-   // for alignment in two columns
-   position: relative;
-   min-height: 1px;
-   min-width: 80%;
-   // -webkit-border-radius: 0.125rem;
-   // -moz-border-radius: 0.125rem;
-   // -ms-border-radius: 0.125rem;
-   // -o-border-radius: 0.125rem;
-   // font-style: normal;
-   // &:hover {
-   //    border-color: rgba(16, 185, 129, 1);
-   // }
-   &:first-child {
-      margin-left: 0;
-   }
-   &:last-child {
-      margin-right: 0;
-   }
-   @media (min-width: 768px) {
-      -webkit-flex: 0 0 48.9%;
-      -moz-box-flex: 0;
-      flex: 0 0 48.9%;
-      max-width: 48.85%;
-      min-width: 48.85%;
-   }
-}
-.hern-address-list__address:focus {
-   background: rgb(215 215 215 / 80%);
-}
-// .hern-address-list__address--active {
-//    background: rgba(187, 187, 187, 0.8);
-// }
-.hern-address-list__address--not-clickable {
-   border-width: 2px;
-   border-color: rgba(209, 213, 219, 1);
-   padding: 0.5rem;
-   margin-bottom: 0.5rem;
-   border-radius: 0.125rem;
-   cursor: pointer;
-   color: rgba(156, 163, 175, 1);
-   cursor: not-allowed;
-   // -webkit-border-radius: 0.125rem;
-   // -moz-border-radius: 0.125rem;
-   // -ms-border-radius: 0.125rem;
-   // -o-border-radius: 0.125rem;
-   &:hover {
-      border-color: rgba(209, 213, 219, 1);
-   }
-}
-.hern-address-list-header__label {
-   display: block;
-   font-weight: 600;
-   font-size: 20px;
-   line-height: 22px;
-   margin: 0 10px;
-}
-.hern-address-list__address-landmark {
-   font-weight: 600;
+   font-weight: 500;
    font-size: 18px;
-   line-height: 20px;
+   line-height: 22px;
+   color: #333333;
 }
-// .hern-address-list-container__address {
-//    -ms-overflow-style: none;
-//    scrollbar-width: none;
-// }
-// .hern-address-list-container__address::-webkit-scrollbar {
-//    display: none;
-// }
 .hern-address-list-container__address {
-   display: flex;
-   overflow: auto;
-   &::-webkit-scrollbar {
-      width: 1px;
+   height: calc(100vh - 4.5rem);
+   overflow-y: auto;
+}
+.hern-address-list__address {
+   background: #ffffff;
+   box-shadow: 0px 1px 5px rgba(0, 0, 0, 0.08);
+   border-radius: 8px;
+   padding: 12px;
+   margin-top: 1.25rem;
+   cursor: pointer;
+   &--active {
+      border: 1.5px solid var(--hern-accent);
    }
-   &::-webkit-scrollbar-thumb {
-      background: #e5f0f7;
-      border-radius: 1px;
+   &--invalid {
+      border: 1.5px solid rgba(255, 0, 0, 0.8);
+      margin-bottom: 4px;
+      background: #f9f9f9;
    }
+
+   > h4 {
+      font-family: 'Inter';
+      font-style: normal;
+      font-weight: 500;
+      font-size: 14px;
+      line-height: 17px;
+      color: rgba(51, 51, 51, 0.6);
+      margin-bottom: 8px;
+   }
+   > address {
+      font-family: 'Inter';
+      font-style: normal;
+      font-weight: 500;
+      font-size: 16px;
+      line-height: 19px;
+      color: rgba(51, 51, 51, 0.4);
+      margin-bottom: auto;
+   }
+   &:first-child {
+      margin-top: 1.25rem;
+   }
+}
+.hern-address-list__address--invalid__message {
+   font-family: 'Inter';
+   font-style: normal;
+   font-weight: 500;
+   font-size: 12px;
+   line-height: 15px;
+   letter-spacing: 0.005em;
+   color: #ff0000;
+   margin-bottom: 1.25rem;
 }

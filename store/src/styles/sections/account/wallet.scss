@@ -4,6 +4,8 @@
    min-height: calc(100vh - 64px);
    grid-template-columns: 300px 1fr;
    position: relative;
+   max-width: 1200px;
+   margin: 27px auto;
    @media (max-width: 768px) {
       display: block;
    }
@@ -32,23 +34,28 @@
 }
 
 .hern-wallet__header__title {
-   font-weight: 700;
-   font-size: 32px;
    line-height: 38px;
+   font-family: 'Inter';
+   font-style: normal;
+   font-weight: 600;
+   font-size: 24px;
+   color: #333333;
 }
 
 .hern-wallet__total_balance_title {
    font-weight: 500;
    font-size: 16px;
-   color: #202020;
+   color: #333333;
 }
 
 .hern-wallet__transaction_title {
-   font-weight: 700;
-   font-size: 20px;
+   font-family: 'Inter';
+   font-weight: 600;
+   font-size: 24px;
    line-height: 22px;
-   font-variant: small-caps;
-   color: #202020;
+   font-feature-settings: 'c2sc';
+   // font-variant: small-caps;
+   color: #333333;
    margin-top: 28px;
    margin-bottom: 10px;
 }
@@ -58,7 +65,7 @@
    font-weight: 700;
    font-size: 23px;
    line-height: 26px;
-   color: #202020;
+   color: #333333;
    margin-left: 15px;
 }
 
@@ -67,11 +74,12 @@
 }
 
 .hern-wallet__table {
-   margin: 2.5rem 0.2rem;
+   margin: 1.688rem 0 0 0;
    table-layout: auto;
    font-weight: 400;
    font-size: 14px;
    line-height: 16px;
+   width: 100%;
    th {
       text-align: left;
       padding: 0.55rem 5px;

@@ -10,6 +10,7 @@ import { useConfig } from '../../../../lib'
 import { useTranslation, useUser } from '../../../../context'
 import { Loader, Tunnel } from '../../../../components'
 import { CheckIcon } from '../../../../assets/icons'
+import { DeliveryInfoIcons } from '../../../../assets/icons'
 import { ZIPCODE, MUTATIONS, UPDATE_CART } from '../../../../graphql'
 import { formatCurrency, normalizeAddress } from '../../../../utils'
 import AddressList from '../../../../components/address_list'
@@ -210,7 +211,9 @@ const Fulfillment = () => {
          <Tunnel.Wrapper
             isOpen={isAddressListOpen}
             toggleTunnel={setIsAddressListOpen}
-            style={{ zIndex: 1030 }}
+            style={{ zIndex: 1030, marginTop: '0' }}
+            direction="right"
+            size="sm"
          >
             <AddressList
                closeTunnel={() => setIsAddressListOpen(false)}
@@ -227,6 +230,10 @@ const Fulfillment = () => {
                      setIsAddressListOpen(false)
                   })
                }
+               activeAddressId={
+                  state?.occurenceCustomer?.cart?.address?.id ||
+                  user?.defaultAddress?.id
+               }
             />
          </Tunnel.Wrapper>
       </>
@@ -239,7 +246,6 @@ const FulfillmentOption = ({
    state,
    type,
    zipcode,
-   user,
    setFulfillment,
    setIsAddressListOpen,
 }) => {
@@ -251,47 +257,50 @@ const FulfillmentOption = ({
       'hern-cart-fulfillment__fulfillment-option',
       { 'hern-cart-fulfillment__fulfillment-option--active': isActive }
    )
+   const { user } = useUser()
    return (
       <section
          className={fulfillmentClasses}
          onClick={() => setFulfillment(type)}
       >
-         <aside className="hern-cart-fulfillment__check-icon">
-            <CheckIcon size={18} stroke="currentColor" active={isActive} />
-         </aside>
          <main>
             {type === 'DELIVERY' && (
                <>
                   {zipcode.deliveryPrice === 0 ? (
-                     <h3>{t('Free Delivery')}</h3>
+                     <h3 className="hern-cart-fulfillment__delivery-heading">
+                        {t('Free Delivery')}
+                     </h3>
                   ) : (
-                     <h3>
-                        <span>{t('Delivery at')}</span>
-                        {formatCurrency(zipcode.deliveryPrice)}
+                     <h3 className="hern-cart-fulfillment__delivery-heading">
+                        <span>{t('Delivery at:')}</span>
                      </h3>
                   )}
-                  <p className="hern-cart-fulfillment__delivery-details">
-                     <span>{t('Your box will be delivered on')}</span>
-                     <span>
-                        {moment(state?.week?.fulfillmentDate).format('MMM D')}
-                        &nbsp;<span>{t('between')}</span>
-                        {zipcode?.deliveryTime?.from}
-                        &nbsp;-&nbsp;
-                        {zipcode?.deliveryTime?.to}
-                     </span>
-                     <span>{t('at')}</span>
-                     <span>
+                  <div className="hern-cart-fulfillment__delivery-details-wrapper">
+                     <p className="hern-cart-fulfillment__delivery-details">
                         {normalizeAddress(
                            state?.occurenceCustomer?.cart?.address ||
                               user?.defaultAddress
                         )}
-                     </span>
-                  </p>
+                        &nbsp; on &nbsp;
+                        <strong>
+                           {moment(state?.week?.fulfillmentDate).format(
+                              'MMM D'
+                           )}
+                           &nbsp;
+                        </strong>
+                        <span>{t('Between')} </span>
+                        {zipcode?.deliveryTime?.from}
+                        &nbsp;-&nbsp;
+                        {zipcode?.deliveryTime?.to}
+                     </p>
+                  </div>
                </>
             )}
             {type === 'PICKUP' && (
                <>
-                  <h3>{t('Pick Up')}</h3>
+                  <h3 className="hern-cart-fulfillment__pickup-heading">
+                     {t('Pick up from:')}
+                  </h3>
                   <p className="hern-cart-fulfillment__pickup-details">
                      <span> {t('Pickup your box in between')} </span>
                      {moment(state?.week?.fulfillmentDate).format(

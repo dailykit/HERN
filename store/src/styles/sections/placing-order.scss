@@ -5,7 +5,7 @@
 }
 .hern-placing-order__main {
    margin: auto;
-   max-width: 980px;
+   max-width: 1140px;
    background: #fff;
    padding-bottom: 24px;
    padding-top: 1rem;
@@ -16,18 +16,14 @@
 }
 .hern-placing-order__content {
    margin: auto;
-   max-width: 567px;
    width: calc(100% - 40px);
    display: flex;
    flex-direction: column;
    align-items: center;
 }
 .hern-placing-order__header {
-   width: 100%;
-   margin-top: 0.75rem;
+   width: 995px;
    margin-bottom: 0.75rem;
-   padding-bottom: 0.25rem;
-   border-bottom-width: 1px;
    display: -webkit-box;
    display: -webkit-flex;
    display: -ms-flexbox;
@@ -44,7 +40,10 @@
 .hern-placing-order__header__title {
    color: rgba(5, 150, 105, 1);
    font-size: 1.125rem;
-   line-height: 1.75rem;
+   line-height: 1.2;
+   font-family: 'Lato';
+   font-style: normal;
+   font-weight: 500;
 }
 .hern-placing-order__steps {
    width: 100%;

@@ -1,0 +1,74 @@
+.hern-subscription-checkout {
+   background-color: #f9f9f9;
+   .hern-user-info--closed,
+   .hern-user-info {
+      border-radius: 8px;
+      box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.1);
+   }
+   .hern-fulfillment-address {
+      background: #ffffff;
+      box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.1);
+      border-radius: 8px;
+      padding: 16px;
+      margin: 16px 0;
+      &__heading {
+         color: rgba(51, 51, 51, 0.8);
+         font-family: 'Inter';
+         font-style: normal;
+         font-weight: 500;
+         font-size: 18px;
+         line-height: 17px;
+         display: flex;
+         align-items: center;
+         margin-bottom: 16px;
+         > span {
+            margin-left: auto;
+         }
+      }
+      &__delivery,
+      &__pickup {
+         > h3 {
+            font-family: 'Inter';
+            font-style: normal;
+            font-weight: 500;
+            font-size: 14px;
+            line-height: 22px;
+            color: rgba(51, 51, 51, 0.8);
+            margin-bottom: 8px;
+         }
+         > p {
+            font-family: 'Inter';
+            font-family: 'Inter';
+            font-style: normal;
+            font-weight: 500;
+            font-size: 14px;
+            line-height: 17px;
+            color: rgba(51, 51, 51, 0.6);
+         }
+      }
+   }
+   .hern-on-demand-cart__payment-section__content {
+      background: #ffffff;
+      box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.1);
+      border-radius: 8px;
+      padding: 8px 12px;
+      margin: 16px 0;
+      h3 {
+         color: rgba(51, 51, 51, 0.8);
+         font-family: 'Inter';
+         font-style: normal;
+         font-weight: 500;
+         font-size: 18px;
+         line-height: 17px;
+      }
+   }
+   @media screen and (max-width: 767px) {
+      .hern-fulfillment-address {
+         border-radius: 0;
+         position: fixed;
+         bottom: 40px;
+         left: 0;
+         right: 0;
+      }
+   }
+}

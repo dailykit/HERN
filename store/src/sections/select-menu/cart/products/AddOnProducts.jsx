@@ -53,7 +53,7 @@ const AddOnProducts = () => {
    //       .length > 0
 
    return (
-      <div>
+      <div className="hern-cart-add-on-products">
          {hasAddOns && (
             <>
                <header className="hern-cart-add-on-products__header">
@@ -65,13 +65,13 @@ const AddOnProducts = () => {
                      className="hern-cart-add-on-products__header__explore-btn"
                   >
                      Explore
-                     <span>
+                     {/* <span>
                         <PlusIcon
                            size={16}
                            stroke="currentColor"
                            color="rgba(52,211,153,1)"
                         />
-                     </span>
+                     </span> */}
                   </button>
                </header>
                <ul className="hern-cart-add-on-products__list">
@@ -91,8 +91,9 @@ const AddOnProducts = () => {
          )}
          {tunnel && (
             <Tunnel.Wrapper
-               size="md"
+               size="full"
                isOpen={tunnel}
+               additionalClassName="hern-cart-add-on-products__tunnel"
                style={{ zIndex: 1030 }}
                toggleTunnel={() => toggleTunnel(false)}
             >
@@ -139,6 +140,7 @@ const AddOns = () => {
       const index = products?.findIndex(
          node => node.subscriptionOccurenceAddOnProductId === id
       )
+
       return index === -1 ? false : true
    }
 
@@ -173,6 +175,7 @@ const AddOns = () => {
                         theme={theme}
                         key={node.id}
                         isAdded={isAdded}
+                        products={state.occurenceCustomer?.cart?.products || []}
                      />
                   ))}
                </ul>
@@ -182,8 +185,21 @@ const AddOns = () => {
    )
 }
 
-const AddOnProduct = ({ node, isAdded, theme }) => {
+const AddOnProduct = ({ node, isAdded, theme, products }) => {
    const { state, methods } = useMenu()
+   const [isActive, setIsActive] = React.useState(false)
+
+   React.useEffect(() => {
+      setIsActive(
+         products.findIndex(
+            product =>
+               product.subscriptionOccurenceAddOnProductId ===
+               node?.cartItem?.subscriptionOccurenceAddOnProductId
+         ) !== -1
+      )
+   }, [products])
+
+   console.log('ISACTIVE: ', isActive)
 
    const canAdd = () => {
       const conditions = [!node.isSingleSelect, state?.week?.isValid]
@@ -195,7 +211,6 @@ const AddOnProduct = ({ node, isAdded, theme }) => {
       )
    }
 
-   const isActive = isAdded(node?.cartItem?.subscriptionOccurenceAddOnProductId)
    const product = {
       name: node?.productOption?.product?.name || '',
       label: node?.productOption?.label || '',
@@ -225,6 +240,7 @@ const AddOnProduct = ({ node, isAdded, theme }) => {
                <span>No Photos</span>
             )}
          </div>
+
          <div className="hern-add-on__products__list-item__info">
             <section className="hern-add-on__products__list-item__title">
                <CheckIcon size={16} className={checkIconClasses} />
@@ -234,22 +250,23 @@ const AddOnProduct = ({ node, isAdded, theme }) => {
                   </>
                </Link>
             </section>
-            {canAdd() && (
-               <button
-                  onClick={() =>
-                     methods.products.add(
-                        node.cartItem,
-                        node?.productOption?.product
-                     )
-                  }
-                  className="hern-add-on__products__list-item__add-btn"
-               >
-                  {isActive ? 'REPEAT +' : 'ADD +'}
-                  {formatCurrency(Number(node.cartItem.unitPrice) || 0)}
-               </button>
-            )}
+
+            <p>{product.additionalText}</p>
          </div>
-         <p>{product.additionalText}</p>
+         {canAdd() && (
+            <button
+               onClick={() => {
+                  methods.products.add(
+                     node.cartItem,
+                     node?.productOption?.product
+                  )
+               }}
+               className="hern-add-on__products__list-item__add-btn"
+            >
+               {isActive ? 'Repeat +' : 'Add +'}
+               {formatCurrency(Number(node.cartItem.unitPrice) || 0)}
+            </button>
+         )}
       </li>
    )
 }

@@ -43,22 +43,35 @@ export const CartProduct = ({ product, isRemovable, onDelete }) => {
             >
                {product.name}
             </p>
-            <p className="hern-cart-product__quantity">
-               {product.isAddOn && formatCurrency(product.unitPrice)} x
-               {product?.quantity || 1}
-            </p>
-            {!product.isAddOn && product.isAutoAdded && (
-               <span className="hern-cart-product__tag">
-                  {t('Auto Selected')}
-               </span>
-            )}
-            {Boolean(product.addOnPrice) && (
-               <span className="hern-cart-product__tag">
-                  <span data-translation="true">{product.addOnLabel}</span>
-                  &nbsp;
-                  {formatCurrency(product.addOnPrice)}
-               </span>
-            )}
+            <div style={{ display: 'flex', alignItems: 'center' }}>
+               <p className="hern-cart-product__quantity">
+                  {product.isAddOn && formatCurrency(product.unitPrice)} x
+                  {product?.quantity || 1}
+               </p>
+               <div
+                  style={{
+                     display: 'flex',
+                     alignItems: 'center',
+                     marginLeft: 'auto',
+                     flexWrap: 'wrap',
+                     gap: '0.5rem',
+                  }}
+               >
+                  {!product.isAddOn && product.isAutoAdded && (
+                     <span className="hern-cart-product__tag">
+                        {t('Auto Selected')}
+                     </span>
+                  )}
+                  {Boolean(product.addOnPrice) && (
+                     <span className="hern-cart-product__tag">
+                        <span data-translation="true">
+                           {product.addOnLabel}
+                        </span>{' '}
+                        + &nbsp;{formatCurrency(product.addOnPrice)}
+                     </span>
+                  )}
+               </div>
+            </div>
          </main>
          {isRemovable && (
             <section className="hern-cart-product__remove">
@@ -67,11 +80,7 @@ export const CartProduct = ({ product, isRemovable, onDelete }) => {
                   onClick={() => onDelete(product)}
                   title={<span>{t('Remove Product')}</span>}
                >
-                  <CloseIcon
-                     size={16}
-                     stroke="currentColor"
-                     color="rgba(55,65,81,1)"
-                  />
+                  <CloseIcon size={16} stroke="currentColor" color="#919699" />
                </button>
             </section>
          )}

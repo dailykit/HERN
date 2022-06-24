@@ -875,6 +875,10 @@ export const CUSTOMER = {
                subscriptionPaymentMethodId
                subscriptionOnboardStatus
                subscription {
+                  subscriptionTitle {
+                     title
+                     metaDetails
+                  }
                   recipes: subscriptionItemCount {
                      count
                      price
@@ -2508,6 +2512,30 @@ export const PRODUCT_ONE = gql`
                   }
                }
             }
+         }
+      }
+   }
+`
+export const GET_PLAN_INFO = gql`
+   query GET_PLAN_INFO($planId: Int!) {
+      subscription_subscriptionItemCount(where: { id: { _eq: $planId } }) {
+         subscriptionServing {
+            servingSize
+            subscriptionTitle {
+               title
+               metaDetails
+            }
+         }
+         price
+         count
+      }
+   }
+`
+export const GET_AVAILABLE_ZIP_CODES_BY_SUBSCRIPTION_ID = gql`
+   query GET_AVAILABLE_ZIP_CODES_BY_SUBSCRIPTION_ID($subscriptionId: Int!) {
+      subscription_subscription(where: { id: { _eq: $subscriptionId } }) {
+         availableZipcodes(where: { isDeliveryActive: { _eq: true } }) {
+            zipcode
          }
       }
    }

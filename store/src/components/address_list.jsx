@@ -1,163 +1,105 @@
-import { useQuery } from '@apollo/react-hooks'
+import { useLazyQuery, useQuery } from '@apollo/react-hooks'
 import classNames from 'classnames'
 import React, { useState } from 'react'
 import { useToasts } from 'react-toast-notifications'
-import { CloseIcon, LocationIcon } from '../assets/icons'
-import { CartContext, useTranslation, useUser } from '../context'
-import { ZIPCODE_AVAILABILITY } from '../graphql'
-import { Loader } from './loader'
-import { Modal } from 'antd'
+import { CloseIcon } from '../assets/icons'
+import { useTranslation, useUser } from '../context'
+import { GET_AVAILABLE_ZIP_CODES_BY_SUBSCRIPTION_ID } from '../graphql'
+import { normalizeAddress } from '../utils'
 
 const AddressList = ({
    closeTunnel,
    onSelect,
-   zipCodes = true,
    tunnel = true,
+   activeAddressId = null,
 }) => {
    const { user } = useUser()
-   const { addToast } = useToasts()
    const { t } = useTranslation()
-   const { cartState } = React.useContext(CartContext)
-
+   const { addToast } = useToasts()
    const addresses = user?.platform_customer?.addresses || []
-
-   const addressByCart = cartState.cart?.address
-
-   const [availableZipcodes, setAvailableZipcodes] = React.useState([])
-   const [localAddress, setLocalAddress] = useState(null)
-
-   const { loading } = useQuery(ZIPCODE_AVAILABILITY, {
-      fetchPolicy: 'network-only',
-      variables: {
-         subscriptionId: {
-            _eq: user?.subscriptionId,
+   const [showZipCodeError, setShowZipCodeError] = React.useState(null)
+   const { data, error, loading } = useQuery(
+      GET_AVAILABLE_ZIP_CODES_BY_SUBSCRIPTION_ID,
+      {
+         variables: {
+            subscriptionId: Number(user?.subscriptionId),
          },
-         zipcode: {},
-      },
-      onCompleted: ({ subscription_zipcode = [] }) => {
-         if (zipCodes && subscription_zipcode.length) {
-            setAvailableZipcodes(subscription_zipcode.map(z => z.zipcode))
-         }
-      },
-      onError: error => {
-         addToast(t('Something went wrong'), { appearance: 'error' })
-         console.log('checkZipcodeValidity -> zipcode -> error', error)
-      },
-   })
+
+         onError: error => {
+            console.error(error)
+            addToast(t('Failed to fetch zip code '), {
+               appearance: 'error',
+            })
+         },
+      }
+   )
+   const availableZipCodes =
+      data?.subscription_subscription[0]?.availableZipcodes?.map(
+         z => z.zipcode
+      ) || []
 
    const selectAddress = address => {
-      if (zipCodes && availableZipcodes.includes(address.zipcode)) {
+      if (availableZipCodes.includes(address.zipcode)) {
          onSelect(address)
       } else {
-         if (!address.zipcode) {
-            showWarningPopup()
-            return
-         }
-         setLocalAddress(address)
-         onSelect(address)
+         setShowZipCodeError(address.zipcode)
+         addToast(t('This address is not available'), {
+            appearance: 'error',
+         })
       }
    }
-   const showWarningPopup = () => {
-      Modal.warning({
-         title: `Please select a precise location. Try typing a landmark near your house.`,
-         maskClosable: true,
-         centered: true,
-      })
-   }
-   if (loading) return <Loader />
 
    return (
       <div className="hern-address-list">
          <div className="hern-address-list__header">
-            <h3 className="hern-address-list__heading">
-               {t('Your saved addresses')}
-            </h3>
             {tunnel && (
                <button className="hern-address-list__close-btn">
                   <CloseIcon
-                     size={16}
-                     color={'var(--hern-accent)'}
+                     size={20}
+                     color={'rgba(51, 51, 51, 1)'}
                      stroke="currentColor"
                      onClick={closeTunnel}
                   />
                </button>
             )}
+            <h3 className="hern-address-list__heading">
+               {t('Your saved addresses')}
+            </h3>
          </div>
          <div className="hern-address-list-container__address">
-            {user?.keycloakId ? (
-               addresses.map(address => {
-                  const addressClasses = classNames(
-                     'hern-address-list__address',
-                     {
-                        'hern-address-list__address--active': localAddress,
-                     }
-                  )
-                  return (
-                     <address
-                        key={address?.id}
-                        className={addressClasses}
-                        tabIndex={1}
-                        onClick={() => selectAddress(address)}
-                     >
-                        <div className="hern-address-list__address-landmark">
-                           {address?.landmark}
-                        </div>
-                        <p>{address?.line1}</p>
-                        <p>{address?.line2}</p>
-                        <span>{address?.city} </span>
-                        <span>{address?.state} </span>
-                        <span>
-                           {address?.country}
-                           {', '}
-                        </span>
-                        <span>{address?.zipcode}</span>
-                     </address>
-                  )
+            {addresses.map(address => {
+               const addressClasses = classNames('hern-address-list__address', {
+                  'hern-address-list__address--active':
+                     activeAddressId === address.id,
+                  'hern-address-list__address--invalid':
+                     showZipCodeError === address.zipcode,
                })
-            ) : (
-               <address
-                  key={addressByCart?.id || 1}
-                  tabIndex={1}
-                  className={classNames('hern-address-list__address', {
-                     'hern-address-list__address--active':
-                        localAddress === addressByCart,
-                  })}
-                  onClick={() => selectAddress(addressByCart)}
-               >
-                  <p>{addressByCart?.line1}</p>
-                  <p>{addressByCart?.line2}</p>
-                  <span>{addressByCart?.city} </span>
-                  <span>{addressByCart?.state} </span>
-                  <span>
-                     {addressByCart?.country}
-                     {', '}
-                  </span>
-                  <span>{addressByCart?.zipcode}</span>
-               </address>
-            )}
+               return (
+                  <>
+                     <div
+                        key={address?.id}
+                        tabIndex={1}
+                        className={addressClasses}
+                     >
+                        <h4>Delivery at</h4>
+                        <address onClick={() => selectAddress(address)}>
+                           {normalizeAddress(address)}
+                        </address>
+                     </div>
+
+                     {showZipCodeError === address.zipcode && (
+                        <p className="hern-address-list__address--invalid__message">
+                           {t(
+                              'This Delivery area is not available for this Plan. '
+                           )}
+                        </p>
+                     )}
+                  </>
+               )
+            })}
          </div>
       </div>
    )
 }
 
 export default AddressList
-export const AddressListHeader = () => {
-   const { t } = useTranslation()
-   return (
-      <div
-         style={{
-            display: 'flex',
-            alignItems: 'center',
-            marginBottom: '10px',
-         }}
-      >
-         <LocationIcon />
-         <label
-            className={'hern-address-list-header__label'}
-            htmlFor="address-list-header"
-         >
-            {t('Delivery Area')}
-         </label>
-      </div>
-   )
-}

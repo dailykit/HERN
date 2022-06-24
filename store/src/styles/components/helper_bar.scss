@@ -1,16 +1,16 @@
 .hern-helper-bar {
-   padding: 0.5rem 0.75rem;
+   padding: 0 2.25rem;
    height: auto;
    width: 100%;
    display: flex;
-   flex-direction: column;
    align-items: center;
-   border-radius: 0.25rem;
-   -webkit-border-radius: 0.25rem;
-   -moz-border-radius: 0.25rem;
-   -ms-border-radius: 0.25rem;
-   -o-border-radius: 0.25rem;
-   margin-bottom: 0.75rem;
+   justify-content: center;
+   border-radius: 0.5rem;
+   -webkit-border-radius: 0.5rem;
+   -moz-border-radius: 0.5rem;
+   -ms-border-radius: 0.5rem;
+   -o-border-radius: 0.5rem;
+   margin-bottom: 1.688rem;
 }
 .hern-helper-bar--info {
    @extend .hern-helper-bar;
@@ -27,8 +27,8 @@
 
 .hern-helper-bar--success {
    @extend .hern-helper-bar;
-   background-color: rgba(167, 243, 208, 1);
-   color: rgba(6, 95, 70, 1);
+   background-color: rgba(17, 130, 59, 0.1);
+
    button {
       border-width: 1px;
       border-color: rgba(6, 95, 70, 1);
@@ -53,6 +53,7 @@
    @extend .hern-helper-bar;
    background-color: rgba(253, 230, 138, 1);
    color: rgba(146, 64, 14, 1);
+
    button {
       border-width: 1px;
       border-color: rgba(146, 64, 14, 1);
@@ -62,11 +63,20 @@
    }
 }
 .hern-helper-bar__btn {
+   color: #ffffff;
+   font-family: 'Lato';
+   font-style: normal;
+   font-weight: 500;
    margin-top: 0.25rem;
-   padding: 0.25rem 0.5rem;
-   border-radius: 0.25rem;
-   font-size: 0.875rem;
+   padding: 0.625em 6.25em;
+   border-radius: 0.375rem;
+   font-size: 1.25rem;
    line-height: 1.25rem;
+   background-color: var(--hern-accent);
+
+   &:hover {
+      background-color: rgba(17, 130, 59, 0.8);
+   }
 }
 .hern-helper-bar__title {
    text-align: center;
@@ -74,5 +84,49 @@
    line-height: 1.75rem;
 }
 .hern-helper-bar__subtitle {
-   text-align: center;
+   // margin: 0px auto 0px 35px;
+   padding: 0.75rem;
+   & > span {
+      color: #11823b;
+      display: block;
+      font-family: 'Lato';
+      font-style: normal;
+      font-weight: 700;
+      font-size: 32px;
+      margin-bottom: 4px;
+   }
+   font-family: 'lato';
+   font-style: normal;
+   font-weight: 400;
+   font-size: 16px;
+   color: #333333;
+}
+
+@media (max-width: 1024px) {
+   .hern-helper-bar {
+      padding: 0 13px;
+      justify-content: space-between;
+   }
+   .hern-helper-bar__subtitle {
+      & > span {
+         font-size: 25px;
+      }
+
+      font-size: 15px;
+      text-align: center;
+      margin: 0 35px;
+   }
+}
+
+@media (max-width: 768px) {
+   .hern-helper-bar__subtitle {
+      & > span {
+         font-size: 18px;
+      }
+
+      font-size: 12px;
+   }
+   .hern-helper-bar__btn {
+      font-size: 1rem;
+   }
 }

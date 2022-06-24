@@ -100,7 +100,7 @@ export const CartPanel = ({ noSkip, isCheckout }) => {
                   {/* Fulfilment Mode */}
                   <Fulfillment />
                   {/* Payment */}
-                  <PaymentCard />
+                  {/* <PaymentCard /> */}
                   {/* Billing Details */}
                   <Billing isCheckout={isCheckout} />
                   {/* Checkout */}
@@ -116,7 +116,7 @@ export const CartPanel = ({ noSkip, isCheckout }) => {
                               ?.itemCountValid
                         }
                      >
-                        {t('PROCEED TO CHECKOUT')}
+                        {t('Proceed to Checkout')}
                      </Button>
                   )}
                </>

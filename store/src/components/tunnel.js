@@ -38,14 +38,17 @@ export const Tunnel = ({
    size = 'sm',
    children,
    direction = 'popup',
+   additionalClassName,
    ...props
 }) => {
    const ref = React.useRef()
    useOnClickOutside(ref, () => toggleTunnel(false))
    const wrapperClasses = classNames(
+      additionalClassName ? additionalClassName : '',
       'hern-tunnel__wrapper',
       `hern-tunnel__${direction}--${size}`
    )
+   // TODO:Background should not be scrollable while tunnel is open
    if (isOpen)
       return (
          <Portal>

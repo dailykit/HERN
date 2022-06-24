@@ -15,6 +15,8 @@ import { useConfig } from '../../../../lib'
 import { PlusIcon, MinusIcon } from '../../../../assets/icons'
 import { useTranslation } from '../../../../context'
 
+import { ChevronIcon } from '../../../../assets/icons/Chevron'
+
 const BillingDetails = ({ isCheckout }) => {
    const router = useRouter()
    const { state } = useMenu()
@@ -55,9 +57,9 @@ const BillingDetails = ({ isCheckout }) => {
    }
 
    return (
-      <div>
+      <>
          {itemCountValid && !isEmpty(state?.occurenceCustomer?.cart) && (
-            <>
+            <div className="hern-cart-billing__coupon-wallet">
                {couponsAllowed && (
                   <Coupon cart={state?.occurenceCustomer?.cart} />
                )}
@@ -68,25 +70,31 @@ const BillingDetails = ({ isCheckout }) => {
                   !isEmpty(state?.occurenceCustomer?.cart) && (
                      <LoyaltyPoints cart={state?.occurenceCustomer?.cart} />
                   )}
-            </>
+            </div>
          )}
-         <header className="hern-cart-billing__header">
-            <h4 className="hern-cart-billing__heading">
-               <span> {t('Your Weekly Total:')}</span>
-               {itemCountValid ? formatCurrency(billing?.totalToPay) : 'N/A'}
-            </h4>
-            {itemCountValid && <Toggle open={open} toggle={toggle} />}
-         </header>
-         {itemCountValid && open && <Billing billing={billing} />}
-         {!isCheckout && itemCountValid && (
-            <button
-               className="hern-cart-billing__early-pay-btn"
-               onClick={payEarly}
-            >
-               {t('EARLY PAY')}
-            </button>
-         )}
-      </div>
+         <div className="hern-cart-billing">
+            <header className="hern-cart-billing__header">
+               <h4 className="hern-cart-billing__heading">
+                  <span> {t('Your Weekly Total:')} </span>
+                  <span className="hern-cart-billing__amount">
+                     {itemCountValid
+                        ? formatCurrency(billing?.totalToPay)
+                        : 'N/A'}
+                  </span>
+               </h4>
+               {itemCountValid && <Toggle open={open} toggle={toggle} />}
+            </header>
+            {itemCountValid && open && <Billing billing={billing} />}
+            {!isCheckout && itemCountValid && (
+               <button
+                  className="hern-cart-billing__early-pay-btn"
+                  onClick={payEarly}
+               >
+                  {t('EARLY PAY')}
+               </button>
+            )}
+         </div>
+      </>
    )
 }
 
@@ -99,16 +107,18 @@ const Toggle = ({ open, toggle }) => {
          onClick={() => toggle(!open)}
       >
          {open ? (
-            <MinusIcon
-               color="rgba(4,120,87,1)"
-               stroke="currentColor"
-               size={18}
+            <ChevronIcon
+               direction="up"
+               color="var(--hern-accent)"
+               width={12}
+               height={6}
             />
          ) : (
-            <PlusIcon
-               color="rgba(4,120,87,1)"
-               stroke="currentColor"
-               size={18}
+            <ChevronIcon
+               direction="down"
+               color="var(--hern-accent)"
+               height={15}
+               width={8}
             />
          )}
       </button>
