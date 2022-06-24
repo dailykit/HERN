@@ -490,7 +490,10 @@ export const MENU_PRODUCT_BY_SUBSCRIPTION = gql`
 export const MENU_PRODUCT_BY_SUBSCRIPTION_OCCURRENCE = gql`
    subscription MENU_PRODUCT_BY_SUBSCRIPTION_OCCURRENCE {
       subscription_subscriptionOccurence_product(
-         where: { subscriptionId: { _is_null: true } }
+         where: {
+            subscriptionId: { _is_null: true }
+            subscriptionOccurenceId: { _is_null: false }
+         }
       ) {
          id
          isAutoSelectable
