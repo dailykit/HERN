@@ -5,6 +5,7 @@ import Kiosk from '../../../sections/kiosk'
 import { useConfig } from '../../../lib'
 import {
    BRAND_LOCATIONS,
+   GET_ALL_RECURRENCES,
    GET_BRAND_LOCATION,
    LOCATION_KIOSK,
    LOCATION_KIOSK_VALIDATION,
@@ -118,22 +119,29 @@ const KioskScreen = props => {
          setIsValidationLoading(false)
       }
    }, [])
-   useQuery(BRAND_LOCATIONS, {
+   useQuery(GET_ALL_RECURRENCES, {
       variables: {
          where: {
-            brandId: { _eq: settings.brandId },
-            locationId: { _eq: kioskDetails.locationId },
+            _or: [
+               {
+                  brand_location: {
+                     locationId: { _eq: kioskDetails.locationId },
+                     brandId: { _eq: settings.brandId },
+                  },
+               },
+               {
+                  brandId: { _eq: settings.brandId },
+               },
+            ],
+            isActive: { _eq: true },
+            recurrence: { isActive: { _eq: true } },
          },
       },
-      onCompleted: data => {
-         if (data) {
-            dispatch({
-               type: 'SET_KIOSK_RECURRENCES',
-               payload:
-                  data.brands_brand_location_aggregate.nodes[0]
-                     .brand_recurrences,
-            })
-         }
+      onCompleted: async data => {
+         dispatch({
+            type: 'SET_KIOSK_RECURRENCES',
+            payload: data.brandRecurrences || [],
+         })
       },
    })
    const handleLoginClick = () => {

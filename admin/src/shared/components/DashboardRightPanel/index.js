@@ -34,6 +34,7 @@ import CustomerOverTime from '../Reports/ReportTiles/Customers/Tunnels/customerO
 import { BrandContext } from './../../../App'
 import BrandManagerList from '../OperationalMode/Listing/ListForIds/brandId'
 import BrandLocationManagerList from '../OperationalMode/Listing/ListForIds/brandIdLocation'
+import { CloneBrandLocationOperation } from './tunnels/cloneBrandLocationOperation'
 
 const DashboardRightPanel = () => {
    const { user } = useAuth()

@@ -31,6 +31,7 @@ export const KioskLocation = () => {
    const params = useParams()
    const { tab, addTab, setTabTitle } = useTabs()
    const [brandList, setBrandList] = React.useState([])
+   const [selectedBrandId, setSelectedBrandId] = React.useState()
    const [title, setTitle] = React.useState({
       value: '',
       accessUrl: '',
@@ -42,7 +43,7 @@ export const KioskLocation = () => {
       },
    })
 
-   const [update] = useMutation(KIOSK.UPDATE_KIOSK, {
+   const [updateKiosk] = useMutation(KIOSK.UPDATE_KIOSK, {
       onCompleted: () => toast.success('Successfully updated KIOSK!'),
       onError: error => {
          toast.error('Failed to update KIOSK!')
@@ -104,6 +105,15 @@ export const KioskLocation = () => {
          addTab(kiosk?.title || 'N/A', `/kiosks/kiosks/${kiosk[0].id}`)
          console.log('data:', loading)
       }
+      /// set brandID
+      if (title.accessUrl) {
+         // console.log('accessUrLLL', title.accessUrl.split('/')[0])
+         const result = brandList.filter(
+            ele => ele.title === title.accessUrl.split('/')[0]
+         )
+         // console.log('accessUrLLL 2', result)
+         setSelectedBrandId(result[0])
+      }
    }, [tab, addTab, loading, kiosk])
 
    const updateTitle = e => {
@@ -117,7 +127,7 @@ export const KioskLocation = () => {
          },
       })
       if (validator.name(e.target.value).isValid) {
-         update({
+         updateKiosk({
             variables: {
                id: params.id,
                _set: {
@@ -207,8 +217,8 @@ export const KioskLocation = () => {
                               addOption={brandList}
                               options={brandList}
                               defaultName={title.accessUrl.split('/kiosk')[0]}
-                              selectedOption={e =>
-                                 update({
+                              selectedOption={e => {
+                                 updateKiosk({
                                     variables: {
                                        id: params.id,
                                        _set: {
@@ -217,7 +227,11 @@ export const KioskLocation = () => {
                                        },
                                     },
                                  })
-                              }
+                                 setSelectedBrandId(e)
+                              }}
+                              onChange={e => {
+                                 setSelectedBrandId(e)
+                              }}
                               placeholder="Enter brand domain"
                            />
                         </div>
@@ -248,7 +262,7 @@ export const KioskLocation = () => {
                      kiosk[0]?.printerId &&
                      kiosk[0]?.location?.id
                   ) {
-                     update({
+                     updateKiosk({
                         variables: {
                            id: params.id,
                            _set: { isActive: !kiosk[0].isActive || false },
@@ -284,7 +298,7 @@ export const KioskLocation = () => {
             </HorizontalTabList>
             <HorizontalTabPanels>
                <HorizontalTabPanel style={{ height: '100%' }}>
-                  <BasicInfo />
+                  <BasicInfo selectedBrandId={selectedBrandId} />
                </HorizontalTabPanel>
                <HorizontalTabPanel>
                   <LinkOrderTab />

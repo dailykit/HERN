@@ -678,6 +678,38 @@ export const KIOSK = {
          }
       }
    `,
+   POSIST_CUSTOMER_KEY: gql`
+      subscription PosistCustomerKey(
+         $brandId: Int_comparison_exp!
+         $locationId: Int_comparison_exp!
+      ) {
+         PosistCustomerKey: brands_brand_location(
+            where: { brandId: $brandId, locationId: $locationId }
+         ) {
+            id
+            brandId
+            locationId
+            posist_customer_key
+         }
+      }
+   `,
+
+   UPDATE_POSIST_CUSTOMER_KEY: gql`
+      mutation updatePosistCustomerKey(
+         $_set: brands_brand_location_set_input!
+         $brandId: Int!
+         $locationId: Int!
+      ) {
+         update_brands_brand_location_by_pk(
+            pk_columns: { brandId: $brandId, locationId: $locationId }
+            _set: $_set
+         ) {
+            posist_customer_key
+            brandId
+            locationId
+         }
+      }
+   `,
 }
 export const PAYMENT_OPTIONS = {
    AGGREGATE: gql`
@@ -815,6 +847,7 @@ export const PAYMENT_OPTIONS = {
          }
       }
    `,
+
    VIEW: gql`
       subscription availablePayment($id: Int!) {
          brands_availablePaymentOption_by_pk(id: $id) {

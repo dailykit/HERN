@@ -53,6 +53,24 @@
    height: 100%;
    align-items: center;
 }
+.hern-kiosk__kiosk-header-container--centered-logo {
+   display: grid;
+   grid-template-columns: 1fr auto;
+   justify-items: center;
+   align-content: center;
+}
+.hern-kiosk__kiosk-header__brand {
+   display: flex;
+   align-items: center;
+   gap: 1rem;
+   > h3 {
+      font-weight: 800;
+      font-size: 2.5rem;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: #ffffff;
+   }
+}
 .hern-kiosk__kiosk-header-logo {
    height: 7em;
    width: 7em;
@@ -129,27 +147,20 @@
 }
 .hern-kiosk__fulfillment-option-template-2 {
    z-index: 1000;
-   // background: #ffffff;
-   // border: 4px solid rgba(111, 111, 111, 0.5);
    box-sizing: border-box;
-   // box-shadow: 0px 6px 20px rgba(0, 0, 0, 0.2);
    border-radius: 1px;
-   width: 30em;
-   height: 30em;
+   width: 430px;
+   height: 430px;
    position: relative;
    display: flex;
-   justify-content: center;
    flex-direction: column;
    align-items: center;
-   // background: #fff;
-   // &::after {
-   //    content: ' ';
-   //    width: 40px;
-   //    height: 40px;
-   //    background-color: red;
-   //    position: absolute;
-   //    bottom: 0;
-   // }
+   cursor: pointer;
+   padding: 90px 0 60px 0;
+   &:active {
+      opacity: 0.8;
+      box-shadow: 0px 6px 20px rgba(0, 0, 0, 0.2);
+   }
 }
 
 .hern-kiosk__fulfillment-view-menu-btn-wrapper {
@@ -237,6 +248,32 @@
 .hern-kiosk__menu-carousal-right-arrow {
    right: 0;
 }
+//Override default carousel dots
+.hern-kiosk__promotion__carousel {
+   .slick-dots {
+      bottom: 16px !important;
+      li {
+         background-color: rgba(255, 255, 255, 0.25);
+         backdrop-filter: blur(20px);
+         height: 12px;
+         width: 12px;
+         border-radius: 50%;
+      }
+      > li.slick-active {
+         height: 12px;
+         width: 12px;
+         border-radius: 50%;
+         > button {
+            background-color: rgba(255, 255, 255, 0.8);
+         }
+      }
+      li > button {
+         height: 12px;
+         width: 12px;
+         border-radius: 50%;
+      }
+   }
+}
 .hern-kiosk__promotion-image {
    display: flex !important;
    justify-content: center !important;
@@ -269,6 +306,15 @@
       }
    }
 }
+//Bold progress for step bar
+.hern-kiosk__step-bar-wrapper {
+   .ant-steps-item-title::after {
+      top: 10px !important;
+      height: 12px !important;
+      background-color: rgba(113, 36, 180, 0.4) !important;
+      border-radius: 20px;
+   }
+}
 .hern-kiosk__step-bar-count {
    width: 45px;
    height: 45px;
@@ -279,8 +325,7 @@
    font-weight: 600;
 }
 .hern-kiosk__menu-category-side-bar {
-   box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
-   overflow: auto;
+   overflow-y: auto;
    padding-top: 1em;
    &::-webkit-scrollbar {
       width: 6px;
@@ -299,6 +344,34 @@
       .hern-kiosk__menu-page-product-category-title {
          // color: #0f6bb1;
       }
+   }
+}
+.hern-kiosk__menu-category-side-bar__wrapper {
+   box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+}
+.hern-kiosk__menu-category-arrow {
+   display: flex;
+   justify-content: center;
+   width: 100%;
+   background-color: #ffffff;
+
+   &:first-child {
+      padding-top: 12px;
+      padding-bottom: 8px;
+   }
+   &:last-child {
+      padding-bottom: 12px;
+      padding-top: 8px;
+   }
+   > span {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 1.75rem;
+      width: 1.75rem;
+      border-radius: 50%;
+      background: rgba(113, 36, 180, 0.1);
+      backdrop-filter: blur(4px);
    }
 }
 .hern-kiosk__menu-header-veg-switch {
@@ -412,6 +485,7 @@
 .hern-kiosk__cart-tool-tip {
    position: absolute;
    // bottom: -5px;
+   z-index: 9999;
    transform: translateY(40px);
    animation-name: cart-tool-tip;
    animation-duration: 3s;
@@ -520,6 +594,11 @@
 .hern-kiosk__menu-product-name {
    font-size: 1.3em;
    font-weight: 700;
+   display: flex;
+   gap: 8px;
+   > svg {
+      transform: translateY(5px);
+   }
 }
 .hern-kiosk__menu-product-description {
    white-space: nowrap;
@@ -573,20 +652,21 @@
    height: 80vh;
    width: 80vw;
    // background-color: red;
-   margin: 5em 0 0 0;
+   // margin: 5em 0 0 0;
    border-radius: 2.5em;
    position: relative;
 }
 .hern-kiosk__menu-product-modifier-pop-up-scrollPart {
    height: 90%;
    overflow-y: auto;
+   //background-color: var(--hern-primary-color);
 }
 .hern-kiosk__menu-product-modifier-header {
    display: flex;
    flex-direction: column;
    align-items: center;
    justify-content: center;
-   border-radius: 2.5em 2.5em 0 0;
+   // border-radius: 2.5em 2.5em 0 0;
 }
 .hern-kiosk__additional-modifier {
    padding: 1.3em;
@@ -749,6 +829,25 @@
    height: 5.8vh;
    border-radius: 0em 0em 2.5em 2.5em;
 }
+//Applicable when using large footer on modifier popup
+.hern-kiosk__modifier-popup-footer--large {
+   height: 184px;
+   padding: 0 56px;
+   > div {
+      white-space: nowrap;
+   }
+   > div > span {
+      font-weight: 700;
+      font-size: 36px;
+   }
+   > button {
+      white-space: nowrap;
+      font-weight: 700;
+      font-size: 40px;
+      padding: 0;
+      width: auto;
+   }
+}
 .hern-kiosk__modifier-add-to-cart {
    padding: 1em;
    font-weight: 700;
@@ -772,7 +871,7 @@
    text-transform: capitalize;
 }
 .hern-kiosk__modifier-total-price {
-   margin: 0 1em;
+   margin: 0 1rem;
    color: #ffffff;
    font-size: 2em;
 }
@@ -838,6 +937,10 @@
    padding: 1.5em 1.5em;
    min-height: 13em;
    margin: 1em 1em;
+}
+.hern-kiosk__cart-card-warning {
+   font-size: 26px;
+   color: #f33737;
 }
 .hern-kiosk__cart-card-header {
    display: flex;
@@ -1043,12 +1146,31 @@
    }
 }
 .hern-kiosk__table-selection-drawer {
+   .ant-drawer-body {
+      padding: 5rem 3.5rem 2rem 3.5rem;
+   }
+   .ant-drawer-footer {
+      padding: 0;
+      border: none;
+   }
    .ant-drawer-header {
-      margin-top: 15px;
+      // margin-top: 15px;
       .ant-drawer-title {
          font-size: 42px;
          font-weight: 700;
       }
+   }
+}
+//Simple cart variant style
+.hern-kiosk__cart-count--simple {
+   left: 96px !important;
+   top: -8px !important;
+   .hern-kiosk__cart-item-badge {
+      background-color: var(--hern-primary-color);
+      height: 16px;
+      width: 16px;
+      font-size: 10px;
+      padding: 0;
    }
 }
 .hern-kiosk__cart-item-badge {
@@ -1187,11 +1309,13 @@
    margin-top: 15px;
 }
 .hern-kiosk__dine-in-heading {
-   font-weight: 600;
-   font-size: 28px;
-   line-height: 49px;
+   font-weight: 700;
+   font-size: 56px;
+   text-align: center;
    letter-spacing: 0.04em;
    text-transform: uppercase;
+   color: #202020;
+   opacity: 0.8;
 }
 .hern-kiosk__dine-in-tables {
    display: grid;
@@ -1213,23 +1337,31 @@
 }
 
 .hern-kiosk__dine-in-selection-confirm-btn {
-   padding: 2em 2em;
-   height: 2.5em;
-   display: flex;
-   align-items: center;
+   background: var(--hern-primary-color);
+   box-shadow: 0px -4px 6px #d1e3f5;
    width: 100%;
-   justify-content: center;
-   font-size: 1.3rem;
+   padding: 40px initial;
+   font-weight: 700;
+   font-size: 68px;
+   text-transform: uppercase;
+   color: #ffffff;
+   border-radius: 0;
+   &:active {
+      opacity: 0.8;
+   }
+   // &:disabled {
+   //    opacity: 0.5;
+   // }
 }
 .hern-kiosk__dine-in-selection-confirm-btn--disabled {
    cursor: not-allowed;
 }
 .hern-kiosk__dine-in-selection-back {
-   position: absolute;
-   stroke: currentColor;
+   // position: absolute;
+   // stroke: currentColor;
 
-   z-index: 100;
-   border-radius: 50%;
+   // z-index: 100;
+   // border-radius: 50%;
 }
 .hern-kiosk__dine-in-table-detail {
    position: absolute;
@@ -1307,4 +1439,239 @@
    color: #f00;
    font-size: 16px;
    margin-top: 18px;
+}
+.hern-kiosk__phone-number-drawer {
+   background: #ffffff;
+   .ant-drawer-body {
+      padding: 0;
+   }
+   .ant-drawer-header {
+      box-shadow: 0px 1px 20px rgba(0, 0, 0, 0.1);
+      height: 160px;
+   }
+   .ant-drawer-title {
+      text-align: center;
+      font-weight: 700;
+      font-size: 3.5rem;
+      text-align: center;
+      color: #303030;
+   }
+
+   .hern-kiosk__phone-number-drawer__skip-btn {
+      font-style: normal;
+      font-weight: 700;
+      font-size: 40px;
+      line-height: 55px;
+      text-align: center;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--hern-primary-color);
+      opacity: 0.8;
+   }
+}
+.hern-kiosk__number-pad {
+   display: grid;
+   grid-template-columns: repeat(3, 280px);
+   grid-auto-rows: 140px;
+   grid-gap: 60px;
+   margin-bottom: 56px;
+   padding: initial 60px;
+
+   > div {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #f9f9f9;
+      box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.08);
+      border-radius: 20px;
+      font-style: normal;
+      font-weight: 600;
+      font-size: 80px;
+      color: #202020;
+      cursor: pointer;
+      .hern-kiosk__phone-number-drawer__number__clear-btn {
+         font-size: 60px;
+      }
+      &:active {
+         background: rgba(113, 36, 180, 0.1);
+         box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.08);
+         border-radius: 20px;
+         color: #7124b4;
+      }
+   }
+}
+.hern-kiosk__phone-number-drawer__number__input {
+   width: 100%;
+   display: block;
+   padding: 0.5rem 60px;
+   margin-bottom: 60px;
+   > input {
+      display: block;
+      width: 100%;
+      height: 140px;
+      background-color: #f9f9f9;
+      border-radius: 2px;
+      border: none;
+      outline: none;
+      text-align: center;
+      font-size: 80px !important;
+      font-weight: 600;
+      color: #202020;
+   }
+}
+.hern-kiosk__phone-number-drawer__content {
+   display: flex;
+   flex-direction: column;
+   justify-content: space-between;
+   height: 100%;
+   .hern-kiosk__phone-number-drawer__header {
+      padding: 140px 92px initial 92px;
+      > h1 {
+         font-weight: 700;
+         font-size: 60px;
+         text-align: center;
+         letter-spacing: 0.04em;
+         text-transform: capitalize;
+         color: #202020;
+         opacity: 0.8;
+         margin-bottom: 0.5rem;
+      }
+      > p {
+         font-weight: 700;
+         font-size: 40px;
+         text-align: center;
+         text-transform: capitalize;
+         color: #202020;
+         opacity: 0.8;
+      }
+   }
+   .hern-kiosk__phone-number-drawer__number__proceed-btn {
+      background: var(--hern-primary-color);
+      box-shadow: 0px -4px 6px #d1e3f5;
+      width: 100%;
+      padding: 40px initial;
+      font-weight: 700;
+      font-size: 68px;
+      text-transform: uppercase;
+      color: #ffffff;
+      &:active {
+         opacity: 0.8;
+      }
+      &:disabled {
+         opacity: 0.5;
+      }
+   }
+}
+
+/** Pay button */
+.hern-kiosk__pay-button {
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   flex-direction: column;
+   padding: 24px;
+   border-radius: 0.5rem;
+   background: #fff !important;
+   color: #202020 !important;
+   max-width: 220px;
+   border: 3px solid var(--hern-primary-color);
+   > span {
+      font-size: 24px;
+      display: inline-block;
+      margin-top: 2rem;
+      margin-bottom: 0.25rem;
+      white-space: nowrap;
+      color: var(--hern-primary-color);
+      font-weight: 700;
+   }
+   > svg {
+      height: 96px;
+      width: 96px;
+   }
+   &:active {
+      opacity: 0.8;
+   }
+   &:disabled {
+      opacity: 0.5;
+   }
+}
+/**close payment modal **/
+.hern-kiosk__payment-modal-close {
+   position: absolute;
+   top: 32px;
+   right: 32px;
+   z-index: 10000;
+   > svg {
+      height: 36px;
+      width: 36px;
+   }
+}
+/*Payment modal style override*/
+.hern-kiosk-payment-modal {
+   .ant-modal-body {
+      padding: 32px 32px 48px 32px;
+   }
+   .ant-modal-content {
+      border-radius: 0.5rem;
+   }
+}
+
+/**Repeat last one style override */
+.hern-kiosk__increase-type-modal {
+   .hern-kiosk__product-type-mods__menu-product-name {
+      font-weight: 700;
+      font-size: 28px;
+      color: #6f6f6f;
+      text-transform: capitalize;
+      margin-bottom: 28px;
+      display: block;
+   }
+   .ant-modal-close {
+      top: 24px;
+      right: 24px;
+   }
+   .ant-modal-title {
+      font-weight: 600;
+      font-size: 36px;
+   }
+   .ant-modal-body {
+      padding: 0 40px 40px 40px;
+   }
+   .ant-modal-header {
+      border-radius: 0.5rem 0.5rem 0 0;
+      padding: 40px;
+      border-bottom: none;
+   }
+   .ant-modal-content {
+      border-radius: 0.5rem;
+   }
+   .hern-kiosk__kiosk-button-linear {
+      padding: 24px 64px !important;
+      font-weight: 700;
+      font-size: 30px;
+      line-height: 32px;
+      white-space: nowrap;
+      margin-right: 48px;
+      border-radius: 0;
+      border: 4px solid var(--hern-primary-color) !important;
+      &:last-child {
+         margin-right: 0;
+      }
+   }
+}
+.hern-kiosk__menu-product-modifier-pop-up-container--close {
+   position: absolute;
+   left: 0;
+   right: 0;
+   top: 0;
+   height: 100px;
+   z-index: 100;
+   display: flex;
+   justify-content: space-between;
+   align-items: center;
+   padding: 0 28px;
+   > h4 {
+      font-weight: 700;
+      font-size: 24px;
+   }
 }

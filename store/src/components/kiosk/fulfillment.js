@@ -1,11 +1,13 @@
 import React, { useState } from 'react'
-import { Button } from 'antd'
+import { Button, Drawer } from 'antd'
 import { useCart, useTranslation } from '../../context'
 import { DineInIcon, TakeOutIcon } from '../../assets/icons'
 import { useConfig } from '../../lib'
 import moment from 'moment'
-import { isDateValidInRRule } from '../../utils'
+import { get_env, isDateValidInRRule, isClient } from '../../utils'
 import { DineInTableSelection } from './component'
+import { ArrowLeftIconBG } from '../../assets/icons/ArrowLeftWithBG'
+import { BackSpaceIcon } from '../../assets/icons/BackSpaceIcon'
 
 export const FulfillmentSection = props => {
    const { config, setCurrentPage } = props
@@ -17,22 +19,35 @@ export const FulfillmentSection = props => {
       dispatch,
    } = useConfig()
    const { t, direction, dynamicTrans, locale } = useTranslation()
-   // console.log('config', config)
    const { methods, setDineInTableInfo, storedCartId } = useCart()
    const [showDineInTableSelection, setShowDineInTableSelection] =
       useState(false)
+   const [visible, setVisible] = useState(false)
+   const [number, setNumber] = useState('')
    React.useEffect(() => {
       // check is there any recurrence available or not
       // if available then check that store is available for current day and time
       if (kioskRecurrences && kioskRecurrences.length > 0) {
          const now = new Date() // now
          const start = new Date(now.getTime() - 1000 * 60 * 60 * 24) // yesterday
-         const ondemandPickupRecs = kioskRecurrences.filter(
+         let ondemandPickupRecs = kioskRecurrences.filter(
             eachRec => eachRec.recurrence.type === 'ONDEMAND_PICKUP'
          )
-         const ondemandDineinRecs = kioskRecurrences.filter(
+         let ondemandPickupRecurrenceForBrandLocation =
+            ondemandPickupRecs.filter(rec => rec.brandLocationId)
+         if (ondemandPickupRecurrenceForBrandLocation.length > 0) {
+            ondemandPickupRecs = ondemandPickupRecurrenceForBrandLocation
+         }
+
+         let ondemandDineinRecs = kioskRecurrences.filter(
             eachRec => eachRec.recurrence.type === 'ONDEMAND_DINEIN'
          )
+         let ondemandDineinRecurrenceForBrandLocation =
+            ondemandDineinRecs.filter(rec => rec.brandLocationId)
+         if (ondemandDineinRecurrenceForBrandLocation.length > 0) {
+            ondemandDineinRecs = ondemandDineinRecurrenceForBrandLocation
+         }
+
          // return a boolean value for store available or not
          const recurrencesValidation = recurrences => {
             for (let i = 0; i <= recurrences.length - 1; i++) {
@@ -125,7 +140,21 @@ export const FulfillmentSection = props => {
       setCurrentPage('menuPage')
    }
    return (
-      <div className="hern-kiosk__fulfillment-section-container">
+      <div
+         style={{
+            justifyContent: `${
+               config?.fulfillmentPageSettings?.alignContentStart?.value
+                  ? 'flex-start'
+                  : 'center'
+            }`,
+            paddingTop: `${
+               config?.fulfillmentPageSettings?.alignContentStart?.value
+                  ? '260px'
+                  : 'unset'
+            }`,
+         }}
+         className="hern-kiosk__fulfillment-section-container"
+      >
          {config.fulfillmentPageSettings.backgroundImage.value.url[0] && (
             <img
                className="hern-kiosk__fulfillment-section-bg-image"
@@ -144,6 +173,14 @@ export const FulfillmentSection = props => {
                className="hern-kiosk__fulfillment-section-main-text"
                style={{
                   color: `${config.kioskSettings.theme.primaryColor.value}`,
+                  textTransform: `${
+                     config?.fulfillmentPageSettings?.fulfillmentStyle?.mainText
+                        ?.textTransform?.value || 'initial'
+                  }`,
+                  fontSize: `${
+                     config?.fulfillmentPageSettings?.fulfillmentStyle?.mainText
+                        ?.fontSize?.value || '6rem'
+                  }`,
                }}
                data-translation="true"
             >
@@ -153,7 +190,19 @@ export const FulfillmentSection = props => {
          <span
             className="hern-kiosk__fulfillment-section-secondary-text"
             style={{
-               color: `${config.kioskSettings.theme.primaryColor.value}`,
+               color: `${
+                  config?.fulfillmentPageSettings?.fulfillmentStyle
+                     ?.secondaryText?.color?.value ||
+                  config.kioskSettings.theme.primaryColor.value
+               }`,
+               textTransform: `${
+                  config?.fulfillmentPageSettings?.fulfillmentStyle
+                     ?.secondaryText?.textTransform?.value || 'initial'
+               }`,
+               fontSize: `${
+                  config?.fulfillmentPageSettings?.fulfillmentStyle
+                     ?.secondaryText?.fontSize?.value || '4rem'
+               }`,
             }}
             data-translation="true"
          >
@@ -188,6 +237,7 @@ export const FulfillmentSection = props => {
                            setShowDineInTableSelection={
                               setShowDineInTableSelection
                            }
+                           setVisible={setVisible}
                         />
                      )
                   }
@@ -199,6 +249,7 @@ export const FulfillmentSection = props => {
                         buttonText={eachTab?.label}
                         key={index}
                         setCurrentPage={setCurrentPage}
+                        setVisible={setVisible}
                      />
                   )
                })
@@ -230,6 +281,14 @@ export const FulfillmentSection = props => {
             }}
             config={config}
             onConfirmClick={onTableSelectionConfirmClick}
+         />
+         <PhoneNumber
+            config={config}
+            visible={visible}
+            number={number}
+            setVisible={setVisible}
+            setNumber={setNumber}
+            setCurrentPage={setCurrentPage}
          />
       </div>
    )
@@ -310,15 +369,21 @@ const FulfillmentOptionCustom = props => {
       setCurrentPage,
       fulfillment,
       setShowDineInTableSelection,
+      setVisible,
    } = props
 
    const { dispatch, kioskAvailability } = useConfig()
    const { t } = useTranslation()
    const { methods } = useCart()
 
+   const askedPhoneNumber =
+      config?.phoneNoScreenSettings?.askPhoneNumber.value ?? false
    const onFulfillmentClick = () => {
       if (!kioskAvailability[fulfillment.orderFulfillmentTypeLabel]) {
          return
+      }
+      if (askedPhoneNumber && isClient && !localStorage.getItem('phone')) {
+         setVisible(true)
       }
       if (
          config.kioskSettings.showTableSelectionView.value &&
@@ -341,8 +406,18 @@ const FulfillmentOptionCustom = props => {
                },
             })
          }
-         setCurrentPage('menuPage')
+         if (
+            !askedPhoneNumber ||
+            (askedPhoneNumber && isClient && localStorage.getItem('phone'))
+         ) {
+            setCurrentPage('menuPage')
+         }
       }
+      isClient &&
+         localStorage.setItem(
+            'fulfillmentType',
+            fulfillment.orderFulfillmentTypeLabel
+         )
    }
 
    return (
@@ -384,5 +459,114 @@ const FulfillmentOptionCustom = props => {
             {t(buttonText)}
          </span>
       </div>
+   )
+}
+
+const PhoneNumber = ({
+   config,
+   visible,
+   setVisible,
+   number,
+   setNumber,
+   setCurrentPage,
+}) => {
+   const { t } = useTranslation()
+   return (
+      <Drawer
+         title={t('Enter Phone Number')}
+         placement={'right'}
+         width={'100%'}
+         onClose={() => setVisible(false)}
+         visible={visible}
+         style={{ zIndex: '9999' }}
+         extra={
+            <button
+               onClick={() => {
+                  setVisible(false)
+                  isClient && localStorage.setItem('phone', '2222222222')
+                  if (
+                     isClient &&
+                     localStorage.getItem('fulfillmentType') !==
+                        'ONDEMAND_DINEIN'
+                  ) {
+                     setCurrentPage('menuPage')
+                  }
+               }}
+               className="hern-kiosk__phone-number-drawer__skip-btn"
+            >
+               Skip
+            </button>
+         }
+         className="hern-kiosk__phone-number-drawer"
+         closeIcon={
+            <ArrowLeftIconBG bgColor="var(--hern-primary-color)" variant="sm" />
+         }
+      >
+         <div className="hern-kiosk__phone-number-drawer__content">
+            <div className="hern-kiosk__phone-number-drawer__header">
+               <h1>
+                  {t(
+                     config?.phoneNoScreenSettings?.title?.value ||
+                        'Want to Get update about your Order Details?'
+                  )}
+               </h1>
+               <p>
+                  {t(
+                     config?.phoneNoScreenSettings?.description?.value ||
+                        'Enter Your Mobile Number & Get Details On WhatsApp'
+                  )}
+               </p>
+            </div>
+            <div className="hern-kiosk__phone-number-drawer__number">
+               <div className="hern-kiosk__phone-number-drawer__number__input">
+                  <input
+                     value={number}
+                     type="text"
+                     placeholder="Phone number"
+                  />
+               </div>
+
+               <div className="hern-kiosk__number-pad">
+                  <div onClick={() => setNumber(number + '1')}>1</div>
+                  <div onClick={() => setNumber(number + '2')}>2</div>
+                  <div onClick={() => setNumber(number + '3')}>3</div>
+                  <div onClick={() => setNumber(number + '4')}>4</div>
+                  <div onClick={() => setNumber(number + '5')}>5</div>
+                  <div onClick={() => setNumber(number + '6')}>6</div>
+                  <div onClick={() => setNumber(number + '7')}>7</div>
+                  <div onClick={() => setNumber(number + '8')}>8</div>
+                  <div onClick={() => setNumber(number + '9')}>9</div>
+                  <div onClick={() => setNumber('')}>
+                     <span className="hern-kiosk__phone-number-drawer__number__clear-btn">
+                        Clear
+                     </span>
+                  </div>
+                  <div onClick={() => setNumber(number + '0')}>0</div>
+                  <div onClick={() => setNumber(number.slice(0, -1))}>
+                     <BackSpaceIcon />
+                  </div>
+               </div>
+               <button
+                  onClick={() => {
+                     isClient &&
+                        number.length > 0 &&
+                        localStorage.setItem('phone', number)
+                     setVisible(false)
+                     if (
+                        isClient &&
+                        localStorage.getItem('fulfillmentType') !==
+                           'ONDEMAND_DINEIN'
+                     ) {
+                        setCurrentPage('menuPage')
+                     }
+                  }}
+                  disabled={number.length < 10}
+                  className="hern-kiosk__phone-number-drawer__number__proceed-btn"
+               >
+                  {t('Proceed')}
+               </button>
+            </div>
+         </div>
+      </Drawer>
    )
 }

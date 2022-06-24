@@ -1,6 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
-import { Loader, IconButton, Text, Spacer } from '@dailykit/ui'
+import { Loader, IconButton, Text, Spacer, Filler } from '@dailykit/ui'
 
 import useAssets from './useAssets'
 
@@ -9,13 +9,20 @@ const Misc = ({ onMiscSelect }) => {
 
    if (status === 'LOADING') return <Loader />
    if (status === 'ERROR') return <div>{error}</div>
+   if (misc.length === 0) {
+      return (
+         <StyledFillerDiv>
+            <Filler message="Nothing to show" />
+         </StyledFillerDiv>
+      )
+   }
    return (
       <>
          <StyledList>
             {misc.map(node => (
                <StyledListItem
                   key={node.key}
-                  title={node.metadata.title}
+                  title={node?.metadata?.title || node?.name}
                   onClick={() => onMiscSelect(node)}
                >
                   <StyledTag>
@@ -39,6 +46,12 @@ const Misc = ({ onMiscSelect }) => {
    )
 }
 export default Misc
+
+const StyledFillerDiv = styled.div`
+   display: flex;
+   align-items: center;
+   justify-content: center;
+`
 
 const StyledList = styled.ul`
    height: 100%;

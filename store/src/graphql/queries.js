@@ -202,6 +202,7 @@ export const OCCURENCE_PRODUCTS_BY_CATEGORIES = gql`
    query categories(
       $subscriptionId: Int_comparison_exp
       $occurenceId: Int_comparison_exp
+      $params: jsonb!
    ) {
       categories: productCategories(
          where: {
@@ -235,6 +236,9 @@ export const OCCURENCE_PRODUCTS_BY_CATEGORIES = gql`
                isSingleSelect
                productOption {
                   id
+                  isArchived
+                  isPublished: publishedByLocation(args: { params: $params })
+                  isAvailable: availabilityByLocation(args: { params: $params })
                   label
                   simpleRecipeYield {
                      yield
@@ -245,9 +249,15 @@ export const OCCURENCE_PRODUCTS_BY_CATEGORIES = gql`
                   }
                   product {
                      name
+                     isArchived
+                     isPublished: publishedByLocation(args: { params: $params })
+                     isAvailable: availabilityByLocation(
+                        args: { params: $params }
+                     )
                      assets
                      additionalText
                      tags
+                     isPopupAllowed
                   }
                }
             }
@@ -343,6 +353,7 @@ export const CART_BY_WEEK = gql`
       $keycloakId: String!
       $weekId: Int!
       $brand_customerId: Int!
+      $params: jsonb!
    ) {
       subscriptionOccurenceCustomer: subscription_subscriptionOccurence_customer_by_pk(
          keycloakId: $keycloakId
@@ -378,6 +389,29 @@ export const CART_BY_WEEK = gql`
                isAutoAdded
                subscriptionOccurenceProductId
                subscriptionOccurenceAddOnProductId
+               product {
+                  id
+                  name
+                  isPublished: publishedByLocation(args: { params: $params })
+                  isAvailable: availabilityByLocation(args: { params: $params })
+                  isArchived
+                  productOptions {
+                     id
+                     isArchived
+                     isPublished: publishedByLocation(args: { params: $params })
+                     isAvailable: availabilityByLocation(
+                        args: { params: $params }
+                     )
+                  }
+               }
+               childs {
+                  id
+                  unitPrice
+                  productOption {
+                     id
+                     label
+                  }
+               }
             }
          }
       }
@@ -984,6 +1018,18 @@ export const CUSTOMER = {
          }
       }
    `,
+   PROFILE_INFO: gql`
+      query customer($keycloakId: String!) {
+         customer(keycloakId: $keycloakId) {
+            platform_customer: platform_customer {
+               customerEmail: email
+               customerFirstName: firstName
+               customerLastName: lastName
+               customerPhone: phoneNumber
+            }
+         }
+      }
+   `,
 }
 
 export const GET_FILEID = gql`
@@ -1305,7 +1351,7 @@ export const PLATFORM_CUSTOMERS = gql`
 `
 
 export const PRODUCTS_BY_CATEGORY = gql`
-   query PRODUCTS_BY_CATEGORY($params: jsonb!) {
+   subscription PRODUCTS_BY_CATEGORY($params: jsonb!) {
       onDemand_getMenuV2copy(args: { params: $params }) {
          data
          id
@@ -1543,6 +1589,7 @@ export const GET_CART = gql`
                country
                supportedPaymentCompanyId
                paymentOptionLabel
+               paymentOptionLabelToShow
                supportedPaymentCompany {
                   id
                   label
@@ -1878,7 +1925,10 @@ export const GET_JS_CSS_FILES = gql`
 `
 
 export const GET_CART_ITEMS_BY_CART = gql`
-   subscription GET_CART_ITEMS_BY_CART($where: order_cartItem_bool_exp!) {
+   subscription GET_CART_ITEMS_BY_CART(
+      $where: order_cartItem_bool_exp!
+      $params: jsonb!
+   ) {
       cartItems(where: $where) {
          cartItemId: id
          parentCartItemId
@@ -1916,6 +1966,17 @@ export const GET_CART_ITEMS_BY_CART = gql`
                }
             }
          }
+         product {
+            isPublished: publishedByLocation(args: { params: $params })
+            isAvailable: availabilityByLocation(args: { params: $params })
+            isArchived
+            productOptions {
+               isPublished: publishedByLocation(args: { params: $params })
+               isAvailable: availabilityByLocation(args: { params: $params })
+               isArchived
+               id
+            }
+         }
          productId
       }
    }
@@ -1948,6 +2009,7 @@ export const GET_CART_PAYMENT_INFO = gql`
          isTest
          paymentStatus
          paymentType
+         metaData
          transactionRemark
          isResultShown
          stripeInvoiceId

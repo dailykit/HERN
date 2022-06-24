@@ -13,8 +13,14 @@ import {
 import { useUser } from '.'
 import { useConfig } from '../lib'
 import { useToasts } from 'react-toast-notifications'
-import { combineCartItems, useQueryParamState, isKiosk } from '../utils'
+import {
+   combineCartItems,
+   useQueryParamState,
+   isKiosk,
+   isClient,
+} from '../utils'
 import { useTranslation } from './language'
+import { indexOf } from 'lodash'
 
 export const CartContext = React.createContext()
 
@@ -38,8 +44,15 @@ const reducer = (state, { type, payload }) => {
 }
 
 export const CartProvider = ({ children }) => {
-   const { brand, kioskId, selectedOrderTab, locationId, dispatch, orderTabs } =
-      useConfig()
+   const {
+      brand,
+      kioskId,
+      selectedOrderTab,
+      locationId,
+      dispatch,
+      orderTabs,
+      brandLocation,
+   } = useConfig()
    const { addToast } = useToasts()
    const { t } = useTranslation()
    const isKioskMode = isKiosk()
@@ -58,7 +71,18 @@ export const CartProvider = ({ children }) => {
    const [combinedCartItems, setCombinedCartData] = useState(null)
    const [showCartIconToolTip, setShowCartIconToolTip] = useState(false)
    const [dineInTableInfo, setDineInTableInfo] = useState(null)
-
+   const [
+      isCartValidByProductAvailability,
+      setIsCartValidByProductAvailability,
+   ] = useState(false)
+   const argsForByLocation = React.useMemo(
+      () => ({
+         brandId: brand?.id,
+         locationId: locationId,
+         brand_locationId: brandLocation?.id,
+      }),
+      [brand, locationId, brandLocation?.id]
+   )
    React.useEffect(() => {
       // case 1 - user is not authenticated
       //case 1.1 if there is cart-id in local storage , set storedCartId
@@ -133,9 +157,50 @@ export const CartProvider = ({ children }) => {
                },
             }),
          },
+         params: argsForByLocation,
       },
       fetchPolicy: 'no-cache',
    })
+
+   React.useEffect(() => {
+      if (cartItemsData?.cartItems) {
+         for (let node of cartItemsData?.cartItems) {
+            let isCartValid = true
+            const selectedProductOption = node.product.productOptions.find(
+               option => option.id === node.childs[0]?.productOption?.id
+            )
+
+            if (!isEmpty(selectedProductOption)) {
+               isCartValid =
+                  node.product.isAvailable &&
+                  node.product.isPublished &&
+                  !node.product.isArchived &&
+                  selectedProductOption.isAvailable &&
+                  selectedProductOption.isPublished &&
+                  !selectedProductOption.isArchived
+            } else {
+               isCartValid =
+                  node.product.isAvailable &&
+                  node.product.isPublished &&
+                  !node.product.isArchived
+            }
+
+            if (!isCartValid) {
+               setIsCartValidByProductAvailability(false)
+               return
+            }
+
+            if (
+               indexOf(cartItemsData?.cartItems, node) ===
+               cartItemsData?.cartItems.length - 1
+            ) {
+               if (isCartValid) {
+                  setIsCartValidByProductAvailability(true)
+               }
+            }
+         }
+      }
+   }, [cartItemsData?.cartItems])
 
    useEffect(() => {
       if (
@@ -145,32 +210,20 @@ export const CartProvider = ({ children }) => {
          oiType === 'Kiosk Ordering'
       ) {
          const cart = cartData.carts[0]
-         const terminalPaymentOption = cart?.paymentMethods.find(
-            option =>
-               option?.supportedPaymentOption?.paymentOptionLabel === 'TERMINAL'
-         )
-         const codPaymentOption = cart?.paymentMethods.find(
-            option =>
-               option?.supportedPaymentOption?.paymentOptionLabel === 'CASH'
-         )
-         const terminalPaymentOptionId = !isEmpty(terminalPaymentOption)
-            ? terminalPaymentOption?.id
-            : null
-         const codPaymentOptionId = !isEmpty(codPaymentOption)
-            ? codPaymentOption?.id
-            : null
+         const finalPaymentOptions = []
+         cart?.paymentMethods
+            .sort((a, b) => a.position - b.position)
+            .forEach(option => {
+               finalPaymentOptions.push({
+                  identifier: option?.label,
+                  label: option?.supportedPaymentOption
+                     ?.paymentOptionLabelToShow,
+                  id: option?.id,
+               })
+            })
          cartReducer({
             type: 'KIOSK_PAYMENT_OPTION',
-            payload: [
-               {
-                  label: 'TERMINAL',
-                  id: terminalPaymentOptionId,
-               },
-               {
-                  label: 'COD',
-                  id: codPaymentOptionId,
-               },
-            ],
+            payload: finalPaymentOptions,
          })
       }
    }, [cartData, isCartLoading])
@@ -381,6 +434,12 @@ export const CartProvider = ({ children }) => {
                ...(oiType === 'Kiosk Ordering' &&
                   !isEmpty(terminalPayment) && {
                      toUseAvailablePaymentOptionId: terminalPayment.id,
+                  }),
+               ...(oiType === 'Kiosk Ordering' &&
+                  !isEmpty(isClient && localStorage.getItem('phone')) && {
+                     customerInfo: {
+                        customerPhone: localStorage.getItem('phone'),
+                     },
                   }),
             }
             // console.log('object new cart', object)
@@ -666,6 +725,7 @@ export const CartProvider = ({ children }) => {
                   update: updateCart,
                },
             },
+            isCartValidByProductAvailability,
          }}
       >
          {children}

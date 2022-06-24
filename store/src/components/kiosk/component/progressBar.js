@@ -13,6 +13,7 @@ import { useConfig } from '../../../lib'
 import { Header } from 'antd/lib/layout/layout'
 import { DineInTableSelection } from '.'
 import { useIntl } from 'react-intl'
+import classNames from 'classnames'
 const { Step } = Steps
 
 export const ProgressBar = props => {
@@ -183,19 +184,34 @@ export const ProgressBar = props => {
                   </div>
                )}
             </div>
-            <div style={{ display: 'flex', alignItems: 'center' }}>
-               {direction === 'ltr' ? (
-                  <ArrowLeftIconBG
-                     style={{ marginRight: '1em' }}
-                     onClick={handleArrowClick}
-                     bgColor={config.kioskSettings.theme.primaryColor.value}
-                  />
-               ) : (
-                  <ArrowRightIconBG
-                     style={{ marginRight: '1em' }}
-                     onClick={handleArrowClick}
-                     bgColor={config.kioskSettings.theme.primaryColor.value}
-                  />
+            <div
+               className={classNames({
+                  'hern-kiosk__step-bar-wrapper':
+                     config?.progressBarSettings?.boldProgressBarTail?.value,
+               })}
+               style={{ display: 'flex', alignItems: 'center' }}
+            >
+               {config?.progressBarSettings?.showBackButton?.value !==
+                  false && (
+                  <>
+                     {direction === 'ltr' ? (
+                        <ArrowLeftIconBG
+                           style={{ marginRight: '1em' }}
+                           onClick={handleArrowClick}
+                           bgColor={
+                              config.kioskSettings.theme.primaryColor.value
+                           }
+                        />
+                     ) : (
+                        <ArrowRightIconBG
+                           style={{ marginRight: '1em' }}
+                           onClick={handleArrowClick}
+                           bgColor={
+                              config.kioskSettings.theme.primaryColor.value
+                           }
+                        />
+                     )}
+                  </>
                )}
                <Steps
                   current={current}
