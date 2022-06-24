@@ -19,6 +19,8 @@ import classNames from 'classnames'
 import isNull from 'lodash/isNull'
 import isEmpty from 'lodash/isEmpty'
 import { useIntl } from 'react-intl'
+import { BiPlus } from 'react-icons/bi'
+import { RoundedCloseIcon } from '../../../assets/icons/RoundedCloseIcon'
 const { Header, Content, Footer } = Layout
 
 export const KioskProduct = props => {
@@ -43,7 +45,6 @@ export const KioskProduct = props => {
    // const [combinedCartItems, setCombinedCartData] = useState(null)
    const [showChooseIncreaseType, setShowChooseIncreaseType] = useState(false) // show I'll choose or repeat last one popup
 
-
    useEffect(() => {
       const languageTags = document.querySelectorAll(
          '[data-translation="true"]'
@@ -62,9 +63,9 @@ export const KioskProduct = props => {
    }, [combinedCartItems])
    const argsForByLocation = React.useMemo(
       () => ({
-            brandId: brand?.id,
-            locationId: kioskDetails?.locationId,
-            brand_locationId: brandLocation?.id,
+         brandId: brand?.id,
+         locationId: kioskDetails?.locationId,
+         brand_locationId: brandLocation?.id,
       }),
       [brand, kioskDetails?.locationId, brandLocation?.id]
    )
@@ -100,8 +101,8 @@ export const KioskProduct = props => {
       const { product: productCompleteData } = await graphQLClientSide.request(
          PRODUCT_ONE,
          {
-               id: productData.id,
-               params: argsForByLocation,
+            id: productData.id,
+            params: argsForByLocation,
          }
       )
       const cartDetailSelectedProduct = cartState.cartItems
@@ -207,7 +208,6 @@ export const KioskProduct = props => {
                               eachCategory => {
                                  eachCategory.options.forEach(eachOption => {
                                     if (eachOption.additionalModifierTemplate) {
-                                       console.log("getting Error Here",eachOption.additionalModifierTemplate)
                                        eachOption.additionalModifierTemplate.categories.forEach(
                                           eachCategory => {
                                              additionalModifierOptions.push(
@@ -241,8 +241,7 @@ export const KioskProduct = props => {
                                              ...eachCategory.options.map(
                                                 eachOptionTemp => ({
                                                    ...eachOptionTemp,
-                                                   categoryId:
-                                                      eachCategory.id,
+                                                   categoryId: eachCategory.id,
                                                 })
                                              )
                                           )
@@ -389,6 +388,12 @@ export const KioskProduct = props => {
                   filter:
                      'drop-shadow(0px 0.64912px 3.2456px rgba(0, 107, 177, 0.4))',
                }),
+               ...(config?.productSettings?.shadowOnProductCard?.value && {
+                  boxShadow: '0px 1px 8px rgba(0, 0, 0, 0.1)',
+               }),
+               ...(config?.productSettings?.squareCorner?.value && {
+                  borderRadius: '0',
+               }),
             }}
          >
             <Layout style={{ height: '100%' }}>
@@ -485,6 +490,13 @@ export const KioskProduct = props => {
                         className="hern-kiosk__menu-product-name"
                         data-translation="true"
                      >
+                        {config.menuSettings?.showVegToggle?.value &&
+                           productData.VegNonVegType !== null && (
+                              <KioskVegNonVegTypeIcon
+                                 type={productData.VegNonVegType}
+                              />
+                           )}
+
                         {productData.name}
                      </span>
                      {productData.additionalText && (
@@ -519,18 +531,75 @@ export const KioskProduct = props => {
                            disabled={isProductOutOfStock}
                            buttonConfig={config.kioskSettings.buttonSettings}
                         >
-                           {isStoreAvailable
-                              ? isProductOutOfStock
-                                 ? t('Out Of Stock')
-                                 : t('Add To Cart')
-                              : t('View Product')}
+                           <span
+                              style={{
+                                 ...(config?.menuSettings
+                                    ?.productAddToCartButton?.fontWeight
+                                    ?.value && {
+                                    fontWeight:
+                                       config?.menuSettings
+                                          ?.productAddToCartButton?.fontWeight
+                                          ?.value,
+                                 }),
+                                 ...(config?.menuSettings
+                                    ?.productAddToCartButton?.fontSize
+                                    ?.value && {
+                                    fontSize:
+                                       config?.menuSettings
+                                          ?.productAddToCartButton?.fontSize
+                                          ?.value,
+                                 }),
+                              }}
+                           >
+                              {isStoreAvailable ? (
+                                 isProductOutOfStock ? (
+                                    t(
+                                       config?.menuSettings
+                                          ?.productAddToCartButton
+                                          ?.outOfStockLabel?.value ||
+                                          'Out Of Stock'
+                                    )
+                                 ) : (
+                                    <div
+                                       style={{
+                                          display: 'flex',
+                                          alignItems: 'center',
+                                          justifyContent: 'center',
+                                       }}
+                                    >
+                                       <span>
+                                          {t(
+                                             config?.menuSettings
+                                                ?.productAddToCartButton
+                                                ?.addToCartLabel?.value ||
+                                                'Add To Cart'
+                                          )}
+                                       </span>
+
+                                       {config?.menuSettings
+                                          ?.productAddToCartButton?.showIcon
+                                          ?.value && (
+                                          <>
+                                             &nbsp;
+                                             <BiPlus size={16} />
+                                          </>
+                                       )}
+                                    </div>
+                                 )
+                              ) : (
+                                 t(
+                                    config?.menuSettings?.productAddToCartButton
+                                       ?.viewProductLabel?.value ||
+                                       'View Product'
+                                 )
+                              )}
+                           </span>
                         </KioskButton>
                      ) : null
                   ) : (
                      <KioskCounterButton
                         config={config}
                         onMinusClick={() => {
-                           // console.log('combinedCartItems')
                            const idsAv = combinedCartItems
                               .filter(x => x.productId === productData.id)
                               .map(x => x.ids)
@@ -560,9 +629,33 @@ export const KioskProduct = props => {
             onCancel={() => {
                setShowChooseIncreaseType(false)
             }}
-            closable={false}
+            closable={
+               config?.productSettings?.repeatLastOne?.showCloseIcon?.value
+                  ? config?.productSettings?.repeatLastOne?.showCloseIcon?.value
+                  : false
+            }
             footer={null}
+            width={
+               config?.productSettings?.repeatLastOne?.variant?.value?.value ===
+               'large'
+                  ? 800
+                  : 520
+            }
+            className={classNames({
+               'hern-kiosk__increase-type-modal':
+                  config?.productSettings?.repeatLastOne?.variant?.value
+                     ?.value === 'large',
+            })}
+            closeIcon={<RoundedCloseIcon />}
          >
+            {config?.productSettings?.repeatLastOne?.showProductName?.value && (
+               <span
+                  className="hern-kiosk__product-type-mods__menu-product-name"
+                  data-translation="true"
+               >
+                  {productData.name}
+               </span>
+            )}
             <div
                style={{
                   display: 'flex',
@@ -592,7 +685,11 @@ export const KioskProduct = props => {
                   }}
                   buttonConfig={config.kioskSettings.buttonSettings}
                >
-                  {t('REPEAT LAST ONE')}
+                  {t(
+                     config?.productSettings?.repeatLastOne
+                        ?.labelForRepeatLastOneButton?.value ||
+                        'REPEAT LAST ONE'
+                  )}
                </KioskButton>
             </div>
          </Modal>
@@ -608,5 +705,50 @@ export const KioskProduct = props => {
             />
          )}
       </>
+   )
+}
+const KioskVegNonVegTypeIcon = ({ type }) => {
+   const isVeg = type === 'veg' || type === 'vegetarian'
+   if (type == null) return <></>
+   if (isVeg) {
+      return (
+         <svg
+            width="17"
+            height="17"
+            viewBox="0 0 17 17"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+         >
+            <rect
+               x="0.757812"
+               y="1.11987"
+               width="15"
+               height="15"
+               stroke="#4E9914"
+            />
+            <circle cx="8.25781" cy="8.61987" r="4" fill="#4E9914" />
+         </svg>
+      )
+   }
+   return (
+      <svg
+         width="17"
+         height="17"
+         viewBox="0 0 17 17"
+         fill="none"
+         xmlns="http://www.w3.org/2000/svg"
+      >
+         <rect
+            x="1.25781"
+            y="1.11993"
+            width="15"
+            height="15"
+            stroke="#D53440"
+         />
+         <path
+            d="M8.75781 4.61993L12.7578 11.0199H4.75781L8.75781 4.61993Z"
+            fill="#D53440"
+         />
+      </svg>
    )
 }

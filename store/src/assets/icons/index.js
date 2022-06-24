@@ -301,6 +301,15 @@ const EmptyReferralIll = dynamic(() =>
 )
 const Cloche = dynamic(() => import('./Cloche').then(promise => promise.Cloche))
 
+const RoundedCloseIcon = dynamic(() =>
+   import('./RoundedCloseIcon').then(promise => promise.RoundedCloseIcon)
+)
+const PaymentOptionIcon = dynamic(() =>
+   import('./PaymentOptionIcon').then(promise => promise.PaymentOptionIcon)
+)
+const BackSpaceIcon = dynamic(() =>
+   import('./BackSpaceIcon').then(promise => promise.BackSpaceIcon)
+)
 export {
    AddressIcon,
    ArrowLeftIcon,
@@ -390,4 +399,7 @@ export {
    EmptyStore,
    EmptyReferralIll,
    Cloche,
+   RoundedCloseIcon,
+   PaymentOptionIcon,
+   BackSpaceIcon,
 }

@@ -83,13 +83,24 @@ export const HernLazyImage = ({
       } else {
          return dataSrc
       }
-   }, [])
+   }, [dataSrc])
 
    const [src, setSrc] = React.useState(finalImageSrc)
    const [error, setError] = React.useState(false)
    const [LQIPimageUrl, setLQIPimageUrl] = React.useState(lowSizeBGImage)
    const [LQIPerror, setLQIPError] = React.useState(false)
    const [LQIPdisplay, setLQIPdisplay] = React.useState('unset')
+   const mainImageRef = React.useRef()
+
+   React.useEffect(() => {
+      if (src !== finalImageSrc) {
+         const node = mainImageRef.current
+         if (node?.className) {
+            node.className = `lazyload ${className}`
+         }
+         setSrc(finalImageSrc)
+      }
+   }, [dataSrc])
 
    const SERVER_URL = React.useMemo(() => {
       const storeMode = process?.env?.NEXT_PUBLIC_MODE || 'production'
@@ -115,7 +126,6 @@ export const HernLazyImage = ({
    }
 
    // removing data-src from rest bcz data-src using dynamically by state
-
    return (
       <div className="hern-image__image-container">
          <img
@@ -136,6 +146,7 @@ export const HernLazyImage = ({
             style={{ display: LQIPdisplay }}
          />
          <img
+            ref={mainImageRef}
             className={`lazyload ${className}`}
             data-src={src}
             // src={src}

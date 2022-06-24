@@ -47,6 +47,7 @@ import {
 
 const Serving = ({ id, isActive, toggleServingTunnel }) => {
    const { state, dispatch } = usePlan()
+   const [countArray, setCountArray] = React.useState([])
    const [tabIndex, setTabIndex] = React.useState(0)
    const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
    const [upsertTitle] = useMutation(UPSERT_SUBSCRIPTION_TITLE)
@@ -73,6 +74,10 @@ const Serving = ({ id, isActive, toggleServingTunnel }) => {
                isDefault: state.title.defaultServing.id === node.id,
             },
          })
+         // extract item counts in countArray:
+         for (let index = 0; index< node?.counts?.length; index++){
+            setCountArray((oldArray)=>[...oldArray,node.counts[index].count])
+         }
       },
    })
 
@@ -274,6 +279,7 @@ const Serving = ({ id, isActive, toggleServingTunnel }) => {
                tunnels={tunnels}
                itemTunnelState={itemTunnelState}
                closeTunnel={closeTunnel}
+               countArray={countArray}
             />
          </ErrorBoundary>
       </>
@@ -282,7 +288,7 @@ const Serving = ({ id, isActive, toggleServingTunnel }) => {
 
 export default Serving
 
-const ItemCountTunnel = ({ tunnels, itemTunnelState, closeTunnel }) => {
+const ItemCountTunnel = ({ tunnels, itemTunnelState, closeTunnel,countArray }) => {
    const { state } = usePlan()
    const [form, setForm] = React.useState({
       id: null,
@@ -327,6 +333,12 @@ const ItemCountTunnel = ({ tunnels, itemTunnelState, closeTunnel }) => {
 
    const save = () => {
       const { tax, count, price, isTaxIncluded } = form
+      
+      if (countArray.includes(parseInt(count))){
+         toast.error("Item count already exsit. Choose different one")
+         // throw Error('nothing to add')
+      }
+      else{
       upsertItemCount({
          variables: {
             object: {
@@ -340,6 +352,7 @@ const ItemCountTunnel = ({ tunnels, itemTunnelState, closeTunnel }) => {
             },
          },
       })
+   }
    }
 
    const handleChange = (name, value) => {

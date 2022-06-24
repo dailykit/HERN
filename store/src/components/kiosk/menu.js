@@ -13,6 +13,8 @@ import { PromotionCarousal } from '../../sections/promotionCarousel'
 import * as Scroll from 'react-scroll'
 import { HernLazyImage } from '../../utils/hernImage'
 import KioskButton from './component/button'
+import { BiChevronDown, BiChevronUp } from 'react-icons/bi'
+import classNames from 'classnames'
 
 const { Content, Sider, Header, Footer } = Layout
 
@@ -37,7 +39,7 @@ export const MenuSection = props => {
       )
    }
    if (status === 'error') {
-      return <div>Somthing went wring</div>
+      return <div>Something went wrong</div>
    }
    return (
       <Layout>
@@ -45,7 +47,15 @@ export const MenuSection = props => {
             {/* Promotion, coupons and progress bar */}
             <Layout style={{ height: '100%' }}>
                <ProgressBar config={config} setCurrentPage={setCurrentPage} />
-               <Content className="hern-kiosk__menu-promotion-coupons">
+               <Content
+                  style={{
+                     margin: config?.promotionalCarouselSettings
+                        ?.fullScreenCarousel?.value
+                        ? 0
+                        : '0 1em',
+                  }}
+                  className="hern-kiosk__menu-promotion-coupons"
+               >
                   <PromotionCarousal config={config} />
                </Content>
             </Layout>
@@ -71,8 +81,16 @@ const KioskMenu = props => {
    const { cartState, showCartIconToolTip } = React.useContext(CartContext)
    const { cart } = cartState
    const { isStoreAvailable } = useConfig()
+   const sidebarRef = React.useRef()
 
+   const scroll = scrollOffset => {
+      sidebarRef.current.scrollTop += scrollOffset
+   }
    const menuRef = React.useRef()
+   const [showVegMenuOnly, setShowVegMenuOnly] = useState(false)
+   const [vegMenu, setVegMenu] = useState(null)
+   const { t, dynamicTrans, direction } = useTranslation()
+
    const kioskFinalMenu = React.useMemo(() => {
       if (showVegMenuOnly) {
          return vegMenu
@@ -87,9 +105,6 @@ const KioskMenu = props => {
             .findIndex(x => x.isCategoryPublished && x.isCategoryAvailable)
             .toString()
    )
-   const [showVegMenuOnly, setShowVegMenuOnly] = useState(false)
-   const [vegMenu, setVegMenu] = useState(null)
-   const { t, dynamicTrans, direction } = useTranslation()
 
    const onCategorySelect = e => {
       setSelectedCategory(e.key)
@@ -100,7 +115,7 @@ const KioskMenu = props => {
          '[data-translation="true"]'
       )
       dynamicTrans(languageTags)
-   }, [])
+   }, [kioskMenus])
    useEffect(() => {
       const kioskMenusClone = JSON.parse(JSON.stringify(kioskMenus))
       const filteredVegMenu = kioskMenusClone
@@ -125,85 +140,134 @@ const KioskMenu = props => {
             height: `calc(100vh - ${isStoreAvailable ? '37em' : '42em'})`,
          }}
       >
-         <Sider
-            width={250}
-            theme={'light'}
-            className="hern-kiosk__menu-category-side-bar"
-         >
-            <Menu
+         <div className="hern-kiosk__menu-category-side-bar__wrapper">
+            {config.menuSettings?.category?.showArrow?.value && (
+               <button
+                  className="hern-kiosk__menu-category-arrow"
+                  onClick={() => scroll(-200)}
+               >
+                  <span>
+                     <BiChevronUp color="var(--hern-primary-color)" size={28} />
+                  </span>
+               </button>
+            )}
+            <Sider
+               width={250}
                theme={'light'}
-               mode={'vertical'}
-               onSelect={onCategorySelect}
-               defaultSelectedKeys={[selectedCategory]}
+               className="hern-kiosk__menu-category-side-bar"
+               ref={sidebarRef}
+               style={{
+                  scrollBehavior: 'smooth',
+                  height: config.menuSettings?.category?.showArrow?.value
+                     ? 'calc(100% - 86px)'
+                     : '100%',
+               }}
             >
-               {kioskFinalMenu.map((eachCategory, index) => {
-                  if (!eachCategory.isCategoryPublished) {
-                     return null
-                  }
-                  return (
-                     <Menu.Item key={index} style={{ height: '13em' }}>
-                        <div
-                           className="hern-kiosk__menu-page-product-category"
-                           style={{
-                              ...(index == selectedCategory && {
-                                 border: ` 4px solid ${config.kioskSettings.theme.primaryColor.value}`,
-                              }),
-                           }}
-                        >
-                           <Scroll.Link
-                              containerId="hern-kiosk__menu-list"
-                              smooth={true}
-                              // activeClass="hern-on-demand-menu__navigationAnchor-li--active"
-                              onSetActive={to => {
-                                 setSelectedCategory(index)
-                                 // changeCategory(index)
-                                 // console.log('thisIsTo', to)
+               <Menu
+                  theme={'light'}
+                  mode={'vertical'}
+                  onSelect={onCategorySelect}
+                  defaultSelectedKeys={[selectedCategory]}
+               >
+                  {kioskFinalMenu.map((eachCategory, index) => {
+                     if (!eachCategory.isCategoryPublished) {
+                        return null
+                     }
+                     return (
+                        <Menu.Item key={index} style={{ height: '13em' }}>
+                           <div
+                              className="hern-kiosk__menu-page-product-category"
+                              style={{
+                                 ...(index == selectedCategory && {
+                                    border: ` 4px solid ${config.kioskSettings.theme.primaryColor.value}`,
+                                 }),
                               }}
-                              to={eachCategory.name}
-                              spy={true}
-                              className="hern-kiosk__category-scroll-link"
                            >
-                              <HernLazyImage
-                                 dataSrc={
-                                    eachCategory?.imageUrl ||
-                                    config.productSettings.defaultImage.value
-                                 }
-                                 alt="category image"
-                                 style={{ width: '100px', height: '100px' }}
-                                 width={100}
-                                 height={100}
-                                 className="hern-kiosk__menu-page-product-category-image"
-                              />
-                              <span
-                                 className="hern-kiosk__menu-page-product-category-title"
-                                 style={{
-                                    ...((index == selectedCategory ||
-                                       index == categoryId) && {
-                                       color: `${config.kioskSettings.theme.primaryColor.value}`,
-                                    }),
+                              <Scroll.Link
+                                 containerId="hern-kiosk__menu-list"
+                                 smooth={true}
+                                 // activeClass="hern-on-demand-menu__navigationAnchor-li--active"
+                                 onSetActive={to => {
+                                    setSelectedCategory(index)
+                                    // changeCategory(index)
+                                    // console.log('thisIsTo', to)
                                  }}
-                                 data-translation="true"
+                                 to={eachCategory.name}
+                                 spy={true}
+                                 className="hern-kiosk__category-scroll-link"
                               >
-                                 {eachCategory.name}
-                              </span>
-                           </Scroll.Link>
-                        </div>
-                     </Menu.Item>
-                  )
-               })}
-            </Menu>
-         </Sider>
+                                 <HernLazyImage
+                                    dataSrc={
+                                       eachCategory?.imageUrl ||
+                                       config.productSettings.defaultImage.value
+                                    }
+                                    alt="category image"
+                                    style={{ width: '100px', height: '100px' }}
+                                    width={100}
+                                    height={100}
+                                    className="hern-kiosk__menu-page-product-category-image"
+                                 />
+                                 <span
+                                    className="hern-kiosk__menu-page-product-category-title"
+                                    style={{
+                                       ...((index == selectedCategory ||
+                                          index == categoryId) && {
+                                          color: `${config.kioskSettings.theme.primaryColor.value}`,
+                                       }),
+                                    }}
+                                    data-translation="true"
+                                 >
+                                    {eachCategory.name}
+                                 </span>
+                              </Scroll.Link>
+                           </div>
+                        </Menu.Item>
+                     )
+                  })}
+               </Menu>
+            </Sider>
+            {config.menuSettings?.category?.showArrow?.value && (
+               <button
+                  className="hern-kiosk__menu-category-arrow"
+                  onClick={() => scroll(200)}
+               >
+                  <span>
+                     <BiChevronDown
+                        color="var(--hern-primary-color)"
+                        size={28}
+                     />
+                  </span>
+               </button>
+            )}
+         </div>
          <Content>
             <Layout style={{ height: '100%', backgroundColor: '#fff' }}>
-               <Header theme={'light'} className="hern-kiosk__menu-header">
-                  <Row className="hern-kiosk__menu-header-row">
+               <Header
+                  style={{
+                     ...(config?.menuSettings?.header?.height?.value && {
+                        height: config.menuSettings.header.height.value,
+                     }),
+                  }}
+                  theme={'light'}
+                  className="hern-kiosk__menu-header"
+               >
+                  <Row
+                     style={{
+                        ...(config?.menuSettings?.header?.alignItems?.value
+                           ?.value && {
+                           alignItems:
+                              config.menuSettings.header.alignItems.value.value,
+                        }),
+                     }}
+                     className="hern-kiosk__menu-header-row"
+                  >
                      {config.menuSettings?.showVegToggle?.value && (
                         <Col
                            span={4}
                            className="hern-kiosk__menu-header-veg-switch"
                         >
                            <span className="hern-kiosk__menu-header-veg-text">
-                              {t('VEG')}
+                              {t('Veg')}
                            </span>
                            <Switch
                               onClick={checked => {
@@ -231,6 +295,12 @@ const KioskMenu = props => {
                               className="hern-kiosk__menu-header-heading"
                               style={{
                                  color: `${config.kioskSettings.theme.primaryColor.value}`,
+                                 ...(config?.menuSettings?.header?.fontSize
+                                    ?.value && {
+                                    fontSize:
+                                       config.menuSettings.header.fontSize
+                                          .value,
+                                 }),
                               }}
                            >
                               {t('Menu')}
@@ -245,32 +315,53 @@ const KioskMenu = props => {
                               setCurrentPage('cartPage')
                            }}
                         >
-                           <KioskButton
-                              customClass="hern-kiosk__goto-cart-btn"
-                              buttonConfig={config.kioskSettings.buttonSettings}
-                           >
+                           {config?.menuSettings?.cartButton?.variant?.value
+                              ?.value === 'simple' ? (
                               <CartIcon
                                  size={25}
                                  stroke={
                                     config.kioskSettings.buttonSettings
                                        .textColor.value
                                  }
+                                 variant="simple"
                               />
-                              <span
-                                 className="hern-kiosk__goto-cart-btn-text"
-                                 style={{
-                                    color: `${config.kioskSettings.buttonSettings.textColor.value}`,
-                                 }}
+                           ) : (
+                              <KioskButton
+                                 customClass="hern-kiosk__goto-cart-btn"
+                                 buttonConfig={
+                                    config.kioskSettings.buttonSettings
+                                 }
                               >
-                                 {t('Go To Cart')}
-                              </span>
-                           </KioskButton>
+                                 <CartIcon
+                                    size={25}
+                                    stroke={
+                                       config.kioskSettings.buttonSettings
+                                          .textColor.value
+                                    }
+                                    variant="bag"
+                                 />
+                                 <span
+                                    className="hern-kiosk__goto-cart-btn-text"
+                                    style={{
+                                       color: `${config.kioskSettings.buttonSettings.textColor.value}`,
+                                    }}
+                                 >
+                                    {t('Go To Cart')}
+                                 </span>
+                              </KioskButton>
+                           )}
+
                            <div
                               style={{
                                  position: 'absolute',
                                  top: '-1.2em',
                                  right: '-17px',
                               }}
+                              className={classNames({
+                                 'hern-kiosk__cart-count--simple':
+                                    config?.menuSettings?.cartButton?.variant
+                                       ?.value?.value === 'simple',
+                              })}
                            >
                               {cart?.cartItems_aggregate?.aggregate?.count >
                                  0 && (
@@ -284,15 +375,37 @@ const KioskMenu = props => {
                            </div>
                            {cart?.cartItems_aggregate?.aggregate?.count > 0 &&
                               showCartIconToolTip && (
-                                 <div className="hern-kiosk__cart-tool-tip">
+                                 <div
+                                    style={{
+                                       left:
+                                          config?.menuSettings?.toolTip?.variant
+                                             ?.value?.value === 'square'
+                                             ? '0'
+                                             : 'auto',
+                                    }}
+                                    className="hern-kiosk__cart-tool-tip"
+                                 >
                                     <span
                                        className="hern-kiosk__cart-tool-tip-text"
                                        style={{
-                                          background:
-                                             config.kioskSettings.theme
-                                                .secondaryColorLight.value,
-                                          color: config.kioskSettings.theme
-                                             .primaryColor.value,
+                                          background: config?.menuSettings
+                                             ?.toolTip?.backgroundColor?.value
+                                             ? config?.menuSettings?.toolTip
+                                                  ?.backgroundColor?.value
+                                             : config.kioskSettings.theme
+                                                  .secondaryColorLight.value,
+                                          color: config?.menuSettings?.toolTip
+                                             ?.color?.value
+                                             ? config?.menuSettings?.toolTip
+                                                  ?.color?.value
+                                             : config.kioskSettings.theme
+                                                  .primaryColor.value,
+                                          borderRadius:
+                                             config?.menuSettings?.toolTip
+                                                ?.variant?.value?.value ===
+                                             'square'
+                                                ? '0px'
+                                                : '12px',
                                        }}
                                     >
                                        {
@@ -310,9 +423,18 @@ const KioskMenu = props => {
                                     <div
                                        className="hern-kiosk__cart-tip"
                                        style={{
-                                          background:
-                                             config.kioskSettings.theme
-                                                .secondaryColorLight.value,
+                                          background: config?.menuSettings
+                                             ?.toolTip?.backgroundColor?.value
+                                             ? config?.menuSettings?.toolTip
+                                                  ?.backgroundColor?.value
+                                             : config.kioskSettings.theme
+                                                  .secondaryColorLight.value,
+                                          ...(config?.menuSettings?.toolTip
+                                             ?.variant?.value?.value ===
+                                             'square' && {
+                                             zIndex: '-1',
+                                             width: '28px',
+                                          }),
                                        }}
                                     ></div>
                                  </div>

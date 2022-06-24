@@ -21,9 +21,9 @@ import { HernLazyImage } from '../utils/hernImage'
 const CartCard = props => {
    // productData --> product data from cart
    const { productData, removeCartItems, quantity = 0 } = props
-   console.log("productData",productData)
+
    const { brand, locationId, isConfigLoading, brandLocation } = useConfig()
-   const { addToCart,cartState } = React.useContext(CartContext)
+   const { addToCart, cartState } = React.useContext(CartContext)
    const { t, dynamicTrans, locale } = useTranslation()
    const { formatMessage } = useIntl()
 
@@ -112,7 +112,7 @@ const CartCard = props => {
 
    useEffect(() => {
       if (repeatLastOneData && forRepeatLastOne) {
-            repeatLastOne(repeatLastOneData.product)
+         repeatLastOne(repeatLastOneData.product)
       }
    }, [repeatLastOneData, forRepeatLastOne])
 
@@ -126,11 +126,11 @@ const CartCard = props => {
          setShowChooseIncreaseType(false)
          return
       }
-      
+
       const productOptionId =
-      cartDetailSelectedProduct.childs[0].productOption.id
+         cartDetailSelectedProduct.childs[0].productOption.id
       const modifierCategoryOptionsIds =
-      cartDetailSelectedProduct.childs[0].childs.map(
+         cartDetailSelectedProduct.childs[0].childs.map(
             x => x?.modifierOption?.id
          )
 
@@ -141,7 +141,7 @@ const CartCard = props => {
 
       // select all modifier option id which has modifier option ( parent modifier option id)
       const modifierOptionsConsistAdditionalModifiers =
-      cartDetailSelectedProduct.childs[0].childs
+         cartDetailSelectedProduct.childs[0].childs
             .map(eachModifierOption => {
                if (eachModifierOption.childs.length > 0) {
                   return {
@@ -212,89 +212,88 @@ const CartCard = props => {
                })
             })
          })
-         const modifierOptionsConsistAdditionalModifiersWithData = modifierOptionsConsistAdditionalModifiers.map(
-            eachModifierOptionsConsistAdditionalModifiers => {
-               let additionalModifierOptions = []
-               selectedProductOption.additionalModifiers.forEach(
-                  additionalModifier => {
-                     if (additionalModifier.modifier) {
-                        additionalModifier.modifier.categories.forEach(
-                           eachCategory => {
-                              eachCategory.options.forEach(eachOption => {
+         const modifierOptionsConsistAdditionalModifiersWithData =
+            modifierOptionsConsistAdditionalModifiers.map(
+               eachModifierOptionsConsistAdditionalModifiers => {
+                  let additionalModifierOptions = []
+                  selectedProductOption.additionalModifiers.forEach(
+                     additionalModifier => {
+                        if (additionalModifier.modifier) {
+                           additionalModifier.modifier.categories.forEach(
+                              eachCategory => {
+                                 eachCategory.options.forEach(eachOption => {
+                                    if (eachOption.additionalModifierTemplate) {
+                                       eachOption.additionalModifierTemplate.categories.forEach(
+                                          eachCategory => {
+                                             additionalModifierOptions.push(
+                                                ...eachCategory.options.map(
+                                                   eachOptionTemp => ({
+                                                      ...eachOptionTemp,
+                                                      categoryId:
+                                                         eachCategory.id,
+                                                   })
+                                                )
+                                             )
+                                          }
+                                       )
+                                    }
+                                 })
+                              }
+                           )
+                        }
+                     }
+                  )
+                  // for single modifiers
+                  if (selectedProductOption.modifier) {
+                     selectedProductOption.modifier.categories.forEach(
+                        eachCategory => {
+                           eachCategory.options.forEach(eachOption => {
+                              if (eachOption.additionalModifierTemplateId) {
                                  if (eachOption.additionalModifierTemplate) {
-                                    console.log("getting Error Here",eachOption.additionalModifierTemplate)
                                     eachOption.additionalModifierTemplate.categories.forEach(
                                        eachCategory => {
                                           additionalModifierOptions.push(
                                              ...eachCategory.options.map(
                                                 eachOptionTemp => ({
                                                    ...eachOptionTemp,
-                                                   categoryId:
-                                                      eachCategory.id,
+                                                   categoryId: eachCategory.id,
                                                 })
                                              )
                                           )
                                        }
                                     )
                                  }
-                              })
-                           }
-                        )
-                     }
-                  }
-               )
-               // for single modifiers
-               if (selectedProductOption.modifier) {
-                  selectedProductOption.modifier.categories.forEach(
-                     eachCategory => {
-                        eachCategory.options.forEach(eachOption => {
-                           if (eachOption.additionalModifierTemplateId) {
-                              if (eachOption.additionalModifierTemplate) {
-                                 eachOption.additionalModifierTemplate.categories.forEach(
-                                    eachCategory => {
-                                       additionalModifierOptions.push(
-                                          ...eachCategory.options.map(
-                                             eachOptionTemp => ({
-                                                ...eachOptionTemp,
-                                                categoryId:
-                                                   eachCategory.id,
-                                             })
-                                          )
-                                       )
-                                    }
-                                 )
                               }
-                           }
-                        })
-                     }
-                  )
-               }
-
-               const mapedModifierOptions =
-                  eachModifierOptionsConsistAdditionalModifiers.selectedModifierOptionIds.map(
-                     eachId => {
-                        const additionalModifierOption =
-                           additionalModifierOptions.find(
-                              x => x.id === eachId
-                           )
-                        const selectedOption = {
-                           modifierCategoryID:
-                              additionalModifierOption.categoryId,
-                           modifierCategoryOptionsID:
-                              additionalModifierOption.id,
-                           modifierCategoryOptionsPrice:
-                              additionalModifierOption.price,
-                           cartItem: additionalModifierOption.cartItem,
+                           })
                         }
-                        return selectedOption
-                     }
-                  )
-               return {
-                  ...eachModifierOptionsConsistAdditionalModifiers,
-                  data: mapedModifierOptions,
+                     )
+                  }
+
+                  const mapedModifierOptions =
+                     eachModifierOptionsConsistAdditionalModifiers.selectedModifierOptionIds.map(
+                        eachId => {
+                           const additionalModifierOption =
+                              additionalModifierOptions.find(
+                                 x => x.id === eachId
+                              )
+                           const selectedOption = {
+                              modifierCategoryID:
+                                 additionalModifierOption.categoryId,
+                              modifierCategoryOptionsID:
+                                 additionalModifierOption.id,
+                              modifierCategoryOptionsPrice:
+                                 additionalModifierOption.price,
+                              cartItem: additionalModifierOption.cartItem,
+                           }
+                           return selectedOption
+                        }
+                     )
+                  return {
+                     ...eachModifierOptionsConsistAdditionalModifiers,
+                     data: mapedModifierOptions,
+                  }
                }
-            }
-         )
+            )
 
          // root modifiers options + additional modifier's modifier options
          const resultSelectedModifier = [
@@ -343,6 +342,26 @@ const CartCard = props => {
       )
       dynamicTrans(languageTags)
    }, [locale, showAdditionalDetailsOnCard])
+
+   // check product and product option available in cart are valid or not by there isPublished and  isAvailability
+   const isProductAvailable = product => {
+      const selectedProductOption = product.product.productOptions.find(
+         option => option.id === product.childs[0]?.productOption?.id
+      )
+      if (!isEmpty(selectedProductOption)) {
+         return (
+            product.product.isAvailable &&
+            product.product.isPublished &&
+            !product.product.isArchived &&
+            selectedProductOption.isAvailable &&
+            !selectedProductOption.isArchived &&
+            selectedProductOption.isPublished
+         )
+      } else {
+         return product.product.isAvailable && product.product.isPublished
+      }
+   }
+
    return (
       <div className="hern-cart-card">
          <div className="hern-cart-card__img">
@@ -568,24 +587,36 @@ const CartCard = props => {
             </div>
 
             <div className="hern-cart-card__bottom">
-               <CounterButton
-                  count={productData.ids.length}
-                  incrementClick={() => {
-                     if (productData.childs.length > 0) {
-                        setShowChooseIncreaseType(true)
-                     } else {
-                        setCartDetailSelectedProduct(productData)
-                        setModifyProductId(productData.productId)
-                        setForRepeatLastOne(true)
+               {isProductAvailable(productData) ? (
+                  <CounterButton
+                     count={productData.ids.length}
+                     incrementClick={() => {
+                        if (productData.childs.length > 0) {
+                           setShowChooseIncreaseType(true)
+                        } else {
+                           setCartDetailSelectedProduct(productData)
+                           setModifyProductId(productData.productId)
+                           setForRepeatLastOne(true)
+                        }
+                     }}
+                     decrementClick={() =>
+                        removeCartItems([
+                           productData.ids[productData.ids.length - 1],
+                        ])
                      }
-                  }}
-                  decrementClick={() =>
-                     removeCartItems([
-                        productData.ids[productData.ids.length - 1],
-                     ])
-                  }
-                  showDeleteButton
-               />
+                     showDeleteButton
+                  />
+               ) : (
+                  <span
+                     style={{
+                        color: '#f33737',
+                        fontWeight: '500',
+                        fontSize: '13px',
+                     }}
+                  >
+                     This product is not available
+                  </span>
+               )}
                <div className="hern-cart-card__price">
                   {getTotalPrice.totalDiscount > 0 && (
                      <span className="hern-cart-card__price__discount">

@@ -22,8 +22,13 @@ import { useConfig } from '../../lib'
 
 export const CartDetails = () => {
    //context
-   const { cartState, methods, combinedCartItems, isFinalCartLoading } =
-      React.useContext(CartContext)
+   const {
+      cartState,
+      methods,
+      combinedCartItems,
+      isFinalCartLoading,
+      isCartValidByProductAvailability,
+   } = React.useContext(CartContext)
 
    const { settings } = useConfig()
    const { user, isAuthenticated } = useUser()
@@ -96,6 +101,11 @@ export const CartDetails = () => {
          <h2>
             <span>{t('Items')}</span>({combinedCartItems.length})
          </h2>
+         {!isCartValidByProductAvailability && (
+            <p className="hern-cart__cart-warning">
+               Some products in cart are not available
+            </p>
+         )}
          {combinedCartItems.map((product, index) => {
             return (
                <CartCard
