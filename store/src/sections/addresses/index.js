@@ -100,9 +100,14 @@ const Content = () => {
          addToast(t('Can not delete a default address!'), { appearance: 'error' })
          return
       }
-      deleteCustomerAddress({
-         variables: { id },
-      })
+
+      let confirmationForDelete = confirm("Are you sure you want to delete?");
+
+      if(confirmationForDelete){
+         deleteCustomerAddress({
+            variables: { id },
+         })
+      }
    }
 
    const makeDefault = async address => {
@@ -129,7 +134,7 @@ const Content = () => {
                   color: `${theme.accent ? theme.accent : 'rgba(5,150,105,1)'}`,
                }}
             >
-               {t("Addresses")}
+               {t("Manage Addresses")}
             </h2>
             {user?.platform_customer?.addresses.length > 0 && (
                <Button bg={theme?.accent} onClick={() => toggleTunnel(true)}>
@@ -171,12 +176,15 @@ const Content = () => {
                                  />
                               </button>
                            </header>
+                           <span>{address?.label}</span>
                            <span>{address?.line1}</span>
                            <span>{address?.line2}</span>
-                           <span>{address?.city}</span>
-                           <span>{address?.state}</span>
-                           <span>{address?.country}</span>
-                           <span>{address?.zipcode}</span>
+                           <div>
+                              <span>{address?.city}</span>,
+                              <span>{address?.state}</span>,
+                              <span>{address?.country}</span>,
+                              <span>{address?.zipcode}</span>
+                           </div>
                         </li>
                      ))}
                   </ul>
