@@ -42,6 +42,7 @@
 @use './sections/our-plans';
 @use './sections/our-menu';
 @use './sections/order-info';
+@use './sections/placing-order-info.scss';
 @use './sections/select-delivery';
 @use './sections/select-menu';
 @use './cart/cart_billing';
@@ -85,3 +86,6 @@
 @use './sections/faq.scss';
 @use './components/delivery_progress.scss';
 @use './components/empty.scss';
+@use './components/page_banner.scss';
+@use './sections/subscription-checkout.scss';
+@use './components/plan_info.scss';

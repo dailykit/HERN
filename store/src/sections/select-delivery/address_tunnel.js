@@ -4,13 +4,15 @@ import { useToasts } from 'react-toast-notifications'
 import GooglePlacesAutocomplete from 'react-google-places-autocomplete'
 
 import { useDelivery } from './state'
-import { useUser, CartContext, useTranslation } from '../../context'
+import { useUser, useTranslation } from '../../context'
 import { MUTATIONS } from '../../graphql'
-import { CloseIcon } from '../../assets/icons'
+import { AddressLabelIcon, CloseIcon, LocationIcon } from '../../assets/icons'
 import { useScript, isClient, get_env, useOnClickOutside } from '../../utils'
 import { Tunnel, Button, Form, Spacer } from '../../components'
 import { useConfig } from '../../lib'
-import { Modal } from 'antd'
+import { Input, Modal } from 'antd'
+import { AiOutlineClose } from 'react-icons/ai'
+import classNames from 'classnames'
 const ReactPixel = isClient ? require('react-facebook-pixel').default : null
 
 export const AddressTunnel = props => {
@@ -19,39 +21,19 @@ export const AddressTunnel = props => {
       showAddressForm = true,
       onInputFiledSelect,
       onSubmitAddress,
-      useLocalAddress = false, // use local address as address
+      onSavingSuccess,
    } = props
 
    // outside --> use without this component without popup
 
    const { user } = useUser()
    const { addToast } = useToasts()
-   const { t, dynamicTrans } = useTranslation()
-   const { methods } = React.useContext(CartContext)
+   const { t } = useTranslation()
    const { state, dispatch } = outside
       ? { state: {}, dispatch: {} }
       : useDelivery()
    const { selectedOrderTab } = useConfig()
    const userAddressFormRef = React.useRef()
-   useOnClickOutside(userAddressFormRef, () => {
-      if (!address) {
-         return
-      }
-      if (!address.line1) {
-         setAddressWarnings(prev => ({
-            ...prev,
-            line1: true,
-         }))
-         return
-      }
-      console.log('this is valid location')
-      if (useLocalAddress) {
-         handleSubmitLocal()
-      } else {
-         handleSubmit()
-      }
-   })
-
    const [formStatus, setFormStatus] = React.useState('PENDING')
    const [address, setAddress] = React.useState(null)
    const [createAddress] = useMutation(MUTATIONS.CUSTOMER.ADDRESS.CREATE, {
@@ -60,6 +42,7 @@ export const AddressTunnel = props => {
          addToast(t('Address has been saved.'), {
             appearance: 'success',
          })
+         onSavingSuccess()
          if (!outside) {
             toggleTunnel(false)
             dispatch({ type: 'SET_ADDRESS', payload: address })
@@ -80,9 +63,6 @@ export const AddressTunnel = props => {
            )}&libraries=places`
          : ''
    )
-   const [addressWarnings, setAddressWarnings] = React.useState({
-      line1: false,
-   }) // to show warning for required field
 
    const formatAddress = async input => {
       if (!isClient) return 'Runs only on client side.'
@@ -143,39 +123,6 @@ export const AddressTunnel = props => {
       })
    }
 
-   const handleSubmitLocal = () => {
-      setFormStatus('SAVING')
-      const userLocationInLocal = JSON.parse(
-         localStorage.getItem('userLocation')
-      )
-      const addressFromLocal = {
-         ...address,
-         city: userLocationInLocal.address.city,
-         country: userLocationInLocal.address.country,
-         state: userLocationInLocal.address.state,
-         zipcode: userLocationInLocal.address.zipcode.toString(),
-         lat: userLocationInLocal.latitude.toString(),
-         lng: userLocationInLocal.longitude.toString(),
-         line2: userLocationInLocal.address.mainText,
-         searched: userLocationInLocal.searched || '',
-      }
-      if (user?.keycloakId) {
-         if (outside) {
-            onSubmitAddress(addressFromLocal)
-         }
-         createAddress({
-            variables: {
-               object: { ...addressFromLocal, keycloakId: user?.keycloakId },
-            },
-         })
-      } else {
-         if (outside) {
-            onSubmitAddress(addressFromLocal)
-         }
-      }
-      setAddress(null)
-   }
-
    const handleSubmit = () => {
       setFormStatus('SAVING')
       // if user authenticate than add address to users details
@@ -201,92 +148,22 @@ export const AddressTunnel = props => {
    }
 
    // outside --> use without tunnel
-   // useLocalAddress --> use localStorage address (getting from location selector) for address
-   if (outside && useLocalAddress) {
-      return (
-         <div className="hern-address__address-form" ref={userAddressFormRef}>
-            <Form.Field>
-               <Form.Label>
-                  {t('Apartment/Building Info/Street info*')}
-                  <span className="hern-address-warning">
-                     {addressWarnings?.line1 ? t('fill this field') : null}
-                  </span>
-               </Form.Label>
-               <Form.Text
-                  type="text"
-                  placeholder="Enter apartment/building info/street info"
-                  value={address?.line1 || ''}
-                  onChange={e => {
-                     if (!e.target.value) {
-                        setAddressWarnings(prev => ({
-                           ...prev,
-                           line1: true,
-                        }))
-                     } else {
-                        setAddressWarnings(prev => ({
-                           ...prev,
-                           line1: false,
-                        }))
-                     }
-                     setAddress({ ...address, line1: e.target.value })
-                  }}
-               />
-            </Form.Field>
-            <Form.Field>
-               <Form.Label>{t('Landmark')}</Form.Label>
-               <Form.Text
-                  type="text"
-                  value={address?.landmark || ''}
-                  placeholder="Enter landmark"
-                  onChange={e =>
-                     setAddress({
-                        ...address,
-                        landmark: e.target.value,
-                     })
-                  }
-               />
-            </Form.Field>
 
-            <Form.Field>
-               <Form.Label>{t('Label')}</Form.Label>
-               <Form.Text
-                  type="text"
-                  value={address?.label || ''}
-                  placeholder="Enter label for this address"
-                  onChange={e =>
-                     setAddress({ ...address, label: e.target.value })
-                  }
-               />
-            </Form.Field>
-            <Form.Field>
-               <Form.Label>{t('Dropoff Instructions')}</Form.Label>
-               <Form.TextArea
-                  type="text"
-                  value={address?.notes || ''}
-                  placeholder="Enter dropoff instructions"
-                  onChange={e =>
-                     setAddress({ ...address, notes: e.target.value })
-                  }
-               />
-            </Form.Field>
-            <Spacer />
-         </div>
-      )
-   }
    if (outside) {
       return (
-         <>
+         <div className="hern-delivery__address--outside">
             <section className="hern-delivery__address-tunnel__address-search">
-               <Form.Label>
-                  <span>{t('Search')}</span>
+               {/* <Form.Label>
+                  <span>{t('Search')}</span> &nbsp;
                   {selectedOrderTab ? ' ' + selectedOrderTab.label : ''}
                   <span>{t('Address')}</span>
-               </Form.Label>
+               </Form.Label> */}
                {loaded && !error && (
                   <GooglePlacesAutocomplete
                      inputClassName="hern-store-location-selector-main__location-input"
                      onSelect={data => formatAddress(data)}
                      apiKey={get_env('GOOGLE_API_KEY')}
+                     placeholder="Search address"
                   />
                )}
             </section>
@@ -296,78 +173,163 @@ export const AddressTunnel = props => {
                      className="hern-address__address-form"
                      ref={userAddressFormRef}
                   >
-                     <Form.Field>
-                        <Form.Label>
-                           {t('Apartment/Building Info/Street info*')}
-                           <span className="hern-address-warning">
-                              {addressWarnings.line1
-                                 ? t('fill this field')
-                                 : null}
-                           </span>
-                        </Form.Label>
-                        <Form.Text
-                           type="text"
-                           placeholder="Enter apartment/building info/street info"
-                           value={address.line1 || ''}
-                           onChange={e => {
-                              if (!e.target.value) {
-                                 setAddressWarnings(prev => ({
-                                    ...prev,
-                                    line1: true,
-                                 }))
-                              } else {
-                                 setAddressWarnings(prev => ({
-                                    ...prev,
-                                    line1: false,
-                                 }))
+                     <>
+                        <Form.Field>
+                           <Form.Label>
+                              {t('Apartment/Building Info/Street info*')}
+                           </Form.Label>
+                           <Form.Text
+                              type="text"
+                              placeholder="Enter apartment/building info/street info"
+                              value={address.line1 || ''}
+                              onChange={e =>
+                                 setAddress({
+                                    ...address,
+                                    line1: e.target.value,
+                                 })
                               }
-                              setAddress({ ...address, line1: e.target.value })
+                           />
+                        </Form.Field>
+                        <div
+                           style={{
+                              display: 'grid',
+                              gap: '1rem 3rem',
+                              gridTemplateColumns:
+                                 'repeat(auto-fit, minmax(280px, 1fr))',
                            }}
-                        />
-                     </Form.Field>
-                     <Form.Field>
-                        <Form.Label>{t('Landmark')}</Form.Label>
-                        <Form.Text
-                           type="text"
-                           value={address.landmark || ''}
-                           placeholder="Enter landmark"
-                           onChange={e =>
-                              setAddress({
-                                 ...address,
-                                 landmark: e.target.value,
-                              })
-                           }
-                        />
-                     </Form.Field>
+                        >
+                           <Form.Field>
+                              <Form.Label>{t('Line 2')}</Form.Label>
+                              <Form.Text
+                                 type="text"
+                                 placeholder="Enter line 2"
+                                 value={address.line2 || ''}
+                                 onChange={e =>
+                                    setAddress({
+                                       ...address,
+                                       line2: e.target.value,
+                                    })
+                                 }
+                              />
+                           </Form.Field>
+                           <Form.Field>
+                              <Form.Label>{t('Landmark')}</Form.Label>
+                              <Form.Text
+                                 type="text"
+                                 value={address.landmark || ''}
+                                 placeholder="Enter landmark"
+                                 onChange={e =>
+                                    setAddress({
+                                       ...address,
+                                       landmark: e.target.value,
+                                    })
+                                 }
+                              />
+                           </Form.Field>
+                        </div>
+                        <div
+                           style={{
+                              display: 'grid',
+                              gap: '1rem 2.5rem',
+                              gridTemplateColumns:
+                                 'repeat(auto-fit, minmax(216px, 1fr))',
+                           }}
+                        >
+                           <Form.Field>
+                              <Form.Label>{t('City*')}</Form.Label>
+                              <Form.Text
+                                 type="text"
+                                 placeholder="Enter city"
+                                 value={address.city || ''}
+                                 onChange={e =>
+                                    setAddress({
+                                       ...address,
+                                       city: e.target.value,
+                                    })
+                                 }
+                              />
+                           </Form.Field>
+                           <Form.Field>
+                              <Form.Label>{t('State')}</Form.Label>
+                              <Form.Text
+                                 readOnly
+                                 value={
+                                    address.state?.length
+                                       ? address.state
+                                       : 'N/A'
+                                 }
+                              />
+                           </Form.Field>
+                           <Form.Field>
+                              <Form.Label>{t('Country')}</Form.Label>
+                              <Form.Text readOnly value={address.country} />
+                           </Form.Field>
+                           <Form.Field>
+                              <Form.Label>{t('Zipcode')}</Form.Label>
+                              <Form.Text readOnly value={address.zipcode} />
+                           </Form.Field>
+                        </div>
+                        <div
+                           style={{
+                              display: 'grid',
+                              gap: '1rem 3rem',
+                              gridTemplateColumns:
+                                 'repeat(auto-fit, minmax(280px, 1fr))',
+                           }}
+                        >
+                           <AddressLabel
+                              address={address}
+                              setAddress={setAddress}
+                           />
 
-                     <Form.Field>
-                        <Form.Label>{t('Label')}</Form.Label>
-                        <Form.Text
-                           type="text"
-                           value={address.label || ''}
-                           placeholder="Enter label for this address"
-                           onChange={e =>
-                              setAddress({ ...address, label: e.target.value })
+                           <Form.Field>
+                              <Form.Label>
+                                 {t('Drop off Instructions')}
+                              </Form.Label>
+                              <Form.TextArea
+                                 type="text"
+                                 value={address.notes || ''}
+                                 placeholder="Enter drop off instructions"
+                                 onChange={e =>
+                                    setAddress({
+                                       ...address,
+                                       notes: e.target.value,
+                                    })
+                                 }
+                              />
+                           </Form.Field>
+                        </div>
+
+                        <button
+                           className={classNames(
+                              'hern-delivery__address-tunnel__save-btn',
+                              {
+                                 'hern-delivery__address-tunnel__save-btn--disabled':
+                                    !address?.line1 ||
+                                    !address?.city ||
+                                    formStatus === 'SAVING',
+                              }
+                           )}
+                           onClick={() => handleSubmit()}
+                           disabled={
+                              !address?.line1 ||
+                              !address?.city ||
+                              formStatus === 'SAVING'
                            }
-                        />
-                     </Form.Field>
-                     <Form.Field>
-                        <Form.Label>{t('Dropoff Instructions')}</Form.Label>
-                        <Form.TextArea
-                           type="text"
-                           value={address.notes || ''}
-                           placeholder="Enter dropoff instructions"
-                           onChange={e =>
-                              setAddress({ ...address, notes: e.target.value })
-                           }
-                        />
-                     </Form.Field>
-                     <Spacer />
+                        >
+                           {formStatus === 'SAVING' ? (
+                              <>{t('Saving...')}</>
+                           ) : (
+                              <>{t('Save Address')}</>
+                           )}
+                        </button>
+                        <Spacer />
+                     </>
                   </div>
                ) : (
                   <>{showWarningPopup}</>
                ))}
-         </>
+         </div>
       )
    }
    return (
@@ -499,5 +461,95 @@ export const AddressTunnel = props => {
             )}
          </Tunnel.Body>
       </Tunnel.Wrapper>
+   )
+}
+const AddressLabel = ({ setAddress, address }) => {
+   const { t } = useTranslation()
+   const [showInputField, setShowInputField] = React.useState(false)
+   const [selectedLabel, setSelectedLabel] = React.useState(null)
+   const labels = [
+      {
+         id: 1,
+         label: 'Home',
+      },
+      {
+         id: 2,
+         label: 'Office',
+      },
+      {
+         id: 3,
+         label: 'Other',
+      },
+   ]
+   console.log('addres', address)
+   return (
+      <div className="hern-delivery__address-tunnel__address-label">
+         {showInputField ? (
+            <Form.Field>
+               <Form.Label>{t('Label')}</Form.Label>
+               <Input
+                  onChange={e =>
+                     setAddress({
+                        ...address,
+                        label: e.target.value,
+                     })
+                  }
+                  addonBefore={
+                     <div className="hern-delivery__address-tunnel__address-label__addon-before">
+                        <span>Other</span>
+                        <LocationIcon />
+                     </div>
+                  }
+                  addonAfter={
+                     <button
+                        style={{
+                           display: 'flex',
+                           alignItems: 'center',
+                           justifyContent: 'center',
+                        }}
+                        onClick={() => {
+                           setShowInputField(false)
+                        }}
+                     >
+                        <AiOutlineClose />
+                     </button>
+                  }
+                  placeholder="User address label"
+               />
+            </Form.Field>
+         ) : (
+            <>
+               <Form.Label>{t('Label')}</Form.Label>
+               <div className="hern-delivery__address-tunnel__label__btn-group">
+                  {labels.map(({ id, label }) => (
+                     <button
+                        key={id}
+                        onClick={() => {
+                           if (label === 'Other') {
+                              setShowInputField(true)
+                           } else {
+                              setSelectedLabel(id)
+                              setAddress({
+                                 ...address,
+                                 label,
+                              })
+                           }
+                        }}
+                        className={classNames(
+                           'hern-delivery__address-tunnel__label__btn-group__btn',
+                           {
+                              'hern-delivery__address-tunnel__label__btn-group__btn--active':
+                                 selectedLabel === id,
+                           }
+                        )}
+                     >
+                        <AddressLabelIcon label={label} />
+                        {label}
+                     </button>
+                  ))}
+               </div>
+            </>
+         )}
+      </div>
    )
 }

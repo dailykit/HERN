@@ -73,6 +73,7 @@ const MenuProductOccurenceTable = () => {
       MENU_PRODUCT_BY_SUBSCRIPTION_OCCURRENCE,
       {
          onSubscriptionData: ({ subscriptionData }) => {
+            // console.log('new data-->', subscriptionData)
             const newData =
                subscriptionData.data.subscription_subscriptionOccurence_product.map(
                   each => {
@@ -90,12 +91,13 @@ const MenuProductOccurenceTable = () => {
                      return each
                   }
                )
+            // console.log('new data-->', newData)
             setProductOccurrenceData(newData)
          },
       }
    )
 
-   console.log('productOccurrenceData', productOccurrenceData)
+   // console.log('productOccurrenceData', productOccurrenceData)
    const columns = [
       {
          title: 'Label',
@@ -237,7 +239,7 @@ const MenuProductOccurenceTable = () => {
          tableRef.current.table.selectRow('active')
          let multipleRowData = tableRef.current.table.getSelectedData()
          setSelectedRows(multipleRowData)
-         console.log('first', selectedRows)
+         // console.log('first', selectedRows)
          localStorage.setItem(
             'selected-rows-id_occurrence_table',
             JSON.stringify(multipleRowData.map(row => row.id))
@@ -245,7 +247,7 @@ const MenuProductOccurenceTable = () => {
       } else {
          tableRef.current.table.deselectRow()
          setSelectedRows([])
-         console.log('second', selectedRows)
+         // console.log('second', selectedRows)
 
          localStorage.setItem(
             'selected-rows-id_occurrence_table',
@@ -253,7 +255,7 @@ const MenuProductOccurenceTable = () => {
          )
       }
    }
-   console.log('selected row:::::', selectedRows)
+   // console.log('selected row:::::', selectedRows)
    const selectionColumn =
       selectedRows.length > 0 &&
       selectedRows.length < productOccurrenceData.length
@@ -421,7 +423,7 @@ const MenuProductSubscriptionTable = () => {
    const dataLoaded = () => {
       tableRef.current.table.setGroupBy('productCategory')
    }
-   console.log('productSubscriptionData', productSubscriptionData)
+   // console.log('productSubscriptionData', productSubscriptionData)
    const columns = [
       {
          title: 'Label',
@@ -557,7 +559,7 @@ const MenuProductSubscriptionTable = () => {
          tableRef.current.table.selectRow('active')
          let multipleRowData = tableRef.current.table.getSelectedData()
          setSelectedRows(multipleRowData)
-         console.log('first', selectedRows)
+         // console.log('first', selectedRows)
          localStorage.setItem(
             'selected-rows-id_subscription_table',
             JSON.stringify(multipleRowData.map(row => row.id))
@@ -565,7 +567,7 @@ const MenuProductSubscriptionTable = () => {
       } else {
          tableRef.current.table.deselectRow()
          setSelectedRows([])
-         console.log('second', selectedRows)
+         // console.log('second', selectedRows)
 
          localStorage.setItem(
             'selected-rows-id_subscription_table',
@@ -573,7 +575,7 @@ const MenuProductSubscriptionTable = () => {
          )
       }
    }
-   console.log('selected row:::::', selectedRows)
+   // console.log('selected row:::::', selectedRows)
    const selectionColumn =
       selectedRows.length > 0 &&
       selectedRows.length < productSubscriptionData.length
@@ -640,7 +642,7 @@ const MenuProductSubscriptionTable = () => {
          <Spacer size="30px" />
          <ReactTabulator
             ref={tableRef}
-            columns={columns}
+            // columns={columns}
             data={productSubscriptionData}
             options={TableOptions}
             dataLoaded={dataLoaded}
@@ -664,7 +666,7 @@ const BooleanIcon = ({ cell, check }) => {
    if (check === 'singleSelect') {
       isCheck = data.isSingleSelect
    }
-   console.log('isCheck', isCheck)
+   // console.log('isCheck', isCheck)
    return (
       <Flex
          container

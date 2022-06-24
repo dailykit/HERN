@@ -1,16 +1,17 @@
 import React from 'react'
 export const TickIcon = ({ size = 18, ...props }) => (
    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width={size}
-      height={size}
-      viewBox="0 0 24 24"
+      width="10"
+      height="8"
+      viewBox="0 0 10 8"
       fill="none"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      {...props}
+      xmlns="http://www.w3.org/2000/svg"
    >
-      <polyline points="20 6 9 17 4 12" />
+      <path
+         fill-rule="evenodd"
+         clip-rule="evenodd"
+         d="M9.28782 1.91792L4.24049 7.36627C3.95946 7.66958 3.50985 7.66958 3.22882 7.36627L0.710774 4.62459C0.429742 4.32128 0.429742 3.8313 0.710774 3.52791C0.991806 3.22459 1.44142 3.22459 1.72245 3.52791L3.74588 5.72124L8.28735 0.821235C8.56838 0.517922 9.01799 0.517922 9.29902 0.821235C9.56883 1.12455 9.56883 1.61461 9.28781 1.91792H9.28782Z"
+         fill="#11823B"
+      />
    </svg>
 )

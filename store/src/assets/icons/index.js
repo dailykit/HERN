@@ -287,6 +287,9 @@ const ProfileSidebarIcon = {
 }
 
 export * from './DeliveryInfoIcons'
+export * from './AddressLabelIcon'
+export * from './DeliveryTitleIcons'
+
 const EmptyCloche = dynamic(() =>
    import('./EmptyCloche').then(promise => promise.EmptyCloche)
 )
@@ -296,6 +299,8 @@ const EmptyStore = dynamic(() =>
 const EmptyReferralIll = dynamic(() =>
    import('./EmptyReferralIll').then(promise => promise.EmptyReferralIll)
 )
+const Cloche = dynamic(() => import('./Cloche').then(promise => promise.Cloche))
+
 const RoundedCloseIcon = dynamic(() =>
    import('./RoundedCloseIcon').then(promise => promise.RoundedCloseIcon)
 )
@@ -393,6 +398,7 @@ export {
    EmptyCloche,
    EmptyStore,
    EmptyReferralIll,
+   Cloche,
    RoundedCloseIcon,
    PaymentOptionIcon,
    BackSpaceIcon,

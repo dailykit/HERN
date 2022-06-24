@@ -196,7 +196,7 @@ const UserInfoForm = props => {
                   }
                   loading={savingUserInfo}
                >
-                  {t('save')}
+                  {t('Save')}
                </Button>
             </div>
             <div className="hern-user-info__name-field">
@@ -276,8 +276,8 @@ const UserDetails = ({
    const isSmallerDevice = isClient && window.innerWidth < 768
    const { t } = useTranslation()
    const hasUserInfo =
-      cart?.customerInfo?.customerFirstName?.length ||
-      cart?.customerInfo?.customerLastName?.length ||
+      cart?.customerInfo?.customerFirstName?.length &&
+      cart?.customerInfo?.customerLastName?.length &&
       cart?.customerInfo?.customerPhone?.length
 
    React.useEffect(() => {

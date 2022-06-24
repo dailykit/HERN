@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { useRouter } from 'next/router'
 import tw, { styled, css } from 'twin.macro'
 import { useToasts } from 'react-toast-notifications'
@@ -14,6 +14,8 @@ import {
    getRoute,
    useQueryParams,
    get_env,
+   setThemeVariable,
+   normalizeAddress,
 } from '../../utils'
 import {
    Loader,
@@ -21,18 +23,22 @@ import {
    HelperBar,
    PaymentOptionsRenderer,
    UserInfo,
+   Tunnel,
+   PlanInfo,
 } from '../../components'
 import {
    // usePayment,
    ProfileSection,
    PaymentProvider,
-   PaymentSection,
+   // PaymentSection,
 } from '../../sections/checkout'
 import { useUser, useCart, useTranslation } from '../../context'
 import * as QUERIES from '../../graphql'
 import { isEmpty } from 'lodash'
 import { EmptyCart } from '../../assets/icons'
 import Link from 'next/link'
+import classNames from 'classnames'
+import moment from 'moment'
 
 export const Checkout = props => {
    const router = useRouter()
@@ -158,83 +164,27 @@ export const Checkout = props => {
          </div>
       )
    }
-   // if (isAuthenticated && user?.keycloakId !== cart?.customerKeycloakId) {
-   //    return (
-   //       <Main>
-   //          <div tw="pt-4 w-full">
-   //             <HelperBar type="warning">
-   //                <HelperBar.SubTitle>
-   //                   Seems like, you do not have access to this page, let's get
-   //                   you to home.
-   //                </HelperBar.SubTitle>
-   //                <HelperBar.Button
-   //                   onClick={() =>
-   //                      (window.location.href =
-   //                         get_env('BASE_BRAND_URL') + getRoute('/'))
-   //                   }
-   //                >
-   //                   Go to Home
-   //                </HelperBar.Button>
-   //             </HelperBar>
-   //          </div>
-   //       </Main>
-   //    )
-   // }
+
    if (loading) return <Loader inline />
    return (
       <>
          {cart?.source === 'subscription' ? (
-            <Main>
-               <Form>
-                  <header tw="my-3 pb-1 border-b flex items-center justify-between">
-                     <SectionTitle theme={theme}>Profile Details</SectionTitle>
-                  </header>
-                  <UserInfo cart={cart} />
-                  {!isEmpty(cart) && (
-                     <PaymentOptionsRenderer cartId={cart?.id} />
-                  )}
-               </Form>
-               {cart?.products?.length > 0 && (
-                  <CartDetails>
-                     <OrderInfo cart={cart} />
-                  </CartDetails>
-               )}
-               {isOverlayOpen && (
-                  <Overlay>
-                     <header tw="flex pr-3 pt-3">
-                        <button
-                           onClick={onOverlayClose}
-                           tw="ml-auto bg-white h-10 w-10 flex items-center justify-center rounded-full"
-                        >
-                           <Icon.CloseIcon tw="stroke-current text-gray-600" />
-                        </button>
-                     </header>
-                     <main tw="flex-1 flex flex-col items-center justify-center">
-                        <section tw="p-4 w-11/12 lg:w-8/12 bg-white rounded flex flex-col items-center">
-                           <p tw="lg:w-3/4 text-gray-700 md:text-lg mb-4 text-center">
-                              {overlayMessage}{' '}
-                           </p>
-                           {cart.paymentStatus === 'REQUIRES_ACTION' &&
-                              otpPageUrl && (
-                                 <a
-                                    target="_blank"
-                                    href={otpPageUrl}
-                                    title={otpPageUrl}
-                                    rel="noreferer noopener"
-                                    style={{ color: '#fff' }}
-                                    tw="inline-block px-4 py-2 bg-orange-400 text-sm uppercase rounded font-medium tracking-wider text-indigo-600"
-                                 >
-                                    Complete Payment
-                                 </a>
-                              )}
-                           {cart.paymentStatus !== 'PENDING' && (
-                              <Loader inline />
-                           )}
-                        </section>
-                     </main>
-                  </Overlay>
-               )}
-            </Main>
+            <>
+               {router.pathname === '/[brand]/checkout' && <CartPageHeader />}
+               <PlanInfo />
+               <div className="hern-subscription-checkout hern-on-demand-cart-section">
+                  <div>
+                     <div className="hern-on-demand-cart-section__left">
+                        <UserInfo cart={cart} />
+                        <FulfillmentAddress cart={cart} />
+                        <PaymentSection cart={cart} />
+                     </div>
+                     <div className="hern-on-demand-cart-section__right">
+                        <OrderInfo cart={cart} showFulfillment={false} />
+                     </div>
+                  </div>
+               </div>
+            </>
          ) : (
             <OnDemandCart config={props.config} />
          )}
@@ -242,61 +192,219 @@ export const Checkout = props => {
    )
 }
 
-const messages = {
-   PENDING: 'We are processing your payment.',
-   SUCCEEDED: 'Payment for your order has succeeded, you will redirected soon.',
-   REQUIRES_PAYMENT_METHOD: '',
-   REQUIRES_ACTION:
-      'A window will open in short while for further payment authorization required by your bank!',
-   PAYMENT_FAILED: 'Your payment has failed, please try again.',
-   REQUIRES_ACTION_WITH_URL:
-      'A window will open in short while for further payment authorization required by your bank. In case the new window has not opened own yet, please click the button below.',
+const CartPageHeader = () => {
+   const {
+      BrandName: { value: showBrandName } = {},
+      BrandLogo: { value: showBrandLogo } = {},
+      brandName: { value: brandName } = {},
+      brandLogo: { value: logo } = {},
+   } = useConfig('brand').configOf('Brand Info')
+   const router = useRouter()
+   const { t } = useTranslation()
+   return (
+      <header className="hern-cart-page__header">
+         <div>
+            <a
+               style={{ display: 'flex', alignItems: 'center' }}
+               onClick={() => router.back()}
+            >
+               <Icon.LeftArrowIcon /> &nbsp;&nbsp;
+            </a>
+         </div>
+         <div
+            role="button"
+            onClick={() => router.push(getRoute('/'))}
+            className="hern-cart-page__header-logo"
+         >
+            {showBrandLogo && logo && <img src={logo} alt={brandName} />}
+            &nbsp;&nbsp;
+            {showBrandName && brandName && <span>{brandName}</span>}
+         </div>
+      </header>
+   )
 }
-
-const Overlay = styled.section`
-   ${tw`fixed flex flex-col inset-0`};
-   z-index: 1000;
-   background: rgba(0, 0, 0, 0.3);
-`
-
-const SectionTitle = styled.h3(
-   ({ theme }) => css`
-      ${tw`text-green-600 text-lg`}
-      ${theme?.accent && `color: ${theme.accent}`}
-   `
-)
-
-const Main = styled.main`
-   display: flex;
-   padding: 64px 16px 16px 16px;
-   margin-bottom: 24px;
-   min-height: calc(100vh - 220px);
-   ${tw`gap-4`}
-   @media (max-width: 768px) {
-      flex-direction: column;
-   }
-`
-
-const Form = styled.section`
-   flex: 1;
-   .ant-radio-wrapper {
-      align-items: center;
-   }
-`
-const CartDetails = styled.section`
-   width: 420px;
-   @media (max-width: 768px) {
-      width: 100%;
-      > section {
-         padding: 16px;
-         position: fixed;
-         bottom: 0;
-         left: 0;
-         background-color: #fff;
-         right: 0;
-         > button {
-            ${tw`shadow-lg`}
-         }
+const PaymentSection = ({ cart }) => {
+   const [open, setOpen] = React.useState(false)
+   console.log('cart', cart)
+   const isDisabled =
+      !cart?.customerInfo?.customerFirstName?.length ||
+      !cart?.customerInfo?.customerLastName?.length ||
+      !cart?.customerInfo?.customerPhone?.length
+   const isSmallerDevice = isClient && window.innerWidth < 768
+   const { t } = useTranslation()
+   const [isTunnelOpen, setIsTunnelOpen] = React.useState(false)
+   console.log(
+      'cart',
+      cart?.customerInfo?.customerFirstName,
+      cart?.customerInfo?.customerLastName
+   )
+   React.useEffect(() => {
+      if (!isDisabled) {
+         setOpen(true)
       }
-   }
-`
+   }, [isDisabled])
+
+   return (
+      <>
+         {!isSmallerDevice && (
+            <div className="hern-on-demand-cart__payment-section__content">
+               <div
+                  role="button"
+                  onClick={() => !isDisabled && setOpen(!open)}
+                  className={classNames(
+                     'hern-on-demand-cart__payment-section__content__header',
+                     {
+                        'hern-on-demand-cart__payment-section__content__header--open':
+                           open,
+                     },
+                     {
+                        'hern-on-demand-cart__payment-section__content__header--disabled':
+                           isDisabled,
+                     }
+                  )}
+               >
+                  <div>
+                     <span className="hern-payment-icon-shawdow">
+                        <Icon.PaymentIcon
+                           color="rgba(64, 64, 64, 0.6)"
+                           width={20}
+                           height={20}
+                        />
+                     </span>
+                     &nbsp; &nbsp;
+                     <h3>{t('Payment')}</h3>
+                  </div>
+                  <span role="button">
+                     <Icon.ChevronIcon
+                        direction={open ? 'down' : 'right'}
+                        color="rgba(64, 64, 64, 0.6)"
+                        width={16}
+                        height={16}
+                     />
+                  </span>
+               </div>
+
+               {open && (
+                  <>
+                     {!isEmpty(cart) && (
+                        <PaymentOptionsRenderer cartId={cart?.id} />
+                     )}
+                  </>
+               )}
+            </div>
+         )}
+
+         {isSmallerDevice && !isDisabled && (
+            <>
+               <button
+                  className="hern-cart__make-payment-btn"
+                  onClick={() => setIsTunnelOpen(true)}
+               >
+                  {t('Make Payment')}
+                  {`(${formatCurrency(cart?.cartOwnerBilling?.totalToPay)})`}
+               </button>
+               <Tunnel.Bottom
+                  title={
+                     <div className="hern-on-demand-cart__payment-section__header--tunnel">
+                        <Icon.PaymentIcon width={20} height={22} />
+                        <span className="hern-user-info__heading">Payment</span>
+                     </div>
+                  }
+                  visible={isTunnelOpen}
+                  className="hern-on-demand-cart__payment-section__content--tunnel"
+                  onClose={() => setIsTunnelOpen(false)}
+               >
+                  <PaymentOptionsRenderer cartId={cart?.id} />
+               </Tunnel.Bottom>
+            </>
+         )}
+      </>
+   )
+}
+const FulfillmentAddress = ({ cart }) => {
+   const [isOpen, setIsOpen] = React.useState(true)
+   const { t } = useTranslation()
+   React.useEffect(() => {
+      const elem =
+         isClient && document.querySelector('.hern-fulfillment-address')
+      if (elem) {
+         setThemeVariable(
+            '--user-info-section-bottom',
+            elem.clientHeight + 50 + 'px'
+         )
+      }
+   }, [isOpen])
+   React.useEffect(() => {
+      const isSmallerDevice = isClient && window.innerWidth < 768
+      if (isSmallerDevice) {
+         setIsOpen(false)
+      }
+   }, [])
+
+   return (
+      <section className="hern-fulfillment-address">
+         <h2
+            onClick={() => setIsOpen(!isOpen)}
+            className="hern-fulfillment-address__heading"
+            style={{ marginBottom: isOpen ? '16px' : '0px' }}
+         >
+            <Icon.LocationIcon size={18} /> &nbsp;&nbsp; {t('Fulfillment')}
+            <span role="button">
+               <Icon.ChevronIcon
+                  direction={isOpen ? 'down' : 'right'}
+                  color="rgba(64, 64, 64, 0.6)"
+                  width={16}
+                  height={16}
+               />
+            </span>
+         </h2>
+         {isOpen && (
+            <>
+               {cart?.fulfillmentInfo?.type?.includes('DELIVERY') ? (
+                  <div className="hern-fulfillment-address__delivery">
+                     <h3>Delivery</h3>
+                     <p>
+                        <span>{t('Your box will be delivered on')}</span>{' '}
+                        <span>
+                           {moment(cart?.fulfillmentInfo?.slot?.from).format(
+                              'MMM D'
+                           )}
+                           &nbsp;<span>{t('between')}</span>{' '}
+                           {moment(cart?.fulfillmentInfo?.slot?.from).format(
+                              'hh:mm A'
+                           )}
+                           &nbsp;-&nbsp;
+                           {moment(cart?.fulfillmentInfo?.slot?.to).format(
+                              'hh:mm A'
+                           )}
+                        </span>{' '}
+                        <span>{t('at')}</span>{' '}
+                        <span>{normalizeAddress(cart?.address)}</span>
+                     </p>
+                  </div>
+               ) : (
+                  <div className="hern-fulfillment-address__pickup">
+                     <h3>Pickup</h3>
+                     <p>
+                        <span>{t('Pickup your box in between')}</span>
+                        {moment(cart?.fulfillmentInfo?.slot?.from).format(
+                           'MMM D'
+                        )}
+                        ,{' '}
+                        {moment(cart?.fulfillmentInfo?.slot?.from).format(
+                           'hh:mm A'
+                        )}{' '}
+                        -{' '}
+                        {moment(cart?.fulfillmentInfo?.slot?.to).format(
+                           'hh:mm A'
+                        )}{' '}
+                        <span>{t('from')}</span>{' '}
+                        {normalizeAddress(cart?.fulfillmentInfo?.address)}
+                     </p>
+                  </div>
+               )}
+            </>
+         )}
+      </section>
+   )
+}

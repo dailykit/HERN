@@ -285,6 +285,7 @@ export const SUBSCRIPTION_ZIPCODES = gql`
       ) {
          isDemo
          zipcode
+         locationId
          isActive
          deliveryTime
          deliveryPrice
@@ -297,6 +298,19 @@ export const SUBSCRIPTION_ZIPCODES = gql`
             time
             address
          }
+      }
+   }
+`
+
+export const LOCATIONS = gql`
+   subscription locationList {
+      locations: brands_location {
+         id
+         city
+         isActive
+         lat
+         lng
+         label
       }
    }
 `
@@ -476,7 +490,10 @@ export const MENU_PRODUCT_BY_SUBSCRIPTION = gql`
 export const MENU_PRODUCT_BY_SUBSCRIPTION_OCCURRENCE = gql`
    subscription MENU_PRODUCT_BY_SUBSCRIPTION_OCCURRENCE {
       subscription_subscriptionOccurence_product(
-         where: { subscriptionId: { _is_null: true } }
+         where: {
+            subscriptionId: { _is_null: true }
+            subscriptionOccurenceId: { _is_null: false }
+         }
       ) {
          id
          isAutoSelectable

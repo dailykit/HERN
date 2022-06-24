@@ -11,7 +11,7 @@ import {
 
 const SelectDelivery = props => {
    const router = useRouter()
-   const { isAuthenticated, isLoading } = useUser()
+   const { isAuthenticated, isLoading, user } = useUser()
    const { settings, linkedFiles, folds, seoSettings } = props
    React.useEffect(() => {
       if (!isAuthenticated && !isLoading) {
@@ -20,6 +20,14 @@ const SelectDelivery = props => {
       }
    }, [isAuthenticated, isLoading])
 
+   React.useEffect(() => {
+      if (isAuthenticated && !isLoading) {
+         isClient &&
+            localStorage.getItem('changing-plan') !== 'true' &&
+            user?.isSubscriber &&
+            router.push(getRoute('/menu'))
+      }
+   }, [isAuthenticated, isLoading])
    React.useEffect(() => {
       if (isClient && !localStorage.getItem('plan')) {
          router.push('/get-started/select-plan')

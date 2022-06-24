@@ -740,8 +740,12 @@ const Navigation = ({ newNavigationMenus, settings, layout }) => {
                </>
             )}
             {!user?.isSubscriber && isSubscriptionStore && (
-               <li className={getListItemsClasses(getRoute('/our-plans'))}>
-                  <Link href={getRoute('/our-plans')}>
+               <li
+                  className={getListItemsClasses(
+                     getRoute('/get-started/select-plan')
+                  )}
+               >
+                  <Link href={getRoute('/get-started/select-plan')}>
                      <a>{t('Get Started')}</a>
                   </Link>
                </li>
@@ -862,6 +866,10 @@ const AuthMenu = ({
                   backgroundColor: `var(--hern-accent)`,
                }}
                id="hern-header__global-login-button"
+               onClick={() =>
+                  isClient &&
+                  localStorage.setItem('redirected_from', location.href)
+               }
             >
                <Link href={getRoute('/login')}>{loginButtonLabel}</Link>
             </button>

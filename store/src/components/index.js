@@ -142,7 +142,12 @@ const ModifierCategory = dynamic(() =>
    import('./modifierCategory').then(promise => promise.ModifierCategory)
 )
 const Empty = dynamic(() => import('./empty').then(promise => promise.Empty))
-
+const PageBanner = dynamic(() =>
+   import('./page_banner').then(promise => promise.PageBanner)
+)
+const PlanInfo = dynamic(() =>
+   import('./plan_info').then(promise => promise.PlanInfo)
+)
 export {
    PaymentProcessingModal,
    FloatingBar,
@@ -201,6 +206,8 @@ export {
    Form,
    HernSkeleton,
    WalletTopUp,
+   PageBanner,
+   PlanInfo,
 }
 
 const TunnelHeader = dynamic(() =>
