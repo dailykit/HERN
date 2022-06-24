@@ -43,7 +43,6 @@ export const ProcessSachet = ({ closeOrderSummaryTunnel }) => {
       },
       switchView,
    } = useOrder()
-   console.log('=>>> from processSachet', sachet)
    const { state } = useConfig()
    const [weight, setWeight] = React.useState(0)
    // const [sachet, setSachet] = React.useState({})
@@ -254,7 +253,12 @@ export const ProcessSachet = ({ closeOrderSummaryTunnel }) => {
             <section>
                <h4>
                   {sachet?.displayName &&
-                     sachet?.displayName?.split('->').pop().trim()}
+                     sachet?.displayName
+                        .split('->')
+                        .pop()
+                        .split('-')
+                        .shift()
+                        .trim()}
                </h4>
                <StyledStat status={sachet?.status}>{sachet?.status}</StyledStat>
             </section>
@@ -307,7 +311,7 @@ export const ProcessSachet = ({ closeOrderSummaryTunnel }) => {
                         <Form.Stepper
                            id="weight"
                            name="weight"
-                           value={weight || ''}
+                           value={+weight || 0}
                            placeholder="Enter the weight"
                            onChange={value => setWeight(value || 0)}
                         />

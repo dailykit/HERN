@@ -75,7 +75,7 @@ export const PromotionCarousal = props => {
          params: argsForByLocation,
       },
    })
-   console.log('productsData: ', productsData, productIds)
+   // console.log('productsData: ', productsData, productIds)
    const theme = configOf('theme-color', 'Visual')
    const onImageClick = imageDetail => {
       if (imageDetail.belongsTo === 'PRODUCT') {
@@ -92,7 +92,7 @@ export const PromotionCarousal = props => {
                   clickedProduct.isPopupAllowed
                ) {
                   const isProductOptionsAvailable =
-                  clickedProduct.productOptions.filter(
+                     clickedProduct.productOptions.filter(
                         option => option.isPublished && option.isAvailable
                      ).length > 0
                   if (isProductOptionsAvailable) {
@@ -122,45 +122,69 @@ export const PromotionCarousal = props => {
    // if (data.coupons.length === 0) {
    //    return <p> No Coupons available</p>
    // }
-
+   const carouselWidth =
+      1080 /
+      (componentConfig?.promotionalCarouselSettings?.numberOfSlidesToShow
+         ?.value || 2)
    return (
       <div style={{ height: 'inherit', width: '100%' }}>
-         <ArrowLeftIcon
-            className="hern-kiosk__menu-carousal-left-arrow hern-kiosk__menu-carousal-arrow"
-            size={42}
-            onClick={lastCarousal}
-            style={{
-               backgroundColor: `${
-                  componentConfig?.kioskSettings?.theme?.arrowBgColor?.value ||
-                  theme?.accent
-               }99`,
-               color: `${
-                  componentConfig?.kioskSettings?.theme?.arrowColor?.value ||
-                  '#000000'
-               }`,
-            }}
-         />
-         <ArrowRightIcon
-            className="hern-kiosk__menu-carousal-right-arrow hern-kiosk__menu-carousal-arrow"
-            size={42}
-            onClick={nextCarousal}
-            style={{
-               backgroundColor: `${
-                  componentConfig?.kioskSettings?.theme?.arrowBgColor?.value ||
-                  theme?.accent
-               }99`,
-               color: `${
-                  componentConfig?.kioskSettings?.theme?.arrowColor?.value ||
-                  '#000000'
-               }`,
-            }}
-         />
+         {componentConfig?.promotionalCarouselSettings?.showArrowOnCarousel
+            ?.value !== false && (
+            <>
+               <ArrowLeftIcon
+                  className="hern-kiosk__menu-carousal-left-arrow hern-kiosk__menu-carousal-arrow"
+                  size={42}
+                  onClick={lastCarousal}
+                  style={{
+                     backgroundColor: `${
+                        componentConfig?.kioskSettings?.theme?.arrowBgColor
+                           ?.value || theme?.accent
+                     }99`,
+                     color: `${
+                        componentConfig?.kioskSettings?.theme?.arrowColor
+                           ?.value || '#000000'
+                     }`,
+                  }}
+               />
+               <ArrowRightIcon
+                  className="hern-kiosk__menu-carousal-right-arrow hern-kiosk__menu-carousal-arrow"
+                  size={42}
+                  onClick={nextCarousal}
+                  style={{
+                     backgroundColor: `${
+                        componentConfig?.kioskSettings?.theme?.arrowBgColor
+                           ?.value || theme?.accent
+                     }99`,
+                     color: `${
+                        componentConfig?.kioskSettings?.theme?.arrowColor
+                           ?.value || '#000000'
+                     }`,
+                  }}
+               />
+            </>
+         )}
+
          <Carousel
             ref={carousalRef}
-            slidesToShow={2}
-            slidesToScroll={2}
+            slidesToShow={
+               componentConfig?.promotionalCarouselSettings
+                  ?.numberOfSlidesToShow?.value || 2
+            }
+            slidesToScroll={
+               componentConfig?.promotionalCarouselSettings
+                  ?.numberOfSlidesToShow?.value || 2
+            }
             infinite={false}
-            style={{ minHeight: '235px' }}
+            style={{
+               minHeight:
+                  componentConfig?.promotionalCarouselSettings?.height?.value ||
+                  '235px',
+            }}
+            dots={
+               componentConfig?.promotionalCarouselSettings?.showDots?.value ||
+               false
+            }
+            className="hern-kiosk__promotion__carousel"
          >
             {data.coupons.map(eachCoupon => {
                if (!eachCoupon.metaDetails?.image) {
@@ -170,12 +194,18 @@ export const PromotionCarousal = props => {
                   <div
                      className="hern-kiosk__promotion-image"
                      key={eachCoupon.id}
+                     data-coupon-id={eachCoupon.id}
                   >
                      <HernLazyImage
                         dataSrc={eachCoupon.metaDetails.image}
-                        style={{ padding: '1em' }}
+                        style={{
+                           padding: componentConfig?.promotionalCarouselSettings
+                              ?.fullScreenCarousel?.value
+                              ? 0
+                              : '1em',
+                        }}
                         height={225}
-                        width={540}
+                        width={carouselWidth}
                      />
                   </div>
                )
@@ -189,12 +219,18 @@ export const PromotionCarousal = props => {
                      >
                         <HernLazyImage
                            dataSrc={eachImage.url}
-                           style={{ padding: '1em' }}
+                           style={{
+                              padding: componentConfig
+                                 ?.promotionalCarouselSettings
+                                 ?.fullScreenCarousel?.value
+                                 ? 0
+                                 : '1em',
+                           }}
                            onClick={() => {
                               onImageClick(eachImage)
                            }}
                            height={225}
-                           width={540}
+                           width={carouselWidth}
                         />
                      </div>
                   )
@@ -209,9 +245,15 @@ export const PromotionCarousal = props => {
                      >
                         <HernLazyImage
                            dataSrc={eachImage}
-                           style={{ padding: '1em' }}
+                           style={{
+                              padding: componentConfig
+                                 ?.promotionalCarouselSettings
+                                 ?.fullScreenCarousel?.value
+                                 ? 0
+                                 : '1em',
+                           }}
                            height={225}
-                           width={540}
+                           width={carouselWidth}
                         />
                      </div>
                   )

@@ -14,6 +14,7 @@ import {
    DownVector,
    NoTickRoundCheckBoxIcon,
    RoundCheckBoxIcon,
+   RoundedCloseIcon,
    UpVector,
 } from '../../../assets/icons'
 import KioskButton from './button'
@@ -616,6 +617,16 @@ export const KioskModifier = props => {
          </Modal>
       )
    }
+   const showCustomizeText =
+      config?.modifierPopUpSettings?.showCustomizeText?.value ?? false
+   const largeFooter =
+      config?.modifierPopUpSettings?.showLargeFooter?.value ?? false
+   const showRoundedIcon =
+      config?.modifierPopUpSettings?.showRoundedIcon?.value ?? false
+   const addToCartButtonLabel = t(
+      config?.modifierPopUpSettings?.addToCartButtonLabel?.value ||
+         'ADD TO CART'
+   )
    return (
       <div
          className="hern-kiosk__menu-product-modifier-popup"
@@ -630,40 +641,58 @@ export const KioskModifier = props => {
          <div
             className="hern-kiosk__menu-product-modifier-pop-up-container"
             style={{
-               background:
-                  config.modifierPopUpSettings.theme
-                     .modifierPopupContentBackgroundColor.value,
+               ...(showCustomizeText && {
+                  background:
+                     config.modifierPopUpSettings.theme
+                        .modifierPopupContentBackgroundColor.value,
+               }),
             }}
             ref={modifierPopRef}
          >
-            <div className="hern-kiosk__menu-product-modifier-pop-up-scrollPart">
-               <div
-                  onClick={() => {
-                     onCloseModifier()
-                  }}
-                  style={{
-                     position: 'absolute',
-                     right: '2em',
-                     top: '2em',
-                     background: `${config.kioskSettings.theme.primaryColorDark.value}}`,
-                     borderRadius: '50%',
-                     padding: '.5em',
-                  }}
-               >
-                  <CloseIcon
-                     size={50}
-                     stroke={'#fffffF'}
-                     style={{
-                        position: 'fixed',
-                        right: '8em',
-                        top: '12em',
-                        zIndex: '2',
-                        padding: '0.4em',
-                        borderRadius: '50%',
-                        backgroundColor: `#022d4a`,
-                     }}
-                  />
-               </div>
+            <div
+               onClick={() => {
+                  onCloseModifier()
+               }}
+               className="hern-kiosk__menu-product-modifier-pop-up-container--close"
+               style={{
+                  ...(!showCustomizeText && { padding: 0 }),
+                  background: `${config.kioskSettings.theme.primaryColorDark.value}}`,
+               }}
+            >
+               {showCustomizeText && <h4>*Customize</h4>}
+               <span style={{ marginLeft: 'auto' }}>
+                  {showRoundedIcon ? (
+                     <RoundedCloseIcon />
+                  ) : (
+                     <CloseIcon
+                        size={50}
+                        stroke={'#fffffF'}
+                        style={{
+                           zIndex: '2',
+                           padding: '0.4em',
+                           borderRadius: '50%',
+                           backgroundColor: '#022d4a',
+                           marginLeft: 'auto',
+                        }}
+                     />
+                  )}
+               </span>
+            </div>
+            <div
+               style={{
+                  height: `${
+                     largeFooter ? 'calc(100% - 284px)' : 'calc(100% - 182px)'
+                  }`,
+                  marginTop: `${showCustomizeText ? '100px' : '72px'}`,
+                  ...(!showCustomizeText && {
+                     background:
+                        config.modifierPopUpSettings.theme
+                           .modifierPopupContentBackgroundColor.value,
+                     borderRadius: '2.5rem 2.5rem 0 0',
+                  }),
+               }}
+               className="hern-kiosk__menu-product-modifier-pop-up-scrollPart"
+            >
                <div
                   style={{
                      backgroundColor: `${config.modifierPopUpSettings.theme.modifierPopupImageBackgroundColor.value}`,
@@ -1146,8 +1175,11 @@ export const KioskModifier = props => {
                {/* </div> */}
             </div>
             <div
-               className="hern-kiosk__modifier-popup-footer"
+               className={classNames('hern-kiosk__modifier-popup-footer', {
+                  'hern-kiosk__modifier-popup-footer--large': largeFooter,
+               })}
                style={{
+                  ...(largeFooter && { height: '184px' }),
                   backgroundColor: `${config.kioskSettings.theme.primaryColor.value}`,
                }}
             >
@@ -1171,7 +1203,7 @@ export const KioskModifier = props => {
                      customClass="hern-kiosk__modifier-add-to-cart"
                      buttonConfig={config.kioskSettings.buttonSettings}
                   >
-                     {t('Add To Cart')}
+                     {addToCartButtonLabel}
                   </KioskButton>
                )}
             </div>
@@ -1475,7 +1507,13 @@ const AdditionalModifiers = forwardRef(
                >
                   <span
                      className="hern-kiosk__additional-modifier-label"
-                     style={{ color: '#ffffff' }}
+                     style={{
+                        color: config?.modifierPopUpSettings?.theme
+                           ?.addModifierLabelColor?.value
+                           ? config?.modifierPopUpSettings?.theme
+                                ?.addModifierLabelColor?.value
+                           : '#ffffff',
+                     }}
                      data-translation="true"
                   >
                      {eachAdditionalModifier.label}
@@ -1489,9 +1527,25 @@ const AdditionalModifiers = forwardRef(
                               </span>
                            )} */}
                   {showCustomize ? (
-                     <UpVector stroke="#ffffff" />
+                     <UpVector
+                        stroke={
+                           config?.modifierPopUpSettings?.theme
+                              ?.addModifierLabelColor?.value
+                              ? config?.modifierPopUpSettings?.theme
+                                   ?.addModifierLabelColor?.value
+                              : '#ffffff'
+                        }
+                     />
                   ) : (
-                     <DownVector stroke="#ffffff" />
+                     <DownVector
+                        stroke={
+                           config?.modifierPopUpSettings?.theme
+                              ?.addModifierLabelColor?.value
+                              ? config?.modifierPopUpSettings?.theme
+                                   ?.addModifierLabelColor?.value
+                              : '#ffffff'
+                        }
+                     />
                   )}
                </div>
                {showCustomize &&
@@ -1519,7 +1573,7 @@ const AdditionalModifiers = forwardRef(
                                  <span
                                     className="hern-kiosk__modifier-category-label-text"
                                     style={{
-                                       color: `${config.kioskSettings.theme.modifierTextColor.value}`,
+                                       color: `${config.modifierPopUpSettings.theme.modifierPopupCategoryTextColor.value}`,
                                     }}
                                     data-translation="true"
                                  >
@@ -1598,7 +1652,12 @@ const AdditionalModifiers = forwardRef(
                                                       width={95}
                                                    />
 
-                                                   <span className="hern-kiosk__modifier--option-name">
+                                                   <span
+                                                      style={{
+                                                         color: `${config.modifierPopUpSettings.theme.modifierPopupOptionTextColor.value}`,
+                                                      }}
+                                                      className="hern-kiosk__modifier--option-name"
+                                                   >
                                                       <span data-translation="true">
                                                          {eachOption.name}
                                                       </span>
@@ -1617,14 +1676,17 @@ const AdditionalModifiers = forwardRef(
                                                 {isModifierOptionInProduct() ? (
                                                    <RoundCheckBoxIcon
                                                       fill={
-                                                         config.kioskSettings
-                                                            .tickBox
-                                                            .tickBoxBGonCheck
+                                                         config
+                                                            .modifierPopUpSettings
+                                                            .theme
+                                                            .checkBoxCheckedBGColor
                                                             .value
                                                       }
                                                       tickFill={
-                                                         config.kioskSettings
-                                                            .tickBox.tickColor
+                                                         config
+                                                            .modifierPopUpSettings
+                                                            .theme
+                                                            .checkBoxTickColor
                                                             .value
                                                       }
                                                       size={50}
@@ -1632,8 +1694,10 @@ const AdditionalModifiers = forwardRef(
                                                 ) : (
                                                    <NoTickRoundCheckBoxIcon
                                                       fill={
-                                                         config.kioskSettings
-                                                            .theme.primaryColor
+                                                         config
+                                                            .modifierPopUpSettings
+                                                            .theme
+                                                            .checkBoxEmptyColor
                                                             .value
                                                       }
                                                       size={50}
@@ -2037,7 +2101,7 @@ const ModifierOptionsList = forwardRef((props, ref) => {
                      <span
                         className="hern-kiosk__modifier-category-label-text"
                         style={{
-                           color: `${config.kioskSettings.theme.modifierTextColor.value}`,
+                           color: `${config.modifierPopUpSettings.theme.modifierPopupCategoryTextColor.value}`,
                         }}
                         data-translation="true"
                      >
@@ -2108,7 +2172,12 @@ const ModifierOptionsList = forwardRef((props, ref) => {
                                        width={95}
                                     />
 
-                                    <span className="hern-kiosk__modifier--option-name">
+                                    <span
+                                       style={{
+                                          color: `${config.modifierPopUpSettings.theme.modifierPopupOptionTextColor.value}`,
+                                       }}
+                                       className="hern-kiosk__modifier--option-name"
+                                    >
                                        <span data-translation="true">
                                           {eachOption.name}
                                        </span>
@@ -2127,20 +2196,20 @@ const ModifierOptionsList = forwardRef((props, ref) => {
                                  {isModifierOptionInProduct() ? (
                                     <RoundCheckBoxIcon
                                        fill={
-                                          config.kioskSettings.tickBox
-                                             .tickBoxBGonCheck.value
+                                          config.modifierPopUpSettings.theme
+                                             .checkBoxCheckedBGColor.value
                                        }
                                        tickFill={
-                                          config.kioskSettings.tickBox.tickColor
-                                             .value
+                                          config.modifierPopUpSettings.theme
+                                             .checkBoxTickColor.value
                                        }
                                        size={50}
                                     />
                                  ) : (
                                     <NoTickRoundCheckBoxIcon
                                        fill={
-                                          config.kioskSettings.theme
-                                             .primaryColor.value
+                                          config.modifierPopUpSettings.theme
+                                             .checkBoxEmptyColor.value
                                        }
                                        size={50}
                                     />

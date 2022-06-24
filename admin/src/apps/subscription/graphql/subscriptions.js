@@ -108,6 +108,7 @@ export const SIMPLE_RECIPE_PRODUCT_OPTIONS = gql`
             simpleRecipeYieldId: { _is_null: false }
             product: { isArchived: { _eq: false }, isPublished: { _eq: true } }
          }
+         order_by: { created_at: desc }
       ) {
          aggregate {
             count

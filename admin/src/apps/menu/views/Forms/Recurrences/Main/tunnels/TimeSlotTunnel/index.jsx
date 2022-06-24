@@ -1,6 +1,6 @@
 import React from 'react'
 import { useMutation } from '@apollo/react-hooks'
-import { ButtonGroup, ComboButton, Flex, Form, Spacer, Text, TunnelHeader } from '@dailykit/ui'
+import { ButtonGroup, ComboButton, Flex, Form, Input, Spacer, Text, TunnelHeader } from '@dailykit/ui'
 import { useParams } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import { logger } from '../../../../../../../../shared/utils'
@@ -51,7 +51,7 @@ const TimeSlotTunnel = ({ closeTunnel }) => {
       },
    })
    const [slotInterval, setSlotInterval] = React.useState({
-      value: '00:15',
+      value: 15,
       meta: {
          isTouched: false,
          isValid: true,
@@ -207,7 +207,7 @@ const TimeSlotTunnel = ({ closeTunnel }) => {
                type === 'PREORDER_DINEIN' ? +advance.value : null,
             dineInPrepTime:
                type === 'ONDEMAND_DINEIN' ? +advance.value : null,
-            slotInterval: slotInterval?.value || 15,
+            slotInterval: (slotInterval?.value),
          })
          )
          createTimeSlots({
@@ -365,11 +365,19 @@ const TimeSlotTunnel = ({ closeTunnel }) => {
                               <Spacer size="16px" />
                                  <Form.Group>
                                     <Form.Label htmlFor={`slotInterval-${i}`} title={`SlotInterval ${i}`}>
-                                       Slot Interval (HH:MM)
+                                       Slot Interval (size of the slots you created)
                                     </Form.Label>
-                                    <Form.Time
+                                    <Input
                                        id={`slotInterval-${i}`}
                                        name={`slotInterval-${i}`}
+                                       style={{
+                                          border: '1px solid #e3e3e3',
+                                          borderRadius: '6px',
+                                          height: '40px',
+                                          textAlign: 'match-parent',
+                                          padding: '10px 12px 12px 12px',
+                                       }}
+                                       type='time'
                                        onChange={e =>
                                           setSlotInterval({ ...slotInterval, value: e.target.value })
                                        }
@@ -394,7 +402,7 @@ const TimeSlotTunnel = ({ closeTunnel }) => {
                                        !slotInterval.meta.isValid &&
                                        slotInterval.meta.errors.map((error, index) => (
                                           <Form.Error key={index}>{error}</Form.Error>
-                                       ))}
+                                       ))} 
                                  </Form.Group>
                               
                            </>

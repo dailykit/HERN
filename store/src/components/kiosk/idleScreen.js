@@ -80,18 +80,39 @@ export const IdleScreen = props => {
          {config.idlePageSettings.showTouchToContinueFooter.value && (
             <footer
                style={{
+                  inset: `${
+                     config.idlePageSettings?.touchToContinueButtonSettings
+                        ?.position.value
+                        ? config.idlePageSettings.touchToContinueButtonSettings
+                             .position.value
+                        : 'auto 0 0 0'
+                  }`,
+                  borderRadius: `${
+                     config.idlePageSettings?.touchToContinueButtonSettings
+                        ?.borderRadius?.value
+                        ? config.idlePageSettings.touchToContinueButtonSettings
+                             .borderRadius.value
+                        : '0'
+                  }`,
                   backgroundColor: `${config.kioskSettings.theme.primaryColor.value}`,
                }}
             >
-               <img
-                  src={config.kioskSettings.logo.value}
-                  alt="logo"
-                  className="hern-kiosk__idle-screen-footer-logo"
-               />
+               {config.idlePageSettings?.touchToContinueButtonSettings?.showLogo
+                  ?.value && (
+                  <img
+                     src={config.kioskSettings.logo.value}
+                     alt="logo"
+                     className="hern-kiosk__idle-screen-footer-logo"
+                  />
+               )}
                <span
                   className="hern-kiosk__idle-screen-page-text"
                   style={{
                      color: `${config.idlePageSettings.idlePageTextColor.value}`,
+                     fontSize: `${
+                        config.idlePageSettings?.touchToContinueButtonSettings
+                           ?.fontSize.value ?? '3em'
+                     }`,
                   }}
                >
                   {config.idlePageSettings.idlePageText.value ||

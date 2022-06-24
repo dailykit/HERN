@@ -52,6 +52,7 @@ import {
 import { emailTemplateHandler } from './entities/emails'
 
 import './lib/stripe'
+import { InvoiceRouter } from './entities/invoice'
 
 const router = express.Router()
 
@@ -85,6 +86,7 @@ router.use('/api/experience', ExperienceRouter)
 router.use('/api/cards', CardRouter)
 router.use('/api/refund', RefundRouter)
 router.use('/api/payment', NewPaymentRouter)
+router.use('/api/invoice', InvoiceRouter)
 
 router.get('/api/account-details/:id', getAccountDetails)
 

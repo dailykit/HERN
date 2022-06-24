@@ -46,7 +46,7 @@ const ProductsSection = () => {
    const readyToEatTableRef = React.useRef()
    const inventoryTableRef = React.useRef()
    const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
-   const columns = [
+   const columns = React.useMemo(()=>[
       {
          title: 'Product',
          headerFilter: true,
@@ -107,9 +107,9 @@ const ProductsSection = () => {
             )
          },
       },
-   ]
+   ],[])
 
-   const handleRowSelection = row => {
+   const handleRowSelection = React.useCallback((row) => {
       const data = row.getData()
 
       if (row.isSelected()) {
@@ -125,7 +125,7 @@ const ProductsSection = () => {
             payload: data.id,
          })
       }
-   }
+   },[])
 
    const handleRowValidation = row => {
       const data = row.getData()
@@ -230,7 +230,7 @@ const ProductsSection = () => {
 
 export default ProductsSection
 
-const MealKits = ({
+const MealKits = React.memo(({
    columns,
    mealKitTableRef,
    handleRowSelection,
@@ -269,9 +269,9 @@ const MealKits = ({
          }}
       />
    )
-}
+})
 
-const ReadyToEats = ({
+const ReadyToEats = React.memo(({
    columns,
    handleRowSelection,
    readyToEatTableRef,
@@ -311,9 +311,9 @@ const ReadyToEats = ({
          }}
       />
    )
-}
+})
 
-const Inventory = ({ inventoryTableRef, handleRowSelection }) => {
+const Inventory = React.memo(({ inventoryTableRef, handleRowSelection }) => {
    const { tooltip } = useTooltip()
    const {
       error,
@@ -386,7 +386,7 @@ const Inventory = ({ inventoryTableRef, handleRowSelection }) => {
          }}
       />
    )
-}
+})
 
 const SaveTunnel = ({
    tunnels,

@@ -31,13 +31,13 @@ function PayButton({
       initializePayment,
       setPaymentInfo,
    } = usePayment()
-   const { user } = useUser();
+   const { user } = useUser()
    const { addToast } = useToasts()
    const { brand } = useConfig()
    const [cartValidity, setCartValidity] = useState(null)
 
    // query for fetching available payment options
-   if(cartId){
+   if (cartId) {
       var {
          loading,
          error,
@@ -64,9 +64,9 @@ function PayButton({
          console.log(error)
          addToast(error.message, { appearance: 'error' })
       },
-      onCompleted: (data) => {
+      onCompleted: data => {
          initializePayment(null, data.createCartPayment.id)
-      }
+      },
    })
 
    const isStripe =
@@ -75,7 +75,7 @@ function PayButton({
 
    const onPayClickHandler = async () => {
       setPaymentTunnelOpen && setPaymentTunnelOpen(false)
-      if(cartId){
+      if (cartId) {
          if (isKioskMode) {
             console.log('inside kiosk condition')
             if (cartId) {
@@ -126,24 +126,27 @@ function PayButton({
                })
             }
          }
-      }else{
+      } else {
          createCartPayment({
-            variables:{
+            variables: {
                object: {
                   paymentRetryAttempt: 1,
                   amount: balanceToPay,
                   isTest: user.isTest,
                   paymentCustomerId: user.platform_customer.paymentCustomerId,
-                  paymentMethodId: paymentInfo?.selectedAvailablePaymentOption?.selectedPaymentMethodId,
-                  usedAvailablePaymentOptionId: paymentInfo.selectedAvailablePaymentOption.id,
-                  metaData: { ...metaData, brandId: brand.id }
-               }
-            }
+                  paymentMethodId:
+                     paymentInfo?.selectedAvailablePaymentOption
+                        ?.selectedPaymentMethodId,
+                  usedAvailablePaymentOptionId:
+                     paymentInfo.selectedAvailablePaymentOption.id,
+                  metaData: { ...metaData, brandId: brand.id },
+               },
+            },
          })
       }
    }
 
-   if(cartId){
+   if (cartId) {
       useEffect(() => {
          if (!loading && !isEmpty(cart)) {
             setCartValidity(cart?.isCartValid)
@@ -162,7 +165,17 @@ function PayButton({
    return (
       <>
          {loading ? (
-            <Skeleton.Button active size="large" block={fullWidthSkeleton} />
+            <Skeleton.Button
+               active
+               style={{
+                  ...(isKiosk && {
+                     height: '220px',
+                     borderRadius: '12px',
+                  }),
+               }}
+               size="large"
+               block={fullWidthSkeleton}
+            />
          ) : (
             <>
                {!isKioskMode ? (
@@ -175,10 +188,7 @@ function PayButton({
                   </Button>
                ) : (
                   <KioskButton
-                     style={{
-                        paddingTop: '10px',
-                        paddingBottom: '10px',
-                     }}
+                     customClass="hern-kiosk__pay-button"
                      onClick={onPayClickHandler}
                      disabled={!cartValidity?.status}
                      buttonConfig={config.kioskSettings.buttonSettings}

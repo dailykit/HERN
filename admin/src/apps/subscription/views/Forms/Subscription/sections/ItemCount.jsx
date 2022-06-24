@@ -1,5 +1,6 @@
 import React from 'react'
 import moment from 'moment'
+import { indexOf } from 'lodash'
 import { RRule } from 'rrule'
 import styled from 'styled-components'
 import { toast } from 'react-toastify'
@@ -22,6 +23,7 @@ import {
    SectionTabList,
    SectionTabPanel,
    SectionTabPanels,
+   RadioGroup,
 } from '@dailykit/ui'
 
 import { usePlan } from '../state'
@@ -55,6 +57,7 @@ const ItemCount = ({
    defaultSubscriptionItemCountId,
 }) => {
    const { state, dispatch } = usePlan()
+   const [selectedSubscriptionDays, setSelectedSubscriptionDays] = React.useState([])
    const [tunnels, openTunnel, closeTunnel] = useTunnel()
    const [upsertServing] = useMutation(UPSERT_SUBSCRIPTION_SERVING)
    const [defaultItemCountId, setDefaultItemCountId] = React.useState(
@@ -89,6 +92,10 @@ const ItemCount = ({
                isTaxIncluded: node.isTaxIncluded,
             },
          })
+         // extract item counts in countArray:
+         for (let index = 0; index < node?.subscriptions?.length; index++){
+            setSelectedSubscriptionDays((oldArray)=>[...oldArray, RRule.fromString(node.subscriptions[index].rrule).toText().split(' ')[3].toLowerCase() ])
+         }
       },
    })
 
@@ -277,6 +284,7 @@ const ItemCount = ({
                <SubscriptionTunnel
                   tunnels={tunnels}
                   closeTunnel={closeTunnel}
+                  selectedSubscriptionDays={selectedSubscriptionDays}
                />
             </ErrorBoundary>
          </ItemCountSection>
@@ -286,7 +294,7 @@ const ItemCount = ({
 
 export default ItemCount
 
-const SubscriptionTunnel = ({ tunnels, closeTunnel }) => {
+const SubscriptionTunnel = ({ tunnels, closeTunnel, selectedSubscriptionDays }) => {
    const { state } = usePlan()
    const [days, setDays] = React.useState({
       sunday: false,
@@ -297,6 +305,22 @@ const SubscriptionTunnel = ({ tunnels, closeTunnel }) => {
       friday: false,
       saturday: false,
    })
+   const [options] = React.useState([
+      { id: 0, title: 'sunday' },
+      { id: 1, title: 'monday' },
+      { id: 2, title: 'tuesday' },
+      { id: 3, title: 'wednesday'},
+      { id: 4, title: 'thursday' },
+      { id: 5, title: 'friday' },
+      { id: 6, title: 'saturday' }
+   ])
+
+   // remove selected subsbcription days from the option list:
+   options.forEach(element => {
+      if(selectedSubscriptionDays.includes(element.title)){
+         options.splice(indexOf(options, element),1)}
+   })
+
    const [form, setForm] = React.useState({
       cutOffTime: '',
       leadTime: '',
@@ -330,7 +354,7 @@ const SubscriptionTunnel = ({ tunnels, closeTunnel }) => {
       },
       onError: error => {
          logger(error)
-         toast.success('Failed to create the subscription!')
+         toast.error('Failed to create the subscription!')
       },
    })
 
@@ -416,17 +440,12 @@ const SubscriptionTunnel = ({ tunnels, closeTunnel }) => {
                   </Flex>
                   <Spacer size="16px" />
                   <DeliveryDaysList>
-                     {Object.keys(days).map(day => (
-                        <li key={day}>
-                           <Form.Checkbox
-                              name={day}
-                              value={days[day]}
-                              onChange={() => selectDay(day)}
-                           >
-                              {day}
-                           </Form.Checkbox>
-                        </li>
-                     ))}
+                     <RadioGroup
+                        options = {options}
+                        onChange = {(option)=> {
+                           selectDay(option.title)
+                        }}
+                     />
                   </DeliveryDaysList>
                </section>
                <Spacer size="48px" />

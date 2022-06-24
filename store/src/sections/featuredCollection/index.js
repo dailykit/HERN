@@ -43,6 +43,7 @@ export const FeaturedCollection = ({ config }) => {
       allProductIds: [],
       isMenuLoading: true,
    })
+   const [productsList, setProductsList] = React.useState([])
 
    const date = React.useMemo(() => new Date(Date.now()).toISOString(), [])
    const collectionIdArray = React.useMemo(
@@ -83,7 +84,7 @@ export const FeaturedCollection = ({ config }) => {
    )
 
    // query for get products by category (contain array of product ids)
-   const { error: menuError } = useQuery(PRODUCTS_BY_CATEGORY, {
+   const { error: menuError } = useSubscription(PRODUCTS_BY_CATEGORY, {
       skip: isConfigLoading || !brand?.id,
       variables: {
          params: {
@@ -93,7 +94,8 @@ export const FeaturedCollection = ({ config }) => {
             locationId,
          },
       },
-      onCompleted: data => {
+      onSubscriptionData: ({ subscriptionData }) => {
+         const { data } = subscriptionData
          if (data?.onDemand_getMenuV2copy?.length) {
             const [res] = data.onDemand_getMenuV2copy
             const { menu } = res.data
@@ -106,15 +108,19 @@ export const FeaturedCollection = ({ config }) => {
             }))
          }
       },
-      onError: error => {
+   })
+
+   React.useEffect(() => {
+      if (menuError) {
          setMenuData(prev => ({
             ...prev,
             isMenuLoading: false,
          }))
          setStatus('error')
-         console.log(error)
-      },
-   })
+         console.log(menuError)
+      }
+   }, [menuError])
+
    const { isMenuLoading, allProductIds, categories } = menuData
 
    const argsForByLocation = React.useMemo(
@@ -137,29 +143,33 @@ export const FeaturedCollection = ({ config }) => {
          onSubscriptionData: ({ subscriptionData }) => {
             const { data } = subscriptionData
             if (data && data.products.length) {
-               const updatedMenu = categories.map(category => {
-                  const updatedProducts = category.products
-                     .map(productId => {
-                        const found = data.products.find(
-                           ({ id }) => id === productId
-                        )
-                        if (found) {
-                           return found
-                        }
-                        return null
-                     })
-                     .filter(Boolean)
-                  return {
-                     ...category,
-                     products: updatedProducts,
-                  }
-               })
-               setHydratedMenu(updatedMenu)
+               setProductsList(data.products)
             }
-            setStatus('success')
          },
       }
    )
+
+   React.useEffect(() => {
+      if (productsList.length && categories.length) {
+         const updatedMenu = categories.map(category => {
+            const updatedProducts = category.products
+               .map(productId => {
+                  const found = productsList.find(({ id }) => id === productId)
+                  if (found) {
+                     return found
+                  }
+                  return null
+               })
+               .filter(Boolean)
+            return {
+               ...category,
+               products: updatedProducts,
+            }
+         })
+         setHydratedMenu(updatedMenu)
+         setStatus('success')
+      }
+   }, [productsList, categories])
 
    React.useEffect(() => {
       if (productsError) {

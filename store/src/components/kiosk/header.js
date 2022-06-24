@@ -3,22 +3,78 @@ import classNames from 'classnames'
 import React, { useState } from 'react'
 import { useTranslation } from '../../context'
 import KioskButton from './component/button'
-import { ReloadIcon } from '../../assets/icons'
+import { ReloadIcon, ArrowLeftIconBG } from '../../assets/icons'
 import { isClient } from '../../utils'
 import { useIntl } from 'react-intl'
+import { useConfig } from '../../lib'
 
 export const KioskHeader = props => {
    const { config } = props
+   const { setCurrentPage, currentPage } = useConfig()
    const { t } = useTranslation()
    const { formatMessage } = useIntl()
    const [showReloadWarningPopup, setShowReloadWarningPopup] =
       React.useState(false)
+
+   const handleArrowClick = () => {
+      switch (currentPage) {
+         case 'menuPage':
+            setCurrentPage('fulfillmentPage')
+            break
+         case 'cartPage':
+            setCurrentPage('menuPage')
+            break
+         case 'paymentPage':
+            setCurrentPage('cartPage')
+            break
+         default:
+            setCurrentPage('menuPage')
+      }
+   }
+
    return (
-      <div className="hern-kiosk__kiosk-header-container">
-         <img
-            src={config.kioskSettings.logo.value}
-            className="hern-kiosk__kiosk-header-logo"
-         />
+      <div
+         className={classNames('hern-kiosk__kiosk-header-container', {
+            'hern-kiosk__kiosk-header-container--centered-logo':
+               config.kioskSettings?.header?.alignLogo?.value?.value ===
+               'center',
+         })}
+         style={{
+            gridTemplateColumns:
+               config.kioskSettings?.header?.alignLogo?.value?.value ===
+                  'center' &&
+               currentPage !== 'fulfillmentPage' &&
+               config.kioskSettings?.header?.backButton?.showBackButton.value
+                  ? 'auto 1fr auto'
+                  : '1fr auto',
+         }}
+      >
+         {currentPage !== 'fulfillmentPage' &&
+            config.kioskSettings?.header?.backButton?.showBackButton.value && (
+               <ArrowLeftIconBG
+                  style={{ marginRight: '1em' }}
+                  onClick={handleArrowClick}
+                  arrowColor={
+                     config.kioskSettings?.header?.backButton?.arrowColor
+                        ?.value ?? '#fff'
+                  }
+                  bgColor={
+                     config.kioskSettings?.header?.backButton?.arrowBgColor
+                        ?.value ?? config.kioskSettings.theme.primaryColor.value
+                  }
+               />
+            )}
+         <div className="hern-kiosk__kiosk-header__brand">
+            <img
+               src={config.kioskSettings.logo.value}
+               className="hern-kiosk__kiosk-header-logo"
+            />
+            {config.kioskSettings.ShowBrandName.value &&
+               config.kioskSettings.brandName.value && (
+                  <h3>{config.kioskSettings.brandName.value}</h3>
+               )}
+         </div>
+
          <LanguageSelector
             config={config}
             setShowReloadWarningPopup={setShowReloadWarningPopup}
@@ -142,7 +198,18 @@ const LanguageSelector = props => {
             style={{
                margin: '0 20px',
                color: '#fff',
-               fontSize: '16px',
+               textTransform: `${
+                  config?.kioskSettings?.header?.resetButton?.textTransform
+                     ?.value
+                     ? config.kioskSettings.header.resetButton.textTransform
+                          .value
+                     : 'capitalize'
+               }`,
+               fontSize: `${
+                  config?.kioskSettings?.header?.resetButton?.fontSize?.value
+                     ? config.kioskSettings.header.resetButton.fontSize.value
+                     : '1rem'
+               }`,
             }}
          >
             {t('Reset')}
