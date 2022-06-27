@@ -14,6 +14,7 @@ const PlanProducts = ({ noSkip, isCheckout }) => {
    const { addToast } = useToasts()
    const { t } = useTranslation()
    const { state, methods, dispatch } = useMenu()
+   const [cartProducts, setCartProducts] = React.useState(state?.occurenceCustomer?.cart)
    const [upsertOccurenceCustomer] = useMutation(
       MUTATIONS.OCCURENCE.CUSTOMER.UPSERT,
       {
@@ -47,6 +48,12 @@ const PlanProducts = ({ noSkip, isCheckout }) => {
          },
       })
    }
+
+   React.useEffect(()=>{
+      if(state?.occurenceCustomer?.cart){
+         setCartProducts(state?.occurenceCustomer?.cart)
+      }
+   },[state?.occurenceCustomer?.cart])
 
    const isSkippable =
       ['CART_PENDING', undefined].includes(
@@ -129,7 +136,7 @@ const PlanProducts = ({ noSkip, isCheckout }) => {
             </section>
          )}
          <ul className="hern-cart-plan-products__list">
-            {state?.occurenceCustomer?.cart?.products?.map(
+            {cartProducts?.products.map(
                product =>
                   !product.isAddOn && (
                      <CartProduct

@@ -141,17 +141,17 @@ export const MenuProvider = ({ isCheckout = false, children }) => {
             )
             if (!isEmpty(selectedProductOption)) {
                isCartValid =
-                  node.product.isAvailable &&
-                  node.product.isPublished &&
-                  !node.product.isArchived &&
-                  selectedProductOption.isAvailable &&
-                  selectedProductOption.isPublished &&
-                  !selectedProductOption.isArchived
+                  node?.product?.isAvailable &&
+                  node?.product?.isPublished &&
+                  !node?.product?.isArchived &&
+                  selectedProductOption?.isAvailable &&
+                  selectedProductOption?.isPublished &&
+                  !selectedProductOption?.isArchived
             } else {
                isCartValid =
-                  node.product.isAvailable &&
-                  node.product.isPublished &&
-                  !node.product.isArchived
+                  node?.product?.isAvailable &&
+                  node?.product?.isPublished &&
+                  !node?.product?.isArchived
             }
 
             if (!isCartValid) {
@@ -183,6 +183,7 @@ export const MenuProvider = ({ isCheckout = false, children }) => {
                weekId: state.week.id,
                keycloakId: user?.keycloakId,
                brand_customerId: user?.brandCustomerId,
+               params: argsForByLocation,
             },
             onError: error => {
                console.log('Error in subscribeToMore: ', error)
@@ -200,6 +201,9 @@ export const MenuProvider = ({ isCheckout = false, children }) => {
       state.week.id,
       user?.keycloakId,
       user?.brandCustomerId,
+      brand?.id,
+      locationId,
+      brandLocation?.id,
    ])
 
    if (!occurenceCustomerLoading && occurenceCustomerError) {
