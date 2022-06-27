@@ -32,7 +32,7 @@ export const handlePaymentWebhook = async (req, res) => {
             comment: 'Updated by payment logger by handle payment webhook'
          })
       }
-      if (result.success && result.company === 'paytm') {
+      if (result.success && result.company === 'paytm' && result.doRedirect) {
          const paymentStatus = {
             TXN_SUCCESS: 'SUCCEEDED',
             TXN_FAILURE: 'FAILED'
