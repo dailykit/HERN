@@ -23,6 +23,13 @@ query CART_PAYMENT($id: Int!) {
       brand{
         domain
       }
+      availablePaymentOption {
+         id
+         label
+         supportedPaymentOption {
+            paymentOptionLabel
+         }
+      }
     }
  }
 }
@@ -67,6 +74,8 @@ query cart($id: Int!) {
     toUseAvailablePaymentOptionId
     customerInfo
     cartOwnerBilling
+    usedOrderInterface
+    locationKioskId
     availablePaymentOption {
       id
       label
