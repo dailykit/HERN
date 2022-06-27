@@ -427,7 +427,7 @@ const Line = () => {
             x2="750"
             y2="2.86816"
             stroke="url(#paint0_linear_1510_6578)"
-            stroke-width="4"
+            strokeWidth="4"
          />
          <defs>
             <linearGradient
@@ -438,8 +438,8 @@ const Line = () => {
                y2="4.86816"
                gradientUnits="userSpaceOnUse"
             >
-               <stop stop-color="#333333" />
-               <stop offset="1" stop-color="#333333" stop-opacity="0" />
+               <stop stopColor="#333333" />
+               <stop offset="1" stopColor="#333333" stopOpacity="0" />
             </linearGradient>
          </defs>
       </svg>
