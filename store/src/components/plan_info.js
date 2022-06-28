@@ -41,7 +41,10 @@ const PlanInfo = () => {
       icon: subscription_subscriptionItemCount[0]?.subscriptionServing
          ?.subscriptionTitle?.metaDetails?.icon,
    }
-   const planInfo = user?.isSubscriber ? planInfoUser : planInfoFetched
+   const planInfo =
+      user?.isSubscriber && localStorage.getItem('changing-plan') !== 'true'
+         ? planInfoUser
+         : planInfoFetched
 
    return (
       <div className="hern-plan-info">
