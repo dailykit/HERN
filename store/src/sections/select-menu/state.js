@@ -1,9 +1,14 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import moment from 'moment'
 import { isEmpty, indexOf } from 'lodash'
 import { useRouter } from 'next/router'
 import { useToasts } from 'react-toast-notifications'
-import { useMutation, useQuery, useSubscription } from '@apollo/react-hooks'
+import {
+   useMutation,
+   useQuery,
+   useSubscription,
+   useApolloClient,
+} from '@apollo/react-hooks'
 
 import { useConfig } from '../../lib'
 import { useTranslation, useUser } from '../../context'
@@ -16,6 +21,7 @@ import {
    DELETE_CART_ITEM,
    OCCURENCES_BY_SUBSCRIPTION,
    CART_BY_WEEK_SUBSCRIPTION,
+   GET_BRAND_LOCATION,
 } from '../../graphql'
 import { getRoute, isClient } from '../../utils'
 
@@ -95,7 +101,48 @@ export const MenuProvider = ({ isCheckout = false, children }) => {
       setIsCartValidByProductAvailability,
    ] = React.useState(false)
    const [state, dispatch] = React.useReducer(reducers, initialState)
-   const { locationId, brandLocation } = useConfig()
+   const apolloClient = useApolloClient()
+   const [locationId, setLocationId] = useState(null)
+   const [brandLocation, setBrandLocation] = useState(null)
+
+   const { loading: loadingZipcode, data: { zipcode = {} } = {} } =
+      useSubscription(ZIPCODE, {
+         skip:
+            !user?.subscriptionId ||
+            !user?.defaultAddress?.zipcode ||
+            !state.week?.id,
+         variables: {
+            subscriptionId: user?.subscriptionId,
+            zipcode: user?.defaultAddress?.zipcode,
+         },
+      })
+
+   useEffect(() => {
+      if (zipcode?.locationId) {
+         apolloClient
+            .query({
+               query: GET_BRAND_LOCATION,
+               variables: {
+                  where: {
+                     brandId: {
+                        _eq: brand?.id,
+                     },
+                     locationId: {
+                        _eq: zipcode.locationId,
+                     },
+                  },
+               },
+            })
+            .then(data => {
+               data = data.data
+               if (data && data.brandLocations.length > 0) {
+                  setLocationId(zipcode.locationId)
+                  setBrandLocation(data.brandLocations[0])
+               }
+            })
+      }
+   }, [zipcode, loadingZipcode, brand?.id])
+
    const argsForByLocation = React.useMemo(
       () => ({
          brandId: brand?.id,
@@ -123,7 +170,7 @@ export const MenuProvider = ({ isCheckout = false, children }) => {
          brand_customerId: user?.brandCustomerId,
          params: argsForByLocation,
       },
-      onCompleted: () => {
+      onCompleted: data => {
          dispatch({
             type: 'IS_CART_FULL',
             payload: false,
@@ -141,17 +188,17 @@ export const MenuProvider = ({ isCheckout = false, children }) => {
             )
             if (!isEmpty(selectedProductOption)) {
                isCartValid =
-                  node?.product?.isAvailable &&
-                  node?.product?.isPublished &&
-                  !node?.product?.isArchived &&
-                  selectedProductOption?.isAvailable &&
-                  selectedProductOption?.isPublished &&
-                  !selectedProductOption?.isArchived
+                  node.product.isAvailable &&
+                  node.product.isPublished &&
+                  !node.product.isArchived &&
+                  selectedProductOption.isAvailable &&
+                  selectedProductOption.isPublished &&
+                  !selectedProductOption.isArchived
             } else {
                isCartValid =
-                  node?.product?.isAvailable &&
-                  node?.product?.isPublished &&
-                  !node?.product?.isArchived
+                  node.product.isAvailable &&
+                  node.product.isPublished &&
+                  !node.product.isArchived
             }
 
             if (!isCartValid) {
@@ -236,17 +283,6 @@ export const MenuProvider = ({ isCheckout = false, children }) => {
       },
       onError: error => console.log('deleteCartItem => error =>', error),
    })
-   const { loading: loadingZipcode, data: { zipcode = {} } = {} } =
-      useSubscription(ZIPCODE, {
-         skip:
-            !user?.subscriptionId ||
-            !user?.defaultAddress?.zipcode ||
-            !state.week?.id,
-         variables: {
-            subscriptionId: user?.subscriptionId,
-            zipcode: user?.defaultAddress?.zipcode,
-         },
-      })
 
    //query
 
@@ -407,6 +443,7 @@ export const MenuProvider = ({ isCheckout = false, children }) => {
          !occurenceCustomerLoading &&
          state.week?.id
       ) {
+         if (!locationId || !brandLocation?.id) return
          if (isEmpty(occurenceCustomer)) {
             insertOccurenceCustomer({
                variables: {
@@ -733,6 +770,9 @@ export const MenuProvider = ({ isCheckout = false, children }) => {
                   delete: removeProduct,
                },
             },
+            locationId,
+            brandLocation,
+            brand,
             dispatch,
          }}
       >

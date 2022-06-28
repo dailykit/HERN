@@ -7,7 +7,10 @@ export const ITEM_COUNT = gql`
          valid: subscriptions(
             where: {
                isDemo: { _eq: $isDemo }
-               availableZipcodes: { zipcode: { _eq: $zipcode } }
+               availableZipcodes: {
+                  zipcode: { _eq: $zipcode }
+                  locationId: { _is_null: false }
+               }
             }
             order_by: { position: desc_nulls_last }
          ) {
@@ -16,6 +19,7 @@ export const ITEM_COUNT = gql`
             rrule
             leadTime
             zipcodes: availableZipcodes(where: { zipcode: { _eq: $zipcode } }) {
+               locationId
                deliveryPrice
                isDeliveryActive
                isPickupActive
@@ -33,6 +37,7 @@ export const ITEM_COUNT = gql`
             rrule
             leadTime
             zipcodes: availableZipcodes(where: { zipcode: { _eq: $zipcode } }) {
+               locationId
                deliveryPrice
                isDeliveryActive
                isPickupActive

@@ -23,8 +23,7 @@ export const Menu = () => {
    const { user } = useUser()
    const { addToast } = useToasts()
    const { t, dynamicTrans, locale } = useTranslation()
-   const { state } = useMenu()
-   const { brand, locationId, brandLocation } = useConfig()
+   const { state, brand, locationId, brandLocation } = useMenu()
    const { configOf, buildImageUrl, noProductImage } = useConfig()
 
    const argsForByLocation = React.useMemo(
