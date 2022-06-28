@@ -108,11 +108,6 @@ export const DeliverySection = ({ planId }) => {
                   t('No days are available for delivery on this address.')
                )}
             </HelperBar.SubTitle>
-            <HelperBar.Button
-               onClick={() => router.push(getRoute('/get-started/select-plan'))}
-            >
-               {t('Select Plan')}
-            </HelperBar.Button>
          </HelperBar>
       )
    }

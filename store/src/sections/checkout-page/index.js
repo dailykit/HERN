@@ -330,7 +330,7 @@ const FulfillmentAddress = ({ cart }) => {
       if (elem) {
          setThemeVariable(
             '--user-info-section-bottom',
-            elem.clientHeight + 50 + 'px'
+            elem?.clientHeight + 50 + 'px'
          )
       }
    }, [isOpen])

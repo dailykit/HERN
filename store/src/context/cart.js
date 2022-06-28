@@ -580,20 +580,20 @@ export const CartProvider = ({ children }) => {
                      const addressInCart =
                         subscriptionData.data.carts[0].address
                      const addressToBeSaveInLocal = {
-                        city: addressInCart.city,
-                        country: addressInCart.country,
-                        label: addressInCart.label,
-                        landmark: addressInCart.landmark,
-                        latitude: addressInCart.lat,
-                        line1: addressInCart.line1,
-                        line2: addressInCart.line2,
-                        longitude: addressInCart.lng,
-                        mainText: addressInCart.line1,
-                        notes: addressInCart.notes,
-                        secondaryText: `${addressInCart.city}, ${addressInCart.state} ${addressInCart.zipcode}, ${addressInCart.country}`,
-                        state: addressInCart.state,
-                        zipcode: addressInCart.zipcode,
-                        searched: addressInCart.searched || '',
+                        city: addressInCart?.city,
+                        country: addressInCart?.country,
+                        label: addressInCart?.label,
+                        landmark: addressInCart?.landmark,
+                        latitude: addressInCart?.lat,
+                        line1: addressInCart?.line1,
+                        line2: addressInCart?.line2,
+                        longitude: addressInCart?.lng,
+                        mainText: addressInCart?.line1,
+                        notes: addressInCart?.notes,
+                        secondaryText: `${addressInCart?.city}, ${addressInCart?.state} ${addressInCart?.zipcode}, ${addressInCart?.country}`,
+                        state: addressInCart?.state,
+                        zipcode: addressInCart?.zipcode,
+                        searched: addressInCart?.searched || '',
                      }
                      const orderTabForLocal =
                         subscriptionData.data.carts[0].fulfillmentInfo?.type ||

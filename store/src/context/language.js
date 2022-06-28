@@ -74,6 +74,8 @@ export const LanguageProvider = ({ children }) => {
             changeLocale('nl')
          } else if (languageInLocal == 'en') {
             changeLocale('en')
+         } else if (languageInLocal == 'fr') {
+            changeLocale('fr')
          }
       }
    }, [])
