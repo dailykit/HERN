@@ -67,7 +67,8 @@ export const Header = ({ title, children }) => {
    const theme = configOf('theme-color')
    return (
       <header className="hern-tunnel__header">
-         <h2
+         {children}
+         <span
             className="hern-tunnel__header__title"
             style={{
                color: theme?.accent
@@ -76,8 +77,7 @@ export const Header = ({ title, children }) => {
             }}
          >
             {title}
-         </h2>
-         {children}
+         </span>
       </header>
    )
 }
