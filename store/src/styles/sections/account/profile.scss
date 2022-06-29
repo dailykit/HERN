@@ -4,8 +4,6 @@
    min-height: calc(100vh - 64px);
    grid-template-columns: 300px 1fr;
    position: relative;
-   max-width: 1200px;
-   margin: 27px auto;
    @media (max-width: 768px) {
       display: block;
    }
