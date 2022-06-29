@@ -61,6 +61,7 @@ const ProductsSection = () => {
       },
       {
          title: 'Serving',
+         headerFilter: true,
          field: 'recipeYield.size',
          hozAlign: 'right',
          headerHozAlign: 'right',
