@@ -115,7 +115,9 @@ export const Menu = () => {
                      smooth={true}
                      offset={-70}
                   >
-                     {category.name}
+                     <span data-translation="true">
+                        {t(`${category.name}`)}
+                     </span>
                   </Scroll.Link>
                ))}
             </div>
@@ -127,7 +129,7 @@ export const Menu = () => {
                className="hern-select-menu__menu"
             >
                <h4 className="hern-select-menu__menu__category-name">
-                  <span data-translation="true">{category.name}</span> (
+                  <span data-translation="true">{t(`${category.name}`)}</span> (
                   {
                      uniqBy(category.productsAggregate.nodes, v =>
                         [
