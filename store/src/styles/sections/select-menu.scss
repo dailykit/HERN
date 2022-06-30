@@ -50,9 +50,19 @@
    display: flex;
    align-items: center;
    justify-content: space-between;
+   gap: 12px;
    &::after,
    &::before {
       content: '';
+   }
+
+   &::-webkit-scrollbar {
+      display: none;
+   }
+
+   @media (max-width: 1024px) {
+      overflow: auto;
+      white-space: nowrap;
    }
 }
 .hern-select-menu__week-picker__list-item {
