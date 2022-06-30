@@ -484,6 +484,7 @@ const AreasTunnel = ({
          })
          setPickupOption(data?.subscriptionPickupOption)
          setIsPickupActive(data?.isPickupActive)
+         setSelectedLocation(data?.locationId)
       }
    }, [mode, data])
 
@@ -497,6 +498,7 @@ const AreasTunnel = ({
    const save = () => {
       if (mode === 'ADD') {
          const zips = zipcodes.split(',').map(node => node.trim())
+         if(id && delivery.from && delivery.to && selectedLocation?.id){
          const objects = zips.map(zip => ({
             zipcode: zip,
             subscriptionId: id,
@@ -512,6 +514,8 @@ const AreasTunnel = ({
                objects,
             },
          })
+      }
+      else{toast.error('Zipcodes, locations and Delivery "from" and "To" are important to fill')}
       } else {
          updateSubscriptionZipcode({
             variables: {
@@ -581,7 +585,7 @@ const AreasTunnel = ({
             <Spacer yAxis size="16px" />
                <Flex width={'35%'}>
                   <Form.Group>
-                     <Text as='h3'>Location</Text>
+                     <Text as='h3'>Location*</Text>
                      {/* <Form.Text
                      value={title.location}
                      placeholder="Enter location"
@@ -590,6 +594,7 @@ const AreasTunnel = ({
                         type="single"
                         //  variant="revamp"
                         // defaultName={title.location}
+                        // defaultOption={{id: selectedLocation.id}}
                         isLoading={locationListLoading}
                         addOption={locationList}
                         options={locationList}
@@ -636,7 +641,7 @@ const AreasTunnel = ({
                <Form.Group>
                   <Form.Label htmlFor="from" title="from">
                      <Flex container alignItems="center">
-                        From
+                        From*
                         <Tooltip identifier="form_subscription_tunnel_zipcode_field_delivery_from" />
                      </Flex>
                   </Form.Label>
@@ -654,7 +659,7 @@ const AreasTunnel = ({
                <Form.Group>
                   <Form.Label htmlFor="to" title="to">
                      <Flex container alignItems="center">
-                        To
+                        To*
                         <Tooltip identifier="form_subscription_tunnel_zipcode_field_delivery_to" />
                      </Flex>
                   </Form.Label>
