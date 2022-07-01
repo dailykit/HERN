@@ -7,6 +7,7 @@
    align-items: center;
    justify-content: center;
    margin-top: 110px;
+   z-index: 1;
    &::after {
       content: '';
       position: absolute;
