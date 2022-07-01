@@ -27,11 +27,18 @@
    font-size: 24px;
    line-height: 29px;
    color: rgba(64, 64, 64, 0.8);
+   @media (max-width: 320px) {
+      width: 50%;
+   }
 }
 .hern-account-addresses__header__add-addresses-button {
    padding: 8px 24px;
    background: #38A169;
    border-radius: 4px;
+   @media (max-width: 320px) {
+      margin: 0;
+      padding: .4rem;
+   }
 }
 .hern-account-addresses__address-list {
    display: grid;
