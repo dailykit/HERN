@@ -1,6 +1,10 @@
 .hern-plan-info {
    background-color: #f9f9f9;
    margin-top: 0.5rem;
+   position: fixed;
+   width: 100%;
+   top: 94px;
+   z-index: 3;
    > div {
       max-width: 1200px;
       margin: 0 auto;
@@ -8,7 +12,6 @@
       align-items: center;
       justify-content: space-between;
       padding: 6px 16px;
-      margin-bottom: 16px;
    }
    .hern-plan-info__title {
       > h3 {

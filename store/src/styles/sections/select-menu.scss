@@ -21,6 +21,16 @@
 }
 
 /**Week picker */
+
+.hern-select-menu__week-picker__wrapper {
+   position: fixed;
+   z-index: 5;
+   width: 100%;
+   background: #fff;
+   top: 150px;
+   border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
 .hern-select-menu__week-picker {
    display: flex;
    justify-content: center;
@@ -45,7 +55,7 @@
    height: 64px;
    max-width: 980px;
    padding: 0 0.5rem;
-   margin: 12px auto;
+   margin: 0px auto;
    overflow-x: auto;
    display: flex;
    align-items: center;
