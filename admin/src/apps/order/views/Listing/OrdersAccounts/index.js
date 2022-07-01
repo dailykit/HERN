@@ -126,6 +126,7 @@ const DataTable = ({ data }) => {
          },
          cssClass: 'colHover',
          width: 100,
+         headerFilter: true,
       },
       {
          title: 'Customer Name',
