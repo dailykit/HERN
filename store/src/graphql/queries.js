@@ -23,6 +23,7 @@ export const ITEM_COUNT = gql`
                deliveryPrice
                isDeliveryActive
                isPickupActive
+               deliveryTime
             }
          }
          invalid: subscriptions(

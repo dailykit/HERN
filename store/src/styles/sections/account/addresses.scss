@@ -16,11 +16,29 @@
    display: flex;
    justify-content: space-between;
    align-items: center;
+   flex-direction: row;
 }
 .hern-account-addresses__header__title {
-   color: rgba(5, 150, 105, 1);
-   font-size: 1.5rem;
-   line-height: 2rem;
+   left: 318.02px;
+   top: 131.51px;
+   font-family: 'Lato';
+   font-style: normal;
+   font-weight: 600;
+   font-size: 24px;
+   line-height: 29px;
+   color: rgba(64, 64, 64, 0.8);
+   @media (max-width: 320px) {
+      width: 50%;
+   }
+}
+.hern-account-addresses__header__add-addresses-button {
+   padding: 8px 24px;
+   background: #38A169;
+   border-radius: 4px;
+   @media (max-width: 320px) {
+      margin: 0;
+      padding: .4rem;
+   }
 }
 .hern-account-addresses__address-list {
    display: grid;
@@ -51,7 +69,10 @@
    -ms-flex-align: flex-start;
    align-items: flex-start;
    border-width: 1px;
-   color: rgba(55, 65, 81, 1);
+   background: #FFFFFF;
+   box-shadow: 0px 1px 12px rgba(0, 0, 0, 0.05);
+   border-radius: 6px;
+   position: relative;
 }
 
 .hern-account-addresses__address-list-item__header {
@@ -69,6 +90,17 @@
    -webkit-box-align: center;
    -ms-flex-align: center;
    align-items: center;
+   justify-content: space-between;
+}
+.hern-account-addresses__address-list-item-header-div1 {
+   display: flex;
+   align-items: center;
+   flex-direction: row;
+}
+.hern-account-addresses__address-list-item-label {
+   padding-left: 0.5rem;
+   color: #333333;
+   font-size: large;
 }
 .hern-account-addresses__address-list-item__btn--default {
    border-radius: 0.25rem;
@@ -78,6 +110,7 @@
    padding-left: 0.5rem;
    padding-right: 0.5rem;
    color: rgba(44, 122, 123, 1);
+   margin: .5rem 0;
 }
 .hern-account-addresses__address-list-item__btn--make-default {
    border-radius: 0.25rem;
@@ -85,7 +118,7 @@
    border-color: rgba(251, 211, 141, 1);
    padding-left: 0.5rem;
    padding-right: 0.5rem;
-
+   margin: .5rem 0;
    color: rgba(44, 122, 123, 1);
    cursor: pointer;
    &:hover {
@@ -112,6 +145,13 @@
    border-radius: 0.25rem;
    height: 1.5rem;
    width: 1.5rem;
+   position: absolute;
+   left: 88.5%;
+   right: 3.83%;
+   top: 7.14%;
+   bottom: 78.57%;
+   background: #FFFFFF;
+   border-radius: 4px;
    &:hover {
       background-color: rgba(248, 113, 113, 1);
       .hern-account-addresses__address-list-item__btn--delete-icon {
@@ -124,18 +164,33 @@
 }
 .hern-account-addresses__address-search {
    margin-bottom: 16px;
+   position: relative;
    .google-places-autocomplete {
       width: 100%;
-      position: relative;
    }
    .google-places-autocomplete__input {
-      border-bottom-width: 1px;
       width: 100%;
       height: 2rem;
+      background: #F9F9F9;
+      border-radius: 4px;
       &:focus {
          outline: none;
          border-color: rgba(55, 65, 81, 1);
       }
+      &::placeholder {
+         padding: .5rem;
+         font-size: medium;
+      }
+   }
+   .hern-account-addresses__address-input-search-icon {
+      position: absolute;
+      right: 0;
+      top: 0;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      background: #F9F9F9;
+      padding-right: .5rem;
    }
    .google-places-autocomplete__input:active,
    .google-places-autocomplete__input:focus,
@@ -187,4 +242,37 @@
       -moz-box-direction: normal;
       flex-direction: column;
    }
+}
+.hern-account-addresses__no_addresses_img{
+   display: flex;
+   align-items: center;
+   flex-direction: column;
+}
+.hern-account-addresses-no-addresses-text {
+   font-family: 'Lato';
+   font-style: normal;
+   font-weight: 600;
+   font-size: 24px;
+   color: rgba(64, 64, 64, 0.8);
+   margin: 1rem 0;
+}
+.hern-account-addresses-no-addresses-add-addresses-button{
+   padding: 8px 80px;
+   background: #38A169;
+   border-radius: 4px;
+   margin: 1rem 0;
+}
+.hern-account-addresses-add-addresses-button-text{
+   font-family: 'Lato';
+   font-style: normal;
+   font-weight: 700;
+   font-size: 16px;
+   color: #FFFFFF;
+}
+.hern-account-addresses-no-addresses-add-addresses-button-text{
+   font-family: 'Lato';
+   font-style: normal;
+   font-weight: 700;
+   font-size: 20px;
+   color: #FFFFFF;
 }

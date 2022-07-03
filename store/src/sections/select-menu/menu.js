@@ -115,7 +115,9 @@ export const Menu = () => {
                      smooth={true}
                      offset={-70}
                   >
-                     {category.name}
+                     <span data-translation="true">
+                        {t(`${category.name}`)}
+                     </span>
                   </Scroll.Link>
                ))}
             </div>
@@ -127,7 +129,7 @@ export const Menu = () => {
                className="hern-select-menu__menu"
             >
                <h4 className="hern-select-menu__menu__category-name">
-                  <span data-translation="true">{category.name}</span> (
+                  <span data-translation="true">{t(`${category.name}`)}</span> (
                   {
                      uniqBy(category.productsAggregate.nodes, v =>
                         [
@@ -169,6 +171,7 @@ const Product = ({ node, theme, isAdded, noProductImage, buildImageUrl }) => {
    const { state, methods } = useMenu()
    const { t, dynamicTrans, locale } = useTranslation()
    const { formatMessage } = useIntl()
+
    const openRecipe = () => {
       window.open(
          getRoute(`/recipes/${node?.productOption?.id}`),
@@ -396,10 +399,22 @@ const Product = ({ node, theme, isAdded, noProductImage, buildImageUrl }) => {
                >
                   {node.isAvailable && !isProductOutOfStock ? (
                      <>
-                        {isActive ? t('REPEAT') : t('ADD')}
-                        {node.addOnPrice > 0 && ' + '}
-                        {node.addOnPrice > 0 &&
-                           formatCurrency(Number(node.addOnPrice) || 0)}
+                        {state.occurenceCustomer?.cart?.paymentStatus ===
+                        'SUCCEEDED' ? (
+                           <>
+                              {node.cartItem.unitPrice > 0 &&
+                                 formatCurrency(
+                                    Number(node.cartItem.unitPrice) || 0
+                                 )}
+                           </>
+                        ) : (
+                           <>
+                              {isActive ? t('REPEAT') : t('ADD')}
+                              {node.addOnPrice > 0 && ' + '}
+                              {node.addOnPrice > 0 &&
+                                 formatCurrency(Number(node.addOnPrice) || 0)}
+                           </>
+                        )}
                      </>
                   ) : (
                      t('Out of Stock')

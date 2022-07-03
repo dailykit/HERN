@@ -61,7 +61,7 @@ const Occurences = ({ id, setOccurencesTotal }) => {
       openMenuTunnel(1)
    }
 
-   const columns = [
+   const columns = React.useMemo(() => [
       {
          title: 'Label',
          field: 'label',
@@ -140,8 +140,8 @@ const Occurences = ({ id, setOccurencesTotal }) => {
             )
          },
       },
-   ]
-   const handleRowSelection = ({ _row }) => {
+   ],[])
+   const handleRowSelection = React.useCallback((_row) => {
       const rowData = _row.getData()
       const lastPersistence = localStorage.getItem(
          'selected-rows-id_subscription_occurrence_table'
@@ -158,8 +158,8 @@ const Occurences = ({ id, setOccurencesTotal }) => {
          'selected-rows-id_subscription_occurrence_table',
          JSON.stringify(newData)
       )
-   }
-   const handleRowDeselection = ({ _row }) => {
+   }, [])
+   const handleRowDeselection = React.useCallback(({ _row }) => {
       const data = _row.getData()
       const lastPersistence = localStorage.getItem(
          'selected-rows-id_subscription_occurrence_table'
@@ -178,7 +178,7 @@ const Occurences = ({ id, setOccurencesTotal }) => {
          'selected-rows-id_subscription_occurrence_table',
          JSON.stringify(newLastPersistenceParse)
       )
-   }
+   }, [])
 
    const removeSelectedOccurrence = () => {
       setChecked({ checked: false })
@@ -282,6 +282,7 @@ const Occurences = ({ id, setOccurencesTotal }) => {
             options={{
                ...tableOptions,
                layout: 'fitColumns',
+               // scrollToRowIfVisible: false,
             }}
             rowSelected={handleRowSelection}
             rowDeselected={handleRowDeselection}
