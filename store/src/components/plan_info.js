@@ -14,8 +14,6 @@ const PlanInfo = () => {
    const router = useRouter()
    const route = router.route
 
-   console.log('Router: ', router)
-
    const planId = localStorage.getItem('plan')
       ? Number(localStorage.getItem('plan'))
       : null
