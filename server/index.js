@@ -36,7 +36,8 @@ import {
    sendSMS,
    updateDailyosStripeStatus,
    getAccountDetails,
-   SSLRouter
+   SSLRouter,
+   AuthRouter
 } from './entities'
 
 import { PrintRouter } from './entities/print'
@@ -120,5 +121,6 @@ router.post('/api/envs', populate_env)
 router.get('/images/:url(*)', handleImage)
 
 router.use('/api/ssl', SSLRouter)
+router.use('/api/auth', AuthRouter)
 
 export default router
