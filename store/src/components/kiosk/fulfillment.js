@@ -541,7 +541,6 @@ const PhoneNumber = ({
             <div className="hern-kiosk__phone-number-drawer__number">
                <div className="hern-kiosk__phone-number-drawer__number__input">
                   <input
-                     // value={number}
                      ref={phoneNumberInputRef}
                      type="text"
                      placeholder="Phone number"
