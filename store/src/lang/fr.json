@@ -403,5 +403,6 @@
    "Out Of Stock": "En rupture de stock",
    "View Menu": "Afficher le menu",
    "Choose your plan": "Choisissez votre forfait",
-   "Choose your quantity": "Choisissez votre quantité"
+   "Choose your quantity": "Choisissez votre quantité",
+   "You do not have plans...": "Vous n’avez pas de plans..."
 }
