@@ -8,6 +8,8 @@ import { useTabs } from '../../../../shared/providers'
 import { COLLECTIONS_COUNT } from '../../graphql'
 import { Banner } from '../../../../shared/components'
 import { CollectionsSvg } from '../../../../shared/assets/illustrationTileSvg'
+import { AddOnMenuSvg, MenuSvg, SubscriptionOccurencesSvg, SubscriptionsSvg } from '../../../../shared/assets/illustrationTileSvg'
+
 
 const address = 'apps.menu.views.home.'
 
@@ -31,6 +33,36 @@ const Home = () => {
                onClick={() => addTab('Collections', '/menu/collections')}
                tileSvg={<CollectionsSvg />}
             />
+            <DashboardTile
+               title='Pre-Order Delivery'
+               onClick={() => addTab('Collections', '/menu/recurrences/PREORDER_DELIVERY')}
+               tileSvg={<SubscriptionsSvg />}
+            />
+            <DashboardTile
+               title='Pre-Order PickUp'
+               onClick={() => addTab('Collections', '/menu/recurrences/PREORDER_PICKUP')}
+               tileSvg={<SubscriptionOccurencesSvg />}
+            />
+            <DashboardTile
+               title='On-Demand Delivery'
+               onClick={() => addTab('Collections', '/menu/recurrences/ONDEMAND_DELIVERY')}
+               tileSvg={<AddOnMenuSvg />}
+            />
+            <DashboardTile
+               title='On-Demand PickUp'
+               onClick={() => addTab('Collections', '/menu/recurrences/ONDEMAND_PICKUP')}
+               tileSvg={<MenuSvg />}
+            />
+            <DashboardTile
+               title='On-Demand Dinin'
+               onClick={() => addTab('Collections', '/menu/recurrences/ONDEMAND_DININ')}
+            />
+            <DashboardTile
+               title='Pre-Order Dinin'
+               onClick={() => addTab('Collections', '/menu/recurrences/PREORDER_DININ')}
+
+            />
+
          </StyledCardList>
          <Banner id="menu-app-home-bottom" />
       </StyledHome>
