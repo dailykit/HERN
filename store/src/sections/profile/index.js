@@ -304,13 +304,6 @@ const CurrentPlan = () => {
          </div>
       )
 
-   if (!user?.isSubscriber)
-      return (
-         <div className="hern-profile__current-plan-not-subscribed">
-            <h1>{t('You do not have plans...')}</h1>
-         </div>
-      )
-
    if (user?.isSubscriber)
       return (
          <div className="hern-profile__current-plan">
@@ -488,4 +481,5 @@ const CurrentPlan = () => {
             )}
          </div>
       )
+   else return null
 }
