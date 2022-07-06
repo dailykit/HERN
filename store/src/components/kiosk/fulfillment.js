@@ -478,18 +478,23 @@ const PhoneNumber = ({
    useEffect( ()=> {
 
       const show = "*"
+      const hidePhoneNumber = true;
       let phoneNumberlen = number.length
-      
+
       if (phoneNumberInputRef.current){
          if(phoneNumberlen){
-            if(!isBackspace){
-               phoneNumberInputRef.current.value = show.repeat(phoneNumberlen-1)+number[phoneNumberlen-1];
-               setTimeout( ()=>{
+            if(hidePhoneNumber){
+               if(!isBackspace){
+                  phoneNumberInputRef.current.value = show.repeat(phoneNumberlen-1)+number[phoneNumberlen-1];
+                  setTimeout( ()=>{
+                     phoneNumberInputRef.current.value = show.repeat(phoneNumberlen);
+                  }, 500)
+               } else {
                   phoneNumberInputRef.current.value = show.repeat(phoneNumberlen);
-               }, 300)
+                  setIsBackspace(false);
+               }
             } else {
-               phoneNumberInputRef.current.value = show.repeat(phoneNumberlen);
-               setIsBackspace(false);
+               phoneNumberInputRef.current.value = number;
             }
          } else {
             phoneNumberInputRef.current.value = "";
