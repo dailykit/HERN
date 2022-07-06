@@ -476,20 +476,24 @@ const PhoneNumber = ({
    const { t } = useTranslation()
    
    useEffect( ()=> {
+
       const show = "*"
       let phoneNumberlen = number.length
+      
       if (phoneNumberInputRef.current){
          if(phoneNumberlen){
             if(!isBackspace){
                phoneNumberInputRef.current.value = show.repeat(phoneNumberlen-1)+number[phoneNumberlen-1];
                setTimeout( ()=>{
                   phoneNumberInputRef.current.value = show.repeat(phoneNumberlen);
-               }, 500)
+               }, 300)
             } else {
                phoneNumberInputRef.current.value = show.repeat(phoneNumberlen);
+               setIsBackspace(false);
             }
          } else {
             phoneNumberInputRef.current.value = "";
+            setIsBackspace(false);
          }
       }
    }, [number])
