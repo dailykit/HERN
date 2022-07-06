@@ -6,7 +6,7 @@
    flex-direction: column;
    align-items: center;
    justify-content: center;
-   margin-top: 106px;
+   margin-top: 32px;
    z-index: 1;
    &::after {
       content: '';
@@ -45,6 +45,11 @@
    @media (max-width: 768px) {
       height: 300px;
    }
+}
+
+.hern-page-banner__header-two {
+   @extend .hern-page-banner__header;
+   margin-top: 106px;
 }
 
 //  .hern-select-menu__header__heading {

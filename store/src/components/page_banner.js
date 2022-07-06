@@ -1,8 +1,18 @@
 import React from 'react'
+import { useRouter } from 'next/router'
 
 const PageBanner = ({ image, heading, subHeading }) => {
+   const router = useRouter()
+   const route = router.route
+
    return (
-      <header className="hern-page-banner__header">
+      <header
+         className={
+            route === '/[brand]/menu'
+               ? 'hern-page-banner__header-two'
+               : 'hern-page-banner__header'
+         }
+      >
          <div
             className="hern-page-banner__header__before"
             style={{
