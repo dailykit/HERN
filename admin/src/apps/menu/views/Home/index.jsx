@@ -31,6 +31,37 @@ const Home = () => {
                onClick={() => addTab('Collections', '/menu/collections')}
                tileSvg={<CollectionsSvg />}
             />
+            <DashboardTile
+               title='Pre-Order Delivery'
+               onClick={() => addTab('Collections', '/menu/recurrences/PREORDER_DELIVERY')}
+               conf="All available"
+            />
+            <DashboardTile
+               title='Pre-Order PickUp'
+               onClick={() => addTab('Collections', '/menu/recurrences/PREORDER_PICKUP')}
+               conf="All available"
+            />
+            <DashboardTile
+               title='On-Demand Delivery'
+               onClick={() => addTab('Collections', '/menu/recurrences/ONDEMAND_DELIVERY')}
+               conf="All available"
+            />
+            <DashboardTile
+               title='On-Demand PickUp'
+               onClick={() => addTab('Collections', '/menu/recurrences/ONDEMAND_PICKUP')}
+               conf="All available"
+            />
+            <DashboardTile
+               title='On-Demand Dinin'
+               onClick={() => addTab('Collections', '/menu/recurrences/ONDEMAND_DININ')}
+               conf="All available"
+            />
+            <DashboardTile
+               title='Pre-Order Dinin'
+               onClick={() => addTab('Collections', '/menu/recurrences/PREORDER_DININ')}
+               conf="All available"
+            />
+
          </StyledCardList>
          <Banner id="menu-app-home-bottom" />
       </StyledHome>
