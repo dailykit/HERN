@@ -478,17 +478,19 @@ const PhoneNumber = ({
    useEffect( ()=> {
       const show = "*"
       let phoneNumberlen = number.length
-      if(phoneNumberlen){
-         if(!isBackspace){
-            phoneNumberInputRef.current.value = show.repeat(phoneNumberlen-1)+number[phoneNumberlen-1];
-            setTimeout( ()=>{
+      if (phoneNumberInputRef.current){
+         if(phoneNumberlen){
+            if(!isBackspace){
+               phoneNumberInputRef.current.value = show.repeat(phoneNumberlen-1)+number[phoneNumberlen-1];
+               setTimeout( ()=>{
+                  phoneNumberInputRef.current.value = show.repeat(phoneNumberlen);
+               }, 500)
+            } else {
                phoneNumberInputRef.current.value = show.repeat(phoneNumberlen);
-            }, 500)
+            }
          } else {
-            phoneNumberInputRef.current.value = show.repeat(phoneNumberlen);
+            phoneNumberInputRef.current.value = "";
          }
-      } else {
-         phoneNumberInputRef.current.value = "";
       }
    }, [number])
 
