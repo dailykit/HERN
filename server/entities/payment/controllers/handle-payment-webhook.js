@@ -2,24 +2,9 @@ import { paymentLogger } from '../../../utils'
 
 export const handlePaymentWebhook = async (req, res) => {
    try {
-      const stripeSignature = req.headers['stripe-signature']
-      const razorpaySignature =
-         req.headers['x-razorpay-signature'] || req.body.razorpay_signature
-      const isPaytmWebhook = [
-         'https://securegw-stage.paytm.in',
-         'https://securegw.paytm.in'
-      ].includes(req.headers['origin'])
-      const isTerminalPayment = req.headers['payment-type'] === 'terminal'
-      let paymentType
-      if (stripeSignature) {
-         paymentType = 'stripe'
-      } else if (razorpaySignature) {
-         paymentType = 'razorpay'
-      } else if (isPaytmWebhook) {
-         paymentType = 'paytm'
-      } else if (isTerminalPayment) {
-         paymentType = 'terminal'
-      } else {
+      let paymentType = req.params.paymentType
+      // Payment Type will decide this request is for which payment integration
+      if (!paymentType) {
          return
       }
       const functionFilePath = `../functions/${paymentType}`
