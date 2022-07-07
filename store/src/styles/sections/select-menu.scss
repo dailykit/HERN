@@ -27,7 +27,7 @@
    z-index: 5;
    width: 100%;
    background: #fff;
-   top: 144px;
+   top: 148px;
    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
 }
 
@@ -141,11 +141,11 @@
    width: 100%;
    background-color: #fff;
    position: sticky;
-   top: 0;
+   top: 212px;
    z-index: 1;
    padding: 16px 12px;
+   max-width: calc(100vw - 465px);
    overflow-x: auto;
-   white-space: nowrap;
    &__btn {
       font-family: 'Inter';
       font-style: normal;
@@ -177,6 +177,10 @@
    }
    &::-webkit-scrollbar {
       display: none;
+   }
+
+   @media (max-width: 768px) {
+      max-width: calc(100vw - 32px);
    }
 }
 
