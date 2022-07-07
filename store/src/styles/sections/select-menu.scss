@@ -21,6 +21,16 @@
 }
 
 /**Week picker */
+
+.hern-select-menu__week-picker__wrapper {
+   position: fixed;
+   z-index: 5;
+   width: 100%;
+   background: #fff;
+   top: 144px;
+   border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
 .hern-select-menu__week-picker {
    display: flex;
    justify-content: center;
@@ -45,14 +55,24 @@
    height: 64px;
    max-width: 980px;
    padding: 0 0.5rem;
-   margin: 12px auto;
+   margin: 0px auto;
    overflow-x: auto;
    display: flex;
    align-items: center;
    justify-content: space-between;
+   gap: 12px;
    &::after,
    &::before {
       content: '';
+   }
+
+   &::-webkit-scrollbar {
+      display: none;
+   }
+
+   @media (max-width: 1024px) {
+      overflow: auto;
+      white-space: nowrap;
    }
 }
 .hern-select-menu__week-picker__list-item {
@@ -115,16 +135,17 @@
 
 /* category */
 .hern-select-menu__category {
-   width: 100%;
    display: flex;
-   justify-content: center;
+   justify-content: flex-start;
    align-items: center;
    width: 100%;
    background-color: #fff;
    position: sticky;
    top: 0;
-   z-index: 999;
+   z-index: 1;
    padding: 16px 12px;
+   overflow-x: auto;
+   white-space: nowrap;
    &__btn {
       font-family: 'Inter';
       font-style: normal;
@@ -153,6 +174,9 @@
          color: #fff;
          opacity: 0.7;
       }
+   }
+   &::-webkit-scrollbar {
+      display: none;
    }
 }
 
