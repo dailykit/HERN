@@ -20,7 +20,7 @@ import {
    isClient,
 } from '../utils'
 import { useTranslation } from './language'
-import { indexOf } from 'lodash'
+import { indexOf, isArray } from 'lodash'
 
 export const CartContext = React.createContext()
 
@@ -353,7 +353,10 @@ export const CartProvider = ({ children }) => {
    //add to cart
    const addToCart = async (cartItem, quantity) => {
       // setIsFinalCartLoading(true)
-      const cartItems = new Array(quantity).fill({ ...cartItem })
+      const cartItems = isArray(cartItem)
+         ? cartItem
+         : new Array(quantity).fill({ ...cartItem })
+
       const orderTabInLocal = JSON.parse(localStorage.getItem('orderTab'))
       let customerAddressFromLocal
       switch (orderTabInLocal) {
