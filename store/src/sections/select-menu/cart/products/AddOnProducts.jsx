@@ -199,8 +199,6 @@ const AddOnProduct = ({ node, isAdded, theme, products }) => {
       )
    }, [products])
 
-   console.log('ISACTIVE: ', isActive)
-
    const canAdd = () => {
       const conditions = [!node.isSingleSelect, state?.week?.isValid]
       return (

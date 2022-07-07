@@ -496,6 +496,10 @@ export const Sidebar = ({ setOpen }) => {
                      },
                   ],
                },
+               {
+                  title: 'Subscription - Occurrences',
+                  path: '/subscription/subscription-occurrences',
+               },
             ],
          },
          {
@@ -592,6 +596,18 @@ export const Sidebar = ({ setOpen }) => {
                         payload: 'brand',
                      },
                   ],
+               },
+               {
+                  title: 'Locations',
+                  path: '/brands/locations',
+               },
+               {
+                  title: 'Kiosk',
+                  path: '/brands/kiosks',
+               },
+               {
+                  title: 'Payments',
+                  path: '/brands/payment',
                },
             ],
          },

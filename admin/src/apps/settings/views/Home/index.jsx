@@ -83,7 +83,17 @@ const Home = () => {
             <DashboardTile
                title="Envs"
                onClick={() => addTab('Envs', '/settings/envs')}
-            // tileSvg={<MasterListSvg />}
+            />
+            <DashboardTile
+               title="Editor"
+               onClick={() => addTab('Envs', '/editor')}
+               conf="Edit Here"
+            />
+            <DashboardTile
+               title="Manage Content"
+               onClick={() => addTab('Envs', '/content')}
+               count="3"
+               conf="All active"
             />
          </StyledCardList>
          <Banner id="settings-app-home-bottom" />
