@@ -110,6 +110,7 @@ const DeliveryDay = ({ id }) => {
                   <EditSubscriptionTunnel
                      id={subscription?.id}
                      closeTunnel={closeTunnel}
+                     lastFulifillmentDate={subscription?.subscriptionOccurences?.[0]?.fulfillmentDate}
                   />
                </Tunnel>
             </Tunnels>
@@ -120,7 +121,7 @@ const DeliveryDay = ({ id }) => {
 
 export default DeliveryDay
 
-const EditSubscriptionTunnel = ({ id, closeTunnel }) => {
+const EditSubscriptionTunnel = ({ id, closeTunnel, lastFulifillmentDate }) => {
    const [endDate, setEndDate] = React.useState('')
    const [updateSubscription] = useMutation(UPDATE_SUBSCRIPTION, {
       onCompleted: () => {
@@ -136,6 +137,10 @@ const EditSubscriptionTunnel = ({ id, closeTunnel }) => {
       setEndDate(null)
    }
    const save = () => {
+      if (endDate < lastFulifillmentDate){
+         toast.error('selected date is less than last fulfillment date')
+      }
+      else{
       updateSubscription({
          variables: {
             id,
@@ -144,6 +149,7 @@ const EditSubscriptionTunnel = ({ id, closeTunnel }) => {
             },
          },
       })
+   }
    }
    return (
       <>
