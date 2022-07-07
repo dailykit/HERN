@@ -73,6 +73,7 @@ const CartCard = props => {
          params: argsForByLocation,
       },
       onCompleted: data => {
+         console.log('data trying to find::>', data)
          // use for repeat last one order
          if (forRepeatLastOne) {
             if (data) {
@@ -80,7 +81,7 @@ const CartCard = props => {
             }
          }
          if (data) {
-            setModifyProduct(data.products[0])
+            setModifyProduct(data.product)
          }
       },
    })
