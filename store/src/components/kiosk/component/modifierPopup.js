@@ -22,6 +22,7 @@ import KioskButton from './button'
 import {
    formatCurrency,
    getCartItemWithModifiers,
+   getPriceWithDiscount,
    useOnClickOutside,
 } from '../../../utils'
 import {
@@ -702,21 +703,21 @@ export const KioskModifier = props => {
          x =>
             (allSelectedOptionsPrice =
                allSelectedOptionsPrice +
-               (x?.modifierCategoryOptionsPrice || 0) -
-               (x?.modifierCategoryOptionsDiscount || 0))
+               getPriceWithDiscount(
+                  x?.modifierCategoryOptionsPrice || 0,
+                  x?.modifierCategoryOptionsDiscount || 0
+               ))
       )
 
       const totalPrice =
-         productOptionPrice +
-         allSelectedOptionsPrice +
-         productData.price -
-         productData.discount -
-         productOptionDiscount
+         getPriceWithDiscount(productData.price, productData.discount) +
+         getPriceWithDiscount(productOptionPrice, productOptionDiscount) +
+         allSelectedOptionsPrice
 
       //Adding the selected related product price with total price
       return selectedRelatedProductPrice + totalPrice * quantity
    }
-
+   console.log('#CPD', completeProductData)
    // used for add new product or edit product
    useEffect(() => {
       if (!isEmpty(completeProductData) && (forNewItem || edit)) {
@@ -1058,7 +1059,10 @@ export const KioskModifier = props => {
                   >
                      {productData.price > 0 &&
                         formatCurrency(
-                           productData.price - productData.discount
+                           getPriceWithDiscount(
+                              productData.price,
+                              productData.discount
+                           )
                         )}
                   </span>
                </div>
@@ -1113,7 +1117,10 @@ export const KioskModifier = props => {
                                  </span>
                                  {' (+ '}
                                  {formatCurrency(
-                                    eachOption.price - eachOption.discount
+                                    getPriceWithDiscount(
+                                       eachOption.price,
+                                       eachOption.discount
+                                    )
                                  )}
                                  {')'}
                               </button>
@@ -1179,7 +1186,10 @@ export const KioskModifier = props => {
                                  </span>
                                  {' (+ '}
                                  {formatCurrency(
-                                    eachOption.price - eachOption.discount
+                                    getPriceWithDiscount(
+                                       eachOption.price,
+                                       eachOption.discount
+                                    )
                                  )}
                                  {')'}
                               </button>
@@ -1335,8 +1345,10 @@ export const KioskModifier = props => {
                                                          <>
                                                             {' ('}
                                                             {formatCurrency(
-                                                               eachOption.price -
+                                                               getPriceWithDiscount(
+                                                                  eachOption.price,
                                                                   eachOption.discount
+                                                               )
                                                             )}
                                                             {')'}
                                                          </>
@@ -1966,8 +1978,10 @@ const AdditionalModifiers = forwardRef(
                                                          <>
                                                             {' ('}
                                                             {formatCurrency(
-                                                               eachOption.price -
+                                                               getPriceWithDiscount(
+                                                                  eachOption.price,
                                                                   eachOption.discount
+                                                               )
                                                             )}
                                                             {')'}
                                                          </>
@@ -2486,8 +2500,10 @@ const ModifierOptionsList = forwardRef((props, ref) => {
                                           <>
                                              {' ('}
                                              {formatCurrency(
-                                                eachOption.price -
+                                                getPriceWithDiscount(
+                                                   eachOption.price,
                                                    eachOption.discount
+                                                )
                                              )}
                                              {')'}
                                           </>
