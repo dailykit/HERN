@@ -9,9 +9,21 @@ export const Wrapper = styled.div`
    }
    .ant-result-icon {
       margin: 0;
+      background: #7124B4;
+      padding: 2rem;
+
+   }
+   .ant-result-icon {
+      border-radius: 10px;
    }
    .ant-result-success .ant-result-icon > .anticon {
-      color: linear-gradient(228.17deg, #7ab6d3 0.03%, #294460 95.55%);
+      color: linear-gradient(228.17deg, #7AB6D3 0.03%, #294460 95.55%);
+   }
+   .ant-result-title {
+      color: #7124B4;
+      font-size: 1.5rem;
+      margin-top: 1rem;
+      font-weight: 900;
    }
    .ant-spin .ant-spin-dot {
       width: 1em;

@@ -136,13 +136,25 @@ const PaymentProcessingModal = ({
             subtitle = t('Please wait while we process your order')
          } else if (cartPayment?.paymentStatus === 'SUCCEEDED') {
             icon = (
-               <img
-                  src="/assets/gifs/successful.gif"
-                  className="payment_status_loader"
-               />
+               <>
+                  <img
+                     src="/assets/gifs/success.gif"
+                     className="payment_status_loader"
+                  />
+                  <div style={{color:'white', paddingBottom: '2rem', fontFamily: 'Nunito Sans'}}>
+                     <p style={{fontSize: '1.5rem'}}>{t('Your Payment is Complete')}</p>
+                     <h1 style={{color: 'white', fontSize: '3rem'}}>{t('Thank You!')}</h1>
+                  </div>
+               </>
             )
-            title = 'Successfully placed your order'
-            subtitle = t('You will be redirected to your order page shortly')
+            title = 'Your Order Is Placed Successfully.'
+            subtitle = (
+               <>
+                  <p style={{fontSize: '1.5rem', color: 'black'}}>{t('Your Order Id')}</p>
+                  <h1 style={{fontSize: '2rem', color: '#7124B4', fontWeight: '900'}}>{t(`${cartId}`)}</h1>
+                  <p style={{fontSize: '1rem', color: 'black'}}>{t('Check your whatsapp for order confirmation')}</p>
+               </>
+            )
          } else if (cartPayment?.paymentStatus === 'FAILED') {
             icon = (
                <img
@@ -294,13 +306,25 @@ const PaymentProcessingModal = ({
       } else {
          if (cartPayment?.paymentStatus === 'SUCCEEDED') {
             icon = (
-               <img
-                  src="/assets/gifs/successful.gif"
-                  className="payment_status_loader"
-               />
+               <>
+                  <img
+                     src="/assets/gifs/success.gif"
+                     className="payment_status_loader"
+                  />
+                  <div style={{color:'white', paddingBottom: '2rem', fontFamily: 'Nunito Sans'}}>
+                     <p style={{fontSize: '1.5rem'}}>{t('Your Payment is Complete')}</p>
+                     <h1 style={{color: 'white', fontSize: '3rem'}}>{t('Thank You!')}</h1>
+                  </div>
+               </>
             )
-            title = 'Successfully placed your order'
-            subtitle = t('You will be redirected to your booking page shortly')
+            title = 'Your Order Is Placed Successfully.'
+            subtitle = (
+               <>
+                  <p style={{fontSize: '1.5rem', color: 'black'}}>{t('Your Order Id')}</p>
+                  <h1 style={{fontSize: '2rem', color: '#7124B4', fontWeight: '900'}}>{t(`${cartId}`)}</h1>
+                  <p style={{fontSize: '1rem', color: 'black'}}>{t('Check your whatsapp for order confirmation')}</p>
+               </>
+            )
          } else if (cartPayment?.paymentStatus === 'REQUIRES_ACTION') {
             icon = (
                <img
