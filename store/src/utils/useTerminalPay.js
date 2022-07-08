@@ -10,7 +10,7 @@ import { UPDATE_CART, UPDATE_CART_PAYMENT } from '../graphql'
 
 const passResponseToWebhook = async data => {
    const baseUrl = isClient ? get_env('BASE_BRAND_URL') : ''
-   const url = `${baseUrl}/server/api/payment/handle-payment-webhook`
+   const url = `${baseUrl}/server/api/payment/handle-payment-webhook/terminal`
    const response = await axios({
       url,
       method: 'POST',
