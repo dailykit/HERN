@@ -20,6 +20,10 @@ query CART_PAYMENT($id: Int!) {
    usedAvailablePaymentOptionId
    metaData
    cart{
+      locationKioskId
+      orderTab {
+         availableOrderInterfaceLabel
+      }
       brand{
         domain
       }
@@ -75,6 +79,9 @@ query cart($id: Int!) {
     customerInfo
     cartOwnerBilling
     usedOrderInterface
+    orderTab {
+      availableOrderInterfaceLabel
+    }
     locationKioskId
     availablePaymentOption {
       id
@@ -137,3 +144,14 @@ query AVAILABLE_PAYMENT_OPTION($id: Int!) {
  }
 
  `
+
+export const PINE_LABS_DEVICE_INFO = `
+query MyQuery($kioskId: Int!) {
+   devices: brands_kioskPineLabsDevices(where: {kioskId: {_eq: $kioskId}, pineLabsDevice: {isActive: {_eq: true}}}) {
+     pineLabsDevice {
+       imei
+       merchantStorePosCode
+     }
+   }
+}
+`
