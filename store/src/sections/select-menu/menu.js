@@ -103,7 +103,7 @@ export const Menu = () => {
          </main>
       )
    return (
-      <main>
+      <main style={{ overflow: 'auto' }}>
          {categories.length > 1 && (
             <div className="hern-select-menu__category">
                {categories.map(category => (

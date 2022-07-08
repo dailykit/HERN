@@ -69,6 +69,26 @@
 .hern-profile__current-plan {
    padding: 1.5rem;
 }
+
+.hern-profile__current-plan-not-subscribed {
+   display: flex;
+   justify-content: center;
+   align-items: center;
+   padding: 10px;
+   margin: 1.5rem;
+   border-radius: 6px;
+   background: rgba(51, 51, 51, 0.05);
+   border: 1.5px solid rgba(255, 0, 0, 0.6);
+
+   & > h1 {
+      font-family: 'Inter';
+      font-style: normal;
+      font-weight: 500;
+      font-size: 16.68px;
+      line-height: 20px;
+      color: #333333;
+   }
+}
 .hern-profile__divider {
    max-width: 420px;
 }

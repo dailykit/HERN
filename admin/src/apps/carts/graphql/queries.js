@@ -3,7 +3,7 @@ import gql from 'graphql-tag'
 export const QUERIES = {
    CART: {
       ONE: gql`
-         subscription cart($id: Int!, $params: jsonb!) {
+         subscription cart($id: Int!) {
             cart(id: $id) {
                id
                tax
@@ -71,23 +71,6 @@ export const QUERIES = {
                      price: unitPrice
                      name: displayName
                      image: displayImage
-                     product {
-                        isPublished: publishedByLocation(
-                           args: { params: $params }
-                        )
-                        isAvailable: availabilityByLocation(
-                           args: { params: $params }
-                        )
-                        productOptions {
-                           id
-                           isPublished: publishedByLocation(
-                              args: { params: $params }
-                           )
-                           isAvailable: availabilityByLocation(
-                              args: { params: $params }
-                           )
-                        }
-                     }
                      childs {
                         id
                         price: unitPrice

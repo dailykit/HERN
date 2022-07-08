@@ -32,33 +32,35 @@ export const WeekPicker = ({ isFixed }) => {
    }
    console.log('state occurence', state.occurences)
    return (
-      <ul className="hern-select-menu__week-picker__list">
-         {state.occurences.map(occurence => (
-            <li
-               className={classNames(
-                  'hern-select-menu__week-picker__list-item',
-                  {
-                     'hern-select-menu__week-picker__list-item--active':
-                        state.week?.fulfillmentDate ===
-                        occurence.fulfillmentDate,
-                  }
-               )}
-               key={occurence.id}
-               onClick={() => {
-                  router.push(`/menu?d=${occurence.fulfillmentDate}`)
-                  dispatch({ type: 'SET_WEEK', payload: occurence })
-               }}
-            >
-               {moment(occurence?.fulfillmentDate)
-                  .weekday(1)
-                  .format('ddd MMM D')}
-               &nbsp;-&nbsp;
-               {moment(occurence?.fulfillmentDate)
-                  .add(7, 'day')
-                  .weekday(0)
-                  .format('ddd MMM D')}
-            </li>
-         ))}
-      </ul>
+      <div className="hern-select-menu__week-picker__wrapper">
+         <ul className="hern-select-menu__week-picker__list">
+            {state.occurences.map(occurence => (
+               <li
+                  className={classNames(
+                     'hern-select-menu__week-picker__list-item',
+                     {
+                        'hern-select-menu__week-picker__list-item--active':
+                           state.week?.fulfillmentDate ===
+                           occurence.fulfillmentDate,
+                     }
+                  )}
+                  key={occurence.id}
+                  onClick={() => {
+                     router.push(`/menu?d=${occurence.fulfillmentDate}`)
+                     dispatch({ type: 'SET_WEEK', payload: occurence })
+                  }}
+               >
+                  {moment(occurence?.fulfillmentDate)
+                     .weekday(1)
+                     .format('ddd MMM D')}
+                  &nbsp;-&nbsp;
+                  {moment(occurence?.fulfillmentDate)
+                     .add(7, 'day')
+                     .weekday(0)
+                     .format('ddd MMM D')}
+               </li>
+            ))}
+         </ul>
+      </div>
    )
 }

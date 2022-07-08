@@ -312,7 +312,12 @@ const PlansDetails = ({ selectedPlan, list, config, planViewConfig }) => {
             </p>
          </div>
          <div>
-            <div className="hern-plans__aggregate__plan-details">
+            <div
+               className="hern-plans__aggregate__plan-details"
+               style={{
+                  marginLeft: '25px',
+               }}
+            >
                <p className="hern-plans__aggregate__selectedPlan-title">
                   {/* TODO-
                   - Include plateIllustration
