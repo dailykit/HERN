@@ -441,9 +441,49 @@ export const KioskModifier = props => {
          ...selectedOptions.single,
          ...selectedOptions.multiple,
       ]
+
+      //no product options available
+      if (!selectedProductOption) {
+         const cartItem = productData.defaultCartItem
+         if (addRelatedProductToCart && currentPage === 'menuPage') {
+            const relatedProductsCartItems = cartItems.filter(cartItem =>
+               selectedRelatedProducts.includes(cartItem.productId)
+            )
+            await addToCart([...relatedProductsCartItems, cartItem], quantity)
+         } else {
+            await addToCart(cartItem, quantity)
+         }
+
+         if (edit) {
+            methods.cartItems.delete({
+               variables: {
+                  where: {
+                     id: {
+                        _in: productCartDetail.ids,
+                     },
+                  },
+               },
+            })
+         }
+         if (edit || forNewItem) {
+            onCloseModifier()
+            return
+         }
+
+         // not open GO TO MENU - CHECKOUT popup
+         if (
+            !config.kioskSettings.popupSettings.showGoToMenuCheckoutPopup.value
+         ) {
+            onCloseModifier()
+            return
+         }
+
+         setShowProceedPopup(true)
+         return
+      }
+
       //no modifier available in product options
       if (!selectedProductOption.modifier) {
-         // addToCart({ ...productOption, quantity })
          const cartItem = getCartItemWithModifiers(
             selectedProductOption.cartItem,
             allSelectedOptions.map(x => x.cartItem)
@@ -632,8 +672,8 @@ export const KioskModifier = props => {
    }
 
    const totalAmount = () => {
-      const productOptionPrice = selectedProductOption.price
-      const productOptionDiscount = selectedProductOption.discount
+      const productOptionPrice = selectedProductOption?.price || 0
+      const productOptionDiscount = selectedProductOption?.discount || 0
       let allSelectedOptions = [
          ...selectedOptions.single,
          ...selectedOptions.multiple,
@@ -1163,8 +1203,8 @@ export const KioskModifier = props => {
                )}
                {/* <div className="hern-kiosk__modifier-popup-modifiers-list"> */}
                {!isModifiersLoading &&
-                  selectedProductOption.additionalModifiers.length > 0 &&
-                  selectedProductOption.additionalModifiers.map(
+                  selectedProductOption?.additionalModifiers.length > 0 &&
+                  selectedProductOption?.additionalModifiers.map(
                      (eachAdditionalModifier, index) => (
                         <AdditionalModifiers
                            ref={additionalModifierRef}
@@ -1184,8 +1224,8 @@ export const KioskModifier = props => {
                      )
                   )}
                {!isModifiersLoading &&
-                  selectedProductOption.modifier &&
-                  selectedProductOption.modifier.categories.map(
+                  selectedProductOption?.modifier &&
+                  selectedProductOption?.modifier?.categories.map(
                      (eachModifierCategory, index) => {
                         return (
                            <div
