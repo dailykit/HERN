@@ -1,6 +1,9 @@
 import { paymentLogger } from '../../../utils'
 
 export const handlePaymentWebhook = async (req, res) => {
+   console.log('==> Webhook Req Headers: ', req.headers)
+   console.log('==> Webhook Req Body: ', req.body)
+   console.log('==> Payment Type: ', req.params.paymentType)
    try {
       let paymentType = req.params.paymentType
       // Payment Type will decide this request is for which payment integration
