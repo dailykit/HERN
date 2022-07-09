@@ -42,6 +42,10 @@ export const KioskProduct = props => {
    const [availableQuantityInCart, setAvailableQuantityInCart] = useState(0)
    const currentLang = React.useMemo(() => locale, [locale])
 
+   // Related products to cart
+   const addRelatedProductToCart =
+      config?.relatedProducts?.addRelatedProductToCart?.value || false
+
    // const [combinedCartItems, setCombinedCartData] = useState(null)
    const [showChooseIncreaseType, setShowChooseIncreaseType] = useState(false) // show I'll choose or repeat last one popup
 
@@ -362,14 +366,16 @@ export const KioskProduct = props => {
       if (productData.isAvailable) {
          if (showAddToCartButton) {
             if (
-               productData.productOptions.length > 0 &&
-               productData.isPopupAllowed
+               (productData.productOptions.length > 0 &&
+                  productData.isPopupAllowed) ||
+               (addRelatedProductToCart &&
+                  productData?.relatedProductIds?.ids.length > 0)
             ) {
                const availableProductOptions =
                   productData.productOptions.filter(
                      option => option.isAvailable && option.isPublished
                   ).length
-               if (availableProductOptions > 0) {
+               if (availableProductOptions > 0 || addRelatedProductToCart) {
                   setShowModifier(true)
                }
             } else {
@@ -613,7 +619,14 @@ export const KioskProduct = props => {
                            ) {
                               setShowChooseIncreaseType(true)
                            } else {
-                              addToCart(productData.defaultCartItem, 1)
+                              if (
+                                 addRelatedProductToCart &&
+                                 productData?.relatedProductIds?.ids.length > 0
+                              ) {
+                                 setShowModifier(true)
+                              } else {
+                                 addToCart(productData.defaultCartItem, 1)
+                              }
                            }
                         }}
                         quantity={availableQuantityInCart}
