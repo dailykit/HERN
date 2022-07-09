@@ -42,6 +42,7 @@ const STATUS = {
    PROCESSING: 'PROCESSING',
    QR_GENERATED: 'QR_GENERATED',
    FAILED: 'FAILED',
+   failed: 'FAILED',
    SWIPE_CARD: 'SWIPE_CARD',
    ENTER_PIN: 'ENTER_PIN',
    declined: 'FAILED',
