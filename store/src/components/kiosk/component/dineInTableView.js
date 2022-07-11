@@ -34,7 +34,6 @@ export const DineInTableSelection = props => {
          },
       },
    })
-   // console.log('data', data)
    const DineInFooter = () => {
       return (
          <KioskButton
@@ -109,8 +108,10 @@ export const DineInTableSelection = props => {
          </div>
          <div className="hern-kiosk__dine-in-tables">
             {data &&
-               data.brands_locationTable &&
-               data.brands_locationTable.map(eachTable => {
+               data.brands_locationTable && 
+               data.brands_locationTable.sort( (brands_locationtable_element1, brands_locationtable_element2)=>{
+                   return (brands_locationtable_element1.internalTableLabel - brands_locationtable_element2.internalTableLabel);
+               }).map(eachTable => {
                   return (
                      <div
                         className={classNames('hern-kiosk__dine-in-table')}
