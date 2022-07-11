@@ -477,8 +477,8 @@ const PhoneNumber = ({
    
    useEffect( ()=> {
 
-      const show = "*"
-      const hidePhoneNumber = true;
+      const show = config?.phoneNoScreenSettings?.visibilityOfPhoneNumber.label;
+      const hidePhoneNumber = (config?.phoneNoScreenSettings?.visibilityOfPhoneNumber.value)? false : true;
       let phoneNumberlen = number.length
 
       if (phoneNumberInputRef.current){
