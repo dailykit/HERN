@@ -5,6 +5,7 @@ import React, {
    useRef,
    useImperativeHandle,
 } from 'react'
+import tw from 'twin.macro'
 import { Badge, Carousel, Radio, Modal } from 'antd'
 import { KioskCounterButton } from '.'
 import { CartContext, useTranslation } from '../../../context'
@@ -21,10 +22,15 @@ import KioskButton from './button'
 import {
    formatCurrency,
    getCartItemWithModifiers,
+   getPriceWithDiscount,
    useOnClickOutside,
 } from '../../../utils'
-import { GET_MODIFIER_BY_ID, PRODUCT_ONE } from '../../../graphql'
-import { useQuery } from '@apollo/react-hooks'
+import {
+   GET_MODIFIER_BY_ID,
+   PRODUCT_BY_IDS,
+   PRODUCT_ONE,
+} from '../../../graphql'
+import { useQuery, useLazyQuery } from '@apollo/react-hooks'
 import { useConfig } from '../../../lib'
 import { Loader } from '../..'
 import classNames from 'classnames'
@@ -51,6 +57,7 @@ export const KioskModifier = props => {
       kioskDetails,
       brandLocation,
       isStoreAvailable,
+      currentPage,
    } = useConfig()
 
    // component state
@@ -71,6 +78,13 @@ export const KioskModifier = props => {
       useState(false)
    const [childChangingToggle, setChildChangingToggle] = useState(false) // use for reflect changes from child so that parent can re render
 
+   //Related products
+   const [cartItems, setCartItems] = useState([])
+   const [relatedProductPrices, setRelatedProductPrices] = useState([])
+   const [selectedRelatedProducts, setSelectedRelatedProducts] = useState([])
+   const addRelatedProductToCart =
+      config?.relatedProducts?.addRelatedProductToCart?.value || false
+
    const modifierPopRef = React.useRef()
    useOnClickOutside(modifierPopRef, () => onCloseModifier())
    const argsForByLocation = React.useMemo(
@@ -81,19 +95,239 @@ export const KioskModifier = props => {
       }),
       [brand, kioskDetails?.locationId, brandLocation?.id]
    )
+   //ID for all the products related to the current product
+   const relatedProductIds = productData?.relatedProductIds?.ids || []
+
+   //Data for current product and related products
    const {
       loading,
       error,
-      data: { product: completeProductData = {} } = {},
-   } = useQuery(PRODUCT_ONE, {
+      data: { products } = {},
+   } = useQuery(PRODUCT_BY_IDS, {
       variables: {
-         id: productData.id,
          params: argsForByLocation,
+         where: {
+            id: {
+               _in: [productData.id, ...relatedProductIds],
+            },
+         },
       },
       onError: error => {
          console.error('kiosk modifier popup', error)
       },
    })
+   //Current product info
+   const completeProductData = products?.find(
+      product => product.id === productData.id
+   )
+   //Related product of the current product
+   const relatedProducts = products?.filter(product =>
+      relatedProductIds.includes(product.id)
+   )
+
+   //Price for all the selected related products
+   const selectedRelatedProductPrice =
+      relatedProductPrices
+         .filter(product => selectedRelatedProducts.includes(product.id))
+         .reduce((acc, cur) => (acc += cur.total.price), 0) || 0
+
+   //Fetching modifiers
+   const [
+      fetchModifiers,
+      { loading: templateLoading, error: TemplateError, data: modifierData },
+   ] = useLazyQuery(GET_MODIFIER_BY_ID, {
+      skip: isConfigLoading || !brand?.id,
+      onError: error => {
+         console.error('kiosk modifier popup->GET_MODIFIER_BY_ID', error)
+      },
+   })
+
+   //FOR SETTING DEFAULT CART ITEMS AND PRODUCT PRICE
+   useEffect(() => {
+      if (!isEmpty(products) && addRelatedProductToCart) {
+         //Function for extracting modifiers cartItem
+         const getModifiersCartItem = (modifiers, isNested = false) => {
+            const modifiersCartItem = []
+
+            //Total price  after discount and total discount
+            const total = {
+               price: 0,
+               discount: 0,
+            }
+
+            const setTotal = (price, discount) => {
+               total.price = total.price + (price - price * (discount / 100))
+               total.discount = total.discount + price * (discount / 100)
+            }
+
+            modifiers?.forEach(modifier => {
+               const categories = isNested
+                  ? modifier?.modifier?.categories
+                  : modifier?.categories
+
+               categories?.forEach(eachCategory => {
+                  if (
+                     eachCategory.type === 'single' &&
+                     eachCategory.isRequired
+                  ) {
+                     modifiersCartItem.push(eachCategory.options[0].cartItem)
+
+                     setTotal(
+                        eachCategory.options[0].price,
+                        eachCategory.options[0].discount
+                     )
+                  } else if (
+                     eachCategory.type === 'multiple' &&
+                     eachCategory.isRequired
+                  ) {
+                     const defaultSelectedOptions = eachCategory.options.slice(
+                        0,
+                        eachCategory.limits.min
+                     )
+                     defaultSelectedOptions.forEach(eachModifierOption => {
+                        modifiersCartItem.push(eachModifierOption.cartItem)
+                        setTotal(
+                           eachModifierOption.price,
+                           eachModifierOption.discount
+                        )
+                     })
+                  }
+               })
+            })
+
+            return { modifiersCartItem, total }
+         }
+
+         //Function for getting additionalModifiers template ids
+         const getAdditionalModifierTemplateIds = additionalModifiers => {
+            const templateIds = []
+            additionalModifiers.forEach(additionalModifier => {
+               additionalModifier?.modifier?.categories?.forEach(category => {
+                  category?.options?.forEach(option => {
+                     if (option?.additionalModifierTemplateId) {
+                        templateIds.push(option.additionalModifierTemplateId)
+                     }
+                  })
+               })
+            })
+            return templateIds
+         }
+
+         //Function for getting default product options and modifiers price and default cart items
+         const getDefaultCartItem = relatedProducts => {
+            const cartItems = []
+            const productPrice = []
+
+            relatedProducts.forEach(product => {
+               //Initialize total price and total discount
+               const total = {
+                  price: 0,
+                  discount: 0,
+               }
+               const setTotal = (price, discount) => {
+                  total.price = total.price + (price - price * (discount / 100))
+                  total.discount = total.discount + price * (discount / 100)
+               }
+
+               setTotal(product.price, product.discount)
+
+               if (isEmpty(product.productOptions)) {
+                  //there are no  product options
+                  cartItems.push(product.defaultCartItem)
+               } else {
+                  //there are product option
+
+                  //GETTING PRODUCT OPTION
+                  let productOption
+                  if (product.defaultProductOptionId) {
+                     //if defaultProductOptionId
+                     productOption = product.productOptions.find(
+                        option => option.id === product.defaultProductOptionId
+                     )
+                  } else {
+                     //If there is no product option selecting the first one
+                     productOption = product.productOptions[0]
+                  }
+
+                  setTotal(productOption.price, productOption.discount)
+
+                  //Product options has no modifiers
+                  if (isEmpty(productOption.modifier)) {
+                     cartItems.push(productOption.cartItem)
+                  } else {
+                     //Additional modifier templateIds
+                     const additionalModifierTemplateIds =
+                        getAdditionalModifierTemplateIds(
+                           productOption.additionalModifiers
+                        )
+                     fetchModifiers({
+                        variables: {
+                           priceArgs: { params: argsForByLocation },
+                           discountArgs: { params: argsForByLocation },
+                           modifierCategoryOptionCartItemArgs: {
+                              params: argsForByLocation,
+                           },
+                           id: additionalModifierTemplateIds,
+                        },
+                     })
+
+                     //ProductOptions cart item
+                     const productOptionCartItem = productOption.cartItem
+
+                     //ProductOptions modifiers default cart item
+                     const { modifiersCartItem, total: modifierTotal } =
+                        getModifiersCartItem([productOption?.modifier])
+
+                     // ProductOptions additional Modifiers cart item
+                     const {
+                        modifiersCartItem: additionalModifierCartItem,
+                        total: additionalModifiersTotal,
+                     } = getModifiersCartItem(
+                        productOption.additionalModifiers,
+                        true
+                     )
+
+                     // Modifiers cart item
+                     const {
+                        modifiersCartItem: modifierOfModifiersCartItems,
+                        total: modifierOfModifiersTotal,
+                     } = getModifiersCartItem(modifierData?.modifiers)
+
+                     //Adding total price of all modifiers to the total price
+                     total.price =
+                        total.price +
+                        modifierTotal.price +
+                        additionalModifiersTotal.price +
+                        modifierOfModifiersTotal.price
+
+                     //Adding total discount of all modifiers to the total price
+                     total.discount =
+                        total.discount +
+                        modifierTotal.discount +
+                        additionalModifiersTotal.discount +
+                        modifierOfModifiersTotal.discount
+
+                     cartItems.push(
+                        getCartItemWithModifiers(productOptionCartItem, [
+                           ...modifiersCartItem,
+                           ...modifierOfModifiersCartItems,
+                           ...additionalModifierCartItem,
+                        ])
+                     )
+                  }
+               }
+               //Setting the product total price after discount and total discounted price
+               productPrice.push({ id: product.id, total })
+            })
+
+            return { cartItems, productPrice }
+         }
+         const { cartItems, productPrice } = getDefaultCartItem(relatedProducts)
+
+         setCartItems(cartItems)
+         setRelatedProductPrices(productPrice)
+      }
+   }, [products])
 
    useEffect(() => {
       if (!isEmpty(completeProductData)) {
@@ -208,15 +442,63 @@ export const KioskModifier = props => {
          ...selectedOptions.single,
          ...selectedOptions.multiple,
       ]
+
+      //no product options available
+      if (!selectedProductOption) {
+         const cartItem = productData.defaultCartItem
+         if (addRelatedProductToCart && currentPage === 'menuPage') {
+            const relatedProductsCartItems = cartItems.filter(cartItem =>
+               selectedRelatedProducts.includes(cartItem.productId)
+            )
+            await addToCart([...relatedProductsCartItems, cartItem], quantity)
+         } else {
+            await addToCart(cartItem, quantity)
+         }
+
+         if (edit) {
+            methods.cartItems.delete({
+               variables: {
+                  where: {
+                     id: {
+                        _in: productCartDetail.ids,
+                     },
+                  },
+               },
+            })
+         }
+         if (edit || forNewItem) {
+            onCloseModifier()
+            return
+         }
+
+         // not open GO TO MENU - CHECKOUT popup
+         if (
+            !config.kioskSettings.popupSettings.showGoToMenuCheckoutPopup.value
+         ) {
+            onCloseModifier()
+            return
+         }
+
+         setShowProceedPopup(true)
+         return
+      }
+
       //no modifier available in product options
       if (!selectedProductOption.modifier) {
-         // addToCart({ ...productOption, quantity })
          const cartItem = getCartItemWithModifiers(
             selectedProductOption.cartItem,
             allSelectedOptions.map(x => x.cartItem)
          )
 
-         await addToCart(cartItem, quantity)
+         if (addRelatedProductToCart && currentPage === 'menuPage') {
+            const relatedProductsCartItems = cartItems.filter(cartItem =>
+               selectedRelatedProducts.includes(cartItem.productId)
+            )
+            await addToCart([...relatedProductsCartItems, cartItem], quantity)
+         } else {
+            await addToCart(cartItem, quantity)
+         }
+
          if (edit) {
             methods.cartItems.delete({
                variables: {
@@ -321,8 +603,14 @@ export const KioskModifier = props => {
                allSelectedOptions.map(x => x.cartItem)
             )
          }
-
-         await addToCart(cartItem, quantity)
+         if (addRelatedProductToCart && currentPage === 'menuPage') {
+            const relatedProductsCartItems = cartItems.filter(cartItem =>
+               selectedRelatedProducts.includes(cartItem.productId)
+            )
+            await addToCart([...relatedProductsCartItems, cartItem], quantity)
+         } else {
+            await addToCart(cartItem, quantity)
+         }
          if (edit) {
             methods.cartItems.delete({
                variables: {
@@ -385,8 +673,8 @@ export const KioskModifier = props => {
    }
 
    const totalAmount = () => {
-      const productOptionPrice = selectedProductOption.price
-      const productOptionDiscount = selectedProductOption.discount
+      const productOptionPrice = selectedProductOption?.price || 0
+      const productOptionDiscount = selectedProductOption?.discount || 0
       let allSelectedOptions = [
          ...selectedOptions.single,
          ...selectedOptions.multiple,
@@ -415,19 +703,21 @@ export const KioskModifier = props => {
          x =>
             (allSelectedOptionsPrice =
                allSelectedOptionsPrice +
-               (x?.modifierCategoryOptionsPrice || 0) -
-               (x?.modifierCategoryOptionsDiscount || 0))
+               getPriceWithDiscount(
+                  x?.modifierCategoryOptionsPrice || 0,
+                  x?.modifierCategoryOptionsDiscount || 0
+               ))
       )
 
       const totalPrice =
-         productOptionPrice +
-         allSelectedOptionsPrice +
-         productData.price -
-         productData.discount -
-         productOptionDiscount
-      return totalPrice * quantity
-   }
+         getPriceWithDiscount(productData.price, productData.discount) +
+         getPriceWithDiscount(productOptionPrice, productOptionDiscount) +
+         allSelectedOptionsPrice
 
+      //Adding the selected related product price with total price
+      return selectedRelatedProductPrice + totalPrice * quantity
+   }
+   console.log('#CPD', completeProductData)
    // used for add new product or edit product
    useEffect(() => {
       if (!isEmpty(completeProductData) && (forNewItem || edit)) {
@@ -769,7 +1059,10 @@ export const KioskModifier = props => {
                   >
                      {productData.price > 0 &&
                         formatCurrency(
-                           productData.price - productData.discount
+                           getPriceWithDiscount(
+                              productData.price,
+                              productData.discount
+                           )
                         )}
                   </span>
                </div>
@@ -824,7 +1117,10 @@ export const KioskModifier = props => {
                                  </span>
                                  {' (+ '}
                                  {formatCurrency(
-                                    eachOption.price - eachOption.discount
+                                    getPriceWithDiscount(
+                                       eachOption.price,
+                                       eachOption.discount
+                                    )
                                  )}
                                  {')'}
                               </button>
@@ -890,7 +1186,10 @@ export const KioskModifier = props => {
                                  </span>
                                  {' (+ '}
                                  {formatCurrency(
-                                    eachOption.price - eachOption.discount
+                                    getPriceWithDiscount(
+                                       eachOption.price,
+                                       eachOption.discount
+                                    )
                                  )}
                                  {')'}
                               </button>
@@ -914,8 +1213,8 @@ export const KioskModifier = props => {
                )}
                {/* <div className="hern-kiosk__modifier-popup-modifiers-list"> */}
                {!isModifiersLoading &&
-                  selectedProductOption.additionalModifiers.length > 0 &&
-                  selectedProductOption.additionalModifiers.map(
+                  selectedProductOption?.additionalModifiers.length > 0 &&
+                  selectedProductOption?.additionalModifiers.map(
                      (eachAdditionalModifier, index) => (
                         <AdditionalModifiers
                            ref={additionalModifierRef}
@@ -935,8 +1234,8 @@ export const KioskModifier = props => {
                      )
                   )}
                {!isModifiersLoading &&
-                  selectedProductOption.modifier &&
-                  selectedProductOption.modifier.categories.map(
+                  selectedProductOption?.modifier &&
+                  selectedProductOption?.modifier?.categories.map(
                      (eachModifierCategory, index) => {
                         return (
                            <div
@@ -1046,8 +1345,10 @@ export const KioskModifier = props => {
                                                          <>
                                                             {' ('}
                                                             {formatCurrency(
-                                                               eachOption.price -
+                                                               getPriceWithDiscount(
+                                                                  eachOption.price,
                                                                   eachOption.discount
+                                                               )
                                                             )}
                                                             {')'}
                                                          </>
@@ -1173,6 +1474,18 @@ export const KioskModifier = props => {
                      }
                   )}
                {/* </div> */}
+               {/* Showing all the related products based on config  */}
+               {!isModifiersLoading &&
+                  !isEmpty(relatedProducts) &&
+                  addRelatedProductToCart && (
+                     <RelatedProducts
+                        config={config}
+                        relatedProducts={relatedProducts}
+                        selectedRelatedProducts={selectedRelatedProducts}
+                        setSelectedRelatedProducts={setSelectedRelatedProducts}
+                        relatedProductPrices={relatedProductPrices}
+                     />
+                  )}
             </div>
             <div
                className={classNames('hern-kiosk__modifier-popup-footer', {
@@ -1665,8 +1978,10 @@ const AdditionalModifiers = forwardRef(
                                                          <>
                                                             {' ('}
                                                             {formatCurrency(
-                                                               eachOption.price -
+                                                               getPriceWithDiscount(
+                                                                  eachOption.price,
                                                                   eachOption.discount
+                                                               )
                                                             )}
                                                             {')'}
                                                          </>
@@ -2185,8 +2500,10 @@ const ModifierOptionsList = forwardRef((props, ref) => {
                                           <>
                                              {' ('}
                                              {formatCurrency(
-                                                eachOption.price -
+                                                getPriceWithDiscount(
+                                                   eachOption.price,
                                                    eachOption.discount
+                                                )
                                              )}
                                              {')'}
                                           </>
@@ -2236,3 +2553,109 @@ const ModifierOptionsList = forwardRef((props, ref) => {
       </>
    )
 })
+
+const RelatedProducts = ({
+   relatedProducts,
+   selectedRelatedProducts,
+   setSelectedRelatedProducts,
+   config,
+   relatedProductPrices,
+}) => {
+   const handleProductClick = id => {
+      if (selectedRelatedProducts.includes(id)) {
+         setSelectedRelatedProducts(
+            selectedRelatedProducts.filter(selectedId => selectedId !== id)
+         )
+      } else {
+         setSelectedRelatedProducts(prev => [...prev, id])
+      }
+   }
+
+   return (
+      <React.Fragment>
+         <div
+            className="hern-kiosk__modifier-popup-modifier-category"
+            style={{
+               backgroundColor: `${config.modifierPopUpSettings.theme.modifierPopupOptionsBackgroundColor.value}`,
+            }}
+         >
+            <label className="hern-kiosk__modifier-category-label">
+               <span
+                  className="hern-kiosk__modifier-category-label-text"
+                  style={{
+                     textTransform: 'uppercase',
+                     color: `${config.modifierPopUpSettings.theme.modifierPopupCategoryTextColor.value}`,
+                  }}
+                  data-translation="true"
+               >
+                  Product goes best with
+               </span>
+            </label>
+            {relatedProducts.map(product => {
+               const price = relatedProductPrices.find(
+                  price => price.id === product.id
+               )
+               return (
+                  <React.Fragment key={product.id}>
+                     <div
+                        className="hern-kiosk__modifier-category-option"
+                        onClick={() => handleProductClick(product.id)}
+                     >
+                        <div className="hern-kiosk__modifier-category-right">
+                           <HernLazyImage
+                              className="hern-kiosk__modifier-category-option-image"
+                              alt="modifier image"
+                              dataSrc={
+                                 product.assets.images[0] ||
+                                 config.productSettings.defaultImage.value
+                              }
+                              height={95}
+                              width={95}
+                           />
+
+                           <span
+                              className="hern-kiosk__modifier--option-name"
+                              style={{
+                                 color: `${config.modifierPopUpSettings.theme.modifierPopupOptionTextColor.value}`,
+                              }}
+                           >
+                              <span data-translation="true">
+                                 {product.name} {' ('}
+                                 {formatCurrency(Number(price.total.price))}
+                                 {')'}
+                              </span>
+                           </span>
+                        </div>
+                        {selectedRelatedProducts.includes(product.id) ? (
+                           <RoundCheckBoxIcon
+                              fill={
+                                 config.modifierPopUpSettings.theme
+                                    .checkBoxCheckedBGColor.value
+                              }
+                              tickFill={
+                                 config.modifierPopUpSettings.theme
+                                    .checkBoxTickColor.value
+                              }
+                              size={50}
+                           />
+                        ) : (
+                           <NoTickRoundCheckBoxIcon
+                              fill={
+                                 config.modifierPopUpSettings.theme
+                                    .checkBoxEmptyColor.value
+                              }
+                              size={50}
+                              stroke={
+                                 config.modifierPopUpSettings.theme
+                                    .checkBoxBorderColor.value
+                              }
+                           />
+                        )}
+                     </div>
+                  </React.Fragment>
+               )
+            })}
+         </div>
+      </React.Fragment>
+   )
+}
