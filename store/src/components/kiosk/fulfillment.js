@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import { Button, Drawer } from 'antd'
 import { useCart, useTranslation } from '../../context'
 import { DineInIcon, TakeOutIcon } from '../../assets/icons'
@@ -470,7 +470,39 @@ const PhoneNumber = ({
    setNumber,
    setCurrentPage,
 }) => {
+   
+   const phoneNumberInputRef = useRef();
+   const [isBackspace, setIsBackspace] = useState(false);
    const { t } = useTranslation()
+   
+   useEffect( ()=> {
+
+      const show = config?.phoneNoScreenSettings?.visibilityOfPhoneNumber.label;
+      const hidePhoneNumber = (config?.phoneNoScreenSettings?.visibilityOfPhoneNumber.value)? false : true;
+      let phoneNumberlen = number.length
+
+      if (phoneNumberInputRef.current){
+         if(phoneNumberlen){
+            if(hidePhoneNumber){
+               if(!isBackspace){
+                  phoneNumberInputRef.current.value = show.repeat(phoneNumberlen-1)+number[phoneNumberlen-1];
+                  setTimeout( ()=>{
+                     phoneNumberInputRef.current.value = show.repeat(phoneNumberlen);
+                  }, 500)
+               } else {
+                  phoneNumberInputRef.current.value = show.repeat(phoneNumberlen);
+                  setIsBackspace(false);
+               }
+            } else {
+               phoneNumberInputRef.current.value = number;
+            }
+         } else {
+            phoneNumberInputRef.current.value = "";
+            setIsBackspace(false);
+         }
+      }
+   }, [number])
+
    return (
       <Drawer
          title={t('Enter Phone Number')}
@@ -520,7 +552,7 @@ const PhoneNumber = ({
             <div className="hern-kiosk__phone-number-drawer__number">
                <div className="hern-kiosk__phone-number-drawer__number__input">
                   <input
-                     value={number}
+                     ref={phoneNumberInputRef}
                      type="text"
                      placeholder="Phone number"
                   />
@@ -542,7 +574,10 @@ const PhoneNumber = ({
                      </span>
                   </div>
                   <div onClick={() => setNumber(number + '0')}>0</div>
-                  <div onClick={() => setNumber(number.slice(0, -1))}>
+                  <div onClick={() => {
+                                       setNumber(number.slice(0, -1))
+                                       setIsBackspace(true)
+                                       }}>
                      <BackSpaceIcon />
                   </div>
                </div>
