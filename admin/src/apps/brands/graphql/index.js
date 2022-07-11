@@ -885,3 +885,85 @@ export const PAYMENT_OPTIONS = {
       }
    `,
 }
+
+export const PINELABS_DEVICES = {
+   AGGREGATE: gql`
+      subscription PINELABS_DEVICES {
+         deviceHub_pineLabsDevices_aggregate {
+            aggregate {
+               count
+            }
+         }
+      }
+   `,
+   LIST: gql`
+      subscription PINELABS_LIST {
+         devices: deviceHub_pineLabsDevices_aggregate {
+            aggregate {
+               count
+            }
+            nodes {
+               id
+               imei
+               internalPineLabsDeviceLabel
+               merchantStorePosCode
+               created_at
+               updated_at
+               isActive
+            }
+         }
+      }
+   `,
+   DEVICE: gql`
+      subscription DEVICE($id: Int_comparison_exp!) {
+         device: deviceHub_pineLabsDevices(where: { id: $id }) {
+            id
+            imei
+            merchantStorePosCode
+            deviceLabel: internalPineLabsDeviceLabel
+            isActive
+            created_at
+            updated_at
+         }
+      }
+   `,
+   CREATE_DEVICE: gql`
+      mutation CREATE_DEVICE($object: deviceHub_pineLabsDevices_insert_input!) {
+         insert_deviceHub_pineLabsDevices_one(object: $object) {
+            id
+         }
+      }
+   `,
+   CREATE_DEVICES: gql`
+      mutation CREATE_DEVICES(
+         $objects: [deviceHub_pineLabsDevices_insert_input!]!
+      ) {
+         insert_deviceHub_pineLabsDevices(objects: $objects) {
+            returning {
+               id
+            }
+            affected_rows
+         }
+      }
+   `,
+   UPDATE_DEVICE: gql`
+      mutation UPDATE_DEVICE(
+         $id: Int!
+         $_set: deviceHub_pineLabsDevices_set_input
+      ) {
+         update_deviceHub_pineLabsDevices_by_pk(
+            pk_columns: { id: $id }
+            _set: $_set
+         ) {
+            id
+         }
+      }
+   `,
+   DELETE_DEVICE: gql`
+      mutation DELETE_DEVICE($id: Int!) {
+         delete_deviceHub_pineLabsDevices(where: { id: { _eq: $id } }) {
+            affected_rows
+         }
+      }
+   `,
+}

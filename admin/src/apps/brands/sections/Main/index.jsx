@@ -17,6 +17,8 @@ import { Flex } from '../../../../shared/components'
 import { useAccess } from '../../../../shared/providers'
 import KioskReportTable from '../../views/Listings/kioskLocations/KioskReportTable'
 import { PaymentOptions } from '../../views/Listings/paymentOptions'
+import { PinelabsDevices } from '../../views/Listings/pinelabsDevices'
+import PinelabsDevice from '../../views/Forms/pinelabsDevice'
 export default function Main() {
    return (
       <main style={{ height: '100%' }}>
@@ -99,6 +101,22 @@ export default function Main() {
                   message="You do not have sufficient permission to access payment form."
                >
                   <PaymentOption />
+               </AccessCheck>
+            </Route>
+            <Route path="/brands/pinelabs-devices" exact>
+               <AccessCheck
+                  title="pinelabs devices"
+                  message="You do not have sufficient permission to access payment details."
+               >
+                  <PinelabsDevices />
+               </AccessCheck>
+            </Route>
+            <Route path="/brands/pinelabs-devices/:id" exact>
+               <AccessCheck
+                  title="payment option"
+                  message="You do not have sufficient permission to access payment form."
+               >
+                  <PinelabsDevice />
                </AccessCheck>
             </Route>
          </Switch>

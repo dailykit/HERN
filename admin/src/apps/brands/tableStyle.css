@@ -47,3 +47,11 @@
    color: #367bf5;
    cursor: pointer;
 }
+
+.delete-kiosk {
+   display: inline;
+}
+
+.actions-col {
+   display: flex;
+}

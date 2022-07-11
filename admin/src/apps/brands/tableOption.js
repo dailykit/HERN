@@ -3,7 +3,7 @@ const options = {
    maxHeight: 420,
    layout: 'fitColumns',
    autoResize: true,
-   resizableColumns: false,
+   resizableColumns: true,
    virtualDomBuffer: 80,
    placeholder: 'No Data Available',
    persistence: true,
