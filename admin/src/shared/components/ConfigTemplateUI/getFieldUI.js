@@ -25,6 +25,7 @@ import {
    RecipeSelector,
    AnimationSelector,
    PaymentOptionSelector,
+   VideoUpload,
 } from './UIComponents'
 import { Address } from './UIComponents/Address'
 import { useEditMode } from './EditModeContext'
@@ -251,6 +252,21 @@ export const getFieldUI = (
    ) {
       configUI = (
          <ImageUpload
+            fieldDetail={field}
+            marginLeft={indentation}
+            path={fieldKey}
+            onConfigChange={onConfigChange}
+            configSaveHandler={configSaveHandler}
+            configJSON={configJSON}
+            editMode={editMode}
+         />
+      )
+   } else if (
+      field.dataType === 'videoUpload' &&
+      field.userInsertType === 'videoUpload'
+   ) {
+      configUI = (
+         <VideoUpload
             fieldDetail={field}
             marginLeft={indentation}
             path={fieldKey}
