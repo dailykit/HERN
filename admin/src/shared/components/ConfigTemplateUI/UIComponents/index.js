@@ -885,6 +885,147 @@ export const ImageUpload = props => {
    )
 }
 
+export const VideoUpload = props => {
+   // props
+   const { fieldDetail, path, onConfigChange, editMode } = props
+   const [tunnels, openTunnel, closeTunnel] = useTunnel(1)
+
+   const updateSetting = (data = {}) => {
+      if ('url' in data) {
+         const e = { target: { name: path, value: data.url } }
+         onConfigChange(e, data.url)
+      } else if (data) {
+         const e = { target: { name: path, value: data } }
+         onConfigChange(e, data)
+      }
+      closeTunnel(1)
+   }
+   return (
+      <>
+         {editMode ? (
+            <>
+               <VideoWrapper>
+                  <Flex container alignItems="flex-start">
+                     <Form.Label title={fieldDetail.label} htmlFor="textArea">
+                        {fieldDetail.label.toUpperCase()}
+                     </Form.Label>
+                     <Tooltip identifier="textArea_component_info" />
+                  </Flex>
+                  <Spacer size="16px" />
+                  {fieldDetail?.value?.url || fieldDetail?.value ? (
+                     <VideoContainer height="120px">
+                        <div
+                           style={{ display: 'flex', flexDirection: 'column' }}
+                        >
+                           <IconButton
+                              style={{ background: 'transparent' }}
+                              size="sm"
+                              type="solid"
+                              onClick={() => openTunnel(1)}
+                           >
+                              <EditIcon />
+                           </IconButton>
+                           <IconButton
+                              style={{
+                                 background: 'transparent',
+                              }}
+                              size="sm"
+                              type="solid"
+                              onClick={() => updateSetting({ url: '' })}
+                           >
+                              <DeleteIcon />
+                           </IconButton>
+                        </div>
+                        <video
+                           controls={true}
+                           muted={true}
+                           src={fieldDetail?.value?.url || fieldDetail?.value}
+                           alt={fieldDetail?.label}
+                        />
+                     </VideoContainer>
+                  ) : (
+                     <ButtonTile
+                        type="uploadImage"
+                        size="sm"
+                        text="Upload"
+                        onClick={() => openTunnel(1)}
+                        style={{
+                           width: '170px',
+                           height: '120px',
+                           marginBottom: '10px',
+                        }}
+                     />
+                  )}
+               </VideoWrapper>
+               <Tunnels tunnels={tunnels}>
+                  <Tunnel layer={1} size="md">
+                     <TunnelHeader
+                        title="Add Brand Logo"
+                        close={() => closeTunnel(1)}
+                     />
+                     <Flex padding="16px">
+                        <AssetUploader
+                           onAssetUpload={data => updateSetting(data)}
+                           onVideoSelect={data => updateSetting(data)}
+                        />
+                     </Flex>
+                  </Tunnel>
+               </Tunnels>
+            </>
+         ) : (
+            <VideoWrapper>
+               {fieldDetail?.value?.url || fieldDetail?.value ? (
+                  <>
+                     <Flex container alignItems="flex-end">
+                        <Form.Label title={fieldDetail.label} htmlFor="text">
+                           {fieldDetail.label.toUpperCase()}
+                        </Form.Label>
+                        <Tooltip identifier="image_label" />
+                     </Flex>
+                     <VideoContainer
+                        width="120px"
+                        height="120px"
+                        flexDirection="row"
+                     >
+                        <video
+                           controls={true}
+                           muted={true}
+                           src={fieldDetail?.value?.url || fieldDetail?.value}
+                           alt={fieldDetail.label}
+                        />
+                     </VideoContainer>
+                  </>
+               ) : (
+                  <>
+                     <Flex container alignItems="flex-end">
+                        <Form.Label title={fieldDetail.label} htmlFor="text">
+                           {fieldDetail.label.toUpperCase()}
+                        </Form.Label>
+                        <Tooltip identifier="image_label" />
+                     </Flex>
+                     <VideoContainer
+                        width="100px"
+                        height="100px"
+                        flexDirection="row"
+                     >
+                        <div className="fallback-image-container">
+                           <Image
+                              width={150}
+                              height={100}
+                              src="error"
+                              fallback="https://raw.githubusercontent.com/koehlersimon/fallback/master/Resources/Public/Images/placeholder.jpg"
+                              title="no video added"
+                           />
+                        </div>{' '}
+                     </VideoContainer>
+                  </>
+               )}
+            </VideoWrapper>
+         )}
+      </>
+   )
+}
+
 export const MultipleImageUpload = props => {
    // props
    const { fieldDetail, path, onConfigChange, editMode } = props
@@ -1361,6 +1502,48 @@ export const ImageContainer = styled.div`
       }
    }
 `
+
+export const VideoContainer = styled.div`
+   display: flex;
+   flex-direction: ${props =>
+      props.flexDirection ? props.flexDirection : 'row-reverse'};
+   justify-content: flex-end;
+   height: ${props => props.height || 'auto'};
+   width: ${props => props.width || 'auto'};
+   position: relative;
+   margin-bottom: 16px;
+   img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+   }
+   button {
+      float: right;
+      margin: 4px 4px 0 4px;
+   }
+   .slick-dots li.slick-active button,
+   .ant-carousel.slick-dots li button {
+      background: #000;
+   }
+   .ant-carousel.slick-dots-bottom {
+      height: 2px;
+   }
+   .fallback-image-container {
+      display: flex;
+      flex-wrap: wrap;
+      align-content: flex-start;
+      text-align: center;
+      flex-direction: column;
+   }
+   .ant-carousel > .slick-slider {
+      height: 10rem !important;
+      .slick-list > .slick-track > .slick-slide > div > div > img {
+         max-height: 120px !important;
+         width: auto;
+      }
+   }
+`
+
 export const PhoneNumSelector = styled.div`
    .showPhoneNumber {
       color: #555b6e;
@@ -1401,6 +1584,13 @@ export const ColorLabel = styled.p`
    color: grey;
 `
 export const ImageWrapper = styled.div`
+   display: flex;
+   align-items: center;
+   justify-content: space-between;
+   padding: 1rem 1.5rem;
+   padding-right: ${props => props.paddingRight || '0.4rem'};
+`
+export const VideoWrapper = styled.div`
    display: flex;
    align-items: center;
    justify-content: space-between;

@@ -70,14 +70,39 @@ const Upload = ({ onAssetUpload }) => {
          <Spacer size="24px" />
          {!uploading && (
             <>
-               <Text as="title">Selected Images</Text>
+               <Text as="title">Selected Assets</Text>
                <Spacer size="8px" />
                {files.length > 0 ? (
                   <StyledImages>
                      {files.map((file, index) => {
                         if (!file.preview) return null
 
-                        return (
+                        return file.raw.type.split('/')[0] === 'video' ? (
+                           <StyledVideo key={index}>
+                              <StyledVideoThumb
+                                 controls
+                                 muted
+                                 src={file.preview}
+                                 alt={file.raw.name}
+                              />
+                              <span
+                                 style={{
+                                    position: 'absolute',
+                                    right: '-45px',
+                                 }}
+                              >
+                                 <IconButton
+                                    size="sm"
+                                    type="solid"
+                                    onClick={() => removeSelection(index)}
+                                 >
+                                    <Trash />
+                                 </IconButton>
+                              </span>
+                              <Spacer size="4px" />
+                              <Text as="p">{file.raw.name}</Text>
+                           </StyledVideo>
+                        ) : (
                            <StyledImage key={index}>
                               {file.raw.type && (
                                  <StyledThumb
@@ -101,7 +126,7 @@ const Upload = ({ onAssetUpload }) => {
                      })}
                   </StyledImages>
                ) : (
-                  <span>No images selected!</span>
+                  <span>No assets selected!</span>
                )}
             </>
          )}
@@ -126,6 +151,16 @@ const StyledImage = styled.li`
    }
 `
 
+const StyledVideo = styled.li`
+   list-style: none;
+   position: relative;
+   span {
+      position: absolute;
+      top: 6px;
+      right: 6px;
+   }
+`
+
 const FileInput = styled.input`
    width: 100%;
    padding: 12px;
@@ -136,6 +171,13 @@ const FileInput = styled.input`
 const StyledThumb = styled.img`
    height: 120px;
    width: 120px;
+   object-fit: cover;
+   border-radius: 8px;
+   border: 1px solid #e3e3e3;
+`
+
+const StyledVideoThumb = styled.video`
+   height: 120px;
    object-fit: cover;
    border-radius: 8px;
    border: 1px solid #e3e3e3;
