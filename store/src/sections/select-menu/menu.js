@@ -25,6 +25,8 @@ export const Menu = () => {
    const { t, dynamicTrans, locale } = useTranslation()
    const { state, brand, locationId, brandLocation } = useMenu()
    const { configOf, buildImageUrl, noProductImage } = useConfig()
+   const router = useRouter()
+   const route = router.route
 
    const argsForByLocation = React.useMemo(
       () => ({
@@ -105,7 +107,13 @@ export const Menu = () => {
    return (
       <main>
          {categories.length > 1 && (
-            <div className="hern-select-menu__category">
+            <div
+               className={
+                  route === '/[brand]/get-started/select-menu'
+                     ? 'hern-select-menu__category-two'
+                     : 'hern-select-menu__category'
+               }
+            >
                {categories.map(category => (
                   <Scroll.Link
                      to={category.name}
