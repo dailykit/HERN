@@ -42,6 +42,7 @@ import {
    GET_BRAND_CAMPAIGNS,
    GET_PAYMENT_OPTIONS,
 } from '../../../graphql'
+import { FieldUI } from '../getFieldUI'
 
 const { Paragraph } = Typography
 
@@ -772,13 +773,13 @@ export const ImageUpload = props => {
                <ImageWrapper>
                   <Flex container alignItems="flex-start">
                      <Form.Label title={fieldDetail.label} htmlFor="textArea">
-                        YOUR {fieldDetail.label.toUpperCase()}
+                        {fieldDetail.label.toUpperCase()}
                      </Form.Label>
                      <Tooltip identifier="textArea_component_info" />
                   </Flex>
                   <Spacer size="16px" />
                   {fieldDetail?.value?.url || fieldDetail?.value ? (
-                     <ImageContainer width="120px" height="120px">
+                     <ImageContainer height="120px">
                         <div>
                            <IconButton
                               style={{ background: 'transparent' }}
@@ -843,11 +844,7 @@ export const ImageUpload = props => {
                         </Form.Label>
                         <Tooltip identifier="image_label" />
                      </Flex>
-                     <ImageContainer
-                        width="120px"
-                        height="120px"
-                        flexDirection="row"
-                     >
+                     <ImageContainer height="120px" flexDirection="row">
                         <img
                            src={fieldDetail?.value?.url || fieldDetail?.value}
                            alt={fieldDetail.label}
@@ -862,11 +859,7 @@ export const ImageUpload = props => {
                         </Form.Label>
                         <Tooltip identifier="image_label" />
                      </Flex>
-                     <ImageContainer
-                        width="100px"
-                        height="100px"
-                        flexDirection="row"
-                     >
+                     <ImageContainer height="100px" flexDirection="row">
                         <div className="fallback-image-container">
                            <Image
                               width={150}
@@ -1437,6 +1430,110 @@ export const PaymentOptionSelector = props => {
                   {fieldDetail?.value?.title || 'choose payment option...'}
                </Text>
             )}
+         </Flex>
+      </>
+   )
+}
+
+// Custom Field
+export const CustomField = props => {
+   const {
+      fieldDetail,
+      marginLeft,
+      path,
+      onConfigChange,
+      editMode,
+      configJSON,
+      configSaveHandler,
+      isValid,
+      setIsValid,
+   } = props
+   console.log('==> Field Details: ', fieldDetail)
+
+   const availableFields = fieldDetail?.fieldOptions || []
+   // When user changes the Datatype by selecting an option
+   const selectedOptionHandler = options => {
+      const e = {
+         target: {
+            name: path,
+         },
+      }
+      let value = {
+         optionId: options.id,
+         ...options.value,
+         title: options?.title || '',
+         label: '',
+         value: '',
+      }
+      onConfigChange(e, value)
+   }
+
+   if (availableFields?.length == 0) {
+      return <ErrorState message="options not found" height="100px" />
+   }
+
+   return (
+      <>
+         <Flex
+            container
+            justifyContent="space-between"
+            flexDirection="column"
+            alignItems="center"
+            margin={`0 0 0 ${marginLeft}`}
+         >
+            <Flex
+               container
+               width={'100%'}
+               justifyContent="space-between"
+               alignItems="center"
+               margin={`0 0 0 ${marginLeft}`}
+            >
+               <Flex container alignItems="flex-end">
+                  <Form.Label title={fieldDetail.label} htmlFor="select">
+                     {fieldDetail.label.toUpperCase()}
+                  </Form.Label>
+                  <Tooltip identifier="select_component_info" />
+               </Flex>
+               {editMode ? (
+                  <DropdownWrapper>
+                     <Dropdown
+                        type={'single'}
+                        options={availableFields}
+                        defaultOption={
+                           fieldDetail?.value?.optionId && {
+                              id: fieldDetail?.value?.optionId,
+                           }
+                        }
+                        searchedOption={option => console.log(option)}
+                        selectedOption={option => selectedOptionHandler(option)}
+                        placeholder="choose a field..."
+                     />
+                  </DropdownWrapper>
+               ) : fieldDetail?.value?.userInsertType ? (
+                  <h3>{fieldDetail?.value?.title}</h3>
+               ) : (
+                  <h3>No Field Selected</h3>
+               )}
+            </Flex>
+            <Flex
+               container
+               width={'100%'}
+               justifyContent="end"
+               alignItems="center"
+               margin={`0 0 0 ${marginLeft}`}
+            >
+               {fieldDetail?.value?.userInsertType && (
+                  <FieldUI
+                     fieldKey={`${path}.value`}
+                     configJSON={configJSON}
+                     onConfigChange={onConfigChange}
+                     value={fieldDetail?.value?.value}
+                     configSaveHandler={configSaveHandler}
+                     isValid={isValid}
+                     setIsValid={setIsValid}
+                  />
+               )}
+            </Flex>
          </Flex>
       </>
    )
