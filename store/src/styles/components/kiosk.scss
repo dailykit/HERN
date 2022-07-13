@@ -376,8 +376,8 @@
 }
 .hern-kiosk__menu-header-veg-switch {
    display: flex;
-   justify-content: space-between;
-   padding-top: 12px;
+   gap: 12px;
+   align-items: center;
    .ant-switch {
       margin-top: 5px;
    }
@@ -468,10 +468,26 @@
    height: 9em;
    background: transparent;
 }
-
+.hern-kiosk__menu-header--lg {
+   padding: 0 40px 0 16px;
+   .hern-kiosk__menu-header-row {
+      .hern-kiosk__menu-header-veg-switch {
+         grid-column: 1/2;
+      }
+      .hern-kiosk__menu-header-col-1 {
+         grid-column: 2/6;
+      }
+   }
+}
 .hern-kiosk__menu-header-row {
    height: 100%;
+   display: grid;
+   grid-template-columns: repeat(6, 1fr);
+   .hern-kiosk__menu-header-col-1 {
+      grid-column: 1/6;
+   }
 }
+
 .hern-kiosk__menu-header-heading {
    text-align: center;
    font-size: 3.5em;
@@ -1163,8 +1179,8 @@
 }
 //Simple cart variant style
 .hern-kiosk__cart-count--simple {
-   left: 96px !important;
-   top: -8px !important;
+   left: 90px !important;
+   top: -2px !important;
    .hern-kiosk__cart-item-badge {
       background-color: var(--hern-primary-color);
       height: 16px;
