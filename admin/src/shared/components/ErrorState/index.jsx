@@ -18,7 +18,7 @@ export const ErrorState = ({
          width={width}
          height={height}
       >
-         {illustration || <Illustration height="600px" />}
+         {illustration || <Illustration height="200px" />}
          <Text as="h3">{message}</Text>
       </Flex>
    )

@@ -25,6 +25,8 @@ import {
    RecipeSelector,
    AnimationSelector,
    PaymentOptionSelector,
+   VideoUpload,
+   CustomField,
 } from './UIComponents'
 import { Address } from './UIComponents/Address'
 import { useEditMode } from './EditModeContext'
@@ -261,6 +263,21 @@ export const getFieldUI = (
          />
       )
    } else if (
+      field.dataType === 'videoUpload' &&
+      field.userInsertType === 'videoUpload'
+   ) {
+      configUI = (
+         <VideoUpload
+            fieldDetail={field}
+            marginLeft={indentation}
+            path={fieldKey}
+            onConfigChange={onConfigChange}
+            configSaveHandler={configSaveHandler}
+            configJSON={configJSON}
+            editMode={editMode}
+         />
+      )
+   } else if (
       field.dataType === 'multipleImagesUpload' &&
       field.userInsertType === 'multipleImagesUpload'
    ) {
@@ -367,6 +384,21 @@ export const getFieldUI = (
             path={fieldKey}
             onConfigChange={onConfigChange}
             editMode={editMode}
+         />
+      )
+   } else if (field.userInsertType === 'customField') {
+      configUI = (
+         <CustomField
+            fieldDetail={field}
+            marginLeft={indentation}
+            path={fieldKey}
+            onConfigChange={onConfigChange}
+            editMode={editMode}
+            fieldKey={fieldKey}
+            configJSON={configJSON}
+            isValid={isValid}
+            setIsValid={setIsValid}
+            configSaveHandler={configSaveHandler}
          />
       )
    }

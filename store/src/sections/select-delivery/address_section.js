@@ -148,10 +148,10 @@ const AddressCard = ({
             border:
                address?.id === selectedAddress?.id &&
                '0.5px solid var(--hern-accent)',
-            boxShadow: isSelectedCard
-               ? 'none'
-               : '0px 0px 29px rgba(0, 0, 0, 0.08)',
-            paddingTop: isSelectedCard ? '25px' : 'none',
+            // boxShadow: isSelectedCard
+            //    ? 'none'
+            //    : '0px 0px 29px rgba(0, 0, 0, 0.08)',
+            marginTop: isSelectedCard ? '45px' : 'none',
          }}
       >
          <div className="hern-delivery__address__list-item__header">

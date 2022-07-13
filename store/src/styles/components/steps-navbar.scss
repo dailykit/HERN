@@ -110,7 +110,11 @@
       border-radius: 50%;
       background-color: #fff;
    }
-
+   >div:hover{
+      border: 2px solid;
+      border-radius: 50%;
+      border-color: var(--hern-accent);
+   }
    > div > span {
       position: absolute;
       left: 0;
@@ -135,7 +139,7 @@
          height: 100%;
          width: 100%;
       }
-
+      
       @media (max-width: 768px) {
          margin: 0;
          background-color: rgba(17, 130, 59, 0.2);
