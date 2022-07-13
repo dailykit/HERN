@@ -13,3 +13,16 @@ export const PLATFORM_CUSTOMER = `
       }
    }
 `
+export const BRAND_CUSTOMER_AND_DEVICE_ID = `
+   query BRAND_CUSTOMER_AND_DEVICE_ID(
+      $where: crm_brand_customer_bool_exp!
+      $where1: deviceHub_mobileDevice_bool_exp!
+   ) {
+      brandCustomers(where: $where) {
+         id
+      }
+      deviceHub_mobileDevice(where: $where1) {
+         id
+      }
+   }
+`

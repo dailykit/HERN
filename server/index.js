@@ -54,6 +54,8 @@ import { emailTemplateHandler } from './entities/emails'
 
 import './lib/stripe'
 import { InvoiceRouter } from './entities/invoice'
+import { PushNotification } from './entities/pushNotification'
+import { sendOrderStatusNotification } from './entities/events/sendOrderStatusNotification'
 
 const router = express.Router()
 
@@ -110,6 +112,10 @@ router.post('/event/order/third-party', handleThirdPartyOrder)
 router.post('/event/create-cron-event', createCronEvent)
 router.post('/event/create-new-scheduled-event', createScheduledEvent)
 router.post('/event/send-otp', sendOtp)
+router.post(
+   '/event/send-order-status-notification',
+   sendOrderStatusNotification
+)
 
 router.use('/api/developer', DeveloperRouter)
 
@@ -122,5 +128,6 @@ router.get('/images/:url(*)', handleImage)
 
 router.use('/api/ssl', SSLRouter)
 router.use('/api/auth', AuthRouter)
+router.use('/api/send-notification', PushNotification)
 
 export default router

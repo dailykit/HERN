@@ -5,3 +5,21 @@ export const INSERT_CUSTOMER = `
       }
    }
 `
+export const INSERT_BRAND_CUSTOMER = `
+mutation createCustomer($object: crm_customer_insert_input!) {
+   createCustomer(object: $object) {
+      id
+      keycloakId
+   }
+}
+`
+export const INSERT_BRAND_CUSTOMER_ID_DEVICE_ID = `
+   mutation INSERT_BRAND_CUSTOMER_ID_DEVICE_ID(
+      $object: crm_brand_customer_device_insert_input!
+   ) {
+      insert_crm_brand_customer_device_one(object: $object) {
+         brandCustomerId
+         mobileDeviceId
+      }
+   }
+`
