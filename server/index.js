@@ -54,6 +54,7 @@ import { emailTemplateHandler } from './entities/emails'
 
 import './lib/stripe'
 import { InvoiceRouter } from './entities/invoice'
+import { PushNotification } from './entities/pushNotification'
 
 const router = express.Router()
 
@@ -122,5 +123,6 @@ router.get('/images/:url(*)', handleImage)
 
 router.use('/api/ssl', SSLRouter)
 router.use('/api/auth', AuthRouter)
+router.use('/api/send-notification', PushNotification)
 
 export default router
