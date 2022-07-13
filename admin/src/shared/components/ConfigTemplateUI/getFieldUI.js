@@ -26,6 +26,7 @@ import {
    AnimationSelector,
    PaymentOptionSelector,
    VideoUpload,
+   CustomField,
 } from './UIComponents'
 import { Address } from './UIComponents/Address'
 import { useEditMode } from './EditModeContext'
@@ -383,6 +384,21 @@ export const getFieldUI = (
             path={fieldKey}
             onConfigChange={onConfigChange}
             editMode={editMode}
+         />
+      )
+   } else if (field.userInsertType === 'customField') {
+      configUI = (
+         <CustomField
+            fieldDetail={field}
+            marginLeft={indentation}
+            path={fieldKey}
+            onConfigChange={onConfigChange}
+            editMode={editMode}
+            fieldKey={fieldKey}
+            configJSON={configJSON}
+            isValid={isValid}
+            setIsValid={setIsValid}
+            configSaveHandler={configSaveHandler}
          />
       )
    }
