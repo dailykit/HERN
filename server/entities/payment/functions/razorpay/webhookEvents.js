@@ -41,6 +41,22 @@ const razorpayWebhookEvents = async arg => {
             paymentStatus: status,
             transactionId: entity.id
          }
+      } else if (
+         has(arg.body, 'payload.payment.entity') &&
+         arg.body.payload.payment.entity.status === 'failed'
+      ) {
+         console.log('payment failed')
+         const { entity } = arg.body.payload.payment
+         const { id, receipt } = await razorpayInstance.orders.fetch(
+            entity.order_id
+         )
+         requiredData = {
+            cartPaymentId: parseInt(receipt.split('_').pop()),
+            transactionRemark: entity,
+            requestId: id,
+            paymentStatus: entity.status,
+            transactionId: entity.id
+         }
       }
       return {
          success: true,

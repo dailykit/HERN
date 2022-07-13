@@ -38,7 +38,7 @@ const ConfigUI = ({
    saveAllSettings,
    setSaveAllSettings,
    alertShow,
-   singleConfigUI = false
+   singleConfigUI = false,
 }) => {
    const [configJSON, setConfigJSON] = React.useState({})
    const [fields, setFields] = React.useState([])
@@ -62,7 +62,17 @@ const ConfigUI = ({
       setIsSavedChange(false)
       let updatedConfig
       const type = _.get(configJSON, `${e.target.name}.dataType`)
-      if (type === 'boolean' || type === 'html' || type === 'select') {
+      const userInsertType = _.get(
+         configJSON,
+         `${e.target.name}.userInsertType`
+      )
+
+      if (
+         userInsertType === 'customField' ||
+         type === 'boolean' ||
+         type === 'html' ||
+         type === 'select'
+      ) {
          updatedConfig = _.set(configJSON, `${e.target.name}.value`, value)
       } else {
          updatedConfig = _.set(
@@ -223,13 +233,11 @@ const ConfigUI = ({
       _.forOwn(configData, (value, key) => {
          const isFieldObject = _.has(value, 'value')
 
-
          if (isFieldObject) {
             if (value?.userInsertType && Array.isArray(value.userInsertType)) {
                const updatedRootkey = rootKey
                   ? `${rootKey}.${key}.value`
                   : `${key}.value`
-
 
                elements.push(
                   getHeaderUI({
@@ -460,10 +468,15 @@ const ConfigUI = ({
                      </Layout>
                   </Modal>
                   {/*modal for warning 👆*/}
-               </Card>) : <> {fields.map((config, index) => (
-                  <div key={index}>{config}</div>
-               ))}</>
-
+               </Card>
+            ) : (
+               <>
+                  {' '}
+                  {fields.map((config, index) => (
+                     <div key={index}>{config}</div>
+                  ))}
+               </>
+            )
          ) : (
             <Flex container justifyContent="center" padding="16px">
                <Filler
