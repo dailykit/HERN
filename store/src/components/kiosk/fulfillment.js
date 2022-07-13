@@ -475,11 +475,10 @@ const PhoneNumber = ({
    const { t } = useTranslation()
 
    useEffect(() => {
-      const show = config?.phoneNoScreenSettings?.visibilityOfPhoneNumber.label
-      const hidePhoneNumber = config?.phoneNoScreenSettings
-         ?.visibilityOfPhoneNumber.value
-         ? false
-         : true
+      const show =
+         config?.phoneNoScreenSettings?.phoneNumberHiddenText.value || '*'
+      const hidePhoneNumber =
+         config?.phoneNoScreenSettings?.visibilityOfPhoneNumber.value ?? false
 
       let phoneNumberlen = number.length
 
