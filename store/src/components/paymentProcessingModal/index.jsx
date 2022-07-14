@@ -50,7 +50,7 @@ const PaymentProcessingModal = ({
    const { user } = useUser()
    const PaymentPopUpDesignConfig = useConfig('KioskConfig')?.KioskConfig
    const variant = PaymentPopUpDesignConfig?.cartPageSettings?.congratulationTunnel.variant.value.value
-
+   
    const closeModalHandler = async () => {
       setIsCelebrating(false)
       await closeModal()
@@ -93,9 +93,9 @@ const PaymentProcessingModal = ({
    }
    const startCelebration = () => {
       setIsCelebrating(true)
-      // setTimeout(async () => {
-      //    await stopCelebration()
-      // }, 5000)
+      setTimeout(async () => {
+         await stopCelebration()
+      }, 5000)
    }
 
    const ShowPaymentStatusInfo = () => {
