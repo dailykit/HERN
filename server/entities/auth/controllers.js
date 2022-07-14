@@ -1,6 +1,8 @@
 import { client } from '../../lib/graphql'
 import {
+   BRAND_CUSTOMER,
    BRAND_CUSTOMER_AND_DEVICE_ID,
+   CREATE_CUSTOMER,
    INSERT_BRAND_CUSTOMER,
    INSERT_BRAND_CUSTOMER_ID_DEVICE_ID,
    INSERT_CUSTOMER,
@@ -34,41 +36,66 @@ export const authHandler = async (req, res) => {
       if (otps.length > 0) {
          const [firstOtp] = otps
          if (Number(otp) === firstOtp.code) {
-            const { platform_customer = [] } = await client.request(
-               PLATFORM_CUSTOMER,
-               {
-                  where: { phoneNumber: { _eq: phoneNumber } }
-               }
-            )
-            let customerInfo
-            if (platform_customer.length > 0) {
-               const [customer] = platform_customer
-               customerInfo = customer
-            } else {
-               const { insertCustomer = {} } = await client.request(
-                  INSERT_CUSTOMER,
-                  {
-                     object: {
-                        ...(email && {
-                           email: email
-                        }),
-                        phoneNumber: phoneNumber
-                     }
-                  }
-               )
-               await client.request(INSERT_BRAND_CUSTOMER, {
-                  object: {
-                     sourceBrandId: brandId,
-                     brandCustomers: {
-                        data: {
-                           brandId: brandId
-                        }
-                     },
-                     email: email,
-                     keycloakId: insertCustomer.id
+            // get brand customer
+            const { brandCustomers: existingBrandCustomer = [] } =
+               await client.request(BRAND_CUSTOMER, {
+                  brandId: {
+                     _eq: brandId
+                  },
+                  phoneNumber: {
+                     _eq: phoneNumber
                   }
                })
-               customerInfo = insertCustomer
+
+            let customerInfo
+            if (existingBrandCustomer.length > 0) {
+               const [customer] = existingBrandCustomer
+               customerInfo = { id: customer.keycloakId }
+            } else {
+               // check is customer is registered with company
+               const { platform_customer = [] } = await client.request(
+                  PLATFORM_CUSTOMER,
+                  {
+                     where: { phoneNumber: { _eq: phoneNumber } }
+                  }
+               )
+
+               if (platform_customer.length === 0) {
+                  // if the customer is not register with company the create new customer and assign to particular brand
+                  const { insertCustomer = {} } = await client.request(
+                     INSERT_CUSTOMER,
+                     {
+                        object: {
+                           ...(email && {
+                              email: email
+                           }),
+                           phoneNumber: phoneNumber
+                        }
+                     }
+                  )
+                  await client.request(CREATE_CUSTOMER, {
+                     object: {
+                        sourceBrandId: brandId,
+                        brandCustomers: {
+                           data: {
+                              brandId: brandId
+                           }
+                        },
+                        email: email,
+                        keycloakId: insertCustomer.id
+                     }
+                  })
+                  customerInfo = insertCustomer
+               } else {
+                  // if customer register with company but not link with brand (it is possible that customer is already linked with one brand)
+                  await client.request(INSERT_BRAND_CUSTOMER, {
+                     object: {
+                        brandId: brandId,
+                        keycloakId: platform_customer[0].id
+                     }
+                  })
+                  customerInfo = { id: platform_customer[0].id }
+               }
             }
 
             // get brand customer and mobile device id
