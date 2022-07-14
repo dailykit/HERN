@@ -1278,9 +1278,16 @@ export const KioskModifier = props => {
                                        color: `${config.modifierPopUpSettings.theme.modifierCategoryWarningColor.value}`,
                                     }}
                                  >
-                                    {'('}
-                                    {renderConditionText(eachModifierCategory)}
-                                    {')'}
+                                    {eachModifierCategory.options.length >
+                                       1 && (
+                                       <>
+                                          {'('}
+                                          {renderConditionText(
+                                             eachModifierCategory
+                                          )}
+                                          {')'}
+                                       </>
+                                    )}
                                  </span>
                               </label>
                               {errorCategories.includes(
@@ -1907,9 +1914,16 @@ const AdditionalModifiers = forwardRef(
                                        color: `${config.modifierPopUpSettings.theme.modifierCategoryWarningColor.value}`,
                                     }}
                                  >
-                                    {'('}
-                                    {renderConditionText(eachModifierCategory)}
-                                    {')'}
+                                    {eachModifierCategory.options.length >
+                                       1 && (
+                                       <>
+                                          {'('}
+                                          {renderConditionText(
+                                             eachModifierCategory
+                                          )}
+                                          {')'}
+                                       </>
+                                    )}
                                  </span>
                                  {errorCategories.includes(
                                     eachModifierCategory.id
@@ -2437,9 +2451,13 @@ const ModifierOptionsList = forwardRef((props, ref) => {
                            color: `${config.modifierPopUpSettings.theme.modifierCategoryWarningColor.value}`,
                         }}
                      >
-                        {'('}
-                        {renderConditionText(eachModifierCategory)}
-                        {')'}
+                        {eachModifierCategory.options.length > 1 && (
+                           <>
+                              {'('}
+                              {renderConditionText(eachModifierCategory)}
+                              {')'}
+                           </>
+                        )}
                      </span>
                   </label>
                   {errorCategories.includes(eachModifierCategory.id) && (
