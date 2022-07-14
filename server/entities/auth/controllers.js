@@ -82,7 +82,7 @@ export const authHandler = async (req, res) => {
                                  brandId: brandId
                               }
                            },
-                           email: email,
+                           ...(email && { email: email }),
                            keycloakId: insertCustomer.id
                         }
                      })
