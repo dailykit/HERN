@@ -541,6 +541,12 @@ const PhoneNumber = ({
       }
    }, [number])
 
+   const checkNumber = (numberText, textToAddInNumber) => {
+      if(numberText.length < 12){
+         setNumber(numberText+textToAddInNumber)
+      }
+   }
+
    return (
       <Drawer
          title={t('Enter Phone Number')}
@@ -614,21 +620,21 @@ const PhoneNumber = ({
                </div>
 
                <div className="hern-kiosk__number-pad">
-                  <div onClick={() => setNumber(number + '1')}>1</div>
-                  <div onClick={() => setNumber(number + '2')}>2</div>
-                  <div onClick={() => setNumber(number + '3')}>3</div>
-                  <div onClick={() => setNumber(number + '4')}>4</div>
-                  <div onClick={() => setNumber(number + '5')}>5</div>
-                  <div onClick={() => setNumber(number + '6')}>6</div>
-                  <div onClick={() => setNumber(number + '7')}>7</div>
-                  <div onClick={() => setNumber(number + '8')}>8</div>
-                  <div onClick={() => setNumber(number + '9')}>9</div>
+                  <div onClick={() => checkNumber(number, '1')}>1</div>
+                  <div onClick={() => checkNumber(number, '2')}>2</div>
+                  <div onClick={() => checkNumber(number, '3')}>3</div>
+                  <div onClick={() => checkNumber(number, '4')}>4</div>
+                  <div onClick={() => checkNumber(number, '5')}>5</div>
+                  <div onClick={() => checkNumber(number, '6')}>6</div>
+                  <div onClick={() => checkNumber(number, '7')}>7</div>
+                  <div onClick={() => checkNumber(number, '8')}>8</div>
+                  <div onClick={() => checkNumber(number, '9')}>9</div>
                   <div onClick={() => setNumber('')}>
                      <span className="hern-kiosk__phone-number-drawer__number__clear-btn">
                         Clear
                      </span>
                   </div>
-                  <div onClick={() => setNumber(number + '0')}>0</div>
+                  <div onClick={() => checkNumber(number + '0')}>0</div>
                   <div
                      onClick={() => {
                         setNumber(number.slice(0, -1))
