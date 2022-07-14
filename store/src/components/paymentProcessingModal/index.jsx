@@ -95,6 +95,9 @@ const PaymentProcessingModal = ({
       setIsCelebrating(true)
       setTimeout(async () => {
          await stopCelebration()
+         if(isClient){
+            window.location.reload()
+         }
       }, 5000)
    }
 
