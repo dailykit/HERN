@@ -1521,6 +1521,7 @@
    display: block;
    padding: 0.5rem 60px;
    margin-bottom: 60px;
+   position: relative;
    > input {
       display: block;
       width: 100%;
@@ -1534,6 +1535,14 @@
       font-weight: 600;
       color: #202020;
    }
+}
+.hern-kiosk__phone-number-input-toggle-button {
+   position: absolute;
+   top: 0;
+   right: 6rem;
+   display: flex;
+   height: 100%;
+   align-items: center;
 }
 .hern-kiosk__phone-number-drawer__content {
    display: flex;
