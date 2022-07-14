@@ -290,8 +290,7 @@ const KioskMenu = props => {
                         </div>
                      </div>
                      {isStoreAvailable && (
-                        <di
-                           span={6}
+                        <div
                            className="hern-kiosk__menu-header-col-2"
                            onClick={() => {
                               setCurrentPage('cartPage')
@@ -428,7 +427,7 @@ const KioskMenu = props => {
                                     ></div>
                                  </div>
                               )}
-                        </di>
+                        </div>
                      )}
                   </div>
                </Header>
