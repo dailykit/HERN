@@ -148,8 +148,8 @@ export const FulfillmentSection = props => {
                   : 'center'
             }`,
             paddingTop: `${
-               config?.fulfillmentPageSettings?.alignContentStart?.value
-                  ? '260px'
+               config?.fulfillmentPageSettings?.paddingTop?.value
+                  ? config?.fulfillmentPageSettings?.paddingTop?.value
                   : 'unset'
             }`,
          }}
@@ -470,35 +470,40 @@ const PhoneNumber = ({
    setNumber,
    setCurrentPage,
 }) => {
-   
-   const phoneNumberInputRef = useRef();
-   const [isBackspace, setIsBackspace] = useState(false);
+   const phoneNumberInputRef = useRef()
+   const [isBackspace, setIsBackspace] = useState(false)
    const { t } = useTranslation()
-   
-   useEffect( ()=> {
 
-      const show = "*"
-      const hidePhoneNumber = true;
+   useEffect(() => {
+      const show =
+         config?.phoneNoScreenSettings?.phoneNumberHiddenText.value || '*'
+      const hidePhoneNumber =
+         config?.phoneNoScreenSettings?.visibilityOfPhoneNumber.value ?? false
+
       let phoneNumberlen = number.length
 
-      if (phoneNumberInputRef.current){
-         if(phoneNumberlen){
-            if(hidePhoneNumber){
-               if(!isBackspace){
-                  phoneNumberInputRef.current.value = show.repeat(phoneNumberlen-1)+number[phoneNumberlen-1];
-                  setTimeout( ()=>{
-                     phoneNumberInputRef.current.value = show.repeat(phoneNumberlen);
+      if (phoneNumberInputRef.current) {
+         if (phoneNumberlen) {
+            if (hidePhoneNumber) {
+               if (!isBackspace) {
+                  phoneNumberInputRef.current.value =
+                     show.repeat(phoneNumberlen - 1) +
+                     number[phoneNumberlen - 1]
+                  setTimeout(() => {
+                     phoneNumberInputRef.current.value =
+                        show.repeat(phoneNumberlen)
                   }, 500)
                } else {
-                  phoneNumberInputRef.current.value = show.repeat(phoneNumberlen);
-                  setIsBackspace(false);
+                  phoneNumberInputRef.current.value =
+                     show.repeat(phoneNumberlen)
+                  setIsBackspace(false)
                }
             } else {
-               phoneNumberInputRef.current.value = number;
+               phoneNumberInputRef.current.value = number
             }
          } else {
-            phoneNumberInputRef.current.value = "";
-            setIsBackspace(false);
+            phoneNumberInputRef.current.value = ''
+            setIsBackspace(false)
          }
       }
    }, [number])
@@ -574,10 +579,12 @@ const PhoneNumber = ({
                      </span>
                   </div>
                   <div onClick={() => setNumber(number + '0')}>0</div>
-                  <div onClick={() => {
-                                       setNumber(number.slice(0, -1))
-                                       setIsBackspace(true)
-                                       }}>
+                  <div
+                     onClick={() => {
+                        setNumber(number.slice(0, -1))
+                        setIsBackspace(true)
+                     }}
+                  >
                      <BackSpaceIcon />
                   </div>
                </div>
