@@ -557,9 +557,8 @@
 // product
 .hern-kiosk__menu-product {
    background-color: #ffffff;
-   // filter: drop-shadow(0px 2.64912px 13.2456px rgba(0, 107, 177, 0.4));
-   // filter: drop-shadow(0px 0.64912px 3.2456px rgba(0, 107, 177, 0.4));
-   height: 26em;
+   height: 100%;
+   min-height: 26em;
    padding: 0.5em;
    border-radius: 0.5em;
    position: relative;
