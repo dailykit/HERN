@@ -49,7 +49,7 @@ const PaymentProcessingModal = ({
    const { t } = useTranslation()
    const { user } = useUser()
    const PaymentPopUpDesignConfig = useConfig('KioskConfig')?.KioskConfig
-   const variant = PaymentPopUpDesignConfig?.cartPageSettings?.congratulationTunnel.variant.value.value
+   const variant = PaymentPopUpDesignConfig?.cartPageSettings?.congratulationTunnel.variant.value.value || 'simple'
    
    const closeModalHandler = async () => {
       setIsCelebrating(false)
