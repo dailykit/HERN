@@ -474,11 +474,13 @@ const PhoneNumber = ({
    const [isBackspace, setIsBackspace] = useState(false)
    const { t } = useTranslation()
 
+   const phoneNoConfig = config?.phoneNoScreenSettings
+
    useEffect(() => {
       const show =
-         config?.phoneNoScreenSettings?.phoneNumberHiddenText.value || '*'
+         config?.phoneNoScreenSettings?.phoneNumberHiddenText?.value || '*'
       const hidePhoneNumber =
-         config?.phoneNoScreenSettings?.visibilityOfPhoneNumber.value ?? false
+         config?.phoneNoScreenSettings?.visibilityOfPhoneNumber?.value ?? false
 
       let phoneNumberlen = number.length
 
@@ -510,7 +512,7 @@ const PhoneNumber = ({
 
    return (
       <Drawer
-         title={t('Enter Phone Number')}
+         title={t(phoneNoConfig?.heading?.value || 'Enter Phone Number')}
          placement={'right'}
          width={'100%'}
          onClose={() => setVisible(false)}
@@ -547,19 +549,23 @@ const PhoneNumber = ({
                         'Want to Get update about your Order Details?'
                   )}
                </h1>
-               <p>
-                  {t(
-                     config?.phoneNoScreenSettings?.description?.value ||
-                        'Enter Your Mobile Number & Get Details On WhatsApp'
-                  )}
-               </p>
+               {phoneNoConfig?.showDescription?.value && (
+                  <p>
+                     {t(
+                        config?.phoneNoScreenSettings?.description?.value ||
+                           'Enter Your Mobile Number & Get Details On WhatsApp'
+                     )}
+                  </p>
+               )}
             </div>
             <div className="hern-kiosk__phone-number-drawer__number">
                <div className="hern-kiosk__phone-number-drawer__number__input">
                   <input
                      ref={phoneNumberInputRef}
                      type="text"
-                     placeholder="Phone number"
+                     placeholder={
+                        phoneNoConfig?.placeholder?.value || 'Phone number'
+                     }
                   />
                </div>
 
@@ -605,7 +611,7 @@ const PhoneNumber = ({
                   disabled={number.length < 10}
                   className="hern-kiosk__phone-number-drawer__number__proceed-btn"
                >
-                  {t('Proceed')}
+                  {t(phoneNoConfig?.proceedButtonLabel?.value || 'Proceed')}
                </button>
             </div>
          </div>
