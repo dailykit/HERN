@@ -605,6 +605,7 @@
 .hern-kiosk__menu-product-content {
    display: flex;
    flex-direction: column;
+   margin-top: 6px;
 }
 .hern-kiosk__menu-product-name {
    font-size: 1.3em;
@@ -613,6 +614,7 @@
    gap: 8px;
    > svg {
       transform: translateY(5px);
+      min-width: fit-content;
    }
 }
 .hern-kiosk__menu-product-description {
@@ -623,6 +625,7 @@
 }
 .hern-kiosk__menu-product-price {
    padding-top: 5px;
+   font-size: 20px;
 }
 .hern-kiosk__kiosk-button {
    background: linear-gradient(90deg, #ffd45f -3.04%, #f7b502 104.56%);
