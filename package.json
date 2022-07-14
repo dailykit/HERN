@@ -36,6 +36,7 @@
       "ejs": "^3.1.6",
       "eslint-plugin-graphql": "^4.0.0",
       "esm": "^3.2.25",
+      "expo-server-sdk": "^3.6.0",
       "express": "^4.17.1",
       "file-type": "^14.4.0",
       "gql": "^1.1.2",

@@ -360,7 +360,8 @@ export const KioskProduct = props => {
          productData.productOptions.find(x => x.isPublished && x.isAvailable)
       )
    }, [productData, isProductOutOfStock])
-
+   const showModifierPopupAlways =
+      config?.modifierPopUpSettings?.showPopupAlways?.value ?? false
    const handelAddToCartClick = () => {
       // product availability
       if (productData.isAvailable) {
@@ -369,13 +370,19 @@ export const KioskProduct = props => {
                (productData.productOptions.length > 0 &&
                   productData.isPopupAllowed) ||
                (addRelatedProductToCart &&
-                  productData?.relatedProductIds?.ids.length > 0)
+                  productData?.relatedProductIds?.ids.length > 0) ||
+               showModifierPopupAlways
             ) {
                const availableProductOptions =
                   productData.productOptions.filter(
                      option => option.isAvailable && option.isPublished
                   ).length
-               if (availableProductOptions > 0 || addRelatedProductToCart) {
+
+               if (
+                  availableProductOptions > 0 ||
+                  addRelatedProductToCart ||
+                  showModifierPopupAlways
+               ) {
                   setShowModifier(true)
                }
             } else {
