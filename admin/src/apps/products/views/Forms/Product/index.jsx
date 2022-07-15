@@ -47,7 +47,7 @@ import ProductInsight from './components/Insight'
 import { MASTER } from '../../../../settings/graphql/index'
 import { SEOSettings } from './components'
 import { ProductSettings } from './ProductSettings'
-import { Typography, Select } from 'antd'
+import { Select } from 'antd'
 
 const Product = () => {
    const { id: productId } = useParams()
@@ -665,6 +665,8 @@ export default Product
 const RelatedProducts = ({ productId, updateProduct }) => {
    const [products, setProducts] = React.useState([])
    const [selectedProductIds, setSelectedProductIds] = React.useState([])
+   const [open, setOpen] = React.useState(false)
+
    const { loading } = useSubscription(PRODUCTS.LIST, {
       variables: {
          where: {
@@ -687,8 +689,10 @@ const RelatedProducts = ({ productId, updateProduct }) => {
             },
          },
       })
+      setOpen(false)
    }
    const handleChange = value => {
+      setOpen(true)
       setSelectedProductIds(value.map(value => Number(value)))
    }
 
@@ -711,6 +715,9 @@ const RelatedProducts = ({ productId, updateProduct }) => {
             defaultValue={relatedProducts}
             onChange={handleChange}
             onBlur={handleAddRelatedProducts}
+            onFocus={() => setOpen(true)}
+            onDeselect={() => setOpen(true)}
+            open={open}
          >
             {products.map(product => (
                <Select.Option key={product.id}>{product.name}</Select.Option>
