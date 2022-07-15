@@ -1017,6 +1017,7 @@ const CartCard = props => {
                         title={formatMessage({ id: 'Are you sure you want to remove this product from your cart' })}
                         visible={isConfirmationForDeleteCartItemModalVisible}
                         centered={true}
+                        className = "hern-kiosk__cart-item-delete-confirmation-modal"
                         onCancel={() => {
                            setConfirmationForDeleteCartItemModalVisible(false)
                         }}
