@@ -47,6 +47,8 @@ import ProductInsight from './components/Insight'
 import { MASTER } from '../../../../settings/graphql/index'
 import { SEOSettings } from './components'
 import { ProductSettings } from './ProductSettings'
+import { Select } from 'antd'
+
 const Product = () => {
    const { id: productId } = useParams()
 
@@ -436,37 +438,37 @@ const Product = () => {
                               <Form.Error key={index}>{error}</Form.Error>
                            ))}
                      </Form.Group>
-                     
+
                      <Flex container>
-                     <Form.Toggle
-                        name="published"
-                        value={state.isPublished}
-                        onChange={togglePublish}
-                     >
-                        <Flex
-                           container
-                           alignItems="center"
-                           style={{ paddingRight: '0px' }}
+                        <Form.Toggle
+                           name="published"
+                           value={state.isPublished}
+                           onChange={togglePublish}
                         >
-                           Published
-                           <Tooltip identifier="simple_recipe_product_publish" />
-                        </Flex>
-                     </Form.Toggle>
-                     <Spacer xAxis size="10px" />
-                     <Form.Toggle
-                        name="available"
-                        value={state.isAvailable}
-                        onChange={toggleAvailable}
-                     >
-                        <Flex
-                           container
-                           alignItems="center"
-                           style={{ paddingRight: '0px' }}
+                           <Flex
+                              container
+                              alignItems="center"
+                              style={{ paddingRight: '0px' }}
+                           >
+                              Published
+                              <Tooltip identifier="simple_recipe_product_publish" />
+                           </Flex>
+                        </Form.Toggle>
+                        <Spacer xAxis size="10px" />
+                        <Form.Toggle
+                           name="available"
+                           value={state.isAvailable}
+                           onChange={toggleAvailable}
                         >
-                           Availability
-                           <Tooltip identifier="simple_recipe_product_publish" />
-                        </Flex>
-                     </Form.Toggle>
+                           <Flex
+                              container
+                              alignItems="center"
+                              style={{ paddingRight: '0px' }}
+                           >
+                              Availability
+                              <Tooltip identifier="simple_recipe_product_publish" />
+                           </Flex>
+                        </Form.Toggle>
                      </Flex>
                   </Flex>
                </ResponsiveFlex>
@@ -620,6 +622,12 @@ const Product = () => {
                               />
                            </Form.Group>
                            <Spacer size="32px" yaxis />
+                           <Spacer size="16px" />
+                           <RelatedProducts
+                              productId={productId}
+                              updateProduct={updateProduct}
+                           />
+                           <Spacer size="16px" />
                         </HorizontalTabPanel>
                         <HorizontalTabPanel>
                            {renderOptions()}
@@ -653,3 +661,68 @@ const Product = () => {
 }
 
 export default Product
+
+const RelatedProducts = ({ productId, updateProduct }) => {
+   const [products, setProducts] = React.useState([])
+   const [selectedProductIds, setSelectedProductIds] = React.useState([])
+   const [open, setOpen] = React.useState(false)
+
+   const { loading } = useSubscription(PRODUCTS.LIST, {
+      variables: {
+         where: {
+            isArchived: { _eq: false },
+         },
+      },
+      onSubscriptionData: data => {
+         const { products } = data.subscriptionData.data
+         setProducts([...products])
+      },
+   })
+   const handleAddRelatedProducts = async () => {
+      await updateProduct({
+         variables: {
+            id: productId,
+            _set: {
+               relatedProductIds: {
+                  ids: selectedProductIds,
+               },
+            },
+         },
+      })
+      setOpen(false)
+   }
+   const handleChange = value => {
+      setOpen(true)
+      setSelectedProductIds(value.map(value => Number(value)))
+   }
+
+   const currentProduct = products.find(
+      product => product.id === Number(productId)
+   )
+   const relatedProducts =
+      currentProduct?.relatedProductIds?.ids?.map(id => id?.toString()) || []
+   if (loading) return <InlineLoader />
+   if (isEmpty(products) || !currentProduct) return null
+   return (
+      <div>
+         <div style={{ display: 'block' }}>
+            Related products/product goes best with
+         </div>
+         <Select
+            mode="multiple"
+            style={{ width: '100%', maxWidth: '600px' }}
+            placeholder="Please select"
+            defaultValue={relatedProducts}
+            onChange={handleChange}
+            onBlur={handleAddRelatedProducts}
+            onFocus={() => setOpen(true)}
+            onDeselect={() => setOpen(true)}
+            open={open}
+         >
+            {products.map(product => (
+               <Select.Option key={product.id}>{product.name}</Select.Option>
+            ))}
+         </Select>
+      </div>
+   )
+}

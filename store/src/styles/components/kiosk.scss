@@ -1017,7 +1017,20 @@
    display: flex;
    justify-content: flex-end;
 }
-
+.hern-kiosk__cart-item-delete-confirmation-modal {
+   .ant-modal-content {
+      padding: 1rem;
+      border-radius: .5rem;
+   }
+   .ant-modal-title {
+      font-size: 26px;
+   }
+}
+.hern-kiosk__cart-item-delete-confirmation-button-div {
+   width: 100%;
+   display: inline-flex;
+   justify-content: space-between;
+}
 .hern-kiosk__cart-page-footer {
    padding: 0;
    height: calc(40em + 120px);

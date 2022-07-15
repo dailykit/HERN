@@ -446,8 +446,6 @@ export const PaymentProvider = ({ children }) => {
          setIsProcessingPayment(true)
       } else {
          setCartPayment(null)
-         setIsPaymentInitiated(false)
-         setIsProcessingPayment(false)
       }
    }, [cartPaymentsFromQuery])
 

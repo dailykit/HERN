@@ -622,30 +622,30 @@ export const LoyaltyPointsIllustrationNoTrx = () => {
          <path
             d="M56.111 140.318C57.5166 140.318 58.656 139.178 58.656 137.773C58.656 136.367 57.5166 135.228 56.111 135.228C54.7054 135.228 53.5659 136.367 53.5659 137.773C53.5659 139.178 54.7054 140.318 56.111 140.318Z"
             stroke="white"
-            stroke-width="1.11625"
-            stroke-linecap="round"
-            stroke-linejoin="round"
+            strokeWidth="1.11625"
+            strokeLinecap="round"
+            strokeLinejoin="round"
          />
          <path
             d="M59.0448 103.662H53.659"
             stroke="#008DD3"
-            stroke-width="1.11625"
-            stroke-linecap="round"
-            stroke-linejoin="round"
+            strokeWidth="1.11625"
+            strokeLinecap="round"
+            strokeLinejoin="round"
          />
          <path
             d="M59.0448 106.428H53.659"
             stroke="#008DD3"
-            stroke-width="1.11625"
-            stroke-linecap="round"
-            stroke-linejoin="round"
+            strokeWidth="1.11625"
+            strokeLinecap="round"
+            strokeLinejoin="round"
          />
          <path
             d="M59.0448 109.195H53.659"
             stroke="#008DD3"
-            stroke-width="1.11625"
-            stroke-linecap="round"
-            stroke-linejoin="round"
+            strokeWidth="1.11625"
+            strokeLinecap="round"
+            strokeLinejoin="round"
          />
          <path
             d="M76.8045 147.094V93.1479H63.3035V147.094H76.8045Z"
@@ -662,37 +662,37 @@ export const LoyaltyPointsIllustrationNoTrx = () => {
          <path
             d="M69.5563 140.373C70.9619 140.373 72.1013 139.233 72.1013 137.828C72.1013 136.422 70.9619 135.283 69.5563 135.283C68.1507 135.283 67.0112 136.422 67.0112 137.828C67.0112 139.233 68.1507 140.373 69.5563 140.373Z"
             stroke="white"
-            stroke-width="1.11625"
-            stroke-linecap="round"
-            stroke-linejoin="round"
+            strokeWidth="1.11625"
+            strokeLinecap="round"
+            strokeLinejoin="round"
          />
          <path
             d="M72.4064 115.226H67.0205"
             stroke="#384B42"
-            stroke-width="1.11625"
-            stroke-linecap="round"
-            stroke-linejoin="round"
+            strokeWidth="1.11625"
+            strokeLinecap="round"
+            strokeLinejoin="round"
          />
          <path
             d="M72.4064 100.951H67.0205"
             stroke="#384B42"
-            stroke-width="1.11625"
-            stroke-linecap="round"
-            stroke-linejoin="round"
+            strokeWidth="1.11625"
+            strokeLinecap="round"
+            strokeLinejoin="round"
          />
          <path
             d="M72.4064 117.992H67.0205"
             stroke="#384B42"
-            stroke-width="1.11625"
-            stroke-linecap="round"
-            stroke-linejoin="round"
+            strokeWidth="1.11625"
+            strokeLinecap="round"
+            strokeLinejoin="round"
          />
          <path
             d="M72.4064 120.759H67.0205"
             stroke="#384B42"
-            stroke-width="1.11625"
-            stroke-linecap="round"
-            stroke-linejoin="round"
+            strokeWidth="1.11625"
+            strokeLinecap="round"
+            strokeLinejoin="round"
          />
          <path
             d="M50.048 147.094V93.1479H36.547V147.094H50.048Z"
@@ -709,45 +709,45 @@ export const LoyaltyPointsIllustrationNoTrx = () => {
          <path
             d="M42.7998 140.373C44.2054 140.373 45.3448 139.233 45.3448 137.828C45.3448 136.422 44.2054 135.283 42.7998 135.283C41.3942 135.283 40.2547 136.422 40.2547 137.828C40.2547 139.233 41.3942 140.373 42.7998 140.373Z"
             stroke="white"
-            stroke-width="1.11625"
-            stroke-linecap="round"
-            stroke-linejoin="round"
+            strokeWidth="1.11625"
+            strokeLinecap="round"
+            strokeLinejoin="round"
          />
          <path
             d="M45.6499 115.226H40.264"
             stroke="#384B42"
-            stroke-width="1.11625"
-            stroke-linecap="round"
-            stroke-linejoin="round"
+            strokeWidth="1.11625"
+            strokeLinecap="round"
+            strokeLinejoin="round"
          />
          <path
             d="M45.6499 100.951H40.264"
             stroke="#384B42"
-            stroke-width="1.11625"
-            stroke-linecap="round"
-            stroke-linejoin="round"
+            strokeWidth="1.11625"
+            strokeLinecap="round"
+            strokeLinejoin="round"
          />
          <path
             d="M45.6499 117.992H40.264"
             stroke="#384B42"
-            stroke-width="1.11625"
-            stroke-linecap="round"
-            stroke-linejoin="round"
+            strokeWidth="1.11625"
+            strokeLinecap="round"
+            strokeLinejoin="round"
          />
          <path
             d="M45.6499 120.759H40.264"
             stroke="#384B42"
-            stroke-width="1.11625"
-            stroke-linecap="round"
-            stroke-linejoin="round"
+            strokeWidth="1.11625"
+            strokeLinecap="round"
+            strokeLinejoin="round"
          />
          <path
             d="M65.0447 75.8238C65.1428 73.6526 64.4352 71.5218 63.0578 69.8407C60.7472 67.0222 60.7193 65.2343 59.417 63.8855C58.1147 62.5367 56.0478 63.1525 57.9082 67.7273C59.7686 72.302 60.5723 74.181 60.5723 74.181L65.0447 75.8238Z"
             fill="white"
             stroke="#384B42"
-            stroke-width="1.11625"
-            stroke-linecap="round"
-            stroke-linejoin="round"
+            strokeWidth="1.11625"
+            strokeLinecap="round"
+            strokeLinejoin="round"
          />
          <path
             d="M54.3939 69.3699C54.5948 69.3699 67.2605 68.7243 68.7693 81.2765Z"
@@ -756,17 +756,17 @@ export const LoyaltyPointsIllustrationNoTrx = () => {
          <path
             d="M54.3939 69.3699C54.5948 69.3699 67.2605 68.7243 68.7693 81.2765"
             stroke="#384B42"
-            stroke-width="1.11625"
-            stroke-linecap="round"
-            stroke-linejoin="round"
+            strokeWidth="1.11625"
+            strokeLinecap="round"
+            strokeLinejoin="round"
          />
          <path
             d="M62.9629 94.4336C62.9629 94.4336 61.3927 85.1669 59.3351 81.9502C57.2775 78.7336 52.6823 78.9736 52.6823 78.9736C52.6823 78.9736 40.9989 68.6166 39.3078 66.7451C37.6167 64.8735 38.2641 63.0894 41.2872 65.1693C44.3104 67.2492 53.3967 73.8407 53.3967 73.8407C53.3967 73.8407 68.5441 68.7115 71.0073 83.2618L73.798 91.8978L62.9629 94.4336Z"
             fill="white"
             stroke="#384B42"
-            stroke-width="1.11625"
-            stroke-linecap="round"
-            stroke-linejoin="round"
+            strokeWidth="1.11625"
+            strokeLinecap="round"
+            strokeLinejoin="round"
          />
          <path
             d="M52.4832 78.5156C52.4832 78.5156 46.4834 65.1858 45.5848 62.6742C44.6862 60.1627 45.9011 58.8381 47.942 62.1701C49.9828 65.5021 54.6264 73.2228 54.6264 73.2228"
@@ -775,9 +775,9 @@ export const LoyaltyPointsIllustrationNoTrx = () => {
          <path
             d="M52.4832 78.5156C52.4832 78.5156 46.4834 65.1858 45.5848 62.6742C44.6862 60.1627 45.9011 58.8381 47.942 62.1701C49.9828 65.5021 54.6264 73.2228 54.6264 73.2228"
             stroke="#384B42"
-            stroke-width="1.11625"
-            stroke-linecap="round"
-            stroke-linejoin="round"
+            strokeWidth="1.11625"
+            strokeLinecap="round"
+            strokeLinejoin="round"
          />
          <path
             d="M51.9158 77.4495C51.9158 77.4495 51.4377 66.0154 51.4395 63.7996C51.4395 60.1476 53.6329 59.1095 54.1985 64.0322C54.5706 67.3195 54.9929 73.3789 54.9929 73.3789"
@@ -786,17 +786,17 @@ export const LoyaltyPointsIllustrationNoTrx = () => {
          <path
             d="M51.9158 77.4495C51.9158 77.4495 51.4377 66.0154 51.4395 63.7996C51.4395 60.1476 53.6329 59.1095 54.1985 64.0322C54.5706 67.3195 54.9929 73.3789 54.9929 73.3789"
             stroke="#384B42"
-            stroke-width="1.11625"
-            stroke-linecap="round"
-            stroke-linejoin="round"
+            strokeWidth="1.11625"
+            strokeLinecap="round"
+            strokeLinejoin="round"
          />
          <path
             d="M224.249 75.8235C224.15 73.6526 224.857 71.5215 226.235 69.8405C228.547 67.0238 228.571 65.2341 229.879 63.8871C231.187 62.5402 233.246 63.1541 231.386 67.7289C229.526 72.3036 228.714 74.1808 228.714 74.1808L224.249 75.8235Z"
             fill="white"
             stroke="#384B42"
-            stroke-width="1.11625"
-            stroke-linecap="round"
-            stroke-linejoin="round"
+            strokeWidth="1.11625"
+            strokeLinecap="round"
+            strokeLinejoin="round"
          />
          <path
             d="M234.889 69.3699C234.688 69.3699 222.021 68.7243 220.514 81.2765Z"
@@ -805,17 +805,17 @@ export const LoyaltyPointsIllustrationNoTrx = () => {
          <path
             d="M234.889 69.3699C234.688 69.3699 222.021 68.7243 220.514 81.2765"
             stroke="#384B42"
-            stroke-width="1.11625"
-            stroke-linecap="round"
-            stroke-linejoin="round"
+            strokeWidth="1.11625"
+            strokeLinecap="round"
+            strokeLinejoin="round"
          />
          <path
             d="M226.326 94.4335C226.326 94.4335 227.896 85.1668 229.954 81.9501C232.011 78.7335 236.606 78.9735 236.606 78.9735C236.606 78.9735 248.286 68.6147 249.981 66.7431C251.676 64.8715 251.025 63.0874 248.001 65.1674C244.978 67.2473 235.892 73.8387 235.892 73.8387C235.892 73.8387 220.744 68.7096 218.281 83.2599L215.491 91.8959L226.326 94.4335Z"
             fill="white"
             stroke="#384B42"
-            stroke-width="1.11625"
-            stroke-linecap="round"
-            stroke-linejoin="round"
+            strokeWidth="1.11625"
+            strokeLinecap="round"
+            strokeLinejoin="round"
          />
          <path
             d="M236.805 78.5156C236.805 78.5156 242.805 65.1858 243.704 62.6742C244.602 60.1627 243.388 58.8381 241.349 62.1701C239.31 65.5021 234.668 73.2228 234.668 73.2228"
@@ -824,9 +824,9 @@ export const LoyaltyPointsIllustrationNoTrx = () => {
          <path
             d="M236.805 78.5156C236.805 78.5156 242.805 65.1858 243.704 62.6742C244.602 60.1627 243.388 58.8381 241.349 62.1701C239.31 65.5021 234.668 73.2228 234.668 73.2228"
             stroke="#384B42"
-            stroke-width="1.11625"
-            stroke-linecap="round"
-            stroke-linejoin="round"
+            strokeWidth="1.11625"
+            strokeLinecap="round"
+            strokeLinejoin="round"
          />
          <path
             d="M237.373 77.4495C237.373 77.4495 237.851 66.0154 237.849 63.7996C237.849 60.1476 235.656 59.1095 235.09 64.0322C234.718 67.3195 234.298 73.3789 234.298 73.3789"
@@ -835,9 +835,9 @@ export const LoyaltyPointsIllustrationNoTrx = () => {
          <path
             d="M237.373 77.4495C237.373 77.4495 237.851 66.0154 237.849 63.7996C237.849 60.1476 235.656 59.1095 235.09 64.0322C234.718 67.3195 234.298 73.3789 234.298 73.3789"
             stroke="#384B42"
-            stroke-width="1.11625"
-            stroke-linecap="round"
-            stroke-linejoin="round"
+            strokeWidth="1.11625"
+            strokeLinecap="round"
+            strokeLinejoin="round"
          />
          <path
             d="M229.805 89.457C230.052 86.6106 229.68 85.4832 229.68 85.4832C223.135 86.1753 217.887 79.9243 217.887 79.9243C217.887 79.9243 217.262 80.6312 215.5 82.9009C213.738 85.1706 210.393 82.607 208.417 85.8664C206.821 88.5008 201.162 102.307 199.047 107.507C192.623 88.4171 184.364 78.7169 170.891 76.276C169.135 65.6363 161.554 52.139 131.378 54.4943C112.625 57.8747 106.902 67.4818 108.199 77.6267H108.11C108.11 77.6267 95.9685 77.4648 89.1668 97.6708C87.1743 92.9825 85.152 88.3947 84.2832 86.9585C82.3056 83.6991 75.5542 85.1632 73.7905 82.8991C72.0268 80.635 71.4017 79.9224 71.4017 79.9224C71.4017 79.9224 66.1554 86.1846 59.603 85.4832C59.603 85.4832 59.2309 86.6106 59.4802 89.457C59.7295 92.3035 56.2673 92.629 57.0393 96.3517C57.8114 100.074 70.0008 133.46 70.0008 133.46C71.1506 136.563 72.6687 146.272 78.968 146.618C78.9851 146.663 79.015 146.703 79.0539 146.732C79.0928 146.76 79.1393 146.777 79.1875 146.78C89.1761 146.752 211.316 146.854 211.316 146.854C211.316 146.854 211.327 146.722 211.34 146.473C216.782 145.189 218.192 136.386 219.277 133.46C219.277 133.46 231.468 100.074 232.238 96.3517C233.008 92.629 229.557 92.3035 229.805 89.457Z"
@@ -862,37 +862,37 @@ export const LoyaltyPointsIllustrationNoTrx = () => {
          <path
             d="M129.874 101.845C129.874 101.845 137.889 115.681 138.724 124.419"
             stroke="#384B42"
-            stroke-width="1.48833"
-            stroke-linecap="round"
-            stroke-linejoin="round"
+            strokeWidth="1.48833"
+            strokeLinecap="round"
+            strokeLinejoin="round"
          />
          <path
             d="M164.441 100.997C164.441 100.997 160.688 114.666 161.606 123.393"
             stroke="#384B42"
-            stroke-width="1.48833"
-            stroke-linecap="round"
-            stroke-linejoin="round"
+            strokeWidth="1.48833"
+            strokeLinecap="round"
+            strokeLinejoin="round"
          />
          <path
             d="M88.67 98.1543C88.7537 98.4092 97.6465 117.29 97.6465 117.29"
             stroke="#384B42"
-            stroke-width="1.11625"
-            stroke-linecap="round"
-            stroke-linejoin="round"
+            strokeWidth="1.11625"
+            strokeLinecap="round"
+            strokeLinejoin="round"
          />
          <path
             d="M199.508 107.914L193.413 118.52"
             stroke="#384B42"
-            stroke-width="1.11625"
-            stroke-linecap="round"
-            stroke-linejoin="round"
+            strokeWidth="1.11625"
+            strokeLinecap="round"
+            strokeLinejoin="round"
          />
          <path
             d="M114.967 132.137C114.967 132.137 114.223 147.284 106.305 146.931"
             stroke="#384B42"
-            stroke-width="1.11625"
-            stroke-linecap="round"
-            stroke-linejoin="round"
+            strokeWidth="1.11625"
+            strokeLinecap="round"
+            strokeLinejoin="round"
          />
          <path
             d="M159.967 146.903C158.316 134.116 156.56 115.207 159.258 107.207C163.516 94.6049 161.862 78.7877 158.986 76.4975C156.11 74.2074 124.345 74.6502 124.345 74.6502L118.636 76.6166C118.636 76.6166 140.375 96.8132 146.812 133.666C147.822 139.445 148.505 143.986 148.959 147.549"
@@ -902,25 +902,25 @@ export const LoyaltyPointsIllustrationNoTrx = () => {
             d="M129.288 63.9248L128.829 71.986L124.085 75.2566C124.085 75.2566 136.511 83.861 147.623 96.7127C147.623 96.7127 154.441 91.8924 156.036 76.6203L152.46 76.0621L135.344 65.9229L129.288 63.9248Z"
             fill="white"
             stroke="#384B42"
-            stroke-width="1.11625"
-            stroke-linecap="round"
-            stroke-linejoin="round"
+            strokeWidth="1.11625"
+            strokeLinecap="round"
+            strokeLinejoin="round"
          />
          <path
             d="M123.912 49.2103C123.912 49.2103 116.58 50.2223 118.66 56.7524C120.74 63.2824 128.418 58.464 128.418 58.464L126.245 49.0894L123.912 49.2103Z"
             fill="white"
             stroke="#384B42"
-            stroke-width="1.11625"
-            stroke-linecap="round"
-            stroke-linejoin="round"
+            strokeWidth="1.11625"
+            strokeLinecap="round"
+            strokeLinejoin="round"
          />
          <path
             d="M141.355 23.1161C143.273 22.7254 156.449 20.3087 159.187 31.3912C161.926 42.4737 161.779 55.0817 161.2 60.8992C160.622 66.7167 134.914 67.0925 133.419 66.7558C131.923 66.419 130.014 64.9102 130.014 64.9102L124.554 48.0456C124.554 48.0456 120.747 27.3318 141.355 23.1161Z"
             fill="white"
             stroke="#384B42"
-            stroke-width="1.11625"
-            stroke-linecap="round"
-            stroke-linejoin="round"
+            strokeWidth="1.11625"
+            strokeLinecap="round"
+            strokeLinejoin="round"
          />
          <path
             d="M126.95 47.6084C128.319 48.7042 132.429 55.4631 133.612 58.702C133.612 58.702 141.441 54.9384 153.094 53.3887C153.094 53.3887 159.474 52.7673 162.099 53.2361C162.099 53.2361 162.899 65.1056 158.437 71.8254C153.976 78.5452 142.87 78.1247 137.333 75.0551C131.796 71.9854 130.749 70.3315 129.116 66.54C127.482 62.7484 122.675 48.4605 122.675 48.4605L126.95 47.6084Z"
@@ -933,9 +933,9 @@ export const LoyaltyPointsIllustrationNoTrx = () => {
          <path
             d="M151.79 45.9883L154.127 56.135L151.122 56.8177"
             stroke="#384B42"
-            stroke-width="1.48833"
-            stroke-linecap="round"
-            stroke-linejoin="round"
+            strokeWidth="1.48833"
+            strokeLinecap="round"
+            strokeLinejoin="round"
          />
          <path
             d="M155.777 50.0605C156.35 49.9965 156.732 49.2144 156.632 48.3138C156.531 47.4132 155.985 46.735 155.412 46.7991C154.839 46.8631 154.457 47.6451 154.557 48.5458C154.658 49.4464 155.204 50.1246 155.777 50.0605Z"
@@ -948,23 +948,23 @@ export const LoyaltyPointsIllustrationNoTrx = () => {
          <path
             d="M143.626 40.7989C143.626 40.7989 139.383 41.0519 139.437 43.8872"
             stroke="#384B42"
-            stroke-width="1.48833"
-            stroke-linecap="round"
-            stroke-linejoin="round"
+            strokeWidth="1.48833"
+            strokeLinecap="round"
+            strokeLinejoin="round"
          />
          <path
             d="M154.211 39.3019C154.211 39.3019 157.001 38.2023 157.991 40.5055"
             stroke="#384B42"
-            stroke-width="1.48833"
-            stroke-linecap="round"
-            stroke-linejoin="round"
+            strokeWidth="1.48833"
+            strokeLinecap="round"
+            strokeLinejoin="round"
          />
          <path
             d="M150.869 61.3421C149.379 61.6147 147.863 61.7152 146.35 61.6416C145.42 61.6026 144.715 62.1774 144.99 62.7579C145.472 63.7774 146.624 64.9904 149.359 64.6723C152.053 64.3523 152.59 63.1076 152.585 62.1495C152.581 61.5728 151.712 61.1765 150.869 61.3421Z"
             stroke="#384B42"
-            stroke-width="1.11625"
-            stroke-linecap="round"
-            stroke-linejoin="round"
+            strokeWidth="1.11625"
+            strokeLinecap="round"
+            strokeLinejoin="round"
          />
          <path
             d="M157.217 145.746H214.397V132.245H157.217V145.746Z"
@@ -981,30 +981,30 @@ export const LoyaltyPointsIllustrationNoTrx = () => {
          <path
             d="M169.308 142.362C170.713 142.362 171.853 141.222 171.853 139.817C171.853 138.411 170.713 137.271 169.308 137.271C167.902 137.271 166.763 138.411 166.763 139.817C166.763 141.222 167.902 142.362 169.308 142.362Z"
             stroke="white"
-            stroke-width="1.11625"
-            stroke-linecap="round"
-            stroke-linejoin="round"
+            strokeWidth="1.11625"
+            strokeLinecap="round"
+            strokeLinejoin="round"
          />
          <path
             d="M206.901 142.239L206.875 136.853"
             stroke="#008DD3"
-            stroke-width="1.11625"
-            stroke-linecap="round"
-            stroke-linejoin="round"
+            strokeWidth="1.11625"
+            strokeLinecap="round"
+            strokeLinejoin="round"
          />
          <path
             d="M204.135 142.252L204.109 136.866"
             stroke="#008DD3"
-            stroke-width="1.11625"
-            stroke-linecap="round"
-            stroke-linejoin="round"
+            strokeWidth="1.11625"
+            strokeLinecap="round"
+            strokeLinejoin="round"
          />
          <path
             d="M201.368 142.265L201.342 136.879"
             stroke="#008DD3"
-            stroke-width="1.11625"
-            stroke-linecap="round"
-            stroke-linejoin="round"
+            strokeWidth="1.11625"
+            strokeLinecap="round"
+            strokeLinejoin="round"
          />
          <path
             d="M166.439 133.774H220.385V119.587H166.439V133.774Z"
@@ -1021,37 +1021,37 @@ export const LoyaltyPointsIllustrationNoTrx = () => {
          <path
             d="M175.706 128.385C177.111 128.385 178.251 127.245 178.251 125.839C178.251 124.434 177.111 123.294 175.706 123.294C174.3 123.294 173.161 124.434 173.161 125.839C173.161 127.245 174.3 128.385 175.706 128.385Z"
             stroke="white"
-            stroke-width="1.11625"
-            stroke-linecap="round"
-            stroke-linejoin="round"
+            strokeWidth="1.11625"
+            strokeLinecap="round"
+            strokeLinejoin="round"
          />
          <path
             d="M198.308 128.69V123.304"
             stroke="#008DD3"
-            stroke-width="1.11625"
-            stroke-linecap="round"
-            stroke-linejoin="round"
+            strokeWidth="1.11625"
+            strokeLinecap="round"
+            strokeLinejoin="round"
          />
          <path
             d="M212.583 128.69V123.304"
             stroke="#008DD3"
-            stroke-width="1.11625"
-            stroke-linecap="round"
-            stroke-linejoin="round"
+            strokeWidth="1.11625"
+            strokeLinecap="round"
+            strokeLinejoin="round"
          />
          <path
             d="M195.541 128.69V123.304"
             stroke="#008DD3"
-            stroke-width="1.11625"
-            stroke-linecap="round"
-            stroke-linejoin="round"
+            strokeWidth="1.11625"
+            strokeLinecap="round"
+            strokeLinejoin="round"
          />
          <path
             d="M192.775 128.69V123.304"
             stroke="#008DD3"
-            stroke-width="1.11625"
-            stroke-linecap="round"
-            stroke-linejoin="round"
+            strokeWidth="1.11625"
+            strokeLinecap="round"
+            strokeLinejoin="round"
          />
          <path
             d="M277.002 99.896H210.185V147.024H277.002V99.896Z"
@@ -1061,81 +1061,81 @@ export const LoyaltyPointsIllustrationNoTrx = () => {
          <path
             d="M247.674 99.4478V147.294"
             stroke="white"
-            stroke-width="1.11625"
-            stroke-linejoin="round"
+            strokeWidth="1.11625"
+            strokeLinejoin="round"
          />
          <path
             d="M238.679 105.116H268.912"
             stroke="white"
-            stroke-width="1.11625"
-            stroke-linecap="round"
-            stroke-linejoin="round"
+            strokeWidth="1.11625"
+            strokeLinecap="round"
+            strokeLinejoin="round"
          />
          <path
             d="M256.97 122.048H276.395"
             stroke="white"
-            stroke-width="1.11625"
-            stroke-linecap="round"
-            stroke-linejoin="round"
+            strokeWidth="1.11625"
+            strokeLinecap="round"
+            strokeLinejoin="round"
          />
          <path
             d="M235.656 137.845H273.524"
             stroke="white"
-            stroke-width="1.11625"
-            stroke-linecap="round"
-            stroke-linejoin="round"
+            strokeWidth="1.11625"
+            strokeLinecap="round"
+            strokeLinejoin="round"
          />
          <path
             d="M240.947 117.815H221.371"
             stroke="white"
-            stroke-width="1.11625"
-            stroke-linecap="round"
-            stroke-linejoin="round"
+            strokeWidth="1.11625"
+            strokeLinecap="round"
+            strokeLinejoin="round"
          />
          <path
             d="M210.259 110.408H222.127"
             stroke="white"
-            stroke-width="1.11625"
-            stroke-linecap="round"
-            stroke-linejoin="round"
+            strokeWidth="1.11625"
+            strokeLinecap="round"
+            strokeLinejoin="round"
          />
          <path
             d="M210.185 132.176H233.388"
             stroke="white"
-            stroke-width="1.11625"
-            stroke-linecap="round"
-            stroke-linejoin="round"
+            strokeWidth="1.11625"
+            strokeLinecap="round"
+            strokeLinejoin="round"
          />
          <path
             d="M210.084 110.482C205.095 112.447 210.235 115.734 210.235 115.734C210.235 115.734 211.521 112.013 218.095 110.497L210.084 110.482Z"
             fill="#059669"
             stroke="white"
-            stroke-width="1.11625"
-            stroke-linecap="round"
-            stroke-linejoin="round"
+            strokeWidth="1.11625"
+            strokeLinecap="round"
+            strokeLinejoin="round"
          />
          <path
             d="M277.197 121.97C282.185 123.934 277.044 127.224 277.044 127.224C277.044 127.224 275.761 123.503 269.184 121.985L277.197 121.97Z"
             fill="#059669"
             stroke="white"
-            stroke-width="1.11625"
-            stroke-linecap="round"
-            stroke-linejoin="round"
+            strokeWidth="1.11625"
+            strokeLinecap="round"
+            strokeLinejoin="round"
          />
          <path
             d="M227.721 132.209C227.721 132.209 216.144 134.394 216.43 141.205C216.43 141.205 207.15 137.8 210.291 132.209H227.721Z"
             fill="#059669"
             stroke="white"
-            stroke-width="1.11625"
-            stroke-linecap="round"
-            stroke-linejoin="round"
+            strokeWidth="1.11625"
+            strokeLinecap="round"
+            strokeLinejoin="round"
          />
          <path
             d="M1 146.967H314.48"
             stroke="#384B42"
-            stroke-width="1.48833"
-            stroke-linecap="round"
-            stroke-linejoin="round"
+            strokeWidth="1.48833"
+            strokeLinecap="round"
+            strokeLinejoin="round"
          />
       </svg>
    )
