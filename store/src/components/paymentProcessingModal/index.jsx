@@ -178,7 +178,7 @@ const PaymentProcessingModal = ({
                      <h1
                         style={{
                            fontSize: '2rem',
-                           color: '#7124B4',
+                           color: 'var(--hern-primary-color)',
                            fontWeight: '900',
                         }}
                      >
@@ -385,7 +385,7 @@ const PaymentProcessingModal = ({
                      <h1
                         style={{
                            fontSize: '2rem',
-                           color: '#7124B4',
+                           color: 'var(--hern-primary-color)',
                            fontWeight: '900',
                         }}
                      >
@@ -625,7 +625,10 @@ const PaymentProcessingModal = ({
                </Button> */}
             </>
          ) : (
-            <Wrapper variant={variant}>
+            <Wrapper
+               variant={variant}
+               isSuccess={cartPayment?.paymentStatus === 'SUCCEEDED'}
+            >
                <Result
                   icon={ShowPaymentStatusInfo().icon}
                   title={t(ShowPaymentStatusInfo().title)}
