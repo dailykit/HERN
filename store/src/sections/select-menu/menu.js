@@ -6,6 +6,7 @@ import ReactImageFallback from 'react-image-fallback'
 import { useToasts } from 'react-toast-notifications'
 import { useIntl } from 'react-intl'
 import * as Scroll from 'react-scroll'
+import { Slide } from 'react-slideshow-image'
 
 import { useMenu } from './state'
 import { useConfig } from '../../lib'
@@ -179,6 +180,8 @@ const Product = ({ node, theme, isAdded, noProductImage, buildImageUrl }) => {
    const { state, methods } = useMenu()
    const { t, dynamicTrans, locale } = useTranslation()
    const { formatMessage } = useIntl()
+   const autoPlaySlider = false
+   const slideRef = React.useRef()
 
    const openRecipe = () => {
       window.open(
@@ -269,9 +272,9 @@ const Product = ({ node, theme, isAdded, noProductImage, buildImageUrl }) => {
       name: node?.productOption?.product?.name || '',
       label: node?.productOption?.label || '',
       type: node?.productOption?.simpleRecipeYield?.simpleRecipe?.type,
-      image:
+      images:
          node?.productOption?.product?.assets?.images?.length > 0
-            ? node?.productOption?.product?.assets?.images[0]
+            ? node?.productOption?.product?.assets?.images
             : null,
       additionalText: node?.productOption?.product?.additionalText || '',
    }
@@ -347,14 +350,22 @@ const Product = ({ node, theme, isAdded, noProductImage, buildImageUrl }) => {
                }
             }}
          >
-            {product.image ? (
-               <ReactImageFallback
-                  src={buildImageUrl('400x300', product.image)}
-                  fallbackImage={product.image}
-                  initialImage={<Loader />}
-                  alt={product.name}
-                  className="image__thumbnail"
-               />
+            {product.images ? (
+               <Slide
+                  ref={slideRef}
+                  infinite={autoPlaySlider}
+                  autoplay={autoPlaySlider}
+               >
+                  {product.images.map(image => (
+                     <ReactImageFallback
+                        src={buildImageUrl('400x300', image)}
+                        fallbackImage={image}
+                        initialImage={<Loader />}
+                        alt={product.name}
+                        className="image__thumbnail"
+                     />
+                  ))}
+               </Slide>
             ) : (
                <img src={noProductImage} alt={product.name} />
             )}

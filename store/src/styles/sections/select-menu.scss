@@ -24,7 +24,7 @@
 
 .hern-select-menu__week-picker__wrapper {
    position: fixed;
-   z-index: 5;
+   z-index: 11;
    width: 100%;
    background: #fff;
    top: 148px;
@@ -229,16 +229,11 @@
    border: 2px solid var(--hern-accent);
 }
 .hern-select-menu__menu__product__img {
-   display: flex;
-   align-items: center;
-   justify-content: center;
-   background-color: rgba(229, 231, 235, 1);
-   margin-bottom: 0.969rem;
+   background-color: #e5e7eb;
    border-radius: 20px 20px 0px 0px;
    overflow: hidden;
    cursor: pointer;
-   position: relative;
-   padding-bottom: calc(3 / 4 * 100%);
+   margin-bottom: 0.969rem;
    > img {
       position: absolute;
       height: 100%;
