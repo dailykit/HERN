@@ -20,10 +20,13 @@ import {
    formatTerminalStatus,
    isClient,
    formatCurrency,
+   get_env,
 } from '../../utils'
 import { useTranslation, useUser } from '../../context'
 import { useConfig } from '../../lib'
 import qrcode from 'qrcode'
+
+const ALLOW_POSIST_PUSH_ORDER = get_env('ALLOW_POSIST_PUSH_ORDER')
 
 const PaymentProcessingModal = ({
    isOpen,
@@ -49,8 +52,10 @@ const PaymentProcessingModal = ({
    const { t } = useTranslation()
    const { user } = useUser()
    const PaymentPopUpDesignConfig = useConfig('KioskConfig')?.KioskConfig
-   const variant = PaymentPopUpDesignConfig?.cartPageSettings?.congratulationTunnel?.variant?.value?.value || 'simple'
-   
+   const variant =
+      PaymentPopUpDesignConfig?.cartPageSettings?.congratulationTunnel?.variant
+         ?.value?.value || 'simple'
+
    const closeModalHandler = async () => {
       setIsCelebrating(false)
       await closeModal()
@@ -95,14 +100,13 @@ const PaymentProcessingModal = ({
       setIsCelebrating(true)
       setTimeout(async () => {
          await stopCelebration()
-         if(isClient){
+         if (isClient && ALLOW_POSIST_PUSH_ORDER === false) {
             window.location.reload()
          }
       }, 5000)
    }
 
    const ShowPaymentStatusInfo = () => {
-
       let icon = (
          <img
             src="/assets/gifs/paymentProcessing.gif"
@@ -140,29 +144,50 @@ const PaymentProcessingModal = ({
             title = 'Processing your order'
             subtitle = t('Please wait while we process your order')
          } else if (cartPayment?.paymentStatus === 'SUCCEEDED') {
-            
-            if(variant === "customized"){
+            if (variant === 'customized') {
                icon = (
                   <>
                      <img
                         src="/assets/gifs/success.gif"
                         className="payment_status_loader"
                      />
-                     <div style={{color:'white', paddingBottom: '2rem', fontFamily: 'Nunito Sans'}}>
-                        <p style={{fontSize: '1.5rem'}}>{t('Your Payment is Complete')}</p>
-                        <h1 style={{color: 'white', fontSize: '3rem'}}>{t('Thank You!')}</h1>
+                     <div
+                        style={{
+                           color: 'white',
+                           paddingBottom: '2rem',
+                           fontFamily: 'Nunito Sans',
+                        }}
+                     >
+                        <p style={{ fontSize: '1.5rem' }}>
+                           {t('Your Payment is Complete')}
+                        </p>
+                        <h1 style={{ color: 'white', fontSize: '3rem' }}>
+                           {t('Thank You!')}
+                        </h1>
                      </div>
                   </>
                )
                title = 'Your Order Is Placed Successfully.'
                subtitle = (
                   <>
-                     <p style={{fontSize: '1.5rem', color: 'black'}}>{t('Your Order Id')}</p>
-                     <h1 style={{fontSize: '2rem', color: '#7124B4', fontWeight: '900'}}>{t(`${cartId}`)}</h1>
-                     <p style={{fontSize: '1rem', color: 'black'}}>{t('Check your whatsapp for order confirmation')}</p>
+                     <p style={{ fontSize: '1.5rem', color: 'black' }}>
+                        {t('Your Order Id')}
+                     </p>
+                     <h1
+                        style={{
+                           fontSize: '2rem',
+                           color: '#7124B4',
+                           fontWeight: '900',
+                        }}
+                     >
+                        {t(`${cartId}`)}
+                     </h1>
+                     <p style={{ fontSize: '1rem', color: 'black' }}>
+                        {t('Check your whatsapp for order confirmation')}
+                     </p>
                   </>
                )
-            } else if(variant === "simple"){
+            } else if (variant === 'simple') {
                icon = (
                   <img
                      src="/assets/gifs/successful.gif"
@@ -172,7 +197,6 @@ const PaymentProcessingModal = ({
                title = 'Successfully placed your order'
                subtitle = t('You will be redirected to your order page shortly')
             }
-            
          } else if (cartPayment?.paymentStatus === 'FAILED') {
             icon = (
                <img
@@ -251,19 +275,20 @@ const PaymentProcessingModal = ({
             )
             title = 'Enter your pin'
             subtitle = t('Please your pin to complete the payment')
-         } else if (cartPayment?.paymentStatus === 'QR_GENERATED'){
+         } else if (cartPayment?.paymentStatus === 'QR_GENERATED') {
             icon = (
-               <div className="qr_code_card" style={{
-               }}>
-                  <p className="msg my-2" style={{
-                  }}>Scan QR code to make payment</p>
+               <div className="qr_code_card" style={{}}>
+                  <p className="msg my-2" style={{}}>
+                     Scan QR code to make payment
+                  </p>
                   <img
                      src={cartPayment?.actionUrl}
                      tw="height[400px] width[400px] mx-auto"
                      className="qr_code"
                   />
-                  <p className="total_amount" style={{
-                  }}>Total Amount: {formatCurrency(cartPayment.amount)}</p>
+                  <p className="total_amount" style={{}}>
+                     Total Amount: {formatCurrency(cartPayment.amount)}
+                  </p>
                </div>
             )
             title = ''
@@ -271,8 +296,8 @@ const PaymentProcessingModal = ({
             extra = [
                <p
                   style={{
-                     color: PaymentPopUpDesignConfig
-                        .paymentPopupSettings.textColor.value,
+                     color: PaymentPopUpDesignConfig.paymentPopupSettings
+                        .textColor.value,
                   }}
                   tw="last:(hidden) font-extrabold margin[2rem 0] text-4xl text-center"
                >
@@ -281,14 +306,17 @@ const PaymentProcessingModal = ({
                <button
                   type="primary"
                   style={{
-                     padding: "20px 0px",
-                     width: "100%",
-                     fontSize: "28px",
-                     lineHeight: "40px",
-                     borderRadius: "0.2em",
-                     backgroundColor: PaymentPopUpDesignConfig.paymentPopupSettings.textColor.value,
-                     color: PaymentPopUpDesignConfig.paymentPopupSettings.paymentTitleColor.value,
-                     textTransform: "uppercase"
+                     padding: '20px 0px',
+                     width: '100%',
+                     fontSize: '28px',
+                     lineHeight: '40px',
+                     borderRadius: '0.2em',
+                     backgroundColor:
+                        PaymentPopUpDesignConfig.paymentPopupSettings.textColor
+                           .value,
+                     color: PaymentPopUpDesignConfig.paymentPopupSettings
+                        .paymentTitleColor.value,
+                     textTransform: 'uppercase',
                   }}
                   key="console"
                   onClick={() =>
@@ -296,7 +324,7 @@ const PaymentProcessingModal = ({
                   }
                >
                   {t('Try other payment method')}
-               </button>
+               </button>,
             ]
          } else if (
             ![
@@ -305,7 +333,7 @@ const PaymentProcessingModal = ({
                'CANCELLED',
                'SWIPE_CARD',
                'ENTER_PIN',
-               'QR_GENERATED'
+               'QR_GENERATED',
             ].includes(cartPayment?.paymentStatus)
          ) {
             icon = (
@@ -323,28 +351,50 @@ const PaymentProcessingModal = ({
          }
       } else {
          if (cartPayment?.paymentStatus === 'SUCCEEDED') {
-            if(variant === "customized"){
+            if (variant === 'customized') {
                icon = (
                   <>
                      <img
                         src="/assets/gifs/success.gif"
                         className="payment_status_loader"
                      />
-                     <div style={{color:'white', paddingBottom: '2rem', fontFamily: 'Nunito Sans'}}>
-                        <p style={{fontSize: '1.5rem'}}>{t('Your Payment is Complete')}</p>
-                        <h1 style={{color: 'white', fontSize: '3rem'}}>{t('Thank You!')}</h1>
+                     <div
+                        style={{
+                           color: 'white',
+                           paddingBottom: '2rem',
+                           fontFamily: 'Nunito Sans',
+                        }}
+                     >
+                        <p style={{ fontSize: '1.5rem' }}>
+                           {t('Your Payment is Complete')}
+                        </p>
+                        <h1 style={{ color: 'white', fontSize: '3rem' }}>
+                           {t('Thank You!')}
+                        </h1>
                      </div>
                   </>
                )
                title = 'Your Order Is Placed Successfully.'
                subtitle = (
                   <>
-                     <p style={{fontSize: '1.5rem', color: 'black'}}>{t('Your Order Id')}</p>
-                     <h1 style={{fontSize: '2rem', color: '#7124B4', fontWeight: '900'}}>{t(`${cartId}`)}</h1>
-                     <p style={{fontSize: '1rem', color: 'black'}}>{t('Check your whatsapp for order confirmation')}</p>
+                     <p style={{ fontSize: '1.5rem', color: 'black' }}>
+                        {t('Your Order Id')}
+                     </p>
+                     <h1
+                        style={{
+                           fontSize: '2rem',
+                           color: '#7124B4',
+                           fontWeight: '900',
+                        }}
+                     >
+                        {t(`${cartId}`)}
+                     </h1>
+                     <p style={{ fontSize: '1rem', color: 'black' }}>
+                        {t('Check your whatsapp for order confirmation')}
+                     </p>
                   </>
                )
-            } else if(variant === "simple"){
+            } else if (variant === 'simple') {
                icon = (
                   <img
                      src="/assets/gifs/successful.gif"
@@ -471,7 +521,6 @@ const PaymentProcessingModal = ({
    //    setCountDown(60)
    // }, [cartPayment?.paymentStatus])
 
-   
    const arrowBgColor =
       PaymentPopUpDesignConfig?.kioskSettings?.theme?.arrowBgColor?.value
    const arrowColor =
@@ -660,7 +709,7 @@ const CartPageHeader = ({
    const { configOf } = useConfig('brand')
    const PaymentPopUpDesignConfig = useConfig('KioskConfig')
    const isKioskMode = isKiosk()
-   
+
    const {
       ShowBrandName: { value: showBrandName } = {},
       ShowBrandLogo: { value: showBrandLogo } = {},
