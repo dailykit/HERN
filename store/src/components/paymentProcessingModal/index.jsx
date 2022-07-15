@@ -76,6 +76,8 @@ const PaymentProcessingModal = ({
       if (isKioskMode) {
          // initializePrinting()
          await closeModalHandler()
+         setIsProcessingPayment(false)
+         setIsPaymentInitiated(false)
       } else {
          await closeModalHandler()
          setIsProcessingPayment(false)
