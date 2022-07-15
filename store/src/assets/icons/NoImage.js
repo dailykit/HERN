@@ -57,7 +57,7 @@ export const NoImage = ({ size, fill = '#009345' }) => {
             cy="34"
             r="33.2677"
             stroke="#262626"
-            stroke-width="1.46462"
+            strokeWidth="1.46462"
          />
          <line
             x1="10.9792"
@@ -65,7 +65,7 @@ export const NoImage = ({ size, fill = '#009345' }) => {
             x2="58.0562"
             y2="57.0205"
             stroke="#262626"
-            stroke-width="1.46462"
+            strokeWidth="1.46462"
          />
       </svg>
    )

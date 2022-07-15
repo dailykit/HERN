@@ -37,107 +37,107 @@ export const WalletPageIllustration = ({ width, height }) => {
             <path
                d="M292.934 65.8352C298.486 69.3142 305.198 71.5021 314.485 71.6235"
                stroke="#2E186A"
-               stroke-width="2.02268"
-               stroke-linecap="round"
-               stroke-linejoin="round"
+               strokeWidth="2.02268"
+               strokeLinecap="round"
+               strokeLinejoin="round"
             />
             <path
                d="M223.91 30.2728C230.817 29.5042 250.724 23.9081 266.76 39.5569C268.763 41.5088 270.61 43.4675 272.356 45.4025"
                stroke="#2E186A"
-               stroke-width="2.02268"
-               stroke-linecap="round"
-               stroke-linejoin="round"
+               strokeWidth="2.02268"
+               strokeLinecap="round"
+               strokeLinejoin="round"
             />
             <path
                d="M236.541 159.684C232.342 159.234 228.107 159.241 223.91 159.704"
                stroke="#2E186A"
-               stroke-width="2.02268"
-               stroke-linecap="round"
-               stroke-linejoin="round"
+               strokeWidth="2.02268"
+               strokeLinecap="round"
+               strokeLinejoin="round"
             />
             <path
                d="M314.485 192.954C288.838 192.617 282.797 189.31 266.76 173.661C265.494 172.426 264.166 171.258 262.779 170.162"
                stroke="#2E186A"
-               stroke-width="2.02268"
-               stroke-linecap="round"
-               stroke-linejoin="round"
+               strokeWidth="2.02268"
+               strokeLinecap="round"
+               strokeLinejoin="round"
             />
             <path
                d="M292.269 45.4026H248.017V89.6556H292.269V45.4026Z"
                stroke="#059669"
-               stroke-width="2.3598"
-               stroke-linecap="round"
-               stroke-linejoin="round"
+               strokeWidth="2.3598"
+               strokeLinecap="round"
+               strokeLinejoin="round"
             />
             <path
                d="M260.159 93.4446H248.765V104.839H260.159V93.4446Z"
                stroke="#059669"
-               stroke-width="2.3598"
-               stroke-linecap="round"
-               stroke-linejoin="round"
+               strokeWidth="2.3598"
+               strokeLinecap="round"
+               strokeLinejoin="round"
             />
             <path
                d="M260.159 93.4446L248.765 104.839"
                stroke="#059669"
-               stroke-width="2.3598"
-               stroke-linecap="round"
-               stroke-linejoin="round"
+               strokeWidth="2.3598"
+               strokeLinecap="round"
+               strokeLinejoin="round"
             />
             <path
                d="M275.717 93.4446H264.323V104.839H275.717V93.4446Z"
                stroke="#059669"
-               stroke-width="2.3598"
-               stroke-linecap="round"
-               stroke-linejoin="round"
+               strokeWidth="2.3598"
+               strokeLinecap="round"
+               strokeLinejoin="round"
             />
             <path
                d="M275.717 93.4446L264.323 104.839"
                stroke="#059669"
-               stroke-width="2.3598"
-               stroke-linecap="round"
-               stroke-linejoin="round"
+               strokeWidth="2.3598"
+               strokeLinecap="round"
+               strokeLinejoin="round"
             />
             <path
                d="M291.272 93.4446H279.877V104.839H291.272V93.4446Z"
                stroke="#059669"
-               stroke-width="2.3598"
-               stroke-linecap="round"
-               stroke-linejoin="round"
+               strokeWidth="2.3598"
+               strokeLinecap="round"
+               strokeLinejoin="round"
             />
             <path
                d="M291.275 93.4446L279.877 104.839"
                stroke="#059669"
-               stroke-width="2.3598"
-               stroke-linecap="round"
-               stroke-linejoin="round"
+               strokeWidth="2.3598"
+               strokeLinecap="round"
+               strokeLinejoin="round"
             />
             <path
                d="M295.846 118.159H246.162C241.283 118.159 237.327 122.115 237.327 126.994V132.682C237.327 137.561 241.283 141.517 246.162 141.517H295.846C300.726 141.517 304.682 137.561 304.682 132.682V126.994C304.682 122.115 300.726 118.159 295.846 118.159Z"
                stroke="#059669"
-               stroke-width="2.3598"
-               stroke-linecap="round"
-               stroke-linejoin="round"
+               strokeWidth="2.3598"
+               strokeLinecap="round"
+               strokeLinejoin="round"
             />
             <path
                d="M295.502 146.213H245.819C240.939 146.213 236.983 150.169 236.983 155.049V160.736C236.983 165.616 240.939 169.572 245.819 169.572H295.502C300.382 169.572 304.338 165.616 304.338 160.736V155.049C304.338 150.169 300.382 146.213 295.502 146.213Z"
                stroke="#059669"
-               stroke-width="2.3598"
-               stroke-linecap="round"
-               stroke-linejoin="round"
+               strokeWidth="2.3598"
+               strokeLinecap="round"
+               strokeLinejoin="round"
             />
             <path
                d="M291.487 45.7197L248.017 89.6558"
                stroke="#059669"
-               stroke-width="2.3598"
-               stroke-linecap="round"
-               stroke-linejoin="round"
+               strokeWidth="2.3598"
+               strokeLinecap="round"
+               strokeLinejoin="round"
             />
             <path
                d="M232.408 73.2178H164.065C159.995 73.2178 156.696 76.5171 156.696 80.5871V113.51C156.696 117.58 159.995 120.879 164.065 120.879H232.408C236.478 120.879 239.777 117.58 239.777 113.51V80.5871C239.777 76.5171 236.478 73.2178 232.408 73.2178Z"
                stroke="#2E186A"
-               stroke-width="2.02268"
-               stroke-linecap="round"
-               stroke-linejoin="round"
+               strokeWidth="2.02268"
+               strokeLinecap="round"
+               strokeLinejoin="round"
             />
             <path
                d="M188.958 91.1555H188.725C188.032 91.1555 187.471 91.717 187.471 92.4096V93.6569C187.471 94.3495 188.032 94.911 188.725 94.911H188.958C189.65 94.911 190.212 94.3495 190.212 93.6569V92.4096C190.212 91.717 189.65 91.1555 188.958 91.1555Z"
@@ -182,44 +182,44 @@ export const WalletPageIllustration = ({ width, height }) => {
             <path
                d="M316.026 151.779C316.026 151.779 310.339 151.61 306.614 149.419C304.389 148.121 301.51 146.341 301.372 145.569C301.109 144.13 304.621 145.603 305.181 145.792"
                stroke="#2E186A"
-               stroke-width="2.02268"
-               stroke-linecap="round"
-               stroke-linejoin="round"
+               strokeWidth="2.02268"
+               strokeLinecap="round"
+               strokeLinejoin="round"
             />
             <path
                d="M319.218 154.442L317.556 152.122C314.391 151.613 312.136 150.804 310.619 149.982C308.653 148.913 302.666 143.954 302.551 143.3C302.248 141.56 305.215 141.614 307.399 144.385"
                stroke="#2E186A"
-               stroke-width="2.02268"
-               stroke-linecap="round"
-               stroke-linejoin="round"
+               strokeWidth="2.02268"
+               strokeLinecap="round"
+               strokeLinejoin="round"
             />
             <path
                d="M311.997 147.747C311.997 147.747 308.943 146.159 307.615 144.554C306.287 142.949 305.35 141.689 305.592 141.368C305.835 141.048 307.578 141.099 308.495 142.019C309.658 143.678 313.214 145.444 313.214 145.444C312.823 145.387 310.518 143.802 309.385 142.747C308.252 141.692 307.75 139.75 310.851 141.318C310.851 141.318 314.155 143.094 315.379 143.566C315.379 143.566 320.567 144.22 322.239 145.963C322.576 146.3 323.517 147.281 324.872 148.64"
                stroke="#2E186A"
-               stroke-width="2.02268"
-               stroke-linecap="round"
-               stroke-linejoin="round"
+               strokeWidth="2.02268"
+               strokeLinecap="round"
+               strokeLinejoin="round"
             />
             <path
                d="M347.431 220.473C345.099 221.036 343.993 220.897 344.61 219.643C345.045 218.75 350.948 215.699 352.104 215.355C353.26 215.011 363.347 213.558 363.347 213.558L365.932 224.275H351.325C347.789 224.501 348.81 222.492 350.253 221.973C351.696 221.454 354.363 220.21 354.76 220.311C354.76 220.311 350.954 221.396 349.255 222.455C348.048 222.94 346.68 222.118 346.558 221.713C346.437 221.309 347.539 220.28 349.39 219.353C350.77 218.684 352.188 218.096 353.638 217.594"
                stroke="#2E186A"
-               stroke-width="2.02268"
-               stroke-linecap="round"
-               stroke-linejoin="round"
+               strokeWidth="2.02268"
+               strokeLinecap="round"
+               strokeLinejoin="round"
             />
             <path
                d="M392.73 159.843L389.544 172.117C389.335 173.059 388.943 173.951 388.389 174.741C387.836 175.532 387.132 176.205 386.318 176.723C385.504 177.241 384.596 177.594 383.645 177.761C382.695 177.928 381.721 177.906 380.779 177.696V177.696C379.836 177.488 378.944 177.096 378.153 176.542C377.363 175.989 376.689 175.285 376.17 174.471C375.652 173.657 375.299 172.749 375.132 171.798C374.965 170.847 374.986 169.873 375.196 168.931L376.17 164.549"
                stroke="#2E186A"
-               stroke-width="2.02268"
-               stroke-linecap="round"
-               stroke-linejoin="round"
+               strokeWidth="2.02268"
+               strokeLinecap="round"
+               strokeLinejoin="round"
             />
             <path
                d="M396.964 152.342C396.964 152.342 402.833 140.907 391.324 134.812C390.252 134.242 382.842 130.497 379.285 136.498C376.926 140.503 375.179 145.131 374.09 148.809C374.09 148.829 371.936 155.723 373.383 160.429C374.829 165.135 380.954 166.764 384.75 165.934C388.546 165.105 389.449 164.323 391.071 162.391C392.692 160.46 396.95 152.376 396.95 152.376L396.964 152.342Z"
                stroke="#2E186A"
-               stroke-width="2.02268"
-               stroke-linecap="round"
-               stroke-linejoin="round"
+               strokeWidth="2.02268"
+               strokeLinecap="round"
+               strokeLinejoin="round"
             />
             <path
                d="M374.09 148.786C375.179 145.108 376.909 140.479 379.285 136.474C379.393 136.289 379.508 136.113 379.623 135.948C377.687 134.441 374.566 137.553 372.402 143.948C371.282 147.258 368.225 148.92 368.225 148.92C370.561 150.967 372.664 150.08 374.05 148.92C374.077 148.836 374.09 148.789 374.09 148.786Z"
@@ -228,9 +228,9 @@ export const WalletPageIllustration = ({ width, height }) => {
             <path
                d="M379.535 146.665L377.057 152.895L379.1 153.643"
                stroke="#2E186A"
-               stroke-width="2.02268"
-               stroke-linecap="round"
-               stroke-linejoin="round"
+               strokeWidth="2.02268"
+               strokeLinecap="round"
+               strokeLinejoin="round"
             />
             <path
                d="M377.867 146.246C378.085 145.738 377.996 145.211 377.667 145.07C377.339 144.929 376.896 145.227 376.678 145.735C376.46 146.244 376.549 146.77 376.878 146.911C377.206 147.052 377.649 146.754 377.867 146.246Z"
@@ -243,16 +243,16 @@ export const WalletPageIllustration = ({ width, height }) => {
             <path
                d="M387.882 146.665C387.719 146.16 387.422 145.707 387.024 145.356C386.627 145.004 386.141 144.766 385.62 144.666"
                stroke="#2E186A"
-               stroke-width="2.02268"
-               stroke-linecap="round"
-               stroke-linejoin="round"
+               strokeWidth="2.02268"
+               strokeLinecap="round"
+               strokeLinejoin="round"
             />
             <path
                d="M380.209 142.09C380.209 142.09 378.409 140.442 377.057 141.416"
                stroke="#2E186A"
-               stroke-width="2.02268"
-               stroke-linecap="round"
-               stroke-linejoin="round"
+               strokeWidth="2.02268"
+               strokeLinecap="round"
+               strokeLinejoin="round"
             />
             <path
                d="M409.255 148.961L403.042 145.809C403.821 141.173 403.342 134.01 394.654 129.964C381.079 123.657 376.113 137.256 376.113 137.256L407.219 152.952C407.483 153.099 407.774 153.192 408.075 153.223C408.376 153.255 408.68 153.226 408.969 153.137C409.258 153.048 409.527 152.902 409.758 152.707C409.989 152.512 410.179 152.273 410.315 152.003C410.451 151.733 410.532 151.438 410.551 151.136C410.571 150.834 410.529 150.532 410.429 150.246C410.329 149.961 410.172 149.699 409.968 149.476C409.764 149.252 409.517 149.073 409.241 148.947L409.255 148.961Z"
@@ -269,72 +269,72 @@ export const WalletPageIllustration = ({ width, height }) => {
             <path
                d="M366.145 77.8633H304.864C300.794 77.8633 297.495 81.1626 297.495 85.2326V90.0972C297.495 94.1671 300.794 97.4665 304.864 97.4665H366.145C370.215 97.4665 373.514 94.1671 373.514 90.0972V85.2326C373.514 81.1626 370.215 77.8633 366.145 77.8633Z"
                stroke="#2E186A"
-               stroke-width="2.02268"
-               stroke-linecap="round"
-               stroke-linejoin="round"
+               strokeWidth="2.02268"
+               strokeLinecap="round"
+               strokeLinejoin="round"
             />
             <path
                d="M307.264 85.644H364.26"
                stroke="#2E186A"
-               stroke-width="2.02268"
-               stroke-linecap="round"
-               stroke-linejoin="round"
+               strokeWidth="2.02268"
+               strokeLinecap="round"
+               strokeLinejoin="round"
             />
             <path
                d="M307.264 90.5049H334.311"
                stroke="#2E186A"
-               stroke-width="2.02268"
-               stroke-linecap="round"
-               stroke-linejoin="round"
+               strokeWidth="2.02268"
+               strokeLinecap="round"
+               strokeLinejoin="round"
             />
             <path
                d="M267.97 188.342H206.69C202.62 188.342 199.32 191.642 199.32 195.712V200.576C199.32 204.646 202.62 207.945 206.69 207.945H267.97C272.04 207.945 275.34 204.646 275.34 200.576V195.712C275.34 191.642 272.04 188.342 267.97 188.342Z"
                stroke="#2E186A"
-               stroke-width="2.02268"
-               stroke-linecap="round"
-               stroke-linejoin="round"
+               strokeWidth="2.02268"
+               strokeLinecap="round"
+               strokeLinejoin="round"
             />
             <path
                d="M209.087 196.123H266.083"
                stroke="#2E186A"
-               stroke-width="2.02268"
-               stroke-linecap="round"
-               stroke-linejoin="round"
+               strokeWidth="2.02268"
+               strokeLinecap="round"
+               strokeLinejoin="round"
             />
             <path
                d="M209.087 200.984H236.137"
                stroke="#2E186A"
-               stroke-width="2.02268"
-               stroke-linecap="round"
-               stroke-linejoin="round"
+               strokeWidth="2.02268"
+               strokeLinecap="round"
+               strokeLinejoin="round"
             />
             <path
                d="M180.128 36.1995H118.848C114.778 36.1995 111.478 39.4988 111.478 43.5688V48.4333C111.478 52.5033 114.778 55.8026 118.848 55.8026H180.128C184.198 55.8026 187.498 52.5033 187.498 48.4333V43.5688C187.498 39.4988 184.198 36.1995 180.128 36.1995Z"
                stroke="#2E186A"
-               stroke-width="2.02268"
-               stroke-linecap="round"
-               stroke-linejoin="round"
+               strokeWidth="2.02268"
+               strokeLinecap="round"
+               strokeLinejoin="round"
             />
             <path
                d="M121.248 43.9802H178.244"
                stroke="#2E186A"
-               stroke-width="2.02268"
-               stroke-linecap="round"
-               stroke-linejoin="round"
+               strokeWidth="2.02268"
+               strokeLinecap="round"
+               strokeLinejoin="round"
             />
             <path
                d="M121.248 48.8411H148.298"
                stroke="#2E186A"
-               stroke-width="2.02268"
-               stroke-linecap="round"
-               stroke-linejoin="round"
+               strokeWidth="2.02268"
+               strokeLinecap="round"
+               strokeLinejoin="round"
             />
             <path
                d="M116.687 132.027C105.98 135.108 103.607 139.444 104.918 143.688C100.624 146.267 91.8316 152.588 83.9701 164.771C73.0645 181.671 108.242 208.384 114.442 208.384C120.641 208.384 164.358 191.305 164.358 191.305L166.927 183.525C168.742 178.047 168.931 172.162 167.471 166.579C166.011 160.997 162.965 155.957 158.702 152.069L158.496 151.883C153.776 147.659 149.262 142.4 144.88 140.324C144.27 137.158 142.557 133.777 138.03 131.896"
                stroke="#2E186A"
-               stroke-width="2.02268"
-               stroke-linecap="round"
-               stroke-linejoin="round"
+               strokeWidth="2.02268"
+               strokeLinecap="round"
+               strokeLinejoin="round"
             />
             <path
                d="M143.933 139.902C144.408 142.35 144.223 144.676 144.162 146.088C143.909 151.998 141.684 155.19 141.017 157.395C145.328 154.823 149.313 148.907 151.255 145.037C150.034 143.88 146.083 140.964 143.933 139.902Z"
@@ -351,30 +351,30 @@ export const WalletPageIllustration = ({ width, height }) => {
             <path
                d="M113.488 125.292C112.372 125.781 110.275 127.106 111.566 129.85C112.723 132.307 115.002 131.566 116.363 130.824"
                stroke="#2E186A"
-               stroke-width="2.02268"
-               stroke-linecap="round"
-               stroke-linejoin="round"
+               strokeWidth="2.02268"
+               strokeLinecap="round"
+               strokeLinejoin="round"
             />
             <path
                d="M134.493 113.439C136.934 119.682 137.78 127.031 137.865 130.463"
                stroke="#2E186A"
-               stroke-width="2.02268"
-               stroke-linecap="round"
-               stroke-linejoin="round"
+               strokeWidth="2.02268"
+               strokeLinecap="round"
+               strokeLinejoin="round"
             />
             <path
                d="M119.138 136.086L119.04 137.816L116.701 140.513C121.722 143.833 126.278 147.808 130.249 152.332C133.661 148.345 135.849 143.458 136.55 138.257"
                stroke="#2E186A"
-               stroke-width="2.02268"
-               stroke-linecap="round"
-               stroke-linejoin="round"
+               strokeWidth="2.02268"
+               strokeLinecap="round"
+               strokeLinejoin="round"
             />
             <path
                d="M116.559 125.319C117.435 125.858 120.338 129.489 121.279 131.289C121.279 131.289 125.553 128.528 132.218 126.779C132.218 126.779 135.886 125.953 137.447 126.034C137.447 126.034 138.795 132.881 136.712 137.115C134.628 141.349 128.122 141.925 124.663 140.53C121.204 139.134 120.476 138.264 119.239 136.178C118.002 134.091 114.135 126.128 114.135 126.128L116.559 125.319Z"
                stroke="#2E186A"
-               stroke-width="2.02268"
-               stroke-linecap="round"
-               stroke-linejoin="round"
+               strokeWidth="2.02268"
+               strokeLinecap="round"
+               strokeLinejoin="round"
             />
             <path
                d="M115.049 127.227C115.049 127.227 112.264 124.611 110.69 121.563C109.956 120.179 109.717 118.585 110.013 117.047C110.308 115.508 111.12 114.116 112.315 113.102C114.391 111.379 116.36 111.841 116.36 111.841C116.36 111.841 112.803 108.214 115.628 103.494C116.124 102.674 116.781 101.964 117.56 101.406C118.339 100.849 119.223 100.455 120.159 100.251C121.444 99.9464 122.79 100.023 124.032 100.472C125.274 100.922 126.358 101.723 127.151 102.779C127.151 102.779 129.848 92.5479 141.215 95.3999C142.362 95.6865 143.875 96.9068 144.674 97.7799C149.512 103.083 140.349 113.044 134.787 115.027C128.682 117.204 124.761 117.073 122.364 116.038C124.077 116.584 124.717 126.371 115.049 127.227Z"
@@ -383,9 +383,9 @@ export const WalletPageIllustration = ({ width, height }) => {
             <path
                d="M132.063 124.048L134.197 129.779L131.989 129.759"
                stroke="#2E186A"
-               stroke-width="2.02268"
-               stroke-linecap="round"
-               stroke-linejoin="round"
+               strokeWidth="2.02268"
+               strokeLinecap="round"
+               strokeLinejoin="round"
             />
             <path
                d="M134.954 124.367C135.288 124.285 135.456 123.799 135.328 123.282C135.2 122.765 134.826 122.413 134.491 122.495C134.157 122.578 133.989 123.064 134.117 123.581C134.245 124.098 134.619 124.45 134.954 124.367Z"
@@ -398,59 +398,59 @@ export const WalletPageIllustration = ({ width, height }) => {
             <path
                d="M125.277 122.45C125.51 121.996 125.862 121.613 126.294 121.341C126.727 121.07 127.224 120.919 127.734 120.906"
                stroke="#2E186A"
-               stroke-width="2.02268"
-               stroke-linecap="round"
-               stroke-linejoin="round"
+               strokeWidth="2.02268"
+               strokeLinecap="round"
+               strokeLinejoin="round"
             />
             <path
                d="M132.626 118.125C132.626 118.125 134.591 116.84 135.724 117.97"
                stroke="#2E186A"
-               stroke-width="2.02268"
-               stroke-linecap="round"
-               stroke-linejoin="round"
+               strokeWidth="2.02268"
+               strokeLinecap="round"
+               strokeLinejoin="round"
             />
             <path
                d="M131.975 133.801C130.037 133.618 129.373 132.648 129.373 132.648L132.724 132.428C132.724 132.428 133.26 133.77 131.975 133.801Z"
                fill="#2E186A"
                stroke="#2E186A"
-               stroke-width="2.02268"
-               stroke-linecap="round"
-               stroke-linejoin="round"
+               strokeWidth="2.02268"
+               strokeLinecap="round"
+               strokeLinejoin="round"
             />
             <path
                d="M121.68 156.239C121.68 156.239 124.967 163.864 125.489 169.248"
                stroke="#2E186A"
-               stroke-width="2.02268"
-               stroke-linecap="round"
-               stroke-linejoin="round"
+               strokeWidth="2.02268"
+               strokeLinecap="round"
+               strokeLinejoin="round"
             />
             <path
                d="M139.334 156.586C139.334 156.586 139.918 163.234 140.494 168.614"
                stroke="#2E186A"
-               stroke-width="2.02268"
-               stroke-linecap="round"
-               stroke-linejoin="round"
+               strokeWidth="2.02268"
+               strokeLinecap="round"
+               strokeLinejoin="round"
             />
             <path
                d="M99.0829 172.485C99.0829 172.485 102.579 168.628 108.286 172.174L113.377 167.65"
                stroke="#2E186A"
-               stroke-width="2.02268"
-               stroke-linecap="round"
-               stroke-linejoin="round"
+               strokeWidth="2.02268"
+               strokeLinecap="round"
+               strokeLinejoin="round"
             />
             <path
                d="M121.14 179.476C120.523 179.166 107.824 171.918 107.824 171.918"
                stroke="#2E186A"
-               stroke-width="2.02268"
-               stroke-linecap="round"
-               stroke-linejoin="round"
+               strokeWidth="2.02268"
+               strokeLinecap="round"
+               strokeLinejoin="round"
             />
             <path
                d="M152.637 171.77L150.108 166.022"
                stroke="#2E186A"
-               stroke-width="2.02268"
-               stroke-linecap="round"
-               stroke-linejoin="round"
+               strokeWidth="2.02268"
+               strokeLinecap="round"
+               strokeLinejoin="round"
             />
             <path
                d="M120.513 201.887C120.513 201.887 107.858 196.628 92.2126 185.783C76.5671 174.938 66.5919 191.733 70.8092 198.594C74.5175 204.662 95.3478 225.465 95.3478 225.465L166.256 224.889C166.256 224.889 182.917 203.923 185.533 200.64C194.375 189.535 187.07 183.663 177.351 182.813C168.201 182.011 143.511 200.006 140.477 202.315L120.513 201.887Z"
@@ -463,9 +463,9 @@ export const WalletPageIllustration = ({ width, height }) => {
             <path
                d="M501.381 223.665L-10.0949 226.025"
                stroke="#2E186A"
-               stroke-width="2.02268"
-               stroke-linecap="round"
-               stroke-linejoin="round"
+               strokeWidth="2.02268"
+               strokeLinecap="round"
+               strokeLinejoin="round"
             />
          </g>
          <defs>
@@ -517,107 +517,107 @@ export const WalletPageIllustration = ({ width, height }) => {
 //             <path
 //                d="M188.07 76.1074C191.275 78.1214 195.149 79.3879 200.51 79.4582"
 //                stroke="#2E186A"
-//                stroke-width="1.17091"
-//                stroke-linecap="round"
-//                stroke-linejoin="round"
+//                strokeWidth="1.17091"
+//                strokeLinecap="round"
+//                strokeLinejoin="round"
 //             />
 //             <path
 //                d="M148.228 55.5228C152.215 55.0779 163.706 51.8388 172.962 60.8968C174.118 62.0266 175.185 63.1603 176.192 64.2803"
 //                stroke="#2E186A"
-//                stroke-width="1.17091"
-//                stroke-linecap="round"
-//                stroke-linejoin="round"
+//                strokeWidth="1.17091"
+//                strokeLinecap="round"
+//                strokeLinejoin="round"
 //             />
 //             <path
 //                d="M155.519 130.43C153.096 130.169 150.651 130.173 148.228 130.442"
 //                stroke="#2E186A"
-//                stroke-width="1.17091"
-//                stroke-linecap="round"
-//                stroke-linejoin="round"
+//                strokeWidth="1.17091"
+//                strokeLinecap="round"
+//                strokeLinejoin="round"
 //             />
 //             <path
 //                d="M200.51 149.687C185.706 149.492 182.219 147.578 172.962 138.52C172.231 137.806 171.464 137.129 170.664 136.495"
 //                stroke="#2E186A"
-//                stroke-width="1.17091"
-//                stroke-linecap="round"
-//                stroke-linejoin="round"
+//                strokeWidth="1.17091"
+//                strokeLinecap="round"
+//                strokeLinejoin="round"
 //             />
 //             <path
 //                d="M187.687 64.2803H162.143V89.8951H187.687V64.2803Z"
 //                stroke="#059669"
-//                stroke-width="1.36607"
-//                stroke-linecap="round"
-//                stroke-linejoin="round"
+//                strokeWidth="1.36607"
+//                strokeLinecap="round"
+//                strokeLinejoin="round"
 //             />
 //             <path
 //                d="M169.152 92.0884H162.575V98.6838H169.152V92.0884Z"
 //                stroke="#059669"
-//                stroke-width="1.36607"
-//                stroke-linecap="round"
-//                stroke-linejoin="round"
+//                strokeWidth="1.36607"
+//                strokeLinecap="round"
+//                strokeLinejoin="round"
 //             />
 //             <path
 //                d="M169.152 92.0884L162.575 98.6838"
 //                stroke="#059669"
-//                stroke-width="1.36607"
-//                stroke-linecap="round"
-//                stroke-linejoin="round"
+//                strokeWidth="1.36607"
+//                strokeLinecap="round"
+//                strokeLinejoin="round"
 //             />
 //             <path
 //                d="M178.132 92.0884H171.555V98.6838H178.132V92.0884Z"
 //                stroke="#059669"
-//                stroke-width="1.36607"
-//                stroke-linecap="round"
-//                stroke-linejoin="round"
+//                strokeWidth="1.36607"
+//                strokeLinecap="round"
+//                strokeLinejoin="round"
 //             />
 //             <path
 //                d="M178.132 92.0884L171.555 98.6838"
 //                stroke="#059669"
-//                stroke-width="1.36607"
-//                stroke-linecap="round"
-//                stroke-linejoin="round"
+//                strokeWidth="1.36607"
+//                strokeLinecap="round"
+//                strokeLinejoin="round"
 //             />
 //             <path
 //                d="M187.111 92.0884H180.534V98.6838H187.111V92.0884Z"
 //                stroke="#059669"
-//                stroke-width="1.36607"
-//                stroke-linecap="round"
-//                stroke-linejoin="round"
+//                strokeWidth="1.36607"
+//                strokeLinecap="round"
+//                strokeLinejoin="round"
 //             />
 //             <path
 //                d="M187.113 92.0884L180.534 98.6838"
 //                stroke="#059669"
-//                stroke-width="1.36607"
-//                stroke-linecap="round"
-//                stroke-linejoin="round"
+//                strokeWidth="1.36607"
+//                strokeLinecap="round"
+//                strokeLinejoin="round"
 //             />
 //             <path
 //                d="M189.751 106.394H161.073C158.256 106.394 155.972 108.683 155.972 111.508V114.8C155.972 117.624 158.256 119.914 161.073 119.914H189.751C192.568 119.914 194.851 117.624 194.851 114.8V111.508C194.851 108.683 192.568 106.394 189.751 106.394Z"
 //                stroke="#059669"
-//                stroke-width="1.36607"
-//                stroke-linecap="round"
-//                stroke-linejoin="round"
+//                strokeWidth="1.36607"
+//                strokeLinecap="round"
+//                strokeLinejoin="round"
 //             />
 //             <path
 //                d="M189.553 122.632H160.874C158.058 122.632 155.774 124.922 155.774 127.747V131.039C155.774 133.863 158.058 136.153 160.874 136.153H189.553C192.37 136.153 194.653 133.863 194.653 131.039V127.747C194.653 124.922 192.37 122.632 189.553 122.632Z"
 //                stroke="#059669"
-//                stroke-width="1.36607"
-//                stroke-linecap="round"
-//                stroke-linejoin="round"
+//                strokeWidth="1.36607"
+//                strokeLinecap="round"
+//                strokeLinejoin="round"
 //             />
 //             <path
 //                d="M187.235 64.4644L162.143 89.8958"
 //                stroke="#059669"
-//                stroke-width="1.36607"
-//                stroke-linecap="round"
-//                stroke-linejoin="round"
+//                strokeWidth="1.36607"
+//                strokeLinecap="round"
+//                strokeLinejoin="round"
 //             />
 //             <path
 //                d="M153.134 80.3804H113.685C111.335 80.3804 109.431 82.2901 109.431 84.6459V103.702C109.431 106.058 111.335 107.968 113.685 107.968H153.134C155.483 107.968 157.387 106.058 157.387 103.702V84.6459C157.387 82.2901 155.483 80.3804 153.134 80.3804Z"
 //                stroke="#2E186A"
-//                stroke-width="1.17091"
-//                stroke-linecap="round"
-//                stroke-linejoin="round"
+//                strokeWidth="1.17091"
+//                strokeLinecap="round"
+//                strokeLinejoin="round"
 //             />
 //             <path
 //                d="M128.053 90.7632H127.919C127.519 90.7632 127.195 91.0882 127.195 91.4892V92.2112C127.195 92.6122 127.519 92.9372 127.919 92.9372H128.053C128.453 92.9372 128.777 92.6122 128.777 92.2112V91.4892C128.777 91.0882 128.453 90.7632 128.053 90.7632Z"
@@ -662,44 +662,44 @@ export const WalletPageIllustration = ({ width, height }) => {
 //             <path
 //                d="M201.4 125.854C201.4 125.854 198.117 125.756 195.967 124.488C194.682 123.736 193.021 122.706 192.941 122.259C192.789 121.426 194.817 122.279 195.14 122.388"
 //                stroke="#2E186A"
-//                stroke-width="1.17091"
-//                stroke-linecap="round"
-//                stroke-linejoin="round"
+//                strokeWidth="1.17091"
+//                strokeLinecap="round"
+//                strokeLinejoin="round"
 //             />
 //             <path
 //                d="M203.242 127.395L202.283 126.052C200.456 125.758 199.154 125.289 198.278 124.813C197.144 124.195 193.688 121.324 193.622 120.946C193.447 119.939 195.159 119.97 196.42 121.574"
 //                stroke="#2E186A"
-//                stroke-width="1.17091"
-//                stroke-linecap="round"
-//                stroke-linejoin="round"
+//                strokeWidth="1.17091"
+//                strokeLinecap="round"
+//                strokeLinejoin="round"
 //             />
 //             <path
 //                d="M199.074 123.52C199.074 123.52 197.311 122.601 196.544 121.672C195.778 120.743 195.237 120.013 195.377 119.828C195.517 119.642 196.523 119.672 197.052 120.204C197.724 121.164 199.777 122.187 199.777 122.187C199.551 122.154 198.22 121.237 197.566 120.626C196.912 120.015 196.622 118.891 198.413 119.798C198.413 119.798 200.319 120.827 201.026 121.1C201.026 121.1 204.021 121.479 204.986 122.488C205.18 122.683 205.723 123.251 206.505 124.037"
 //                stroke="#2E186A"
-//                stroke-width="1.17091"
-//                stroke-linecap="round"
-//                stroke-linejoin="round"
+//                strokeWidth="1.17091"
+//                strokeLinecap="round"
+//                strokeLinejoin="round"
 //             />
 //             <path
 //                d="M219.528 165.616C218.181 165.942 217.543 165.862 217.899 165.136C218.15 164.619 221.557 162.853 222.225 162.654C222.892 162.455 228.714 161.614 228.714 161.614L230.207 167.817H221.775C219.734 167.948 220.323 166.785 221.156 166.484C221.989 166.184 223.528 165.464 223.758 165.522C223.758 165.522 221.561 166.151 220.58 166.763C219.884 167.044 219.094 166.568 219.024 166.334C218.953 166.1 219.59 165.505 220.658 164.968C221.455 164.58 222.273 164.24 223.11 163.949"
 //                stroke="#2E186A"
-//                stroke-width="1.17091"
-//                stroke-linecap="round"
-//                stroke-linejoin="round"
+//                strokeWidth="1.17091"
+//                strokeLinecap="round"
+//                strokeLinejoin="round"
 //             />
 //             <path
 //                d="M245.674 130.521L243.835 137.626C243.715 138.172 243.488 138.688 243.169 139.145C242.849 139.603 242.443 139.993 241.973 140.293C241.503 140.592 240.979 140.797 240.43 140.893C239.882 140.99 239.32 140.977 238.776 140.856V140.856C238.232 140.735 237.717 140.508 237.261 140.188C236.804 139.868 236.415 139.46 236.116 138.989C235.816 138.518 235.613 137.992 235.516 137.442C235.42 136.891 235.432 136.328 235.554 135.782L236.116 133.246"
 //                stroke="#2E186A"
-//                stroke-width="1.17091"
-//                stroke-linecap="round"
-//                stroke-linejoin="round"
+//                strokeWidth="1.17091"
+//                strokeLinecap="round"
+//                strokeLinejoin="round"
 //             />
 //             <path
 //                d="M248.118 126.18C248.118 126.18 251.506 119.561 244.863 116.033C244.244 115.703 239.967 113.535 237.914 117.009C236.552 119.327 235.544 122.006 234.916 124.135C234.916 124.146 233.672 128.137 234.507 130.861C235.342 133.585 238.877 134.527 241.068 134.047C243.259 133.567 243.781 133.115 244.717 131.997C245.653 130.878 248.111 126.199 248.111 126.199L248.118 126.18Z"
 //                stroke="#2E186A"
-//                stroke-width="1.17091"
-//                stroke-linecap="round"
-//                stroke-linejoin="round"
+//                strokeWidth="1.17091"
+//                strokeLinecap="round"
+//                strokeLinejoin="round"
 //             />
 //             <path
 //                d="M234.915 124.121C235.544 121.992 236.542 119.313 237.914 116.995C237.976 116.888 238.042 116.786 238.109 116.691C236.992 115.818 235.19 117.619 233.94 121.321C233.294 123.237 231.529 124.199 231.529 124.199C232.878 125.384 234.092 124.87 234.892 124.199C234.908 124.15 234.915 124.123 234.915 124.121Z"
@@ -708,9 +708,9 @@ export const WalletPageIllustration = ({ width, height }) => {
 //             <path
 //                d="M238.058 122.894L236.628 126.5L237.807 126.933"
 //                stroke="#2E186A"
-//                stroke-width="1.17091"
-//                stroke-linecap="round"
-//                stroke-linejoin="round"
+//                strokeWidth="1.17091"
+//                strokeLinecap="round"
+//                strokeLinejoin="round"
 //             />
 //             <path
 //                d="M237.096 122.651C237.222 122.357 237.17 122.052 236.98 121.971C236.791 121.889 236.535 122.061 236.409 122.356C236.283 122.65 236.335 122.954 236.524 123.036C236.714 123.117 236.97 122.945 237.096 122.651Z"
@@ -723,16 +723,16 @@ export const WalletPageIllustration = ({ width, height }) => {
 //             <path
 //                d="M242.876 122.894C242.782 122.601 242.611 122.339 242.381 122.136C242.152 121.932 241.872 121.794 241.57 121.736"
 //                stroke="#2E186A"
-//                stroke-width="1.17091"
-//                stroke-linecap="round"
-//                stroke-linejoin="round"
+//                strokeWidth="1.17091"
+//                strokeLinecap="round"
+//                strokeLinejoin="round"
 //             />
 //             <path
 //                d="M238.447 120.246C238.447 120.246 237.408 119.292 236.628 119.856"
 //                stroke="#2E186A"
-//                stroke-width="1.17091"
-//                stroke-linecap="round"
-//                stroke-linejoin="round"
+//                strokeWidth="1.17091"
+//                strokeLinecap="round"
+//                strokeLinejoin="round"
 //             />
 //             <path
 //                d="M255.213 124.223L251.627 122.398C252.076 119.715 251.8 115.569 246.785 113.227C238.949 109.576 236.083 117.448 236.083 117.448L254.038 126.533C254.19 126.618 254.358 126.671 254.532 126.69C254.705 126.708 254.881 126.691 255.048 126.64C255.215 126.589 255.37 126.504 255.503 126.391C255.637 126.278 255.746 126.14 255.825 125.983C255.903 125.827 255.95 125.656 255.961 125.482C255.972 125.307 255.948 125.132 255.891 124.967C255.833 124.802 255.742 124.65 255.624 124.521C255.507 124.391 255.364 124.287 255.205 124.215L255.213 124.223Z"
@@ -749,72 +749,72 @@ export const WalletPageIllustration = ({ width, height }) => {
 //             <path
 //                d="M230.329 83.0693H194.957C192.607 83.0693 190.703 84.9791 190.703 87.3349V90.1506C190.703 92.5065 192.607 94.4162 194.957 94.4162H230.329C232.678 94.4162 234.583 92.5065 234.583 90.1506V87.3349C234.583 84.9791 232.678 83.0693 230.329 83.0693Z"
 //                stroke="#2E186A"
-//                stroke-width="1.17091"
-//                stroke-linecap="round"
-//                stroke-linejoin="round"
+//                strokeWidth="1.17091"
+//                strokeLinecap="round"
+//                strokeLinejoin="round"
 //             />
 //             <path
 //                d="M196.342 87.5732H229.241"
 //                stroke="#2E186A"
-//                stroke-width="1.17091"
-//                stroke-linecap="round"
-//                stroke-linejoin="round"
+//                strokeWidth="1.17091"
+//                strokeLinecap="round"
+//                strokeLinejoin="round"
 //             />
 //             <path
 //                d="M196.342 90.3867H211.954"
 //                stroke="#2E186A"
-//                stroke-width="1.17091"
-//                stroke-linecap="round"
-//                stroke-linejoin="round"
+//                strokeWidth="1.17091"
+//                strokeLinecap="round"
+//                strokeLinejoin="round"
 //             />
 //             <path
 //                d="M173.661 147.018H138.289C135.939 147.018 134.035 148.928 134.035 151.284V154.099C134.035 156.455 135.939 158.365 138.289 158.365H173.661C176.01 158.365 177.915 156.455 177.915 154.099V151.284C177.915 148.928 176.01 147.018 173.661 147.018Z"
 //                stroke="#2E186A"
-//                stroke-width="1.17091"
-//                stroke-linecap="round"
-//                stroke-linejoin="round"
+//                strokeWidth="1.17091"
+//                strokeLinecap="round"
+//                strokeLinejoin="round"
 //             />
 //             <path
 //                d="M139.672 151.521H172.571"
 //                stroke="#2E186A"
-//                stroke-width="1.17091"
-//                stroke-linecap="round"
-//                stroke-linejoin="round"
+//                strokeWidth="1.17091"
+//                strokeLinecap="round"
+//                strokeLinejoin="round"
 //             />
 //             <path
 //                d="M139.672 154.335H155.286"
 //                stroke="#2E186A"
-//                stroke-width="1.17091"
-//                stroke-linecap="round"
-//                stroke-linejoin="round"
+//                strokeWidth="1.17091"
+//                strokeLinecap="round"
+//                strokeLinejoin="round"
 //             />
 //             <path
 //                d="M122.957 58.9531H87.5842C85.235 58.9531 83.3305 60.8629 83.3305 63.2187V66.0344C83.3305 68.3902 85.235 70.3 87.5842 70.3H122.957C125.306 70.3 127.21 68.3902 127.21 66.0344V63.2187C127.21 60.8629 125.306 58.9531 122.957 58.9531Z"
 //                stroke="#2E186A"
-//                stroke-width="1.17091"
-//                stroke-linecap="round"
-//                stroke-linejoin="round"
+//                strokeWidth="1.17091"
+//                strokeLinecap="round"
+//                strokeLinejoin="round"
 //             />
 //             <path
 //                d="M88.9698 63.457H121.869"
 //                stroke="#2E186A"
-//                stroke-width="1.17091"
-//                stroke-linecap="round"
-//                stroke-linejoin="round"
+//                strokeWidth="1.17091"
+//                strokeLinecap="round"
+//                strokeLinejoin="round"
 //             />
 //             <path
 //                d="M88.9698 66.2705H104.584"
 //                stroke="#2E186A"
-//                stroke-width="1.17091"
-//                stroke-linecap="round"
-//                stroke-linejoin="round"
+//                strokeWidth="1.17091"
+//                strokeLinecap="round"
+//                strokeLinejoin="round"
 //             />
 //             <path
 //                d="M86.3368 114.421C80.1566 116.204 78.7867 118.714 79.5437 121.17C77.0646 122.663 71.9897 126.322 67.4519 133.374C61.1569 143.156 81.4623 158.618 85.0408 158.618C88.6193 158.618 113.854 148.733 113.854 148.733L115.336 144.229C116.384 141.059 116.493 137.652 115.65 134.42C114.808 131.189 113.049 128.272 110.588 126.021L110.47 125.914C107.745 123.469 105.14 120.425 102.61 119.223C102.258 117.391 101.27 115.434 98.6562 114.345"
 //                stroke="#2E186A"
-//                stroke-width="1.17091"
-//                stroke-linecap="round"
-//                stroke-linejoin="round"
+//                strokeWidth="1.17091"
+//                strokeLinecap="round"
+//                strokeLinejoin="round"
 //             />
 //             <path
 //                d="M102.063 118.979C102.338 120.396 102.231 121.742 102.196 122.56C102.05 125.98 100.765 127.828 100.38 129.104C102.869 127.616 105.169 124.191 106.29 121.951C105.585 121.282 103.305 119.594 102.063 118.979Z"
@@ -831,30 +831,30 @@ export const WalletPageIllustration = ({ width, height }) => {
 //             <path
 //                d="M84.4903 110.522C83.8462 110.805 82.6358 111.572 83.3811 113.16C84.0485 114.583 85.364 114.154 86.1501 113.724"
 //                stroke="#2E186A"
-//                stroke-width="1.17091"
-//                stroke-linecap="round"
-//                stroke-linejoin="round"
+//                strokeWidth="1.17091"
+//                strokeLinecap="round"
+//                strokeLinejoin="round"
 //             />
 //             <path
 //                d="M96.6151 103.661C98.0239 107.275 98.5124 111.529 98.561 113.515"
 //                stroke="#2E186A"
-//                stroke-width="1.17091"
-//                stroke-linecap="round"
-//                stroke-linejoin="round"
+//                strokeWidth="1.17091"
+//                strokeLinecap="round"
+//                strokeLinejoin="round"
 //             />
 //             <path
 //                d="M87.7515 116.771L87.6951 117.772L86.3446 119.333C89.2429 121.255 91.8729 123.555 94.1651 126.174C96.1345 123.866 97.3974 121.037 97.802 118.027"
 //                stroke="#2E186A"
-//                stroke-width="1.17091"
-//                stroke-linecap="round"
-//                stroke-linejoin="round"
+//                strokeWidth="1.17091"
+//                strokeLinecap="round"
+//                strokeLinejoin="round"
 //             />
 //             <path
 //                d="M86.2627 110.538C86.7687 110.85 88.4441 112.952 88.987 113.994C88.987 113.994 91.4544 112.396 95.3014 111.383C95.3014 111.383 97.4185 110.905 98.3195 110.952C98.3195 110.952 99.0978 114.915 97.8953 117.366C96.6927 119.817 92.9372 120.15 90.9407 119.342C88.9442 118.535 88.5239 118.031 87.8097 116.823C87.0956 115.615 84.8636 111.006 84.8636 111.006L86.2627 110.538Z"
 //                stroke="#2E186A"
-//                stroke-width="1.17091"
-//                stroke-linecap="round"
-//                stroke-linejoin="round"
+//                strokeWidth="1.17091"
+//                strokeLinecap="round"
+//                strokeLinejoin="round"
 //             />
 //             <path
 //                d="M85.391 111.642C85.391 111.642 83.7837 110.128 82.875 108.364C82.4516 107.562 82.3137 106.64 82.4843 105.749C82.6548 104.859 83.1236 104.053 83.8129 103.466C85.0116 102.469 86.148 102.736 86.148 102.736C86.148 102.736 84.0951 100.637 85.7257 97.9049C86.0117 97.4302 86.391 97.019 86.8407 96.6963C87.2903 96.3736 87.8008 96.1461 88.341 96.0277C89.0828 95.8514 89.8597 95.8959 90.5766 96.1559C91.2934 96.4158 91.9191 96.8799 92.3768 97.4912C92.3768 97.4912 93.9335 91.5689 100.495 93.2198C101.157 93.3856 102.03 94.092 102.492 94.5974C105.284 97.6668 99.995 103.433 96.7842 104.58C93.2602 105.841 90.9972 105.765 89.6136 105.166C90.6021 105.482 90.9719 111.146 85.391 111.642Z"
@@ -863,9 +863,9 @@ export const WalletPageIllustration = ({ width, height }) => {
 //             <path
 //                d="M95.2119 109.802L96.4436 113.12L95.1691 113.108"
 //                stroke="#2E186A"
-//                stroke-width="1.17091"
-//                stroke-linecap="round"
-//                stroke-linejoin="round"
+//                strokeWidth="1.17091"
+//                strokeLinecap="round"
+//                strokeLinejoin="round"
 //             />
 //             <path
 //                d="M96.8809 109.987C97.0739 109.939 97.1706 109.658 97.0968 109.358C97.0231 109.059 96.8068 108.855 96.6138 108.903C96.4208 108.951 96.3241 109.232 96.3979 109.532C96.4716 109.831 96.6878 110.035 96.8809 109.987Z"
@@ -878,59 +878,59 @@ export const WalletPageIllustration = ({ width, height }) => {
 //             <path
 //                d="M91.2949 108.877C91.4297 108.614 91.6326 108.393 91.8821 108.236C92.1317 108.078 92.4188 107.991 92.7134 107.983"
 //                stroke="#2E186A"
-//                stroke-width="1.17091"
-//                stroke-linecap="round"
-//                stroke-linejoin="round"
+//                strokeWidth="1.17091"
+//                strokeLinecap="round"
+//                strokeLinejoin="round"
 //             />
 //             <path
 //                d="M95.5371 106.373C95.5371 106.373 96.6716 105.63 97.3254 106.284"
 //                stroke="#2E186A"
-//                stroke-width="1.17091"
-//                stroke-linecap="round"
-//                stroke-linejoin="round"
+//                strokeWidth="1.17091"
+//                strokeLinecap="round"
+//                strokeLinejoin="round"
 //             />
 //             <path
 //                d="M95.1614 115.447C94.0425 115.342 93.6592 114.78 93.6592 114.78L95.5934 114.653C95.5934 114.653 95.9028 115.43 95.1614 115.447Z"
 //                fill="#2E186A"
 //                stroke="#2E186A"
-//                stroke-width="1.17091"
-//                stroke-linecap="round"
-//                stroke-linejoin="round"
+//                strokeWidth="1.17091"
+//                strokeLinecap="round"
+//                strokeLinejoin="round"
 //             />
 //             <path
 //                d="M89.2187 128.435C89.2187 128.435 91.1159 132.849 91.4175 135.965"
 //                stroke="#2E186A"
-//                stroke-width="1.17091"
-//                stroke-linecap="round"
-//                stroke-linejoin="round"
+//                strokeWidth="1.17091"
+//                strokeLinecap="round"
+//                strokeLinejoin="round"
 //             />
 //             <path
 //                d="M99.4093 128.636C99.4093 128.636 99.7459 132.484 100.079 135.599"
 //                stroke="#2E186A"
-//                stroke-width="1.17091"
-//                stroke-linecap="round"
-//                stroke-linejoin="round"
+//                strokeWidth="1.17091"
+//                strokeLinecap="round"
+//                strokeLinejoin="round"
 //             />
 //             <path
 //                d="M76.1752 137.839C76.1752 137.839 78.1931 135.606 81.4875 137.659L84.4258 135.041"
 //                stroke="#2E186A"
-//                stroke-width="1.17091"
-//                stroke-linecap="round"
-//                stroke-linejoin="round"
+//                strokeWidth="1.17091"
+//                strokeLinecap="round"
+//                strokeLinejoin="round"
 //             />
 //             <path
 //                d="M88.9073 141.886C88.5512 141.707 81.221 137.511 81.221 137.511"
 //                stroke="#2E186A"
-//                stroke-width="1.17091"
-//                stroke-linecap="round"
-//                stroke-linejoin="round"
+//                strokeWidth="1.17091"
+//                strokeLinecap="round"
+//                strokeLinejoin="round"
 //             />
 //             <path
 //                d="M107.088 137.425L105.628 134.098"
 //                stroke="#2E186A"
-//                stroke-width="1.17091"
-//                stroke-linecap="round"
-//                stroke-linejoin="round"
+//                strokeWidth="1.17091"
+//                strokeLinecap="round"
+//                strokeLinejoin="round"
 //             />
 //             <path
 //                d="M88.5454 154.858C88.5454 154.858 81.2405 151.814 72.2097 145.536C63.1788 139.259 57.4209 148.98 59.8552 152.951C61.9957 156.464 74.0193 168.505 74.0193 168.505L114.949 168.172C114.949 168.172 124.566 156.036 126.076 154.136C131.18 147.708 126.963 144.309 121.353 143.817C116.072 143.353 101.82 153.769 100.069 155.106L88.5454 154.858Z"
@@ -943,9 +943,9 @@ export const WalletPageIllustration = ({ width, height }) => {
 //             <path
 //                d="M308.391 167.463L13.1559 168.829"
 //                stroke="#2E186A"
-//                stroke-width="1.17091"
-//                stroke-linecap="round"
-//                stroke-linejoin="round"
+//                strokeWidth="1.17091"
+//                strokeLinecap="round"
+//                strokeLinejoin="round"
 //             />
 //          </g>
 //          <path
@@ -971,16 +971,16 @@ export const WalletPageIllustration = ({ width, height }) => {
 //          <path
 //             d="M248.619 284.364H261.744"
 //             stroke="#059669"
-//             stroke-width="1.27273"
-//             stroke-linecap="round"
-//             stroke-linejoin="round"
+//             strokeWidth="1.27273"
+//             strokeLinecap="round"
+//             strokeLinejoin="round"
 //          />
 //          <path
 //             d="M256.375 278.994L261.745 284.363L256.375 289.732"
 //             stroke="#059669"
-//             stroke-width="1.27273"
-//             stroke-linecap="round"
-//             stroke-linejoin="round"
+//             strokeWidth="1.27273"
+//             strokeLinecap="round"
+//             strokeLinejoin="round"
 //          />
 //          <defs>
 //             <filter
