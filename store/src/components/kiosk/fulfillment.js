@@ -1,13 +1,12 @@
-import React, { useState, useRef, useEffect } from 'react'
-import { Button, Drawer } from 'antd'
+import React, { useState } from 'react'
+import { Button } from 'antd'
 import { useCart, useTranslation } from '../../context'
 import { DineInIcon, TakeOutIcon } from '../../assets/icons'
 import { useConfig } from '../../lib'
 import moment from 'moment'
 import { get_env, isDateValidInRRule, isClient } from '../../utils'
-import { DineInTableSelection } from './component'
-import { ArrowLeftIconBG } from '../../assets/icons/ArrowLeftWithBG'
-import { BackSpaceIcon } from '../../assets/icons/BackSpaceIcon'
+import { DineInTableSelection, PhoneNumberTunnel } from './component'
+import tw from 'twin.macro'
 
 export const FulfillmentSection = props => {
    const { config, setCurrentPage } = props
@@ -23,7 +22,6 @@ export const FulfillmentSection = props => {
    const [showDineInTableSelection, setShowDineInTableSelection] =
       useState(false)
    const [visible, setVisible] = useState(false)
-   const [number, setNumber] = useState('')
    React.useEffect(() => {
       // check is there any recurrence available or not
       // if available then check that store is available for current day and time
@@ -282,12 +280,10 @@ export const FulfillmentSection = props => {
             config={config}
             onConfirmClick={onTableSelectionConfirmClick}
          />
-         <PhoneNumber
+         <PhoneNumberTunnel
             config={config}
             visible={visible}
-            number={number}
             setVisible={setVisible}
-            setNumber={setNumber}
             setCurrentPage={setCurrentPage}
          />
       </div>
@@ -459,156 +455,5 @@ const FulfillmentOptionCustom = props => {
             {t(buttonText)}
          </span>
       </div>
-   )
-}
-
-const PhoneNumber = ({
-   config,
-   visible,
-   setVisible,
-   number,
-   setNumber,
-   setCurrentPage,
-}) => {
-   const phoneNumberInputRef = useRef()
-   const [isBackspace, setIsBackspace] = useState(false)
-   const { t } = useTranslation()
-
-   useEffect(() => {
-      const show =
-         config?.phoneNoScreenSettings?.phoneNumberHiddenText.value || '*'
-      const hidePhoneNumber =
-         config?.phoneNoScreenSettings?.visibilityOfPhoneNumber.value ?? false
-
-      let phoneNumberlen = number.length
-
-      if (phoneNumberInputRef.current) {
-         if (phoneNumberlen) {
-            if (hidePhoneNumber) {
-               if (!isBackspace) {
-                  phoneNumberInputRef.current.value =
-                     show.repeat(phoneNumberlen - 1) +
-                     number[phoneNumberlen - 1]
-                  setTimeout(() => {
-                     phoneNumberInputRef.current.value =
-                        show.repeat(phoneNumberlen)
-                  }, 500)
-               } else {
-                  phoneNumberInputRef.current.value =
-                     show.repeat(phoneNumberlen)
-                  setIsBackspace(false)
-               }
-            } else {
-               phoneNumberInputRef.current.value = number
-            }
-         } else {
-            phoneNumberInputRef.current.value = ''
-            setIsBackspace(false)
-         }
-      }
-   }, [number])
-
-   return (
-      <Drawer
-         title={t('Enter Phone Number')}
-         placement={'right'}
-         width={'100%'}
-         onClose={() => setVisible(false)}
-         visible={visible}
-         style={{ zIndex: '9999' }}
-         extra={
-            <button
-               onClick={() => {
-                  setVisible(false)
-                  isClient && localStorage.setItem('phone', '2222222222')
-                  if (
-                     isClient &&
-                     localStorage.getItem('fulfillmentType') !==
-                        'ONDEMAND_DINEIN'
-                  ) {
-                     setCurrentPage('menuPage')
-                  }
-               }}
-               className="hern-kiosk__phone-number-drawer__skip-btn"
-            >
-               Skip
-            </button>
-         }
-         className="hern-kiosk__phone-number-drawer"
-         closeIcon={
-            <ArrowLeftIconBG bgColor="var(--hern-primary-color)" variant="sm" />
-         }
-      >
-         <div className="hern-kiosk__phone-number-drawer__content">
-            <div className="hern-kiosk__phone-number-drawer__header">
-               <h1>
-                  {t(
-                     config?.phoneNoScreenSettings?.title?.value ||
-                        'Want to Get update about your Order Details?'
-                  )}
-               </h1>
-               <p>
-                  {t(
-                     config?.phoneNoScreenSettings?.description?.value ||
-                        'Enter Your Mobile Number & Get Details On WhatsApp'
-                  )}
-               </p>
-            </div>
-            <div className="hern-kiosk__phone-number-drawer__number">
-               <div className="hern-kiosk__phone-number-drawer__number__input">
-                  <input
-                     ref={phoneNumberInputRef}
-                     type="text"
-                     placeholder="Phone number"
-                  />
-               </div>
-
-               <div className="hern-kiosk__number-pad">
-                  <div onClick={() => setNumber(number + '1')}>1</div>
-                  <div onClick={() => setNumber(number + '2')}>2</div>
-                  <div onClick={() => setNumber(number + '3')}>3</div>
-                  <div onClick={() => setNumber(number + '4')}>4</div>
-                  <div onClick={() => setNumber(number + '5')}>5</div>
-                  <div onClick={() => setNumber(number + '6')}>6</div>
-                  <div onClick={() => setNumber(number + '7')}>7</div>
-                  <div onClick={() => setNumber(number + '8')}>8</div>
-                  <div onClick={() => setNumber(number + '9')}>9</div>
-                  <div onClick={() => setNumber('')}>
-                     <span className="hern-kiosk__phone-number-drawer__number__clear-btn">
-                        Clear
-                     </span>
-                  </div>
-                  <div onClick={() => setNumber(number + '0')}>0</div>
-                  <div
-                     onClick={() => {
-                        setNumber(number.slice(0, -1))
-                        setIsBackspace(true)
-                     }}
-                  >
-                     <BackSpaceIcon />
-                  </div>
-               </div>
-               <button
-                  onClick={() => {
-                     isClient &&
-                        number.length > 0 &&
-                        localStorage.setItem('phone', number)
-                     setVisible(false)
-                     if (
-                        isClient &&
-                        localStorage.getItem('fulfillmentType') !==
-                           'ONDEMAND_DINEIN'
-                     ) {
-                        setCurrentPage('menuPage')
-                     }
-                  }}
-                  disabled={number.length < 10}
-                  className="hern-kiosk__phone-number-drawer__number__proceed-btn"
-               >
-                  {t('Proceed')}
-               </button>
-            </div>
-         </div>
-      </Drawer>
    )
 }

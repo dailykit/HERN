@@ -26,3 +26,10 @@ export const BRAND_CUSTOMER_AND_DEVICE_ID = `
       }
    }
 `
+export const BRAND_CUSTOMER = `
+query MyQuery($brandId: Int_comparison_exp!, $phoneNumber: String_comparison_exp!) {
+   brandCustomers(where: {brandId: $brandId, customer: {platform_customer: {phoneNumber: $phoneNumber}}}) {
+     keycloakId
+   }
+ } 
+`

@@ -5,7 +5,7 @@ export const INSERT_CUSTOMER = `
       }
    }
 `
-export const INSERT_BRAND_CUSTOMER = `
+export const CREATE_CUSTOMER = `
 mutation createCustomer($object: crm_customer_insert_input!) {
    createCustomer(object: $object) {
       id
@@ -22,4 +22,12 @@ export const INSERT_BRAND_CUSTOMER_ID_DEVICE_ID = `
          mobileDeviceId
       }
    }
+`
+export const INSERT_BRAND_CUSTOMER = `
+mutation INSERT_BRAND_CUSTOMER($object: crm_brand_customer_insert_input!) {
+   createBrandCustomer(object: $object) {
+     keycloakId
+     id
+   }
+ }
 `

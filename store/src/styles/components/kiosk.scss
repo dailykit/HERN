@@ -376,8 +376,8 @@
 }
 .hern-kiosk__menu-header-veg-switch {
    display: flex;
-   justify-content: space-between;
-   padding-top: 12px;
+   gap: 12px;
+   align-items: center;
    .ant-switch {
       margin-top: 5px;
    }
@@ -468,10 +468,26 @@
    height: 9em;
    background: transparent;
 }
-
+.hern-kiosk__menu-header--lg {
+   padding: 0 40px 0 24px;
+   .hern-kiosk__menu-header-row {
+      .hern-kiosk__menu-header-veg-switch {
+         grid-column: 1/2;
+      }
+      .hern-kiosk__menu-header-col-1 {
+         grid-column: 2/6;
+      }
+   }
+}
 .hern-kiosk__menu-header-row {
    height: 100%;
+   display: grid;
+   grid-template-columns: repeat(6, 1fr);
+   .hern-kiosk__menu-header-col-1 {
+      grid-column: 1/6;
+   }
 }
+
 .hern-kiosk__menu-header-heading {
    text-align: center;
    font-size: 3.5em;
@@ -541,9 +557,8 @@
 // product
 .hern-kiosk__menu-product {
    background-color: #ffffff;
-   // filter: drop-shadow(0px 2.64912px 13.2456px rgba(0, 107, 177, 0.4));
-   // filter: drop-shadow(0px 0.64912px 3.2456px rgba(0, 107, 177, 0.4));
-   height: 26em;
+   height: 100%;
+   min-height: 26em;
    padding: 0.5em;
    border-radius: 0.5em;
    position: relative;
@@ -590,6 +605,7 @@
 .hern-kiosk__menu-product-content {
    display: flex;
    flex-direction: column;
+   margin-top: 6px;
 }
 .hern-kiosk__menu-product-name {
    font-size: 1.3em;
@@ -598,6 +614,7 @@
    gap: 8px;
    > svg {
       transform: translateY(5px);
+      min-width: fit-content;
    }
 }
 .hern-kiosk__menu-product-description {
@@ -608,6 +625,7 @@
 }
 .hern-kiosk__menu-product-price {
    padding-top: 5px;
+   font-size: 20px;
 }
 .hern-kiosk__kiosk-button {
    background: linear-gradient(90deg, #ffd45f -3.04%, #f7b502 104.56%);
@@ -1163,8 +1181,8 @@
 }
 //Simple cart variant style
 .hern-kiosk__cart-count--simple {
-   left: 96px !important;
-   top: -8px !important;
+   left: 90px !important;
+   top: -2px !important;
    .hern-kiosk__cart-item-badge {
       background-color: var(--hern-primary-color);
       height: 16px;
@@ -1505,6 +1523,7 @@
    display: block;
    padding: 0.5rem 60px;
    margin-bottom: 60px;
+   position: relative;
    > input {
       display: block;
       width: 100%;
@@ -1518,6 +1537,14 @@
       font-weight: 600;
       color: #202020;
    }
+}
+.hern-kiosk__phone-number-input-toggle-button {
+   position: absolute;
+   top: 0;
+   right: 6rem;
+   display: flex;
+   height: 100%;
+   align-items: center;
 }
 .hern-kiosk__phone-number-drawer__content {
    display: flex;

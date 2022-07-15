@@ -360,7 +360,8 @@ export const KioskProduct = props => {
          productData.productOptions.find(x => x.isPublished && x.isAvailable)
       )
    }, [productData, isProductOutOfStock])
-
+   const showModifierPopupAlways =
+      config?.modifierPopUpSettings?.showPopupAlways?.value ?? false
    const handelAddToCartClick = () => {
       // product availability
       if (productData.isAvailable) {
@@ -369,13 +370,19 @@ export const KioskProduct = props => {
                (productData.productOptions.length > 0 &&
                   productData.isPopupAllowed) ||
                (addRelatedProductToCart &&
-                  productData?.relatedProductIds?.ids.length > 0)
+                  productData?.relatedProductIds?.ids.length > 0) ||
+               showModifierPopupAlways
             ) {
                const availableProductOptions =
                   productData.productOptions.filter(
                      option => option.isAvailable && option.isPublished
                   ).length
-               if (availableProductOptions > 0 || addRelatedProductToCart) {
+
+               if (
+                  availableProductOptions > 0 ||
+                  addRelatedProductToCart ||
+                  showModifierPopupAlways
+               ) {
                   setShowModifier(true)
                }
             } else {
@@ -513,8 +520,9 @@ export const KioskProduct = props => {
                            {productData.additionalText}
                         </span>
                      )}
+                  </div>
+                  <div style={{ marginTop: 'auto' }}>
                      <span className="hern-kiosk__menu-product-price">
-                        {/* <sup></sup> */}
                         {formatCurrency(
                            getPriceWithDiscount(
                               productData.price,
@@ -526,112 +534,121 @@ export const KioskProduct = props => {
                               )
                         )}
                      </span>
-                  </div>
-                  {availableQuantityInCart === 0 ? (
-                     showAddToCartButton ? (
-                        <KioskButton
-                           onClick={() => {
-                              // setShowModifier(true)
-                              handelAddToCartClick()
-                           }}
-                           disabled={isProductOutOfStock}
-                           buttonConfig={config.kioskSettings.buttonSettings}
-                        >
-                           <span
-                              style={{
-                                 ...(config?.menuSettings
-                                    ?.productAddToCartButton?.fontWeight
-                                    ?.value && {
-                                    fontWeight:
-                                       config?.menuSettings
+                     <div style={{ width: '100%' }}>
+                        {availableQuantityInCart === 0 ? (
+                           showAddToCartButton ? (
+                              <KioskButton
+                                 onClick={() => {
+                                    // setShowModifier(true)
+                                    handelAddToCartClick()
+                                 }}
+                                 disabled={isProductOutOfStock}
+                                 buttonConfig={
+                                    config.kioskSettings.buttonSettings
+                                 }
+                                 style={{
+                                    width: '100%',
+                                 }}
+                              >
+                                 <span
+                                    style={{
+                                       ...(config?.menuSettings
                                           ?.productAddToCartButton?.fontWeight
-                                          ?.value,
-                                 }),
-                                 ...(config?.menuSettings
-                                    ?.productAddToCartButton?.fontSize
-                                    ?.value && {
-                                    fontSize:
-                                       config?.menuSettings
-                                          ?.productAddToCartButton?.fontSize
-                                          ?.value,
-                                 }),
-                              }}
-                           >
-                              {isStoreAvailable ? (
-                                 isProductOutOfStock ? (
-                                    t(
-                                       config?.menuSettings
-                                          ?.productAddToCartButton
-                                          ?.outOfStockLabel?.value ||
-                                          'Out Of Stock'
-                                    )
-                                 ) : (
-                                    <div
-                                       style={{
-                                          display: 'flex',
-                                          alignItems: 'center',
-                                          justifyContent: 'center',
-                                       }}
-                                    >
-                                       <span>
-                                          {t(
+                                          ?.value && {
+                                          fontWeight:
                                              config?.menuSettings
                                                 ?.productAddToCartButton
-                                                ?.addToCartLabel?.value ||
-                                                'Add To Cart'
-                                          )}
-                                       </span>
+                                                ?.fontWeight?.value,
+                                       }),
+                                       ...(config?.menuSettings
+                                          ?.productAddToCartButton?.fontSize
+                                          ?.value && {
+                                          fontSize:
+                                             config?.menuSettings
+                                                ?.productAddToCartButton
+                                                ?.fontSize?.value,
+                                       }),
+                                    }}
+                                 >
+                                    {isStoreAvailable ? (
+                                       isProductOutOfStock ? (
+                                          t(
+                                             config?.menuSettings
+                                                ?.productAddToCartButton
+                                                ?.outOfStockLabel?.value ||
+                                                'Out Of Stock'
+                                          )
+                                       ) : (
+                                          <div
+                                             style={{
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                justifyContent: 'center',
+                                             }}
+                                          >
+                                             <span>
+                                                {t(
+                                                   config?.menuSettings
+                                                      ?.productAddToCartButton
+                                                      ?.addToCartLabel?.value ||
+                                                      'Add To Cart'
+                                                )}
+                                             </span>
 
-                                       {config?.menuSettings
-                                          ?.productAddToCartButton?.showIcon
-                                          ?.value && (
-                                          <>
-                                             &nbsp;
-                                             <BiPlus size={16} />
-                                          </>
-                                       )}
-                                    </div>
-                                 )
-                              ) : (
-                                 t(
-                                    config?.menuSettings?.productAddToCartButton
-                                       ?.viewProductLabel?.value ||
-                                       'View Product'
-                                 )
-                              )}
-                           </span>
-                        </KioskButton>
-                     ) : null
-                  ) : (
-                     <KioskCounterButton
-                        config={config}
-                        onMinusClick={() => {
-                           const idsAv = combinedCartItems
-                              .filter(x => x.productId === productData.id)
-                              .map(x => x.ids)
-                              .flat()
-                           onMinusClick([idsAv[idsAv.length - 1]])
-                        }}
-                        onPlusClick={() => {
-                           if (
-                              productData.productOptions.length > 0 &&
-                              productData.isPopupAllowed
-                           ) {
-                              setShowChooseIncreaseType(true)
-                           } else {
-                              if (
-                                 addRelatedProductToCart &&
-                                 productData?.relatedProductIds?.ids.length > 0
-                              ) {
-                                 setShowModifier(true)
-                              } else {
-                                 addToCart(productData.defaultCartItem, 1)
-                              }
-                           }
-                        }}
-                        quantity={availableQuantityInCart}
-                     />
-                  )}
+                                             {config?.menuSettings
+                                                ?.productAddToCartButton
+                                                ?.showIcon?.value && (
+                                                <>
+                                                   &nbsp;
+                                                   <BiPlus size={16} />
+                                                </>
+                                             )}
+                                          </div>
+                                       )
+                                    ) : (
+                                       t(
+                                          config?.menuSettings
+                                             ?.productAddToCartButton
+                                             ?.viewProductLabel?.value ||
+                                             'View Product'
+                                       )
+                                    )}
+                                 </span>
+                              </KioskButton>
+                           ) : null
+                        ) : (
+                           <KioskCounterButton
+                              config={config}
+                              onMinusClick={() => {
+                                 const idsAv = combinedCartItems
+                                    .filter(x => x.productId === productData.id)
+                                    .map(x => x.ids)
+                                    .flat()
+                                 onMinusClick([idsAv[idsAv.length - 1]])
+                              }}
+                              onPlusClick={() => {
+                                 if (
+                                    productData.productOptions.length > 0 &&
+                                    productData.isPopupAllowed
+                                 ) {
+                                    setShowChooseIncreaseType(true)
+                                 } else {
+                                    if (
+                                       addRelatedProductToCart &&
+                                       productData?.relatedProductIds?.ids
+                                          .length > 0
+                                    ) {
+                                       setShowModifier(true)
+                                    } else {
+                                       addToCart(productData.defaultCartItem, 1)
+                                    }
+                                 }
+                              }}
+                              quantity={availableQuantityInCart}
+                           />
+                        )}
+                     </div>
+                  </div>
                </Content>
             </Layout>
          </div>

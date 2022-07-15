@@ -15,6 +15,7 @@ import { HernLazyImage } from '../../utils/hernImage'
 import KioskButton from './component/button'
 import { BiChevronDown, BiChevronUp } from 'react-icons/bi'
 import classNames from 'classnames'
+import tw from 'twin.macro'
 
 const { Content, Sider, Header, Footer } = Layout
 
@@ -243,15 +244,12 @@ const KioskMenu = props => {
          <Content>
             <Layout style={{ height: '100%', backgroundColor: '#fff' }}>
                <Header
-                  style={{
-                     ...(config?.menuSettings?.header?.height?.value && {
-                        height: config.menuSettings.header.height.value,
-                     }),
-                  }}
                   theme={'light'}
-                  className="hern-kiosk__menu-header"
+                  className={classNames('hern-kiosk__menu-header', {
+                     'hern-kiosk__menu-header--lg': true,
+                  })}
                >
-                  <Row
+                  <div
                      style={{
                         ...(config?.menuSettings?.header?.alignItems?.value
                            ?.value && {
@@ -262,10 +260,7 @@ const KioskMenu = props => {
                      className="hern-kiosk__menu-header-row"
                   >
                      {config.menuSettings?.showVegToggle?.value && (
-                        <Col
-                           span={4}
-                           className="hern-kiosk__menu-header-veg-switch"
-                        >
+                        <div className="hern-kiosk__menu-header-veg-switch">
                            <span className="hern-kiosk__menu-header-veg-text">
                               {t('Veg')}
                            </span>
@@ -274,24 +269,11 @@ const KioskMenu = props => {
                                  setShowVegMenuOnly(checked)
                               }}
                            />
-                           {/* <button
-                           onClick={checked => {
-                              setShowVegMenuOnly(prev => !prev)
-                           }}
-                        >
-                           veg
-                        </button> */}
-                        </Col>
+                        </div>
                      )}
-                     <Col
-                        span={
-                           config.menuSettings?.showVegToggle?.value ? 14 : 18
-                        }
-                        className="hern-kiosk__menu-header-col-1"
-                     >
-                        <Row>
-                           <Col
-                              span={24}
+                     <div className="hern-kiosk__menu-header-col-1">
+                        <div>
+                           <div
                               className="hern-kiosk__menu-header-heading"
                               style={{
                                  color: `${config.kioskSettings.theme.primaryColor.value}`,
@@ -304,12 +286,11 @@ const KioskMenu = props => {
                               }}
                            >
                               {t('Menu')}
-                           </Col>
-                        </Row>
-                     </Col>
+                           </div>
+                        </div>
+                     </div>
                      {isStoreAvailable && (
-                        <Col
-                           span={6}
+                        <div
                            className="hern-kiosk__menu-header-col-2"
                            onClick={() => {
                               setCurrentPage('cartPage')
@@ -324,6 +305,9 @@ const KioskMenu = props => {
                                        .textColor.value
                                  }
                                  variant="simple"
+                                 count={
+                                    cart?.cartItems_aggregate?.aggregate?.count
+                                 }
                               />
                            ) : (
                               <KioskButton
@@ -351,37 +335,41 @@ const KioskMenu = props => {
                               </KioskButton>
                            )}
 
-                           <div
-                              style={{
-                                 position: 'absolute',
-                                 top: '-1.2em',
-                                 right: '-17px',
-                              }}
-                              className={classNames({
-                                 'hern-kiosk__cart-count--simple':
-                                    config?.menuSettings?.cartButton?.variant
-                                       ?.value?.value === 'simple',
-                              })}
-                           >
-                              {cart?.cartItems_aggregate?.aggregate?.count >
-                                 0 && (
-                                 <span className="hern-kiosk__cart-item-badge">
-                                    {
-                                       cart?.cartItems_aggregate?.aggregate
-                                          ?.count
-                                    }
-                                 </span>
-                              )}
-                           </div>
+                           {config?.menuSettings?.cartButton?.variant?.value
+                              ?.value !== 'simple' && (
+                              <div
+                                 style={{
+                                    position: 'absolute',
+                                    top: '-1.2em',
+                                    right: '-17px',
+                                 }}
+                                 className={classNames({
+                                    'hern-kiosk__cart-count--simple':
+                                       config?.menuSettings?.cartButton?.variant
+                                          ?.value?.value === 'simple',
+                                 })}
+                              >
+                                 {cart?.cartItems_aggregate?.aggregate?.count >
+                                    0 && (
+                                    <span className="hern-kiosk__cart-item-badge">
+                                       {
+                                          cart?.cartItems_aggregate?.aggregate
+                                             ?.count
+                                       }
+                                    </span>
+                                 )}
+                              </div>
+                           )}
                            {cart?.cartItems_aggregate?.aggregate?.count > 0 &&
                               showCartIconToolTip && (
                                  <div
                                     style={{
-                                       left:
-                                          config?.menuSettings?.toolTip?.variant
-                                             ?.value?.value === 'square'
-                                             ? '0'
-                                             : 'auto',
+                                       ...(config?.menuSettings?.toolTip
+                                          ?.variant?.value?.value ===
+                                          'square' && {
+                                          left: '-32px',
+                                          top: '32px',
+                                       }),
                                     }}
                                     className="hern-kiosk__cart-tool-tip"
                                  >
@@ -439,9 +427,9 @@ const KioskMenu = props => {
                                     ></div>
                                  </div>
                               )}
-                        </Col>
+                        </div>
                      )}
-                  </Row>
+                  </div>
                </Header>
                <Content
                   className="hern-kiosk__menu-product-list"
