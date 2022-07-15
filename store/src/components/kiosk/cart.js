@@ -373,7 +373,8 @@ const CartCard = props => {
    const [showChooseIncreaseType, setShowChooseIncreaseType] = useState(false) // show I'll choose or repeat last one popup
    const [showModifier, setShowModifier] = useState(false) // show modifier popup
    const [forRepeatLastOne, setForRepeatLastOne] = useState(false) // to run repeatLastOne fn in PRODUCTS_ONE query
-
+   const [isConfirmationForDeleteCartItemModalVisible, 
+      setConfirmationForDeleteCartItemModalVisible] = useState(false);
    let totalPrice = 0
    let totalDiscount = 0
    const price = product => {
@@ -1003,9 +1004,59 @@ const CartCard = props => {
                      title="Delete"
                      size={50}
                      onClick={() => {
-                        removeCartItems(productData.ids)
+                        if(config?.cartCardSettings?.deleteConfirmation?.value || false){
+                           setConfirmationForDeleteCartItemModalVisible(true)
+                        } else{
+                           removeCartItems(productData.ids)
+                        }
                      }}
                   />
+                  { isConfirmationForDeleteCartItemModalVisible &&
+                     (config?.cartCardSettings?.deleteConfirmation?.value || false) &&
+                     <Modal
+                        title={formatMessage({ id: 'Are you sure you want to remove this product from your cart' })}
+                        visible={isConfirmationForDeleteCartItemModalVisible}
+                        centered={true}
+                        onCancel={() => {
+                           setConfirmationForDeleteCartItemModalVisible(false)
+                        }}
+                        closable={false}
+                        footer={null}
+                     >
+                        <div className="hern-kiosk__cart-item-delete-confirmation-button-div">
+                           <Button
+                              variant="outline"
+                              onClick={() => {
+                                 setConfirmationForDeleteCartItemModalVisible(false)
+                              }}
+                              style={{ margin: "2px",
+                                       fontSize: "20px", 
+                                       border: `2px solid ${config?.kioskSettings?.theme?.primaryColor?.value ?? "black"}`, 
+                                       paddingBottom: "2.5rem",
+                                       width: "40%",
+                                       paddingTop: "0.8rem"
+                                    }}
+                           >
+                              {t(`Cancel`)}
+                           </Button>
+                           <Button
+                              onClick={() => {
+                                 setConfirmationForDeleteCartItemModalVisible(false)
+                                 removeCartItems(productData.ids)
+                              }}
+                              style={{fontSize: "20px", 
+                                       backgroundColor: config?.kioskSettings?.theme?.primaryColor?.value ?? "black", 
+                                       color:"white", 
+                                       paddingBottom: "2.5rem",
+                                       width: "40%",
+                                       paddingTop: "0.8rem"
+                                    }}
+                           >
+                              {t('Yes, Remove')}
+                           </Button>
+                        </div>
+                     </Modal> 
+                  }
                </div>
                <div
                   className="hern-kiosk__cart-cards-price"
