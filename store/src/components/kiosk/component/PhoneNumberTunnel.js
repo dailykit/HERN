@@ -5,6 +5,7 @@ import styled from 'styled-components'
 import tw from 'twin.macro'
 import { ArrowLeftIconBG, BackSpaceIcon } from '../../../assets/icons'
 import { useTranslation } from '../../../context'
+import { useConfig } from '../../../lib'
 import { isClient } from '../../../utils'
 
 export const PhoneNumberTunnel = ({
@@ -20,6 +21,7 @@ export const PhoneNumberTunnel = ({
    const [isEyeButtonOn, toggleEyeButton] = useState(true)
    const [isBackspace, setIsBackspace] = useState(false)
    const [skipModal, setSkipModal] = useState(false)
+   const { currentPage } = useConfig()
 
    const { t } = useTranslation()
    const hidePhoneNumber =
@@ -208,6 +210,7 @@ export const PhoneNumberTunnel = ({
                         setVisible(false)
                         if (
                            isClient &&
+                           currentPage === 'fulfillmentPage' &&
                            localStorage.getItem('fulfillmentType') !==
                               'ONDEMAND_DINEIN'
                         ) {
@@ -247,7 +250,7 @@ export const PhoneNoWarningModal = ({
    message,
 }) => {
    const { t } = useTranslation()
-
+   const { currentPage } = useConfig()
    return (
       <StyledModal
          title={HtmlParser(message)}
@@ -264,6 +267,7 @@ export const PhoneNoWarningModal = ({
                isClient && localStorage.setItem('phone', '2222222222')
                if (
                   isClient &&
+                  currentPage === 'fulfillmentPage' &&
                   localStorage.getItem('fulfillmentType') !== 'ONDEMAND_DINEIN'
                ) {
                   setCurrentPage('menuPage')

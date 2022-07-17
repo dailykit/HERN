@@ -33,14 +33,14 @@ export const AddressIcon = ({ size = 24, ...props }) => (
          stroke="white"
          strokeWidth="5"
          strokeLinecap="round"
-         stroke-linejoin="round"
+         strokeLinejoin="round"
       />
       <path
          d="M152.875 124.438C152.875 145.531 129.438 161.938 129.438 161.938C129.438 161.938 106 145.531 106 124.438C106 118.221 108.469 112.26 112.865 107.865C117.26 103.469 123.221 101 129.438 101C135.654 101 141.615 103.469 146.01 107.865C150.406 112.26 152.875 118.221 152.875 124.438V124.438Z"
          stroke="white"
          strokeWidth="5"
          strokeLinecap="round"
-         stroke-linejoin="round"
+         strokeLinejoin="round"
       />
    </svg>
 )
