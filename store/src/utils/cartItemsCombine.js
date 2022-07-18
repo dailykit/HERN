@@ -11,8 +11,8 @@ export const combineCartItems = cartItems => {
    const cartItemRootIds = cartItems.map(item => item.cartItemId)
    const cartItemsWithoutId = cartItems.map(item => {
       const updatedItem = JSON.parse(JSON.stringify(item))
-      delete updatedItem.cartItemId
-      delete updatedItem.created_at
+      // delete updatedItem.cartItemId
+      //delete updatedItem.created_at
       return updatedItem
    })
 
@@ -21,9 +21,13 @@ export const combineCartItems = cartItems => {
       let found = false
       for (const combinedItem of combinedItems) {
          const combinedItemIds = combinedItem.ids
-         const newCombinedItem = omit(combinedItem, 'ids')
-
-         if (isEqual(newCombinedItem, item)) {
+         const newCombinedItem = omit(combinedItem, [
+            'ids',
+            'cartItemId',
+            'created_at',
+         ])
+         const cartItem = omit(item, ['cartItemId', 'created_at'])
+         if (isEqual(newCombinedItem, cartItem)) {
             combinedItem.ids = [...combinedItemIds, cartItemRootIds[index]]
             found = true
             break
@@ -38,6 +42,8 @@ export const combineCartItems = cartItems => {
          })
       }
    })
-
-   return combinedItems
+   const sortedCombinedItems = combinedItems.sort(
+      (item1, item2) => item1.created_at - item2.created_at
+   )
+   return sortedCombinedItems
 }
