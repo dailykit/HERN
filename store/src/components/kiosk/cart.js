@@ -84,6 +84,11 @@ export const KioskCart = props => {
    }
    const showPhoneNoModal =
       config?.phoneNoScreenSettings?.askPhoneNumberOnCartPage?.value ?? false
+   const showNumberOfItemsOnCart =
+      config?.cartCardSettings?.showNumberOfItemsOnCart?.value || false
+   const labelForCartItemsList =
+      config?.cartCardSettings?.labelForCartItemsList?.value || 'REVIEW CART'
+
    const { setIsProcessingPayment, setIsPaymentInitiated, updatePaymentState } =
       usePayment()
    const SHOW_FREEBIE_MSG = get_env('SHOW_FREEBIE_MSG')
@@ -190,7 +195,22 @@ export const KioskCart = props => {
                   <Content style={{ backgroundColor: '#ffffff' }}>
                      <div className="hern-kiosk__cart-cards-container">
                         <div className="hern-kiosk__cart-cards-container-header">
-                           <span>{t('REVIEW ORDER')}</span>
+                           <div>
+                              <span>{t(labelForCartItemsList)}</span>
+                              {showNumberOfItemsOnCart &&
+                                 cart?.cartItems_aggregate?.aggregate?.count >
+                                    0 && (
+                                    <span>
+                                       &nbsp;(
+                                       {
+                                          cart?.cartItems_aggregate?.aggregate
+                                             ?.count
+                                       }
+                                       )
+                                    </span>
+                                 )}
+                           </div>
+
                            <span
                               style={{
                                  color: `${config.kioskSettings.theme.primaryColor.value}`,
