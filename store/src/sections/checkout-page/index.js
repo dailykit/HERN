@@ -165,7 +165,7 @@ export const Checkout = props => {
       )
    }
 
-   if (loading) return <Loader inline />
+   if (loading) return <Loader />
    return (
       <>
          {cart?.source === 'subscription' ? (
