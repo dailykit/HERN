@@ -18,6 +18,7 @@ import { CheckIcon } from '../../assets/icons'
 import { OCCURENCE_PRODUCTS_BY_CATEGORIES } from '../../graphql'
 import classNames from 'classnames'
 import moment from 'moment'
+import { HernLazyImage } from '../../utils/hernImage'
 const ReactPixel = isClient ? require('react-facebook-pixel').default : null
 
 export const Menu = () => {
@@ -317,6 +318,26 @@ const Product = ({ node, theme, isAdded, noProductImage, buildImageUrl }) => {
       dynamicTrans(languageTags)
    }, [currentLang])
 
+   const productImageSize = React.useMemo(() => {
+      const innerWidth = isClient ? window.innerWidth : ''
+      if (0 <= innerWidth && innerWidth <= 468) {
+         return {
+            width: 400,
+            height: 400,
+         }
+      } else if (469 <= innerWidth && innerWidth <= 900) {
+         return {
+            width: 450,
+            height: 450,
+         }
+      } else if (901 <= innerWidth) {
+         return {
+            width: 500,
+            height: 500,
+         }
+      }
+   }, [])
+
    if (!ProductIsPublished) {
       return null
    }
@@ -357,12 +378,10 @@ const Product = ({ node, theme, isAdded, noProductImage, buildImageUrl }) => {
                   autoplay={autoPlaySlider}
                >
                   {product.images.map(image => (
-                     <ReactImageFallback
-                        src={buildImageUrl('400x300', image)}
-                        fallbackImage={image}
-                        initialImage={<Loader />}
-                        alt={product.name}
-                        className="image__thumbnail"
+                     <HernLazyImage
+                        dataSrc={image}
+                        height={productImageSize.height}
+                        width={productImageSize.width}
                      />
                   ))}
                </Slide>
