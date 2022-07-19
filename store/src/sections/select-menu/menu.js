@@ -318,6 +318,8 @@ const Product = ({ node, theme, isAdded, noProductImage, buildImageUrl }) => {
       dynamicTrans(languageTags)
    }, [currentLang])
 
+   const maintainRatio = true
+
    const productImageSize = React.useMemo(() => {
       const innerWidth = isClient ? window.innerWidth : ''
       if (0 <= innerWidth && innerWidth <= 468) {
@@ -382,6 +384,10 @@ const Product = ({ node, theme, isAdded, noProductImage, buildImageUrl }) => {
                         dataSrc={image}
                         height={productImageSize.height}
                         width={productImageSize.width}
+                        className={classNames('hern-product-card__image', {
+                           'hern-product-card__image--aspect-ratio':
+                              maintainRatio,
+                        })}
                      />
                   ))}
                </Slide>
