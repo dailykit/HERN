@@ -15,7 +15,7 @@ export const AddressSection = () => {
    const { state, dispatch } = useDelivery()
    const { t, dynamicTrans, locale } = useTranslation()
    const [currentView, setCurrentView] = React.useState('address-list')
-   console.log('user and state on delivery==>', user, state)
+
    //Customers previously selected address
    React.useEffect(() => {
       if (
@@ -25,13 +25,13 @@ export const AddressSection = () => {
          const [address] = user?.platform_customer?.addresses
          addressSelection(address)
       }
-   }, [dispatch, user])
+   }, [dispatch])
 
    //Effect for setting current view to address form if there is no address
    React.useEffect(() => {
       if (isEmpty(user?.platform_customer?.addresses)) {
          setCurrentView('address-list')
-      } else if (!isEmpty(state?.address?.selected)) {
+      } else if (!isEmpty(state?.address)) {
          setCurrentView('selected-address')
       } else {
          setCurrentView('address-form')

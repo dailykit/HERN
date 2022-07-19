@@ -6,6 +6,7 @@ import ReactImageFallback from 'react-image-fallback'
 import { useToasts } from 'react-toast-notifications'
 import { useIntl } from 'react-intl'
 import * as Scroll from 'react-scroll'
+import { Slide } from 'react-slideshow-image'
 
 import { useMenu } from './state'
 import { useConfig } from '../../lib'
@@ -17,6 +18,7 @@ import { CheckIcon } from '../../assets/icons'
 import { OCCURENCE_PRODUCTS_BY_CATEGORIES } from '../../graphql'
 import classNames from 'classnames'
 import moment from 'moment'
+import { HernLazyImage } from '../../utils/hernImage'
 const ReactPixel = isClient ? require('react-facebook-pixel').default : null
 
 export const Menu = () => {
@@ -25,6 +27,8 @@ export const Menu = () => {
    const { t, dynamicTrans, locale } = useTranslation()
    const { state, brand, locationId, brandLocation } = useMenu()
    const { configOf, buildImageUrl, noProductImage } = useConfig()
+   const router = useRouter()
+   const route = router.route
 
    const argsForByLocation = React.useMemo(
       () => ({
@@ -103,9 +107,15 @@ export const Menu = () => {
          </main>
       )
    return (
-      <main style={{ overflow: 'auto' }}>
+      <main>
          {categories.length > 1 && (
-            <div className="hern-select-menu__category">
+            <div
+               className={
+                  route === '/[brand]/get-started/select-menu'
+                     ? 'hern-select-menu__category-two'
+                     : 'hern-select-menu__category'
+               }
+            >
                {categories.map(category => (
                   <Scroll.Link
                      to={category.name}
@@ -171,6 +181,8 @@ const Product = ({ node, theme, isAdded, noProductImage, buildImageUrl }) => {
    const { state, methods } = useMenu()
    const { t, dynamicTrans, locale } = useTranslation()
    const { formatMessage } = useIntl()
+   const autoPlaySlider = false
+   const slideRef = React.useRef()
 
    const openRecipe = () => {
       window.open(
@@ -261,9 +273,9 @@ const Product = ({ node, theme, isAdded, noProductImage, buildImageUrl }) => {
       name: node?.productOption?.product?.name || '',
       label: node?.productOption?.label || '',
       type: node?.productOption?.simpleRecipeYield?.simpleRecipe?.type,
-      image:
+      images:
          node?.productOption?.product?.assets?.images?.length > 0
-            ? node?.productOption?.product?.assets?.images[0]
+            ? node?.productOption?.product?.assets?.images
             : null,
       additionalText: node?.productOption?.product?.additionalText || '',
    }
@@ -306,6 +318,26 @@ const Product = ({ node, theme, isAdded, noProductImage, buildImageUrl }) => {
       dynamicTrans(languageTags)
    }, [currentLang])
 
+   const productImageSize = React.useMemo(() => {
+      const innerWidth = isClient ? window.innerWidth : ''
+      if (0 <= innerWidth && innerWidth <= 468) {
+         return {
+            width: 400,
+            height: 400,
+         }
+      } else if (469 <= innerWidth && innerWidth <= 900) {
+         return {
+            width: 450,
+            height: 450,
+         }
+      } else if (901 <= innerWidth) {
+         return {
+            width: 500,
+            height: 500,
+         }
+      }
+   }, [])
+
    if (!ProductIsPublished) {
       return null
    }
@@ -339,14 +371,20 @@ const Product = ({ node, theme, isAdded, noProductImage, buildImageUrl }) => {
                }
             }}
          >
-            {product.image ? (
-               <ReactImageFallback
-                  src={buildImageUrl('400x300', product.image)}
-                  fallbackImage={product.image}
-                  initialImage={<Loader />}
-                  alt={product.name}
-                  className="image__thumbnail"
-               />
+            {product.images ? (
+               <Slide
+                  ref={slideRef}
+                  infinite={autoPlaySlider}
+                  autoplay={autoPlaySlider}
+               >
+                  {product.images.map(image => (
+                     <HernLazyImage
+                        dataSrc={image}
+                        height={productImageSize.height}
+                        width={productImageSize.width}
+                     />
+                  ))}
+               </Slide>
             ) : (
                <img src={noProductImage} alt={product.name} />
             )}

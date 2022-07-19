@@ -77,7 +77,7 @@ const ContentWrapper = () => {
       }
    }
 
-   if (loading) return <Loader inline />
+   if (loading) return <Loader />
    if (isClient && !new URLSearchParams(location.search).get('id')) {
       return (
          <main className="hern-placing-order__main">
