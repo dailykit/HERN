@@ -83,6 +83,8 @@ const KioskMenu = props => {
    const { cart } = cartState
    const { isStoreAvailable } = useConfig()
    const sidebarRef = React.useRef()
+   const [isReverseScroll, setReverseScroll] = React.useState(false)
+   const [previousSelectedCategory, setPreviousSelectedCategory] = React.useState(-1)
 
    const scroll = scrollOffset => {
       sidebarRef.current.scrollTop += scrollOffset
@@ -112,6 +114,17 @@ const KioskMenu = props => {
       // changeCategory(e.key)
    }
    useEffect( ()=> {
+
+      if(previousSelectedCategory >= 0){
+         if(previousSelectedCategory > selectedCategory){
+            setReverseScroll(true)
+         } else {
+            setReverseScroll(false)
+         }
+      } else {
+         setReverseScroll(false)
+      }
+      setPreviousSelectedCategory(selectedCategory)
       const allDivs = document.querySelectorAll(".hern-kiosk__menu-page-product-category")
       console.log("AllDivs: ", allDivs)
       console.log("ScrollHeight: ", allDivs[selectedCategory].scrollHeight)
@@ -128,10 +141,26 @@ const KioskMenu = props => {
       // allDivs[selectedCategory].scroll(data.x, data.y)
       // allDivs[selectedCategory].scrollIntoView({block: "start"});
       // document.getElementById(`${selectedCategory}`).scrollIntoView({block: "start"})
-      document.getElementById("hern-kiosk-sidebar").scroll({
-         top: allDivs[selectedCategory].scrollHeight*(selectedCategory+1) - 200,
-         behavior: "smooth",
-      })
+      console.log("True/False", (selectedCategory > 3))
+      if(selectedCategory >= 3){
+
+         if(isReverseScroll && selectedCategory == 3){
+            document.getElementById("hern-kiosk-sidebar").scroll({
+               top: allDivs[selectedCategory].scrollHeight*(selectedCategory-2) -200,
+               behavior: "smooth",
+            }) 
+         } else {
+            console.log("It's true!")
+            document.getElementById("hern-kiosk-sidebar").scroll({
+               top: allDivs[selectedCategory].scrollHeight*(selectedCategory-2),
+               behavior: "smooth",
+            })
+         }
+      }
+      // document.getElementById("hern-kiosk-sidebar").scroll({
+      //    top: allDivs[selectedCategory].scrollHeight*(selectedCategory+1) - 200,
+      //    behavior: "smooth",
+      // })
       // document.getElementById("hern-kiosk-sidebar").scrollTo(data.x, (data.y - allDivs[selectedCategory].scrollHeight*(selectedCategory+1)))
    }, [selectedCategory])
    useEffect(() => {
