@@ -318,7 +318,14 @@ const PlansDetails = ({ selectedPlan, list, config, planViewConfig }) => {
                   - Include plateIllustration
                 */}
                   <span>
-                     <PlateIllustration />
+                     {selectedPlan.metaDetails?.icon ? (
+                        <img
+                           src={selectedPlan.metaDetails?.icon}
+                           style={{ height: '29px', width: '29px' }}
+                        />
+                     ) : (
+                        <PlateIllustration />
+                     )}
                   </span>
                   {selectedPlan.title}
                </p>
