@@ -719,7 +719,6 @@ export const KioskModifier = props => {
       //Adding the selected related product price with total price
       return selectedRelatedProductPrice + totalPrice * quantity
    }
-   console.log('#CPD', completeProductData)
    // used for add new product or edit product
    useEffect(() => {
       if (!isEmpty(completeProductData) && (forNewItem || edit)) {
