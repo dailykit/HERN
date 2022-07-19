@@ -111,6 +111,29 @@ const KioskMenu = props => {
       setSelectedCategory(e.key)
       // changeCategory(e.key)
    }
+   useEffect( ()=> {
+      const allDivs = document.querySelectorAll(".hern-kiosk__menu-page-product-category")
+      console.log("AllDivs: ", allDivs)
+      console.log("ScrollHeight: ", allDivs[selectedCategory].scrollHeight)
+      console.log("ScrollTop: ", allDivs[selectedCategory].offsetTop)
+      console.log("firstDiv: ", allDivs[0].getBoundingClientRect())
+      console.log("selectedDiv: ", allDivs[selectedCategory].getBoundingClientRect())
+      console.log("LastDiv: ", allDivs[11].getBoundingClientRect())
+      console.log("Div selected: ", allDivs[selectedCategory]);
+      // allDivs[selectedCategory].scroll({
+      //    top: allDivs[selectedCategory].scrollHeight,
+      //    behavior: "smooth",
+      // })
+      const data = allDivs[selectedCategory].getBoundingClientRect();
+      // allDivs[selectedCategory].scroll(data.x, data.y)
+      // allDivs[selectedCategory].scrollIntoView({block: "start"});
+      // document.getElementById(`${selectedCategory}`).scrollIntoView({block: "start"})
+      document.getElementById("hern-kiosk-sidebar").scroll({
+         top: allDivs[selectedCategory].scrollHeight*(selectedCategory+1) - 200,
+         behavior: "smooth",
+      })
+      // document.getElementById("hern-kiosk-sidebar").scrollTo(data.x, (data.y - allDivs[selectedCategory].scrollHeight*(selectedCategory+1)))
+   }, [selectedCategory])
    useEffect(() => {
       const languageTags = document.querySelectorAll(
          '[data-translation="true"]'
@@ -157,6 +180,7 @@ const KioskMenu = props => {
                theme={'light'}
                className="hern-kiosk__menu-category-side-bar"
                ref={sidebarRef}
+               id="hern-kiosk-sidebar"
                style={{
                   scrollBehavior: 'smooth',
                   height: config.menuSettings?.category?.showArrow?.value
@@ -183,6 +207,7 @@ const KioskMenu = props => {
                                     border: ` 4px solid ${config.kioskSettings.theme.primaryColor.value}`,
                                  }),
                               }}
+                              id={index}
                            >
                               <Scroll.Link
                                  containerId="hern-kiosk__menu-list"
