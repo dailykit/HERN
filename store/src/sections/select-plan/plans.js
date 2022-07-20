@@ -10,6 +10,7 @@ import { useTranslation, useUser } from '../../context'
 import { SkeletonPlan } from './skeletons'
 import { HelperBar } from '../../components'
 import { PlateIllustration } from '../../assets/icons/PlateIllustration'
+import { Loader } from '../../components'
 
 export const Plans = ({ config }) => {
    const { user } = useUser()
@@ -71,13 +72,7 @@ export const Plans = ({ config }) => {
          }
       },
    })
-   if (isLoading)
-      return (
-         <ul className="hern-plans__skeletons">
-            <SkeletonPlan />
-            <SkeletonPlan />
-         </ul>
-      )
+   if (isLoading) return <Loader />
    if (error) {
       setIsLoading(false)
       addToast('Something went wrong, please refresh the page!', {
@@ -323,7 +318,14 @@ const PlansDetails = ({ selectedPlan, list, config, planViewConfig }) => {
                   - Include plateIllustration
                 */}
                   <span>
-                     <PlateIllustration />
+                     {selectedPlan.metaDetails?.icon ? (
+                        <img
+                           src={selectedPlan.metaDetails?.icon}
+                           style={{ height: '29px', width: '29px' }}
+                        />
+                     ) : (
+                        <PlateIllustration />
+                     )}
                   </span>
                   {selectedPlan.title}
                </p>

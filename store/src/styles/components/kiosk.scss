@@ -939,13 +939,6 @@
 .hern-kiosk__cart-cards {
    overflow: auto;
    height: calc(100% - 5em);
-   &::-webkit-scrollbar {
-      width: 6px;
-   }
-   &::-webkit-scrollbar-thumb {
-      background: #e5f0f7;
-      border-radius: 4px;
-   }
 }
 .hern-kiosk__cart-card {
    // display: flex;
@@ -1020,7 +1013,7 @@
 .hern-kiosk__cart-item-delete-confirmation-modal {
    .ant-modal-content {
       padding: 1rem;
-      border-radius: .5rem;
+      border-radius: 0.5rem;
    }
    .ant-modal-title {
       font-size: 26px;
@@ -1033,7 +1026,7 @@
 }
 .hern-kiosk__cart-page-footer {
    padding: 0;
-   height: calc(40em + 120px);
+   // height: calc(40em + 120px);
 }
 .hern-kiosk__cart-page-freebie {
    width: 100%;
@@ -1053,9 +1046,9 @@
    }
 }
 .hern-kiosk__cart-page-offer {
-   height: 16em;
+   height: auto;
    background: #ffffff;
-   padding: 0 2em;
+   padding: 1rem 2em;
 }
 .hern-kiosk__cart-page-price-detail {
    height: 15em;

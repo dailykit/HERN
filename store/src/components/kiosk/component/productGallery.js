@@ -15,6 +15,7 @@ import {
    ProductGalleryBG,
 } from '../../../assets/icons'
 import { HernLazyImage } from '../../../utils/hernImage'
+import { useToasts } from 'react-toast-notifications'
 
 export const ProductGalleryKiosk = ({ config }) => {
    const { brand, isConfigLoading, kioskDetails, configOf, brandLocation } =
@@ -176,6 +177,7 @@ export const ProductGalleryKiosk = ({ config }) => {
 const ProductGalleryCard = ({ product, config }) => {
    const { locale, dynamicTrans, t, direction } = useTranslation()
    const { addToCart } = useCart()
+   const { addToast } = useToasts()
 
    useEffect(() => {
       const languageTags = document.querySelectorAll(
@@ -246,6 +248,9 @@ const ProductGalleryCard = ({ product, config }) => {
             onClick={() => {
                if (product.isPublished && product.isAvailable) {
                   addToCart(product.defaultCartItem, 1)
+                  addToast('Successfully added to the cart !', {
+                     appearance: 'success',
+                  })
                }
             }}
             disabled={!product.isAvailable}
