@@ -7,7 +7,7 @@ export const TermsAndConditions = () => {
 
    const termsAndConditions =
       settings?.brand?.['Terms and Conditions']?.['Terms and Conditions']
-         ?.value ?? ''
+         ?.value || ''
 
    return (
       <div className="hern-terms-condition">

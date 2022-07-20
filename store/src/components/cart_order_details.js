@@ -195,8 +195,8 @@ const DeliveryTracking = ({ deliveryInfo, onMapLoad }) => {
                  ' ' +
                  deliveryInfo.assigned.driverInfo.driverLastName
                : '',
-            image: deliveryInfo.assigned?.driverInfo.driverPicture ?? '',
-            phone: deliveryInfo.assigned?.driverInfo?.driverPhone ?? '',
+            image: deliveryInfo.assigned?.driverInfo.driverPicture || '',
+            phone: deliveryInfo.assigned?.driverInfo?.driverPhone || '',
          },
          tailHeight: 72,
       },

@@ -12,7 +12,7 @@ export const getAnimationConfig = animationConfig => {
    if (animationConfig) {
       if (_hasIn(animationConfig, 'animation.isAnimationRequired')) {
          isAnimationRequired =
-            animationConfig.animation.isAnimationRequired.value ??
+            animationConfig.animation.isAnimationRequired.value ||
             animationConfig.animation.isAnimationRequired.default
       }
       if (isAnimationRequired) {
@@ -38,17 +38,17 @@ export const getAnimationConfig = animationConfig => {
          }
          if (_hasIn(animationConfig, 'animation.initiallyVisible')) {
             initiallyVisible =
-               animationConfig.animation.initiallyVisible.value ??
+               animationConfig.animation.initiallyVisible.value ||
                animationConfig.animation.initiallyVisible.default
          }
          if (_hasIn(animationConfig, 'animation.animateOnce')) {
             animateOnce =
-               animationConfig.animation.animateOnce.value ??
+               animationConfig.animation.animateOnce.value ||
                animationConfig.animation.animateOnce.default
          }
          if (_hasIn(animationConfig, 'animation.animatePreScroll')) {
             animatePreScroll =
-               animationConfig.animation.animatePreScroll.value ??
+               animationConfig.animation.animatePreScroll.value ||
                animationConfig.animation.animatePreScroll.default
          }
       }

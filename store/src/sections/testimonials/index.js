@@ -10,7 +10,7 @@ export const Testimonials = ({ config }) => {
    const variant = config?.display?.variant?.value?.value
    const header = config?.data?.title?.value
    const subHeading = config?.data?.subTitle?.value
-   const numberOfSliderToShow = +config?.data?.numberOfSlidesToShow?.value ?? 1
+   const numberOfSliderToShow = +config?.data?.numberOfSlidesToShow?.value || 1
 
    const carouselRef = React.createRef()
    const testimonialImageSize = React.useMemo(() => {

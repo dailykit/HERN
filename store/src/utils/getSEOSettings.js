@@ -8,11 +8,16 @@ export const getSEOSettings = async (domain, dataByRoute) => {
    // console.log(domain, "domain")
    //Passing page level SEO settings
    //********brandLevelSEOSettings
-   const { brands_brand_brandSetting: brandLevelSEOSettings } =
-      await client.request(BRAND_SETTINGS_BY_TYPE, {
-         domain,
-         type: 'seo',
-      })
+   const brandSettingsByType = await client.request(BRAND_SETTINGS_BY_TYPE, {
+      domain,
+      type: 'seo',
+   })
+
+   // brandSettingsByType consist original domain setting and default domain settings
+   const brandLevelSEOSettings =
+      brandSettingsByType.brandSettings.length > 0
+         ? brandSettingsByType.brandSettings
+         : brandSettingsByType.defaultBrandSettings
 
    //*******Page level SEO Settings
    const pageLevelSEOSettings =
@@ -28,12 +33,12 @@ export const getSEOSettings = async (domain, dataByRoute) => {
          )?.value?.[property]
       )
          ? pageLevelSEOSettings?.find(
-            setting => setting?.brandPageSetting?.identifier === type
-         )?.value?.[property]
+              setting => setting?.brandPageSetting?.identifier === type
+           )?.value?.[property]
          : brandLevelSEOSettings?.find(
-            setting => setting.meta.identifier === type
-         )?.value?.[property]
-      return value
+              setting => setting.meta.identifier === type
+           )?.value?.[property]
+      return value || null
    }
    // ACCESSING SETTINGS
    const settings = {
@@ -50,7 +55,7 @@ export const getSEOSettings = async (domain, dataByRoute) => {
       googleAnalyticsId: getSEOValue('googleAnalyticsId', 'googleAnalyticsId'),
       facebookPixelId: getSEOValue('fbPixelId', 'facebookPixelId'),
       additionalTags: getSEOValue('additionalTags', 'additionalTags'),
-      richResults: getSEOValue('richResults', 'richResults')
+      richResults: getSEOValue('richResults', 'richResults'),
    }
 
    return settings
@@ -88,7 +93,7 @@ export const getProductSEOSettings = async productId => {
             ?.product_productPageSettings[0]?.value?.[property]
       )
          ? ProductPageSettings?.find(setting => setting?.identifier === type)
-            ?.product_productPageSettings[0]?.value?.[property]
+              ?.product_productPageSettings[0]?.value?.[property]
          : defaultProductSettings?.[0]?.value?.[property]
       return value
    }
@@ -109,7 +114,7 @@ export const getProductSEOSettings = async productId => {
       googleAnalyticsId:
          getSEOValue('googleAnalyticsId', 'googleAnalyticsId') || null,
       facebookPixelId: getSEOValue('fbPixelId', 'facebookPixelId') || null,
-      richResults: getSEOValue('richResults', 'richResults') || null
+      richResults: getSEOValue('richResults', 'richResults') || null,
    }
 
    return settings

@@ -56,11 +56,11 @@ export const KioskHeader = props => {
                   onClick={handleArrowClick}
                   arrowColor={
                      config.kioskSettings?.header?.backButton?.arrowColor
-                        ?.value ?? '#fff'
+                        ?.value || '#fff'
                   }
                   bgColor={
                      config.kioskSettings?.header?.backButton?.arrowBgColor
-                        ?.value ?? config.kioskSettings.theme.primaryColor.value
+                        ?.value || config.kioskSettings.theme.primaryColor.value
                   }
                />
             )}

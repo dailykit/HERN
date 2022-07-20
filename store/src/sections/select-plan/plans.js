@@ -21,19 +21,19 @@ export const Plans = ({ config }) => {
    const { t, dynamicTrans, locale } = useTranslation()
 
    // Plan view Config
-   const planViewConfig = config?.display?.planView?.value?.value ?? 'card'
+   const planViewConfig = config?.display?.planView?.value?.value || 'card'
 
    //Config
    const headingConfig = {
-      heading: config?.data?.heading?.value ?? 'Select a plan',
-      color: config?.display?.heading?.color?.value ?? '#202020',
+      heading: config?.data?.heading?.value || 'Select a plan',
+      color: config?.display?.heading?.color?.value || '#202020',
       fontFamily:
-         config?.display?.heading?.fontFamily?.value[0]?.value ?? 'Lato',
-      fontSize: config?.display?.heading?.fontSize?.value ?? '1.5rem',
-      fontWeight: config?.display?.heading?.fontWeight?.value ?? 'bold',
+         config?.display?.heading?.fontFamily?.value[0]?.value || 'Lato',
+      fontSize: config?.display?.heading?.fontSize?.value || '1.5rem',
+      fontWeight: config?.display?.heading?.fontWeight?.value || 'bold',
       textAlign:
-         config?.display?.heading?.textAlign?.value[0]?.value ?? 'center',
-      spacing: config?.display?.heading?.spacing?.value ?? '32px 0',
+         config?.display?.heading?.textAlign?.value[0]?.value || 'center',
+      spacing: config?.display?.heading?.spacing?.value || '32px 0',
    }
 
    const currentLang = React.useMemo(() => locale, [locale])
