@@ -21,6 +21,8 @@ import isEmpty from 'lodash/isEmpty'
 import { useIntl } from 'react-intl'
 import { BiPlus } from 'react-icons/bi'
 import { RoundedCloseIcon } from '../../../assets/icons/RoundedCloseIcon'
+import styled from 'styled-components'
+
 const { Header, Content, Footer } = Layout
 
 export const KioskProduct = props => {
@@ -35,10 +37,13 @@ export const KioskProduct = props => {
       brandLocation,
    } = useConfig()
 
-   const { config, productData, setCurrentPage } = props
+   const { config, productData, setCurrentPage, mealProduct } = props
    const { t, locale, dynamicTrans } = useTranslation()
    const { formatMessage } = useIntl()
    const [showModifier, setShowModifier] = useState(false)
+   const [showConvertToMealProductModal, setShowConvertToMealProductModal] =
+      useState(false)
+   const [showConvertedProduct, setShowConvertedProduct] = useState(false)
    const [availableQuantityInCart, setAvailableQuantityInCart] = useState(0)
    const currentLang = React.useMemo(() => locale, [locale])
 
@@ -362,6 +367,8 @@ export const KioskProduct = props => {
    }, [productData, isProductOutOfStock])
    const showModifierPopupAlways =
       config?.modifierPopUpSettings?.showPopupAlways?.value ?? false
+   const showConvertPopup =
+      config?.menuSettings?.convertMealPopup?.showConvertPopup?.value ?? false
    const handelAddToCartClick = () => {
       // product availability
       if (productData.isAvailable) {
@@ -383,7 +390,14 @@ export const KioskProduct = props => {
                   addRelatedProductToCart ||
                   showModifierPopupAlways
                ) {
-                  setShowModifier(true)
+                  if (
+                     showConvertPopup &&
+                     !isNull(productData?.convertToMealProductId)
+                  ) {
+                     setShowConvertToMealProductModal(true)
+                  } else {
+                     setShowModifier(true)
+                  }
                }
             } else {
                addToCart(productData.defaultCartItem, 1)
@@ -638,7 +652,16 @@ export const KioskProduct = props => {
                                        productData?.relatedProductIds?.ids
                                           .length > 0
                                     ) {
-                                       setShowModifier(true)
+                                       if (
+                                          showConvertPopup &&
+                                          !isNull(
+                                             productData?.convertToMealProductId
+                                          )
+                                       ) {
+                                          setShowConvertToMealProductModal(true)
+                                       } else {
+                                          setShowModifier(true)
+                                       }
                                     } else {
                                        addToCart(productData.defaultCartItem, 1)
                                     }
@@ -695,7 +718,14 @@ export const KioskProduct = props => {
             >
                <KioskButton
                   onClick={() => {
-                     setShowModifier(true)
+                     if (
+                        showConvertPopup &&
+                        !isNull(productData?.convertToMealProductId)
+                     ) {
+                        setShowConvertToMealProductModal(true)
+                     } else {
+                        setShowModifier(true)
+                     }
                      setShowChooseIncreaseType(false)
                   }}
                   style={{
@@ -732,6 +762,25 @@ export const KioskProduct = props => {
                productData={productData}
                setCurrentPage={setCurrentPage}
                key={productData.id}
+               showConvertedProduct={showConvertPopup && showConvertedProduct}
+               mealProduct={mealProduct}
+            />
+         )}
+         {showConvertToMealProductModal && (
+            <ConfirmConvertProductModal
+               visible={showConvertToMealProductModal}
+               config={config}
+               onCancel={() => {
+                  setShowConvertToMealProductModal(false)
+                  setShowConvertedProduct(false)
+                  setShowModifier(true)
+               }}
+               onConfirm={() => {
+                  setShowConvertToMealProductModal(false)
+                  setShowConvertedProduct(true)
+                  setShowModifier(true)
+               }}
+               mealProduct={mealProduct}
             />
          )}
       </>
@@ -782,3 +831,103 @@ const KioskVegNonVegTypeIcon = ({ type }) => {
       </svg>
    )
 }
+const ConfirmConvertProductModal = ({
+   visible,
+   onConfirm,
+   onCancel,
+   mealProduct,
+   config,
+}) => {
+   const { t } = useTranslation()
+   const labels = {
+      confirm:
+         config?.menuSettings?.convertMealPopup?.confirmLabel?.value ||
+         'Convert',
+      cancel:
+         config?.menuSettings?.convertMealPopup?.cancelLabel?.value ||
+         'Cancel convert',
+   }
+   return (
+      <StyledModal
+         title={null}
+         visible={visible}
+         centered={true}
+         closable={false}
+         footer={null}
+         zIndex={9999999}
+      >
+         <div style={{ height: '350px', width: '350px' }}>
+            {mealProduct.assets.images.length === 0 ? (
+               <img src={config.productSettings.defaultImage.value} />
+            ) : (
+               <HernLazyImage
+                  dataSrc={mealProduct.assets.images[0]}
+                  height={350}
+                  width={350}
+                  style={{
+                     ...(config.kioskSettings.allowTilt.value && {
+                        clipPath: 'polygon(0 0, 100% 0, 100% 100%, 0 97%)',
+                     }),
+                  }}
+                  onClick={onConfirm}
+               />
+            )}
+         </div>
+
+         <button
+            style={{
+               marginBottom: '2rem',
+            }}
+            onClick={onConfirm}
+         >
+            {t(labels.confirm)}
+         </button>
+         <button className="solid" onClick={onCancel}>
+            {t(labels.cancel)}
+         </button>
+      </StyledModal>
+   )
+}
+const StyledModal = styled(Modal)`
+   max-width: 800px;
+   width: 100% !important;
+   border-radius: 24px;
+   padding: 56px;
+   .ant-modal-content {
+      border-radius: 12px;
+   }
+   .ant-modal-header {
+      padding: 56px;
+      text-align: center;
+      border: none;
+      border-radius: 12px;
+   }
+   .ant-modal-title {
+      max-width: 600px;
+      margin: 0 auto;
+      font-size: 2rem;
+      line-height: 1.2;
+   }
+   .ant-modal-body {
+      display: flex;
+      padding: 0 56px 56px 56px;
+      flex-direction: column;
+      align-items: center;
+      button {
+         border: 4px solid var(--hern-primary-color);
+         padding: 0.75rem 1rem;
+         width: 100%;
+         display: block;
+         color: var(--hern-primary-color);
+         font-size: 24px;
+         text-transform: uppercase;
+         font-weight: bold;
+         white-space: nowrap;
+         overflow-x: hidden;
+      }
+      button.solid {
+         background-color: var(--hern-primary-color);
+         color: #fff;
+      }
+   }
+`
