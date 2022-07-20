@@ -1,8 +1,6 @@
 export const CardCoverIllustration = () => (
    <div
       style={{
-         width: '100%',
-         minHeight: '225px',
          display: 'flex',
          justifyContent: 'center',
          alignItems: 'center',
@@ -10,8 +8,8 @@ export const CardCoverIllustration = () => (
       }}
    >
       <svg
-         width="150"
-         height="161"
+         width="100%"
+         height="225px"
          viewBox="0 0 150 161"
          fill="none"
          xmlns="http://www.w3.org/2000/svg"
