@@ -5,10 +5,11 @@ import { useTranslation } from '../context'
 import { formatCurrency, isClient } from '../utils'
 import { HernLazyImage } from '../utils/hernImage'
 import { ModifierPopup, ModifierPopupForUnAvailability } from './index'
+// import { useConfig } from '../lib'
 // if (isClient) {
 //    import('lazysizes/plugins/unveilhooks/ls.unveilhooks').then(module => module)
 // }
-
+   
 export const ProductCard = props => {
    const {
       data,
@@ -50,6 +51,7 @@ export const ProductCard = props => {
    } = props
    // console.log('🚀 ~ file: product_card.jsx ~ line 50 ~ data', data)
    const { t, dynamicTrans, locale } = useTranslation()
+
    const currentLang = React.useMemo(() => locale, [locale])
    const slideRef = React.useRef()
    const properties = {
@@ -58,9 +60,9 @@ export const ProductCard = props => {
       transitionDuration: 500,
       infinite: false,
       easing: 'ease',
-      ...(showImage && data.assets.images.length !== 1
-         ? { arrows: showSliderArrows }
-         : { arrows: false }),
+      ...(showImage && data.assets.images.length == 1
+         ? { arrows: false }
+         : { arrows: showSliderArrows }),
       ...(showImage &&
          data.assets.images.length !== 1 &&
          showSliderIndicators && {
@@ -136,6 +138,7 @@ export const ProductCard = props => {
                         ref={slideRef}
                         infinite={autoPlaySlider}
                         autoplay={autoPlaySlider}
+                        {...properties}
                      >
                         {data.assets.images.map((each, index) => {
                            return (
