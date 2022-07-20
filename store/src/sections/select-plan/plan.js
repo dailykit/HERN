@@ -306,7 +306,18 @@ export const Plan = ({
                   display: `${planViewConfig === 'aggregated' ? 'block' : ''}`,
                }}
             >
-               {showPlanCoverImage && <CardCoverIllustration />}
+               {showPlanCoverImage && (
+                  <div
+                     style={{
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        backgroundColor: '#F9F9F9',
+                     }}
+                  >
+                     <CardCoverIllustration width={'100%'} height={'225px'} />
+                  </div>
+               )}
 
                {showOveralay && (
                   <div className="hern-plan__aggregate__overlay"></div>
