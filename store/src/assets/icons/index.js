@@ -310,6 +310,12 @@ const PaymentOptionIcon = dynamic(() =>
 const BackSpaceIcon = dynamic(() =>
    import('./BackSpaceIcon').then(promise => promise.BackSpaceIcon)
 )
+
+const CardCoverIllustration = dynamic(() =>
+   import('./CardCoverIllustration').then(
+      promise => promise.CardCoverIllustration
+   )
+)
 export {
    AddressIcon,
    ArrowLeftIcon,
@@ -317,6 +323,7 @@ export {
    ArrowRightIcon,
    ArrowRightCircle,
    ArrowRightIconBG,
+   CardCoverIllustration,
    CartIcon,
    CartIllo,
    ChevronIcon,
