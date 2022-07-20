@@ -1409,6 +1409,7 @@ export const PRODUCTS = gql`
          productionOptionSelectionStatement
          subCategory
          relatedProductIds
+         convertToMealProductId
          productOptions(
             where: { isArchived: { _eq: false } }
             order_by: { position: desc_nulls_last }
