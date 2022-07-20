@@ -297,7 +297,10 @@ const CurrentPlan = () => {
    if (loading) return <Loader inline />
    if (user?.isSubscriptionCancelled)
       return (
-         <div className="hern-profile_current-plan">
+         <div
+            className="hern-profile_current-plan"
+            style={{ marginLeft: '1.5rem' }}
+         >
             <Button size="sm" onClick={handleReactivation}>
                {t('Reactivate Subscription')}
             </Button>
