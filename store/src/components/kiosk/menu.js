@@ -83,6 +83,7 @@ const KioskMenu = props => {
    const { cart } = cartState
    const { isStoreAvailable } = useConfig()
    const sidebarRef = React.useRef()
+   const [previousSelectedCategory, setPreviousSelectedCategory] = React.useState(-1)
 
    const scroll = scrollOffset => {
       sidebarRef.current.scrollTop += scrollOffset
@@ -111,6 +112,34 @@ const KioskMenu = props => {
       setSelectedCategory(e.key)
       // changeCategory(e.key)
    }
+   useEffect( ()=> {
+
+      let isReverseScroll = false
+
+      if(previousSelectedCategory >= 0){
+         if(previousSelectedCategory >= selectedCategory){
+            isReverseScroll = true
+         }  else {
+            isReverseScroll = false
+         }
+      }
+      setPreviousSelectedCategory(selectedCategory)
+      const allDivs = document.querySelectorAll(".hern-kiosk__menu-page-product-category")
+      if(selectedCategory >= 2){
+
+         if(isReverseScroll && (selectedCategory == 3 || selectedCategory == 2) ){
+            sidebarRef.current.scroll({
+               top: allDivs[selectedCategory].scrollHeight*(selectedCategory-1) -200,
+               behavior: "smooth",
+            }) 
+         } else {
+            sidebarRef.current.scroll({
+               top: allDivs[selectedCategory].scrollHeight*(selectedCategory-2),
+               behavior: "smooth",
+            })
+         }
+      }
+   }, [selectedCategory])
    useEffect(() => {
       const languageTags = document.querySelectorAll(
          '[data-translation="true"]'
