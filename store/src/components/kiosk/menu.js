@@ -468,7 +468,6 @@ const MenuProducts = ({ setCurrentPage, eachCategory, config }) => {
    const [currentGroupProducts, setCurrentGroupedProduct] = useState(
       groupedByType[0].products
    )
-
    useEffect(() => {
       setCurrentGroupedProduct(groupedByType[0].products)
    }, [eachCategory])
@@ -500,12 +499,26 @@ const MenuProducts = ({ setCurrentPage, eachCategory, config }) => {
                className="hern-kiosk__menu-category-banner-img"
             />
          ) : (
-            <p
-               className="hern-kiosk__menu-category-name"
-               data-translation="true"
-            >
-               {eachCategory.name}
-            </p>
+            <>
+               {
+                  (config?.menuSettings?.menuCategoryBannerSettings?.variant?.value?.value === "simple") && 
+                  <p
+                     className="hern-kiosk__menu-category-name-simple"
+                     data-translation="true"
+                  >
+                     {eachCategory.name}
+                  </p>
+               }
+               {
+                  (config?.menuSettings?.menuCategoryBannerSettings?.variant?.value?.value === "simple-underline") && 
+                  <p
+                     className="hern-kiosk__menu-category-name-underline"
+                     data-translation="true"
+                  >
+                     {eachCategory.name}
+                  </p>
+               }
+            </>
          )}
          {groupedByType.length > 1 && (
             <div className="hern-kiosk__menu-product-type">
