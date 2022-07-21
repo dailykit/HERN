@@ -50,7 +50,7 @@ export const Recipe = ({ productOption, config }) => {
    const customIngredientsLabel =
       (productSetting &&
          productSetting?.['information Visibility']?.customIngredientsLabel
-            ?.value) ??
+            ?.value) ||
       config?.['information Visibility']?.recipe?.customIngredientsLabel?.value
    const showAuthor =
       (productSetting &&
@@ -75,7 +75,8 @@ export const Recipe = ({ productOption, config }) => {
       (productSetting &&
          productSetting?.['information Visibility']?.nutritionAndRecipeSameline
             ?.value) ??
-      config?.['information Visibility']?.recipe?.nutritionAndRecipeSameline?.value ??
+      config?.['information Visibility']?.recipe?.nutritionAndRecipeSameline
+         ?.value ??
       true
 
    const recipeImageSize = React.useMemo(() => {

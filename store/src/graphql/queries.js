@@ -846,11 +846,18 @@ export const SETTINGS = gql`
 export const SETTINGS_QUERY = gql`
    query settings($domain: String) {
       settings: brands_brand_brandSetting(
-         where: {
-            brand: {
-               _or: [{ domain: { _eq: $domain } }, { isDefault: { _eq: true } }]
-            }
+         where: { brand: { domain: { _eq: $domain } } }
+      ) {
+         value
+         brandId
+         meta: brandSetting {
+            id
+            type
+            identifier
          }
+      }
+      defaultSettings: brands_brand_brandSetting(
+         where: { brand: { isDefault: { _eq: true } } }
       ) {
          value
          brandId
@@ -1301,6 +1308,7 @@ export const BRAND_PAGE = gql`
                _or: [{ isDefault: { _eq: true } }, { domain: { _eq: $domain } }]
             }
          }
+         order_by: { brand: { isDefault: asc } }
       ) {
          id
          internalPageName
@@ -1644,11 +1652,23 @@ export const GET_CARTS = gql`
 `
 export const BRAND_SETTINGS_BY_TYPE = gql`
    query BRAND_SEO_SETTINGS($domain: String!, $type: String!) {
-      brands_brand_brandSetting(
+      brandSettings: brands_brand_brandSetting(
          where: {
-            brand: {
-               _or: [{ isDefault: { _eq: true } }, { domain: { _eq: $domain } }]
-            }
+            brand: { domain: { _eq: $domain } }
+            brandSetting: { type: { _eq: $type } }
+         }
+      ) {
+         brandId
+         meta: brandSetting {
+            id
+            type
+            identifier
+         }
+         value
+      }
+      defaultBrandSettings: brands_brand_brandSetting(
+         where: {
+            brand: { isDefault: { _eq: true } }
             brandSetting: { type: { _eq: $type } }
          }
       ) {
@@ -1937,8 +1957,25 @@ export const GET_BRAND_LOCATION = gql`
    }
 `
 export const GET_JS_CSS_FILES = gql`
-   query GET_CSS_JS_FILES($where: brands_jsCssFileLinks_bool_exp!) {
-      brands_jsCssFileLinks(where: $where) {
+   query GET_CSS_JS_FILES(
+      $where: brands_jsCssFileLinks_bool_exp!
+      $defaultWhere: brands_jsCssFileLinks_bool_exp!
+   ) {
+      brandJsCssFileLinks: brands_jsCssFileLinks(where: $where) {
+         id
+         brandId
+         brandPageId
+         brandPageModuleId
+         htmlFileId
+         position
+         file {
+            fileName
+            fileType
+            id
+            path
+         }
+      }
+      defaultBrandJsCssFileLinks: brands_jsCssFileLinks(where: $defaultWhere) {
          id
          brandId
          brandPageId
@@ -2329,6 +2366,7 @@ export const GET_PAGE_ROUTES = gql`
          where: {
             _or: [{ domain: { _eq: $domain } }, { isDefault: { _eq: true } }]
          }
+         order_by: { isDefault: asc }
       ) {
          brandPages(
             where: {
@@ -2348,6 +2386,7 @@ export const GET_DISALLOWED_PAGE_ROUTES = gql`
          where: {
             _or: [{ domain: { _eq: $domain } }, { isDefault: { _eq: true } }]
          }
+         order_by: { isDefault: asc }
       ) {
          brandPages(
             where: {

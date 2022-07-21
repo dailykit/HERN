@@ -66,7 +66,7 @@ export const Header = ({ settings, navigationMenus }) => {
       ]?.['Location-Selector'].value ?? true
 
    const layoutStyle =
-      headerNavigationSettings?.layout?.value?.value ?? 'layout-two'
+      headerNavigationSettings?.layout?.value?.value || 'layout-two'
 
    const [toggle, setToggle] = React.useState(true)
    const [isMobileNavVisible, setIsMobileNavVisible] = React.useState(false)
@@ -783,10 +783,10 @@ const AuthMenu = ({
 
    const loginButtonLabel =
       settings?.brand['Login Illustrations']?.loginButton?.loginbuttonLabel
-         .value ?? 'Log in'
+         .value || 'Log in'
    const roundedLoginButton =
       settings?.brand['Login Illustrations']?.loginButton?.roundedLoginButton
-         .value ?? false
+         .value || false
 
    return (
       <section className={classNames('hern-header__auth')}>

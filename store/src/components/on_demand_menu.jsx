@@ -18,7 +18,7 @@ export const OnDemandMenu = props => {
    const { configOf } = useConfig()
    const headerLayoutStyle =
       configOf('header-navigation', 'navigation')?.headerNavigation?.layout
-         ?.value?.value ?? 'layout-two'
+         ?.value?.value || 'layout-two'
    const ref = React.useRef()
    useOnClickOutside(ref, () => setShowMenuItems('0'))
 

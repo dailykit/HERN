@@ -111,7 +111,7 @@ export const IdleScreen = props => {
                      color: `${config.idlePageSettings.idlePageTextColor.value}`,
                      fontSize: `${
                         config.idlePageSettings?.touchToContinueButtonSettings
-                           ?.fontSize.value ?? '3em'
+                           ?.fontSize.value || '3em'
                      }`,
                   }}
                >
