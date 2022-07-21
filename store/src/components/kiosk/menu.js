@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import _ from 'lodash'
+import _, { isNull } from 'lodash'
 import { Col, Layout, Menu, Row, Spin, Switch } from 'antd'
 import { useQueryParamState, formatCurrency } from '../../utils'
 import { CartContext, useTranslation } from '../../context'
@@ -470,6 +470,7 @@ const KioskMenu = props => {
                         eachCategory={eachCategory}
                         setCurrentPage={setCurrentPage}
                         config={config}
+                        kioskMenus={kioskMenus}
                      />
                   ))}
                </Content>
@@ -478,8 +479,21 @@ const KioskMenu = props => {
       </Layout>
    )
 }
-const MenuProducts = ({ setCurrentPage, eachCategory, config }) => {
+const MenuProducts = ({
+   setCurrentPage,
+   eachCategory,
+   config,
+   kioskMenus = [],
+}) => {
    const { t, dynamicTrans, direction } = useTranslation()
+   const getMealProduct = id => {
+      if (id == null) return null
+      const products = kioskMenus.reduce(
+         (acc, curr) => acc.concat(curr.products),
+         []
+      )
+      return products.find(product => product.id === id)
+   }
 
    // VegNonVegTYpe change into type
    const groupedByType = React.useMemo(() => {
@@ -592,6 +606,9 @@ const MenuProducts = ({ setCurrentPage, eachCategory, config }) => {
                         config={config}
                         productData={eachProduct}
                         setCurrentPage={setCurrentPage}
+                        mealProduct={getMealProduct(
+                           eachProduct?.convertToMealProductId
+                        )}
                      />
                   </Col>
                )
