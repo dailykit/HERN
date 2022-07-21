@@ -628,6 +628,11 @@ const Product = () => {
                               updateProduct={updateProduct}
                            />
                            <Spacer size="16px" />
+                           <ConvertedMealProduct
+                              productId={productId}
+                              updateProduct={updateProduct}
+                           />
+                           <Spacer size="16px" />
                         </HorizontalTabPanel>
                         <HorizontalTabPanel>
                            {renderOptions()}
@@ -721,6 +726,69 @@ const RelatedProducts = ({ productId, updateProduct }) => {
          >
             {products.map(product => (
                <Select.Option key={product.id}>{product.name}</Select.Option>
+            ))}
+         </Select>
+      </div>
+   )
+}
+
+const ConvertedMealProduct = ({ productId, updateProduct }) => {
+   const [products, setProducts] = React.useState([])
+   const { loading } = useSubscription(PRODUCTS.LIST, {
+      variables: {
+         where: {
+            isArchived: { _eq: false },
+         },
+      },
+      onSubscriptionData: data => {
+         const { products } = data.subscriptionData.data
+         setProducts([...products])
+      },
+   })
+
+   const handleChange = async value => {
+      const id = value.match(/\##(.*?)\##/g)[0].replaceAll('#', '')
+      await updateProduct({
+         variables: {
+            id: productId,
+            _set: {
+               convertToMealProductId: Number(id),
+            },
+         },
+      })
+   }
+
+   const currentProduct = products.find(
+      product => product.id === Number(productId)
+   )
+
+   const convertToMealProduct = currentProduct?.convertToMealProductId
+      ? products.find(
+           product => product.id === currentProduct?.convertToMealProductId
+        )?.name
+      : null
+
+   if (loading) return <InlineLoader />
+   if (isEmpty(products) || !currentProduct) return null
+
+   return (
+      <div>
+         <div style={{ display: 'block' }}>Converted Meal Product</div>
+         <Select
+            style={{ width: '100%', maxWidth: '600px' }}
+            placeholder="Please select"
+            defaultValue={convertToMealProduct}
+            onChange={handleChange}
+            allowClear={true}
+            showSearch={true}
+         >
+            {products.map(product => (
+               <Select.Option
+                  value={product.name + '##' + product.id + '##'}
+                  key={product.id}
+               >
+                  {product.name}
+               </Select.Option>
             ))}
          </Select>
       </div>
