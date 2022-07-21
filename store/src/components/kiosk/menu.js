@@ -471,7 +471,9 @@ const MenuProducts = ({ setCurrentPage, eachCategory, config }) => {
    useEffect(() => {
       setCurrentGroupedProduct(groupedByType[0].products)
    }, [eachCategory])
-
+   
+   const classNameForMenuCategoryName = 
+         config?.menuSettings?.menuCategoryBannerSettings?.className?.variant?.value?.value || 'simple'
    const [currentGroup, setCurrentGroup] = useState(groupedByType[0].type)
    const onRadioClick = e => {
       setCurrentGroupedProduct(prev => {
@@ -492,34 +494,33 @@ const MenuProducts = ({ setCurrentPage, eachCategory, config }) => {
          key={eachCategory.name}
       >
          {/* <div name={eachCategory.name} ref={menuRef}></div> */}
-         {eachCategory?.bannerImageUrl ? (
-            <HernLazyImage
-               // src={eachCategory?.bannerImageUrl}
-               dataSrc={eachCategory?.bannerImageUrl}
-               className="hern-kiosk__menu-category-banner-img"
-            />
-         ) : (
-            <>
-               {
-                  (config?.menuSettings?.menuCategoryBannerSettings?.variant?.value?.value === "simple") && 
-                  <p
-                     className="hern-kiosk__menu-category-name-simple"
-                     data-translation="true"
-                  >
-                     {eachCategory.name}
-                  </p>
-               }
-               {
-                  (config?.menuSettings?.menuCategoryBannerSettings?.variant?.value?.value === "simple-underline") && 
-                  <p
-                     className="hern-kiosk__menu-category-name-underline"
-                     data-translation="true"
-                  >
-                     {eachCategory.name}
-                  </p>
-               }
-            </>
-         )}
+         {  config?.menuSettings?.menuCategoryBannerSettings?.showBanner?.value ?
+            (
+               <>
+                  {eachCategory?.bannerImageUrl ? (
+                     <HernLazyImage
+                        dataSrc={eachCategory?.bannerImageUrl}
+                        className="hern-kiosk__menu-category-banner-img"
+                     />
+                  ) : (
+                     <p
+                        className={`hern-kiosk__menu-category-name-${classNameForMenuCategoryName}`}
+                        data-translation="true"
+                     >
+                        {eachCategory.name}
+                     </p>
+                  )}
+               </>
+            ) : (
+               <p
+                  className={`hern-kiosk__menu-category-name-${classNameForMenuCategoryName}`}
+                  data-translation="true"
+               >
+                  {eachCategory.name}
+               </p>
+            )
+         }
+         
          {groupedByType.length > 1 && (
             <div className="hern-kiosk__menu-product-type">
                <div className="hern-kiosk__menu-product-type-list">

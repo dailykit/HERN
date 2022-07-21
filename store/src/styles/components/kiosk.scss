@@ -412,7 +412,7 @@
    margin: 1rem 0 0.2rem 0.5rem;
    font-weight: 600; 
 }
-.hern-kiosk__menu-category-name-underline {
+.hern-kiosk__menu-category-name-simple-underline {
    font-size: 4rem;
    margin: 1rem 0 0.2rem 0.5rem;
    font-weight: 600;
@@ -421,7 +421,7 @@
    box-sizing: border-box;
    display: inline-block;
 }
-.hern-kiosk__menu-category-name-underline::after {
+.hern-kiosk__menu-category-name-simple-underline::after {
    background: #5cb8b2;
    height: 8px;
    z-index: -1;
