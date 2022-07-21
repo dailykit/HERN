@@ -623,12 +623,8 @@ const Product = () => {
                            </Form.Group>
                            <Spacer size="32px" yaxis />
                            <Spacer size="16px" />
+                           {/* Product goes best with and convertToMeal products  */}
                            <RelatedProducts
-                              productId={productId}
-                              updateProduct={updateProduct}
-                           />
-                           <Spacer size="16px" />
-                           <ConvertedMealProduct
                               productId={productId}
                               updateProduct={updateProduct}
                            />
@@ -728,24 +724,17 @@ const RelatedProducts = ({ productId, updateProduct }) => {
                <Select.Option key={product.id}>{product.name}</Select.Option>
             ))}
          </Select>
+         <Spacer size="16px" />
+         <ConvertedMealProduct
+            products={products}
+            productId={productId}
+            updateProduct={updateProduct}
+         />
       </div>
    )
 }
 
-const ConvertedMealProduct = ({ productId, updateProduct }) => {
-   const [products, setProducts] = React.useState([])
-   const { loading } = useSubscription(PRODUCTS.LIST, {
-      variables: {
-         where: {
-            isArchived: { _eq: false },
-         },
-      },
-      onSubscriptionData: data => {
-         const { products } = data.subscriptionData.data
-         setProducts([...products])
-      },
-   })
-
+const ConvertedMealProduct = ({ products, productId, updateProduct }) => {
    const handleChange = async value => {
       const id = value.match(/\##(.*?)\##/g)[0].replaceAll('#', '')
       await updateProduct({
@@ -768,7 +757,6 @@ const ConvertedMealProduct = ({ productId, updateProduct }) => {
         )?.name
       : null
 
-   if (loading) return <InlineLoader />
    if (isEmpty(products) || !currentProduct) return null
 
    return (
