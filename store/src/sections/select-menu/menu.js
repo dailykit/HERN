@@ -30,6 +30,13 @@ export const Menu = () => {
    const router = useRouter()
    const route = router.route
 
+   const [isLoading, setIsLoading] = React.useState(false)
+   const cartSize = state?.occurenceCustomer?.cart?.products?.length
+
+   React.useEffect(() => {
+      setIsLoading(false)
+   }, [cartSize])
+
    const argsForByLocation = React.useMemo(
       () => ({
          brandId: brand?.id,
@@ -152,33 +159,46 @@ export const Menu = () => {
                   <Line />
                </h4>
 
-               <ul className="hern-select-menu__menu__products">
-                  {uniqBy(category.productsAggregate.nodes, v =>
-                     [
-                        v?.cartItem?.productId,
-                        v?.cartItem?.option?.productOptionId,
-                     ].join()
-                  ).map((node, index) => (
-                     <Product
-                        node={node}
-                        theme={theme}
-                        key={node.id}
-                        isAdded={isAdded}
-                        buildImageUrl={buildImageUrl}
-                        noProductImage={noProductImage}
-                     />
-                  ))}
-               </ul>
+               {isLoading ? (
+                  <Loader inline />
+               ) : (
+                  <ul className="hern-select-menu__menu__products">
+                     {uniqBy(category.productsAggregate.nodes, v =>
+                        [
+                           v?.cartItem?.productId,
+                           v?.cartItem?.option?.productOptionId,
+                        ].join()
+                     ).map((node, index) => (
+                        <Product
+                           node={node}
+                           theme={theme}
+                           key={node.id}
+                           isAdded={isAdded}
+                           buildImageUrl={buildImageUrl}
+                           noProductImage={noProductImage}
+                           setIsLoading={setIsLoading}
+                        />
+                     ))}
+                  </ul>
+               )}
             </Scroll.Element>
          ))}
       </main>
    )
 }
 
-const Product = ({ node, theme, isAdded, noProductImage, buildImageUrl }) => {
+const Product = ({
+   node,
+   theme,
+   isAdded,
+   noProductImage,
+   buildImageUrl,
+   setIsLoading,
+}) => {
    // const router = useRouter()
    const { addToast } = useToasts()
    const { state, methods } = useMenu()
+   const { user } = useUser()
    const { t, dynamicTrans, locale } = useTranslation()
    const { formatMessage } = useIntl()
    const autoPlaySlider = false
@@ -429,6 +449,15 @@ const Product = ({ node, theme, isAdded, noProductImage, buildImageUrl }) => {
                      state.occurenceCustomer?.validStatus?.itemCountValid
                   }
                   onClick={() => {
+                     if (
+                        !state?.isCartFull ||
+                        state?.occurenceCustomer?.validStatus
+                           ?.addedProductsCount <
+                           user?.subscription?.recipes?.count
+                     ) {
+                        setIsLoading(true)
+                     }
+
                      if (!isProductOutOfStock) {
                         add(node.cartItem, node)
                      }
