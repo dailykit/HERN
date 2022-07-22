@@ -1120,7 +1120,7 @@ const CartCard = props => {
                                     fontSize: '20px',
                                     border: `2px solid ${
                                        config?.kioskSettings?.theme
-                                          ?.primaryColor?.value ?? 'black'
+                                          ?.primaryColor?.value || 'black'
                                     }`,
                                     paddingBottom: '2.5rem',
                                     width: '40%',
@@ -1140,7 +1140,7 @@ const CartCard = props => {
                                     fontSize: '20px',
                                     backgroundColor:
                                        config?.kioskSettings?.theme
-                                          ?.primaryColor?.value ?? 'black',
+                                          ?.primaryColor?.value || 'black',
                                     color: 'white',
                                     paddingBottom: '2.5rem',
                                     width: '40%',

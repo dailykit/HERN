@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import _ from 'lodash'
+import _, { isNull } from 'lodash'
 import { Col, Layout, Menu, Row, Spin, Switch } from 'antd'
 import { useQueryParamState, formatCurrency } from '../../utils'
 import { CartContext, useTranslation } from '../../context'
@@ -470,6 +470,7 @@ const KioskMenu = props => {
                         eachCategory={eachCategory}
                         setCurrentPage={setCurrentPage}
                         config={config}
+                        kioskMenus={kioskMenus}
                      />
                   ))}
                </Content>
@@ -478,8 +479,21 @@ const KioskMenu = props => {
       </Layout>
    )
 }
-const MenuProducts = ({ setCurrentPage, eachCategory, config }) => {
+const MenuProducts = ({
+   setCurrentPage,
+   eachCategory,
+   config,
+   kioskMenus = [],
+}) => {
    const { t, dynamicTrans, direction } = useTranslation()
+   const getMealProduct = id => {
+      if (id == null) return null
+      const products = kioskMenus.reduce(
+         (acc, curr) => acc.concat(curr.products),
+         []
+      )
+      return products.find(product => product.id === id)
+   }
 
    // VegNonVegTYpe change into type
    const groupedByType = React.useMemo(() => {
@@ -497,11 +511,12 @@ const MenuProducts = ({ setCurrentPage, eachCategory, config }) => {
    const [currentGroupProducts, setCurrentGroupedProduct] = useState(
       groupedByType[0].products
    )
-
    useEffect(() => {
       setCurrentGroupedProduct(groupedByType[0].products)
    }, [eachCategory])
-
+   
+   const classNameForMenuCategoryName = 
+         config?.menuSettings?.menuCategoryBannerSettings?.className?.variant?.value?.value || 'simple'
    const [currentGroup, setCurrentGroup] = useState(groupedByType[0].type)
    const onRadioClick = e => {
       setCurrentGroupedProduct(prev => {
@@ -522,20 +537,33 @@ const MenuProducts = ({ setCurrentPage, eachCategory, config }) => {
          key={eachCategory.name}
       >
          {/* <div name={eachCategory.name} ref={menuRef}></div> */}
-         {eachCategory?.bannerImageUrl ? (
-            <HernLazyImage
-               // src={eachCategory?.bannerImageUrl}
-               dataSrc={eachCategory?.bannerImageUrl}
-               className="hern-kiosk__menu-category-banner-img"
-            />
-         ) : (
-            <p
-               className="hern-kiosk__menu-category-name"
-               data-translation="true"
-            >
-               {eachCategory.name}
-            </p>
-         )}
+         {  config?.menuSettings?.menuCategoryBannerSettings?.showBanner?.value ?
+            (
+               <>
+                  {eachCategory?.bannerImageUrl ? (
+                     <HernLazyImage
+                        dataSrc={eachCategory?.bannerImageUrl}
+                        className="hern-kiosk__menu-category-banner-img"
+                     />
+                  ) : (
+                     <p
+                        className={`hern-kiosk__menu-category-name-${classNameForMenuCategoryName}`}
+                        data-translation="true"
+                     >
+                        {eachCategory.name}
+                     </p>
+                  )}
+               </>
+            ) : (
+               <p
+                  className={`hern-kiosk__menu-category-name-${classNameForMenuCategoryName}`}
+                  data-translation="true"
+               >
+                  {eachCategory.name}
+               </p>
+            )
+         }
+         
          {groupedByType.length > 1 && (
             <div className="hern-kiosk__menu-product-type">
                <div className="hern-kiosk__menu-product-type-list">
@@ -592,6 +620,9 @@ const MenuProducts = ({ setCurrentPage, eachCategory, config }) => {
                         config={config}
                         productData={eachProduct}
                         setCurrentPage={setCurrentPage}
+                        mealProduct={getMealProduct(
+                           eachProduct?.convertToMealProductId
+                        )}
                      />
                   </Col>
                )

@@ -42,55 +42,55 @@ export const Plan = ({
    */
 
    const selectPlanButtonConfig = {
-      color: planConfig?.display?.selectPlanButton?.color?.value ?? '#ffffff',
+      color: planConfig?.display?.selectPlanButton?.color?.value || '#ffffff',
       backgroundColor:
-         planConfig?.display?.selectPlanButton?.backgroundColor?.value ??
+         planConfig?.display?.selectPlanButton?.backgroundColor?.value ||
          '#11823B',
       fontSize:
-         planConfig?.display?.selectPlanButton?.fontSize?.value ?? '1.125rem',
+         planConfig?.display?.selectPlanButton?.fontSize?.value || '1.125rem',
       fontFamily:
-         planConfig?.display?.selectPlanButton?.fontFamily?.value ?? 'Poppins',
+         planConfig?.display?.selectPlanButton?.fontFamily?.value || 'Poppins',
 
       fontWeight:
-         planConfig?.display?.selectPlanButton?.fontWeight?.value ?? '500',
+         planConfig?.display?.selectPlanButton?.fontWeight?.value || '500',
 
       border:
-         planConfig?.display?.selectPlanButton?.border?.border?.value ?? 'none',
+         planConfig?.display?.selectPlanButton?.border?.border?.value || 'none',
 
       borderRadius:
-         planConfig?.display?.selectPlanButton?.border?.borderRadius?.value ??
+         planConfig?.display?.selectPlanButton?.border?.borderRadius?.value ||
          '25px',
       hoverColor:
-         planConfig?.display?.selectPlanButton?.hover?.color?.value ??
+         planConfig?.display?.selectPlanButton?.hover?.color?.value ||
          '#FFFFFF',
    }
 
    // Button label
    const selectPlanButtonLabelConfig = {
       buttonLabel:
-         planConfig?.data?.selectPlanButtonLabel?.value ?? 'Choose Plan',
+         planConfig?.data?.selectPlanButtonLabel?.value || 'Choose Plan',
    }
 
    // Plan title
    const selectPlanTitleConfig = {
-      color: planConfig?.display?.planTitle?.color?.value ?? 'blue',
-      fontSize: planConfig?.display?.planTitle?.fontSize?.value ?? '1.125rem',
+      color: planConfig?.display?.planTitle?.color?.value || 'blue',
+      fontSize: planConfig?.display?.planTitle?.fontSize?.value || '1.125rem',
       fontFamily:
-         planConfig?.display?.planTitle?.fontFamily?.value ?? 'Poppins',
-      fontWeight: planConfig?.display?.planTitle?.fontWeight?.value ?? '600',
+         planConfig?.display?.planTitle?.fontFamily?.value || 'Poppins',
+      fontWeight: planConfig?.display?.planTitle?.fontWeight?.value || '600',
    }
 
    //Yield and ItemCount labels
    const yieldAndItemsCountLabelConfig = {
       color:
-         planConfig?.display?.yieldAndItemsCountLabel?.color?.value ??
+         planConfig?.display?.yieldAndItemsCountLabel?.color?.value ||
          'rgba(51, 51, 51, 0.6)',
       fontSize:
-         planConfig?.display?.yieldAndItemsCountLabel?.fontSize?.value ??
+         planConfig?.display?.yieldAndItemsCountLabel?.fontSize?.value ||
          '1rem',
 
       fontWeight:
-         planConfig?.display?.yieldAndItemsCountLabel?.fontWeight?.value ??
+         planConfig?.display?.yieldAndItemsCountLabel?.fontWeight?.value ||
          '500',
    }
 
@@ -108,14 +108,14 @@ export const Plan = ({
    // Count Buttons
    const countButtonConfig = {
       borderRadius:
-         planConfig?.display?.countButton?.borderRadius?.value ?? '2px',
+         planConfig?.display?.countButton?.borderRadius?.value || '2px',
       backgroundColor:
-         planConfig?.display?.countButton?.backgroundColor?.value ??
+         planConfig?.display?.countButton?.backgroundColor?.value ||
          ' rgba(17, 130, 59, 0.2)',
-      fontSize: planConfig?.display?.countButton?.fontSize?.value ?? '1rem',
-      fontWeight: planConfig?.display?.countButton?.fontWeight?.value ?? '600',
+      fontSize: planConfig?.display?.countButton?.fontSize?.value || '1rem',
+      fontWeight: planConfig?.display?.countButton?.fontWeight?.value || '600',
       color:
-         planConfig?.display?.countButton?.color?.value ??
+         planConfig?.display?.countButton?.color?.value ||
          'rgba(51, 51, 51, 0.6)',
    }
 

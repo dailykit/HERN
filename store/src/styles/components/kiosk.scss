@@ -407,10 +407,30 @@
    align-items: center;
    padding: 1em 0;
 }
-.hern-kiosk__menu-category-name {
-   font-size: 1.5em;
-   margin: 0 0 1em 0;
-   font-weight: 500;
+.hern-kiosk__menu-category-name-simple {
+   font-size: 4rem;
+   margin: 1rem 0 0.2rem 0.5rem;
+   font-weight: 600; 
+}
+.hern-kiosk__menu-category-name-simple-underline {
+   font-size: 4rem;
+   margin: 1rem 0 0.2rem 0.5rem;
+   font-weight: 600;
+   position: relative;
+   z-index: 1;
+   box-sizing: border-box;
+   display: inline-block;
+}
+.hern-kiosk__menu-category-name-simple-underline::after {
+   background: #5cb8b2;
+   height: 8px;
+   z-index: -1;
+   position: absolute;
+   left: 0;
+   right: 0;
+   bottom: 30px;
+   content: '';
+   box-sizing: border-box;
 }
 .hern-kiosk__scroll-element:nth-last-child(1) {
    min-height: 100%;
