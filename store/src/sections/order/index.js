@@ -37,8 +37,8 @@ export const OnDemandOrder = ({ config }) => {
       ? config?.display?.dropdown?.value[0]?.value
       : 'side-nav'
    const numberOfProducts =
-      config?.display?.['numberOfProducts']?.value ??
-      config?.display?.['numberOfProducts']?.default ??
+      config?.display?.['numberOfProducts']?.value ||
+      config?.display?.['numberOfProducts']?.default ||
       2
    const showCategoryLengthOnCategoryTitle =
       config?.display?.['showCategoryLengthOnCategoryTitle']?.value ??
@@ -53,8 +53,8 @@ export const OnDemandOrder = ({ config }) => {
       config?.display?.['showCartOnRight']?.default ??
       false
    const productsScrollWidth =
-      config?.display?.productsScrollWidth?.value ??
-      config?.display?.productsScrollWidth?.default ??
+      config?.display?.productsScrollWidth?.value ||
+      config?.display?.productsScrollWidth?.default ||
       0
    const showCategoryBackgroundImage =
       config?.display?.showCategoryBackgroundImage?.value ??
@@ -70,7 +70,7 @@ export const OnDemandOrder = ({ config }) => {
       config?.display?.showAddToCartButtonFullWidth?.default ??
       true
    const navbarCategoryAlignment =
-      config?.display?.navbarCategoryAlignment?.value?.value ?? 'CENTER'
+      config?.display?.navbarCategoryAlignment?.value?.value || 'CENTER'
    const autoPlaySlider = config?.display?.autoPlaySlider?.value ?? false
 
    setThemeVariable('--hern-number-of-products', numberOfProducts)

@@ -6,11 +6,19 @@ export const getSettings = async (domain, path = '/') => {
    const data = await client.request(SETTINGS_QUERY, {
       domain,
    })
-   const brandId = data.settings[0].brandId
-   if (data) {
+
+   const brandId =
+      data.settings.length > 0
+         ? data.settings[0].brandId
+         : data.defaultSettings[0].brandId
+
+   // data consist original settings of brand as well as default settings of brand
+   const finalData =
+      data.settings.length > 0 ? data.settings : data.defaultSettings
+   if (finalData) {
       const settings = { brandId }
 
-      data.settings.forEach(setting => {
+      finalData.forEach(setting => {
          if (settings[setting.meta.type]) {
             settings[setting.meta.type][setting.meta.identifier] = setting.value
          } else {

@@ -553,7 +553,7 @@ export const CustomArea = props => {
                      addToCartButtonConfig?.variant?.value?.value === 'rounded',
                })}
             >
-               {t(`${addToCartButtonConfig?.label?.value ?? 'Out Of Stock'}`)}
+               {t(`${addToCartButtonConfig?.label?.value || 'Out Of Stock'}`)}
             </Button>
          ) : (
             <>
@@ -578,7 +578,7 @@ export const CustomArea = props => {
                         }
                      }}
                   >
-                     {t(`${addToCartButtonConfig?.label?.value ?? 'ADD'}`)}
+                     {t(`${addToCartButtonConfig?.label?.value || 'ADD'}`)}
                   </Button>
                ) : (
                   <CounterButton

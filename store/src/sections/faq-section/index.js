@@ -9,24 +9,24 @@ export const FrequentlyAskedQuestions = ({ config: faqConfig }) => {
       QuestionWithMultipleColor:
          faqConfig?.FAQ?.QuestionWithMultipleColor?.value,
 
-      heading: faqConfig?.FAQ?.heading?.heading?.value ?? 'FAQ',
+      heading: faqConfig?.FAQ?.heading?.heading?.value || 'FAQ',
       showHeading: faqConfig?.FAQ?.heading?.showHeading?.value ?? true,
 
-      subHeading: faqConfig?.FAQ?.subHeading?.subHeading?.value ?? '',
+      subHeading: faqConfig?.FAQ?.subHeading?.subHeading?.value || '',
       showSubHeading:
          faqConfig?.FAQ?.subHeading?.showSubHeading?.value ?? false,
 
       IllustrationLeft:
-         faqConfig?.FAQ?.IllustrationLeft?.illustration?.value ??
+         faqConfig?.FAQ?.IllustrationLeft?.illustration?.value ||
          'https://dailykit-237-breezychef.s3.us-east-2.amazonaws.com/images/52247-nounfaq610769.png',
       showLeftIllustration:
          faqConfig?.FAQ?.IllustrationLeft?.showIllustrationOnLeft?.value ??
          false,
       backgruond:
-         faqConfig?.FAQ?.backgruond?.value ??
+         faqConfig?.FAQ?.backgruond?.value ||
          'https://dailykit-237-breezychef.s3.us-east-2.amazonaws.com/images/87806-home-faq-first-bg.jpg',
       arrowIcon:
-         faqConfig?.FAQ?.arrowIcon?.value ??
+         faqConfig?.FAQ?.arrowIcon?.value ||
          'https://dailykit-237-breezychef.s3.us-east-2.amazonaws.com/images/52865-right-arrow.png',
       qna:
          faqConfig?.FAQ?.qna?.value?.map(qna => {

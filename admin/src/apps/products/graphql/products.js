@@ -45,6 +45,7 @@ export const PRODUCTS = {
             isPublished
             price
             relatedProductIds
+            convertToMealProductId
          }
       }
    `,

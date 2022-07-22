@@ -42,11 +42,13 @@ export const KioskModifier = props => {
    const {
       config,
       onCloseModifier,
-      productData,
+      productData: productInfo,
       edit = false,
       forNewItem = false,
       productCartDetail,
       setCurrentPage,
+      showConvertedProduct = false,
+      mealProduct = null,
    } = props
    const showProductDescription =
       config?.modifierPopUpSettings?.showProductDescription?.value ?? false
@@ -98,8 +100,17 @@ export const KioskModifier = props => {
       [brand, kioskDetails?.locationId, brandLocation?.id]
    )
    //ID for all the products related to the current product
-   const relatedProductIds = productData?.relatedProductIds?.ids || []
-
+   const relatedProductIds = productInfo?.relatedProductIds?.ids || []
+   //convert to meal products
+   const convertToMealProductId = productInfo?.convertToMealProductId || null
+   //Required productIds
+   const getRequireProductIds = () => {
+      const ids = [productInfo.id, ...relatedProductIds]
+      if (!isNull(convertToMealProductId)) {
+         ids.push(convertToMealProductId)
+      }
+      return ids
+   }
    //Data for current product and related products
    const {
       loading,
@@ -110,7 +121,7 @@ export const KioskModifier = props => {
          params: argsForByLocation,
          where: {
             id: {
-               _in: [productData.id, ...relatedProductIds],
+               _in: getRequireProductIds(),
             },
          },
       },
@@ -119,9 +130,16 @@ export const KioskModifier = props => {
       },
    })
    //Current product info
-   const completeProductData = products?.find(
-      product => product.id === productData.id
-   )
+   const completeProductData =
+      showConvertedProduct && !isNull(convertToMealProductId)
+         ? products?.find(product => product.id === convertToMealProductId)
+         : products?.find(product => product.id === productInfo.id)
+
+   const productData =
+      !isNull(convertToMealProductId) && showConvertedProduct
+         ? mealProduct
+         : productInfo
+
    //Related product of the current product
    const relatedProducts = products?.filter(product =>
       relatedProductIds.includes(product.id)
@@ -918,6 +936,7 @@ export const KioskModifier = props => {
       config?.modifierPopUpSettings?.addToCartButtonLabel?.value ||
          'ADD TO CART'
    )
+   if (isEmpty(productData)) return null
    return (
       <div
          className="hern-kiosk__menu-product-modifier-popup"
