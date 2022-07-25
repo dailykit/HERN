@@ -107,7 +107,8 @@ export const FulfillmentSection = props => {
          })
       }
    }, [kioskRecurrences])
-   const showPromotionalScreen = true
+   const showPromotionalScreen =
+      config?.promotionalScreenSettings?.showPromotionalScreen?.value ?? false
    React.useEffect(() => {
       const languageTags = document.querySelectorAll(
          '[data-translation="true"]'
@@ -481,6 +482,18 @@ const FulfillmentOptionCustom = props => {
    )
 }
 const PromotionalScreen = ({ config, visible, setVisible, setCurrentPage }) => {
+   const { t } = useTranslation()
+   //Config for promotional screen
+   const promotionalScreenSettings = {
+      continueButtonLabel:
+         config?.promotionalScreenSettings?.promotionalScreenContinueButton
+            ?.labelForContinueButton?.value || 'CONTINUE',
+      image:
+         config?.promotionalScreenSettings?.promotionalScreenBackgroundImage
+            ?.value ||
+         'https://dailykit-133-test.s3.us-east-2.amazonaws.com/images/08345-app_promotion.png',
+   }
+   const { image, continueButtonLabel } = promotionalScreenSettings
    return (
       <StyledPromotionalScreen
          title={null}
@@ -492,7 +505,7 @@ const PromotionalScreen = ({ config, visible, setVisible, setCurrentPage }) => {
          closable={false}
       >
          <div tw="h-full relative">
-            <img src="https://dailykit-133-test.s3.us-east-2.amazonaws.com/images/08345-app_promotion.png" />
+            <img src={image} />
             <div tw="absolute bottom-20 w-full flex justify-center">
                <button
                   onClick={() => {
@@ -501,7 +514,7 @@ const PromotionalScreen = ({ config, visible, setVisible, setCurrentPage }) => {
                   }}
                   tw="bg-[#3d0347] text-7xl text-white font-extrabold px-[56px] py-7 tracking-wide"
                >
-                  VIEW MENU
+                  {t(continueButtonLabel)}
                </button>
             </div>
          </div>
