@@ -97,6 +97,15 @@
       z-index: 10000000;
    }
 }
+.hern-kiosk___header-go-back-confirmation-modal {
+   .ant-modal-content {
+      padding: 1rem;
+      border-radius: 0.5rem;
+   }
+   .ant-modal-title {
+      font-size: 26px;
+   }
+}
 
 // fulfillment section
 .hern-kiosk__fulfillment-section-container {
