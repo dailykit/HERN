@@ -1171,7 +1171,7 @@
 }
 .hern-kiosk__table-selection-drawer {
    .ant-drawer-body {
-      padding: 5rem 3.5rem 2rem 3.5rem;
+      padding: 3rem 3.5rem initial 3.5rem;
    }
    .ant-drawer-footer {
       padding: 0;
@@ -1364,7 +1364,7 @@
    background: var(--hern-primary-color);
    box-shadow: 0px -4px 6px #d1e3f5;
    width: 100%;
-   padding: 40px initial;
+   padding: 24px initial;
    font-weight: 700;
    font-size: 68px;
    text-transform: uppercase;
