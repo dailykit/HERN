@@ -402,5 +402,6 @@
    "Some product in cart are not available": "Some product in cart are not available",
    "This product is not available": "This product is not available",
    "Scan QR code to get invoice": "Scan QR code to get invoice",
-   "Exit": "Exit"
+   "Exit": "Exit",
+   "Please enter your user details to proceed to payment.": "Please enter your user details to proceed to payment."
 }

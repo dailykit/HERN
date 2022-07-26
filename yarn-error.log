@@ -1,29 +1,29 @@
 Arguments: 
-  C:\Program Files\nodejs\node.exe C:\Users\goyal\AppData\Roaming\npm\node_modules\yarn\bin\yarn.js
+  /usr/bin/node /usr/bin/yarn
 
 PATH: 
-  C:\Users\goyal\bin;C:\Program Files\Git\mingw64\bin;C:\Program Files\Git\usr\local\bin;C:\Program Files\Git\usr\bin;C:\Program Files\Git\usr\bin;C:\Program Files\Git\mingw64\bin;C:\Program Files\Git\usr\bin;C:\Users\goyal\bin;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0;C:\Program Files (x86)\NVIDIA Corporation\PhysX\Common;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0;C:\WINDOWS\System32\OpenSSH;C:\Program Files\NVIDIA Corporation\NVIDIA NvDLISR;C:\Program Files\nodejs;C:\Program Files\Docker\Docker\resources\bin;C:\ProgramData\DockerDesktop\version-bin;C:\Program Files\Git\cmd;C:\Users\goyal\AppData\Local\Microsoft\WindowsApps;C:\Users\goyal\AppData\Local\Programs\Microsoft VS Code\bin;C:\Users\goyal\AppData\Roaming\npm;C:\Program Files\Git\usr\bin\vendor_perl;C:\Program Files\Git\usr\bin\core_perl
+  /tmp/yarn--1658789423571-0.9691475179108153:/home/andrew/Work/HERN/node_modules/.bin:/home/andrew/.config/yarn/link/node_modules/.bin:/home/andrew/.yarn/bin:/usr/libexec/lib/node_modules/npm/bin/node-gyp-bin:/usr/lib/node_modules/npm/bin/node-gyp-bin:/usr/bin/node_modules/npm/bin/node-gyp-bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/usr/lib/wsl/lib:/mnt/c/WINDOWS/system32:/mnt/c/WINDOWS:/mnt/c/WINDOWS/System32/Wbem:/mnt/c/WINDOWS/System32/WindowsPowerShell/v1.0/:/mnt/c/WINDOWS/System32/OpenSSH/:/mnt/c/Program Files/nodejs/:/mnt/c/Users/TMB CO/AppData/Local/Microsoft/WindowsApps:/mnt/c/Users/TMB CO/AppData/Local/Programs/Microsoft VS Code/bin:/mnt/c/Users/TMB CO/AppData/Roaming/npm
 
 Yarn version: 
-  1.22.11
+  1.22.19
 
 Node version: 
-  14.17.5
+  18.6.0
 
 Platform: 
-  win32 x64
+  linux x64
 
 Trace: 
-  Error: https://registry.yarnpkg.com/date-fns/-/date-fns-2.28.0.tgz: ESOCKETTIMEDOUT
-      at ClientRequest.<anonymous> (C:\Users\goyal\AppData\Roaming\npm\node_modules\yarn\lib\cli.js:141390:19)
-      at Object.onceWrapper (events.js:519:28)
-      at ClientRequest.emit (events.js:400:28)
-      at TLSSocket.emitRequestTimeout (_http_client.js:790:9)
-      at Object.onceWrapper (events.js:519:28)
-      at TLSSocket.emit (events.js:412:35)
-      at TLSSocket.Socket._onTimeout (net.js:484:8)
-      at listOnTimeout (internal/timers.js:557:17)
-      at processTimers (internal/timers.js:500:7)
+  Error: https://registry.yarnpkg.com/rxjs/-/rxjs-6.6.7.tgz: ESOCKETTIMEDOUT
+      at ClientRequest.<anonymous> (/usr/lib/node_modules/yarn/lib/cli.js:141517:19)
+      at Object.onceWrapper (node:events:627:28)
+      at ClientRequest.emit (node:events:513:28)
+      at TLSSocket.emitRequestTimeout (node:_http_client:813:9)
+      at Object.onceWrapper (node:events:627:28)
+      at TLSSocket.emit (node:events:525:35)
+      at Socket._onTimeout (node:net:526:8)
+      at listOnTimeout (node:internal/timers:564:17)
+      at process.processTimers (node:internal/timers:507:7)
 
 npm manifest: 
   {
@@ -31,23 +31,26 @@ npm manifest:
      "version": "1.22.11",
      "main": "index.js",
      "repository": "https://github.com/dailykit/hern.git",
-     "author": "Praveen Bisht <prvnbist@gmail.com>",
+     "author": "Dailykit",
      "license": "MIT",
      "scripts": {
         "install:packages": "yarn && cd store && yarn && cd ../admin && yarn",
-        "dev": "concurrently \"nodemon -r esm index.js\" \"cd store && yarn dev\" \"cd admin && yarn start\"",
+        "dev": "concurrently \"nodemon -r esm index.js\" \"nodemon -r esm template.js\" \"cd store && yarn dev\" \"cd admin && yarn start\"",
+        "template": "concurrently \"nodemon -r esm index.js --config nodemon.json\" \"nodemon -r esm template.js --config templateNodemon.json\"",
         "dev-mac": "concurrently \"nodemon -r esm index.js\" \"cd store && yarn dev\" \"cd admin && yarn start-mac\"",
         "build": "cd store && yarn build && cd ../admin && yarn build",
-        "prod": "concurrently \"nodemon -r esm index.js\" \"cd store && yarn start\"",
-        "dev:server": "concurrently \"nodemon -r esm index.js\" \"cd store && yarn dev\"",
+        "build-store": "cd store && yarn build",
+        "prod": "concurrently \"nodemon -r esm index.js --config nodemon.json\" \"nodemon -r esm template.js --config templateNodemon.json\" \"cd store && yarn start\"",
+        "dev:server": "concurrently \"nodemon -r esm index.js\" \"nodemon -r esm template.js\" \"cd store && yarn dev\"",
         "download-graphql": "chmod +x ./fetchgraphqlschema.sh && ./fetchgraphqlschema.sh",
         "lint:graphql": "eslint **/graphql/*.js > graphqlerrors.txt",
         "start-hasura": "cd hasura && hasura console"
      },
      "dependencies": {
-        "@tillpos/xml-escpos-helper": "^0.2.2",
+        "@dailykit/xml-escpos-helper": "^1.0.3",
         "add": "^2.0.6",
         "apollo-server-express": "^2.25.2",
+        "arabic-persian-reshaper": "^1.0.1",
         "aws-sdk": "^2.678.0",
         "axios": "^0.21.1",
         "babel-eslint": "^10.1.0",
@@ -55,11 +58,13 @@ npm manifest:
         "bluebird": "^3.7.2",
         "concurrently": "^6.2.0",
         "cors": "^2.8.5",
+        "crypto-js": "^4.1.1",
         "debug": "^4.3.2",
         "dotenv": "^8.2.0",
         "ejs": "^3.1.6",
         "eslint-plugin-graphql": "^4.0.0",
         "esm": "^3.2.25",
+        "expo-server-sdk": "^3.6.0",
         "express": "^4.17.1",
         "file-type": "^14.4.0",
         "gql": "^1.1.2",
@@ -68,6 +73,7 @@ npm manifest:
         "graphql-request": "^3.4.0",
         "graphql-tools": "^4.0.6",
         "http-proxy-middleware": "^2.0.0",
+        "iconv-lite": "^0.6.3",
         "ics": "^2.31.0",
         "isomorphic-git": "0.75.0",
         "jsonwebtoken": "^8.5.1",
@@ -94,10 +100,12 @@ npm manifest:
         "rrule": "2.6.4",
         "sharp": "^0.29.1",
         "ssh2": "^0.8.9",
+        "ssl-checker": "^2.0.7",
         "stripe": "^8.168.0",
         "table": "^6.8.0",
         "tar-fs": "^2.1.1",
         "twilio": "^3.67.2",
+        "url": "^0.11.0",
         "yarn": "^1.22.11",
         "zlib": "^1.0.5"
      },
@@ -108,12 +116,6 @@ npm manifest:
         "eslint-plugin-prettier": "^3.4.0",
         "nodemon": "^2.0.3",
         "prettier": "^2.3.2"
-     },
-     "nodemonConfig": {
-        "ignore": [
-           "store",
-           "admin"
-        ]
      }
   }
 
