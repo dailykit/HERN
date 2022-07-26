@@ -10,6 +10,7 @@ export const RECENT_ORDERS = gql`
          id
          created_at
          cart {
+            id
             status
             customerInfo
          }

@@ -1,7 +1,7 @@
 import { Modal, Radio, Space } from 'antd'
 import classNames from 'classnames'
 import React, { useState } from 'react'
-import { useTranslation } from '../../context'
+import { useTranslation, useCart } from '../../context'
 import KioskButton from './component/button'
 import { ReloadIcon, ArrowLeftIconBG } from '../../assets/icons'
 import { isClient } from '../../utils'
@@ -15,11 +15,21 @@ export const KioskHeader = props => {
    const { formatMessage } = useIntl()
    const [showReloadWarningPopup, setShowReloadWarningPopup] =
       React.useState(false)
+   const [showClearCartWarning, setClearCartWarning] = React.useState(false)
+   const { methods, storedCartId} = useCart()
 
    const handleArrowClick = () => {
       switch (currentPage) {
          case 'menuPage':
-            setCurrentPage('fulfillmentPage')
+            if(config?.kioskSettings?.removeCartItemGoBackButton?.askForConfirmation?.value || false){
+               if(storedCartId){
+                  setClearCartWarning(true)
+               } else {
+                  setCurrentPage('fulfillmentPage')
+               }
+            } else {
+               setCurrentPage('fulfillmentPage')
+            }
             break
          case 'cartPage':
             setCurrentPage('menuPage')
@@ -31,7 +41,7 @@ export const KioskHeader = props => {
             setCurrentPage('menuPage')
       }
    }
-
+   
    return (
       <div
          className={classNames('hern-kiosk__kiosk-header-container', {
@@ -64,6 +74,63 @@ export const KioskHeader = props => {
                   }
                />
             )}
+         {currentPage === 'menuPage' && 
+            <Modal
+            title={formatMessage({
+               id: (config?.kioskSettings?.removeCartItemGoBackButton?.confirmationTextShown?.value ||
+                     "All the cart items will be cleared. Do you still want to go back?"),
+            })}
+            visible={showClearCartWarning}
+            centered={true}
+            onCancel={() => {
+               setClearCartWarning(false)
+            }}
+            closable={false}
+            footer={null}
+            className="hern-kiosk___header-go-back-confirmation-modal"
+         >
+            <div
+               style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  padding: "0 2.2rem"
+               }}
+            >
+               <KioskButton
+                  onClick={() => {
+                     setClearCartWarning(false)
+                  }}
+                  style={{
+                     border: `2px solid ${config.kioskSettings.theme.secondaryColor.value}`,
+                     background: 'transparent !important',
+                     padding: '.1em 2em',
+                     color: `${config.kioskSettings.theme.primaryColor.value}`,
+                  }}
+                  buttonConfig={config.kioskSettings.buttonSettings}
+               >
+                  {t(config?.kioskSettings?.removeCartItemGoBackButton?.cancelButtonText?.value || "Cancel")}
+               </KioskButton>
+               <KioskButton
+                  style={{ padding: '.1em 2em' }}
+                  onClick={() => {
+                     if(storedCartId){
+                        methods.cart.delete({
+                           variables: {
+                              id: storedCartId,
+                           },
+                        })
+                     }
+                     setClearCartWarning(false)
+                     setCurrentPage('fulfillmentPage')
+                  }}
+                  buttonConfig={config.kioskSettings.buttonSettings}
+               >
+                  {t(config?.kioskSettings?.removeCartItemGoBackButton?.confirmButtonText?.value || "Continue")}
+               </KioskButton>
+            </div>
+         </Modal>
+            }
          <div className="hern-kiosk__kiosk-header__brand">
             <img
                src={config.kioskSettings.logo.value}
@@ -79,7 +146,7 @@ export const KioskHeader = props => {
             config={config}
             setShowReloadWarningPopup={setShowReloadWarningPopup}
          />
-
+         
          <Modal
             title={formatMessage({
                id: 'Current changes will lose do you wish to continue?',

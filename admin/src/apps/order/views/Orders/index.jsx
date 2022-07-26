@@ -67,7 +67,7 @@ const Orders = () => {
             payload: { limit: 10, offset: 0 },
          })
       }
-   }, [location.pathname])
+   }, [location.pathname, state])
 
    React.useEffect(() => {
       window.addEventListener('hashchange', () => {

@@ -19,7 +19,7 @@ const { Step } = Steps
 export const ProgressBar = props => {
    const { config, setCurrentPage } = props
 
-   const { cartState, dineInTableInfo, setDineInTableInfo } =
+   const { cartState, dineInTableInfo, setDineInTableInfo, storedCartId } =
       React.useContext(CartContext)
    const { t, direction } = useTranslation()
    const { formatMessage } = useIntl()
