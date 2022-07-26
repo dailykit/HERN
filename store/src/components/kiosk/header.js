@@ -94,6 +94,7 @@ export const KioskHeader = props => {
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'space-between',
+                  padding: "0 2.2rem"
                }}
             >
                <KioskButton
