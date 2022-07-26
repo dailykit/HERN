@@ -30,6 +30,7 @@ import {
    isClient,
    useRazorPay,
    usePaytm,
+   usePineLabsTerminalPay,
    useTerminalPay,
    getPaytmOptions,
    get_env,
@@ -109,6 +110,10 @@ export const PaymentProvider = ({ children }) => {
       byPassTerminalPayment,
       cancelTerminalPayment,
    } = useTerminalPay()
+   const {
+      initiateTerminalPayment: initiatePineLabsTerminalPayment,
+      cancelTerminalPayment: cancelPineLabsTerminalPayment,
+   } = usePineLabsTerminalPay()
    const { cartState } = useCart()
    const { addToast } = useToasts()
    const { t } = useTranslation()
@@ -606,6 +611,15 @@ export const PaymentProvider = ({ children }) => {
             if (cartPayment.paymentStatus === 'PENDING') {
                ;(async () => {
                   await initiateTerminalPayment(cartPayment)
+               })()
+            }
+         } else if (
+            cartPayment.availablePaymentOption.supportedPaymentOption
+               .paymentOptionLabel === 'PINE_LABS_TERMINAL'
+         ) {
+            if (cartPayment.paymentStatus === 'PENDING') {
+               ;(async () => {
+                  await initiatePineLabsTerminalPayment(cartPayment)
                })()
             }
          }
