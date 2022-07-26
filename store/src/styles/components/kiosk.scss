@@ -97,6 +97,20 @@
       z-index: 10000000;
    }
 }
+.hern-kiosk___header-go-back-confirmation-modal {
+   .ant-modal-content {
+      padding: 1rem;
+      border-radius: 0.5rem;
+   }
+   .ant-modal-title {
+      font-weight: 800;
+      font-size: 24px;
+      margin-bottom: 0.5rem;
+      text-align: center;
+      line-height: 28px;
+      margin-top: 1rem;
+   }
+}
 
 // fulfillment section
 .hern-kiosk__fulfillment-section-container {

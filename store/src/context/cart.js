@@ -735,6 +735,7 @@ export const CartProvider = ({ children }) => {
                },
                cart: {
                   update: updateCart,
+                  delete: deleteCart
                },
             },
             isCartValidByProductAvailability,
