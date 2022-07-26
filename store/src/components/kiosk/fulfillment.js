@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Button } from 'antd'
+import { Button, Drawer } from 'antd'
 import { useCart, useTranslation } from '../../context'
 import { DineInIcon, TakeOutIcon } from '../../assets/icons'
 import { useConfig } from '../../lib'
@@ -7,6 +7,7 @@ import moment from 'moment'
 import { get_env, isDateValidInRRule, isClient } from '../../utils'
 import { DineInTableSelection, PhoneNumberTunnel } from './component'
 import tw from 'twin.macro'
+import styled from 'styled-components'
 
 export const FulfillmentSection = props => {
    const { config, setCurrentPage } = props
@@ -22,6 +23,8 @@ export const FulfillmentSection = props => {
    const [showDineInTableSelection, setShowDineInTableSelection] =
       useState(false)
    const [visible, setVisible] = useState(false)
+   const [isPromotionalScreenVisible, setIsPromotionalScreenVisible] =
+      useState(false)
    React.useEffect(() => {
       // check is there any recurrence available or not
       // if available then check that store is available for current day and time
@@ -104,7 +107,8 @@ export const FulfillmentSection = props => {
          })
       }
    }, [kioskRecurrences])
-
+   const showPromotionalScreen =
+      config?.promotionalScreenSettings?.showPromotionalScreen?.value ?? false
    React.useEffect(() => {
       const languageTags = document.querySelectorAll(
          '[data-translation="true"]'
@@ -135,7 +139,11 @@ export const FulfillmentSection = props => {
          ),
       })
       setShowDineInTableSelection(false)
-      setCurrentPage('menuPage')
+      if (showPromotionalScreen) {
+         setIsPromotionalScreenVisible(true)
+      } else {
+         setCurrentPage('menuPage')
+      }
    }
    return (
       <div
@@ -236,6 +244,10 @@ export const FulfillmentSection = props => {
                               setShowDineInTableSelection
                            }
                            setVisible={setVisible}
+                           setIsPromotionalScreenVisible={
+                              setIsPromotionalScreenVisible
+                           }
+                           showPromotionalScreen
                         />
                      )
                   }
@@ -285,6 +297,12 @@ export const FulfillmentSection = props => {
             visible={visible}
             setVisible={setVisible}
             setCurrentPage={setCurrentPage}
+         />
+         <PromotionalScreen
+            config={config}
+            setCurrentPage={setCurrentPage}
+            visible={isPromotionalScreenVisible}
+            setVisible={setIsPromotionalScreenVisible}
          />
       </div>
    )
@@ -366,6 +384,8 @@ const FulfillmentOptionCustom = props => {
       fulfillment,
       setShowDineInTableSelection,
       setVisible,
+      setIsPromotionalScreenVisible,
+      showPromotionalScreen,
    } = props
 
    const { dispatch, kioskAvailability } = useConfig()
@@ -406,7 +426,11 @@ const FulfillmentOptionCustom = props => {
             !askedPhoneNumber ||
             (askedPhoneNumber && isClient && localStorage.getItem('phone'))
          ) {
-            setCurrentPage('menuPage')
+            if (showPromotionalScreen) {
+               setIsPromotionalScreenVisible(true)
+            } else {
+               setCurrentPage('menuPage')
+            }
          }
       }
       isClient &&
@@ -457,3 +481,48 @@ const FulfillmentOptionCustom = props => {
       </div>
    )
 }
+const PromotionalScreen = ({ config, visible, setVisible, setCurrentPage }) => {
+   const { t } = useTranslation()
+   //Config for promotional screen
+   const promotionalScreenSettings = {
+      continueButtonLabel:
+         config?.promotionalScreenSettings?.promotionalScreenContinueButton
+            ?.labelForContinueButton?.value || 'CONTINUE',
+      image:
+         config?.promotionalScreenSettings?.promotionalScreenBackgroundImage
+            ?.value ||
+         'https://dailykit-133-test.s3.us-east-2.amazonaws.com/images/08345-app_promotion.png',
+   }
+   const { image, continueButtonLabel } = promotionalScreenSettings
+   return (
+      <StyledPromotionalScreen
+         title={null}
+         placement={'right'}
+         width={'100%'}
+         onClose={() => setVisible(false)}
+         visible={visible}
+         style={{ zIndex: '99999' }}
+         closable={false}
+      >
+         <div tw="h-full relative">
+            <img src={image} />
+            <div tw="absolute bottom-20 w-full flex justify-center">
+               <button
+                  onClick={() => {
+                     setVisible(false)
+                     setCurrentPage('menuPage')
+                  }}
+                  tw="bg-[#3d0347] text-7xl text-white font-extrabold px-[56px] py-7 tracking-wide"
+               >
+                  {t(continueButtonLabel)}
+               </button>
+            </div>
+         </div>
+      </StyledPromotionalScreen>
+   )
+}
+const StyledPromotionalScreen = styled(Drawer)`
+   .ant-drawer-body {
+      padding: 0;
+   }
+`

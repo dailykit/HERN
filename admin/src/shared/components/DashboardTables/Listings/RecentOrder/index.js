@@ -28,6 +28,7 @@ const RecentOrderTable = () => {
    const { loading: subsLoading, error: subsError } = useSubscription(
       RECENT_ORDERS,
       {
+         skip: !brandContext,
          variables: {
             where: {
                cart: {
@@ -75,11 +76,10 @@ const RecentOrderTable = () => {
                return newOrder
             })
             setRecentOrders(newData)
-            setStatus({ ...status, loading: false })
+            setStatus({ loading: false })
          },
       }
    )
-   // console.log('recent orders', recentOrders)
    const tableHeaderOnClick = () => {
       history.push('order')
    }
@@ -103,15 +103,16 @@ const RecentOrderTable = () => {
       },
    ]
 
-   if (subsLoading || status.loading) {
-      return <InlineLoader />
-   }
    if (subsError) {
       logger(subsError)
       toast.error('Could not get the Insight data')
+      console.error('suberror-->', subsError)
       return (
          <ErrorState height="320px" message="Could not get the Insight data" />
       )
+   }
+   if (subsLoading || status.loading) {
+      return <InlineLoader />
    }
    if (recentOrders.length == 0) {
       return <Filler message="No Recent Order Data Available" />
