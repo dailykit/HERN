@@ -232,7 +232,7 @@ const TableNumberPadView = ({ numbers, setNumbers, isTableValid, config }) => {
 
             {!isTableValid && numbers.length > 0 && (
                <div tw="text-center pt-9 text-3xl text-[#DC4405]">
-                  Table number doesn’t exist. Try another
+                  {config.dineInTableSettings.dineInTableUnavailableText.value}
                </div>
             )}
          </div>
