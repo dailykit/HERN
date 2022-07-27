@@ -92,6 +92,8 @@ const KioskMenu = props => {
    const [showVegMenuOnly, setShowVegMenuOnly] = useState(false)
    const [vegMenu, setVegMenu] = useState(null)
    const { t, dynamicTrans, direction } = useTranslation()
+   const [upArrowShown, setUpArrowShown] = useState(false)
+   const [downArrowShown, setDownArrowShown] = useState(true)
 
    const kioskFinalMenu = React.useMemo(() => {
       if (showVegMenuOnly) {
@@ -112,6 +114,11 @@ const KioskMenu = props => {
       setSelectedCategory(e.key)
       // changeCategory(e.key)
    }
+
+   useEffect( ()=> {
+      setSelectedCategory(0)
+   }, [])
+   console.log("Selected Category: ", selectedCategory)
    useEffect( ()=> {
 
       let isReverseScroll = false
@@ -126,18 +133,29 @@ const KioskMenu = props => {
       setPreviousSelectedCategory(selectedCategory)
       const allDivs = document.querySelectorAll(".hern-kiosk__menu-page-product-category")
       if(selectedCategory >= 2){
-
          if(isReverseScroll && (selectedCategory == 3 || selectedCategory == 2) ){
             sidebarRef.current.scroll({
                top: allDivs[selectedCategory].scrollHeight*(selectedCategory-1) -200,
                behavior: "smooth",
-            }) 
+            })
          } else {
             sidebarRef.current.scroll({
                top: allDivs[selectedCategory].scrollHeight*(selectedCategory-2),
                behavior: "smooth",
             })
          }
+      }
+      if(!isReverseScroll && selectedCategory == 3){
+         setUpArrowShown(true)
+      }
+      if(isReverseScroll && selectedCategory == 2){
+         setUpArrowShown(false)
+      }
+      if(!isReverseScroll && selectedCategory == 8){
+         setDownArrowShown(false)
+      }
+      if(isReverseScroll && selectedCategory == 8){
+         setDownArrowShown(true)
       }
    }, [selectedCategory])
    useEffect(() => {
@@ -171,7 +189,8 @@ const KioskMenu = props => {
          }}
       >
          <div className="hern-kiosk__menu-category-side-bar__wrapper">
-            {config.menuSettings?.category?.showArrow?.value && (
+            {config.menuSettings?.category?.showArrow?.value &&
+               upArrowShown ? (
                <button
                   className="hern-kiosk__menu-category-arrow"
                   onClick={() => scroll(-200)}
@@ -179,6 +198,11 @@ const KioskMenu = props => {
                   <span>
                      <BiChevronUp color="var(--hern-primary-color)" size={28} />
                   </span>
+               </button>
+            ) : (
+               <button
+                  className="hern-kiosk__menu-category-arrow"
+                  style={{height: "48px"}}>
                </button>
             )}
             <Sider
@@ -256,8 +280,9 @@ const KioskMenu = props => {
                   })}
                </Menu>
             </Sider>
-            {config.menuSettings?.category?.showArrow?.value && (
-               <button
+            {config.menuSettings?.category?.showArrow?.value && 
+               downArrowShown &&
+               (<button
                   className="hern-kiosk__menu-category-arrow"
                   onClick={() => scroll(200)}
                >
