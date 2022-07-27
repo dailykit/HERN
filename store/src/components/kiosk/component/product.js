@@ -463,7 +463,7 @@ export const KioskProduct = props => {
                                           ...(config.kioskSettings.allowTilt
                                              .value && {
                                              clipPath:
-                                                'polygon(0 0, 100% 0, 100% 100%, 0 97%)',
+                                                'polygon(0 0, 100% 0, 100% 100%, 0 94.7%)',
                                           }),
                                        }}
                                        onClick={() => {

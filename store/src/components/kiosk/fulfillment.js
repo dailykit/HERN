@@ -427,7 +427,7 @@ const FulfillmentOptionCustom = props => {
          style={{
             background: `${config.kioskSettings.theme.primaryColor.value}`,
             ...(config.kioskSettings.allowTilt.value && {
-               clipPath: 'polygon(0 0, 100% 0, 100% 100%, 0 97%)',
+               clipPath: 'polygon(0 0, 100% 0, 100% 100%, 0 95%)',
             }),
          }}
       >
