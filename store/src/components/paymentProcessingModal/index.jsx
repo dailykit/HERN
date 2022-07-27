@@ -100,12 +100,12 @@ const PaymentProcessingModal = ({
    }
    const startCelebration = () => {
       setIsCelebrating(true)
-      setTimeout(async () => {
-         await stopCelebration()
-         if (isClient && ALLOW_POSIST_PUSH_ORDER === false) {
-            window.location.reload()
-         }
-      }, 5000)
+      // setTimeout(async () => {
+      //    await stopCelebration()
+      //    if (isClient && ALLOW_POSIST_PUSH_ORDER === false) {
+      //       window.location.reload()
+      //    }
+      // }, 5000)
    }
 
    const ShowPaymentStatusInfo = () => {
@@ -172,12 +172,12 @@ const PaymentProcessingModal = ({
                title = 'Your Order Is Placed Successfully.'
                subtitle = (
                   <>
-                     <p style={{ fontSize: '1.5rem', color: 'black' }}>
+                     <p style={{ fontSize: '2.5rem', color: 'black' }}>
                         {t('Your Order Id')}
                      </p>
                      <h1
                         style={{
-                           fontSize: '4rem',
+                           fontSize: '8rem',
                            color: 'var(--hern-primary-color)',
                            fontWeight: '900',
                         }}
