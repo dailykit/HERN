@@ -88,7 +88,8 @@ export const KioskCart = props => {
       config?.cartCardSettings?.showNumberOfItemsOnCart?.value || false
    const labelForCartItemsList =
       config?.cartCardSettings?.labelForCartItemsList?.value || 'REVIEW CART'
-
+   const scrollOnFullPage =
+      config?.cartPageSettings?.scrollOnFullPage?.value ?? false
    const { setIsProcessingPayment, setIsPaymentInitiated, updatePaymentState } =
       usePayment()
    const SHOW_FREEBIE_MSG = get_env('SHOW_FREEBIE_MSG')
@@ -135,11 +136,19 @@ export const KioskCart = props => {
    }
    return (
       <>
+         <ProgressBar
+            sticky={config?.cartPageSettings?.stickyProgressBar?.value ?? false}
+            config={config}
+            setCurrentPage={setCurrentPage}
+         />
          <Layout
-            style={{ height: '100%', overflowY: 'hidden', background: '#fff' }}
-            className="hern-kiosk__cart-container"
+            style={{
+               display: `${scrollOnFullPage ? 'block' : 'flex'}`,
+               height: 'calc(100% - 10rem)',
+               background: '#fff',
+               overflowY: 'auto',
+            }}
          >
-            <ProgressBar config={config} setCurrentPage={setCurrentPage} />
             {/* <Header className="hern-kiosk__cart-section-header">
             <Row className="hern-kiosk__cart-section-header-row">
                <Col span={4}>
