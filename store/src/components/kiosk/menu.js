@@ -118,7 +118,7 @@ const KioskMenu = props => {
    useEffect( ()=> {
       setSelectedCategory(0)
    }, [])
-   console.log("Selected Category: ", selectedCategory)
+   
    useEffect( ()=> {
 
       let isReverseScroll = false
