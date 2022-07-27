@@ -8,6 +8,7 @@ import { get_env, isDateValidInRRule, isClient } from '../../utils'
 import { DineInTableSelection, PhoneNumberTunnel } from './component'
 import tw from 'twin.macro'
 import styled from 'styled-components'
+import { ArrowLeftIconBG } from '../../assets/icons/ArrowLeftWithBG'
 
 export const FulfillmentSection = props => {
    const { config, setCurrentPage } = props
@@ -505,15 +506,28 @@ const PromotionalScreen = ({ config, visible, setVisible, setCurrentPage }) => {
          closable={false}
       >
          <div tw="h-full relative">
-            <img src={image} />
-            <div tw="absolute bottom-20 w-full flex justify-center">
-               <button
-                  onClick={() => {
-                     setVisible(false)
-                     setCurrentPage('menuPage')
-                  }}
-                  tw="bg-[#3d0347] text-7xl text-white font-extrabold px-[56px] py-7 tracking-wide"
-               >
+            <span tw="absolute top-6 left-4">
+               <ArrowLeftIconBG
+                  bgColor={'#fff'}
+                  onClick={() => setVisible(false)}
+                  arrowColor={config.kioskSettings.theme.primaryColor.value}
+               />
+            </span>
+            <img
+               onClick={() => {
+                  setVisible(false)
+                  setCurrentPage('menuPage')
+               }}
+               src={image}
+            />
+            <div
+               onClick={() => {
+                  setVisible(false)
+                  setCurrentPage('menuPage')
+               }}
+               tw="absolute bottom-20 w-full flex justify-center"
+            >
+               <button tw="bg-[#3d0347] text-7xl text-white font-extrabold px-[56px] py-7 tracking-wide">
                   {t(continueButtonLabel)}
                </button>
             </div>
