@@ -327,17 +327,42 @@ const KioskMenu = props => {
                         >
                            {config?.menuSettings?.cartButton?.variant?.value
                               ?.value === 'simple' ? (
-                              <CartIcon
-                                 size={25}
-                                 stroke={
-                                    config.kioskSettings.buttonSettings
-                                       .textColor.value
-                                 }
-                                 variant="simple"
-                                 count={
-                                    cart?.cartItems_aggregate?.aggregate?.count
-                                 }
-                              />
+                                 <>
+                                    {(!(config?.menuSettings?.showSubTotalWithCartIcon.value)) &&
+                                       <CartIcon
+                                          size={25}
+                                          stroke={
+                                             config.kioskSettings.buttonSettings
+                                                .textColor.value
+                                          }
+                                          variant="simple"
+                                          count={
+                                             cart?.cartItems_aggregate?.aggregate?.count
+                                          }
+                                       />
+                                    }
+                                    { (config?.menuSettings?.showSubTotalWithCartIcon.value) &&
+                                       <div className='hern-kiosk__menu-header-cart-Icon-div'>
+                                          <CartIcon
+                                             size={25}
+                                             stroke={
+                                                config.kioskSettings.buttonSettings
+                                                   .textColor.value
+                                             }
+                                             variant="simple"
+                                             count={
+                                                cart?.cartItems_aggregate?.aggregate?.count
+                                             }
+                                          />
+                                          <span
+                                             style={{verticalAlign: "middle"}}
+                                          >{`| ${formatCurrency(
+                                             cart?.cartOwnerBilling?.totalToPay
+                                          )}`}</span>
+                                       </div>
+                                    }
+                                 </>
+                              
                            ) : (
                               <KioskButton
                                  customClass="hern-kiosk__goto-cart-btn"
@@ -432,7 +457,7 @@ const KioskMenu = props => {
                                        {cart?.cartItems_aggregate?.aggregate
                                           ?.count === 1
                                           ? t('Item')
-                                          : t('Items')}{' '}
+                                          : t('Items')}{'-'}
                                        {formatCurrency(
                                           cart?.cartOwnerBilling?.totalToPay
                                        )}

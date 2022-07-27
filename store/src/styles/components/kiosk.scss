@@ -413,7 +413,11 @@
    display: flex;
    justify-content: center;
 }
-
+.hern-kiosk__menu-header-cart-Icon-div {
+   display: flex;
+   align-items: space-between;
+   height: 100%;
+}
 .hern-kiosk__menu-page-product-category {
    display: flex;
    justify-content: center;
