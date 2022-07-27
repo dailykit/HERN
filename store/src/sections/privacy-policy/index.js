@@ -5,7 +5,7 @@ import { useConfig } from '../../lib'
 export const PrivacyPolicy = () => {
    const { settings } = useConfig('brand')
    const PrivacyPolicy =
-      settings?.brand?.['Privacy Policy']?.['Privacy Policy']?.value ?? ''
+      settings?.brand?.['Privacy Policy']?.['Privacy Policy']?.value || ''
 
    return (
       <div className="hern-privacy-policy">

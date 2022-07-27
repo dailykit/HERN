@@ -33,7 +33,7 @@ export const getPageProps = async (params, route) => {
 
    //pageModules
    const parsedData = await foldsResolver(
-      dataByRoute?.brands_brandPages?.[0]?.['brandPageModules'] ?? []
+      dataByRoute?.brands_brandPages?.[0]?.['brandPageModules'] || []
    )
 
    //All the linked CSS and JS files
@@ -45,27 +45,33 @@ export const getPageProps = async (params, route) => {
          .map(file => file.fileId),
       pageModules: pageModules.map(module => module.id),
    }
-   const { brands_jsCssFileLinks: linkedCSSJSFiles } = await client.request(
-      GET_JS_CSS_FILES,
-      {
-         where: {
-            _or: [
-               { brandPage: { route: { _eq: route } } },
-               { brandPageModuleId: { _in: fileIds.pageModules } },
-               { htmlFileId: { _in: fileIds.htmlFileIds } },
-               {
-                  brand: {
-                     _or: [
-                        { isDefault: { _eq: true } },
-                        { domain: { _eq: params.brand } },
-                     ],
-                  },
-               },
-            ],
-         },
-      }
-   )
+   const allLinkedCSSJSFiles = await client.request(GET_JS_CSS_FILES, {
+      where: {
+         _or: [
+            { brandPage: { route: { _eq: route } } },
+            { brandPageModuleId: { _in: fileIds.pageModules } },
+            { htmlFileId: { _in: fileIds.htmlFileIds } },
+            {
+               brand: { domain: { _eq: params.brand } },
+            },
+         ],
+      },
+      defaultWhere: {
+         _or: [
+            { brandPage: { route: { _eq: route } } },
+            { brandPageModuleId: { _in: fileIds.pageModules } },
+            { htmlFileId: { _in: fileIds.htmlFileIds } },
+            {
+               brand: { isDefault: { _eq: true } },
+            },
+         ],
+      },
+   })
 
+   const linkedCSSJSFiles =
+      allLinkedCSSJSFiles.brandJsCssFileLinks.length === 0
+         ? allLinkedCSSJSFiles.defaultBrandJsCssFileLinks
+         : allLinkedCSSJSFiles.brandJsCssFileLinks
    //Linked files with page
    const linkedFiles = await resolveCSSJSFiles(linkedCSSJSFiles)
 

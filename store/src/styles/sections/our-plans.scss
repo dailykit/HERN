@@ -752,6 +752,9 @@
          margin-top: 16px;
          font-size: 20px;
       }
+      @media (max-width: 1024px) {
+         margin-left: 25px;
+      }
    }
 
    &__cards-wrapper {
@@ -768,6 +771,7 @@
          padding-right: 4px;
          height: 370px;
          grid-auto-rows: minmax(148px, auto);
+         grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
       }
    }
 

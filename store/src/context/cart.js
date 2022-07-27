@@ -20,7 +20,7 @@ import {
    isClient,
 } from '../utils'
 import { useTranslation } from './language'
-import { indexOf } from 'lodash'
+import { indexOf, isArray } from 'lodash'
 
 export const CartContext = React.createContext()
 
@@ -353,7 +353,10 @@ export const CartProvider = ({ children }) => {
    //add to cart
    const addToCart = async (cartItem, quantity) => {
       // setIsFinalCartLoading(true)
-      const cartItems = new Array(quantity).fill({ ...cartItem })
+      const cartItems = isArray(cartItem)
+         ? cartItem
+         : new Array(quantity).fill({ ...cartItem })
+
       const orderTabInLocal = JSON.parse(localStorage.getItem('orderTab'))
       let customerAddressFromLocal
       switch (orderTabInLocal) {
@@ -450,10 +453,19 @@ export const CartProvider = ({ children }) => {
             })
          } else {
             //cart already exist
-            const cartItemsWithCartId = new Array(quantity).fill({
-               ...cartItem,
-               cartId: storedCartId,
-            })
+            let cartItemsWithCartId
+            if (isArray(cartItem)) {
+               cartItemsWithCartId = cartItem.map(item => ({
+                  ...item,
+                  cartId: storedCartId,
+               }))
+            } else {
+               cartItemsWithCartId = new Array(quantity).fill({
+                  ...cartItem,
+                  cartId: storedCartId,
+               })
+            }
+
             // console.log('object new cart', cartItemsWithCartId)
             await createCartItems({
                variables: {
@@ -580,20 +592,20 @@ export const CartProvider = ({ children }) => {
                      const addressInCart =
                         subscriptionData.data.carts[0].address
                      const addressToBeSaveInLocal = {
-                        city: addressInCart.city,
-                        country: addressInCart.country,
-                        label: addressInCart.label,
-                        landmark: addressInCart.landmark,
-                        latitude: addressInCart.lat,
-                        line1: addressInCart.line1,
-                        line2: addressInCart.line2,
-                        longitude: addressInCart.lng,
-                        mainText: addressInCart.line1,
-                        notes: addressInCart.notes,
-                        secondaryText: `${addressInCart.city}, ${addressInCart.state} ${addressInCart.zipcode}, ${addressInCart.country}`,
-                        state: addressInCart.state,
-                        zipcode: addressInCart.zipcode,
-                        searched: addressInCart.searched || '',
+                        city: addressInCart?.city,
+                        country: addressInCart?.country,
+                        label: addressInCart?.label,
+                        landmark: addressInCart?.landmark,
+                        latitude: addressInCart?.lat,
+                        line1: addressInCart?.line1,
+                        line2: addressInCart?.line2,
+                        longitude: addressInCart?.lng,
+                        mainText: addressInCart?.line1,
+                        notes: addressInCart?.notes,
+                        secondaryText: `${addressInCart?.city}, ${addressInCart?.state} ${addressInCart?.zipcode}, ${addressInCart?.country}`,
+                        state: addressInCart?.state,
+                        zipcode: addressInCart?.zipcode,
+                        searched: addressInCart?.searched || '',
                      }
                      const orderTabForLocal =
                         subscriptionData.data.carts[0].fulfillmentInfo?.type ||
@@ -723,6 +735,7 @@ export const CartProvider = ({ children }) => {
                },
                cart: {
                   update: updateCart,
+                  delete: deleteCart
                },
             },
             isCartValidByProductAvailability,

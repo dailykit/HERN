@@ -8,6 +8,7 @@ import { useConfig } from '../../lib'
 import { useCart } from '../../context'
 import { KioskModifier } from '../../components/kiosk/component'
 import { HernLazyImage } from '../../utils/hernImage'
+import * as Scroll from 'react-scroll'
 
 export const PromotionCarousal = props => {
    const { config: componentConfig } = props
@@ -212,28 +213,58 @@ export const PromotionCarousal = props => {
             })}
             {componentConfig.data.promotionImageWithEvent.value.images.map(
                (eachImage, index) => {
-                  return (
-                     <div
-                        className="hern-kiosk__promotion-image"
-                        key={eachImage.url + eachImage.belongsTo}
-                     >
-                        <HernLazyImage
-                           dataSrc={eachImage.url}
-                           style={{
-                              padding: componentConfig
-                                 ?.promotionalCarouselSettings
-                                 ?.fullScreenCarousel?.value
-                                 ? 0
-                                 : '1em',
-                           }}
-                           onClick={() => {
-                              onImageClick(eachImage)
-                           }}
-                           height={225}
-                           width={carouselWidth}
-                        />
-                     </div>
-                  )
+                  if (eachImage.belongsTo === 'CATEGORY') {
+                     return (
+                        <div
+                           className="hern-kiosk__promotion-image"
+                           key={eachImage.url + eachImage.belongsTo}
+                        >
+                           <Scroll.Link
+                              containerId="hern-kiosk__menu-list"
+                              smooth={true}
+                              to={eachImage.categoryName}
+                              spy={true}
+                              className="hern-kiosk__category-scroll-link"
+                           >
+                              <HernLazyImage
+                                 dataSrc={eachImage.url}
+                                 style={{
+                                    padding: componentConfig
+                                       ?.promotionalCarouselSettings
+                                       ?.fullScreenCarousel?.value
+                                       ? 0
+                                       : '1em',
+                                 }}
+                                 height={225}
+                                 width={carouselWidth}
+                              />
+                           </Scroll.Link>
+                        </div>
+                     )
+                  } else {
+                     return (
+                        <div
+                           className="hern-kiosk__promotion-image"
+                           key={eachImage.url + eachImage.belongsTo}
+                        >
+                           <HernLazyImage
+                              dataSrc={eachImage.url}
+                              style={{
+                                 padding: componentConfig
+                                    ?.promotionalCarouselSettings
+                                    ?.fullScreenCarousel?.value
+                                    ? 0
+                                    : '1em',
+                              }}
+                              onClick={() => {
+                                 onImageClick(eachImage)
+                              }}
+                              height={225}
+                              width={carouselWidth}
+                           />
+                        </div>
+                     )
+                  }
                }
             )}
             {componentConfig.data.promotionImages.value.url.map(

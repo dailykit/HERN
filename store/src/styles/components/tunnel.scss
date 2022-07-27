@@ -1,6 +1,5 @@
 .hern-tunnel {
-   z-index: 1000;
-   margin-top: 64px;
+   z-index: 1000 !important;
    position: fixed;
    top: 0px;
    right: 0px;
@@ -10,7 +9,6 @@
 }
 .hern-tunnel__body {
    padding: 16px 16px 80px 16px;
-   overflow-y: auto;
 }
 
 .hern-tunnel__wrapper {
@@ -69,19 +67,15 @@
    }
 }
 .hern-tunnel__popup--sm {
-   top: 32px;
-   right: 0;
-   bottom: 32px;
+   top: 0;
+   bottom: 0;
    left: 0;
-   max-width: 380px;
+   width: 380px;
    margin: 0 auto;
-   border-radius: 12px;
    @media only screen and (max-width: 568px) {
-      top: 32px;
-      right: 16px;
-      bottom: 16px;
-      left: 16px;
-      border-radius: 12px;
+      top: 0;
+      bottom: 0;
+      left: 0;
    }
 }
 
@@ -130,16 +124,14 @@ $variants: (
 
 .hern-tunnel__header {
    height: 64px;
-   padding: 0 1rem;
-   border-bottom-width: 1px;
    display: flex;
    align-items: center;
-   justify-content: space-between;
+   padding: 1rem 2rem;
 }
 .hern-tunnel__header__title {
-   color: rgba(5, 150, 105, 1);
-   font-size: 1.25rem;
-   line-height: 1.75rem;
+   font-size: 1.2rem;
+   margin-left: 0.5rem;
+   font-weight: 600;
 }
 
 .hern-tunnel__ant {

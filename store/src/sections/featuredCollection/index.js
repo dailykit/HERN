@@ -57,8 +57,8 @@ export const FeaturedCollection = ({ config }) => {
       ? config?.display?.dropdown?.value[0]?.value
       : 'side-nav'
    const numberOfProducts =
-      config?.display?.['numberOfProducts']?.value ??
-      config?.display?.['numberOfProducts']?.default ??
+      config?.display?.['numberOfProducts']?.value ||
+      config?.display?.['numberOfProducts']?.default ||
       2
    const showCategoryLengthOnCategoryTitle =
       config?.display?.['showCategoryLengthOnCategoryTitle']?.value ??
@@ -73,8 +73,8 @@ export const FeaturedCollection = ({ config }) => {
       config?.display?.['showCartOnRight']?.default ??
       false
    const productsScrollWidth =
-      config?.display?.productsScrollWidth?.value ??
-      config?.display?.productsScrollWidth?.default ??
+      config?.display?.productsScrollWidth?.value ||
+      config?.display?.productsScrollWidth?.default ||
       0
 
    setThemeVariable('--hern-number-of-products', numberOfProducts)

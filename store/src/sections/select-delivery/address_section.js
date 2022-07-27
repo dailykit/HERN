@@ -25,14 +25,14 @@ export const AddressSection = () => {
          const [address] = user?.platform_customer?.addresses
          addressSelection(address)
       }
-   }, [dispatch, user])
+   }, [dispatch])
 
    //Effect for setting current view to address form if there is no address
    React.useEffect(() => {
-      if (!isEmpty(state?.address?.selected)) {
-         setCurrentView('selected-address')
-      } else if (!isEmpty(user?.platform_customer?.addresses)) {
+      if (isEmpty(user?.platform_customer?.addresses)) {
          setCurrentView('address-list')
+      } else if (!isEmpty(state?.address)) {
+         setCurrentView('selected-address')
       } else {
          setCurrentView('address-form')
       }
@@ -148,10 +148,10 @@ const AddressCard = ({
             border:
                address?.id === selectedAddress?.id &&
                '0.5px solid var(--hern-accent)',
-            boxShadow: isSelectedCard
-               ? 'none'
-               : '0px 0px 29px rgba(0, 0, 0, 0.08)',
-            paddingTop: isSelectedCard ? '25px' : 'none',
+            // boxShadow: isSelectedCard
+            //    ? 'none'
+            //    : '0px 0px 29px rgba(0, 0, 0, 0.08)',
+            marginTop: isSelectedCard ? '45px' : 'none',
          }}
       >
          <div className="hern-delivery__address__list-item__header">

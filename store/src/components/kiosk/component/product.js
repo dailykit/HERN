@@ -21,6 +21,8 @@ import isEmpty from 'lodash/isEmpty'
 import { useIntl } from 'react-intl'
 import { BiPlus } from 'react-icons/bi'
 import { RoundedCloseIcon } from '../../../assets/icons/RoundedCloseIcon'
+import styled from 'styled-components'
+
 const { Header, Content, Footer } = Layout
 
 export const KioskProduct = props => {
@@ -35,12 +37,19 @@ export const KioskProduct = props => {
       brandLocation,
    } = useConfig()
 
-   const { config, productData, setCurrentPage } = props
+   const { config, productData, setCurrentPage, mealProduct } = props
    const { t, locale, dynamicTrans } = useTranslation()
    const { formatMessage } = useIntl()
    const [showModifier, setShowModifier] = useState(false)
+   const [showConvertToMealProductModal, setShowConvertToMealProductModal] =
+      useState(false)
+   const [showConvertedProduct, setShowConvertedProduct] = useState(false)
    const [availableQuantityInCart, setAvailableQuantityInCart] = useState(0)
    const currentLang = React.useMemo(() => locale, [locale])
+
+   // Related products to cart
+   const addRelatedProductToCart =
+      config?.relatedProducts?.addRelatedProductToCart?.value || false
 
    // const [combinedCartItems, setCombinedCartData] = useState(null)
    const [showChooseIncreaseType, setShowChooseIncreaseType] = useState(false) // show I'll choose or repeat last one popup
@@ -356,21 +365,39 @@ export const KioskProduct = props => {
          productData.productOptions.find(x => x.isPublished && x.isAvailable)
       )
    }, [productData, isProductOutOfStock])
-
+   const showModifierPopupAlways =
+      config?.modifierPopUpSettings?.showPopupAlways?.value ?? false
+   const showConvertPopup =
+      config?.menuSettings?.convertMealPopup?.showConvertPopup?.value ?? false
    const handelAddToCartClick = () => {
       // product availability
       if (productData.isAvailable) {
          if (showAddToCartButton) {
             if (
-               productData.productOptions.length > 0 &&
-               productData.isPopupAllowed
+               (productData.productOptions.length > 0 &&
+                  productData.isPopupAllowed) ||
+               (addRelatedProductToCart &&
+                  productData?.relatedProductIds?.ids.length > 0) ||
+               showModifierPopupAlways
             ) {
                const availableProductOptions =
                   productData.productOptions.filter(
                      option => option.isAvailable && option.isPublished
                   ).length
-               if (availableProductOptions > 0) {
-                  setShowModifier(true)
+
+               if (
+                  availableProductOptions > 0 ||
+                  addRelatedProductToCart ||
+                  showModifierPopupAlways
+               ) {
+                  if (
+                     showConvertPopup &&
+                     !isNull(productData?.convertToMealProductId)
+                  ) {
+                     setShowConvertToMealProductModal(true)
+                  } else {
+                     setShowModifier(true)
+                  }
                }
             } else {
                addToCart(productData.defaultCartItem, 1)
@@ -507,8 +534,9 @@ export const KioskProduct = props => {
                            {productData.additionalText}
                         </span>
                      )}
+                  </div>
+                  <div style={{ marginTop: 'auto' }}>
                      <span className="hern-kiosk__menu-product-price">
-                        {/* <sup></sup> */}
                         {formatCurrency(
                            getPriceWithDiscount(
                               productData.price,
@@ -520,105 +548,130 @@ export const KioskProduct = props => {
                               )
                         )}
                      </span>
-                  </div>
-                  {availableQuantityInCart === 0 ? (
-                     showAddToCartButton ? (
-                        <KioskButton
-                           onClick={() => {
-                              // setShowModifier(true)
-                              handelAddToCartClick()
-                           }}
-                           disabled={isProductOutOfStock}
-                           buttonConfig={config.kioskSettings.buttonSettings}
-                        >
-                           <span
-                              style={{
-                                 ...(config?.menuSettings
-                                    ?.productAddToCartButton?.fontWeight
-                                    ?.value && {
-                                    fontWeight:
-                                       config?.menuSettings
+                     <div style={{ width: '100%' }}>
+                        {availableQuantityInCart === 0 ? (
+                           showAddToCartButton ? (
+                              <KioskButton
+                                 onClick={() => {
+                                    // setShowModifier(true)
+                                    handelAddToCartClick()
+                                 }}
+                                 disabled={isProductOutOfStock}
+                                 buttonConfig={
+                                    config.kioskSettings.buttonSettings
+                                 }
+                                 style={{
+                                    width: '100%',
+                                 }}
+                              >
+                                 <span
+                                    style={{
+                                       ...(config?.menuSettings
                                           ?.productAddToCartButton?.fontWeight
-                                          ?.value,
-                                 }),
-                                 ...(config?.menuSettings
-                                    ?.productAddToCartButton?.fontSize
-                                    ?.value && {
-                                    fontSize:
-                                       config?.menuSettings
-                                          ?.productAddToCartButton?.fontSize
-                                          ?.value,
-                                 }),
-                              }}
-                           >
-                              {isStoreAvailable ? (
-                                 isProductOutOfStock ? (
-                                    t(
-                                       config?.menuSettings
-                                          ?.productAddToCartButton
-                                          ?.outOfStockLabel?.value ||
-                                          'Out Of Stock'
-                                    )
-                                 ) : (
-                                    <div
-                                       style={{
-                                          display: 'flex',
-                                          alignItems: 'center',
-                                          justifyContent: 'center',
-                                       }}
-                                    >
-                                       <span>
-                                          {t(
+                                          ?.value && {
+                                          fontWeight:
                                              config?.menuSettings
                                                 ?.productAddToCartButton
-                                                ?.addToCartLabel?.value ||
-                                                'Add To Cart'
-                                          )}
-                                       </span>
+                                                ?.fontWeight?.value,
+                                       }),
+                                       ...(config?.menuSettings
+                                          ?.productAddToCartButton?.fontSize
+                                          ?.value && {
+                                          fontSize:
+                                             config?.menuSettings
+                                                ?.productAddToCartButton
+                                                ?.fontSize?.value,
+                                       }),
+                                    }}
+                                 >
+                                    {isStoreAvailable ? (
+                                       isProductOutOfStock ? (
+                                          t(
+                                             config?.menuSettings
+                                                ?.productAddToCartButton
+                                                ?.outOfStockLabel?.value ||
+                                                'Out Of Stock'
+                                          )
+                                       ) : (
+                                          <div
+                                             style={{
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                justifyContent: 'center',
+                                             }}
+                                          >
+                                             <span>
+                                                {t(
+                                                   config?.menuSettings
+                                                      ?.productAddToCartButton
+                                                      ?.addToCartLabel?.value ||
+                                                      'Add To Cart'
+                                                )}
+                                             </span>
 
-                                       {config?.menuSettings
-                                          ?.productAddToCartButton?.showIcon
-                                          ?.value && (
-                                          <>
-                                             &nbsp;
-                                             <BiPlus size={16} />
-                                          </>
-                                       )}
-                                    </div>
-                                 )
-                              ) : (
-                                 t(
-                                    config?.menuSettings?.productAddToCartButton
-                                       ?.viewProductLabel?.value ||
-                                       'View Product'
-                                 )
-                              )}
-                           </span>
-                        </KioskButton>
-                     ) : null
-                  ) : (
-                     <KioskCounterButton
-                        config={config}
-                        onMinusClick={() => {
-                           const idsAv = combinedCartItems
-                              .filter(x => x.productId === productData.id)
-                              .map(x => x.ids)
-                              .flat()
-                           onMinusClick([idsAv[idsAv.length - 1]])
-                        }}
-                        onPlusClick={() => {
-                           if (
-                              productData.productOptions.length > 0 &&
-                              productData.isPopupAllowed
-                           ) {
-                              setShowChooseIncreaseType(true)
-                           } else {
-                              addToCart(productData.defaultCartItem, 1)
-                           }
-                        }}
-                        quantity={availableQuantityInCart}
-                     />
-                  )}
+                                             {config?.menuSettings
+                                                ?.productAddToCartButton
+                                                ?.showIcon?.value && (
+                                                <>
+                                                   &nbsp;
+                                                   <BiPlus size={16} />
+                                                </>
+                                             )}
+                                          </div>
+                                       )
+                                    ) : (
+                                       t(
+                                          config?.menuSettings
+                                             ?.productAddToCartButton
+                                             ?.viewProductLabel?.value ||
+                                             'View Product'
+                                       )
+                                    )}
+                                 </span>
+                              </KioskButton>
+                           ) : null
+                        ) : (
+                           <KioskCounterButton
+                              config={config}
+                              onMinusClick={() => {
+                                 const idsAv = combinedCartItems
+                                    .filter(x => x.productId === productData.id)
+                                    .map(x => x.ids)
+                                    .flat()
+                                 onMinusClick([idsAv[idsAv.length - 1]])
+                              }}
+                              onPlusClick={() => {
+                                 if (
+                                    productData.productOptions.length > 0 &&
+                                    productData.isPopupAllowed
+                                 ) {
+                                    setShowChooseIncreaseType(true)
+                                 } else {
+                                    if (
+                                       addRelatedProductToCart &&
+                                       productData?.relatedProductIds?.ids
+                                          .length > 0
+                                    ) {
+                                       if (
+                                          showConvertPopup &&
+                                          !isNull(
+                                             productData?.convertToMealProductId
+                                          )
+                                       ) {
+                                          setShowConvertToMealProductModal(true)
+                                       } else {
+                                          setShowModifier(true)
+                                       }
+                                    } else {
+                                       addToCart(productData.defaultCartItem, 1)
+                                    }
+                                 }
+                              }}
+                              quantity={availableQuantityInCart}
+                           />
+                        )}
+                     </div>
+                  </div>
                </Content>
             </Layout>
          </div>
@@ -665,7 +718,14 @@ export const KioskProduct = props => {
             >
                <KioskButton
                   onClick={() => {
-                     setShowModifier(true)
+                     if (
+                        showConvertPopup &&
+                        !isNull(productData?.convertToMealProductId)
+                     ) {
+                        setShowConvertToMealProductModal(true)
+                     } else {
+                        setShowModifier(true)
+                     }
                      setShowChooseIncreaseType(false)
                   }}
                   style={{
@@ -702,6 +762,25 @@ export const KioskProduct = props => {
                productData={productData}
                setCurrentPage={setCurrentPage}
                key={productData.id}
+               showConvertedProduct={showConvertPopup && showConvertedProduct}
+               mealProduct={mealProduct}
+            />
+         )}
+         {showConvertToMealProductModal && (
+            <ConfirmConvertProductModal
+               visible={showConvertToMealProductModal}
+               config={config}
+               onCancel={() => {
+                  setShowConvertToMealProductModal(false)
+                  setShowConvertedProduct(false)
+                  setShowModifier(true)
+               }}
+               onConfirm={() => {
+                  setShowConvertToMealProductModal(false)
+                  setShowConvertedProduct(true)
+                  setShowModifier(true)
+               }}
+               mealProduct={mealProduct}
             />
          )}
       </>
@@ -752,3 +831,103 @@ const KioskVegNonVegTypeIcon = ({ type }) => {
       </svg>
    )
 }
+const ConfirmConvertProductModal = ({
+   visible,
+   onConfirm,
+   onCancel,
+   mealProduct,
+   config,
+}) => {
+   const { t } = useTranslation()
+   const labels = {
+      confirm:
+         config?.menuSettings?.convertMealPopup?.confirmLabel?.value ||
+         'Convert',
+      cancel:
+         config?.menuSettings?.convertMealPopup?.cancelLabel?.value ||
+         'Cancel convert',
+   }
+   return (
+      <StyledModal
+         title={null}
+         visible={visible}
+         centered={true}
+         closable={false}
+         footer={null}
+         zIndex={9999999}
+      >
+         <div style={{ height: '350px', width: '350px' }}>
+            {mealProduct.assets.images.length === 0 ? (
+               <img src={config.productSettings.defaultImage.value} />
+            ) : (
+               <HernLazyImage
+                  dataSrc={mealProduct.assets.images[0]}
+                  height={350}
+                  width={350}
+                  style={{
+                     ...(config.kioskSettings.allowTilt.value && {
+                        clipPath: 'polygon(0 0, 100% 0, 100% 100%, 0 97%)',
+                     }),
+                  }}
+                  onClick={onConfirm}
+               />
+            )}
+         </div>
+
+         <button
+            style={{
+               marginBottom: '2rem',
+            }}
+            onClick={onConfirm}
+         >
+            {t(labels.confirm)}
+         </button>
+         <button className="solid" onClick={onCancel}>
+            {t(labels.cancel)}
+         </button>
+      </StyledModal>
+   )
+}
+const StyledModal = styled(Modal)`
+   max-width: 800px;
+   width: 100% !important;
+   border-radius: 24px;
+   padding: 56px;
+   .ant-modal-content {
+      border-radius: 12px;
+   }
+   .ant-modal-header {
+      padding: 56px;
+      text-align: center;
+      border: none;
+      border-radius: 12px;
+   }
+   .ant-modal-title {
+      max-width: 600px;
+      margin: 0 auto;
+      font-size: 2rem;
+      line-height: 1.2;
+   }
+   .ant-modal-body {
+      display: flex;
+      padding: 0 56px 56px 56px;
+      flex-direction: column;
+      align-items: center;
+      button {
+         border: 4px solid var(--hern-primary-color);
+         padding: 0.75rem 1rem;
+         width: 100%;
+         display: block;
+         color: var(--hern-primary-color);
+         font-size: 24px;
+         text-transform: uppercase;
+         font-weight: bold;
+         white-space: nowrap;
+         overflow-x: hidden;
+      }
+      button.solid {
+         background-color: var(--hern-primary-color);
+         color: #fff;
+      }
+   }
+`

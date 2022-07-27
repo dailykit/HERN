@@ -297,180 +297,192 @@ const CurrentPlan = () => {
    if (loading) return <Loader inline />
    if (user?.isSubscriptionCancelled)
       return (
-         <div className="hern-profile_current-plan">
+         <div
+            className="hern-profile_current-plan"
+            style={{ marginLeft: '1.5rem' }}
+         >
             <Button size="sm" onClick={handleReactivation}>
                {t('Reactivate Subscription')}
             </Button>
          </div>
       )
-   return (
-      <div className="hern-profile__current-plan">
-         {/* <hr className="hern-profile__divider" /> */}
-         <Spacer size="xl" />
-         <h4
-            className="hern-profile__current-plan__heading"
-            style={{
-               color: `${
-                  theme.accent ? theme.accent : 'rgba(51, 51, 51, 0.6)'
-               }`,
-            }}
-         >
-            <span> {t('Your current plan')}</span> {isPlanPaused && `(PAUSED)`}
-         </h4>
-         <div className="hern-profile__current-plan__card">
-            <div>
-               <small className="hern-profile__current-plan__card__changeplan-key">
-                  {t('Name:')}
-               </small>
-               <p className="hern-profile__current-plan__card__changeplan-value">
-                  {plan?.name}
-               </p>
-            </div>
-            <div className="hern-profile__current-plan__details">
-               <small className="hern-profile__current-plan__card__changeplan-key">
-                  {t('No.of Servings: ')}
-               </small>
-               <p className="hern-profile__current-plan__card__changeplan-value">
-                  {plan?.servings}
-               </p>
-            </div>
-            <div className="hern-profile__current-plan__details">
-               <small className="hern-profile__current-plan__card__changeplan-key">
-                  {t('Recipes per Week: ')}
-               </small>
-               <p className="hern-profile__current-plan__card__changeplan-value">
-                  {plan?.itemCount}
-               </p>
-            </div>
-         </div>
-         <Button
-            size="sm"
-            theme={theme}
-            onClick={() => {
-               localStorage.setItem('changing-plan', true)
-               router.push(getRoute(`/change-plan`))
-            }}
-         >
-            {t('Change Plan')}
-         </Button>
-         {/* <Spacer size="xl" /> */}
-         {/* <hr className="hern-profile__divider" /> */}
-         <Spacer size="xl" />
-         {isPauseFormVisible ? (
-            <form
-               className="hern-profile__pause-plan__form"
-               onSubmit={handlePausePlan}
-            >
-               <div className="hern-profile__pause-plan__form__wrapper">
-                  <Form.Field>
-                     <Form.Label> {t('Start Date*')}</Form.Label>
-                     <Form.Text
-                        type="date"
-                        name="start-date"
-                        onChange={e => setStartDate(e.target.value)}
-                        value={startDate}
-                        required
-                     />
-                  </Form.Field>
-                  <Spacer xAxis />
-                  <Form.Field>
-                     <Form.Label> {t('End Date*')}</Form.Label>
-                     <Form.Text
-                        type="date"
-                        name="end-date"
-                        onChange={e => setEndDate(e.target.value)}
-                        value={endDate}
-                        required
-                     />
-                  </Form.Field>
-               </div>
-               <Button variant="warn" size="sm" type="submit">
-                  {t('Yes! Pause my plan.')}
-               </Button>
 
-               <Spacer xAxis />
-               <Button
-                  variant="dull"
-                  size="sm"
-                  type="reset"
-                  onClick={() => setIsPauseFormVisible(false)}
-               >
-                  {t('No! I changed my mind.')}
-               </Button>
-            </form>
-         ) : (
-            <>
-               {!!user?.pausePeriod && Object.keys(user.pausePeriod).length ? (
-                  <div>
-                     <p className="hern-profile__pause-period-details">
-                        <span> {t('Plan pause interval starts from')}</span>
-                        <span>
-                           {moment(user.pausePeriod.startDate).format(
-                              'MMM Do YYYY'
-                           )}
-                        </span>{' '}
-                        <span>{t('and ends on')}</span>
-                        <span>
-                           {moment(user.pausePeriod.endDate).format(
-                              'MMM Do YYYY'
-                           )}
-                        </span>
-                     </p>
-                     <Button size="sm" theme={theme} onClick={clearPausePeriod}>
-                        {t('Clear Pause Interval')}
-                     </Button>
-                  </div>
-               ) : (
-                  <Button
-                     variant="warn"
-                     size="sm"
-                     theme={theme}
-                     onClick={() => setIsPauseFormVisible(true)}
-                  >
-                     {t('Pause Plan')}
-                  </Button>
-               )}
-            </>
-         )}
-         <Spacer />
-         {isCancelFormVisible ? (
-            <form
-               className="hern-profile__cancellation-form"
-               onSubmit={handleCancellation}
+   if (user?.isSubscriber)
+      return (
+         <div className="hern-profile__current-plan">
+            {/* <hr className="hern-profile__divider" /> */}
+            <Spacer size="xl" />
+            <h4
+               className="hern-profile__current-plan__heading"
+               style={{
+                  color: `${
+                     theme.accent ? theme.accent : 'rgba(51, 51, 51, 0.6)'
+                  }`,
+               }}
             >
-               <Form.Field>
-                  <Form.Label> {t('Reason(Optional)')}</Form.Label>
-                  <Form.Text
-                     type="text"
-                     name="reason"
-                     placeholder="Enter your reason"
-                     onChange={e => setReason(e.target.value)}
-                     value={reason}
-                  />
-               </Form.Field>
-               <Button variant="warn" size="sm" type="submit">
-                  {t('Yes! Cancel my subscription.')}
-               </Button>
-               <Spacer xAxis size="xm" />
-               <Button
-                  variant="dull"
-                  size="sm"
-                  type="reset"
-                  onClick={() => setIsCancelFormVisible(false)}
-               >
-                  {t('No! I changed my mind.')}
-               </Button>
-            </form>
-         ) : (
+               <span> {t('Your current plan')}</span>{' '}
+               {isPlanPaused && `(PAUSED)`}
+            </h4>
+            <div className="hern-profile__current-plan__card">
+               <div>
+                  <small className="hern-profile__current-plan__card__changeplan-key">
+                     {t('Name:')}
+                  </small>
+                  <p className="hern-profile__current-plan__card__changeplan-value">
+                     {plan?.name}
+                  </p>
+               </div>
+               <div className="hern-profile__current-plan__details">
+                  <small className="hern-profile__current-plan__card__changeplan-key">
+                     {t('No.of Servings: ')}
+                  </small>
+                  <p className="hern-profile__current-plan__card__changeplan-value">
+                     {plan?.servings}
+                  </p>
+               </div>
+               <div className="hern-profile__current-plan__details">
+                  <small className="hern-profile__current-plan__card__changeplan-key">
+                     {t('Recipes per Week: ')}
+                  </small>
+                  <p className="hern-profile__current-plan__card__changeplan-value">
+                     {plan?.itemCount}
+                  </p>
+               </div>
+            </div>
             <Button
-               variant="danger"
                size="sm"
                theme={theme}
-               onClick={() => setIsCancelFormVisible(true)}
+               onClick={() => {
+                  localStorage.setItem('changing-plan', true)
+                  router.push(getRoute(`/change-plan`))
+               }}
             >
-               {t('Cancel Subscription')}
+               {t('Change Plan')}
             </Button>
-         )}
-      </div>
-   )
+            {/* <Spacer size="xl" /> */}
+            {/* <hr className="hern-profile__divider" /> */}
+            <Spacer size="xl" />
+            {isPauseFormVisible ? (
+               <form
+                  className="hern-profile__pause-plan__form"
+                  onSubmit={handlePausePlan}
+               >
+                  <div className="hern-profile__pause-plan__form__wrapper">
+                     <Form.Field>
+                        <Form.Label> {t('Start Date*')}</Form.Label>
+                        <Form.Text
+                           type="date"
+                           name="start-date"
+                           onChange={e => setStartDate(e.target.value)}
+                           value={startDate}
+                           required
+                        />
+                     </Form.Field>
+                     <Spacer xAxis />
+                     <Form.Field>
+                        <Form.Label> {t('End Date*')}</Form.Label>
+                        <Form.Text
+                           type="date"
+                           name="end-date"
+                           onChange={e => setEndDate(e.target.value)}
+                           value={endDate}
+                           required
+                        />
+                     </Form.Field>
+                  </div>
+                  <Button variant="warn" size="sm" type="submit">
+                     {t('Yes! Pause my plan.')}
+                  </Button>
+
+                  <Spacer xAxis />
+                  <Button
+                     variant="dull"
+                     size="sm"
+                     type="reset"
+                     onClick={() => setIsPauseFormVisible(false)}
+                  >
+                     {t('No! I changed my mind.')}
+                  </Button>
+               </form>
+            ) : (
+               <>
+                  {!!user?.pausePeriod &&
+                  Object.keys(user.pausePeriod).length ? (
+                     <div>
+                        <p className="hern-profile__pause-period-details">
+                           <span> {t('Plan pause interval starts from')}</span>
+                           <span>
+                              {moment(user.pausePeriod.startDate).format(
+                                 'MMM Do YYYY'
+                              )}
+                           </span>{' '}
+                           <span>{t('and ends on')}</span>
+                           <span>
+                              {moment(user.pausePeriod.endDate).format(
+                                 'MMM Do YYYY'
+                              )}
+                           </span>
+                        </p>
+                        <Button
+                           size="sm"
+                           theme={theme}
+                           onClick={clearPausePeriod}
+                        >
+                           {t('Clear Pause Interval')}
+                        </Button>
+                     </div>
+                  ) : (
+                     <Button
+                        variant="warn"
+                        size="sm"
+                        theme={theme}
+                        onClick={() => setIsPauseFormVisible(true)}
+                     >
+                        {t('Pause Plan')}
+                     </Button>
+                  )}
+               </>
+            )}
+            <Spacer />
+            {isCancelFormVisible ? (
+               <form
+                  className="hern-profile__cancellation-form"
+                  onSubmit={handleCancellation}
+               >
+                  <Form.Field>
+                     <Form.Label> {t('Reason(Optional)')}</Form.Label>
+                     <Form.Text
+                        type="text"
+                        name="reason"
+                        placeholder="Enter your reason"
+                        onChange={e => setReason(e.target.value)}
+                        value={reason}
+                     />
+                  </Form.Field>
+                  <Button variant="warn" size="sm" type="submit">
+                     {t('Yes! Cancel my subscription.')}
+                  </Button>
+                  <Spacer xAxis size="xm" />
+                  <Button
+                     variant="dull"
+                     size="sm"
+                     type="reset"
+                     onClick={() => setIsCancelFormVisible(false)}
+                  >
+                     {t('No! I changed my mind.')}
+                  </Button>
+               </form>
+            ) : (
+               <Button
+                  variant="danger"
+                  size="sm"
+                  theme={theme}
+                  onClick={() => setIsCancelFormVisible(true)}
+               >
+                  {t('Cancel Subscription')}
+               </Button>
+            )}
+         </div>
+      )
+   else return null
 }

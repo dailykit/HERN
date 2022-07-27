@@ -42,7 +42,12 @@ const razorpayWebhookEvents = async arg => {
          cartPaymentId: orderId,
          transactionRemark: body,
          requestId: ORDERID,
-         paymentStatus: body.resultInfo.resultStatus,
+         paymentStatus:
+            cartPayment.cart.availablePaymentOption.supportedPaymentOption
+               .paymentOptionLabel === 'QR' &&
+            body.resultInfo.resultStatus === 'PENDING'
+               ? 'QR_GENERATED'
+               : body.resultInfo.resultStatus,
          transactionId: body.txnId,
          cartId: cartPayment.cartId,
          domain: cartPayment.cart

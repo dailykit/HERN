@@ -165,7 +165,7 @@ export const Checkout = props => {
       )
    }
 
-   if (loading) return <Loader inline />
+   if (loading) return <Loader />
    return (
       <>
          {cart?.source === 'subscription' ? (
@@ -330,7 +330,7 @@ const FulfillmentAddress = ({ cart }) => {
       if (elem) {
          setThemeVariable(
             '--user-info-section-bottom',
-            elem.clientHeight + 50 + 'px'
+            elem?.clientHeight + 50 + 'px'
          )
       }
    }, [isOpen])

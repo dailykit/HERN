@@ -168,9 +168,10 @@ function PayButton({
             <Skeleton.Button
                active
                style={{
-                  ...(isKiosk && {
-                     height: '220px',
+                  ...(isKioskMode && {
+                     padding: '8px',
                      borderRadius: '12px',
+                     height: '220px',
                   }),
                }}
                size="large"

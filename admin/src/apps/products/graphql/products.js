@@ -44,6 +44,8 @@ export const PRODUCTS = {
             title: name
             isPublished
             price
+            relatedProductIds
+            convertToMealProductId
          }
       }
    `,

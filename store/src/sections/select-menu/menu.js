@@ -6,6 +6,7 @@ import ReactImageFallback from 'react-image-fallback'
 import { useToasts } from 'react-toast-notifications'
 import { useIntl } from 'react-intl'
 import * as Scroll from 'react-scroll'
+import { Slide } from 'react-slideshow-image'
 
 import { useMenu } from './state'
 import { useConfig } from '../../lib'
@@ -17,15 +18,17 @@ import { CheckIcon } from '../../assets/icons'
 import { OCCURENCE_PRODUCTS_BY_CATEGORIES } from '../../graphql'
 import classNames from 'classnames'
 import moment from 'moment'
+import { HernLazyImage } from '../../utils/hernImage'
 const ReactPixel = isClient ? require('react-facebook-pixel').default : null
 
 export const Menu = () => {
    const { user } = useUser()
    const { addToast } = useToasts()
    const { t, dynamicTrans, locale } = useTranslation()
-   const { state } = useMenu()
-   const { brand, locationId, brandLocation } = useConfig()
+   const { state, brand, locationId, brandLocation } = useMenu()
    const { configOf, buildImageUrl, noProductImage } = useConfig()
+   const router = useRouter()
+   const route = router.route
 
    const argsForByLocation = React.useMemo(
       () => ({
@@ -106,7 +109,13 @@ export const Menu = () => {
    return (
       <main>
          {categories.length > 1 && (
-            <div className="hern-select-menu__category">
+            <div
+               className={
+                  route === '/[brand]/get-started/select-menu'
+                     ? 'hern-select-menu__category-two'
+                     : 'hern-select-menu__category'
+               }
+            >
                {categories.map(category => (
                   <Scroll.Link
                      to={category.name}
@@ -116,7 +125,9 @@ export const Menu = () => {
                      smooth={true}
                      offset={-70}
                   >
-                     {category.name}
+                     <span data-translation="true">
+                        {t(`${category.name}`)}
+                     </span>
                   </Scroll.Link>
                ))}
             </div>
@@ -128,7 +139,7 @@ export const Menu = () => {
                className="hern-select-menu__menu"
             >
                <h4 className="hern-select-menu__menu__category-name">
-                  <span data-translation="true">{category.name}</span> (
+                  <span data-translation="true">{t(`${category.name}`)}</span> (
                   {
                      uniqBy(category.productsAggregate.nodes, v =>
                         [
@@ -165,13 +176,22 @@ export const Menu = () => {
 }
 
 const Product = ({ node, theme, isAdded, noProductImage, buildImageUrl }) => {
-   const router = useRouter()
+   // const router = useRouter()
    const { addToast } = useToasts()
    const { state, methods } = useMenu()
    const { t, dynamicTrans, locale } = useTranslation()
    const { formatMessage } = useIntl()
-   const openRecipe = () =>
-      router.push(getRoute(`/recipes/${node?.productOption?.id}`))
+   const autoPlaySlider = false
+   const slideRef = React.useRef()
+
+   const openRecipe = () => {
+      window.open(
+         getRoute(`/recipes/${node?.productOption?.id}`),
+         '_blank',
+         'noopener,noreferrer'
+      )
+      // router.push(getRoute(`/recipes/${node?.productOption?.id}`))
+   }
 
    // const add = debounce(function (item, node) {
    //    if (state.occurenceCustomer?.betweenPause) {
@@ -253,9 +273,9 @@ const Product = ({ node, theme, isAdded, noProductImage, buildImageUrl }) => {
       name: node?.productOption?.product?.name || '',
       label: node?.productOption?.label || '',
       type: node?.productOption?.simpleRecipeYield?.simpleRecipe?.type,
-      image:
+      images:
          node?.productOption?.product?.assets?.images?.length > 0
-            ? node?.productOption?.product?.assets?.images[0]
+            ? node?.productOption?.product?.assets?.images
             : null,
       additionalText: node?.productOption?.product?.additionalText || '',
    }
@@ -298,6 +318,28 @@ const Product = ({ node, theme, isAdded, noProductImage, buildImageUrl }) => {
       dynamicTrans(languageTags)
    }, [currentLang])
 
+   const maintainRatio = true
+
+   const productImageSize = React.useMemo(() => {
+      const innerWidth = isClient ? window.innerWidth : ''
+      if (0 <= innerWidth && innerWidth <= 468) {
+         return {
+            width: 400,
+            height: 400,
+         }
+      } else if (469 <= innerWidth && innerWidth <= 900) {
+         return {
+            width: 450,
+            height: 450,
+         }
+      } else if (901 <= innerWidth) {
+         return {
+            width: 500,
+            height: 500,
+         }
+      }
+   }, [])
+
    if (!ProductIsPublished) {
       return null
    }
@@ -331,14 +373,24 @@ const Product = ({ node, theme, isAdded, noProductImage, buildImageUrl }) => {
                }
             }}
          >
-            {product.image ? (
-               <ReactImageFallback
-                  src={buildImageUrl('400x300', product.image)}
-                  fallbackImage={product.image}
-                  initialImage={<Loader />}
-                  alt={product.name}
-                  className="image__thumbnail"
-               />
+            {product.images ? (
+               <Slide
+                  ref={slideRef}
+                  infinite={autoPlaySlider}
+                  autoplay={autoPlaySlider}
+               >
+                  {product.images.map(image => (
+                     <HernLazyImage
+                        dataSrc={image}
+                        height={productImageSize.height}
+                        width={productImageSize.width}
+                        className={classNames('hern-product-card__image', {
+                           'hern-product-card__image--aspect-ratio':
+                              maintainRatio,
+                        })}
+                     />
+                  ))}
+               </Slide>
             ) : (
                <img src={noProductImage} alt={product.name} />
             )}
@@ -353,54 +405,66 @@ const Product = ({ node, theme, isAdded, noProductImage, buildImageUrl }) => {
          )}
 
          <div style={{ padding: '0.5rem' }}>
-         <section className="hern-select-menu__menu__product__link">
-            <CheckIcon size={16} className={checkIconClasses} />
-            <a theme={theme} onClick={isProductOutOfStock ? '' : openRecipe}>
-               <span data-translation="true">{product.name}</span>
-               {'-'}
-               <span data-translation="true">{product.label}</span>
-            </a>
-         </section>
-         <p
-            className="hern-select-menu__menu__product__link__additional-text"
-            data-translation="true"
-         >
-            {product?.additionalText}
-         </p>
-         {canAdd() && (
-            <button
-               className={btnClasses}
-               theme={theme}
-               disabled={
-                  !node.isAvailable &&
-                  isProductOutOfStock &&
-                  state.occurenceCustomer?.validStatus?.itemCountValid
-               }
-               onClick={() => {
-                  if (!isProductOutOfStock) {
-                     add(node.cartItem, node)
-                  }
-               }}
-               title={
-                  node.isAvailable && !isProductOutOfStock
-                     ? formatMessage({ id: 'Add product' })
-                     : formatMessage({
-                          id: 'This product is out of stock.',
-                       })
-               }
+            <section className="hern-select-menu__menu__product__link">
+               <CheckIcon size={16} className={checkIconClasses} />
+               <a theme={theme} onClick={isProductOutOfStock ? '' : openRecipe}>
+                  <span data-translation="true">{product.name}</span>
+                  {'-'}
+                  <span data-translation="true">{product.label}</span>
+               </a>
+            </section>
+            <p
+               className="hern-select-menu__menu__product__link__additional-text"
+               data-translation="true"
             >
-               {node.isAvailable && !isProductOutOfStock ? (
-                  <>
-                     {isActive ? t('REPEAT') : t('ADD')}
-                     {node.addOnPrice > 0 && ' + '}
-                     {node.addOnPrice > 0 &&
-                        formatCurrency(Number(node.addOnPrice) || 0)}
-                  </>
-               ) : (
-                  t('Out of Stock')
-               )}
-            </button>
-         )}
+               {product?.additionalText}
+            </p>
+            {canAdd() && (
+               <button
+                  className={btnClasses}
+                  theme={theme}
+                  disabled={
+                     !node.isAvailable &&
+                     isProductOutOfStock &&
+                     state.occurenceCustomer?.validStatus?.itemCountValid
+                  }
+                  onClick={() => {
+                     if (!isProductOutOfStock) {
+                        add(node.cartItem, node)
+                     }
+                  }}
+                  title={
+                     node.isAvailable && !isProductOutOfStock
+                        ? formatMessage({ id: 'Add product' })
+                        : formatMessage({
+                             id: 'This product is out of stock.',
+                          })
+                  }
+               >
+                  {node.isAvailable && !isProductOutOfStock ? (
+                     <>
+                        {state.occurenceCustomer?.cart?.paymentStatus ===
+                        'SUCCEEDED' ? (
+                           <>
+                              {node.cartItem.unitPrice > 0 &&
+                                 formatCurrency(
+                                    Number(node.cartItem.unitPrice) || 0
+                                 )}
+                           </>
+                        ) : (
+                           <>
+                              {isActive ? t('REPEAT') : t('ADD')}
+                              {node.addOnPrice > 0 && ' + '}
+                              {node.addOnPrice > 0 &&
+                                 formatCurrency(Number(node.addOnPrice) || 0)}
+                           </>
+                        )}
+                     </>
+                  ) : (
+                     t('Out of Stock')
+                  )}
+               </button>
+            )}
          </div>
       </li>
    )
@@ -421,7 +485,7 @@ const Line = () => {
             x2="750"
             y2="2.86816"
             stroke="url(#paint0_linear_1510_6578)"
-            stroke-width="4"
+            strokeWidth="4"
          />
          <defs>
             <linearGradient
@@ -432,8 +496,8 @@ const Line = () => {
                y2="4.86816"
                gradientUnits="userSpaceOnUse"
             >
-               <stop stop-color="#333333" />
-               <stop offset="1" stop-color="#333333" stop-opacity="0" />
+               <stop stopColor="#333333" />
+               <stop offset="1" stopColor="#333333" stopOpacity="0" />
             </linearGradient>
          </defs>
       </svg>

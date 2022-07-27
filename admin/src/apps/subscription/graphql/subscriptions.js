@@ -353,6 +353,10 @@ export const SUBSCRIPTION = gql`
          isDemo
          endDate
          startDate
+         subscriptionOccurences(order_by: { fulfillmentDate: desc }, limit: 1) {
+            fulfillmentDate
+            id
+         }
       }
    }
 `

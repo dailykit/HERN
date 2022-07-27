@@ -7,10 +7,13 @@ import { Loader } from './loader'
 import { GET_PLAN_INFO } from '../graphql'
 import { useUser } from '../context'
 import { isNull } from 'lodash'
+import { useRouter } from 'next/router'
 
 const PlanInfo = () => {
    const { user } = useUser()
-   console.log('user', user)
+   const router = useRouter()
+   const route = router.route
+
    const planId = localStorage.getItem('plan')
       ? Number(localStorage.getItem('plan'))
       : null
@@ -41,10 +44,17 @@ const PlanInfo = () => {
       icon: subscription_subscriptionItemCount[0]?.subscriptionServing
          ?.subscriptionTitle?.metaDetails?.icon,
    }
-   const planInfo = user?.isSubscriber ? planInfoUser : planInfoFetched
+   const planInfo =
+      user?.isSubscriber && localStorage.getItem('changing-plan') !== 'true'
+         ? planInfoUser
+         : planInfoFetched
 
    return (
-      <div className="hern-plan-info">
+      <div
+         className={
+            route === '/[brand]/menu' ? 'hern-plan-info-two' : 'hern-plan-info'
+         }
+      >
          <div>
             <div className="hern-plan-info__title">
                {planInfo.icon ? (

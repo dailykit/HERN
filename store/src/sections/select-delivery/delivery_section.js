@@ -47,6 +47,14 @@ export const DeliverySection = ({ planId }) => {
 
    const currentLang = React.useMemo(() => locale, [locale])
 
+   // Perform a check if the zipcode has a delivery time or not
+
+   const validItems = itemCount?.valid?.filter(
+      item =>
+         item.zipcodes[0]?.deliveryTime?.from &&
+         item.zipcodes[0]?.deliveryTime?.to
+   )
+
    React.useEffect(() => {
       const languageTags = document.querySelectorAll(
          '[data-translation="true"]'
@@ -108,14 +116,28 @@ export const DeliverySection = ({ planId }) => {
                   t('No days are available for delivery on this address.')
                )}
             </HelperBar.SubTitle>
-            <HelperBar.Button
-               onClick={() => router.push(getRoute('/get-started/select-plan'))}
-            >
-               {t('Select Plan')}
-            </HelperBar.Button>
          </HelperBar>
       )
    }
+
+   // If validItems has no delivery time, display am error message.
+
+   if (isEmpty(validItems)) {
+      return (
+         <HelperBar type="warning">
+            <HelperBar.SubTitle>
+               {unavailableDaysFromConfig?.noDays?.value ? (
+                  <span data-translation="true">
+                     {unavailableDaysFromConfig?.noDays?.value}
+                  </span>
+               ) : (
+                  t('There is no delivery time for the selected Zipcode.')
+               )}
+            </HelperBar.SubTitle>
+         </HelperBar>
+      )
+   }
+
    return (
       <div className="hern-delivery__delivery-days">
          {isEmpty(itemCount?.valid) && !isEmpty(itemCount?.invalid) && (
@@ -135,7 +157,8 @@ export const DeliverySection = ({ planId }) => {
             </HelperBar>
          )}
          <ul className="hern-delivery__delivery-days__list">
-            {itemCount?.valid?.map(day => {
+            {/* map through the valid items*/}
+            {validItems.map(day => {
                const dateClasses = classNames(
                   'hern-delivery__delivery-days__list-item',
                   {
@@ -202,7 +225,7 @@ export const DeliverySection = ({ planId }) => {
                   </li>
                )
             })}
-            {itemCount?.invalid?.map(day => {
+            {validItems.map(day => {
                return (
                   <li
                      key={day.id}

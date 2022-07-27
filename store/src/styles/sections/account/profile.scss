@@ -4,8 +4,6 @@
    min-height: calc(100vh - 64px);
    grid-template-columns: 300px 1fr;
    position: relative;
-   max-width: 1200px;
-   margin: 27px auto;
    @media (max-width: 768px) {
       display: block;
    }
@@ -14,6 +12,7 @@
    padding-left: 1.5rem;
    padding-right: 1.5rem;
    width: 100%;
+   margin-bottom: 1rem;
    @media (min-width: 768px) {
       // width: 40%;
    }
@@ -70,6 +69,26 @@
 }
 .hern-profile__current-plan {
    padding: 1.5rem;
+}
+
+.hern-profile__current-plan-not-subscribed {
+   display: flex;
+   justify-content: center;
+   align-items: center;
+   padding: 10px;
+   margin: 1.5rem;
+   border-radius: 6px;
+   background: rgba(51, 51, 51, 0.05);
+   border: 1.5px solid rgba(255, 0, 0, 0.6);
+
+   & > h1 {
+      font-family: 'Inter';
+      font-style: normal;
+      font-weight: 500;
+      font-size: 16.68px;
+      line-height: 20px;
+      color: #333333;
+   }
 }
 .hern-profile__divider {
    max-width: 420px;

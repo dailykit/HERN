@@ -31,7 +31,7 @@ export const Login = ({ config }) => {
    /** Brand level config for login illustration **/
    const loginIllustration = configOf('Login Illustrations', 'brand')
    const illustration =
-      loginIllustration?.['Login Illustration']?.illustrationImage?.value ??
+      loginIllustration?.['Login Illustration']?.illustrationImage?.value ||
       'https://dailykit-133-test.s3.us-east-2.amazonaws.com/images/16322-user_login.png' //fallback Image
 
    const showIllustration =
@@ -39,7 +39,7 @@ export const Login = ({ config }) => {
       false //false as fallback value
 
    const loginBackgroundImages =
-      loginIllustration?.['Login Background Image']?.backgroundImage?.value ??
+      loginIllustration?.['Login Background Image']?.backgroundImage?.value ||
       'https://dailykit-237-breezychef.s3.us-east-2.amazonaws.com/images/93576-Coupon%20Image%20%282%29.png' //fallback Image
    const showBackground =
       loginIllustration?.['Login Background Image']?.showBackground?.value ??

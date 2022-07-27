@@ -10,6 +10,7 @@ import { useTranslation, useUser } from '../../context'
 import { SkeletonPlan } from './skeletons'
 import { HelperBar } from '../../components'
 import { PlateIllustration } from '../../assets/icons/PlateIllustration'
+import { Loader } from '../../components'
 
 export const Plans = ({ config }) => {
    const { user } = useUser()
@@ -20,19 +21,19 @@ export const Plans = ({ config }) => {
    const { t, dynamicTrans, locale } = useTranslation()
 
    // Plan view Config
-   const planViewConfig = config?.display?.planView?.value?.value ?? 'card'
+   const planViewConfig = config?.display?.planView?.value?.value || 'card'
 
    //Config
    const headingConfig = {
-      heading: config?.data?.heading?.value ?? 'Select a plan',
-      color: config?.display?.heading?.color?.value ?? '#202020',
+      heading: config?.data?.heading?.value || 'Select a plan',
+      color: config?.display?.heading?.color?.value || '#202020',
       fontFamily:
-         config?.display?.heading?.fontFamily?.value[0]?.value ?? 'Lato',
-      fontSize: config?.display?.heading?.fontSize?.value ?? '1.5rem',
-      fontWeight: config?.display?.heading?.fontWeight?.value ?? 'bold',
+         config?.display?.heading?.fontFamily?.value[0]?.value || 'Lato',
+      fontSize: config?.display?.heading?.fontSize?.value || '1.5rem',
+      fontWeight: config?.display?.heading?.fontWeight?.value || 'bold',
       textAlign:
-         config?.display?.heading?.textAlign?.value[0]?.value ?? 'center',
-      spacing: config?.display?.heading?.spacing?.value ?? '32px 0',
+         config?.display?.heading?.textAlign?.value[0]?.value || 'center',
+      spacing: config?.display?.heading?.spacing?.value || '32px 0',
    }
 
    const currentLang = React.useMemo(() => locale, [locale])
@@ -71,13 +72,7 @@ export const Plans = ({ config }) => {
          }
       },
    })
-   if (isLoading)
-      return (
-         <ul className="hern-plans__skeletons">
-            <SkeletonPlan />
-            <SkeletonPlan />
-         </ul>
-      )
+   if (isLoading) return <Loader />
    if (error) {
       setIsLoading(false)
       addToast('Something went wrong, please refresh the page!', {
@@ -312,13 +307,25 @@ const PlansDetails = ({ selectedPlan, list, config, planViewConfig }) => {
             </p>
          </div>
          <div>
-            <div className="hern-plans__aggregate__plan-details">
+            <div
+               className="hern-plans__aggregate__plan-details"
+               style={{
+                  marginLeft: '25px',
+               }}
+            >
                <p className="hern-plans__aggregate__selectedPlan-title">
                   {/* TODO-
                   - Include plateIllustration
                 */}
                   <span>
-                     <PlateIllustration />
+                     {selectedPlan.metaDetails?.icon ? (
+                        <img
+                           src={selectedPlan.metaDetails?.icon}
+                           style={{ height: '29px', width: '29px' }}
+                        />
+                     ) : (
+                        <PlateIllustration />
+                     )}
                   </span>
                   {selectedPlan.title}
                </p>

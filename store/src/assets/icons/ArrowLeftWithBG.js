@@ -21,9 +21,9 @@ export const ArrowLeftIconBG = props => {
             <path
                d="M31.5 21.4113H10.5M10.5 21.4113L18.7889 14.8749M10.5 21.4113L18.7889 27.1249"
                stroke="white"
-               stroke-width="3"
-               stroke-linecap="round"
-               stroke-linejoin="round"
+               strokeWidth="3"
+               strokeLinecap="round"
+               strokeLinejoin="round"
             />
          </svg>
       )

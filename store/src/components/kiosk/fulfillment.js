@@ -5,9 +5,9 @@ import { DineInIcon, TakeOutIcon } from '../../assets/icons'
 import { useConfig } from '../../lib'
 import moment from 'moment'
 import { get_env, isDateValidInRRule, isClient } from '../../utils'
-import { DineInTableSelection } from './component'
-import { ArrowLeftIconBG } from '../../assets/icons/ArrowLeftWithBG'
-import { BackSpaceIcon } from '../../assets/icons/BackSpaceIcon'
+import { DineInTableSelection, PhoneNumberTunnel } from './component'
+import tw from 'twin.macro'
+import styled from 'styled-components'
 
 export const FulfillmentSection = props => {
    const { config, setCurrentPage } = props
@@ -23,7 +23,8 @@ export const FulfillmentSection = props => {
    const [showDineInTableSelection, setShowDineInTableSelection] =
       useState(false)
    const [visible, setVisible] = useState(false)
-   const [number, setNumber] = useState('')
+   const [isPromotionalScreenVisible, setIsPromotionalScreenVisible] =
+      useState(false)
    React.useEffect(() => {
       // check is there any recurrence available or not
       // if available then check that store is available for current day and time
@@ -106,7 +107,8 @@ export const FulfillmentSection = props => {
          })
       }
    }, [kioskRecurrences])
-
+   const showPromotionalScreen =
+      config?.promotionalScreenSettings?.showPromotionalScreen?.value ?? false
    React.useEffect(() => {
       const languageTags = document.querySelectorAll(
          '[data-translation="true"]'
@@ -137,7 +139,11 @@ export const FulfillmentSection = props => {
          ),
       })
       setShowDineInTableSelection(false)
-      setCurrentPage('menuPage')
+      if (showPromotionalScreen) {
+         setIsPromotionalScreenVisible(true)
+      } else {
+         setCurrentPage('menuPage')
+      }
    }
    return (
       <div
@@ -148,8 +154,8 @@ export const FulfillmentSection = props => {
                   : 'center'
             }`,
             paddingTop: `${
-               config?.fulfillmentPageSettings?.alignContentStart?.value
-                  ? '260px'
+               config?.fulfillmentPageSettings?.paddingTop?.value
+                  ? config?.fulfillmentPageSettings?.paddingTop?.value
                   : 'unset'
             }`,
          }}
@@ -238,6 +244,10 @@ export const FulfillmentSection = props => {
                               setShowDineInTableSelection
                            }
                            setVisible={setVisible}
+                           setIsPromotionalScreenVisible={
+                              setIsPromotionalScreenVisible
+                           }
+                           showPromotionalScreen
                         />
                      )
                   }
@@ -282,13 +292,17 @@ export const FulfillmentSection = props => {
             config={config}
             onConfirmClick={onTableSelectionConfirmClick}
          />
-         <PhoneNumber
+         <PhoneNumberTunnel
             config={config}
             visible={visible}
-            number={number}
             setVisible={setVisible}
-            setNumber={setNumber}
             setCurrentPage={setCurrentPage}
+         />
+         <PromotionalScreen
+            config={config}
+            setCurrentPage={setCurrentPage}
+            visible={isPromotionalScreenVisible}
+            setVisible={setIsPromotionalScreenVisible}
          />
       </div>
    )
@@ -370,6 +384,8 @@ const FulfillmentOptionCustom = props => {
       fulfillment,
       setShowDineInTableSelection,
       setVisible,
+      setIsPromotionalScreenVisible,
+      showPromotionalScreen,
    } = props
 
    const { dispatch, kioskAvailability } = useConfig()
@@ -410,7 +426,11 @@ const FulfillmentOptionCustom = props => {
             !askedPhoneNumber ||
             (askedPhoneNumber && isClient && localStorage.getItem('phone'))
          ) {
-            setCurrentPage('menuPage')
+            if (showPromotionalScreen) {
+               setIsPromotionalScreenVisible(true)
+            } else {
+               setCurrentPage('menuPage')
+            }
          }
       }
       isClient &&
@@ -461,112 +481,48 @@ const FulfillmentOptionCustom = props => {
       </div>
    )
 }
-
-const PhoneNumber = ({
-   config,
-   visible,
-   setVisible,
-   number,
-   setNumber,
-   setCurrentPage,
-}) => {
+const PromotionalScreen = ({ config, visible, setVisible, setCurrentPage }) => {
    const { t } = useTranslation()
+   //Config for promotional screen
+   const promotionalScreenSettings = {
+      continueButtonLabel:
+         config?.promotionalScreenSettings?.promotionalScreenContinueButton
+            ?.labelForContinueButton?.value || 'CONTINUE',
+      image:
+         config?.promotionalScreenSettings?.promotionalScreenBackgroundImage
+            ?.value ||
+         'https://dailykit-133-test.s3.us-east-2.amazonaws.com/images/08345-app_promotion.png',
+   }
+   const { image, continueButtonLabel } = promotionalScreenSettings
    return (
-      <Drawer
-         title={t('Enter Phone Number')}
+      <StyledPromotionalScreen
+         title={null}
          placement={'right'}
          width={'100%'}
          onClose={() => setVisible(false)}
          visible={visible}
-         style={{ zIndex: '9999' }}
-         extra={
-            <button
-               onClick={() => {
-                  setVisible(false)
-                  isClient && localStorage.setItem('phone', '2222222222')
-                  if (
-                     isClient &&
-                     localStorage.getItem('fulfillmentType') !==
-                        'ONDEMAND_DINEIN'
-                  ) {
-                     setCurrentPage('menuPage')
-                  }
-               }}
-               className="hern-kiosk__phone-number-drawer__skip-btn"
-            >
-               Skip
-            </button>
-         }
-         className="hern-kiosk__phone-number-drawer"
-         closeIcon={
-            <ArrowLeftIconBG bgColor="var(--hern-primary-color)" variant="sm" />
-         }
+         style={{ zIndex: '99999' }}
+         closable={false}
       >
-         <div className="hern-kiosk__phone-number-drawer__content">
-            <div className="hern-kiosk__phone-number-drawer__header">
-               <h1>
-                  {t(
-                     config?.phoneNoScreenSettings?.title?.value ||
-                        'Want to Get update about your Order Details?'
-                  )}
-               </h1>
-               <p>
-                  {t(
-                     config?.phoneNoScreenSettings?.description?.value ||
-                        'Enter Your Mobile Number & Get Details On WhatsApp'
-                  )}
-               </p>
-            </div>
-            <div className="hern-kiosk__phone-number-drawer__number">
-               <div className="hern-kiosk__phone-number-drawer__number__input">
-                  <input
-                     value={number}
-                     type="text"
-                     placeholder="Phone number"
-                  />
-               </div>
-
-               <div className="hern-kiosk__number-pad">
-                  <div onClick={() => setNumber(number + '1')}>1</div>
-                  <div onClick={() => setNumber(number + '2')}>2</div>
-                  <div onClick={() => setNumber(number + '3')}>3</div>
-                  <div onClick={() => setNumber(number + '4')}>4</div>
-                  <div onClick={() => setNumber(number + '5')}>5</div>
-                  <div onClick={() => setNumber(number + '6')}>6</div>
-                  <div onClick={() => setNumber(number + '7')}>7</div>
-                  <div onClick={() => setNumber(number + '8')}>8</div>
-                  <div onClick={() => setNumber(number + '9')}>9</div>
-                  <div onClick={() => setNumber('')}>
-                     <span className="hern-kiosk__phone-number-drawer__number__clear-btn">
-                        Clear
-                     </span>
-                  </div>
-                  <div onClick={() => setNumber(number + '0')}>0</div>
-                  <div onClick={() => setNumber(number.slice(0, -1))}>
-                     <BackSpaceIcon />
-                  </div>
-               </div>
+         <div tw="h-full relative">
+            <img src={image} />
+            <div tw="absolute bottom-20 w-full flex justify-center">
                <button
                   onClick={() => {
-                     isClient &&
-                        number.length > 0 &&
-                        localStorage.setItem('phone', number)
                      setVisible(false)
-                     if (
-                        isClient &&
-                        localStorage.getItem('fulfillmentType') !==
-                           'ONDEMAND_DINEIN'
-                     ) {
-                        setCurrentPage('menuPage')
-                     }
+                     setCurrentPage('menuPage')
                   }}
-                  disabled={number.length < 10}
-                  className="hern-kiosk__phone-number-drawer__number__proceed-btn"
+                  tw="bg-[#3d0347] text-7xl text-white font-extrabold px-[56px] py-7 tracking-wide"
                >
-                  {t('Proceed')}
+                  {t(continueButtonLabel)}
                </button>
             </div>
          </div>
-      </Drawer>
+      </StyledPromotionalScreen>
    )
 }
+const StyledPromotionalScreen = styled(Drawer)`
+   .ant-drawer-body {
+      padding: 0;
+   }
+`

@@ -21,7 +21,7 @@ router.post('/handle-cart-payment', handleCartPayment)
 router.post('/initiate-payment', initiatePaymentHandler)
 
 // Stripe webhook events
-router.post('/handle-payment-webhook', handlePaymentWebhook)
+router.post('/handle-payment-webhook/:paymentType', handlePaymentWebhook)
 
 // Setup Intents
 router.get('/setup-intent', listSetupIntent)

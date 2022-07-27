@@ -1,4 +1,4 @@
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 export const Wrapper = styled.div`
    .action_url {
       display: block;
@@ -7,9 +7,30 @@ export const Wrapper = styled.div`
    .ant-result {
       padding: 2.5rem 2rem;
    }
-   .ant-result-icon {
-      margin: 0;
-   }
+   ${props =>
+      props.variant === 'simple' &&
+      css`
+         .ant-result-icon {
+            margin: 0;
+         }
+      `}
+   ${props =>
+      props.variant === 'customized' &&
+      props.isSuccess &&
+      css`
+         .ant-result-icon {
+            margin: 0;
+            background: #7124b4;
+            padding: 2rem;
+            border-radius: 10px;
+         }
+         .ant-result-title {
+            color: #7124b4;
+            font-size: 1.5rem;
+            margin-top: 1rem;
+            font-weight: 900;
+         }
+      `}
    .ant-result-success .ant-result-icon > .anticon {
       color: linear-gradient(228.17deg, #7ab6d3 0.03%, #294460 95.55%);
    }
@@ -26,6 +47,31 @@ export const Wrapper = styled.div`
       max-width: 300px;
       max-height: 300px;
       margin: 0 auto;
+   }
+   .qr_code_card {
+      display: flex;
+      flex-direction: column;
+      border-radius: 20px;
+      position: relative;
+   }
+   .qr_code_card .msg {
+      font-weight: 700;
+      font-size: 32px;
+      line-height: 42px;
+      letter-spacing: 0.04em;
+      text-transform: capitalize;
+      margin: 40px auto 30px;
+   }
+   .qr_code_card .qr_code {
+      border-radius: 10px;
+   }
+   .qr_code_card .total_amount {
+      font-weight: 400;
+      font-size: 40px;
+      line-height: 40px;
+      letter-spacing: 0.04em;
+      text-transform: capitalize;
+      margin: 35px auto 40px;
    }
    .authenticateBtn {
       background: #38a169;

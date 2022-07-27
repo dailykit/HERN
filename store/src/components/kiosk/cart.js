@@ -26,11 +26,14 @@ import { useTranslation, CartContext } from '../../context'
 import {
    DineInTableSelection,
    KioskCounterButton,
+   PhoneNoWarningModal,
+   PhoneNumberTunnel,
    ProductGalleryKiosk,
 } from './component'
 import {
    formatCurrency,
    getCartItemWithModifiers,
+   isClient,
    nestedModifierTemplateIds,
 } from '../../utils'
 import { GET_MODIFIER_BY_ID, PRODUCT_ONE } from '../../graphql'
@@ -45,6 +48,7 @@ import { HernLazyImage } from '../../utils/hernImage'
 import isNull from 'lodash/isNull'
 import { get_env } from '../../utils'
 import { useIntl } from 'react-intl'
+import styled, { css } from 'styled-components'
 
 const { Header, Content, Footer } = Layout
 
@@ -62,6 +66,8 @@ export const KioskCart = props => {
    const { config, combinedCartItems, setCurrentPage } = props
    const { t, direction } = useTranslation()
 
+   const [visible, setVisible] = useState(false)
+   const [skipModal, setSkipModal] = useState(null)
    const { configOf } = useConfig('brand')
    const labelConfig = configOf('BillingDetails', 'brand')
    const label = {
@@ -76,7 +82,12 @@ export const KioskCart = props => {
          labelConfig?.labelForBillingDetailsField?.totalPrice?.value ||
          'Total Price',
    }
-   console.log('config,', label, labelConfig)
+   const showPhoneNoModal =
+      config?.phoneNoScreenSettings?.askPhoneNumberOnCartPage?.value ?? false
+   const showNumberOfItemsOnCart =
+      config?.cartCardSettings?.showNumberOfItemsOnCart?.value || false
+   const labelForCartItemsList =
+      config?.cartCardSettings?.labelForCartItemsList?.value || 'REVIEW CART'
 
    const { setIsProcessingPayment, setIsPaymentInitiated, updatePaymentState } =
       usePayment()
@@ -123,12 +134,13 @@ export const KioskCart = props => {
       )
    }
    return (
-      <Layout
-         style={{ height: '100%', overflowY: 'hidden', background: '#fff' }}
-         className="hern-kiosk__cart-container"
-      >
-         <ProgressBar config={config} setCurrentPage={setCurrentPage} />
-         {/* <Header className="hern-kiosk__cart-section-header">
+      <>
+         <Layout
+            style={{ height: '100%', overflowY: 'hidden', background: '#fff' }}
+            className="hern-kiosk__cart-container"
+         >
+            <ProgressBar config={config} setCurrentPage={setCurrentPage} />
+            {/* <Header className="hern-kiosk__cart-section-header">
             <Row className="hern-kiosk__cart-section-header-row">
                <Col span={4}>
                   <ArrowLeftIconBG
@@ -162,191 +174,251 @@ export const KioskCart = props => {
             </Row>
          </Header> */}
 
-         {(cartState.cart == null || combinedCartItems.length === 0) && (
-            <div className="hern-cart-empty-cart">
-               <EmptyCart width={558} height={480} />
-               <span>{t('Oops! Your cart is empty')} </span>
-               <span
-                  onClick={() => {
-                     setCurrentPage('menuPage')
-                  }}
-                  style={{
-                     color: `${config.kioskSettings.theme.primaryColor.value}`,
-                  }}
-               >
-                  {t('GO TO MENU')}
-               </span>
-            </div>
-         )}
-         {cartState.cart && combinedCartItems.length > 0 && (
-            <>
-               <Content style={{ backgroundColor: '#ffffff' }}>
-                  <div className="hern-kiosk__cart-cards-container">
-                     <div className="hern-kiosk__cart-cards-container-header">
-                        <span>{t('REVIEW ORDER')}</span>
-                        <span
-                           style={{
-                              color: `${config.kioskSettings.theme.primaryColor.value}`,
-                              cursor: 'pointer',
-                           }}
-                           onClick={() => {
-                              const cartItemsIds = combinedCartItems
-                                 .map(each => each.ids)
-                                 .flat()
-                              removeCartItems(cartItemsIds)
-                           }}
-                        >
-                           {t('CLEAR CART')}
-                        </span>
-                     </div>
-                     {!isCartValidByProductAvailability && (
-                        <p
-                           style={{
-                              color: '#f33737',
-                              margin: '0 1em',
-                              fontSize: '26px',
-                           }}
-                        >
-                           {t('Some product in cart are not available')}
-                        </p>
-                     )}
-                     <div className="hern-kiosk__cart-cards">
-                        {combinedCartItems.map((product, index) => {
-                           return (
-                              <CartCard
-                                 config={config}
-                                 productData={product}
-                                 quantity={product?.ids?.length}
-                                 removeCartItems={removeCartItems}
-                                 key={product.productId}
-                              />
-                           )
-                        })}
-                     </div>
-                  </div>
-               </Content>
-               <ProductGalleryKiosk config={config} />
-               <Footer className="hern-kiosk__cart-page-footer">
-                  <Layout>
-                     <Header className="hern-kiosk__cart-page-offer">
-                        <Offers config={config} />
-                     </Header>
-                     {SHOW_FREEBIE_MSG === 'true' && (
-                        <FreebieMessage msg={t('Free 1 Ice Cream Cone')} />
-                     )}
-                     <Content className="hern-kiosk__cart-page-price-detail">
-                        <div className="hern-kiosk-cart-bill-details">
-                           <span>{t('BILL DETAILS')}</span>
-                           <ul className="hern-kiosk-cart-bill-details-list">
-                              <li>
-                                 <span style={{ fontWeight: 'bold' }}>
-                                    {t(label.itemTotal)}
-                                 </span>
-                                 <span style={{ fontWeight: 'bold' }}>
-                                    {formatCurrency(
-                                       (
-                                          (cart?.cartOwnerBilling?.itemTotal ||
-                                             0) -
-                                          (cart?.cartOwnerBilling
-                                             ?.itemTotalInclusiveTax || 0)
-                                       ).toFixed(2)
-                                    )}
-                                 </span>
-                              </li>
-                              <li>
-                                 <span>{t(label.discount)}</span>
-                                 <span>
-                                    {'-'}{' '}
-                                    {formatCurrency(
-                                       (
-                                          cart?.cartOwnerBilling
-                                             ?.totalDiscount || 0
-                                       ).toFixed(2)
-                                    )}
-                                 </span>
-                              </li>
-                              <li>
-                                 <span>{t(label.vat)}</span>
-                                 <span>
-                                    {formatCurrency(
-                                       (
-                                          (cart?.cartOwnerBilling
-                                             ?.itemTotalInclusiveTax || 0) +
-                                          (cart?.cartOwnerBilling
-                                             ?.itemTotalTaxExcluded || 0)
-                                       ).toFixed(2)
-                                    )}
-                                 </span>
-                              </li>
-                              <li>
-                                 <span style={{ fontWeight: 'bold' }}>
-                                    {t(label.totalPrice)}
-                                 </span>
-                                 <span style={{ fontWeight: 'bold' }}>
-                                    {formatCurrency(
-                                       (
-                                          cart?.cartOwnerBilling?.totalToPay ||
-                                          0
-                                       ).toFixed(2)
-                                    )}
-                                 </span>
-                              </li>
-                           </ul>
+            {(cartState.cart == null || combinedCartItems.length === 0) && (
+               <div className="hern-cart-empty-cart">
+                  <EmptyCart width={558} height={480} />
+                  <span>{t('Oops! Your cart is empty')} </span>
+                  <span
+                     onClick={() => {
+                        setCurrentPage('menuPage')
+                     }}
+                     style={{
+                        color: `${config.kioskSettings.theme.primaryColor.value}`,
+                     }}
+                  >
+                     {t('GO TO MENU')}
+                  </span>
+               </div>
+            )}
+            {cartState.cart && combinedCartItems.length > 0 && (
+               <>
+                  <Content style={{ backgroundColor: '#ffffff' }}>
+                     <div className="hern-kiosk__cart-cards-container">
+                        <div className="hern-kiosk__cart-cards-container-header">
+                           <div>
+                              <span>{t(labelForCartItemsList)}</span>
+                              {showNumberOfItemsOnCart &&
+                                 cart?.cartItems_aggregate?.aggregate?.count >
+                                    0 && (
+                                    <span>
+                                       &nbsp;(
+                                       {
+                                          cart?.cartItems_aggregate?.aggregate
+                                             ?.count
+                                       }
+                                       )
+                                    </span>
+                                 )}
+                           </div>
+
+                           <span
+                              style={{
+                                 color: `${config.kioskSettings.theme.primaryColor.value}`,
+                                 cursor: 'pointer',
+                              }}
+                              onClick={() => {
+                                 const cartItemsIds = combinedCartItems
+                                    .map(each => each.ids)
+                                    .flat()
+                                 removeCartItems(cartItemsIds)
+                              }}
+                           >
+                              {t('CLEAR CART')}
+                           </span>
                         </div>
-                     </Content>
-                     <Footer className="hern-kiosk__cart-page-proceed-to-checkout">
-                        {/* <CartPageFooter cart={cart} methods={methods} /> */}
-                        {/* <PayButton
+                        {!isCartValidByProductAvailability && (
+                           <p
+                              style={{
+                                 color: '#f33737',
+                                 margin: '0 1em',
+                                 fontSize: '26px',
+                              }}
+                           >
+                              {t('Some product in cart are not available')}
+                           </p>
+                        )}
+                        <StyledCartItems
+                           scrollBg={
+                              config?.cartCardSettings?.scroll?.color?.value ||
+                              'rgba(229, 240, 247);'
+                           }
+                           scrollWidth={
+                              config?.cartCardSettings?.scroll?.width?.value ||
+                              '12px'
+                           }
+                           className="hern-kiosk__cart-cards"
+                        >
+                           {combinedCartItems.map((product, index) => {
+                              return (
+                                 <CartCard
+                                    config={config}
+                                    productData={product}
+                                    quantity={product?.ids?.length}
+                                    removeCartItems={removeCartItems}
+                                    key={product.productId}
+                                 />
+                              )
+                           })}
+                        </StyledCartItems>
+                     </div>
+                  </Content>
+                  <ProductGalleryKiosk config={config} />
+                  <Footer className="hern-kiosk__cart-page-footer">
+                     <Layout>
+                        <Header className="hern-kiosk__cart-page-offer">
+                           <Offers config={config} />
+                        </Header>
+                        {SHOW_FREEBIE_MSG === 'true' && (
+                           <FreebieMessage msg={t('Free 1 Ice Cream Cone')} />
+                        )}
+                        <Content className="hern-kiosk__cart-page-price-detail">
+                           <div className="hern-kiosk-cart-bill-details">
+                              <span>{t('BILL DETAILS')}</span>
+                              <ul className="hern-kiosk-cart-bill-details-list">
+                                 <li>
+                                    <span style={{ fontWeight: 'bold' }}>
+                                       {t(label.itemTotal)}
+                                    </span>
+                                    <span style={{ fontWeight: 'bold' }}>
+                                       {formatCurrency(
+                                          (
+                                             (cart?.cartOwnerBilling
+                                                ?.itemTotal || 0) -
+                                             (cart?.cartOwnerBilling
+                                                ?.itemTotalInclusiveTax || 0)
+                                          ).toFixed(2)
+                                       )}
+                                    </span>
+                                 </li>
+                                 <li>
+                                    <span>{t(label.discount)}</span>
+                                    <span>
+                                       {'-'}{' '}
+                                       {formatCurrency(
+                                          (
+                                             cart?.cartOwnerBilling
+                                                ?.totalDiscount || 0
+                                          ).toFixed(2)
+                                       )}
+                                    </span>
+                                 </li>
+                                 <li>
+                                    <span>{t(label.vat)}</span>
+                                    <span>
+                                       {formatCurrency(
+                                          (
+                                             (cart?.cartOwnerBilling
+                                                ?.itemTotalInclusiveTax || 0) +
+                                             (cart?.cartOwnerBilling
+                                                ?.itemTotalTaxExcluded || 0)
+                                          ).toFixed(2)
+                                       )}
+                                    </span>
+                                 </li>
+                                 <li>
+                                    <span style={{ fontWeight: 'bold' }}>
+                                       {t(label.totalPrice)}
+                                    </span>
+                                    <span style={{ fontWeight: 'bold' }}>
+                                       {formatCurrency(
+                                          (
+                                             cart?.cartOwnerBilling
+                                                ?.totalToPay || 0
+                                          ).toFixed(2)
+                                       )}
+                                    </span>
+                                 </li>
+                              </ul>
+                           </div>
+                        </Content>
+                        <Footer className="hern-kiosk__cart-page-proceed-to-checkout">
+                           {/* <CartPageFooter cart={cart} methods={methods} /> */}
+                           {/* <PayButton
                            cartId={cart?.id}
                            className="hern-kiosk__kiosk-button hern-kiosk__cart-place-order-btn"
                         > */}
-                        <KioskButton
-                           customClass="hern-kiosk__cart-place-order-btn"
-                           onClick={placeOrderHandler}
-                           buttonConfig={config.kioskSettings.buttonSettings}
-                           disabled={!isCartValidByProductAvailability}
-                        >
-                           <span className="hern-kiosk__cart-place-order-btn-total">
-                              {formatCurrency(
-                                 (
-                                    cart?.cartOwnerBilling?.totalToPay || 0
-                                 ).toFixed(2)
+                           <KioskButton
+                              customClass="hern-kiosk__cart-place-order-btn"
+                              onClick={() => {
+                                 if (
+                                    isClient &&
+                                    (!localStorage.getItem('phone') ||
+                                       localStorage.getItem('phone') ===
+                                          '2222222222') &&
+                                    skipModal === null &&
+                                    showPhoneNoModal
+                                 ) {
+                                    setSkipModal(true)
+                                    return
+                                 } else {
+                                    placeOrderHandler()
+                                 }
+                              }}
+                              buttonConfig={config.kioskSettings.buttonSettings}
+                              disabled={!isCartValidByProductAvailability}
+                           >
+                              <span className="hern-kiosk__cart-place-order-btn-total">
+                                 {formatCurrency(
+                                    (
+                                       cart?.cartOwnerBilling?.totalToPay || 0
+                                    ).toFixed(2)
+                                 )}
+                              </span>
+                              <span className="hern-kiosk__cart-place-order-btn-text">
+                                 {t('Place Order')}
+                              </span>
+                              {direction === 'ltr' ? (
+                                 <ArrowRightIcon
+                                    stroke={
+                                       config.kioskSettings.theme.primaryColor
+                                          .value
+                                    }
+                                 />
+                              ) : (
+                                 <ArrowLeftIcon
+                                    stroke={
+                                       config.kioskSettings.theme.primaryColor
+                                          .value
+                                    }
+                                 />
                               )}
-                           </span>
-                           <span className="hern-kiosk__cart-place-order-btn-text">
-                              {t('Place Order')}
-                           </span>
-                           {direction === 'ltr' ? (
-                              <ArrowRightIcon
-                                 stroke={
-                                    config.kioskSettings.theme.primaryColor
-                                       .value
-                                 }
-                              />
-                           ) : (
-                              <ArrowLeftIcon
-                                 stroke={
-                                    config.kioskSettings.theme.primaryColor
-                                       .value
-                                 }
-                              />
-                           )}
-                        </KioskButton>
+                           </KioskButton>
 
-                        {/* </PayButton> */}
-                     </Footer>
-                  </Layout>
-               </Footer>
-            </>
-         )}
-         {/* <DineInTableSelection
+                           {/* </PayButton> */}
+                        </Footer>
+                     </Layout>
+                  </Footer>
+               </>
+            )}
+            {/* <DineInTableSelection
             showDineInTableSelection={showDineInTableSelection}
             onClose={() => {
                setShowDineInTableSelection(false)
             }}
             config={config}
          /> */}
-      </Layout>
+         </Layout>
+         <PhoneNumberTunnel
+            config={config}
+            visible={visible}
+            setVisible={setVisible}
+            setCurrentPage={setCurrentPage}
+            callback={placeOrderHandler}
+         />
+         <PhoneNoWarningModal
+            skipModal={skipModal}
+            setSkipModal={setSkipModal}
+            setCurrentPage={setCurrentPage}
+            setVisible={setVisible}
+            callback={() => {
+               placeOrderHandler()
+            }}
+            message={
+               config?.phoneNoScreenSettings?.noPhoneNoWarning?.checkoutPage
+                  ?.value || 'Are you sure ?'
+            }
+         />
+      </>
    )
 }
 
@@ -373,7 +445,10 @@ const CartCard = props => {
    const [showChooseIncreaseType, setShowChooseIncreaseType] = useState(false) // show I'll choose or repeat last one popup
    const [showModifier, setShowModifier] = useState(false) // show modifier popup
    const [forRepeatLastOne, setForRepeatLastOne] = useState(false) // to run repeatLastOne fn in PRODUCTS_ONE query
-
+   const [
+      isConfirmationForDeleteCartItemModalVisible,
+      setConfirmationForDeleteCartItemModalVisible,
+   ] = useState(false)
    let totalPrice = 0
    let totalDiscount = 0
    const price = product => {
@@ -1003,9 +1078,80 @@ const CartCard = props => {
                      title="Delete"
                      size={50}
                      onClick={() => {
-                        removeCartItems(productData.ids)
+                        if (
+                           config?.cartCardSettings?.deleteConfirmation
+                              ?.value ||
+                           false
+                        ) {
+                           setConfirmationForDeleteCartItemModalVisible(true)
+                        } else {
+                           removeCartItems(productData.ids)
+                        }
                      }}
                   />
+                  {isConfirmationForDeleteCartItemModalVisible &&
+                     (config?.cartCardSettings?.deleteConfirmation?.value ||
+                        false) && (
+                        <Modal
+                           title={formatMessage({
+                              id: 'Are you sure you want to remove this product from your cart',
+                           })}
+                           visible={isConfirmationForDeleteCartItemModalVisible}
+                           centered={true}
+                           className="hern-kiosk__cart-item-delete-confirmation-modal"
+                           onCancel={() => {
+                              setConfirmationForDeleteCartItemModalVisible(
+                                 false
+                              )
+                           }}
+                           closable={false}
+                           footer={null}
+                        >
+                           <div className="hern-kiosk__cart-item-delete-confirmation-button-div">
+                              <Button
+                                 variant="outline"
+                                 onClick={() => {
+                                    setConfirmationForDeleteCartItemModalVisible(
+                                       false
+                                    )
+                                 }}
+                                 style={{
+                                    margin: '2px',
+                                    fontSize: '20px',
+                                    border: `2px solid ${
+                                       config?.kioskSettings?.theme
+                                          ?.primaryColor?.value || 'black'
+                                    }`,
+                                    paddingBottom: '2.5rem',
+                                    width: '40%',
+                                    paddingTop: '0.8rem',
+                                 }}
+                              >
+                                 {t(`Cancel`)}
+                              </Button>
+                              <Button
+                                 onClick={() => {
+                                    setConfirmationForDeleteCartItemModalVisible(
+                                       false
+                                    )
+                                    removeCartItems(productData.ids)
+                                 }}
+                                 style={{
+                                    fontSize: '20px',
+                                    backgroundColor:
+                                       config?.kioskSettings?.theme
+                                          ?.primaryColor?.value || 'black',
+                                    color: 'white',
+                                    paddingBottom: '2.5rem',
+                                    width: '40%',
+                                    paddingTop: '0.8rem',
+                                 }}
+                              >
+                                 {t('Yes, Remove')}
+                              </Button>
+                           </div>
+                        </Modal>
+                     )}
                </div>
                <div
                   className="hern-kiosk__cart-cards-price"
@@ -1380,4 +1526,19 @@ const FreebieMessage = ({ msg }) => (
          className="hern-kiosk__cart-page-freebie-gif"
       />
    </div>
+)
+
+const StyledCartItems = styled.div(
+   ({ scrollBg, scrollWidth }) => css`
+      overflow: auto;
+      height: calc(100% - 5em);
+      width: calc(100% - 8px);
+      &::-webkit-scrollbar {
+         width: ${scrollWidth};
+      }
+      &::-webkit-scrollbar-thumb {
+         background: ${scrollBg};
+         border-radius: 4px;
+      }
+   `
 )
