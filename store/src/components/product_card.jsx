@@ -2,10 +2,10 @@ import classNames from 'classnames'
 import React from 'react'
 import { Slide } from 'react-slideshow-image'
 import { useTranslation } from '../context'
+import { useConfig } from '../lib'
 import { formatCurrency, isClient } from '../utils'
 import { HernLazyImage } from '../utils/hernImage'
 import { ModifierPopup, ModifierPopupForUnAvailability } from './index'
-// import { useConfig } from '../lib'
 // if (isClient) {
 //    import('lazysizes/plugins/unveilhooks/ls.unveilhooks').then(module => module)
 // }
@@ -51,7 +51,7 @@ export const ProductCard = props => {
    } = props
    // console.log('🚀 ~ file: product_card.jsx ~ line 50 ~ data', data)
    const { t, dynamicTrans, locale } = useTranslation()
-
+   const {noProductImage} = useConfig()
    const currentLang = React.useMemo(() => locale, [locale])
    const slideRef = React.useRef()
    const properties = {
@@ -141,7 +141,44 @@ export const ProductCard = props => {
                         {...properties}
                      >
                         {data.assets.images.map((each, index) => {
-                           return (
+
+                           // each = noProductImage
+                           // console.log("abcde",noProductImage)
+                           console.log("EACH",each)
+                           if (each === undefined || each === null)
+                              {
+                                 return (
+                              <div key={each}>
+                                 
+                                 <HernLazyImage
+                                    // src={each}
+                                    dataSrc={noProductImage}
+                                    alt={data.name}
+                                    className={classNames(
+                                       'hern-product-card__image',
+                                       {
+                                          'hern-product-card__image--aspect-ratio':
+                                             maintainRatio,
+                                       }
+                                    )}
+                                    onClick={e => {
+                                       if (onImageClick) {
+                                          e.stopPropagation()
+                                          onImageClick()
+                                       }
+                                    }}
+                                    style={{
+                                       cursor: onImageClick ? 'pointer' : null,
+                                    }}
+                                    width={productImageSize.width}
+                                    height={productImageSize.height}
+                                 />
+                              </div>
+                           )
+                              }
+                           else {
+                              console.log("jjjjj")
+                              return (
                               <div key={each}>
                                  {/* <div
                                     className={classNames(
@@ -156,6 +193,7 @@ export const ProductCard = props => {
                                     // }}
                                     data-bg={each}
                                  ></div> */}
+                                 
                                  <HernLazyImage
                                     // src={each}
                                     dataSrc={each}
@@ -181,6 +219,7 @@ export const ProductCard = props => {
                                  />
                               </div>
                            )
+                           }
                         })}
                      </Slide>
                      {IconOnImage && (

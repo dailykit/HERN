@@ -253,6 +253,8 @@ export const OnDemandOrder = ({ config }) => {
                            </div>
                            <div style={{ display: 'flex', flexWrap: 'wrap' }}>
                               {eachCategory.products.map(eachProduct => (
+                                 // console.log("Each",eachProduct)
+
                                  <ProductWithIntersection
                                     key={eachProduct.id}
                                     eachProduct={eachProduct}
@@ -288,19 +290,6 @@ const ProductWithIntersection = ({
    CustomAreaWrapper,
    autoPlaySlider,
 }) => {
-   // console.log('ABC', eachProduct.assets.images[0])
-   // console.log('BCD', eachProduct.assets)
-   // console.log(
-   //    eachProduct.assets.images[0] == undefined ||
-   //       eachProduct.assets.images[0] === null
-   // )
-   if (
-      eachProduct.assets.images[0] === undefined ||
-      eachProduct.assets.images[0] === null
-   ) {
-      eachProduct.assets.images[0] =
-         'https://d3i0trfokco6a2.cloudfront.net/TPO-396.png'
-   }
    const router = useRouter()
    const productRef = React.useRef()
    const { entry, isIntersected } = useIntersectionObserver(productRef, {
