@@ -38,8 +38,8 @@ function usePineLabsTerminalPay() {
    }
 
    function parseSalesTxnResponse(message) {
-      let data = message.split(',')
-      let orderId = data[0]
+      let data = message.split(' ,')
+      data = data.map(item => item.slice(1, item.length - 1))
       let cartPaymentId = data[0]?.split('-')?.splice(-1)
       return {
          cartPaymentId: parseInt(cartPaymentId),
