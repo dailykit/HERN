@@ -145,16 +145,16 @@ const KioskMenu = props => {
             })
          }
       }
-      if(!isReverseScroll && selectedCategory == 3){
+      if(!isReverseScroll && selectedCategory >= 3){
          setUpArrowShown(true)
       }
-      if(isReverseScroll && selectedCategory == 2){
+      if(isReverseScroll && selectedCategory <= 2){
          setUpArrowShown(false)
       }
-      if(!isReverseScroll && selectedCategory == 8){
+      if(!isReverseScroll && selectedCategory >= 8){
          setDownArrowShown(false)
       }
-      if(isReverseScroll && selectedCategory == 8){
+      if(isReverseScroll && selectedCategory <= 8){
          setDownArrowShown(true)
       }
    }, [selectedCategory])
