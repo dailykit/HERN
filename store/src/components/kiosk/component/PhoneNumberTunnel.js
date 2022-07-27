@@ -130,7 +130,8 @@ export const PhoneNumberTunnel = ({
                   {phoneNoConfig?.showDescription?.value && (
                      <p>
                         {t(
-                           config?.phoneNoScreenSettings?.description?.value ||
+                           config?.phoneNoScreenSettings?.phoneNoScreenSettings
+                              ?.value ||
                               'Enter Your Mobile Number & Get Details On WhatsApp'
                         )}
                      </p>
