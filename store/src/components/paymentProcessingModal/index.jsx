@@ -100,12 +100,12 @@ const PaymentProcessingModal = ({
    }
    const startCelebration = () => {
       setIsCelebrating(true)
-      // setTimeout(async () => {
-      //    await stopCelebration()
-      //    if (isClient && ALLOW_POSIST_PUSH_ORDER === false) {
-      //       window.location.reload()
-      //    }
-      // }, 5000)
+      setTimeout(async () => {
+         await stopCelebration()
+         if (isClient && ALLOW_POSIST_PUSH_ORDER === false) {
+            window.location.reload()
+         }
+      }, 5000)
    }
 
    const ShowPaymentStatusInfo = () => {
