@@ -177,7 +177,7 @@ const PaymentProcessingModal = ({
                      </p>
                      <h1
                         style={{
-                           fontSize: '2rem',
+                           fontSize: '4rem',
                            color: 'var(--hern-primary-color)',
                            fontWeight: '900',
                         }}
