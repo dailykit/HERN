@@ -88,7 +88,8 @@ const PlanProducts = ({ noSkip, isCheckout }) => {
             <h4 className="hern-cart-plan-products__header__title">
                {t('No. of items you have added:')}{' '}
                <span>
-                  {state?.occurenceCustomer?.validStatus?.addedProductsCount}/
+                  {/* {state?.occurenceCustomer?.validStatus?.addedProductsCount}/ */}
+                  {state?.totalProductsInCart}/
                   {user?.subscription?.recipes?.count}
                </span>
             </h4>
@@ -136,7 +137,8 @@ const PlanProducts = ({ noSkip, isCheckout }) => {
             </section>
          )}
          <ul className="hern-cart-plan-products__list">
-            {cartProducts?.products.map(
+            {/* {cartProducts?.products.map( */}
+             {state?.productsAddedInCart?.map(
                product =>
                   !product.isAddOn && (
                      <CartProduct
