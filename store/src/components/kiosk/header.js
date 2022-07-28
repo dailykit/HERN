@@ -7,6 +7,7 @@ import { ReloadIcon, ArrowLeftIconBG } from '../../assets/icons'
 import { isClient } from '../../utils'
 import { useIntl } from 'react-intl'
 import { useConfig } from '../../lib'
+import ReactHtmlParser from 'react-html-parser'
 
 export const KioskHeader = props => {
    const { config } = props
@@ -76,10 +77,6 @@ export const KioskHeader = props => {
             )}
          {currentPage === 'menuPage' && 
             <Modal
-            title={formatMessage({
-               id: (config?.kioskSettings?.removeCartItemGoBackButton?.confirmationTextShown?.value ||
-                     "All the cart items will be cleared. Do you still want to go back?"),
-            })}
             visible={showClearCartWarning}
             centered={true}
             onCancel={() => {
@@ -89,6 +86,17 @@ export const KioskHeader = props => {
             footer={null}
             className="hern-kiosk___header-go-back-confirmation-modal"
          >
+            <div style={{
+               fontWeight: "800",
+               fontSize: "24px",
+               marginBottom: "2rem",
+               textAlign: "center",
+               lineHeight: "28px",
+               marginTop: "1rem",
+            }}>
+               { ReactHtmlParser((config?.kioskSettings?.removeCartItemGoBackButton?.confirmationTextShown?.value ||
+                     "All the cart items will be cleared<br>Do you still want to go back?"))}
+            </div>
             <div
                style={{
                   display: 'flex',
