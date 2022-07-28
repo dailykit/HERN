@@ -561,10 +561,6 @@ const PayInCashModal = ({
    setToPayInCashModal,
    handleFulfillment,
 }) => {
-   console.log(
-      '##',
-      config?.fulfillmentPageSettings?.payInCashModal?.title?.value
-   )
    const payInCashModalConfig = {
       title:
          config?.fulfillmentPageSettings?.payInCashModal?.title?.value ||
