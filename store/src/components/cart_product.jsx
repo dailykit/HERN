@@ -31,6 +31,7 @@ export const CartProduct = ({ product, isRemovable, onDelete }) => {
                   alt={product.name}
                   className="image__thumbnail"
                />
+               
             ) : (
                <img src={noProductImage} alt={product.name} />
             )}

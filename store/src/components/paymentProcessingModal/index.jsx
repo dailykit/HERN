@@ -172,12 +172,12 @@ const PaymentProcessingModal = ({
                title = 'Your Order Is Placed Successfully.'
                subtitle = (
                   <>
-                     <p style={{ fontSize: '1.5rem', color: 'black' }}>
+                     <p style={{ fontSize: '2.5rem', color: 'black' }}>
                         {t('Your Order Id')}
                      </p>
                      <h1
                         style={{
-                           fontSize: '2rem',
+                           fontSize: '8rem',
                            color: 'var(--hern-primary-color)',
                            fontWeight: '900',
                         }}

@@ -52,6 +52,7 @@ export const CartProvider = ({ children }) => {
       dispatch,
       orderTabs,
       brandLocation,
+      configOf,
    } = useConfig()
    const { addToast } = useToasts()
    const { t } = useTranslation()
@@ -75,6 +76,10 @@ export const CartProvider = ({ children }) => {
       isCartValidByProductAvailability,
       setIsCartValidByProductAvailability,
    ] = useState(false)
+
+   const kioskConfig = configOf('kiosk-config', 'kiosk')
+   const reverseCartItems =
+      kioskConfig?.cartPageSettings?.reverseCartItems?.value ?? false
    const argsForByLocation = React.useMemo(
       () => ({
          brandId: brand?.id,
@@ -230,7 +235,10 @@ export const CartProvider = ({ children }) => {
 
    useEffect(() => {
       if (cartItemsData?.cartItems) {
-         const combinedCartItems = combineCartItems(cartItemsData?.cartItems)
+         const combinedCartItems = combineCartItems(
+            cartItemsData?.cartItems,
+            reverseCartItems
+         )
          console.log('combinedCartItems', combinedCartItems)
          setCombinedCartData(combinedCartItems)
       } else {
@@ -735,7 +743,7 @@ export const CartProvider = ({ children }) => {
                },
                cart: {
                   update: updateCart,
-                  delete: deleteCart
+                  delete: deleteCart,
                },
             },
             isCartValidByProductAvailability,

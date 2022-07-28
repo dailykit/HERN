@@ -1,13 +1,12 @@
 import classNames from 'classnames'
+import { isEmpty } from 'lodash'
 import React from 'react'
 import { Slide } from 'react-slideshow-image'
 import { useTranslation } from '../context'
+import { useConfig } from '../lib'
 import { formatCurrency, isClient } from '../utils'
 import { HernLazyImage } from '../utils/hernImage'
 import { ModifierPopup, ModifierPopupForUnAvailability } from './index'
-// if (isClient) {
-//    import('lazysizes/plugins/unveilhooks/ls.unveilhooks').then(module => module)
-// }
 export const ProductCard = props => {
    const {
       data,
@@ -47,8 +46,8 @@ export const ProductCard = props => {
       stepView = false,
       autoPlaySlider = false,
    } = props
-   // console.log('🚀 ~ file: product_card.jsx ~ line 50 ~ data', data)
    const { t, dynamicTrans, locale } = useTranslation()
+   const { noProductImage } = useConfig()
    const currentLang = React.useMemo(() => locale, [locale])
    const slideRef = React.useRef()
    const properties = {
@@ -125,61 +124,77 @@ export const ProductCard = props => {
          }
       }
    }, [])
+
    return (
       <>
          {showProductCard && (
             <div className={classNames('hern-product-card', className)}>
                {showImage && (
                   <div className="hern-product-card-image-container">
-                     <Slide
-                        ref={slideRef}
-                        infinite={autoPlaySlider}
-                        autoplay={autoPlaySlider}
-                        {...properties}
-                     >
-                        {data.assets.images.map((each, index) => {
-                           return (
-                              <div key={each}>
-                                 {/* <div
-                                    className={classNames(
-                                       'lazyload hern-product-card-image-background',
-                                       {
-                                          'hern-product-card-image-background--aspect-ratio':
-                                             maintainRatio,
-                                       }
-                                    )}
-                                    // style={{
-                                    //    backgroundImage: `url(https://dailykit-502-chefbaskit1.s3.us-east-2.amazonaws.com/images/64330-Lal-Maas.jpg)`,
-                                    // }}
-                                    data-bg={each}
-                                 ></div> */}
-                                 <HernLazyImage
-                                    // src={each}
-                                    dataSrc={each}
-                                    alt={data.name}
-                                    className={classNames(
-                                       'hern-product-card__image',
-                                       {
-                                          'hern-product-card__image--aspect-ratio':
-                                             maintainRatio,
-                                       }
-                                    )}
-                                    onClick={e => {
-                                       if (onImageClick) {
-                                          e.stopPropagation()
-                                          onImageClick()
-                                       }
-                                    }}
-                                    style={{
-                                       cursor: onImageClick ? 'pointer' : null,
-                                    }}
-                                    width={productImageSize.width}
-                                    height={productImageSize.height}
-                                 />
-                              </div>
-                           )
-                        })}
-                     </Slide>
+                     {!isEmpty(data.assets.images) ? (
+                        <Slide
+                           ref={slideRef}
+                           infinite={autoPlaySlider}
+                           autoplay={autoPlaySlider}
+                           {...properties}
+                        >
+                           {data.assets.images.map((each, index) => {
+                              return (
+                                 <div key={each.id}>
+                                    <HernLazyImage
+                                       dataSrc={each}
+                                       alt={data.name}
+                                       className={classNames(
+                                          'hern-product-card__image',
+                                          {
+                                             'hern-product-card__image--aspect-ratio':
+                                                maintainRatio,
+                                          }
+                                       )}
+                                       onClick={e => {
+                                          if (onImageClick) {
+                                             e.stopPropagation()
+                                             onImageClick()
+                                          }
+                                       }}
+                                       style={{
+                                          cursor: onImageClick
+                                             ? 'pointer'
+                                             : null,
+                                       }}
+                                       width={productImageSize.width}
+                                       height={productImageSize.height}
+                                    />
+                                 </div>
+                              )
+                           })}
+                        </Slide>
+                     ) : (
+                        <div>
+                           <HernLazyImage
+                              dataSrc={noProductImage}
+                              alt={data.name}
+                              className={classNames(
+                                 'hern-product-card__image',
+                                 {
+                                    'hern-product-card__image--aspect-ratio':
+                                       maintainRatio,
+                                 }
+                              )}
+                              onClick={e => {
+                                 if (onImageClick) {
+                                    e.stopPropagation()
+                                    onImageClick()
+                                 }
+                              }}
+                              style={{
+                                 cursor: onImageClick ? 'pointer' : null,
+                              }}
+                              width={productImageSize.width}
+                              height={productImageSize.height}
+                           />
+                        </div>
+                     )}
                      {IconOnImage && (
                         <div
                            className="hern-product-card-on-image-icon"
