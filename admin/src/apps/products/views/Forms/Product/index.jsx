@@ -736,12 +736,15 @@ const RelatedProducts = ({ productId, updateProduct }) => {
 
 const ConvertedMealProduct = ({ products, productId, updateProduct }) => {
    const handleChange = async value => {
-      const id = value.match(/\##(.*?)\##/g)[0].replaceAll('#', '')
+      const id = value
+         ? Number(value.match(/\##(.*?)\##/g)[0].replaceAll('#', ''))
+         : null
+
       await updateProduct({
          variables: {
             id: productId,
             _set: {
-               convertToMealProductId: Number(id),
+               convertToMealProductId: id,
             },
          },
       })
