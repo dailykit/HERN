@@ -209,13 +209,18 @@ const Product = ({ node, theme, isAdded, noProductImage, buildImageUrl }) => {
             appearance: 'warning',
          })
       }
-      if (state.occurenceCustomer?.validStatus?.itemCountValid) {
+      if (
+         state.occurenceCustomer?.validStatus?.itemCountValid ||
+         state?.totalProductsInCart >= user?.subscription?.recipes?.count
+      ) {
          addToast(t("You're cart is already full!"), {
             appearance: 'warning',
          })
          return
       }
-      methods.products.add(item, node?.productOption?.product)
+      if (state?.cartState !== 'SAVING') {
+         methods.products.add(item, node?.productOption?.product)
+      }
    }
    const isActive = isAdded(node?.cartItem?.subscriptionOccurenceProductId)
    const ProductIsPublished =

@@ -17,7 +17,7 @@ import classNames from 'classnames'
 const { Step } = Steps
 
 export const ProgressBar = props => {
-   const { config, setCurrentPage } = props
+   const { config, setCurrentPage, sticky = false } = props
 
    const { cartState, dineInTableInfo, setDineInTableInfo, storedCartId } =
       React.useContext(CartContext)
@@ -109,6 +109,7 @@ export const ProgressBar = props => {
    }
    return (
       <Header
+         tw={`${sticky ? 'sticky top-[10em]' : 'static'}`}
          style={{
             background: `${
                config.progressBarSettings.showProgressBackground.value

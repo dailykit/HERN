@@ -1998,7 +1998,7 @@ export const GET_CART_ITEMS_BY_CART = gql`
       $where: order_cartItem_bool_exp!
       $params: jsonb!
    ) {
-      cartItems(where: $where, order_by: { created_at: desc }) {
+      cartItems(where: $where) {
          cartItemId: id
          parentCartItemId
          addOnLabel

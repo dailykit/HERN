@@ -342,8 +342,7 @@ const ProductWithIntersection = ({
                }
                data={eachProduct}
                showImage={
-                  (config?.informationVisibility?.product?.showImage?.value &&
-                     eachProduct.assets.images.length > 0) ??
+                  config?.informationVisibility?.product?.showImage?.value ??
                   true
                }
                canSwipe={

@@ -88,10 +88,19 @@ export const KioskCart = props => {
       config?.cartCardSettings?.showNumberOfItemsOnCart?.value || false
    const labelForCartItemsList =
       config?.cartCardSettings?.labelForCartItemsList?.value || 'REVIEW CART'
-
+   const scrollOnFullPage =
+      config?.cartPageSettings?.scrollOnFullPage?.value ?? false
    const { setIsProcessingPayment, setIsPaymentInitiated, updatePaymentState } =
       usePayment()
    const SHOW_FREEBIE_MSG = get_env('SHOW_FREEBIE_MSG')
+
+   const fullWidthButton =
+      config?.cartPageSettings?.proceedButton?.fullWidthButton?.value ?? false
+   const proceedButtonTotalAmountLabel =
+      config?.cartPageSettings?.proceedButton?.amountTotalLabel?.value ?? ''
+   const showArrowOnProceedButton =
+      config?.cartPageSettings?.proceedButton?.showArrow?.value ?? true
+
    //remove cartItem or cartItems
    const removeCartItems = cartItemIds => {
       methods.cartItems.delete({
@@ -135,11 +144,19 @@ export const KioskCart = props => {
    }
    return (
       <>
+         <ProgressBar
+            sticky={config?.cartPageSettings?.stickyProgressBar?.value ?? false}
+            config={config}
+            setCurrentPage={setCurrentPage}
+         />
          <Layout
-            style={{ height: '100%', overflowY: 'hidden', background: '#fff' }}
-            className="hern-kiosk__cart-container"
+            style={{
+               display: `${scrollOnFullPage ? 'block' : 'flex'}`,
+               height: 'calc(100% - 140px)',
+               background: '#fff',
+               overflowY: 'auto',
+            }}
          >
-            <ProgressBar config={config} setCurrentPage={setCurrentPage} />
             {/* <Header className="hern-kiosk__cart-section-header">
             <Row className="hern-kiosk__cart-section-header-row">
                <Col span={4}>
@@ -331,7 +348,14 @@ export const KioskCart = props => {
                               </ul>
                            </div>
                         </Content>
-                        <Footer className="hern-kiosk__cart-page-proceed-to-checkout">
+                        <Footer
+                           style={{
+                              ...(fullWidthButton && {
+                                 padding: '2rem 1.25rem 1.25rem 1.25rem',
+                              }),
+                           }}
+                           className="hern-kiosk__cart-page-proceed-to-checkout"
+                        >
                            {/* <CartPageFooter cart={cart} methods={methods} /> */}
                            {/* <PayButton
                            cartId={cart?.id}
@@ -356,31 +380,57 @@ export const KioskCart = props => {
                               }}
                               buttonConfig={config.kioskSettings.buttonSettings}
                               disabled={!isCartValidByProductAvailability}
+                              style={{
+                                 ...(fullWidthButton && {
+                                    height: 'auto',
+                                    display: 'flex',
+                                    justifyContent: 'space-between',
+                                 }),
+                              }}
                            >
-                              <span className="hern-kiosk__cart-place-order-btn-total">
+                              <span
+                                 style={{
+                                    ...(fullWidthButton && {
+                                       fontSize: '32px',
+                                    }),
+                                 }}
+                                 className="hern-kiosk__cart-place-order-btn-total"
+                              >
+                                 {proceedButtonTotalAmountLabel}
                                  {formatCurrency(
                                     (
                                        cart?.cartOwnerBilling?.totalToPay || 0
                                     ).toFixed(2)
                                  )}
                               </span>
-                              <span className="hern-kiosk__cart-place-order-btn-text">
+                              <span
+                                 style={{
+                                    ...(fullWidthButton && {
+                                       fontSize: '32px',
+                                    }),
+                                 }}
+                                 className="hern-kiosk__cart-place-order-btn-text"
+                              >
                                  {t('Place Order')}
                               </span>
-                              {direction === 'ltr' ? (
-                                 <ArrowRightIcon
-                                    stroke={
-                                       config.kioskSettings.theme.primaryColor
-                                          .value
-                                    }
-                                 />
-                              ) : (
-                                 <ArrowLeftIcon
-                                    stroke={
-                                       config.kioskSettings.theme.primaryColor
-                                          .value
-                                    }
-                                 />
+                              {showArrowOnProceedButton && (
+                                 <>
+                                    {direction === 'ltr' ? (
+                                       <ArrowRightIcon
+                                          stroke={
+                                             config.kioskSettings.theme
+                                                .primaryColor.value
+                                          }
+                                       />
+                                    ) : (
+                                       <ArrowLeftIcon
+                                          stroke={
+                                             config.kioskSettings.theme
+                                                .primaryColor.value
+                                          }
+                                       />
+                                    )}
+                                 </>
                               )}
                            </KioskButton>
 
