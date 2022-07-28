@@ -5,11 +5,9 @@ import { useTranslation } from '../context'
 import { formatCurrency, isClient } from '../utils'
 import { HernLazyImage } from '../utils/hernImage'
 import { ModifierPopup, ModifierPopupForUnAvailability } from './index'
-// import { useConfig } from '../lib'
 // if (isClient) {
 //    import('lazysizes/plugins/unveilhooks/ls.unveilhooks').then(module => module)
 // }
-   
 export const ProductCard = props => {
    const {
       data,
@@ -51,7 +49,6 @@ export const ProductCard = props => {
    } = props
    // console.log('🚀 ~ file: product_card.jsx ~ line 50 ~ data', data)
    const { t, dynamicTrans, locale } = useTranslation()
-
    const currentLang = React.useMemo(() => locale, [locale])
    const slideRef = React.useRef()
    const properties = {
