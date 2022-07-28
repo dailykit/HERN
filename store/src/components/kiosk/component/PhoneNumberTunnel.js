@@ -281,7 +281,7 @@ export const PhoneNoWarningModal = ({
             {t('Skip anyway')}
          </button>
          <button
-            className="solid"
+            className="solid animate__animated animate__wobble animate__repeat-1 animate__delay-1s"
             onClick={() => {
                setVisible(true)
                setSkipModal(false)
