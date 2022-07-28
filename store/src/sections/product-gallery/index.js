@@ -165,7 +165,7 @@ const ProductGrid = ({ config, product, index }) => {
          onImageClick={() => router.push(getRoute('/products/' + product.id))}
          key={index}
          data={product}
-         showImage={product.assets.images.length > 0 ? true : false}
+         //showImage={product.assets.images.length > 0 ? true : false}
          customAreaComponent={
             (!config?.informationVisibility?.showAddButtonInProduct &&
                CustomAreaWrapper) ||

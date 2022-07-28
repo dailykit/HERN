@@ -337,9 +337,9 @@ const ProductWithIntersection = ({
                   }}
                   data={eachProduct}
                   showProductDescription={true}
-                  showImage={
-                     eachProduct.assets.images.length > 0 ? true : false
-                  }
+                  // showImage={
+                  //    eachProduct.assets.images.length > 0 ? true : false
+                  // }
                   customAreaComponent={CustomAreaWrapper}
                   showModifier={
                      productModifier && productModifier.id === eachProduct.id
