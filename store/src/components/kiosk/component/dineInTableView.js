@@ -43,12 +43,8 @@ export const DineInTableSelection = props => {
    })
 
    React.useLayoutEffect(() => {
-      const selectedTableId = numberPadView
-         ? numbers
-         : selectedLocationTableId + ''
-
       const isTableValid = data?.brands_locationTable?.some(
-         table => table.internalTableLabel === selectedTableId
+         table => table.internalTableLabel === numbers
       )
       if (isTableValid) {
          setIsTableValid(true)
@@ -59,12 +55,18 @@ export const DineInTableSelection = props => {
 
    const handleProceed = () => {
       const selectedTableId = numberPadView
-         ? Number(numbers)
-         : selectedLocationTableId
+         ? numbers
+         : selectedLocationTableId + ''
       const selectedTable = data.brands_locationTable.find(
-         table => table.id === selectedTableId
+         table => table.internalTableLabel === selectedTableId
       )
-      if (isTableValid) {
+
+      if (numberPadView) {
+         if (isTableValid) {
+            onConfirmClick(selectedTable)
+            onClose()
+         }
+      } else {
          onConfirmClick(selectedTable)
          onClose()
       }
