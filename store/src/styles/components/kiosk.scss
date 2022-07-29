@@ -425,7 +425,7 @@
 .hern-kiosk__menu-category-name-simple {
    font-size: 4rem;
    margin: 1rem 0 0.2rem 0.5rem;
-   font-weight: 600; 
+   font-weight: 600;
 }
 .hern-kiosk__menu-category-name-simple-underline {
    font-size: 4rem;
@@ -1742,4 +1742,19 @@
       font-weight: 700;
       font-size: 24px;
    }
+}
+
+.hern-header__css-transition__kiosk-modifier-enter {
+   animation: fadeIn;
+   animation-duration: 0.75s;
+}
+.hern-header__css-transition__kiosk-modifier-enter-active {
+}
+.hern-header__css-transition__kiosk-modifier-exit {
+   animation: bounceOutUp;
+   animation-duration: 0.75s;
+}
+.hern-header__css-transition__kiosk-modifier-exit-active {
+}
+.hern-header__css-transition__kiosk-modifier-enter-done {
 }

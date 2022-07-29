@@ -939,7 +939,7 @@ export const KioskModifier = props => {
    if (isEmpty(productData)) return null
    return (
       <div
-         className="hern-kiosk__menu-product-modifier-popup"
+         className="hern-kiosk__menu-product-modifier-popup animate__animated animate__fadeIn"
          style={{
             backgroundColor:
                config.modifierPopUpSettings.theme.modifierPopupBackgroundColor
@@ -949,7 +949,7 @@ export const KioskModifier = props => {
          <div className="hern-kiosk__menu-product-modifier-popup--bg"></div>
 
          <div
-            className="hern-kiosk__menu-product-modifier-pop-up-container"
+            className="hern-kiosk__menu-product-modifier-pop-up-container animate__animated animate__bounceInUp"
             style={{
                ...(showCustomizeText && {
                   background:
@@ -1547,7 +1547,7 @@ export const KioskModifier = props => {
                {isStoreAvailable && (
                   <KioskButton
                      onClick={handleAddOnCart}
-                     customClass="hern-kiosk__modifier-add-to-cart"
+                     customClass="hern-kiosk__modifier-add-to-cart animate__animated animate__flash animate__delay-2s"
                      buttonConfig={config.kioskSettings.buttonSettings}
                   >
                      {addToCartButtonLabel}
