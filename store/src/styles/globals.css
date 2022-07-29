@@ -280,3 +280,16 @@ code {
       font-size: 16px !important;
    }
 }
+
+.animation-fill-both {
+   animation-fill-mode: both;
+}
+.animation-fill-none {
+   animation-fill-mode: none;
+}
+.animation-fill-forwards {
+   animation-fill-mode: forwards;
+}
+.animation-fill-backwards {
+   animation-fill-mode: backwards;
+}
