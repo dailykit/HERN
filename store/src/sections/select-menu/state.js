@@ -35,6 +35,8 @@ const initialState = {
    occurences: [],
    isCartFull: false,
    cartState: 'IDLE',
+   totalProductsInCart: 0,
+   productsAddedInCart: [],
 }
 
 const reducers = (state, { type, payload }) => {
@@ -60,6 +62,15 @@ const reducers = (state, { type, payload }) => {
             ...state,
             occurences: payload,
          }
+      case 'PRODUCT_ADDED':
+         return { ...state, totalProductsInCart: payload }
+
+      case 'PRODUCT_DELETED':
+         return { ...state, totalProductsInCart: payload }
+      case 'PRODUCT_CART_LENGTH':
+         return { ...state, totalProductsInCart: payload }
+      case 'OCCURENCE_CUSTOMER':
+         return { ...state, productsAddedInCart: payload }
       default:
          return state
    }
@@ -104,6 +115,7 @@ export const MenuProvider = ({ isCheckout = false, children }) => {
    const apolloClient = useApolloClient()
    const [locationId, setLocationId] = useState(null)
    const [brandLocation, setBrandLocation] = useState(null)
+   const [productsAddedInCart, setProductsAddedInCart] = useState([])
 
    const { loading: loadingZipcode, data: { zipcode = {} } = {} } =
       useSubscription(ZIPCODE, {
@@ -177,6 +189,9 @@ export const MenuProvider = ({ isCheckout = false, children }) => {
          })
          setIsCustomerLoading(false)
       },
+      onError: error => {
+         console.error('error in query cart_by_week', error)
+      },
    })
    // check availability of product in cart
    React.useEffect(() => {
@@ -233,7 +248,7 @@ export const MenuProvider = ({ isCheckout = false, children }) => {
                params: argsForByLocation,
             },
             onError: error => {
-               console.log('Error in subscribeToMore: ', error)
+               console.error('Error in subscribeToMore: ', error)
             },
             updateQuery: (prev, { subscriptionData }) => {
                if (!subscriptionData.data) {
@@ -252,6 +267,28 @@ export const MenuProvider = ({ isCheckout = false, children }) => {
       locationId,
       brandLocation?.id,
    ])
+   React.useEffect(() => {
+      const productsWithoutAddon = occurenceCustomer?.cart?.products.filter(
+         product => product.isAddOn === false
+      )
+      dispatch({
+         type: 'PRODUCT_CART_LENGTH',
+         payload: productsWithoutAddon?.length || 0,
+      })
+      dispatch({
+         type: 'OCCURENCE_CUSTOMER',
+         payload: occurenceCustomer?.cart?.products,
+      })
+
+      setProductsAddedInCart(occurenceCustomer?.cart?.products)
+   }, [occurenceCustomer?.cart?.products])
+
+   useEffect(() => {
+      dispatch({
+         type: 'OCCURENCE_CUSTOMER',
+         payload: productsAddedInCart,
+      })
+   }, [productsAddedInCart])
 
    if (!occurenceCustomerLoading && occurenceCustomerError) {
       setIsCustomerLoading(false)
@@ -264,24 +301,32 @@ export const MenuProvider = ({ isCheckout = false, children }) => {
       MUTATIONS.OCCURENCE.CUSTOMER.UPDATE,
       {
          onError: error =>
-            console.log('updateOccurenceCustomer => error =>', error),
+            console.error('updateOccurenceCustomer => error =>', error),
       }
    )
 
    const [createCart] = useMutation(MUTATIONS.CART.CREATE, {
-      onError: error => console.log('createCart => error =>', error),
+      onError: error => console.error('createCart => error =>', error),
    })
    const [insertCartItem] = useMutation(INSERT_CART_ITEM, {
       onCompleted: () => {
          dispatch({ type: 'CART_STATE', payload: 'SAVED' })
+         dispatch({
+            type: 'PRODUCT_ADDED',
+            payload: state.totalProductsInCart + 1,
+         })
       },
-      onError: error => console.log('insertCartItem => error =>', error),
+      onError: error => console.error('insertCartItem => error =>', error),
    })
    const [deleteCartItem] = useMutation(DELETE_CART_ITEM, {
       onCompleted: () => {
          dispatch({ type: 'CART_STATE', payload: 'SAVED' })
+         dispatch({
+            type: 'PRODUCT_DELETED',
+            payload: state.totalProductsInCart - 1,
+         })
       },
-      onError: error => console.log('deleteCartItem => error =>', error),
+      onError: error => console.error('deleteCartItem => error =>', error),
    })
 
    //query
@@ -337,7 +382,7 @@ export const MenuProvider = ({ isCheckout = false, children }) => {
             state.isOccurencesLoading ||
             occurenceCustomerLoading ||
             !state?.week?.id,
-         onError: error => console.log(error),
+         onError: error => console.error(error),
       }
    )
    useQuery(OCCURENCES_BY_SUBSCRIPTION, {
@@ -476,6 +521,9 @@ export const MenuProvider = ({ isCheckout = false, children }) => {
          addToast(`You've removed the product - ${item.name}.`, {
             appearance: 'info',
          })
+         setProductsAddedInCart(
+            productsAddedInCart.filter(product => product.id != item.id)
+         )
          // fb pixel custom event for removing product from cart
          ReactPixel.trackCustom('removeFromCart', item)
       })
@@ -514,6 +562,12 @@ export const MenuProvider = ({ isCheckout = false, children }) => {
                },
             },
             update: (cache, { data: { createCartItem } }) => {
+               if (createCartItem.cartId) {
+                  setProductsAddedInCart(prevArray => [
+                     ...prevArray,
+                     createCartItem,
+                  ])
+               }
                const data = cache.readQuery({
                   query: CART_BY_WEEK,
                   variables: {
@@ -600,7 +654,7 @@ export const MenuProvider = ({ isCheckout = false, children }) => {
                })
             })
             .catch(error =>
-               console.log('addProduct -> insertCartItem ->', error)
+               console.error('addProduct -> insertCartItem ->', error)
             )
       } else {
          const customerInfo = {
@@ -651,6 +705,12 @@ export const MenuProvider = ({ isCheckout = false, children }) => {
                },
             },
             update: (cache, { data: { createCartItem } }) => {
+               if (createCartItem.cartId) {
+                  setProductsAddedInCart(prevArray => [
+                     ...prevArray,
+                     createCartItem,
+                  ])
+               }
                const data = cache.readQuery({
                   query: CART_BY_WEEK,
                   variables: {
@@ -741,7 +801,7 @@ export const MenuProvider = ({ isCheckout = false, children }) => {
                   })
                })
             })
-            .catch(error => console.log('addProduct -> createCart ->', error))
+            .catch(error => console.error('addProduct -> createCart ->', error))
       }
    }
    if (

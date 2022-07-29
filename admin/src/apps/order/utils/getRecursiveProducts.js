@@ -32,8 +32,8 @@ const getName = displayName => {
    let name = displayName
       .split('->')
       .pop()
-      .split('-')
-      .pop()
+      // .split('-')
+      // .pop()
       .split('@@AR@@')
       .shift()
       .trim()

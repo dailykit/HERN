@@ -24,6 +24,8 @@ const getLoader = type => {
          return <img src="/assets/gifs/cart_loader.gif" />
       case 'order-loading':
          return <img src="/assets/gifs/pan_loader.gif" />
+      case 'taco-loading':
+         return <img src="/assets/gifs/taco_loader.gif" />
       default:
          return (
             <div className="hern-loader__wrapper">

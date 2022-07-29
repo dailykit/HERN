@@ -5,8 +5,9 @@ import { Slide } from 'react-slideshow-image'
 export const IdleScreen = props => {
    const { config } = props
    const [playing, setPlaying] = React.useState(0)
+
    const properties = {
-      duration: 3000,
+      duration: config?.idlePageSettings?.idleScreenDuration?.value || 3000,
       transitionDuration: 500,
       infinite: true,
       easing: 'ease',

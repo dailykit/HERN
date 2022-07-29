@@ -3,7 +3,7 @@ import isEqual from 'lodash/isEqual'
 import omit from 'lodash/omit'
 
 //used for combine products which have same product, product option and modifiers
-export const combineCartItems = cartItems => {
+export const combineCartItems = (cartItems, reverseItems = false) => {
    if (!cartItems || !cartItems.length) {
       return []
    }
@@ -45,5 +45,8 @@ export const combineCartItems = cartItems => {
    const sortedCombinedItems = combinedItems.sort(
       (item1, item2) => item1.created_at - item2.created_at
    )
-   return sortedCombinedItems
+   const items = reverseItems
+      ? sortedCombinedItems.reverse()
+      : sortedCombinedItems
+   return items
 }

@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Button, Drawer } from 'antd'
+import { Button, Drawer, Modal } from 'antd'
 import { useCart, useTranslation } from '../../context'
 import { DineInIcon, TakeOutIcon } from '../../assets/icons'
 import { useConfig } from '../../lib'
@@ -8,6 +8,7 @@ import { get_env, isDateValidInRRule, isClient } from '../../utils'
 import { DineInTableSelection, PhoneNumberTunnel } from './component'
 import tw from 'twin.macro'
 import styled from 'styled-components'
+import { ArrowLeftIconBG } from '../../assets/icons/ArrowLeftWithBG'
 
 export const FulfillmentSection = props => {
    const { config, setCurrentPage } = props
@@ -176,7 +177,7 @@ export const FulfillmentSection = props => {
          )}
          {config?.fulfillmentPageSettings?.mainText?.value && (
             <span
-               className="hern-kiosk__fulfillment-section-main-text"
+               className="hern-kiosk__fulfillment-section-main-text animation-fill-none animate__animated animate__bounce"
                style={{
                   color: `${config.kioskSettings.theme.primaryColor.value}`,
                   textTransform: `${
@@ -194,7 +195,7 @@ export const FulfillmentSection = props => {
             </span>
          )}
          <span
-            className="hern-kiosk__fulfillment-section-secondary-text"
+            className="hern-kiosk__fulfillment-section-secondary-text animation-fill-none animate__animated animate__lightSpeedInLeft animate__delay-1s"
             style={{
                color: `${
                   config?.fulfillmentPageSettings?.fulfillmentStyle
@@ -391,10 +392,13 @@ const FulfillmentOptionCustom = props => {
    const { dispatch, kioskAvailability } = useConfig()
    const { t } = useTranslation()
    const { methods } = useCart()
-
+   const [toPayInCashModal, setToPayInCashModal] = React.useState(false)
+   const showPayInCashModal =
+      config?.fulfillmentPageSettings?.payInCashModal?.showPayInCashModal
+         ?.value ?? false
    const askedPhoneNumber =
       config?.phoneNoScreenSettings?.askPhoneNumber.value ?? false
-   const onFulfillmentClick = () => {
+   const handleFulfillment = () => {
       if (!kioskAvailability[fulfillment.orderFulfillmentTypeLabel]) {
          return
       }
@@ -433,6 +437,13 @@ const FulfillmentOptionCustom = props => {
             }
          }
       }
+   }
+   const onFulfillmentClick = () => {
+      if (showPayInCashModal) {
+         setToPayInCashModal(true)
+      } else {
+         handleFulfillment()
+      }
       isClient &&
          localStorage.setItem(
             'fulfillmentType',
@@ -441,44 +452,54 @@ const FulfillmentOptionCustom = props => {
    }
 
    return (
-      <div
-         className="hern-kiosk__fulfillment-option-template-2"
-         onClick={onFulfillmentClick}
-         style={{
-            background: `${config.kioskSettings.theme.primaryColor.value}`,
-            ...(config.kioskSettings.allowTilt.value && {
-               clipPath: 'polygon(0 0, 100% 0, 100% 100%, 0 97%)',
-            }),
-         }}
-      >
-         <div className="hern-kiosk_fulfillment-icon">
-            {fulfillment.orderFulfillmentTypeLabel === 'ONDEMAND_PICKUP' && (
-               <img
-                  src={config.fulfillmentPageSettings.takeAwayIconImage.value}
-                  alt="Take Away"
-               />
-            )}
-            {fulfillment.orderFulfillmentTypeLabel === 'ONDEMAND_DINEIN' && (
-               <img
-                  src={config.fulfillmentPageSettings.dineInIconImage.value}
-                  alt="Dine In"
-               />
-            )}
-         </div>
-         <span
-            size="large"
-            type="primary"
-            className="hern-kiosk__kiosk-primary-button-template-2"
-            style={{
-               backgroundColor: `transparent`,
-               size: '2em',
-               color: `${config.fulfillmentPageSettings.fulfillmentTypeTextColor.value}`,
-            }}
+      <>
+         <div
+            className="hern-kiosk__fulfillment-option-template-2 animate__animated animate__fadeInUp animate__delay-2s animate__faster"
             onClick={onFulfillmentClick}
+            style={{
+               background: `${config.kioskSettings.theme.primaryColor.value}`,
+               ...(config.kioskSettings.allowTilt.value && {
+                  clipPath: 'polygon(0 0, 100% 0, 100% 100%, 0 97%)',
+               }),
+            }}
          >
-            {t(buttonText)}
-         </span>
-      </div>
+            <div className="hern-kiosk_fulfillment-icon">
+               {fulfillment.orderFulfillmentTypeLabel === 'ONDEMAND_PICKUP' && (
+                  <img
+                     src={
+                        config.fulfillmentPageSettings.takeAwayIconImage.value
+                     }
+                     alt="Take Away"
+                  />
+               )}
+               {fulfillment.orderFulfillmentTypeLabel === 'ONDEMAND_DINEIN' && (
+                  <img
+                     src={config.fulfillmentPageSettings.dineInIconImage.value}
+                     alt="Dine In"
+                  />
+               )}
+            </div>
+            <span
+               size="large"
+               type="primary"
+               className="hern-kiosk__kiosk-primary-button-template-2"
+               style={{
+                  backgroundColor: `transparent`,
+                  size: '2em',
+                  color: `${config.fulfillmentPageSettings.fulfillmentTypeTextColor.value}`,
+               }}
+               onClick={onFulfillmentClick}
+            >
+               {t(buttonText)}
+            </span>
+         </div>
+         <PayInCashModal
+            config={config}
+            toPayInCashModal={toPayInCashModal}
+            setToPayInCashModal={setToPayInCashModal}
+            handleFulfillment={handleFulfillment}
+         />
+      </>
    )
 }
 const PromotionalScreen = ({ config, visible, setVisible, setCurrentPage }) => {
@@ -505,15 +526,28 @@ const PromotionalScreen = ({ config, visible, setVisible, setCurrentPage }) => {
          closable={false}
       >
          <div tw="h-full relative">
-            <img src={image} />
-            <div tw="absolute bottom-20 w-full flex justify-center">
-               <button
-                  onClick={() => {
-                     setVisible(false)
-                     setCurrentPage('menuPage')
-                  }}
-                  tw="bg-[#3d0347] text-7xl text-white font-extrabold px-[56px] py-7 tracking-wide"
-               >
+            <span tw="absolute top-6 left-4">
+               <ArrowLeftIconBG
+                  bgColor={'#fff'}
+                  onClick={() => setVisible(false)}
+                  arrowColor={config.kioskSettings.theme.primaryColor.value}
+               />
+            </span>
+            <img
+               onClick={() => {
+                  setVisible(false)
+                  setCurrentPage('menuPage')
+               }}
+               src={image}
+            />
+            <div
+               onClick={() => {
+                  setVisible(false)
+                  setCurrentPage('menuPage')
+               }}
+               tw="absolute bottom-20 w-full flex justify-center"
+            >
+               <button tw="bg-[#3d0347] text-7xl text-white font-extrabold px-[56px] py-7 tracking-wide">
                   {t(continueButtonLabel)}
                </button>
             </div>
@@ -521,8 +555,100 @@ const PromotionalScreen = ({ config, visible, setVisible, setCurrentPage }) => {
       </StyledPromotionalScreen>
    )
 }
+const PayInCashModal = ({
+   config,
+   toPayInCashModal,
+   setToPayInCashModal,
+   handleFulfillment,
+}) => {
+   const payInCashModalConfig = {
+      title:
+         config?.fulfillmentPageSettings?.payInCashModal?.title?.value ||
+         'To pay in cash, request to place the order at the counter',
+      illustrationImage:
+         config?.fulfillmentPageSettings?.payInCashModal?.illustrationImage
+            ?.value ||
+         'https://dailykit-133-test.s3.us-east-2.amazonaws.com/images/95028-pay%20at%20counter.png',
+      continueButtonLabel:
+         config?.fulfillmentPageSettings?.payInCashModal?.continueButtonLabel
+            ?.value || 'Continue',
+   }
+   const { title, illustrationImage, continueButtonLabel } =
+      payInCashModalConfig
+   return (
+      <StyledPayInCashModal
+         title={null}
+         visible={toPayInCashModal}
+         centered={true}
+         onCancel={() => {
+            setToPayInCashModal(false)
+            handleFulfillment()
+         }}
+         closable={false}
+         footer={null}
+      >
+         <div tw="relative flex items-center flex-col">
+            <div tw="w-[500px] min-h-[360px]">
+               <img width={500} height="auto" src={illustrationImage} alt="" />
+            </div>
+
+            <h3 tw="text-3xl font-bold pt-16 pb-20  px-12 text-center tracking-wider">
+               {title}
+            </h3>
+            <button
+               onClick={() => setToPayInCashModal(false)}
+               tw="absolute top-12 right-12"
+            >
+               <svg
+                  width="57"
+                  height="56"
+                  viewBox="0 0 57 56"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+               >
+                  <circle
+                     cx="28.5"
+                     cy="28"
+                     r="26"
+                     fill="white"
+                     stroke="#702082"
+                     stroke-width="4"
+                  />
+                  <path
+                     fill-rule="evenodd"
+                     clip-rule="evenodd"
+                     d="M19.2651 18.765C19.755 18.2752 20.4194 18 21.1121 18C21.8049 18 22.4693 18.2752 22.9591 18.765L28.5001 24.306L34.0411 18.765C34.5309 18.2752 35.1953 18 35.8881 18C36.5808 18 37.2452 18.2752 37.735 18.765C38.2249 19.2549 38.5001 19.9193 38.5001 20.612C38.5001 21.3048 38.2249 21.9692 37.735 22.459L32.1941 28L37.735 33.541C38.2249 34.0308 38.5001 34.6952 38.5001 35.388C38.5001 36.0807 38.2249 36.7451 37.735 37.235C37.2452 37.7248 36.5808 38 35.8881 38C35.1953 38 34.5309 37.7248 34.0411 37.235L28.5001 31.694L22.9591 37.235C22.4693 37.7248 21.8049 38 21.1121 38C20.4194 38 19.755 37.7248 19.2651 37.235C18.7753 36.7451 18.5001 36.0807 18.5001 35.388C18.5001 34.6952 18.7753 34.0308 19.2651 33.541L24.8061 28L19.2651 22.459C18.7753 21.9692 18.5001 21.3048 18.5001 20.612C18.5001 19.9193 18.7753 19.2549 19.2651 18.765Z"
+                     fill="#702082"
+                  />
+               </svg>
+            </button>
+
+            <Button
+               onClick={() => {
+                  setToPayInCashModal(false)
+                  handleFulfillment()
+               }}
+               style={{
+                  border: `4px solid var(--hern-primary-color)`,
+                  whiteSpace: 'nowrap',
+               }}
+               className="animate__animated animate__shakeX animate__delay-3s animate__infinite"
+               tw="text-3xl font-bold text-[var(--hern-primary-color)] py-6 h-auto w-full mb-20 max-w-[520px]"
+            >
+               {continueButtonLabel}
+            </Button>
+         </div>
+      </StyledPayInCashModal>
+   )
+}
 const StyledPromotionalScreen = styled(Drawer)`
    .ant-drawer-body {
       padding: 0;
    }
+`
+const StyledPayInCashModal = styled(Modal)`
+   width: 800px !important;
+   display: flex;
+   justify-content: center;
+   clip-path: polygon(0 0, 100% 0, 100% 100%, 0 94.76%);
 `

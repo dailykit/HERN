@@ -15,6 +15,7 @@ import { useQuery, useLazyQuery } from '@apollo/react-hooks'
 import { setThemeVariable } from '../../../utils'
 import { Input } from 'antd'
 import KioskButton from '../../../components/kiosk/component/button'
+import { Loader } from '../../../components'
 
 const KioskScreen = props => {
    const { kioskId, kioskDetails, settings, brandLocationData } = props
@@ -159,9 +160,18 @@ const KioskScreen = props => {
       })
    }
    if (isValidationLoading) {
+      const config =
+         kioskDetails.kioskModuleConfig || settings.kiosk['kiosk-config']
+
+      const loaderVariant =
+         config?.kioskSettings?.loaderVariant?.value?.value || 'default'
       return (
          <div className="hern-kiosk__login-validation">
-            <span>Loading...</span>
+            {loaderVariant === 'default' ? (
+               <span>Loading...</span>
+            ) : (
+               <Loader type={loaderVariant} />
+            )}
          </div>
       )
    }

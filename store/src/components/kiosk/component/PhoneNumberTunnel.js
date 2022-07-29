@@ -3,10 +3,11 @@ import { useState, useRef, useEffect } from 'react'
 import HtmlParser from 'react-html-parser'
 import styled from 'styled-components'
 import tw from 'twin.macro'
-import { ArrowLeftIconBG, BackSpaceIcon } from '../../../assets/icons'
+import { ArrowLeftIconBG, BackSpaceIcon, SkipPhoneNumberModalImage } from '../../../assets/icons'
 import { useTranslation } from '../../../context'
 import { useConfig } from '../../../lib'
 import { isClient } from '../../../utils'
+import ReactHtmlParser from 'react-html-parser'
 
 export const PhoneNumberTunnel = ({
    config,
@@ -233,10 +234,7 @@ export const PhoneNumberTunnel = ({
             setCurrentPage={setCurrentPage}
             setVisible={setVisible}
             callback={callback}
-            message={
-               config?.phoneNoScreenSettings?.noPhoneNoWarning?.fulfillmentPage
-                  ?.value || 'Are you sure ?'
-            }
+            config={config}
          />
       </>
    )
@@ -248,47 +246,60 @@ export const PhoneNoWarningModal = ({
    setCurrentPage,
    setVisible,
    callback,
-   message,
+   config
 }) => {
    const { t } = useTranslation()
    const { currentPage } = useConfig()
    return (
       <StyledModal
-         title={HtmlParser(message)}
          visible={skipModal}
          centered={true}
          closable={false}
          footer={null}
          zIndex={9999999}
       >
-         <button
-            onClick={() => {
-               setSkipModal(false)
-               setVisible(false)
-               isClient && localStorage.setItem('phone', '2222222222')
-               if (
-                  isClient &&
-                  currentPage === 'fulfillmentPage' &&
-                  localStorage.getItem('fulfillmentType') !== 'ONDEMAND_DINEIN'
-               ) {
-                  setCurrentPage('menuPage')
-               }
-               {
-                  callback && callback()
-               }
-            }}
-         >
-            {t('Skip anyway')}
-         </button>
-         <button
-            className="solid"
-            onClick={() => {
-               setVisible(true)
-               setSkipModal(false)
-            }}
-         >
-            {t('Enter  number')}
-         </button>
+         <div className='ant-modal-title'>
+            <SkipPhoneNumberModalImage />
+            <div style={{margin: "1rem auto", fontSize: "2.2rem"}}>
+               { ReactHtmlParser(config?.phoneNoScreenSettings?.noPhoneNoWarning?.fulfillmentPage?.value || 'Are you sure ?') }
+            </div>
+         </div>
+         <div style={{
+            display: "flex",
+            width: "100%",
+            justifyContent: "space-between"
+         }}>
+            <button
+               onClick={() => {
+                  setSkipModal(false)
+                  setVisible(false)
+                  isClient && localStorage.setItem('phone', '2222222222')
+                  if (
+                     isClient &&
+                     currentPage === 'fulfillmentPage' &&
+                     localStorage.getItem('fulfillmentType') !== 'ONDEMAND_DINEIN'
+                  ) {
+                     setCurrentPage('menuPage')
+                  }
+                  {
+                     callback && callback()
+                  }
+               }}
+               style={{border: `4px solid purple`, width: "45%"}}
+            >
+               {t('Continue')}
+            </button>
+            <button
+               className="solid"
+               onClick={() => {
+                  setVisible(true)
+                  setSkipModal(false)
+               }}
+               style={{width: "45%"}}
+            >
+               {t('Enter  number')}
+            </button>
+         </div>
       </StyledModal>
    )
 }
@@ -298,23 +309,20 @@ const StyledModal = styled(Modal)`
    border-radius: 24px;
    padding: 56px;
    .ant-modal-content {
-      border-radius: 12px;
-   }
-   .ant-modal-header {
-      padding: 56px;
-      text-align: center;
-      border: none;
+      padding-bottom: 20px;
+      clip-path: polygon(0px 0px, 100% 0px, 100% 100%, 0px 97%);
       border-radius: 12px;
    }
    .ant-modal-title {
+      text-align: center;
       max-width: 600px;
-      margin: 0 auto;
+      margin-bottom: 3rem;
       font-size: 2rem;
       line-height: 1.2;
    }
    .ant-modal-body {
-      display: flex;
-      padding: 0 56px 56px 56px;
+      align-items: center;
+      padding: 56px;
       gap: 48px;
       button {
          border: 4px solid var(--hern-primary-color);
