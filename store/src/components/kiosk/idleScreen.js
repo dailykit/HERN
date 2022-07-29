@@ -7,7 +7,7 @@ export const IdleScreen = props => {
    const [playing, setPlaying] = React.useState(0)
 
    const properties = {
-      duration: config.idlePageSettings.idleScreenDuration.value,
+      duration: config?.idlePageSettings?.idleScreenDuration?.value || 3000,
       transitionDuration: 500,
       infinite: true,
       easing: 'ease',
