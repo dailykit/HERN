@@ -83,7 +83,8 @@ const KioskMenu = props => {
    const { cart } = cartState
    const { isStoreAvailable } = useConfig()
    const sidebarRef = React.useRef()
-   const [previousSelectedCategory, setPreviousSelectedCategory] = React.useState(-1)
+   const [previousSelectedCategory, setPreviousSelectedCategory] =
+      React.useState(-1)
 
    const scroll = scrollOffset => {
       sidebarRef.current.scrollTop += scrollOffset
@@ -112,30 +113,38 @@ const KioskMenu = props => {
       setSelectedCategory(e.key)
       // changeCategory(e.key)
    }
-   useEffect( ()=> {
-
+   useEffect(() => {
       let isReverseScroll = false
 
-      if(previousSelectedCategory >= 0){
-         if(previousSelectedCategory >= selectedCategory){
+      if (previousSelectedCategory >= 0) {
+         if (previousSelectedCategory >= selectedCategory) {
             isReverseScroll = true
-         }  else {
+         } else {
             isReverseScroll = false
          }
       }
       setPreviousSelectedCategory(selectedCategory)
-      const allDivs = document.querySelectorAll(".hern-kiosk__menu-page-product-category")
-      if(selectedCategory >= 2){
-
-         if(isReverseScroll && (selectedCategory == 3 || selectedCategory == 2) ){
+      const allDivs = document.querySelectorAll(
+         '.hern-kiosk__menu-page-product-category'
+      )
+      if (selectedCategory >= 2) {
+         if (
+            isReverseScroll &&
+            (selectedCategory == 3 || selectedCategory == 2)
+         ) {
             sidebarRef.current.scroll({
-               top: allDivs[selectedCategory].scrollHeight*(selectedCategory-1) -200,
-               behavior: "smooth",
-            }) 
+               top:
+                  allDivs[selectedCategory].scrollHeight *
+                     (selectedCategory - 1) -
+                  200,
+               behavior: 'smooth',
+            })
          } else {
             sidebarRef.current.scroll({
-               top: allDivs[selectedCategory].scrollHeight*(selectedCategory-2),
-               behavior: "smooth",
+               top:
+                  allDivs[selectedCategory].scrollHeight *
+                  (selectedCategory - 2),
+               behavior: 'smooth',
             })
          }
       }
@@ -290,8 +299,11 @@ const KioskMenu = props => {
                   >
                      {config.menuSettings?.showVegToggle?.value && (
                         <div className="hern-kiosk__menu-header-veg-switch">
-                           <span className="hern-kiosk__menu-header-veg-text">
-                              {t('Veg')}
+                           <span
+                              tw="translate-y-1"
+                              className="hern-kiosk__menu-header-veg-text"
+                           >
+                              {t('VEG')}
                            </span>
                            <Switch
                               onClick={checked => {
@@ -327,17 +339,40 @@ const KioskMenu = props => {
                         >
                            {config?.menuSettings?.cartButton?.variant?.value
                               ?.value === 'simple' ? (
-                              <CartIcon
-                                 size={25}
-                                 stroke={
-                                    config.kioskSettings.buttonSettings
-                                       .textColor.value
-                                 }
-                                 variant="simple"
-                                 count={
-                                    cart?.cartItems_aggregate?.aggregate?.count
-                                 }
-                              />
+                              <div tw="relative">
+                                 <div tw="flex items-center gap-2">
+                                    <div tw="h-16 w-16">
+                                       <img
+                                          src={
+                                             config?.menuSettings?.cartButton
+                                                ?.cartIcon?.value ||
+                                             'https://dailykit-133-test.s3.us-east-2.amazonaws.com/images/16670-cart.png'
+                                          }
+                                          alt=""
+                                       />
+                                    </div>
+                                    <span tw="whitespace-nowrap text-[var(--hern-primary-color)] text-2xl font-bold">
+                                       Subtotal -{' '}
+                                       {formatCurrency(
+                                          cart?.cartOwnerBilling?.totalToPay
+                                       )}
+                                    </span>
+                                 </div>
+
+                                 {cart?.cartItems_aggregate?.aggregate?.count >
+                                    0 && (
+                                    <div tw="absolute top-0 left-[32px]">
+                                       <span tw="flex items-center justify-center rounded-[50%] w-7 h-7 border-2 border-[var(--hern-primary-color)] text-sm text-[var(--hern-primary-color)] bg-white">
+                                          <span tw="translate-y-[1px]">
+                                             {
+                                                cart?.cartItems_aggregate
+                                                   ?.aggregate?.count
+                                             }
+                                          </span>
+                                       </span>
+                                    </div>
+                                 )}
+                              </div>
                            ) : (
                               <KioskButton
                                  customClass="hern-kiosk__goto-cart-btn"
@@ -396,8 +431,8 @@ const KioskMenu = props => {
                                        ...(config?.menuSettings?.toolTip
                                           ?.variant?.value?.value ===
                                           'square' && {
-                                          left: '-32px',
-                                          top: '32px',
+                                          left: '-48px',
+                                          top: '20px',
                                        }),
                                     }}
                                     className="hern-kiosk__cart-tool-tip"
@@ -450,7 +485,7 @@ const KioskMenu = props => {
                                              ?.variant?.value?.value ===
                                              'square' && {
                                              zIndex: '-1',
-                                             width: '28px',
+                                             width: '20px',
                                           }),
                                        }}
                                     ></div>
@@ -514,9 +549,10 @@ const MenuProducts = ({
    useEffect(() => {
       setCurrentGroupedProduct(groupedByType[0].products)
    }, [eachCategory])
-   
-   const classNameForMenuCategoryName = 
-         config?.menuSettings?.menuCategoryBannerSettings?.className?.variant?.value?.value || 'simple'
+
+   const classNameForMenuCategoryName =
+      config?.menuSettings?.menuCategoryBannerSettings?.className?.variant
+         ?.value?.value || 'simple'
    const [currentGroup, setCurrentGroup] = useState(groupedByType[0].type)
    const onRadioClick = e => {
       setCurrentGroupedProduct(prev => {
@@ -537,33 +573,32 @@ const MenuProducts = ({
          key={eachCategory.name}
       >
          {/* <div name={eachCategory.name} ref={menuRef}></div> */}
-         {  config?.menuSettings?.menuCategoryBannerSettings?.showBanner?.value ?
-            (
-               <>
-                  {eachCategory?.bannerImageUrl ? (
-                     <HernLazyImage
-                        dataSrc={eachCategory?.bannerImageUrl}
-                        className="hern-kiosk__menu-category-banner-img"
-                     />
-                  ) : (
-                     <p
-                        className={`hern-kiosk__menu-category-name-${classNameForMenuCategoryName}`}
-                        data-translation="true"
-                     >
-                        {eachCategory.name}
-                     </p>
-                  )}
-               </>
-            ) : (
-               <p
-                  className={`hern-kiosk__menu-category-name-${classNameForMenuCategoryName}`}
-                  data-translation="true"
-               >
-                  {eachCategory.name}
-               </p>
-            )
-         }
-         
+         {config?.menuSettings?.menuCategoryBannerSettings?.showBanner
+            ?.value ? (
+            <>
+               {eachCategory?.bannerImageUrl ? (
+                  <HernLazyImage
+                     dataSrc={eachCategory?.bannerImageUrl}
+                     className="hern-kiosk__menu-category-banner-img"
+                  />
+               ) : (
+                  <p
+                     className={`hern-kiosk__menu-category-name-${classNameForMenuCategoryName}`}
+                     data-translation="true"
+                  >
+                     {eachCategory.name}
+                  </p>
+               )}
+            </>
+         ) : (
+            <p
+               className={`hern-kiosk__menu-category-name-${classNameForMenuCategoryName}`}
+               data-translation="true"
+            >
+               {eachCategory.name}
+            </p>
+         )}
+
          {groupedByType.length > 1 && (
             <div className="hern-kiosk__menu-product-type">
                <div className="hern-kiosk__menu-product-type-list">

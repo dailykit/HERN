@@ -177,7 +177,7 @@ export const FulfillmentSection = props => {
          )}
          {config?.fulfillmentPageSettings?.mainText?.value && (
             <span
-               className="hern-kiosk__fulfillment-section-main-text"
+               className="hern-kiosk__fulfillment-section-main-text animation-fill-none animate__animated animate__bounce"
                style={{
                   color: `${config.kioskSettings.theme.primaryColor.value}`,
                   textTransform: `${
@@ -195,7 +195,7 @@ export const FulfillmentSection = props => {
             </span>
          )}
          <span
-            className="hern-kiosk__fulfillment-section-secondary-text"
+            className="hern-kiosk__fulfillment-section-secondary-text animation-fill-none animate__animated animate__lightSpeedInLeft animate__delay-1s"
             style={{
                color: `${
                   config?.fulfillmentPageSettings?.fulfillmentStyle
@@ -454,7 +454,7 @@ const FulfillmentOptionCustom = props => {
    return (
       <>
          <div
-            className="hern-kiosk__fulfillment-option-template-2"
+            className="hern-kiosk__fulfillment-option-template-2 animate__animated animate__fadeInUp animate__delay-2s animate__faster"
             onClick={onFulfillmentClick}
             style={{
                background: `${config.kioskSettings.theme.primaryColor.value}`,
@@ -596,10 +596,7 @@ const PayInCashModal = ({
                {title}
             </h3>
             <button
-               onClick={() => {
-                  setToPayInCashModal(false)
-                  handleFulfillment()
-               }}
+               onClick={() => setToPayInCashModal(false)}
                tw="absolute top-12 right-12"
             >
                <svg
@@ -635,6 +632,7 @@ const PayInCashModal = ({
                   border: `4px solid var(--hern-primary-color)`,
                   whiteSpace: 'nowrap',
                }}
+               className="animate__animated animate__shakeX animate__delay-3s animate__infinite"
                tw="text-3xl font-bold text-[var(--hern-primary-color)] py-6 h-auto w-full mb-20 max-w-[520px]"
             >
                {continueButtonLabel}

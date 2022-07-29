@@ -7,7 +7,6 @@ import { useConfig } from '../lib'
 import { formatCurrency, isClient } from '../utils'
 import { HernLazyImage } from '../utils/hernImage'
 import { ModifierPopup, ModifierPopupForUnAvailability } from './index'
-
 export const ProductCard = props => {
    const {
       data,
