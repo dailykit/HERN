@@ -596,10 +596,7 @@ const PayInCashModal = ({
                {title}
             </h3>
             <button
-               onClick={() => {
-                  setToPayInCashModal(false)
-                  handleFulfillment()
-               }}
+               onClick={() => setToPayInCashModal(false)}
                tw="absolute top-12 right-12"
             >
                <svg
