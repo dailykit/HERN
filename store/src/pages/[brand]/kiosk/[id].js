@@ -1,5 +1,4 @@
 import React, { useEffect } from 'react'
-
 import { graphQLClient } from '../../../lib'
 import Kiosk from '../../../sections/kiosk'
 import { useConfig } from '../../../lib'
@@ -17,6 +16,8 @@ import { Input } from 'antd'
 import KioskButton from '../../../components/kiosk/component/button'
 import { Loader } from '../../../components'
 
+// import kioskConfig from './config.herfy.json'
+import kioskConfig from './config.tacobell.json'
 const KioskScreen = props => {
    const { kioskId, kioskDetails, settings, brandLocationData } = props
    const { dispatch, setIsLoading } = useConfig()
@@ -26,10 +27,11 @@ const KioskScreen = props => {
    })
    // console.log('kioskDetails', kioskDetails, brandLocationData)
    const [isValidationLoading, setIsValidationLoading] = React.useState(true)
-
    useEffect(() => {
       const finalKioskConfig =
-         kioskDetails.kioskModuleConfig || settings.kiosk['kiosk-config']
+         kioskConfig ||
+         kioskDetails.kioskModuleConfig ||
+         settings.kiosk['kiosk-config']
       if (
          finalKioskConfig.kioskSettings?.primaryFont?.value?.fontEmbedLink
             ?.value
@@ -80,7 +82,6 @@ const KioskScreen = props => {
       })
       setIsLoading(false)
    }, [])
-
    const [
       validatePassword,
       { loading, data: { brands_locationKiosk = [] } = {} },
@@ -100,7 +101,6 @@ const KioskScreen = props => {
          setIsValidationLoading(false)
       },
    })
-
    React.useEffect(() => {
       const passwordInLocal = sessionStorage.getItem('kiosk-ref-key')
       if (passwordInLocal) {
@@ -177,7 +177,9 @@ const KioskScreen = props => {
    }
    if (brands_locationKiosk.length === 0) {
       const config =
-         kioskDetails.kioskModuleConfig || settings.kiosk['kiosk-config']
+         kioskConfig ||
+         kioskDetails.kioskModuleConfig ||
+         settings.kiosk['kiosk-config']
       return (
          <div className="hern-kiosk__login-container">
             <div className="hern-kiosk__kiosk-info-container">
@@ -226,17 +228,17 @@ const KioskScreen = props => {
       <div>
          <Kiosk
             kioskConfig={
-               kioskDetails.kioskModuleConfig || settings.kiosk['kiosk-config']
+               kioskConfig ||
+               kioskDetails.kioskModuleConfig ||
+               settings.kiosk['kiosk-config']
             }
          />
       </div>
    )
 }
 export default KioskScreen
-
 export async function getStaticProps({ params }) {
    const client = await graphQLClient()
-
    // getting kiosk details
    const kioskDetails = await client.request(LOCATION_KIOSK, { id: params.id })
    const { settings } = await getSettings(params.brand)
@@ -251,7 +253,6 @@ export async function getStaticProps({ params }) {
          },
       },
    })
-
    return {
       props: {
          kioskId: params.id,
