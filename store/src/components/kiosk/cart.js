@@ -454,6 +454,7 @@ export const KioskCart = props => {
             setVisible={setVisible}
             setCurrentPage={setCurrentPage}
             callback={placeOrderHandler}
+            triggeredFrom = {"cartPage"}
          />
          <PhoneNoWarningModal
             skipModal={skipModal}
@@ -463,10 +464,8 @@ export const KioskCart = props => {
             callback={() => {
                placeOrderHandler()
             }}
-            message={
-               config?.phoneNoScreenSettings?.noPhoneNoWarning?.checkoutPage
-                  ?.value || 'Are you sure ?'
-            }
+            config={config}
+            triggeredFrom = {"cartPage"}
          />
       </>
    )

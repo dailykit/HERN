@@ -298,6 +298,7 @@ export const FulfillmentSection = props => {
             visible={visible}
             setVisible={setVisible}
             setCurrentPage={setCurrentPage}
+            triggeredFrom={"fulfillmentPage"}
          />
          <PromotionalScreen
             config={config}
