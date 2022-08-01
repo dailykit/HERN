@@ -253,7 +253,6 @@ export const PhoneNoWarningModal = ({
 }) => {
    const { t } = useTranslation()
    const { currentPage } = useConfig()
-   console.log("triggeredFrom: ", triggeredFrom)
 
    return (
       <StyledModal
