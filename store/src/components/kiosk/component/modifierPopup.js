@@ -978,7 +978,9 @@ export const KioskModifier = props => {
                         }`,
                         margin: `${
                            config?.modifierPopUpSettings?.popupHeader
-                              ?.headingMargin?.value || 'auto'
+                              ?.headingAlignment?.value?.value === 'center'
+                              ? 'auto'
+                              : 'unset'
                         }`,
                      }}
                   >
