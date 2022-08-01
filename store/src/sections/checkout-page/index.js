@@ -284,12 +284,25 @@ const PaymentSection = ({ cart }) => {
                   </span>
                </div>
 
-               {open && (
+               {open ? (
                   <>
                      {!isEmpty(cart) && (
                         <PaymentOptionsRenderer cartId={cart?.id} />
                      )}
                   </>
+               ) : (
+                  <div
+                     style={{
+                        color: '#33333399',
+                        fontWeight: '1rem',
+                        fontWeight: '500',
+                        marginTop: '8px',
+                     }}
+                  >
+                     {t(
+                        'Please enter your user details to proceed to payment.'
+                     )}
+                  </div>
                )}
             </div>
          )}
