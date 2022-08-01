@@ -22,6 +22,7 @@ import { useIntl } from 'react-intl'
 import { BiPlus } from 'react-icons/bi'
 import { RoundedCloseIcon } from '../../../assets/icons/RoundedCloseIcon'
 import styled from 'styled-components'
+import { CSSTransition } from 'react-transition-group'
 
 const { Header, Content, Footer } = Layout
 
@@ -490,7 +491,7 @@ export const KioskProduct = props => {
                                           ...(config.kioskSettings.allowTilt
                                              .value && {
                                              clipPath:
-                                                'polygon(0 0, 100% 0, 100% 100%, 0 97%)',
+                                                'polygon(0 0, 100% 0, 100% 100%, 0 94.7%)',
                                           }),
                                        }}
                                        onClick={() => {
@@ -753,7 +754,13 @@ export const KioskProduct = props => {
                </KioskButton>
             </div>
          </Modal>
-         {showModifier && (
+
+         <CSSTransition
+            in={showModifier}
+            timeout={750}
+            unmountOnExit
+            classNames="hern-header__css-transition__kiosk-modifier"
+         >
             <KioskModifier
                config={config}
                onCloseModifier={() => {
@@ -765,7 +772,7 @@ export const KioskProduct = props => {
                showConvertedProduct={showConvertPopup && showConvertedProduct}
                mealProduct={mealProduct}
             />
-         )}
+         </CSSTransition>
          {showConvertToMealProductModal && (
             <ConfirmConvertProductModal
                visible={showConvertToMealProductModal}
