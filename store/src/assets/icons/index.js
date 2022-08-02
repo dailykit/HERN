@@ -322,6 +322,12 @@ const SkipPhoneNumberModalImage = dynamic(() =>
       promise => promise.SkipPhoneNumberModalImage
    )
 )
+
+const ResetPopUpImage = dynamic(() =>
+   import('./ResetPopUpImage').then(
+      promise => promise.ResetPopUpImage
+   )
+)
 export {
    AddressIcon,
    ArrowLeftIcon,
@@ -416,4 +422,5 @@ export {
    PaymentOptionIcon,
    BackSpaceIcon,
    SkipPhoneNumberModalImage,
+   ResetPopUpImage,
 }
