@@ -18,6 +18,12 @@ export const KioskHeader = props => {
       React.useState(false)
    const [showClearCartWarning, setClearCartWarning] = React.useState(false)
    const { methods, storedCartId } = useCart()
+   //config
+   const showPromotionalScreen =
+      config?.promotionalScreenSettings?.showPromotionalScreen?.value ?? false
+   const showPhoneScreen =
+      config?.phoneNoScreenSettings?.askPhoneNumber.value ?? false
+   const fulfillmentType = localStorage.getItem('fulfillmentType')
 
    const handleArrowClick = () => {
       switch (currentPage) {
@@ -30,7 +36,19 @@ export const KioskHeader = props => {
                if (storedCartId) {
                   setClearCartWarning(true)
                } else {
-                  setCurrentPage('fulfillmentPage')
+                  if (showPromotionalScreen) {
+                     setCurrentPage('promotionalPage')
+                  } else {
+                     if (fulfillmentType === 'ONDEMAND_DINEIN') {
+                        setCurrentPage('tableSelectionPage')
+                     } else {
+                        if (showPhoneScreen) {
+                           setCurrentPage('phonePage')
+                        } else {
+                           setCurrentPage('fulfillmentPage')
+                        }
+                     }
+                  }
                }
             } else {
                setCurrentPage('fulfillmentPage')
@@ -142,7 +160,20 @@ export const KioskHeader = props => {
                            })
                         }
                         setClearCartWarning(false)
-                        setCurrentPage('fulfillmentPage')
+                        //handle previous page back
+                        if (showPromotionalScreen) {
+                           setCurrentPage('promotionalPage')
+                        } else {
+                           if (fulfillmentType === 'ONDEMAND_DINEIN') {
+                              setCurrentPage('tableSelectionPage')
+                           } else {
+                              if (showPhoneScreen) {
+                                 setCurrentPage('phonePage')
+                              } else {
+                                 setCurrentPage('fulfillmentPage')
+                              }
+                           }
+                        }
                      }}
                      buttonConfig={config.kioskSettings.buttonSettings}
                   >

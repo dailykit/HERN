@@ -19,8 +19,13 @@ const { Step } = Steps
 export const ProgressBar = props => {
    const { config, setCurrentPage, sticky = false } = props
 
-   const { cartState, dineInTableInfo, setDineInTableInfo, storedCartId } =
-      React.useContext(CartContext)
+   const {
+      cartState,
+      dineInTableInfo,
+      setDineInTableInfo,
+      storedCartId,
+      methods,
+   } = React.useContext(CartContext)
    const { t, direction } = useTranslation()
    const { formatMessage } = useIntl()
    const { cart } = cartState
@@ -100,7 +105,7 @@ export const ProgressBar = props => {
             variables: {
                id: storedCartId,
                _set: {
-                  locationTableId: selectedLocationTableId,
+                  locationTableId: dineInTableInfo.id,
                },
             },
          })
@@ -163,27 +168,30 @@ export const ProgressBar = props => {
                   {t(selectedOrderTab?.label)}
                </span>
                {(dineInTableInfo?.internalTableLabel ||
-                  cartState.cart.locationTableId) && (
-                  <div className="hern-kiosk__dine-in-table-detail">
-                     <div>
-                        <span className="hern-kiosk__dine-in-table-text">
-                           {t('TABLE')}
-                        </span>
-                        <span className="hern-kiosk__dine-in-table-internal-table-label">
-                           {dineInTableInfo?.internalTableLabel ||
-                              cartState.cart.locationTable.internalTableLabel}
-                        </span>
+                  cartState.cart.locationTableId) &&
+                  selectedOrderTab?.orderFulfillmentTypeLabel ===
+                     'ONDEMAND_DINEIN' && (
+                     <div className="hern-kiosk__dine-in-table-detail">
+                        <div>
+                           <span className="hern-kiosk__dine-in-table-text">
+                              {t('TABLE')}
+                           </span>
+                           <span className="hern-kiosk__dine-in-table-internal-table-label">
+                              {dineInTableInfo?.internalTableLabel ||
+                                 cartState.cart.locationTable
+                                    .internalTableLabel}
+                           </span>
+                        </div>
+                        <EditIcon
+                           stroke={config.cartCardSettings.editIconColor.value}
+                           fill={config.cartCardSettings.editIconColor.value}
+                           size={36}
+                           onClick={() => {
+                              setShowDineInTableSelection(true)
+                           }}
+                        />
                      </div>
-                     <EditIcon
-                        stroke={config.cartCardSettings.editIconColor.value}
-                        fill={config.cartCardSettings.editIconColor.value}
-                        size={36}
-                        onClick={() => {
-                           setShowDineInTableSelection(true)
-                        }}
-                     />
-                  </div>
-               )}
+                  )}
             </div>
             <div
                className={classNames({
