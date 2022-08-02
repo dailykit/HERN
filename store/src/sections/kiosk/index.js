@@ -18,6 +18,11 @@ import { usePayment } from '../../lib'
 import { InfoBar } from '../../components/kiosk/component'
 import { useKioskMenu } from './utils/useKioskMenu'
 import moment from 'moment'
+import {
+   PromotionalScreen,
+   TableSelectionScreen,
+   PhoneNoScreen,
+} from '../../components/kiosk/screens'
 // idle screen component
 // fulfillment component
 // header
@@ -55,7 +60,7 @@ const Kiosk = props => {
    const { status: kioskMenuStatus, hydratedMenu } = useKioskMenu(collectionIds)
 
    const { resetPaymentProviderStates } = usePayment()
-   console.log('hydratedMenu', hydratedMenu)
+
    //delete Cart mutation
    const [deleteCart] = useMutation(DELETE_CART)
 
@@ -102,8 +107,9 @@ const Kiosk = props => {
    }
 
    const handleOnAction = event => {
-      setIsIdleScreen(false)
-      console.log('user did something', event)
+      if (event.type !== 'visibilitychange') {
+         setIsIdleScreen(false)
+      }
    }
 
    const { getRemainingTime, getLastActiveTime } = useIdleTimer({
@@ -177,19 +183,30 @@ const Kiosk = props => {
       return <IdleScreen config={kioskConfig} resetStates={resetStates} />
    }
 
+   const noHeaderPages = ['phonePage', 'tableSelectionPage', 'promotionalPage']
    return (
       <div dir={direction}>
          <Layout>
-            {' '}
-            <Header
-               className="hern-kiosk__kiosk-header"
+            {!noHeaderPages.includes(currentPage) && (
+               <Header
+                  className="hern-kiosk__kiosk-header"
+                  style={{
+                     backgroundColor: `${kioskConfig.kioskSettings.theme.primaryColor.value}`,
+                  }}
+               >
+                  <KioskHeader config={kioskConfig} />
+               </Header>
+            )}
+            <Layout
                style={{
-                  backgroundColor: `${kioskConfig.kioskSettings.theme.primaryColor.value}`,
+                  height: `${
+                     noHeaderPages.includes(currentPage)
+                        ? 'auto'
+                        : 'calc(100vh - 10em)'
+                  }`,
                }}
+               className="hern-kiosk__content-layout"
             >
-               <KioskHeader config={kioskConfig} />
-            </Header>
-            <Layout className="hern-kiosk__content-layout">
                <InfoBar
                   backgroundColor={
                      kioskConfig?.infoBar?.storeNotAvailable?.backgroundColor
@@ -225,6 +242,30 @@ const Kiosk = props => {
                         config={kioskConfig}
                         setCurrentPage={setCurrentPage}
                         combinedCartItems={combinedCartItems}
+                     />
+                  </Content>
+               )}
+               {currentPage === 'phonePage' && (
+                  <Content>
+                     <PhoneNoScreen
+                        config={kioskConfig}
+                        setCurrentPage={setCurrentPage}
+                     />
+                  </Content>
+               )}
+               {currentPage === 'tableSelectionPage' && (
+                  <Content>
+                     <TableSelectionScreen
+                        config={kioskConfig}
+                        setCurrentPage={setCurrentPage}
+                     />
+                  </Content>
+               )}
+               {currentPage === 'promotionalPage' && (
+                  <Content>
+                     <PromotionalScreen
+                        config={kioskConfig}
+                        setCurrentPage={setCurrentPage}
                      />
                   </Content>
                )}
