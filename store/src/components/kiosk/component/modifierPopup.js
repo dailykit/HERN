@@ -969,8 +969,26 @@ export const KioskModifier = props => {
                   background: `${config.kioskSettings.theme.primaryColorDark.value}}`,
                }}
             >
-               {showCustomizeText && <h4>*Customize</h4>}
-               <span style={{ marginLeft: 'auto' }}>
+               {showCustomizeText && (
+                  <h4
+                     style={{
+                        fontSize: `${
+                           config?.modifierPopUpSettings?.popupHeader
+                              ?.headingFontSize?.value || '30px'
+                        }`,
+                        margin: `${
+                           config?.modifierPopUpSettings?.popupHeader
+                              ?.headingAlignment?.value?.value === 'center'
+                              ? 'auto'
+                              : 'unset'
+                        }`,
+                     }}
+                  >
+                     {config?.modifierPopUpSettings?.popupHeader?.headingLabel
+                        ?.value || 'Customize'}
+                  </h4>
+               )}
+               <span>
                   {showRoundedIcon ? (
                      <RoundedCloseIcon />
                   ) : (

@@ -254,6 +254,7 @@ export const KioskHeader = props => {
 const LanguageSelector = props => {
    const { config, setShowReloadWarningPopup } = props
    const { changeLocale, locales, t } = useTranslation()
+
    const defaultLang = React.useMemo(() => {
       return locales.find(x => x.default).langCode
    }, [locales])
@@ -333,7 +334,11 @@ const LanguageSelector = props => {
                }`,
             }}
          >
-            {t('Reset')}
+            {t(
+               config?.kioskSettings?.header?.resetButton?.resetLabel?.value
+                  ? config.kioskSettings.header.resetButton.resetLabel.value
+                  : 'Reset'
+            )}
          </div>
       </div>
    )
