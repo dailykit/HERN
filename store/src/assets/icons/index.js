@@ -322,6 +322,12 @@ const SkipPhoneNumberModalImage = dynamic(() =>
       promise => promise.SkipPhoneNumberModalImage
    )
 )
+
+const SkipPhoneNumberCartPageIllustration = dynamic(() =>
+   import('./SkipPhoneNumberCartPageIllustration').then(
+      promise => promise.SkipPhoneNumberCartPageIllustration
+   )
+)
 export {
    AddressIcon,
    ArrowLeftIcon,
@@ -416,4 +422,5 @@ export {
    PaymentOptionIcon,
    BackSpaceIcon,
    SkipPhoneNumberModalImage,
+   SkipPhoneNumberCartPageIllustration
 }
