@@ -135,6 +135,10 @@ export const Plan = ({
    const [plansFirstIndex, setPlansFirstIndex] = React.useState(0)
    const [plansLastIndex, setPlansLastIndex] = React.useState(4)
 
+   // handle margin right for servings and recipe buttons to maintain alignment of the buttons when you click next.
+   const [planNext, setPlanNext] = React.useState(false)
+   const [recipeNext, setRecipeNext] = React.useState(false)
+
    const plansToShow = React.useMemo(
       () => plan?.servings.slice(plansFirstIndex, plansLastIndex),
       [plansLastIndex, plan]
@@ -151,6 +155,7 @@ export const Plan = ({
    )
 
    const handlePlanNext = () => {
+      setPlanNext(true)
       setPlansFirstIndex(plansFirstIndex + numberOfItemsToShow)
       if (plansLastIndex < plan.servings.length) {
          setPlansLastIndex(plansLastIndex + numberOfItemsToShow)
@@ -158,6 +163,7 @@ export const Plan = ({
    }
 
    const handlePlanPrevious = () => {
+      setPlanNext(false)
       if (plansFirstIndex > 0) {
          setPlansFirstIndex(plansFirstIndex - numberOfItemsToShow)
          setPlansLastIndex(plansLastIndex - numberOfItemsToShow)
@@ -165,12 +171,14 @@ export const Plan = ({
    }
 
    const handleRecipeNext = () => {
+      setRecipeNext(true)
       setServingsFirstIndex(servingsFirstIndex + numberOfItemsToShow)
       if (servingsLastIndex < defaultServing?.itemCounts.length) {
          setServingsLastIndex(servingsLastIndex + numberOfItemsToShow)
       }
    }
    const handleRecipePrevious = () => {
+      setRecipeNext(false)
       if (servingsFirstIndex > 0) {
          setServingsFirstIndex(servingsFirstIndex - numberOfItemsToShow)
          setServingsLastIndex(servingsLastIndex - numberOfItemsToShow)
@@ -487,6 +495,7 @@ export const Plan = ({
                         </button>
                      )}
                   <ul
+                     style={{ marginRight: planNext ? '24px' : '' }}
                      className={
                         planViewConfig === 'card'
                            ? 'hern-plan__card__servings__list'
@@ -611,6 +620,7 @@ export const Plan = ({
                         </button>
                      )}
                   <ul
+                     style={{ marginRight: recipeNext ? '24px' : '' }}
                      className={
                         planViewConfig === 'card'
                            ? 'hern-plan__card__item-counts__list'

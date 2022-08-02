@@ -17,16 +17,38 @@ export const KioskHeader = props => {
    const [showReloadWarningPopup, setShowReloadWarningPopup] =
       React.useState(false)
    const [showClearCartWarning, setClearCartWarning] = React.useState(false)
-   const { methods, storedCartId} = useCart()
+   const { methods, storedCartId } = useCart()
+   //config
+   const showPromotionalScreen =
+      config?.promotionalScreenSettings?.showPromotionalScreen?.value ?? false
+   const showPhoneScreen =
+      config?.phoneNoScreenSettings?.askPhoneNumber.value ?? false
+   const fulfillmentType = localStorage.getItem('fulfillmentType')
 
    const handleArrowClick = () => {
       switch (currentPage) {
          case 'menuPage':
-            if(config?.kioskSettings?.removeCartItemGoBackButton?.askForConfirmation?.value || false){
-               if(storedCartId){
+            if (
+               config?.kioskSettings?.removeCartItemGoBackButton
+                  ?.askForConfirmation?.value ||
+               false
+            ) {
+               if (storedCartId) {
                   setClearCartWarning(true)
                } else {
-                  setCurrentPage('fulfillmentPage')
+                  if (showPromotionalScreen) {
+                     setCurrentPage('promotionalPage')
+                  } else {
+                     if (fulfillmentType === 'ONDEMAND_DINEIN') {
+                        setCurrentPage('tableSelectionPage')
+                     } else {
+                        if (showPhoneScreen) {
+                           setCurrentPage('phonePage')
+                        } else {
+                           setCurrentPage('fulfillmentPage')
+                        }
+                     }
+                  }
                }
             } else {
                setCurrentPage('fulfillmentPage')
@@ -42,7 +64,7 @@ export const KioskHeader = props => {
             setCurrentPage('menuPage')
       }
    }
-   
+
    return (
       <div
          className={classNames('hern-kiosk__kiosk-header-container', {
@@ -75,70 +97,94 @@ export const KioskHeader = props => {
                   }
                />
             )}
-         {currentPage === 'menuPage' && 
+         {currentPage === 'menuPage' && (
             <Modal
-            visible={showClearCartWarning}
-            centered={true}
-            onCancel={() => {
-               setClearCartWarning(false)
-            }}
-            closable={false}
-            footer={null}
-            className="hern-kiosk___header-go-back-confirmation-modal"
-         >
-            <div style={{
-               fontWeight: "800",
-               fontSize: "24px",
-               marginBottom: "2rem",
-               textAlign: "center",
-               lineHeight: "28px",
-               marginTop: "1rem",
-            }}>
-               { ReactHtmlParser((config?.kioskSettings?.removeCartItemGoBackButton?.confirmationTextShown?.value ||
-                     "All the cart items will be cleared<br>Do you still want to go back?"))}
-            </div>
-            <div
-               style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  padding: "0 2.2rem"
+               visible={showClearCartWarning}
+               centered={true}
+               onCancel={() => {
+                  setClearCartWarning(false)
                }}
+               closable={false}
+               footer={null}
+               className="hern-kiosk___header-go-back-confirmation-modal"
             >
-               <KioskButton
-                  onClick={() => {
-                     setClearCartWarning(false)
-                  }}
+               <div
                   style={{
-                     border: `2px solid ${config.kioskSettings.theme.secondaryColor.value}`,
-                     background: 'transparent !important',
-                     padding: '.1em 2em',
-                     color: `${config.kioskSettings.theme.primaryColor.value}`,
+                     fontWeight: '800',
+                     fontSize: '24px',
+                     marginBottom: '2rem',
+                     textAlign: 'center',
+                     lineHeight: '28px',
+                     marginTop: '1rem',
                   }}
-                  buttonConfig={config.kioskSettings.buttonSettings}
                >
-                  {t(config?.kioskSettings?.removeCartItemGoBackButton?.cancelButtonText?.value || "Cancel")}
-               </KioskButton>
-               <KioskButton
-                  style={{ padding: '.1em 2em' }}
-                  onClick={() => {
-                     if(storedCartId){
-                        methods.cart.delete({
-                           variables: {
-                              id: storedCartId,
-                           },
-                        })
-                     }
-                     setClearCartWarning(false)
-                     setCurrentPage('fulfillmentPage')
+                  {ReactHtmlParser(
+                     config?.kioskSettings?.removeCartItemGoBackButton
+                        ?.confirmationTextShown?.value ||
+                        'All the cart items will be cleared<br>Do you still want to go back?'
+                  )}
+               </div>
+               <div
+                  style={{
+                     display: 'flex',
+                     alignItems: 'center',
+                     justifyContent: 'space-between',
+                     padding: '0 2.2rem',
                   }}
-                  buttonConfig={config.kioskSettings.buttonSettings}
                >
-                  {t(config?.kioskSettings?.removeCartItemGoBackButton?.confirmButtonText?.value || "Continue")}
-               </KioskButton>
-            </div>
-         </Modal>
-            }
+                  <KioskButton
+                     onClick={() => {
+                        setClearCartWarning(false)
+                     }}
+                     style={{
+                        border: `2px solid ${config.kioskSettings.theme.secondaryColor.value}`,
+                        background: 'transparent !important',
+                        padding: '.1em 2em',
+                        color: `${config.kioskSettings.theme.primaryColor.value}`,
+                     }}
+                     buttonConfig={config.kioskSettings.buttonSettings}
+                  >
+                     {t(
+                        config?.kioskSettings?.removeCartItemGoBackButton
+                           ?.cancelButtonText?.value || 'Cancel'
+                     )}
+                  </KioskButton>
+                  <KioskButton
+                     style={{ padding: '.1em 2em' }}
+                     onClick={() => {
+                        if (storedCartId) {
+                           methods.cart.delete({
+                              variables: {
+                                 id: storedCartId,
+                              },
+                           })
+                        }
+                        setClearCartWarning(false)
+                        //handle previous page back
+                        if (showPromotionalScreen) {
+                           setCurrentPage('promotionalPage')
+                        } else {
+                           if (fulfillmentType === 'ONDEMAND_DINEIN') {
+                              setCurrentPage('tableSelectionPage')
+                           } else {
+                              if (showPhoneScreen) {
+                                 setCurrentPage('phonePage')
+                              } else {
+                                 setCurrentPage('fulfillmentPage')
+                              }
+                           }
+                        }
+                     }}
+                     buttonConfig={config.kioskSettings.buttonSettings}
+                  >
+                     {t(
+                        config?.kioskSettings?.removeCartItemGoBackButton
+                           ?.confirmButtonText?.value || 'Continue'
+                     )}
+                  </KioskButton>
+               </div>
+            </Modal>
+         )}
          <div className="hern-kiosk__kiosk-header__brand">
             <img
                src={config.kioskSettings.logo.value}
@@ -154,7 +200,7 @@ export const KioskHeader = props => {
             config={config}
             setShowReloadWarningPopup={setShowReloadWarningPopup}
          />
-         
+
          <Modal
             title={formatMessage({
                id: 'Current changes will lose do you wish to continue?',
@@ -208,6 +254,7 @@ export const KioskHeader = props => {
 const LanguageSelector = props => {
    const { config, setShowReloadWarningPopup } = props
    const { changeLocale, locales, t } = useTranslation()
+
    const defaultLang = React.useMemo(() => {
       return locales.find(x => x.default).langCode
    }, [locales])
@@ -287,7 +334,11 @@ const LanguageSelector = props => {
                }`,
             }}
          >
-            {t('Reset')}
+            {t(
+               config?.kioskSettings?.header?.resetButton?.resetLabel?.value
+                  ? config.kioskSettings.header.resetButton.resetLabel.value
+                  : 'Reset'
+            )}
          </div>
       </div>
    )
