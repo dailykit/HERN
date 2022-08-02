@@ -11,11 +11,13 @@ import KioskButton from '../component/button'
 export const TableSelectionScreen = props => {
    const { config, setCurrentPage } = props
    const { locationId, orderTabs, dispatch } = useConfig()
-   const { methods, storedCartId, setDineInTableInfo } = useCart()
+   const { methods, storedCartId, setDineInTableInfo, dineInTableInfo } =
+      useCart()
    const { t, dynamicTrans, locale } = useTranslation()
    const [selectedLocationTableId, setSelectedLocationTableId] = useState(null)
    const [numbers, setNumbers] = React.useState('')
    const [isTableValid, setIsTableValid] = React.useState(false)
+
    const numberPadView =
       config?.dineInTableSettings?.dineInTableStyle?.value?.value ===
          'number-pad' || false
@@ -28,6 +30,11 @@ export const TableSelectionScreen = props => {
       )
       dynamicTrans(languageTags)
    }, [locale])
+   React.useEffect(() => {
+      if (dineInTableInfo?.internalTableLabel) {
+         setNumbers(dineInTableInfo?.internalTableLabel)
+      }
+   }, [])
 
    const { data } = useQuery(LOCATION_TABLES, {
       variables: {
