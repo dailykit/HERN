@@ -15,9 +15,11 @@ import { getRoute, isClient } from '../../../utils'
 import { Button } from '../../../components'
 import { CloseIcon } from '../../../assets/icons'
 import { UPDATE_BRAND_CUSTOMER } from '../../../graphql'
+import { useToasts } from 'react-toast-notifications'
 const ReactPixel = isClient ? require('react-facebook-pixel').default : null
 
 export const CartPanel = ({ noSkip, isCheckout }) => {
+   const { addToast } = useToasts()
    const router = useRouter()
    const { user } = useUser()
    const { state } = useMenu()
@@ -49,6 +51,10 @@ export const CartPanel = ({ noSkip, isCheckout }) => {
                isClient && localStorage.setItem('skipList', skipList.split(','))
             }
          }
+
+         addToast(t('Proceeding to checkout.'), {
+            appearance: 'success',
+         })
          router.push(
             getRoute(
                `/get-started/checkout/?id=${state.occurenceCustomer?.cart?.id}`

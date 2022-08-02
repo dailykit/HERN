@@ -404,5 +404,6 @@
    "View Menu": "Afficher le menu",
    "Choose your plan": "Choisissez votre forfait",
    "Choose your quantity": "Choisissez votre quantité",
-   "You do not have plans...": "Vous n’avez pas de plans..."
+   "You do not have plans...": "Vous n’avez pas de plans...",
+   "Please enter your user details to proceed to payment.": "Veuillez entrer vos informations d'utilisateur pour procéder au paiement."
 }

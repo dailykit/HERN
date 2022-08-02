@@ -1,14 +1,12 @@
-import React, { useState } from 'react'
-import { Button, Drawer, Modal } from 'antd'
+import React from 'react'
+import { Button, Modal } from 'antd'
 import { useCart, useTranslation } from '../../context'
 import { DineInIcon, TakeOutIcon } from '../../assets/icons'
 import { useConfig } from '../../lib'
 import moment from 'moment'
-import { get_env, isDateValidInRRule, isClient } from '../../utils'
-import { DineInTableSelection, PhoneNumberTunnel } from './component'
+import { isDateValidInRRule, isClient } from '../../utils'
 import tw from 'twin.macro'
 import styled from 'styled-components'
-import { ArrowLeftIconBG } from '../../assets/icons/ArrowLeftWithBG'
 
 export const FulfillmentSection = props => {
    const { config, setCurrentPage } = props
@@ -20,12 +18,7 @@ export const FulfillmentSection = props => {
       dispatch,
    } = useConfig()
    const { t, direction, dynamicTrans, locale } = useTranslation()
-   const { methods, setDineInTableInfo, storedCartId } = useCart()
-   const [showDineInTableSelection, setShowDineInTableSelection] =
-      useState(false)
-   const [visible, setVisible] = useState(false)
-   const [isPromotionalScreenVisible, setIsPromotionalScreenVisible] =
-      useState(false)
+
    React.useEffect(() => {
       // check is there any recurrence available or not
       // if available then check that store is available for current day and time
@@ -108,163 +101,150 @@ export const FulfillmentSection = props => {
          })
       }
    }, [kioskRecurrences])
-   const showPromotionalScreen =
-      config?.promotionalScreenSettings?.showPromotionalScreen?.value ?? false
+
    React.useEffect(() => {
       const languageTags = document.querySelectorAll(
          '[data-translation="true"]'
       )
       dynamicTrans(languageTags)
    }, [locale])
-   const onTableSelectionConfirmClick = async tableInfo => {
-      setDineInTableInfo(tableInfo)
-      if (storedCartId) {
-         await methods.cart.update({
-            variables: {
-               id: storedCartId,
-               _set: {
-                  locationTableId: orderTabs.find(
-                     eachOrderTab =>
-                        eachOrderTab?.orderFulfillmentTypeLabel ===
-                        'ONDEMAND_DINEIN'
-                  )?.id,
-               },
-            },
-         })
-      }
-      dispatch({
-         type: 'SET_SELECTED_ORDER_TAB',
-         payload: orderTabs.find(
-            eachOrderTab =>
-               eachOrderTab?.orderFulfillmentTypeLabel === 'ONDEMAND_DINEIN'
-         ),
-      })
-      setShowDineInTableSelection(false)
-      if (showPromotionalScreen) {
-         setIsPromotionalScreenVisible(true)
-      } else {
-         setCurrentPage('menuPage')
-      }
-   }
+
    return (
       <div
-         style={{
-            justifyContent: `${
-               config?.fulfillmentPageSettings?.alignContentStart?.value
-                  ? 'flex-start'
-                  : 'center'
-            }`,
-            paddingTop: `${
-               config?.fulfillmentPageSettings?.paddingTop?.value
-                  ? config?.fulfillmentPageSettings?.paddingTop?.value
-                  : 'unset'
-            }`,
-         }}
-         className="hern-kiosk__fulfillment-section-container"
+         tw="fixed inset-0 top-[160px]"
+         className="animate__animated animate__slideInRight"
       >
-         {config.fulfillmentPageSettings.backgroundImage.value.url[0] && (
-            <img
-               className="hern-kiosk__fulfillment-section-bg-image"
-               src={config.fulfillmentPageSettings.backgroundImage.value.url[0]}
-               alt="bg-image"
-               style={{
-                  filter: config.fulfillmentPageSettings
-                     .showFulfillmentPageBgImageBlur.value
-                     ? 'blur(6px)'
-                     : 'unset',
-               }}
-            />
-         )}
-         {config?.fulfillmentPageSettings?.mainText?.value && (
+         <div
+            style={{
+               justifyContent: `${
+                  config?.fulfillmentPageSettings?.alignContentStart?.value
+                     ? 'flex-start'
+                     : 'center'
+               }`,
+               paddingTop: `${
+                  config?.fulfillmentPageSettings?.paddingTop?.value
+                     ? config?.fulfillmentPageSettings?.paddingTop?.value
+                     : 'unset'
+               }`,
+            }}
+            className="hern-kiosk__fulfillment-section-container"
+         >
+            {config.fulfillmentPageSettings.backgroundImage.value.url[0] && (
+               <img
+                  className="hern-kiosk__fulfillment-section-bg-image"
+                  src={
+                     config.fulfillmentPageSettings.backgroundImage.value.url[0]
+                  }
+                  alt="bg-image"
+                  style={{
+                     filter: config.fulfillmentPageSettings
+                        .showFulfillmentPageBgImageBlur.value
+                        ? 'blur(6px)'
+                        : 'unset',
+                  }}
+               />
+            )}
+            {config?.fulfillmentPageSettings?.mainText?.value && (
+               <span
+                  className="hern-kiosk__fulfillment-section-main-text animation-fill-none animate__animated animate__bounce"
+                  style={{
+                     color: `${config.kioskSettings.theme.primaryColor.value}`,
+                     textTransform: `${
+                        config?.fulfillmentPageSettings?.fulfillmentStyle
+                           ?.mainText?.textTransform?.value || 'initial'
+                     }`,
+                     fontSize: `${
+                        config?.fulfillmentPageSettings?.fulfillmentStyle
+                           ?.mainText?.fontSize?.value || '6rem'
+                     }`,
+                  }}
+                  data-translation="true"
+               >
+                  {config.fulfillmentPageSettings.mainText.value}
+               </span>
+            )}
             <span
-               className="hern-kiosk__fulfillment-section-main-text animation-fill-none animate__animated animate__bounce"
+               className="hern-kiosk__fulfillment-section-secondary-text animation-fill-none animate__animated animate__lightSpeedInLeft animate__delay-1s"
                style={{
-                  color: `${config.kioskSettings.theme.primaryColor.value}`,
+                  color: `${
+                     config?.fulfillmentPageSettings?.fulfillmentStyle
+                        ?.secondaryText?.color?.value ||
+                     config.kioskSettings.theme.primaryColor.value
+                  }`,
                   textTransform: `${
-                     config?.fulfillmentPageSettings?.fulfillmentStyle?.mainText
-                        ?.textTransform?.value || 'initial'
+                     config?.fulfillmentPageSettings?.fulfillmentStyle
+                        ?.secondaryText?.textTransform?.value || 'initial'
                   }`,
                   fontSize: `${
-                     config?.fulfillmentPageSettings?.fulfillmentStyle?.mainText
-                        ?.fontSize?.value || '6rem'
+                     config?.fulfillmentPageSettings?.fulfillmentStyle
+                        ?.secondaryText?.fontSize?.value || '4rem'
                   }`,
                }}
                data-translation="true"
             >
-               {config.fulfillmentPageSettings.mainText.value}
+               {config.fulfillmentPageSettings.secondaryText.value}
             </span>
-         )}
-         <span
-            className="hern-kiosk__fulfillment-section-secondary-text animation-fill-none animate__animated animate__lightSpeedInLeft animate__delay-1s"
-            style={{
-               color: `${
-                  config?.fulfillmentPageSettings?.fulfillmentStyle
-                     ?.secondaryText?.color?.value ||
-                  config.kioskSettings.theme.primaryColor.value
-               }`,
-               textTransform: `${
-                  config?.fulfillmentPageSettings?.fulfillmentStyle
-                     ?.secondaryText?.textTransform?.value || 'initial'
-               }`,
-               fontSize: `${
-                  config?.fulfillmentPageSettings?.fulfillmentStyle
-                     ?.secondaryText?.fontSize?.value || '4rem'
-               }`,
-            }}
-            data-translation="true"
-         >
-            {config.fulfillmentPageSettings.secondaryText.value}
-         </span>
-         <div className="hern-kiosk__fulfillment-options" dir={direction}>
-            {isConfigLoading ? (
-               <p>loading</p>
-            ) : (
-               orderTabs.map((eachTab, index) => {
-                  let IconType = null
-                  switch (eachTab?.orderFulfillmentTypeLabel) {
-                     case 'ONDEMAND_PICKUP':
-                        IconType = TakeOutIcon
-                        break
-                     case 'ONDEMAND_DINEIN':
-                        IconType = DineInIcon
-                        break
-                  }
-                  if (
-                     config.fulfillmentPageSettings.customFulfillmentOption
-                        .value
-                  ) {
+            <div className="hern-kiosk__fulfillment-options" dir={direction}>
+               {isConfigLoading ? (
+                  <p>loading</p>
+               ) : (
+                  orderTabs.map((eachTab, index) => {
+                     let IconType = null
+                     switch (eachTab?.orderFulfillmentTypeLabel) {
+                        case 'ONDEMAND_PICKUP':
+                           IconType = TakeOutIcon
+                           break
+                        case 'ONDEMAND_DINEIN':
+                           IconType = DineInIcon
+                           break
+                     }
+                     if (
+                        config.fulfillmentPageSettings.customFulfillmentOption
+                           .value
+                     ) {
+                        return (
+                           <FulfillmentOptionCustom
+                              config={config}
+                              fulfillment={eachTab}
+                              fulfillmentIcon={IconType}
+                              buttonText={eachTab?.label}
+                              key={index}
+                              setCurrentPage={setCurrentPage}
+                           />
+                        )
+                     }
                      return (
-                        <FulfillmentOptionCustom
+                        <FulfillmentOption
                            config={config}
                            fulfillment={eachTab}
                            fulfillmentIcon={IconType}
                            buttonText={eachTab?.label}
                            key={index}
                            setCurrentPage={setCurrentPage}
-                           setShowDineInTableSelection={
-                              setShowDineInTableSelection
-                           }
                            setVisible={setVisible}
-                           setIsPromotionalScreenVisible={
-                              setIsPromotionalScreenVisible
-                           }
-                           showPromotionalScreen
                         />
                      )
-                  }
-                  return (
-                     <FulfillmentOption
-                        config={config}
-                        fulfillment={eachTab}
-                        fulfillmentIcon={IconType}
-                        buttonText={eachTab?.label}
-                        key={index}
-                        setCurrentPage={setCurrentPage}
-                        setVisible={setVisible}
-                     />
-                  )
-               })
-            )}
+                  })
+               )}
+            </div>
+            {!kioskAvailability['ONDEMAND_PICKUP'] &&
+               !kioskAvailability['ONDEMAND_DINEIN'] && (
+                  <div className="hern-kiosk__fulfillment-view-menu-btn-wrapper">
+                     <Button
+                        size="large"
+                        type="primary"
+                        className="hern-kiosk__kiosk-primary-button"
+                        style={{
+                           backgroundColor: `${config.kioskSettings.theme.primaryColor.value}`,
+                        }}
+                        onClick={() => {
+                           setCurrentPage('menuPage')
+                        }}
+                     >
+                        <span>{t('View Menu')}</span>
+                     </Button>
+                  </div>
+               )}
          </div>
          {!kioskAvailability['ONDEMAND_PICKUP'] &&
             !kioskAvailability['ONDEMAND_DINEIN'] && (
@@ -384,9 +364,6 @@ const FulfillmentOptionCustom = props => {
       buttonText,
       setCurrentPage,
       fulfillment,
-      setShowDineInTableSelection,
-      setVisible,
-      setIsPromotionalScreenVisible,
       showPromotionalScreen,
    } = props
 
@@ -399,44 +376,39 @@ const FulfillmentOptionCustom = props => {
          ?.value ?? false
    const askedPhoneNumber =
       config?.phoneNoScreenSettings?.askPhoneNumber.value ?? false
+
    const handleFulfillment = () => {
       if (!kioskAvailability[fulfillment.orderFulfillmentTypeLabel]) {
          return
       }
-      if (askedPhoneNumber && isClient && !localStorage.getItem('phone')) {
-         setVisible(true)
-      }
-      if (
+      if (askedPhoneNumber) {
+         setCurrentPage('phonePage')
+      } else if (
          config.kioskSettings.showTableSelectionView.value &&
          fulfillment.orderFulfillmentTypeLabel === 'ONDEMAND_DINEIN'
       ) {
-         setShowDineInTableSelection(true)
+         setCurrentPage('tableSelectionPage')
       } else {
-         dispatch({
-            type: 'SET_SELECTED_ORDER_TAB',
-            payload: fulfillment,
-         })
-         const cartIdInLocal = localStorage.getItem('cart-id')
-         if (cartIdInLocal) {
-            methods.cart.update({
-               variables: {
-                  id: JSON.parse(cartIdInLocal),
-                  _set: {
-                     orderTabId: fulfillment?.id || null,
-                  },
+         if (showPromotionalScreen) {
+            setCurrentPage('promotionalPage')
+         } else {
+            setCurrentPage('menuPage')
+         }
+      }
+      dispatch({
+         type: 'SET_SELECTED_ORDER_TAB',
+         payload: fulfillment,
+      })
+      const cartIdInLocal = localStorage.getItem('cart-id')
+      if (cartIdInLocal) {
+         methods.cart.update({
+            variables: {
+               id: JSON.parse(cartIdInLocal),
+               _set: {
+                  orderTabId: fulfillment?.id || null,
                },
-            })
-         }
-         if (
-            !askedPhoneNumber ||
-            (askedPhoneNumber && isClient && localStorage.getItem('phone'))
-         ) {
-            if (showPromotionalScreen) {
-               setIsPromotionalScreenVisible(true)
-            } else {
-               setCurrentPage('menuPage')
-            }
-         }
+            },
+         })
       }
    }
    const onFulfillmentClick = () => {
@@ -503,59 +475,7 @@ const FulfillmentOptionCustom = props => {
       </>
    )
 }
-const PromotionalScreen = ({ config, visible, setVisible, setCurrentPage }) => {
-   const { t } = useTranslation()
-   //Config for promotional screen
-   const promotionalScreenSettings = {
-      continueButtonLabel:
-         config?.promotionalScreenSettings?.promotionalScreenContinueButton
-            ?.labelForContinueButton?.value || 'CONTINUE',
-      image:
-         config?.promotionalScreenSettings?.promotionalScreenBackgroundImage
-            ?.value ||
-         'https://dailykit-133-test.s3.us-east-2.amazonaws.com/images/08345-app_promotion.png',
-   }
-   const { image, continueButtonLabel } = promotionalScreenSettings
-   return (
-      <StyledPromotionalScreen
-         title={null}
-         placement={'right'}
-         width={'100%'}
-         onClose={() => setVisible(false)}
-         visible={visible}
-         style={{ zIndex: '99999' }}
-         closable={false}
-      >
-         <div tw="h-full relative">
-            <span tw="absolute top-6 left-4">
-               <ArrowLeftIconBG
-                  bgColor={'#fff'}
-                  onClick={() => setVisible(false)}
-                  arrowColor={config.kioskSettings.theme.primaryColor.value}
-               />
-            </span>
-            <img
-               onClick={() => {
-                  setVisible(false)
-                  setCurrentPage('menuPage')
-               }}
-               src={image}
-            />
-            <div
-               onClick={() => {
-                  setVisible(false)
-                  setCurrentPage('menuPage')
-               }}
-               tw="absolute bottom-20 w-full flex justify-center"
-            >
-               <button tw="bg-[#3d0347] text-7xl text-white font-extrabold px-[56px] py-7 tracking-wide">
-                  {t(continueButtonLabel)}
-               </button>
-            </div>
-         </div>
-      </StyledPromotionalScreen>
-   )
-}
+
 const PayInCashModal = ({
    config,
    toPayInCashModal,
@@ -642,11 +562,7 @@ const PayInCashModal = ({
       </StyledPayInCashModal>
    )
 }
-const StyledPromotionalScreen = styled(Drawer)`
-   .ant-drawer-body {
-      padding: 0;
-   }
-`
+
 const StyledPayInCashModal = styled(Modal)`
    width: 800px !important;
    display: flex;
