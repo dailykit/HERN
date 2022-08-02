@@ -156,7 +156,6 @@ export const useTranslation = () => {
          '[data-translation="true"]'
       )
       dynamicTrans(languageTags)
-      console.log('current language', currentLang)
    }, [currentLang])
 
    return {

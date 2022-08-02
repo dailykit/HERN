@@ -1,3 +1,4 @@
+//TODO:Should be combined with Table selection screen
 import React, { useState } from 'react'
 import Drawer from 'antd/lib/drawer'
 import { useQuery } from '@apollo/react-hooks'
@@ -13,7 +14,7 @@ import { isEmpty } from 'lodash'
 export const DineInTableSelection = props => {
    const { showDineInTableSelection, onClose, config, onConfirmClick } = props
    const { locationId } = useConfig()
-   const { methods, storedCartId } = useCart()
+   const { methods, storedCartId, dineInTableInfo } = useCart()
    const { t, dynamicTrans, locale } = useTranslation()
    const [selectedLocationTableId, setSelectedLocationTableId] = useState(null)
    const [numbers, setNumbers] = React.useState('')
@@ -41,6 +42,11 @@ export const DineInTableSelection = props => {
          },
       },
    })
+   React.useEffect(() => {
+      if (dineInTableInfo?.internalTableLabel) {
+         setNumbers(dineInTableInfo?.internalTableLabel)
+      }
+   }, [])
 
    React.useLayoutEffect(() => {
       const isTableValid = data?.brands_locationTable?.some(
@@ -232,7 +238,8 @@ const TableNumberPadView = ({ numbers, setNumbers, isTableValid, config }) => {
 
             {!isTableValid && numbers.length > 0 && (
                <div tw="text-center pt-9 text-3xl text-[#DC4405]">
-                  {config?.dineInTableSettings?.tableNotAvailableMessage?.value || 'Table number does not exist'}
+                  {config?.dineInTableSettings?.tableNotAvailableMessage
+                     ?.value || 'Table number does not exist'}
                </div>
             )}
          </div>
