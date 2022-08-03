@@ -93,8 +93,22 @@
    margin-right: 0.3em;
 }
 .hern-kiosk__kiosk-header-reset-modal {
+   width: 70% !important;
+   text-align: center;
+   .ant-modal-content {
+      padding-bottom: 20px;
+      clip-path: polygon(0px 0px, 100% 0px, 100% 100%, 0px 97%);
+      border-radius: 12px;
+   }
    .ant-modal-wrap {
       z-index: 10000000;
+   }
+   .ant-modal-title {
+      text-align: center;
+      max-width: 600px;
+      margin: 3rem auto;
+      font-size: 2rem;
+      line-height: 1.2;
    }
 }
 .hern-kiosk___header-go-back-confirmation-modal {
@@ -214,6 +228,7 @@
    font-weight: 800;
    z-index: 999;
    font-size: 6rem;
+   margin-top: 40px;
 }
 .hern-kiosk__fulfillment-section-secondary-text {
    font-size: 4em;

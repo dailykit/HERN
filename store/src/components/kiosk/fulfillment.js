@@ -146,7 +146,7 @@ export const FulfillmentSection = props => {
             )}
             {config?.fulfillmentPageSettings?.mainText?.value && (
                <span
-                  className="hern-kiosk__fulfillment-section-main-text animation-fill-none animate__animated animate__bounce"
+                  className="hern-kiosk__fulfillment-section-main-text animate__animated animate__bounce animation-fill-none"
                   style={{
                      color: `${config.kioskSettings.theme.primaryColor.value}`,
                      textTransform: `${
