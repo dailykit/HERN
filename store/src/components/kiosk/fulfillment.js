@@ -246,46 +246,6 @@ export const FulfillmentSection = props => {
                   </div>
                )}
          </div>
-         {!kioskAvailability['ONDEMAND_PICKUP'] &&
-            !kioskAvailability['ONDEMAND_DINEIN'] && (
-               <div className="hern-kiosk__fulfillment-view-menu-btn-wrapper">
-                  <Button
-                     size="large"
-                     type="primary"
-                     className="hern-kiosk__kiosk-primary-button"
-                     style={{
-                        backgroundColor: `${config.kioskSettings.theme.primaryColor.value}`,
-                     }}
-                     onClick={() => {
-                        setCurrentPage('menuPage')
-                     }}
-                  >
-                     <span>{t('View Menu')}</span>
-                  </Button>
-               </div>
-            )}
-         <DineInTableSelection
-            showDineInTableSelection={showDineInTableSelection}
-            onClose={() => {
-               console.log('showDineInTableSelection', showDineInTableSelection)
-               setShowDineInTableSelection(false)
-            }}
-            config={config}
-            onConfirmClick={onTableSelectionConfirmClick}
-         />
-         <PhoneNumberTunnel
-            config={config}
-            visible={visible}
-            setVisible={setVisible}
-            setCurrentPage={setCurrentPage}
-            triggeredFrom={"fulfillmentPage"}
-         />
-         <PromotionalScreen
-            config={config}
-            setCurrentPage={setCurrentPage}
-            visible={isPromotionalScreenVisible}
-            setVisible={setIsPromotionalScreenVisible}
-         />
       </div>
    )
 }
