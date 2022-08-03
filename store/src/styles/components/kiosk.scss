@@ -112,10 +112,11 @@
    }
 }
 .hern-kiosk___header-go-back-confirmation-modal {
-   width: 60% !important;
+   width: 70% !important;
    .ant-modal-content {
-      padding: 1rem;
-      border-radius: 0.5rem;
+      clip-path: polygon(0px 0px, 100% 0px, 100% 100%, 0px 97%);
+      padding-bottom: 20px;
+      border-radius: 12px;
    }
    .ant-modal-title {
       font-weight: 800;
