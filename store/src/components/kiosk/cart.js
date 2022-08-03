@@ -21,6 +21,7 @@ import {
    EmptyCart,
    PaymentModeIcon,
    UpVector,
+   DeleteConfirmationPopUpIllustration,
 } from '../../assets/icons'
 import { useTranslation, CartContext } from '../../context'
 import {
@@ -1142,9 +1143,6 @@ const CartCard = props => {
                      (config?.cartCardSettings?.deleteConfirmation?.value ||
                         false) && (
                         <Modal
-                           title={formatMessage({
-                              id: 'Are you sure you want to remove this product from your cart',
-                           })}
                            visible={isConfirmationForDeleteCartItemModalVisible}
                            centered={true}
                            className="hern-kiosk__cart-item-delete-confirmation-modal"
@@ -1156,48 +1154,68 @@ const CartCard = props => {
                            closable={false}
                            footer={null}
                         >
-                           <div className="hern-kiosk__cart-item-delete-confirmation-button-div">
-                              <Button
-                                 variant="outline"
+                           < DeleteConfirmationPopUpIllustration style={{margin: '2rem auto'}}/>
+                           <div
+                              style={{
+                                 fontWeight: '800',
+                                 fontSize: '36px',
+                                 margin: '3rem',
+                                 textAlign: 'center',
+                                 lineHeight: '32px',
+                              }}
+                           >
+                              {formatMessage({
+                                 id: 'Are you sure you want to remove this product from your cart',
+                              })}
+                           </div>
+                           <div style={{
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'space-between',
+                                    padding: '0 2.2rem',
+                                    margin: '1rem auto',
+                                    marginBottom: '2rem'
+                                 }}
+                           >
+                              <button
                                  onClick={() => {
                                     setConfirmationForDeleteCartItemModalVisible(
                                        false
                                     )
                                  }}
                                  style={{
-                                    margin: '2px',
-                                    fontSize: '20px',
                                     border: `2px solid ${
                                        config?.kioskSettings?.theme
                                           ?.primaryColor?.value || 'black'
                                     }`,
-                                    paddingBottom: '2.5rem',
-                                    width: '40%',
-                                    paddingTop: '0.8rem',
+                                    background: 'transparent !important',
+                                    padding: '.75rem 1rem',
+                                    color: `${config.kioskSettings.theme.primaryColor.value}`,
+                                    width: "45%",
+                                    fontSize: "24px"
                                  }}
                               >
                                  {t(`Cancel`)}
-                              </Button>
-                              <Button
+                              </button>
+                              <button
                                  onClick={() => {
                                     setConfirmationForDeleteCartItemModalVisible(
                                        false
                                     )
                                     removeCartItems(productData.ids)
                                  }}
-                                 style={{
-                                    fontSize: '20px',
+                                 style={{ 
+                                    padding: '.75rem 1rem',
+                                    width: "45%",
+                                    fontSize: "24px",
                                     backgroundColor:
                                        config?.kioskSettings?.theme
                                           ?.primaryColor?.value || 'black',
                                     color: 'white',
-                                    paddingBottom: '2.5rem',
-                                    width: '40%',
-                                    paddingTop: '0.8rem',
                                  }}
                               >
                                  {t('Yes, Remove')}
-                              </Button>
+                              </button>
                            </div>
                         </Modal>
                      )}
