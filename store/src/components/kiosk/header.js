@@ -3,7 +3,7 @@ import classNames from 'classnames'
 import React, { useState } from 'react'
 import { useTranslation, useCart } from '../../context'
 import KioskButton from './component/button'
-import { ReloadIcon, ArrowLeftIconBG, ResetPopUpImage } from '../../assets/icons'
+import { ReloadIcon, ArrowLeftIconBG, ResetPopUpImage, GoBackMenuPageIllustration } from '../../assets/icons'
 import { isClient } from '../../utils'
 import { useIntl } from 'react-intl'
 import { useConfig } from '../../lib'
@@ -108,14 +108,14 @@ export const KioskHeader = props => {
                footer={null}
                className="hern-kiosk___header-go-back-confirmation-modal"
             >
+               <GoBackMenuPageIllustration style={{margin: "1rem auto"}}/>
                <div
                   style={{
                      fontWeight: '800',
                      fontSize: '24px',
-                     marginBottom: '2rem',
+                     margin: '3rem auto',
                      textAlign: 'center',
                      lineHeight: '28px',
-                     marginTop: '1rem',
                   }}
                >
                   {ReactHtmlParser(
@@ -130,6 +130,8 @@ export const KioskHeader = props => {
                      alignItems: 'center',
                      justifyContent: 'space-between',
                      padding: '0 2.2rem',
+                     margin: '1rem auto',
+                     marginBottom: '2rem'
                   }}
                >
                   <KioskButton
@@ -139,8 +141,10 @@ export const KioskHeader = props => {
                      style={{
                         border: `2px solid ${config.kioskSettings.theme.secondaryColor.value}`,
                         background: 'transparent !important',
-                        padding: '.1em 2em',
+                        padding: '.75rem 1rem',
                         color: `${config.kioskSettings.theme.primaryColor.value}`,
+                        width: "45%",
+                        fontSize: "24px"
                      }}
                      buttonConfig={config.kioskSettings.buttonSettings}
                   >
@@ -150,7 +154,11 @@ export const KioskHeader = props => {
                      )}
                   </KioskButton>
                   <KioskButton
-                     style={{ padding: '.1em 2em' }}
+                     style={{ 
+                        padding: '.75rem 1rem',
+                        width: "45%",
+                        fontSize: "24px"
+                     }}
                      onClick={() => {
                         if (storedCartId) {
                            methods.cart.delete({

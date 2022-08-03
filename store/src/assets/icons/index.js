@@ -333,6 +333,17 @@ const ResetPopUpImage = dynamic(() =>
       promise => promise.ResetPopUpImage
    )
 )
+const GoBackMenuPageIllustration = dynamic(() =>
+   import('./GoBackMenuPageIllustration').then(
+      promise => promise.GoBackMenuPageIllustration
+   )
+)
+const DeleteConfirmationPopUpIllustration = dynamic(() =>
+   import('./DeleteConfirmationPopUpIllustration').then(
+      promise => promise.DeleteConfirmationPopUpIllustration
+   )
+)
+
 export {
    AddressIcon,
    ArrowLeftIcon,
@@ -429,4 +440,6 @@ export {
    SkipPhoneNumberModalImage,
    SkipPhoneNumberCartPageIllustration,
    ResetPopUpImage,
+   GoBackMenuPageIllustration,
+   DeleteConfirmationPopUpIllustration,
 }
