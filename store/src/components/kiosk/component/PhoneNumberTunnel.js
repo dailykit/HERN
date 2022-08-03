@@ -3,7 +3,7 @@ import { useState, useRef, useEffect } from 'react'
 import HtmlParser from 'react-html-parser'
 import styled from 'styled-components'
 import tw from 'twin.macro'
-import { ArrowLeftIconBG, BackSpaceIcon, SkipPhoneNumberModalImage } from '../../../assets/icons'
+import { ArrowLeftIconBG, BackSpaceIcon, SkipPhoneNumberModalImage, RoundedCloseIcon, SkipPhoneNumberCartPageIllustration } from '../../../assets/icons'
 import { useTranslation } from '../../../context'
 import { useConfig } from '../../../lib'
 import { isClient } from '../../../utils'
@@ -15,6 +15,7 @@ export const PhoneNumberTunnel = ({
    setVisible,
    setCurrentPage,
    callback,
+   triggeredFrom
 }) => {
    const [number, setNumber] = useState('')
    const phoneNumberInputRef = useRef()
@@ -235,6 +236,7 @@ export const PhoneNumberTunnel = ({
             setVisible={setVisible}
             callback={callback}
             config={config}
+            triggeredFrom={triggeredFrom}
          />
       </>
    )
@@ -246,10 +248,12 @@ export const PhoneNoWarningModal = ({
    setCurrentPage,
    setVisible,
    callback,
-   config
+   config,
+   triggeredFrom
 }) => {
    const { t } = useTranslation()
    const { currentPage } = useConfig()
+
    return (
       <StyledModal
          visible={skipModal}
@@ -257,49 +261,100 @@ export const PhoneNoWarningModal = ({
          closable={false}
          footer={null}
          zIndex={9999999}
-      >
-         <div className='ant-modal-title'>
-            <SkipPhoneNumberModalImage />
-            <div style={{margin: "1rem auto", fontSize: "2.2rem"}}>
-               { ReactHtmlParser(config?.phoneNoScreenSettings?.noPhoneNoWarning?.fulfillmentPage?.value || 'Are you sure ?') }
+      > { (triggeredFrom === "fulfillmentPage") &&
+         <>
+            <div className='ant-modal-title'>
+               <SkipPhoneNumberModalImage />
+               <div style={{margin: "1rem auto", fontSize: "2.2rem"}}>
+                  { ReactHtmlParser(config?.phoneNoScreenSettings?.noPhoneNoWarning?.fulfillmentPage?.value || 'Are you sure ?') }
+               </div>
             </div>
-         </div>
-         <div style={{
-            display: "flex",
-            width: "100%",
-            justifyContent: "space-between"
-         }}>
-            <button
-               onClick={() => {
-                  setSkipModal(false)
-                  setVisible(false)
-                  isClient && localStorage.setItem('phone', '2222222222')
-                  if (
-                     isClient &&
-                     currentPage === 'fulfillmentPage' &&
-                     localStorage.getItem('fulfillmentType') !== 'ONDEMAND_DINEIN'
-                  ) {
-                     setCurrentPage('menuPage')
-                  }
-                  {
-                     callback && callback()
-                  }
-               }}
-               style={{border: `4px solid purple`, width: "45%"}}
-            >
-               {t('Continue')}
-            </button>
-            <button
-               className="solid"
-               onClick={() => {
-                  setVisible(true)
-                  setSkipModal(false)
-               }}
-               style={{width: "45%"}}
-            >
-               {t('Enter  number')}
-            </button>
-         </div>
+            <div style={{
+               display: "flex",
+               width: "100%",
+               justifyContent: "space-between"
+            }}>
+               <button
+                  onClick={() => {
+                     setSkipModal(false)
+                     setVisible(false)
+                     isClient && localStorage.setItem('phone', '2222222222')
+                     if (
+                        isClient &&
+                        currentPage === 'fulfillmentPage' &&
+                        localStorage.getItem('fulfillmentType') !== 'ONDEMAND_DINEIN'
+                     ) {
+                        setCurrentPage('menuPage')
+                     }
+                     {
+                        callback && callback()
+                     }
+                  }}
+                  style={{border: `4px solid purple`, width: "45%"}}
+               >
+                  {t('Continue')}
+               </button>
+               <button
+                  className="solid"
+                  onClick={() => {
+                     setVisible(true)
+                     setSkipModal(false)
+                  }}
+                  style={{width: "45%"}}
+               >
+                  {t('Enter  number')}
+               </button>
+            </div>
+         </>
+         }
+         { (triggeredFrom === "cartPage") && 
+            <>
+               <div className='ant-modal-title'>
+                  <SkipPhoneNumberCartPageIllustration style={{margin: "auto"}}/>
+                  <div style={{margin: "1rem auto", fontSize: "2.2rem"}}>
+                     { ReactHtmlParser(config?.phoneNoScreenSettings?.noPhoneNoWarning?.checkoutPage?.value || 'Are you sure ?') }
+                  </div>
+                  <button 
+                     onClick={() => {
+                        setSkipModal(false)
+                        setVisible(false)
+                        isClient && localStorage.setItem('phone', '2222222222')
+                        if (
+                           isClient &&
+                           currentPage === 'fulfillmentPage' &&
+                           localStorage.getItem('fulfillmentType') !== 'ONDEMAND_DINEIN'
+                        ) {
+                           setCurrentPage('menuPage')
+                        }
+                        {
+                           callback && callback()
+                        }
+                     }}
+                     style={{border: "none"}}>
+                     <RoundedCloseIcon 
+                        style={{position: "absolute",
+                           top: "38px",
+                           right: "37px"
+                        }}/>
+                  </button>
+               </div>
+               <div style={{
+                  display: "flex",
+                  width: "100%",
+                  justifyContent: "center"
+               }}>
+                  <button
+                     onClick={() => {
+                        setVisible(true)
+                        setSkipModal(false)
+                     }}
+                     style={{border: `4px solid purple`,width: "60%"}}
+                  >
+                     {t('Add  number')}
+                  </button>
+               </div>
+            </>
+         }
       </StyledModal>
    )
 }
@@ -309,6 +364,8 @@ const StyledModal = styled(Modal)`
    border-radius: 24px;
    padding: 56px;
    .ant-modal-content {
+      width: 110%;
+      position: relative;
       padding-bottom: 20px;
       clip-path: polygon(0px 0px, 100% 0px, 100% 100%, 0px 97%);
       border-radius: 12px;

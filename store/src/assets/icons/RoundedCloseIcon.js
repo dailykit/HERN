@@ -1,6 +1,6 @@
 import React from 'react'
 
-export const RoundedCloseIcon = ({ color = 'var(--hern-primary-color)' }) => {
+export const RoundedCloseIcon = ({ color = 'var(--hern-primary-color)', ...props }) => {
    return (
       <svg
          width="56"
@@ -8,6 +8,7 @@ export const RoundedCloseIcon = ({ color = 'var(--hern-primary-color)' }) => {
          viewBox="0 0 56 57"
          fill="none"
          xmlns="http://www.w3.org/2000/svg"
+         {...props}
       >
          <circle cx="28" cy="28.4682" r="26" stroke={color} strokeWidth="4" />
          <path
