@@ -3,7 +3,7 @@ import classNames from 'classnames'
 import React, { useState } from 'react'
 import { useTranslation, useCart } from '../../context'
 import KioskButton from './component/button'
-import { ReloadIcon, ArrowLeftIconBG } from '../../assets/icons'
+import { ReloadIcon, ArrowLeftIconBG, ResetPopUpImage } from '../../assets/icons'
 import { isClient } from '../../utils'
 import { useIntl } from 'react-intl'
 import { useConfig } from '../../lib'
@@ -202,9 +202,6 @@ export const KioskHeader = props => {
          />
 
          <Modal
-            title={formatMessage({
-               id: 'Current changes will lose do you wish to continue?',
-            })}
             visible={showReloadWarningPopup}
             centered={true}
             onCancel={() => {
@@ -214,10 +211,19 @@ export const KioskHeader = props => {
             footer={null}
             className="hern-kiosk__kiosk-header-reset-modal"
          >
+            <div className='ant-modal-title'>
+               <ResetPopUpImage style={{margin: "1rem auto"}} />
+               <div style={{margin: "1rem auto", fontSize: "2.2rem"}}>
+                  {formatMessage({
+                     id: 'Current changes will lose do you wish to continue?'                  
+                  })}
+               </div>
+            </div>
             <div
                style={{
                   display: 'flex',
-                  alignItems: 'center',
+                  margin: "0 2rem",
+                  marginBottom: "1rem",
                   justifyContent: 'space-between',
                }}
             >
@@ -228,15 +234,21 @@ export const KioskHeader = props => {
                   style={{
                      border: `2px solid ${config.kioskSettings.theme.secondaryColor.value}`,
                      background: 'transparent !important',
-                     padding: '.1em 2em',
+                     padding: '.75rem 1rem',
                      color: `${config.kioskSettings.theme.primaryColor.value}`,
+                     width: "45%",
+                     fontSize: "24px"
                   }}
                   buttonConfig={config.kioskSettings.buttonSettings}
                >
                   {t('CANCEL')}
                </KioskButton>
                <KioskButton
-                  style={{ padding: '.1em 2em' }}
+                  style={{ 
+                     padding: '.75rem 1rem',
+                     width: "45%",
+                     fontSize: "24px"
+                  }}
                   onClick={() => {
                      if (isClient) {
                         window.location.reload()
